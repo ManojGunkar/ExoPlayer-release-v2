@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MySpotifyMusic</string>
+    <string name="ok">Ok</string>
+    <string name="storage_permission">Write data on SD Card</string>
+</resources>
