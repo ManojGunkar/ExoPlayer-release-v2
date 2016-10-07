@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/grp"
+        android:checkableBehavior="none">
+    <group
+        android:id="@+id/grp1"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/navigation_music"
+            android:checked="true"
+            android:icon="@drawable/ic_audiotrack_white_24dp"
+            android:title="Music Library" />
+        <item
+            android:id="@+id/navigation_spotify"
+            android:icon="@drawable/ic_album_white_24dp"
+            android:title="Spotify" />
+    </group>
+    <group
+        android:id="@+id/grp2"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/navigation_boom_palylist"
+            android:icon="@drawable/ic_person_white_24dp"
+            android:title="My iBoom Playlist" />
+        <item
+            android:id="@+id/navigation_boom_favourites"
+            android:icon="@drawable/ic_playlist_play_white_24dp"
+            android:title="My iBoom Favourites" />
+    </group>
+    <group
+        android:id="@+id/grp3"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/navigation_close"
+            android:icon="@drawable/ic_info_white_24dp"
+            android:title="Close Library" />
+    </group>
+    </group>
+</menu>

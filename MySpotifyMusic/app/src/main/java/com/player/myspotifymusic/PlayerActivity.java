@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -15,8 +14,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.openslplayer.OpenSLPlayer;
-import com.player.music.AudioListActivity;
-import com.player.music.MediaItem;
+import com.player.player.AudioListActivity;
+import com.player.player.MediaItem;
 import com.example.openslplayer.PlayerEvents;
 
 /**
@@ -35,7 +34,7 @@ public class PlayerActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.old_activity_main);
 
         audioList = (ImageButton) findViewById(R.id.list);
 
@@ -132,13 +131,13 @@ public class PlayerActivity extends Activity {
 
     PlayerEvents events = new PlayerEvents() {
         @Override public void onStop() {
-//            Log.d("PlayerActivity" , "onStop called");
+//            Log.d("BoomPlayerActivity" , "onStop called");
             isStopped = true;
             play_track.setChecked(false);
             seekTrack.setProgress(0);
         }
         @Override public void onStart(String mime, int sampleRate, int channels, long duration) {
-//            Log.d("PlayerActivity" , "onStart called: " + mime + " sampleRate:" + sampleRate + " channels:"+ channels);
+//            Log.d("BoomPlayerActivity" , "onStart called: " + mime + " sampleRate:" + sampleRate + " channels:"+ channels);
             if (duration == 0)
                 Toast.makeText(PlayerActivity.this, "This is a LIVE Stream!", Toast.LENGTH_SHORT).show();
             else
@@ -147,6 +146,12 @@ public class PlayerActivity extends Activity {
         @Override public void onPlayUpdate(int percent, long currentms, long totalms) {
             seekTrack.setProgress(percent);
         }
+
+        @Override
+        public void onFinish() {
+
+        }
+
         @Override public void onPlay() {
         }
         @Override public void onError() {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/popup_album_addto"
+        android:title="Add to"
+        android:checkable="false"
+        android:onClick="@null"
+        android:showAsAction="never" />
+    <item
+        android:id="@+id/popup_album_add_queue"
+        android:icon="@drawable/ic_menu_selected"
+        android:title="Queue"
+        android:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/popup_album_add_playlist"
+        android:icon="@drawable/ic_menu_selected"
+        android:title="Boom Playlist"
+        android:showAsAction="ifRoom" />
+</menu>

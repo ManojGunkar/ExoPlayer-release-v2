@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/song_item_img"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:scaleType="centerCrop"
         android:layout_weight="0" />
 
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="5dp"
         android:layout_weight="0"
-        android:background="@android:drawable/sym_contact_card"
+        android:background="@drawable/unbounded_ripple"
         android:foregroundTint="#434343"
         android:padding="5dp"
         android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"

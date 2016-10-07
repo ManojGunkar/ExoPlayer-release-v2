@@ -33,7 +33,7 @@ public class OpenSLPlayer implements Runnable {
     private int sourceRawResId = -1;
     private Context mContext;
     private boolean stop = false;
-
+    private static Thread playerThread;
     Handler handler = new Handler();
 
     String mime = null;
@@ -60,6 +60,14 @@ public class OpenSLPlayer implements Runnable {
         return (duration == 0);
     }
 
+    public boolean isPlaying(){
+        return state.isPlaying();
+    }
+
+    public boolean isStopped() {
+        return state.isStopped();
+    }
+
     /**
      * set the data source, a file path or an url, or a file descriptor, to play encoded audio from
      * @param src
@@ -76,9 +84,9 @@ public class OpenSLPlayer implements Runnable {
     public void play() {
         if (state.get() == PlayerStates.STOPPED) {
             stop = false;
-            new Thread(this).start();
-        }
-        if (state.get() == PlayerStates.PAUSED) {
+            playerThread = new Thread(this);
+            playerThread.start();
+        }else if (state.get() == PlayerStates.PAUSED ) {
             setPlayingAudioPlayer(true);
             state.set(PlayerStates.PLAYING);
             syncNotify();
@@ -92,7 +100,18 @@ public class OpenSLPlayer implements Runnable {
         notify();
     }
     public void stop() {
-        stop = true;
+
+        if(state.get() != PlayerStates.PAUSED) {
+            stop = true;
+            try {
+                playerThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }else{
+            play();
+            stop = true;
+        }
     }
 
     public void pause() {
@@ -216,6 +235,10 @@ public class OpenSLPlayer implements Runnable {
 
         while (!sawOutputEOS && noOutputCounter < noOutputCounterLimit && !stop) {
 
+            if(playerThread.isInterrupted()){
+                return;
+            }
+
             // pause implementation
             waitPlay();
 
@@ -232,8 +255,14 @@ public class OpenSLPlayer implements Runnable {
                         sampleSize = 0;
                     } else {
                         presentationTimeUs = extractor.getSampleTime();
-                        final int percent =  (duration == 0)? 0 : (int) (100 * presentationTimeUs / duration);
-                        if (events != null) handler.post(new Runnable() { @Override public void run() { events.onPlayUpdate(percent, presentationTimeUs / 1000, duration / 1000);  } });
+                        final int percent = (duration == 0) ? 0 : (int) (100 * presentationTimeUs / duration);
+                        Log.d("Finish", "" + percent);
+                        if (events != null) handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                events.onPlayUpdate(percent, presentationTimeUs / 1000, duration / 1000);
+                            }
+                        });
                     }
 
                     codec.queueInputBuffer(inputBufIndex, 0, sampleSize, presentationTimeUs, sawInputEOS ? MediaCodec.BUFFER_FLAG_END_OF_STREAM : 0);
@@ -246,10 +275,13 @@ public class OpenSLPlayer implements Runnable {
             } // !sawInputEOS
 
             // decode to PCM and push it to the OpenSLPlayer player
-            int res = codec.dequeueOutputBuffer(info, kTimeOutUs);
-
+            int res = 0;
+            try {
+                res = codec.dequeueOutputBuffer(info, kTimeOutUs);
+            } catch (Exception e) {
+            }
             if (res >= 0) {
-                if (info.size > 0)  noOutputCounter = 0;
+                if (info.size > 0) noOutputCounter = 0;
 
                 int outputBufIndex = res;
                 ByteBuffer buf = codecOutputBuffers[outputBufIndex];
@@ -258,16 +290,19 @@ public class OpenSLPlayer implements Runnable {
                 buf.get(chunk);
                 buf.clear();
 
-                if(chunk.length > 0){
+                if (chunk.length > 0) {
 
-                    int i=0;
-                    while(i != chunk.length){
+                    int i = 0;
+                    while (i != chunk.length) {
 
                         i += write(chunk, i, chunk.length);
                     }
 
                 }
-                codec.releaseOutputBuffer(outputBufIndex, false);
+                try {
+                    codec.releaseOutputBuffer(outputBufIndex, false);
+                } catch (Exception e) {
+                }
                 if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
 //                    Log.d(LOG_TAG, "saw output EOS.");
                     sawOutputEOS = true;
@@ -355,4 +390,5 @@ public class OpenSLPlayer implements Runnable {
     public static native void setMutAudioPlayer(boolean mute);
 
     public static native boolean readAsset(AssetManager mgr);
+
 }

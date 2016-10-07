@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@android:color/black">
+
+    <RelativeLayout
+        android:id="@+id/audio_effect_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/audioeffectbtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_audioeffect"
+            android:background="@android:color/transparent"
+            android:layout_alignParentLeft="true"/>
+        <ImageButton
+            android:id="@+id/list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:background="@android:color/transparent"
+            android:src="@drawable/home_library"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/playerControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/audio_effect_panel"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_marginBottom="20dp"
+        android:padding="10dp"
+        android:background="@android:color/black"
+        android:weightSum="1"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/prevTrack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_media_rew"
+            android:background="@android:color/transparent"
+            android:layout_weight=".2"/>
+
+        <ImageButton
+            android:id="@+id/stopTrack"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_media_stop"
+            android:background="@android:color/transparent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".2"/>
+
+        <ImageButton
+            android:id="@+id/nextTrack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_media_ff"
+            android:layout_weight=".2"/>
+    </LinearLayout>
+    <ImageView
+        android:layout_width="236dp"
+        android:layout_height="236dp"
+        android:layout_centerInParent="true"
+        android:scaleType="fitXY"
+        android:visibility="gone"
+        android:src="@drawable/visualizer"/>
+
+
+    <!--<com.audio.player.controller.visualizer.VisualizerView
+        android:id="@+id/visualizer"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:layout_centerInParent="true">
+    </com.audio.player.controller.visualizer.VisualizerView>-->
+
+    <!--<com.audio.player.controller.visualizer.CircularView
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:layout_centerInParent="true">
+    </com.audio.player.controller.visualizer.CircularView>-->
+
+    <com.player.ui.widgets.CircleImageView
+        android:layout_width="180dip"
+        android:layout_height="180dip"
+        android:layout_centerInParent="true"
+        android:background="@drawable/circle_image"
+        android:id="@+id/albumart"/>
+
+    <com.player.ui.widgets.CircularSeekBar
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:padding="60dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/trackSeek"/>
+
+    <ImageButton
+        android:id="@+id/play_pause_btn"
+        android:layout_width="80dip"
+        android:layout_height="80dip"
+        android:scaleType="fitXY"
+        android:layout_centerInParent="true"
+        android:background="@drawable/circle"
+        android:src="@drawable/ic_pause"/>
+
+</RelativeLayout>

@@ -38,6 +38,11 @@ namespace android {
     }
 
     jbyte *OpenSLEqualizer::processEqualizer(jbyte *dataPtr, int numBytes) {
+//        if(true){
+//            dataPtr++;
+//        }
+
+
         return dataPtr;
     }
 }

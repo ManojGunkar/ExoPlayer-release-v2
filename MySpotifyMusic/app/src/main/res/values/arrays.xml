@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="eq_names">
+        <item>AUTO</item>
+        <item>BASSBOOST</item>
+        <item>ACOUSTIC</item>
+        <item>60s</item>
+        <item>CLASSICAL</item>
+        <item>DUBSTEP</item>
+        <item>ELECTRONIC</item>
+        <item>FLAT</item>
+        <item>HIPHOP</item>
+        <item>HOUSE</item>
+        <item>JAZZ</item>
+        <item>LOUD</item>
+        <item>MUSIC</item>
+        <item>PARTY</item>
+        <item>POP</item>
+        <item>REGGAE</item>
+        <item>ROCK</item>
+        <item>SOFT</item>
+        <item>TREBLE</item>
+        <item>VOCALS</item>
+        <item>R &amp; B</item>
+        <item>METAL</item>
+
+
+
+    </string-array>
+
+    <integer-array name="eq_inactive_off">
+        <item>@drawable/eq_auto_off</item>
+        <item>@drawable/eq_bassboost_off</item>
+        <item>@drawable/eq_acoustic_off</item>
+        <item>@drawable/eq_sixties_off</item>
+        <item>@drawable/eq_classical_off</item>
+        <item>@drawable/eq_dubstep_off</item>
+        <item>@drawable/eq_electronic_off</item>
+        <item>@drawable/eq_flat_off</item>
+        <item>@drawable/eq_hiphop_off</item>
+        <item>@drawable/eq_house_off</item>
+        <item>@drawable/eq_jazz_off</item>
+        <item>@drawable/eq_loud_off</item>
+        <item>@drawable/eq_music_off</item>
+        <item>@drawable/eq_party_off</item>
+        <item>@drawable/eq_pop_off</item>
+        <item>@drawable/eq_reggae_off</item>
+        <item>@drawable/eq_rock_off</item>
+        <item>@drawable/eq_soft_off</item>
+        <item>@drawable/eq_treble_off</item>
+        <item>@drawable/eq_vocals_off</item>
+        <item>@drawable/eq_rb_off</item>
+        <item>@drawable/eq_metal_off</item>
+    </integer-array>
+
+    <integer-array name="eq_inactive_on">
+        <item>@drawable/eq_auto_on</item>
+        <item>@drawable/eq_bassboost_on</item>
+        <item>@drawable/eq_acoustic_on</item>
+        <item>@drawable/eq_sixties_on</item>
+        <item>@drawable/eq_classical_on</item>
+        <item>@drawable/eq_dubstep_on</item>
+        <item>@drawable/eq_electronic_on</item>
+        <item>@drawable/eq_flat_on</item>
+        <item>@drawable/eq_hiphop_on</item>
+        <item>@drawable/eq_house_on</item>
+        <item>@drawable/eq_jazz_on</item>
+        <item>@drawable/eq_loud_on</item>
+        <item>@drawable/eq_music_on</item>
+        <item>@drawable/eq_party_on</item>
+        <item>@drawable/eq_pop_on</item>
+        <item>@drawable/eq_reggae_on</item>
+        <item>@drawable/eq_rock_on</item>
+        <item>@drawable/eq_soft_on</item>
+        <item>@drawable/eq_treble_on</item>
+        <item>@drawable/eq_vocals_on</item>
+        <item>@drawable/eq_rb_on</item>
+        <item>@drawable/eq_metal_on</item>
+    </integer-array>
+
+    <integer-array name="eq_active_off">
+        <item>@drawable/eq_bassboost_active_off</item>
+        <item>@drawable/eq_bassboost_active_off</item>
+        <item>@drawable/eq_acoustic_active_off</item>
+        <item>@drawable/eq_sixties_active_off</item>
+        <item>@drawable/eq_classical_active_off</item>
+        <item>@drawable/eq_dubstep_active_off</item>
+        <item>@drawable/eq_electronic_active_off</item>
+        <item>@drawable/eq_flat_active_off</item>
+        <item>@drawable/eq_hiphop_active_off</item>
+        <item>@drawable/eq_house_active_off</item>
+        <item>@drawable/eq_jazz_active_off</item>
+        <item>@drawable/eq_loud_active_off</item>
+        <item>@drawable/eq_music_active_off</item>
+        <item>@drawable/eq_party_active_off</item>
+        <item>@drawable/eq_pop_active_off</item>
+        <item>@drawable/eq_reggae_active_off</item>
+        <item>@drawable/eq_rock_active_off</item>
+        <item>@drawable/eq_soft_active_off</item>
+        <item>@drawable/eq_treble_active_off</item>
+        <item>@drawable/eq_vocals_active_off</item>
+        <item>@drawable/eq_vocals_active_off</item>
+        <item>@drawable/eq_metal_active_off</item>
+    </integer-array>
+
+    <integer-array name="eq_active_on">
+        <item>@drawable/eq_bassboost_active_on</item>
+        <item>@drawable/eq_bassboost_active_on</item>
+        <item>@drawable/eq_acoustic_active_on</item>
+        <item>@drawable/eq_sixties_active_on</item>
+        <item>@drawable/eq_classical_active_on</item>
+        <item>@drawable/eq_dubstep_active_on</item>
+        <item>@drawable/eq_electronic_active_on</item>
+        <item>@drawable/eq_flat_active_on</item>
+        <item>@drawable/eq_hiphop_active_on</item>
+        <item>@drawable/eq_house_active_on</item>
+        <item>@drawable/eq_jazz_active_on</item>
+        <item>@drawable/eq_loud_active_on</item>
+        <item>@drawable/eq_music_active_on</item>
+        <item>@drawable/eq_party_active_on</item>
+        <item>@drawable/eq_pop_active_on</item>
+        <item>@drawable/eq_reggae_active_on</item>
+        <item>@drawable/eq_rock_active_on</item>
+        <item>@drawable/eq_soft_active_on</item>
+        <item>@drawable/eq_treble_active_on</item>
+        <item>@drawable/eq_vocals_active_on</item>
+        <item>@drawable/eq_vocals_active_on</item>
+        <item>@drawable/eq_metal_active_on</item>
+    </integer-array>
+
+</resources>
