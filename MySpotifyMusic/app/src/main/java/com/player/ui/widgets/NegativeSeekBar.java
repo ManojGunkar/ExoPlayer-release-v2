@@ -45,7 +45,7 @@ public class NegativeSeekBar extends SeekBar {
                 getWidth()- getThumbOffset()*2,
                 (getHeight() / 2) + (seekbar_height/2));
 
-        paint.setColor(Color.parseColor("#E0E4D4"));
+        paint.setColor(Color.parseColor("#2b2c30"));
 
         canvas.drawRect(rect, paint);
 

@@ -396,12 +396,15 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
             case R.id.intensity_switch_btn:
+                if(pref.getBoolean(THREE_D_SURROUND_POWER, POWER_OFF) == POWER_ON){
+                    onTextViewTurn(mIntensityIndicator);
+                    return;
+                }
                 if(isPowerOn) {
                     boolean isIntensityOn = pref.getBoolean(INTENSITY_POWER, POWER_OFF);
                     editor = pref.edit();
                     if (isIntensityOn) {
                         editor.putBoolean(INTENSITY_POWER, POWER_OFF);
-                        onTextViewTurn(mIntensityIndicator);
                     } else {
                         editor.putBoolean(INTENSITY_POWER, POWER_ON);
                     }
@@ -410,12 +413,15 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
             case R.id.equalizer_switch_btn:
+                if(pref.getBoolean(THREE_D_SURROUND_POWER, POWER_OFF) == POWER_ON){
+                    onTextViewTurn(mEqualizerIndicator);
+                    return;
+                }
                 if(isPowerOn) {
                     boolean isEqualizerOn = pref.getBoolean(EQUALIZER_POWER, POWER_OFF);
                     editor = pref.edit();
                     if (isEqualizerOn) {
                         editor.putBoolean(EQUALIZER_POWER, POWER_OFF);
-                        onTextViewTurn(mEqualizerIndicator);
                     } else {
                         editor.putBoolean(EQUALIZER_POWER, POWER_ON);
                     }

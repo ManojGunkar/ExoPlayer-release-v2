@@ -315,8 +315,8 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/progress_gray"
+                android:layout_height="1px"
+                android:background="#222327"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"/>
 
@@ -427,8 +427,8 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/progress_gray"
+                android:layout_height="1px"
+                android:background="#222327"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"/>
 
@@ -517,7 +517,7 @@
                                     android:textSize="@dimen/speaker_info"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="intensity ON"
+                                    android:text="equalizer ON"
                                     android:maxLines="1"
                                     android:textColor="#c3cc20"/>
                             </LinearLayout>
