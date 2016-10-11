@@ -52,7 +52,7 @@ public class PlayerEventHandler implements QueueEvent {
     @Override
     public void onPlayingItemChanged() {
 
-        if(isPlaying()){
+        if(isPlaying() || mPlayer.isPause()){
             mPlayer.stop();
         }
 

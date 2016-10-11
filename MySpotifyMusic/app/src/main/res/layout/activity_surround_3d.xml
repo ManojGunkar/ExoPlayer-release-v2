@@ -74,7 +74,7 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:layout_weight=".5"
-                    android:gravity="center_vertical|right">
+                    android:gravity="center_vertical|right">s
                     <ToggleButton
                         android:id="@+id/effect_power_btn"
                         android:layout_width="30dp"

@@ -106,15 +106,19 @@ public class OpenSLPlayer implements Runnable {
     public void stop() {
 
         if(state.get() != PlayerStates.PAUSED) {
-            stop = true;
-            try {
-                playerThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            doStop();
         }else{
             play();
-            stop = true;
+            doStop();
+        }
+    }
+
+    private void doStop(){
+        stop = true;
+        try {
+            playerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
