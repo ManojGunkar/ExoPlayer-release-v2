@@ -101,10 +101,10 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
     private void setArtistImg(final SimpleItemViewHolder holder, final int position, final int size) {
         String path = items.get(position).getItemArtUrl();
         if (isPathValid(path))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.default_album_art, null))
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.default_album_art_home, null))
                     .centerCrop().resize(size, size)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else
-            holder.defaultImg.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art, size, size));
+            holder.defaultImg.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art_home, size, size));
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {

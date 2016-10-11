@@ -151,13 +151,13 @@ public class AlbumActivity extends AppCompatActivity {
             try {
                 if (imagePath == null) {
                     Utils utils = new Utils(this);
-                    albumArt.setImageBitmap(utils.getBitmapOfVector(this, R.drawable.default_album_art,
+                    albumArt.setImageBitmap(utils.getBitmapOfVector(this, R.drawable.default_album_art_home,
                             width, height));
                     return;
                 }
                 Picasso.with(AlbumActivity.this)
                         .load(new File(imagePath)).resize(width, height)
-                        .error(getResources().getDrawable(R.drawable.default_album_art, null)).noFade()
+                        .error(getResources().getDrawable(R.drawable.default_album_art_home, null)).noFade()
                         .into(albumArt);
             } catch (NullPointerException e) {
                 e.printStackTrace();

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="album_grid_height">230dp</dimen>
+    <dimen name="album_grid_text_panel_height">90dp</dimen>
+    <dimen name="grid_item_title_size">19sp</dimen>
+    <dimen name="grid_item_desc_size">16sp</dimen>
+
+
+    <dimen name="toolbar_titile">26sp</dimen>//80
+    <dimen name="effect_switch_txt">24sp</dimen>//72
+    <dimen name="speaker_info">18sp</dimen>//52
+    <dimen name="fullbass_txt">19sp</dimen>//62
+</resources>

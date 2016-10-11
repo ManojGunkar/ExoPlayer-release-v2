@@ -41,6 +41,9 @@ public class PlayerStates {
         return playerState == PlayerStates.PLAYING;
     }
 
+    public boolean isPause() {
+        return playerState == PlayerStates.PAUSED;
+    }
 
     /**
      * Checks whether the player is currently stopped (not playing)
@@ -50,8 +53,4 @@ public class PlayerStates {
     public synchronized boolean isStopped() {
         return playerState == PlayerStates.STOPPED;
     }
-
-
-
-
 }

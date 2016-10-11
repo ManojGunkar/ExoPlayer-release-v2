@@ -52,7 +52,7 @@ public class CircularSeekBar extends View {
     /**
      * The width of the progress line for this CircularSeekBar
      */
-    private int mProgressWidth = 4;
+    private int mProgressWidth = 1;
 
     /**
      * The Width of the background arc for the CircularSeekBar 

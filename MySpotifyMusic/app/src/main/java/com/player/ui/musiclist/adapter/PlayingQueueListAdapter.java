@@ -276,8 +276,9 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void setHeaderBg(SimpleItemViewHolder holder) {
-        holder.mainView.setBackgroundColor(getColor(context, R.color.appBackground));
-        holder.mainView.setElevation(dpToPx(context, 0));
+//        holder.mainView.setBackgroundColor(getColor(context, R.color.appBackground));
+//        holder.mainView.setBackgroundColor(0xffffffff);
+        holder.mainView.setElevation(dpToPx(context, 2));
     }
 
     private void setSongArt(String path, SimpleItemViewHolder holder) {
@@ -389,7 +390,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         //For Header View
-        public View headerHolder;
         public TextView headerText;
 
         //For Song View
@@ -399,7 +399,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            headerHolder = itemView.findViewById(R.id.queue_header_holder);
             headerText = (TextView) itemView.findViewById(R.id.queue_header_text);
             img = (ImageView) itemView.findViewById(R.id.queue_item_img);
             name = (TextView) itemView.findViewById(R.id.queue_item_name);

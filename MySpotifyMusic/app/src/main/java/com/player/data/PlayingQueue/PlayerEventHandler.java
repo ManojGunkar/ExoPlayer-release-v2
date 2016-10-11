@@ -41,6 +41,14 @@ public class PlayerEventHandler implements QueueEvent {
         return mPlayer.isPlaying();
     }
 
+    public boolean isPaused(){
+        return mPlayer.isPause();
+    }
+
+    public boolean isStopped() {
+        return mPlayer.isStopped();
+    }
+
     @Override
     public void onPlayingItemChanged() {
 

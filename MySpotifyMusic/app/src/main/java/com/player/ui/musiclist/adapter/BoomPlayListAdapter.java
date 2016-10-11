@@ -208,7 +208,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     }
 
     private void setDefaultImage(ImageView img, int width, int height){
-        img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art, width, height));
+        img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art_home, width, height));
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {

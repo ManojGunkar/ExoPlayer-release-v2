@@ -14,8 +14,8 @@
         <item name="android:popupMenuStyle">@style/PopupMenu</item>
         <item name="android:windowActionBarOverlay">true</item>
         <!--<item name="android:actionBarWidgetTheme">@style/WidgetTheme</item>-->
-        <!--<item name="android:navigationBarColor">@android:color/black</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>-->
+        <!--<item name="android:navigationBarColor">@android:color/black</item>-->
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="searchViewStyle">@style/ToolbarTheme</item>
         <item name="android:textColorHint">@android:color/white</item>
     </style>
@@ -39,6 +39,7 @@
 
     <style name="ToolbarTheme" parent="Widget.AppCompat.SearchView">
         <item name="searchViewStyle">@android:style/Widget.Material.Light.SearchView</item>
+        <item name="android:background">@color/colorPrimary</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="android:textColorHint">@android:color/white</item>
@@ -53,7 +54,7 @@
     <style name="ToolbarSearchTheme">
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
-        <item name="android:background">#607D8B</item>
+        <item name="android:background">@color/colorPrimary</item>
     </style>
 
     <style name="AppTheme.Search" parent="AppTheme">
@@ -96,4 +97,29 @@
         <attr name="border_overlay" format="boolean" />
         <attr name="fill_color" format="color" />
     </declare-styleable>
+
+
+
+
+    <style name="AppTheme.Effect" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="searchViewStyle">@style/AppTheme.ToolbarTheme</item>
+        <item name="android:textColorHint">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.ToolbarTheme">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:textAppearance">@style/Theme.ToolbarText</item>
+    </style>
+
+    <style name="Theme.ToolbarText" parent="@android:style/TextAppearance.Holo">
+        <item name="android:typeface">serif</item>
+    </style>
+
 </resources>

@@ -19,22 +19,23 @@
 
         <activity
             android:name="com.player.ui.musiclist.activity.Surround3DActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Effect">
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
+        </activity>
+
+        <activity
+            android:name="com.player.ui.musiclist.activity.BoomPlayerActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <activity
-            android:name="com.player.ui.musiclist.activity.BoomPlayerActivity"
-            android:label="@string/app_name" >
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
         </activity>
 
         <activity android:name="com.player.player.AudioListActivity">

@@ -3,6 +3,7 @@ package com.player;
 import android.app.Application;
 
 import com.player.data.Handler.PlayingQueueHandler;
+import com.player.ui.widgets.TypefaceUtil;
 import com.player.utils.handlers.HistoryFavDBHelper;
 import com.player.utils.handlers.PlaylistDBHelper;
 
@@ -21,6 +22,14 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+//        TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/TitilliumWeb-Regular.ttf");
+//
+//        TypefaceUtil.overrideFont(getApplicationContext(), "MONOSPACE", "fonts/TitilliumWeb-SemiBold.ttf");
+//
+//        TypefaceUtil.overrideFont(getApplicationContext(), "NORMAL", "fonts/TitilliumWeb-Bold.ttf");
+//
+//        TypefaceUtil.overrideFont(getApplicationContext(), "SANS", "fonts/TitilliumWeb-Italic.ttf");
 
         application = this;
 

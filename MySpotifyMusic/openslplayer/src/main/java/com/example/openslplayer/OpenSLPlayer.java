@@ -64,6 +64,10 @@ public class OpenSLPlayer implements Runnable {
         return state.isPlaying();
     }
 
+    public boolean isPause(){
+        return state.isPause();
+    }
+
     public boolean isStopped() {
         return state.isStopped();
     }

@@ -179,17 +179,17 @@ public class DetailAlbumActivity extends AppCompatActivity {
             try {
                 if (isPathValid(collection.getItemArtUrl())) {
                     Picasso.with(DetailAlbumActivity.this).load(new File(collection.getItemArtUrl())).resize(width, height)
-                            .error(getResources().getDrawable(R.drawable.default_album_art)).noFade().into(albumArt);
+                            .error(getResources().getDrawable(R.drawable.default_album_art_home)).noFade().into(albumArt);
                     return;
                 }else {
                     Utils utils = new Utils(this);
-                    albumArt.setImageBitmap(utils.getBitmapOfVector(this, R.drawable.default_album_art,
+                    albumArt.setImageBitmap(utils.getBitmapOfVector(this, R.drawable.default_album_art_home,
                             width, height));
                 }
             } catch (NullPointerException e) {
                 e.printStackTrace();
                 Utils utils = new Utils(this);
-                albumArt.setImageBitmap(utils.getBitmapOfVector(this, R.drawable.default_album_art,
+                albumArt.setImageBitmap(utils.getBitmapOfVector(this, R.drawable.default_album_art_home,
                         width, height));
             }
     }

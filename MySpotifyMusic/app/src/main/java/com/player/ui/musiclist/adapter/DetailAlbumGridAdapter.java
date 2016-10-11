@@ -279,14 +279,14 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     private void setArtistImg(final SimpleItemViewHolder holder, final int position, final Size size, final String path) {
 
         if (isPathValid(path))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.default_album_art, null)).noFade()
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.default_album_art_home, null)).noFade()
                     .centerCrop().resize(size.width, size.height)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else
             setDefaultImage(holder.defaultImg, size.width, size.height);
     }
 
     private void setDefaultImage(ImageView img, int width, int height){
-        img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art, width, height));
+        img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art_home, width, height));
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position, final int itemView) {

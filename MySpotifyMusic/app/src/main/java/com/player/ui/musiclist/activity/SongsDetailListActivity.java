@@ -40,8 +40,6 @@ import com.player.myspotifymusic.R;
 import com.player.ui.musiclist.ListDetail;
 import com.player.ui.musiclist.adapter.ItemSongListAdapter;
 import com.player.data.MediaLibrary.ItemType;
-import com.player.ui.widgets.HeaderView;
-import com.player.ui.widgets.RecyclerViewHeader;
 import com.player.utils.PermissionChecker;
 import com.player.utils.Utils;
 import com.player.utils.decorations.SimpleDividerItemDecoration;
@@ -329,7 +327,7 @@ public class SongsDetailListActivity extends AppCompatActivity {
     }
 
     private void setDefaultImage(Size size){
-        albumArt.setImageBitmap(Utils.getBitmapOfVector(this, R.drawable.default_album_art, size.width, size.height));
+        albumArt.setImageBitmap(Utils.getBitmapOfVector(this, R.drawable.default_album_art_home, size.width, size.height));
     }
 
     public class Size{
