@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <dimen name="toolbar_titile">20sp</dimen>//80
-    <dimen name="effect_switch_txt">18sp</dimen>//72
-    <dimen name="speaker_info">13sp</dimen>//52
-    <dimen name="fullbass_txt">14sp</dimen>//62
-    <dimen name="eq_txt">10sp</dimen>
-</resources>

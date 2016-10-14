@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <item android:drawable="@drawable/seeker" android:state_enabled="false"/>
-    <item android:drawable="@drawable/seeker" android:state_pressed="true"/>
-    <item android:drawable="@drawable/seeker" android:state_selected="true"/>
-    <item android:drawable="@drawable/seeker"/>
-
-</layer-list>
