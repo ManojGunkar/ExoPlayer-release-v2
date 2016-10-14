@@ -35,7 +35,7 @@ namespace android {
     static AudioEngine *audioEngine;
 
     static const uint16_t UNITY_GAIN = 0x1000;
-    static const int32_t FRAME_COUNT = 1024;
+    static const int32_t FRAME_COUNT = 2048;
     static const int32_t SAMPLE_RATE = 44100;
     static const int32_t CHANNEL_COUNT = 2;
 
@@ -83,7 +83,7 @@ namespace android {
         bool isPlay = false;
         PlaybackThread() : mBuffer(NULL), mSize(0) {
             mBuffer = (jbyte *) malloc(FRAME_COUNT * CHANNEL_COUNT * sizeof(int16_t));
-            mOutputBuffer = (uint8_t *) malloc(FRAME_COUNT * CHANNEL_COUNT * sizeof(int16_t));
+            mOutputBuffer = (uint8_t *) malloc(FRAME_COUNT * CHANNEL_COUNT * sizeof(float));
             mResampleBuffer = new int32_t[FRAME_COUNT * CHANNEL_COUNT];
             pthread_mutex_init(&lock, NULL);
         }
@@ -131,16 +131,14 @@ namespace android {
 
                     memset(mResampleBuffer, 0, FRAME_COUNT * CHANNEL_COUNT * sizeof(int32_t));
                     memset(mBuffer, 0, FRAME_COUNT * CHANNEL_COUNT * sizeof(int16_t));
-                    memset(mOutputBuffer, 0, FRAME_COUNT * CHANNEL_COUNT * sizeof(int16_t));
                     audioResampler->resample(mResampleBuffer, FRAME_COUNT, ringBuffer);
                     ditherAndClamp((int32_t*)mBuffer, mResampleBuffer, FRAME_COUNT);
 
-                    mSize = FRAME_COUNT * CHANNEL_COUNT * sizeof(int16_t);
-
                     audioEngine->ProcessAudio((short*)mBuffer, mOutputBuffer, FRAME_COUNT * CHANNEL_COUNT);
-
+                    int bufferSize = FRAME_COUNT * CHANNEL_COUNT * sizeof(float);
+                    
                     // enqueue another buffer
-                    SLresult result = (*bqPlayerBufferQueue)->Enqueue(bqPlayerBufferQueue, mOutputBuffer, mSize);
+                    SLresult result = (*bqPlayerBufferQueue)->Enqueue(bqPlayerBufferQueue, mOutputBuffer, bufferSize);
                     if (result == SL_RESULT_BUFFER_INSUFFICIENT) {
                                 //ALOGD("Enqueue : false");
                         isPlay = false;
@@ -228,12 +226,18 @@ namespace android {
         SLresult result;
         // configure audio source
         SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE,
-                                                           4};
+                                                           8};
 
-        SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 2, SL_SAMPLINGRATE_44_1,
-                                       SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
-                                       SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
-                                       SL_BYTEORDER_LITTLEENDIAN};
+        SLAndroidDataFormat_PCM_EX format_pcm = {SL_ANDROID_DATAFORMAT_PCM_EX, 2, SL_SAMPLINGRATE_44_1,
+                                                 SL_PCMSAMPLEFORMAT_FIXED_32, SL_PCMSAMPLEFORMAT_FIXED_32,
+                                                 SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
+                                                 SL_BYTEORDER_LITTLEENDIAN,
+                                                 SL_ANDROID_PCM_REPRESENTATION_FLOAT};
+//        SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 2, SL_SAMPLINGRATE_44_1,
+//                                                 SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
+//                                                 SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
+//                                                 SL_BYTEORDER_LITTLEENDIAN,
+//                                                 };
         SLDataSource audioSrc = {&loc_bufq, &format_pcm};
 
         // configure audio sink
