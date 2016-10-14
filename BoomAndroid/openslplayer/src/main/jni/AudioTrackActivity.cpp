@@ -137,7 +137,7 @@ namespace android {
 
                     mSize = FRAME_COUNT * CHANNEL_COUNT * sizeof(int16_t);
 
-                    audioEngine->ProcessAudio((short*)mBuffer, mOutputBuffer, mSize);
+                    audioEngine->ProcessAudio((short*)mBuffer, mOutputBuffer, FRAME_COUNT * CHANNEL_COUNT);
 
                     // enqueue another buffer
                     SLresult result = (*bqPlayerBufferQueue)->Enqueue(bqPlayerBufferQueue, mOutputBuffer, mSize);
@@ -296,7 +296,7 @@ namespace android {
         playState = SL_PLAYSTATE_PLAYING;
 
         /*Iitialize AudioEngine*/
-        audioEngine = new AudioEngine(FRAME_COUNT*CHANNEL_COUNT * sizeof(uint16_t));
+        audioEngine = new AudioEngine(FRAME_COUNT);
 
         //ALOGD("createAudioPlayer finish");
         return true;
