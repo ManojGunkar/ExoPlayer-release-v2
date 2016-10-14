@@ -131,11 +131,6 @@
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="android:background">@color/colorPrimary</item>
-        <item name="android:textAppearance">@style/Theme.ToolbarText</item>
-    </style>
-
-    <style name="Theme.ToolbarText" parent="@android:style/TextAppearance.Holo">
-        <item name="android:typeface">serif</item>
     </style>
 
 </resources>

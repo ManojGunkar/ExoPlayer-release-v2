@@ -22,14 +22,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-//        TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/TitilliumWeb-Regular.ttf");
-//
-//        TypefaceUtil.overrideFont(getApplicationContext(), "MONOSPACE", "fonts/TitilliumWeb-SemiBold.ttf");
-//
-//        TypefaceUtil.overrideFont(getApplicationContext(), "NORMAL", "fonts/TitilliumWeb-Bold.ttf");
-//
-//        TypefaceUtil.overrideFont(getApplicationContext(), "SANS", "fonts/TitilliumWeb-Italic.ttf");
-
         application = this;
 
         playingQueueHandler = PlayingQueueHandler.getHandlerInstance(application);

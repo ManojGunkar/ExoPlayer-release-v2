@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -42,6 +43,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     private static boolean isUser = false;
+    public static boolean isPlayerResume = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +76,15 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 //        mAudioEffectBtn.setOnLongClickListener(this);
 
         mTrackSeek.setOnCircularSeekBarChangeListener(this);
+        mTrackSeek.setTouchInSide(false);
+
+        mAlbumArt.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.e("Player", "Touch");
+                return true;
+            }
+        });
 
         updateEffectIcon();
     }
@@ -101,38 +112,40 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     public void updateTrackToPlayer(){
         FrameLayout.LayoutParams param;
         try {
-            if (PlayerEventHandler.getPlayerEventInstance(BoomPlayerActivity.this).getPlayingItem() != null &&
-                    (PlayerEventHandler.getPlayerEventInstance(this).isPlaying() || PlayerEventHandler.getPlayerEventInstance(this).isPaused())) {
-                mSongName.setVisibility(View.VISIBLE);
-                mTrackSeek.setVisibility(View.VISIBLE);
+            if(isPlayerResume) {
+                if (PlayerEventHandler.getPlayerEventInstance(BoomPlayerActivity.this).getPlayingItem() != null &&
+                        (PlayerEventHandler.getPlayerEventInstance(this).isPlaying() || PlayerEventHandler.getPlayerEventInstance(this).isPaused())) {
+                    mSongName.setVisibility(View.VISIBLE);
+                    mTrackSeek.setVisibility(View.VISIBLE);
 
-                if(isPathValid(PlayerEventHandler.getPlayerEventInstance(this).getPlayingItem().getItemArtUrl())) {
-                    param = new FrameLayout.LayoutParams(mTrackSeek.getWidth(), mTrackSeek.getHeight());
-                    param.gravity = Gravity.CENTER;
-                    int size = Utils.dpToPx(this, 25);
-                    mAlbumArt.setPadding(size, size, size, size);
-                    mAlbumArt.setLayoutParams(param);
-                    Picasso.with(this).load(new File(PlayerEventHandler.getPlayerEventInstance(this).getPlayingItem().getItemArtUrl()))
-                            .memoryPolicy(MemoryPolicy.NO_CACHE).error(getResources().getDrawable(R.drawable.default_album_art_home)).noFade().into(mAlbumArt);
-                }else{
-                    mAlbumArt.setImageDrawable(getResources().getDrawable(R.drawable.default_album_art_home));
-                }
-                mSongName.setText(PlayerEventHandler.getPlayerEventInstance(BoomPlayerActivity.this).getPlayingItem().getItemTitle());
-                if (PlayerEventHandler.getPlayerEventInstance(this).isPlaying()) {
-                    mPlayPauseBtn.setVisibility(View.VISIBLE);
-                    mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause, null));
+                    if (isPathValid(PlayerEventHandler.getPlayerEventInstance(this).getPlayingItem().getItemArtUrl())) {
+                        int size = Utils.dpToPx(this, 50);
+                        param = new FrameLayout.LayoutParams(mTrackSeek.getWidth() - size, mTrackSeek.getHeight() - size);
+                        param.gravity = Gravity.CENTER;
+//                    mAlbumArt.setPadding(size, size, size, size);
+                        mAlbumArt.setLayoutParams(param);
+                        Picasso.with(this).load(new File(PlayerEventHandler.getPlayerEventInstance(this).getPlayingItem().getItemArtUrl()))
+                                .memoryPolicy(MemoryPolicy.NO_CACHE).error(getResources().getDrawable(R.drawable.default_album_art_home)).noFade().into(mAlbumArt);
+                    } else {
+                        mAlbumArt.setImageDrawable(getResources().getDrawable(R.drawable.default_album_art_home));
+                    }
+                    mSongName.setText(PlayerEventHandler.getPlayerEventInstance(BoomPlayerActivity.this).getPlayingItem().getItemTitle());
+                    if (PlayerEventHandler.getPlayerEventInstance(this).isPlaying()) {
+                        mPlayPauseBtn.setVisibility(View.VISIBLE);
+                        mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause, null));
+                    } else {
+                        mPlayPauseBtn.setVisibility(View.VISIBLE);
+                        mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_play, null));
+                    }
                 } else {
-                    mPlayPauseBtn.setVisibility(View.VISIBLE);
-                    mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_play, null));
+                    param = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    param.gravity = Gravity.CENTER;
+                    mAlbumArt.setLayoutParams(param);
+                    mSongName.setVisibility(View.GONE);
+                    mTrackSeek.setVisibility(View.INVISIBLE);
+                    mPlayPauseBtn.setVisibility(View.INVISIBLE);
+                    mAlbumArt.setImageDrawable(getResources().getDrawable(R.drawable.no_song_selected));
                 }
-            } else {
-                param = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                param.gravity = Gravity.CENTER;
-                mAlbumArt.setLayoutParams(param);
-                mSongName.setVisibility(View.GONE);
-                mTrackSeek.setVisibility(View.INVISIBLE);
-                mPlayPauseBtn.setVisibility(View.INVISIBLE);
-                mAlbumArt.setImageDrawable(getResources().getDrawable(R.drawable.no_song_selected));
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -213,8 +226,15 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onResume() {
         super.onResume();
+        isPlayerResume = true;
         updateEffectIcon();
         updateTrackToPlayer();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isPlayerResume = false;
     }
 
     @Override

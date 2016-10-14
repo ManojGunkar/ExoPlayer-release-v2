@@ -1,25 +1,30 @@
 package com.player.boom.ui.musiclist.activity;
 
+import android.Manifest;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.widget.LinearLayout;
 
 import com.player.boom.R;
 import com.player.boom.ui.musiclist.fragment.MusicLibraryListFragment;
 import com.player.boom.ui.widgets.MusicListTabs.MusicTabBar;
 import com.player.boom.ui.widgets.MusicListTabs.MusicTabLayout;
 import com.player.boom.ui.widgets.MusicListTabs.TabBarStyle;
+import com.player.boom.utils.PermissionChecker;
 
 public class DeviceMusicActivity extends BoomMasterActivity{
 
     private ViewPager mViewPager;
-
+    private PermissionChecker permissionChecker;
     private MusicTabBar mTabBar;
     private ListPageAdapter mPageAdapter;
     private TabBarStyle mTabBarStyle;
+    private LinearLayout mContainer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_Main);
@@ -27,11 +32,12 @@ public class DeviceMusicActivity extends BoomMasterActivity{
 
         setContentView(R.layout.activity_music_library);
 
-        initView();
-        initHandyTabBar();
+        checkPermissions();
     }
 
     private void initView() {
+
+        mContainer = (LinearLayout)findViewById(R.id.music_library_container);
         mTabBar= (MusicTabBar) findViewById(R.id.tab_bar);
         mViewPager= (ViewPager) findViewById(R.id.view_pager);
 
@@ -39,6 +45,8 @@ public class DeviceMusicActivity extends BoomMasterActivity{
         mViewPager.setAdapter(mPageAdapter);
         mViewPager.setOffscreenPageLimit(mPageAdapter.getCount() - 1);
         mViewPager.getCurrentItem();
+
+        initHandyTabBar();
     }
 
     private void initHandyTabBar() {
@@ -79,7 +87,6 @@ public class DeviceMusicActivity extends BoomMasterActivity{
 
         @Override
         public Fragment getItem(int i) {
-
             Log.d("Item No : ", "Item_"+i);
             return MusicLibraryListFragment.getInstance(0, items[i]);
         }
@@ -114,5 +121,31 @@ public class DeviceMusicActivity extends BoomMasterActivity{
     protected void onDestroy() {
         super.onDestroy();
         Log.d("DeviceMusicActivity", "Destroy");
+    }
+
+    private void checkPermissions() {
+        permissionChecker = new PermissionChecker(this, DeviceMusicActivity.this, mContainer);
+        permissionChecker.check(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                getResources().getString(R.string.storage_permission),
+                new PermissionChecker.OnPermissionResponse() {
+                    @Override
+                    public void onAccepted() {
+                        initView();
+                    }
+
+                    @Override
+                    public void onDecline() {
+                        finish();
+                    }
+                });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public void setPermissionChecker(PermissionChecker permissionChecker) {
+        this.permissionChecker = permissionChecker;
     }
 }

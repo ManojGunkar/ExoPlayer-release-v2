@@ -23,13 +23,13 @@ public class OnSwipeListener implements View.OnTouchListener {
         activity.left2right(v);
     }
 
-    public void onTopToBottomSwipe(View v) {
+   /* public void onTopToBottomSwipe(View v) {
         activity.top2bottom(v);
     }
 
     public void onBottomToTopSwipe(View v) {
         activity.bottom2top(v);
-    }
+    }*/
 
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
@@ -61,7 +61,7 @@ public class OnSwipeListener implements View.OnTouchListener {
                 }
 
                 // swipe vertical?
-                if (Math.abs(deltaY) > MIN_DISTANCE) {
+                /*if (Math.abs(deltaY) > MIN_DISTANCE) {
                     // top or down
                     if (deltaY < 0) {
                         this.onTopToBottomSwipe(v);
@@ -74,7 +74,7 @@ public class OnSwipeListener implements View.OnTouchListener {
                 } else {
                     Log.i(logTag, "Swipe was only " + Math.abs(deltaX) + " long, need at least " + MIN_DISTANCE);
                     v.performClick();
-                }
+                }*/
             }
         }
         return false;

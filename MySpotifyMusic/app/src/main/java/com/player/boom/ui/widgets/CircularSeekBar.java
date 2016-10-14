@@ -52,7 +52,7 @@ public class CircularSeekBar extends View {
     /**
      * The width of the progress line for this CircularSeekBar
      */
-    private int mProgressWidth = 1;
+    private int mProgressWidth = 2;
 
     /**
      * The Width of the background arc for the CircularSeekBar 
@@ -314,7 +314,6 @@ public class CircularSeekBar extends View {
                     break;
                 case MotionEvent.ACTION_UP:
                     onStopTrackingTouch();
-                    setPressed(false);
                     this.getParent().requestDisallowInterceptTouchEvent(false);
                     break;
                 case MotionEvent.ACTION_CANCEL:
@@ -331,6 +330,7 @@ public class CircularSeekBar extends View {
     @Override
     protected void drawableStateChanged() {
         super.drawableStateChanged();
+
         if (mThumb != null && mThumb.isStateful()) {
             int[] state = getDrawableState();
             mThumb.setState(state);
@@ -345,6 +345,8 @@ public class CircularSeekBar extends View {
     }
 
     private void onStopTrackingTouch() {
+        setPressed(false);
+        setSelected(false);
         if (mOnCircularSeekBarChangeListener != null) {
             mOnCircularSeekBarChangeListener.onStopTrackingTouch(this);
         }
@@ -356,6 +358,7 @@ public class CircularSeekBar extends View {
             return;
         }
         setPressed(true);
+        setSelected(true);
         mTouchAngle = getTouchDegrees(event.getX(), event.getY());
         int progress = getProgressForAngle(mTouchAngle);
         onProgressRefresh(progress, true);

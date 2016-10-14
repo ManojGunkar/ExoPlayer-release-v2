@@ -70,7 +70,7 @@ public class MusicLibraryListFragment extends Fragment {
 
         mainView = view;
         context = mainView.getContext();
-        init();
+        initViews();
         return view;
     }
 
@@ -249,56 +249,34 @@ public class MusicLibraryListFragment extends Fragment {
         recyclerView.setVisibility(View.GONE);
     }
 
-    private void init() {
+    private void initViews() {
         recyclerView = (RecyclerView) mainView.findViewById(R.id.albumsListContainer);
         emptyView = mainView.findViewById(R.id.album_empty_view);
-        checkPermissions();
-    }
-
-    private void checkPermissions() {
-        permissionChecker = new PermissionChecker(context, getActivity(), mainView);
-        permissionChecker.check(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                getResources().getString(R.string.storage_permission),
-                new PermissionChecker.OnPermissionResponse() {
-                    @Override
-                    public void onAccepted() {
-                        switch (title){
-                            case R.string.songs:
-                                setSongList();
-                                break;
-                            case R.string.albums:
-                                setAlbumList();
-                                break;
-                            case R.string.artists:
-                                setArtistList();
-                                break;
-                            case R.string.playlists:
-                                setDefaultPlayList();
-                                break;
-                            case R.string.genres:
-                                setGenreList();
-                                break;
-                        }
-                    }
-
-                    @Override
-                    public void onDecline() {
-                        getActivity().finish();
-                    }
-                });
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        permissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        fetchMusicList();
     }
 
     public void onBackPress() {
         songListAdapter.onBackPressed();
     }
 
-    public void setPermissionChecker(PermissionChecker permissionChecker) {
-        this.permissionChecker = permissionChecker;
+    private void fetchMusicList(){
+        switch (title){
+            case R.string.songs:
+                setSongList();
+                break;
+            case R.string.albums:
+                setAlbumList();
+                break;
+            case R.string.artists:
+                setArtistList();
+                break;
+            case R.string.playlists:
+                setDefaultPlayList();
+                break;
+            case R.string.genres:
+                setGenreList();
+                break;
+        }
     }
 
     private View getItemView(LayoutInflater inflater, ViewGroup container){

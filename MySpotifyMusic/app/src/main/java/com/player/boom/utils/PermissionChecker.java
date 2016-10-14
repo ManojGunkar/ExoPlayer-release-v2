@@ -50,7 +50,7 @@ public class PermissionChecker {
                 } else {
                     Log.v(TAG, "Waiting");
                     if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context,
-                            permission) && !checkDirectly) {
+                            permission) && !checkDirectly && baseView != null) {
                         Snackbar.make(baseView, customMsg,
                                 Snackbar.LENGTH_INDEFINITE)
                                 .setAction(R.string.ok, new View.OnClickListener() {

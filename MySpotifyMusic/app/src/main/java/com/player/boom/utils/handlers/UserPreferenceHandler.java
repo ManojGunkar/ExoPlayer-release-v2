@@ -11,9 +11,19 @@ public class UserPreferenceHandler {
     private static final String REPEAT_ONE = "repeat_one";
     private static final String SHUFFLE = "shuffle";
     private final SharedPreferences shp;
+    private final SharedPreferences.Editor editor;
 
     public UserPreferenceHandler(Context context) {
         shp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        editor = shp.edit();
+    }
+
+    public SharedPreferences.Editor getEditor(){
+        return editor;
+    }
+
+    public void commit(){
+        editor.commit();
     }
 
     public void setRepeatAllEnable(boolean enable) {
