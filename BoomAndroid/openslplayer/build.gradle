@@ -13,16 +13,16 @@ model {
             platformVersion = 23
             moduleName = 'AudioTrackActivity'
             toolchain = 'clang'
+            stl       = 'c++_static'
             CFlags.add('-std=c99')
             /*stl       = 'gnustl_shared'*/
             /*cppFlags.addAll(['-I' + "${ndkDir}/sources/android/cpufeatures",
                              '-I' + file('src/main/jni/ndk_helper')])*/
             cppFlags.addAll(['-std=c++11', '-Wall',/*'-fexceptions', '-frtti'*/
                              '-fno-exceptions', '-fno-rtti'])
-            ldLibs.addAll(['android','OpenSLES', 'log'])
-            abiFilters.addAll(['armeabi', 'armeabi-v7a', 'arm64-v8a',
-                               'x86', 'x86_64', "arm-neon",
-                               'mips', 'mips64'])
+            ldFlags.addAll(['-L' + file('src/main/jni/libs')])
+            ldLibs.addAll(['android','OpenSLES', 'log', 'AudioCore', 'ffts'])
+            abiFilters.addAll(['armeabi-v7a'])
 
         }
         buildTypes {

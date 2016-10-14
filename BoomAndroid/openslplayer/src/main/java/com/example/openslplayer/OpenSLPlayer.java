@@ -69,8 +69,8 @@ public class OpenSLPlayer implements Runnable {
 
     }
     public OpenSLPlayer(Context context, PlayerEvents events) {
-
         setEventsListener(events);
+        mContext = context;
         pref = context.getSharedPreferences(AUDIO_EFFECT_SETTING, MODE_PRIVATE);
     }
 
@@ -247,7 +247,7 @@ public class OpenSLPlayer implements Runnable {
         ByteBuffer[] codecOutputBuffers = codec.getOutputBuffers();
 
         // configure OpenSLPlayer
-        createEngine();
+        createEngine(mContext.getAssets());
         createAudioPlayer(1024*1024, sampleRate, channels);
 
         extractor.selectTrack(0);
@@ -402,7 +402,7 @@ public class OpenSLPlayer implements Runnable {
     }
 
     /** Native methods, implemented in jni folder */
-    public native void createEngine();
+    public native void createEngine(AssetManager assetManager);
 
     public native boolean createAudioPlayer(int size, int sampleRate, int bufferSize);
 
