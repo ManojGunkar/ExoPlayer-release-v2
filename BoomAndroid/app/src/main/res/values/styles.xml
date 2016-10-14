@@ -1,0 +1,136 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.Splash" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:statusBarColor">#00132f</item>
+        <item name="android:windowBackground">@drawable/ic_splash</item>
+    </style>
+
+    <style name="AppTheme.Main" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <!--<item name="android:actionBarWidgetTheme">@style/WidgetTheme</item>-->
+        <!--<item name="android:navigationBarColor">@android:color/black</item>-->
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="searchViewStyle">@style/ToolbarTheme</item>
+        <item name="android:textColorHint">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.Album" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:actionBarWidgetTheme">@style/WidgetTheme</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="WidgetTheme">
+        <item name="android:textColorHint">@android:color/white</item>
+    </style>
+
+    <style name="PopupMenu" parent="android:Widget.Holo.Light.ListPopupWindow">
+        <item name="android:popupBackground">#888888</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="Widget.AppCompat.SearchView">
+        <item name="searchViewStyle">@android:style/Widget.Material.Light.SearchView</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:textColorHint">@android:color/white</item>
+        <item name="searchHintIcon">@null</item>
+    </style>
+
+    <style name="ExpandedTransparent">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="ToolbarSearchTheme">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <style name="AppTheme.Search" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="searchViewStyle">@style/ToolbarTheme</item>
+        <item name="android:textColorHint">@android:color/white</item>
+    </style>
+
+    <!--<color name="theme_primary">#607D8B</color>-->
+
+    <declare-styleable name="CircularSeekBar">
+        <attr name="thumb" format="reference" />
+        <attr name="thumbOffset" format="dimension" />
+        <attr name="maximum" format="integer" />
+        <attr name="progressWidth" format="dimension" />
+        <attr name="arcWidth" format="dimension" />
+        <attr name="progresses" format="integer" />
+        <attr name="rotation" format="integer" />
+        <attr name="startAngle" format="integer" />
+        <attr name="sweepAngle" format="integer" />
+        <attr name="arcColor" format="color" />
+        <attr name="progressColor" format="color" />
+        <attr name="roundEdges" format="boolean" />
+        <attr name="touchInside" format="boolean" />
+        <attr name="clockwise" format="boolean" />
+        <attr name="enabled" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CircularSeekBarTheme">
+        <attr name="circularSeekBarStyle" format="reference"></attr>
+    </declare-styleable>
+
+    <declare-styleable name="CircleImageView">
+        <attr name="border_width" format="dimension" />
+        <attr name="border_color" format="color" />
+        <attr name="border_overlay" format="boolean" />
+        <attr name="fill_color" format="color" />
+    </declare-styleable>
+
+
+    <style name="AppTheme.Player" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:statusBarColor">#020308</item>
+        <item name="searchViewStyle">@style/AppTheme.ToolbarTheme</item>
+        <item name="android:textColorHint">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.Effect" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="searchViewStyle">@style/AppTheme.ToolbarTheme</item>
+        <item name="android:textColorHint">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.ToolbarTheme">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+</resources>
