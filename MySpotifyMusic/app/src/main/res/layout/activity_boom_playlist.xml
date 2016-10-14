@@ -28,6 +28,6 @@
         android:layout_margin="16dp"
         app:layout_anchor="@+id/playlistContainer"
         app:layout_anchorGravity="bottom|end"
-        app:layout_behavior="com.player.ui.musiclist.FloatingScrollBehavior"/>
+        app:layout_behavior="com.player.boom.ui.musiclist.FloatingScrollBehavior"/>
 
 </android.support.design.widget.CoordinatorLayout>

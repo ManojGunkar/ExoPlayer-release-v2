@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/player_root_view"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,10 +10,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".15"
-        android:gravity="center"
+        android:layout_weight=".13"
+        android:paddingTop="10dp"
+        android:gravity="center_horizontal|top"
         android:orientation="vertical">
-        <com.player.ui.widgets.RegularTextView
+        <com.player.boom.ui.widgets.RegularTextView
             android:textStyle="bold"
             android:textSize="@dimen/toolbar_titile"
             android:layout_width="wrap_content"
@@ -20,11 +23,12 @@
             android:textColor="#c3cc20"
             android:maxLines="1"
             android:id="@+id/app_name" />
-        <com.player.ui.widgets.RegularTextView
+        <com.player.boom.ui.widgets.RegularTextView
             android:textStyle="normal"
-            android:textSize="@dimen/speaker_info"
+            android:textSize="@dimen/fullbass_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
             android:textColor="@color/white"
@@ -33,29 +37,31 @@
             android:id="@+id/media_item_name_txt" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".15"
+        android:layout_weight=".13"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
     </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".4"
         android:layout_gravity="center">
 
-        <com.player.ui.widgets.CircleImageView
+        <com.player.boom.ui.widgets.CircleImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/default_album_art_home"
+            android:src="@drawable/no_song_selected"
             android:layout_gravity="center"
             android:id="@+id/album_art"/>
-        <com.player.ui.widgets.CircularSeekBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <com.player.boom.ui.widgets.CircularSeekBar
+            android:layout_width="220dp"
+            android:layout_height="220dp"
             android:layout_gravity="center"
             android:padding="25dp"
             android:id="@+id/track_seek"/>
@@ -67,10 +73,11 @@
             android:src="@drawable/ic_play"/>
 
     </FrameLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".3"
+        android:layout_weight=".34"
         android:weightSum="1"
         android:orientation="horizontal">
         <LinearLayout
@@ -93,6 +100,8 @@
                 android:id="@+id/audio_effect_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:tintMode="src_atop"
                 android:src="@drawable/boom_effect_off"/>
         </LinearLayout>
         <LinearLayout
@@ -104,7 +113,7 @@
                 android:id="@+id/up_next_queue_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/home_library"/>/>
+                android:src="@drawable/home_upnext"/>/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

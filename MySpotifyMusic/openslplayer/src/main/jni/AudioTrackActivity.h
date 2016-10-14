@@ -10,7 +10,6 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include "android/asset_manager_jni.h"
-/* Header for class com_example_openslplayer_OpenSLPlayer */
 
 #ifndef AUDIOTRACKACTIVITY_H_
 #define AUDIOTRACKACTIVITY_H_
@@ -77,28 +76,48 @@ namespace android {
 
 /*
  * Class:     com_example_openslplayer_OpenSLPlayer
- * Method:    enableReverb
- * Signature: (Z)V
- */
-    jboolean Java_com_example_openslplayer_OpenSLPlayer_enableReverb(JNIEnv *, jclass, jboolean);
-
-/*
- * Class:     com_example_openslplayer_OpenSLPlayer
- * Method:    enableEqualizer
- * Signature: (Z)V
- */
-    jboolean Java_com_example_openslplayer_OpenSLPlayer_enableEqualizer(JNIEnv *, jclass, jboolean);
-
-/*
- * Class:     com_example_openslplayer_OpenSLPlayer
  * Method:    shutdown
  * Signature: ()V
  */
-    void Java_com_example_openslplayer_OpenSLPlayer_shutdown
+    jboolean Java_com_example_openslplayer_OpenSLPlayer_shutdown
             (JNIEnv *, jclass, jboolean);
 
     jboolean Java_com_example_openslplayer_OpenSLPlayer_readAsset(JNIEnv *, jclass, jobject);
 
+    void Java_com_example_openslplayer_OpenSLPlayer_enableAudioEffect(JNIEnv *env, jclass clazz,
+                                                                  jboolean enabled);
+
+    void Java_com_example_openslplayer_OpenSLPlayer_enable3DAudio(JNIEnv *env, jclass clazz,
+                                                                  jboolean enabled);
+
+    void Java_com_example_openslplayer_OpenSLPlayer_enableEqualizer(JNIEnv *env, jclass clazz,
+                                                                    jboolean enabled);
+
+    void Java_com_example_openslplayer_OpenSLPlayer_enableSuperBass(JNIEnv *env, jobject instance,
+                                                                    jboolean enable);
+
+    void Java_com_example_openslplayer_OpenSLPlayer_enableHighQuality(JNIEnv *env, jobject instance,
+                                                                      jboolean enable);
+
+    void Java_com_example_openslplayer_OpenSLPlayer_setIntensity(JNIEnv *env, jobject instance,
+                                                                    jdouble value);
+
+    void Java_com_example_openslplayer_OpenSLPlayer_SetEqualizer(JNIEnv *env, jobject instance, jint id,
+                                                                 jfloatArray bandGains_);
+
+    void Java_com_example_openslplayer_OpenSLPlayer_SetSpeakerState(JNIEnv *env, jobject instance,
+                                                                    jint speakerId, jfloat value);
+
+    jboolean Java_com_example_openslplayer_OpenSLPlayer_Get3DAudioState(JNIEnv *env, jobject instance);
+
+    jboolean Java_com_example_openslplayer_OpenSLPlayer_GetEffectsState(JNIEnv *env, jobject instance);
+
+    jboolean Java_com_example_openslplayer_OpenSLPlayer_GetIntensity(JNIEnv *env, jobject instance);
+
+    jint Java_com_example_openslplayer_OpenSLPlayer_GetEqualizerId(JNIEnv *env, jobject instance);
+
+    jfloat Java_com_example_openslplayer_OpenSLPlayer_GetSpeakerState(JNIEnv *env, jobject instance,
+                                                                      jint speakerId);
 };
 #ifdef __cplusplus
 }

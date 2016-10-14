@@ -20,10 +20,10 @@
     <dimen name="grid_item_desc_size">13sp</dimen>
 
 
-    <dimen name="toolbar_titile">20sp</dimen>
-    <dimen name="effect_switch_txt">18sp</dimen>
-    <dimen name="speaker_info">13sp</dimen>
-    <dimen name="fullbass_txt">15sp</dimen>
-    <dimen name="eq_txt">11sp</dimen>
+    <dimen name="toolbar_titile">19sp</dimen>
+    <dimen name="effect_switch_txt">17sp</dimen>
+    <dimen name="speaker_info">12sp</dimen>
+    <dimen name="fullbass_txt">14sp</dimen>
+    <dimen name="eq_txt">10sp</dimen>
 
 </resources>

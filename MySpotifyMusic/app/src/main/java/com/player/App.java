@@ -1,11 +1,10 @@
-package com.player;
+package com.player.boom;
 
 import android.app.Application;
 
-import com.player.data.Handler.PlayingQueueHandler;
-import com.player.ui.widgets.TypefaceUtil;
-import com.player.utils.handlers.HistoryFavDBHelper;
-import com.player.utils.handlers.PlaylistDBHelper;
+import com.player.boom.handler.PlayingQueueHandler;
+import com.player.boom.utils.handlers.HistoryFavDBHelper;
+import com.player.boom.utils.handlers.PlaylistDBHelper;
 
 
 public class App extends Application {

@@ -5,8 +5,7 @@
     android:foreground="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:padding="2dp"
-    android:layout_marginTop="5dp"
-    android:layout_marginLeft="5dp"
+
     android:orientation="vertical">
     <FrameLayout
         android:id="@+id/card_grid_img_panel"
@@ -115,7 +114,7 @@
                 android:layout_weight="0.2"
                 android:background="@drawable/unbounded_ripple"
                 android:backgroundTint="#434343"
-                android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+                android:src="@drawable/over_flow_menu"
                 android:theme="@style/Theme.AppCompat.Light" />
 
         </LinearLayout>

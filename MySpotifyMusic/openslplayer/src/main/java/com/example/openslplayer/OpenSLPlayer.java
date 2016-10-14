@@ -1,6 +1,7 @@
 package com.example.openslplayer;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.MediaCodec;
@@ -14,6 +15,25 @@ import android.util.Log;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_POWER;
+import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_SETTING;
+import static com.example.openslplayer.AudioEffect.EQUALIZER_POSITION;
+import static com.example.openslplayer.AudioEffect.EQUALIZER_POWER;
+import static com.example.openslplayer.AudioEffect.FULL_BASS;
+import static com.example.openslplayer.AudioEffect.INTENSITY_POSITION;
+import static com.example.openslplayer.AudioEffect.INTENSITY_POWER;
+import static com.example.openslplayer.AudioEffect.POWER_OFF;
+import static com.example.openslplayer.AudioEffect.POWER_ON;
+import static com.example.openslplayer.AudioEffect.SELECTED_EQUALIZER_POSITION;
+import static com.example.openslplayer.AudioEffect.SPEAKER_LEFT_FRONT;
+import static com.example.openslplayer.AudioEffect.SPEAKER_LEFT_SURROUND;
+import static com.example.openslplayer.AudioEffect.SPEAKER_RIGHT_FRONT;
+import static com.example.openslplayer.AudioEffect.SPEAKER_RIGHT_SURROUND;
+import static com.example.openslplayer.AudioEffect.SPEAKER_SUB_WOOFER;
+import static com.example.openslplayer.AudioEffect.SPEAKER_TWEETER;
+import static com.example.openslplayer.AudioEffect.THREE_D_SURROUND_POWER;
+
 /**
  * Created by Rahul Agarwal on 19-09-16.
  */
@@ -24,7 +44,7 @@ public class OpenSLPlayer implements Runnable {
         System.loadLibrary("AudioTrackActivity");
     }
     public final String LOG_TAG = "OpenSLPlayer";
-
+    SharedPreferences pref;
     private MediaExtractor extractor;
     private MediaCodec codec;
     private PlayerEvents events = null;
@@ -35,6 +55,7 @@ public class OpenSLPlayer implements Runnable {
     private boolean stop = false;
     private static Thread playerThread;
     Handler handler = new Handler();
+    private static boolean isFinish = false;
 
     String mime = null;
     int sampleRate = 0, channels = 0, bitrate = 0;
@@ -47,9 +68,10 @@ public class OpenSLPlayer implements Runnable {
     public OpenSLPlayer() {
 
     }
-    public OpenSLPlayer(PlayerEvents events) {
+    public OpenSLPlayer(Context context, PlayerEvents events) {
 
         setEventsListener(events);
+        pref = context.getSharedPreferences(AUDIO_EFFECT_SETTING, MODE_PRIVATE);
     }
 
     /**
@@ -152,12 +174,6 @@ public class OpenSLPlayer implements Runnable {
         }
     }
 
-    public synchronized void enableEq(boolean enable){
-        try {
-            enableEqualizer(enable);
-        }catch (Exception e){}
-    }
-
     @Override
     public void run() {
         android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
@@ -218,7 +234,12 @@ public class OpenSLPlayer implements Runnable {
         }
 
         //state.set(PlayerStates.PAUSED);
-        if (events != null) handler.post(new Runnable() { @Override public void run() { events.onStart(mime, sampleRate, channels, duration);  } });
+        if (events != null)
+            handler.post(new Runnable() {
+                @Override public void run() {
+                    events.onStart(mime, sampleRate, channels, duration);
+                }
+            });
 
         codec.configure(format, null, null, 0);
         codec.start();
@@ -334,11 +355,13 @@ public class OpenSLPlayer implements Runnable {
             codec = null;
         }
         /*Stop player*/
-
+        boolean isShutdown;
         if(stop) {
-            shutdown(false);
+            isShutdown = shutdown(false);//STOP
         }else{
-            shutdown(true);
+            isShutdown = shutdown(true);// FINISH
+            if(isShutdown)
+                isFinish = true;
         }
         // clear source and the other globals
         sourcePath = null;
@@ -354,7 +377,9 @@ public class OpenSLPlayer implements Runnable {
 
         if(noOutputCounter >= noOutputCounterLimit) {
             if (events != null) handler.post(new Runnable() { @Override public void run() { events.onError();  } });
-        } else {
+        } else if(isShutdown && isFinish){
+            if (events != null) handler.post(new Runnable() { @Override public void run() { events.onFinish();  } });
+        } else if(isShutdown && !isFinish){
             if (events != null) handler.post(new Runnable() { @Override public void run() { events.onStop();  } });
         }
     }
@@ -387,11 +412,33 @@ public class OpenSLPlayer implements Runnable {
 
     public static native void seekTo(long position);
 
-    public native boolean enableReverb(boolean enable);
+    public native void enableAudioEffect(boolean enable);
 
-    public native boolean enableEqualizer(boolean enable);
+    public native void enable3DAudio(boolean enable);
 
-    public native void shutdown(boolean enable);
+    public native void enableSuperBass(boolean enable);
+
+    public native void enableHighQuality(boolean enable);
+
+    public native void enableEqualizer(boolean enable);
+
+    public native void setIntensity(double value);
+
+    public native void SetEqualizer(int id, float []bandGains);
+
+    public native void SetSpeakerState(int speakerId, float value);
+
+    public native boolean  Get3DAudioState();
+
+    public native boolean GetEffectsState();
+
+    public native boolean GetIntensity();
+
+    public native int GetEqualizerId();
+
+    public native float GetSpeakerState(int speakerId);
+
+    public native boolean shutdown(boolean enable);
 
     public static native void setVolumeAudioPlayer(int millibel);
 
@@ -399,4 +446,102 @@ public class OpenSLPlayer implements Runnable {
 
     public static native boolean readAsset(AssetManager mgr);
 
+    public void updatePlayerEffect(){
+        boolean isAudioEffect = pref.getBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
+            setEnableEffect(isAudioEffect);
+        boolean is3DAudio = pref.getBoolean(THREE_D_SURROUND_POWER, POWER_OFF);
+        setEnable3DAudio(is3DAudio);
+        boolean isIntensity = pref.getBoolean(INTENSITY_POWER, POWER_OFF);
+        if(isIntensity){
+            setIntensity(pref.getInt(INTENSITY_POSITION, 50)/100);
+        }
+        boolean isEqualizer = pref.getBoolean(EQUALIZER_POWER, POWER_OFF);
+        setEnableEqualizer(isEqualizer);
+        boolean isFullBass = pref.getBoolean(FULL_BASS, POWER_OFF);
+        setEnableSuperBass(isFullBass);
+        int eq = pref.getInt(SELECTED_EQUALIZER_POSITION, EQUALIZER_POSITION);
+        setEqualizerGain(eq);
+
+        if(pref.getBoolean(SPEAKER_LEFT_FRONT, POWER_OFF) == POWER_OFF){
+            setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_OFF);
+        }else if(pref.getBoolean(SPEAKER_LEFT_FRONT, POWER_OFF) == POWER_ON){
+            setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_ON);
+        }
+        if(pref.getBoolean(SPEAKER_RIGHT_FRONT, POWER_OFF) == POWER_OFF){
+            setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_OFF);
+        }else if(pref.getBoolean(SPEAKER_RIGHT_FRONT, POWER_OFF) == POWER_ON){
+            setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_OFF);
+        }
+        if(pref.getBoolean(SPEAKER_TWEETER, POWER_OFF) == POWER_OFF){
+            setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_OFF);
+        }else if(pref.getBoolean(SPEAKER_TWEETER, POWER_OFF) == POWER_ON){
+            setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_OFF);
+        }
+        if(pref.getBoolean(SPEAKER_LEFT_SURROUND, POWER_OFF) == POWER_OFF){
+            setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_OFF);
+        }else if(pref.getBoolean(SPEAKER_LEFT_SURROUND, POWER_OFF) == POWER_ON){
+            setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_OFF);
+        }
+        if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, POWER_OFF) == POWER_OFF){
+            setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_OFF);
+        }else if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, POWER_OFF) == POWER_ON){
+            setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_OFF);
+        }
+        if(pref.getBoolean(SPEAKER_SUB_WOOFER, POWER_OFF) == POWER_OFF){
+            setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_OFF);
+        }else if(pref.getBoolean(SPEAKER_SUB_WOOFER, POWER_OFF) == POWER_ON){
+            setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_OFF);
+        }
+    }
+
+
+    public synchronized void setIntensityValue(double intensity) {
+        try {
+            if(isPlaying() || isPause())
+                setIntensity(intensity);
+        }catch (Exception e){}
+    }
+
+    public synchronized void setEnable3DAudio(boolean enable3DAudio) {
+        try {
+            if(isPlaying() || isPause())
+                enable3DAudio(enable3DAudio);
+        }catch (Exception e){}
+    }
+
+    public synchronized void setEnableEffect(boolean enableEffect) {
+        try {
+            if(isPlaying() || isPause())
+                enableAudioEffect(enableEffect);
+        }catch (Exception e){}
+    }
+
+    public synchronized void setEnableEqualizer(boolean enable){
+        try {
+            if(isPlaying() || isPause())
+                enableEqualizer(enable);
+        }catch (Exception e){}
+    }
+
+    public synchronized void setEnableSuperBass(boolean enableSuperBass) {
+        try {
+            if(isPlaying() || isPause())
+                enableSuperBass(enableSuperBass);
+        }catch (Exception e){}
+    }
+
+    public synchronized void setEqualizerGain(int equalizerId) {
+        float []a = new float[0];
+        try {
+            if(isPlaying() || isPause())
+                SetEqualizer(equalizerId, a);
+        }catch (Exception e){}
+    }
+
+    public synchronized void setSpeakerEnable(AudioEffect.Speaker speaker, boolean value){
+        try {
+            if(isPlaying() || isPause())
+                SetSpeakerState(speaker.ordinal(), value == true ? 1 : 0);
+        }catch (Exception e){}
+    }
 }

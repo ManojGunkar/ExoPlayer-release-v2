@@ -5,7 +5,7 @@ android {
     buildToolsVersion "24.0.1"
 
     defaultConfig {
-        applicationId "com.player.myspotifymusic"
+        applicationId "com.player.boom"
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
@@ -41,5 +41,4 @@ dependencies {
     compile 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     compile 'com.afollestad.material-dialogs:core:0.9.0.2'
     compile project(':openslplayer')
-    compile project(':customtab')
 }

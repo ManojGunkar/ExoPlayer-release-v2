@@ -47,7 +47,7 @@
         android:background="@drawable/unbounded_ripple"
         android:foregroundTint="#434343"
         android:padding="5dp"
-        android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+        android:src="@drawable/over_flow_menu"
         android:theme="@style/Theme.AppCompat.Light" />
 
 </LinearLayout>

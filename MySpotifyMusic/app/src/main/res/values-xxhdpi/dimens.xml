@@ -6,8 +6,9 @@
     <dimen name="grid_item_desc_size">13sp</dimen>
 
 
-    <dimen name="toolbar_titile">24sp</dimen>//80
-    <dimen name="effect_switch_txt">22sp</dimen>//72
-    <dimen name="speaker_info">16sp</dimen>//52
-    <dimen name="fullbass_txt">17sp</dimen>//62
+    <dimen name="toolbar_titile">22sp</dimen>//80
+    <dimen name="effect_switch_txt">20sp</dimen>//72
+    <dimen name="speaker_info">14sp</dimen>//52
+    <dimen name="fullbass_txt">15sp</dimen>//62
+    <dimen name="eq_txt">11sp</dimen>
 </resources>

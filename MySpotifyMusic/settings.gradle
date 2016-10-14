@@ -1,1 +1,1 @@
-include ':app', ':openslplayer', ':customtab'
+include ':app', ':openslplayer'

@@ -1,0 +1,118 @@
+package com.player.boom.ui.musiclist.activity;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
+
+import com.player.boom.R;
+import com.player.boom.ui.musiclist.fragment.MusicLibraryListFragment;
+import com.player.boom.ui.widgets.MusicListTabs.MusicTabBar;
+import com.player.boom.ui.widgets.MusicListTabs.MusicTabLayout;
+import com.player.boom.ui.widgets.MusicListTabs.TabBarStyle;
+
+public class DeviceMusicActivity extends BoomMasterActivity{
+
+    private ViewPager mViewPager;
+
+    private MusicTabBar mTabBar;
+    private ListPageAdapter mPageAdapter;
+    private TabBarStyle mTabBarStyle;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme_Main);
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_music_library);
+
+        initView();
+        initHandyTabBar();
+    }
+
+    private void initView() {
+        mTabBar= (MusicTabBar) findViewById(R.id.tab_bar);
+        mViewPager= (ViewPager) findViewById(R.id.view_pager);
+
+        mPageAdapter=new ListPageAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mPageAdapter);
+        mViewPager.setOffscreenPageLimit(mPageAdapter.getCount() - 1);
+        mViewPager.getCurrentItem();
+    }
+
+    private void initHandyTabBar() {
+        mTabBarStyle=new TabBarStyle.Builder(this)
+                .setDrawIndicator(TabBarStyle.INDICATOR_LINE)
+                .setDrawDivider(false)
+                .setDrawLine(TabBarStyle.NONELINE)
+                .setIndicatorColorResource(android.R.color.white)
+                .setlineColorResource(android.R.color.white)
+                .build();
+        setCustomTab();
+    }
+
+    private void setCustomTab(){
+        int[] res=new int[]{R.drawable.library_songs_normal,
+                R.drawable.library_albums_normal,
+                R.drawable.library_artists_normal,
+                R.drawable.library_playlists_normal ,
+                R.drawable.library_genres_normal};
+
+        int[] selected_res=new int[]{R.drawable.library_songs_active,
+                R.drawable.library_albums_active,
+                R.drawable.library_artists_active,
+                R.drawable.library_playlists_active ,
+                R.drawable.library_genres_active};
+
+        MusicTabLayout customTabLayout=new MusicTabLayout(res, selected_res);
+        mTabBar.attachToViewPager(mViewPager,customTabLayout,mTabBarStyle);
+    }
+
+    private class ListPageAdapter extends FragmentPagerAdapter {
+
+        private int[] items={R.string.songs, R.string.albums, R.string.artists, R.string.playlists, R.string.genres};
+
+        public ListPageAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+
+            Log.d("Item No : ", "Item_"+i);
+            return MusicLibraryListFragment.getInstance(0, items[i]);
+        }
+
+        @Override
+        public int getCount() {
+            return items.length;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return getResources().getString(items[position]);
+        }
+    }
+
+    public void killActivity() {
+        super.onBackPressed();
+    }
+
+    @Override
+    public void onBackPressed() {
+            super.onBackPressed();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("DeviceMusicActivity", "Pause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("DeviceMusicActivity", "Destroy");
+    }
+}

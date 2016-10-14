@@ -1,11 +1,13 @@
 <resources>
-    <string name="app_name">Boom Player</string>
+    <string name="app_name">Boom</string>
     <string name="all_songs">All Songs</string>
     <string name="songs">Songs</string>
     <string name="song">Song</string>
     <string name="albums">Albums</string>
     <string name="album">Album</string>
     <string name="artists">Artists</string>
+    <string name="playlists">PlayLists</string>
+    <string name="genres">Genres</string>
     <string name="add_to_playlist">Add to playlist</string>
     <string name="new_playlist">New Playlist</string>
     <string name="close">Close</string>
