@@ -104,14 +104,14 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                 if (App.getPlayingQueueHandler().getPlayingQueue() != null) {
                     if (item.getItemType() == ItemType.ALBUM) {
 
-                        App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Playing, item.getMediaElement().get(position), -1);
+                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToPlay(item.getMediaElement().get(position));
                         for (int i = position + 1; i < item.getMediaElement().size(); i++) {
-                            App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Auto_UpNext, item.getMediaElement().get(i), -1);
+                            App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToAutoUpNext(item.getMediaElement().get(i));
                         }
                 } else {
-                        App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Playing, ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position), -1);
+                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToPlay(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
                         for (int i = position + 1; i < item.getMediaElement().size(); i++) {
-                            App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Auto_UpNext, ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position), -1);
+                            App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToAutoUpNext(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
                         }
                 }
             }
@@ -133,18 +133,18 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                             case R.id.popup_song_add_queue :
                                 if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
                                     if (item.getItemType() == ItemType.ALBUM) {
-                                        App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Manual_UpNext, item.getMediaElement().get(position), -1);
+                                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(item.getMediaElement().get(position));
                                     }else{
-                                        App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Manual_UpNext, ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position), -1);
+                                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
                                     }
                                 }
                                 break;
                             case R.id.popup_song_add_playlist :
                                 Utils util = new Utils(context);
                                 if (item.getItemType() == ItemType.ALBUM) {
-                                    App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Manual_UpNext, item.getMediaElement().get(position), -1);
+                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(item.getMediaElement().get(position));
                                 }else{
-                                    App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Manual_UpNext, ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position), -1);
+                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
                                 }
                                     util.addToPlaylist((AlbumActivity)context, item.getMediaElement().get(position));
                                 break;

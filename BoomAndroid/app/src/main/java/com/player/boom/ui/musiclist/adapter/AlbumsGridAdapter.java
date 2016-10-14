@@ -134,7 +134,7 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
                         switch (item.getItemId()) {
                             case R.id.popup_album_add_queue :
                                 if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                                    App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Manual_UpNext, itemList.get(position), -1);
+                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(itemList.get(position));
                                 }
                                 break;
                         }

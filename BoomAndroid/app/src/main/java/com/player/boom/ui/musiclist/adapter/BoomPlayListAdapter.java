@@ -264,7 +264,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                         switch (item.getItemId()) {
                             case R.id.popup_add_queue :
                                 if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                                    App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Manual_UpNext, items.get(position), -1);
+                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(items.get(position));
                                 }
                                 break;
                             case R.id.popup_playlist_delete :

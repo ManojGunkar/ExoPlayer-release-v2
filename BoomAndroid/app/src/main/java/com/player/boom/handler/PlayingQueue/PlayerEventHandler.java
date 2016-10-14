@@ -62,14 +62,18 @@ public class PlayerEventHandler implements QueueEvent {
         if(null != playingItem) {
             mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
             mPlayer.play();
-        }else{
-            if (playerUIEvent != null)
-                uiHandler.post(new Runnable() {
+        }
+        if (playerUIEvent != null)
+            uiHandler.post(new Runnable() {
                     @Override public void run() {
                         playerUIEvent.updateUI();
                     }
                 });
-        }
+    }
+
+    @Override
+    public void onPlayingItemClicked() {
+        Play();
     }
 
     @Override
@@ -109,7 +113,7 @@ public class PlayerEventHandler implements QueueEvent {
                     @Override public void run() {
                         playerUIEvent.updateUI();
                     }
-                }, 10);
+                }, 50);
         }
         @Override public void onPlayUpdate(final int percent, final long currentms, final long totalms) {
             if (playerUIEvent != null)
@@ -122,7 +126,22 @@ public class PlayerEventHandler implements QueueEvent {
 
         @Override
         public void onFinish() {
-            App.getPlayingQueueHandler().getPlayingQueue().finishTrack(true);
+            App.getPlayingQueueHandler().getPlayingQueue().addPlayingItemToHistory();
+            playingItem = App.getPlayingQueueHandler().getPlayingQueue().getNextPlayingItem();
+            if(null != playingItem) {
+                mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
+                mPlayer.play();
+                onQueueUpdated();
+            }else {
+                if (playerUIEvent != null) {
+                    uiHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            playerUIEvent.stop();
+                        }
+                    });
+                }
+            }
         }
 
         @Override public void onPlay() {
@@ -160,7 +179,7 @@ public class PlayerEventHandler implements QueueEvent {
         }
     }
 
-    public void next() {
+    /*public void next() {
         if(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue().get(QueueType.Manual_UpNext).size() > 0){
 
             App.getPlayingQueueHandler().getPlayingQueue().addListItemToPlaying(QueueType.Manual_UpNext, 0);
@@ -186,7 +205,7 @@ public class PlayerEventHandler implements QueueEvent {
         }else{
             Toast.makeText(context, "Up Next is Empty.", Toast.LENGTH_LONG).show();
         }
-    }
+    }*/
 
     public IMediaItemBase getPlayingItem() {
         return playingItem;
