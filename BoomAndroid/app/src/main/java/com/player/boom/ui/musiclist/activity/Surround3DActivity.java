@@ -215,7 +215,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             mEffectSwitchTxt.setTextColor(Color.WHITE);
             collapse();
         }
-        PlayerEventHandler.getPlayerEventInstance(this).setEffectEnable(isPowerOn);
+        PlayerEventHandler.getPlayerEventInstance(this).setEffectEnable(!isPowerOn);
     }
 
     public void update3DSurround(){
@@ -413,7 +413,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             }
             editor.commit();
             update3DSurround();
-            PlayerEventHandler.getPlayerEventInstance(this).set3DAudioEnable(is3DOn);
+            PlayerEventHandler.getPlayerEventInstance(this).set3DAudioEnable(!is3DOn);
             if(pref.getBoolean(INTENSITY_POWER, POWER_OFF) == POWER_OFF){
                 switchIntensity(isPowerOn);
             }
@@ -458,7 +458,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             }
             editor.commit();
             updateEqualizer();
-            PlayerEventHandler.getPlayerEventInstance(this).setEqualizerEnable(isEqualizerOn);
+            PlayerEventHandler.getPlayerEventInstance(this).setEqualizerEnable(!isEqualizerOn);
         }
     }
 
@@ -526,13 +526,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_LEFT_FRONT, POWER_OFF);
                     editor.commit();
-                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_ON);
+                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_OFF);
                 } else /*if (pref.getBoolean(SPEAKER_LEFT_FRONT, POWER_OFF) == POWER_OFF)*/ {
                     mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.on_left_front, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_LEFT_FRONT, POWER_ON);
                     editor.commit();
-                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_OFF);
+                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_ON);
                 }
                 updateSpeakerInfo();
                 break;
@@ -542,13 +542,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_RIGHT_FRONT, POWER_OFF);
                     editor.commit();
-                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_ON);
+                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_OFF);
                 } else /*if (pref.getBoolean(SPEAKER_RIGHT_FRONT, POWER_OFF) == POWER_OFF)*/ {
                     mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.on_right_front, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_RIGHT_FRONT, POWER_ON);
                     editor.commit();
-                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_OFF);
+                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_ON);
                 }
                 updateSpeakerInfo();
                 break;
@@ -560,14 +560,14 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_TWEETER, POWER_OFF);
                     editor.commit();
-                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_ON);
+                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_OFF);
                 } else /*if (pref.getBoolean(SPEAKER_TWEETER, POWER_OFF) == POWER_OFF)*/ {
                     mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.on_lefttweeter, null));
                     mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.on_righttweeter, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_TWEETER, POWER_ON);
                     editor.commit();
-                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_OFF);
+                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_ON);
                 }
                 updateSpeakerInfo();
                 break;
@@ -577,13 +577,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_LEFT_SURROUND, POWER_OFF);
                     editor.commit();
-                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_ON);
+                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_OFF);
                 } else /*if (pref.getBoolean(SPEAKER_LEFT_SURROUND, POWER_OFF) == POWER_OFF)*/ {
                     mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_left_surround, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_LEFT_SURROUND, POWER_ON);
                     editor.commit();
-                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_OFF);
+                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_ON);
                 }
                 updateSpeakerInfo();
                 break;
@@ -593,13 +593,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_RIGHT_SURROUND, POWER_OFF);
                     editor.commit();
-                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_ON);
+                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_OFF);
                 } else /*if (pref.getBoolean(SPEAKER_RIGHT_SURROUND, POWER_OFF) == POWER_OFF)*/ {
                     mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_right_surround, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_RIGHT_SURROUND, POWER_ON);
                     editor.commit();
-                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_OFF);
+                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_ON);
                 }
                 updateSpeakerInfo();
                 break;
@@ -609,13 +609,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_SUB_WOOFER, POWER_OFF);
                     editor.commit();
-                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_ON);
+                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_OFF);
                 } else /*if (pref.getBoolean(SPEAKER_SUB_WOOFER, POWER_OFF) == POWER_OFF)*/ {
                     mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.on_subwoofer, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_SUB_WOOFER, POWER_ON);
                     editor.commit();
-                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_OFF);
+                    PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_ON);
                 }
                 updateSpeakerInfo();
                 break;

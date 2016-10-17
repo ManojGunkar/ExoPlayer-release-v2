@@ -117,7 +117,6 @@ public class OpenSLPlayer implements Runnable {
             setPlayingAudioPlayer(true);
             state.set(PlayerStates.PLAYING);
             syncNotify();
-//            updatePlayerEffect();
         }
     }
 
@@ -265,7 +264,7 @@ public class OpenSLPlayer implements Runnable {
         int noOutputCounterLimit = 10;
 
         state.set(PlayerStates.PLAYING);
-
+        updatePlayerEffect();
         while (!sawOutputEOS && noOutputCounter < noOutputCounterLimit && !stop) {
 
             if(playerThread.isInterrupted()){
