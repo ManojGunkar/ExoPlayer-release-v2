@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -262,7 +261,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                         updateList(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue());
                         break;
                     case Playing:
-                        PlayerEventHandler.getPlayerEventInstance(context).Play();
+                        PlayerEventHandler.getPlayerEventInstance(context).PlayPause();
                         break;
                     case Manual_UpNext:
                         App.getPlayingQueueHandler().getPlayingQueue().addUpNextToPlay(itemPosition, queueType);

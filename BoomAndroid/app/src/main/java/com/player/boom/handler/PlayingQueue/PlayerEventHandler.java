@@ -54,10 +54,8 @@ public class PlayerEventHandler implements QueueEvent {
     @Override
     public void onPlayingItemChanged() {
 
-        if(isPlaying() || mPlayer.isPause()){
+        if(isPlaying() || mPlayer.isPause())
             mPlayer.stop();
-        }
-
         playingItem = App.getPlayingQueueHandler().getPlayingQueue().getPlayingItem();
         if(null != playingItem) {
             mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
@@ -73,7 +71,7 @@ public class PlayerEventHandler implements QueueEvent {
 
     @Override
     public void onPlayingItemClicked() {
-        Play();
+        PlayPause();
     }
 
     @Override
@@ -156,7 +154,7 @@ public class PlayerEventHandler implements QueueEvent {
         }
     };
 
-    public int Play() {
+    public int PlayPause() {
         if(isPlaying()){
             mPlayer.pause();
             return 0;
@@ -178,34 +176,6 @@ public class PlayerEventHandler implements QueueEvent {
             mPlayer.stop();
         }
     }
-
-    /*public void next() {
-        if(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue().get(QueueType.Manual_UpNext).size() > 0){
-
-            App.getPlayingQueueHandler().getPlayingQueue().addListItemToPlaying(QueueType.Manual_UpNext, 0);
-
-        }else if(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue().get(QueueType.Auto_UpNext).size() > 0){
-
-            App.getPlayingQueueHandler().getPlayingQueue().addListItemToPlaying(QueueType.Auto_UpNext, 0);
-
-        }else{
-            Toast.makeText(context, "Up Next is Empty.", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public void previous() {
-        if(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue().get(QueueType.Manual_UpNext).size() > 0){
-
-            App.getPlayingQueueHandler().getPlayingQueue().addListItemToPlaying(QueueType.Manual_UpNext, App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue().get(QueueType.Manual_UpNext).size()-1);
-
-        }else if(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue().get(QueueType.Auto_UpNext).size() > 0){
-
-            App.getPlayingQueueHandler().getPlayingQueue().addListItemToPlaying(QueueType.Auto_UpNext, App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue().get(QueueType.Auto_UpNext).size()-1);
-
-        }else{
-            Toast.makeText(context, "Up Next is Empty.", Toast.LENGTH_LONG).show();
-        }
-    }*/
 
     public IMediaItemBase getPlayingItem() {
         return playingItem;

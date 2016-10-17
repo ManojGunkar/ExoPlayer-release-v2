@@ -53,20 +53,19 @@
         android:layout_weight=".4"
         android:layout_gravity="center">
 
+        <com.player.boom.ui.widgets.CoverView.CircularCoverView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/no_song_selected"
+            android:layout_gravity="center"
+            android:id="@+id/album_art"/>
+
         <com.player.boom.ui.widgets.CircularSeekBar
             android:layout_width="220dp"
             android:layout_height="220dp"
             android:layout_gravity="center"
             android:padding="25dp"
             android:id="@+id/track_seek"/>
-
-        <com.player.boom.ui.widgets.CircleImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/no_song_selected"
-            android:filterTouchesWhenObscured="true"
-            android:layout_gravity="center"
-            android:id="@+id/album_art"/>
 
         <ImageView
             android:id="@+id/play_pause_btn"
