@@ -215,7 +215,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             mEffectSwitchTxt.setTextColor(Color.WHITE);
             collapse();
         }
-        PlayerEventHandler.getPlayerEventInstance(this).setEffectEnable(!isPowerOn);
+        PlayerEventHandler.getPlayerEventInstance(this).setEffectEnable(isPowerOn);
     }
 
     public void update3DSurround(){
