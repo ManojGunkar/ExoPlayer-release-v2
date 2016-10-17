@@ -214,17 +214,14 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                 setOnItemClick(holder, QueueType.Manual_UpNext, itemPosition);
                 break;
             case ITEM_VIEW_TYPE_LIST_PLAYING:
-
-                    itemPosition = getPosition(position);
-                    holder.img.setImageDrawable(new ColorDrawable(0xffffffff));
-//                Log.d("Item Position : "+itemPosition, "Position : "+position);
-                    setArt(holder, mPlayingList.get(itemPosition).getItemArtUrl(), whatView(position));
-                    holder.name.setText(mPlayingList.get(itemPosition).getItemTitle());
-                    holder.artistName.setText(((IMediaItem) mPlayingList.get(itemPosition)).getItemArtist());
-                    holder.mainView.setBackgroundColor(0xffffffff);
-                    holder.mainView.setElevation(dpToPx(context, 2));
-                    setOnItemClick(holder, QueueType.Playing, itemPosition);
-
+                itemPosition = getPosition(position);
+                holder.img.setImageDrawable(new ColorDrawable(0xffffffff));
+                setArt(holder, mPlayingList.get(itemPosition).getItemArtUrl(), whatView(position));
+                holder.name.setText(mPlayingList.get(itemPosition).getItemTitle());
+                holder.artistName.setText(((IMediaItem) mPlayingList.get(itemPosition)).getItemArtist());
+                holder.mainView.setBackgroundColor(0xffffffff);
+                holder.mainView.setElevation(dpToPx(context, 2));
+                setOnItemClick(holder, QueueType.Playing, itemPosition);
                 break;
             case ITEM_VIEW_TYPE_LIST_HISTORY:
                 itemPosition = getPosition(position);
@@ -261,7 +258,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                         updateList(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue());
                         break;
                     case Playing:
-                        PlayerEventHandler.getPlayerEventInstance(context).PlayPause();
+                        PlayerEventHandler.getPlayerEventInstance(context).onPlayingItemClicked();
                         break;
                     case Manual_UpNext:
                         App.getPlayingQueueHandler().getPlayingQueue().addUpNextToPlay(itemPosition, queueType);
@@ -355,27 +352,11 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     private void setAlbumArt(String path, SimpleItemViewHolder holder, int what) {
 
         if (path != null && !path.equals("null")) {
-
-            switch (what) {
-                case ITEM_VIEW_TYPE_LIST_PLAYING:
-                    with(context).load(new File(path)).resize(dpToPx(context, 60),
-                            dpToPx(context, 60)).centerCrop().memoryPolicy(NO_CACHE).into(holder.img);
-                    break;
-                case ITEM_VIEW_TYPE_LIST_HISTORY:
-                    with(context).load(new File(path)).resize(dpToPx(context, 60),
-                            dpToPx(context, 60)).centerCrop().memoryPolicy(NO_CACHE).into(holder.img);
-                    break;
-                case ITEM_VIEW_TYPE_LIST_MANUAL:
-                    with(context).load(new File(path)).transform(new RoundedTransformation(100, 0))
-                            .noFade().resize(dpToPx(context, 60),
-                            dpToPx(context, 60)).centerCrop().memoryPolicy(NO_CACHE).into(holder.img);
-                    break;
-                case ITEM_VIEW_TYPE_LIST_AUTO:
-                    with(context).load(new File(path)).transform(new RoundedTransformation(100, 0))
-                            .noFade().resize(dpToPx(context, 60),
-                            dpToPx(context, 60)).centerCrop().memoryPolicy(NO_CACHE).into(holder.img);
-                    break;
-            }
+            with(context).load(new File(path)).error(R.drawable.default_album_art).resize(dpToPx(context, 60),
+                    dpToPx(context, 60)).centerCrop().memoryPolicy(NO_CACHE).into(holder.img);
+//                with(context).load(new File(path)).error(R.drawable.default_album_art).transform(new RoundedTransformation(100, 0))
+//                        .noFade().resize(dpToPx(context, 60),
+//                        dpToPx(context, 60)).centerCrop().memoryPolicy(NO_CACHE).into(holder.img);
         } else {
             setDefaultView(holder, what);
         }

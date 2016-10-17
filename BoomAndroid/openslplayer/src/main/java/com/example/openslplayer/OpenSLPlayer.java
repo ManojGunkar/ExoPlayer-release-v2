@@ -72,6 +72,7 @@ public class OpenSLPlayer implements Runnable {
         setEventsListener(events);
         mContext = context;
         pref = context.getSharedPreferences(AUDIO_EFFECT_SETTING, MODE_PRIVATE);
+        EqualizerGain.setEqGain();
     }
 
     /**
@@ -116,6 +117,7 @@ public class OpenSLPlayer implements Runnable {
             setPlayingAudioPlayer(true);
             state.set(PlayerStates.PLAYING);
             syncNotify();
+//            updatePlayerEffect();
         }
     }
 
@@ -535,10 +537,13 @@ public class OpenSLPlayer implements Runnable {
     }
 
     public synchronized void setEqualizerGain(int equalizerId) {
-        float []a = new float[0];
         try {
-            if(isPlaying() || isPause())
-                SetEqualizer(equalizerId, a);
+            if(EqualizerGain.getEqualizerSize() <= 0){
+                EqualizerGain.setEqGain();
+            }else {
+                if(isPlaying() || isPause())
+                    SetEqualizer(equalizerId, EqualizerGain.getEqGain(equalizerId));
+            }
         }catch (Exception e){}
     }
 

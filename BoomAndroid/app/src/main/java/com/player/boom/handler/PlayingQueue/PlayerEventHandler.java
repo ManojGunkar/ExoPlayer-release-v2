@@ -10,7 +10,7 @@ import com.example.openslplayer.PlayerEvents;
 import com.player.boom.App;
 import com.player.boom.data.DeviceMediaCollection.MediaItem;
 import com.player.boom.data.MediaCollection.IMediaItemBase;
-import com.player.boom.task.IPlayerUIEvent;
+import com.player.boom.handler.IPlayerUIEvent;
 
 /**
  * Created by Rahul Agarwal on 03-10-16.
@@ -158,14 +158,10 @@ public class PlayerEventHandler implements QueueEvent {
         if(isPlaying()){
             mPlayer.pause();
             return 0;
-        }else if(App.getPlayingQueueHandler().getPlayingQueue().getPlayingItem() != null && mPlayer.isStopped()){
-            mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
+        } else if(mPlayer.isPause()){
             mPlayer.play();
             return 1;
-        }else if(App.getPlayingQueueHandler().getPlayingQueue().getPlayingItem() != null && !mPlayer.isStopped()){
-            mPlayer.play();
-            return 1;
-        }else{
+        } else{
             Toast.makeText(context, "Playing Item is Empty.", Toast.LENGTH_LONG).show();
             return -1;
         }

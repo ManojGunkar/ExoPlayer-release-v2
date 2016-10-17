@@ -165,14 +165,17 @@ public class PlayingQueue {
     }
 
     public void addMediaItemToPlay(IMediaItemBase item){
-        if(!playingQueue.get(Playing).contains(item)) {
-            if (playingQueue.get(Playing).size() > 0) {
+        if(playingQueue.get(Playing).size() > 0){
+            if(playingQueue.get(Playing).get(0).getItemId() != item.getItemId()) {
                 addItemToHistory(playingQueue.get(Playing).remove(0));
+                playingQueue.get(Playing).add(item);
+                PlayingItemChanged();
+            }else{
+                PlayPause();
             }
+        }else {
             playingQueue.get(Playing).add(item);
             PlayingItemChanged();
-        }else{
-            PlayPause();
         }
         QueueUpdated();
     }
@@ -229,23 +232,6 @@ public class PlayingQueue {
     }
 
     public void finishTrack(boolean isFinish) {
-        //      History Updated and update to database
-//        if(playingQueue.get(Playing).size()>0){
-//            addItemToHistory(playingQueue.get(Playing).remove(0));
-//        }
-//        invalidateHistory();
-
-        /*if(isFinish) {
-            if (mUpNextList != null && mUpNextList.size() > 0) {
-                addUpNextToPlay(0, Manual_UpNext);
-                PlayingItemChanged();
-            } else if (mAutoNextList != null && mAutoNextList.size() > 0) {
-                addUpNextToPlay(0, Auto_UpNext);
-                PlayingItemChanged();
-            }
-        }else {
-            QueueUpdated();
-        }*/
     }
 
    /****************************************************************************************************************************/

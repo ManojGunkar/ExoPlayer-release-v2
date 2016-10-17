@@ -16,8 +16,7 @@ import android.widget.ImageView;
 import com.player.boom.App;
 import com.player.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.player.boom.R;
-import com.player.boom.task.IPlayerUIEvent;
-import com.player.boom.ui.widgets.CircleImageView;
+import com.player.boom.handler.IPlayerUIEvent;
 import com.player.boom.ui.widgets.CircularSeekBar;
 import com.player.boom.ui.widgets.CoverView.CircularCoverView;
 import com.player.boom.ui.widgets.RegularTextView;
@@ -159,11 +158,11 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public boolean onLongClick(View v) {
-        switch (v.getId()) {
-            case R.id.audio_effect_btn:
-                startEffectActivity();
-                break;
-        }
+//        switch (v.getId()) {
+//            case R.id.audio_effect_btn:
+//                startEffectActivity();
+//                break;
+//        }
         return false;
     }
 
@@ -193,26 +192,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.audio_effect_btn:
                 startEffectActivity();
-                /*boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
-                editor = pref.edit();
-                if(isPowerOn) {
-                    mAudioEffectBtn.setImageDrawable(getResources().getDrawable(R.drawable.boom_effect_off, null));
-                    editor.putBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
-                }else{
-                    mAudioEffectBtn.setImageDrawable(getResources().getDrawable(R.drawable.boom_effect_on, null));
-                    editor.putBoolean(AUDIO_EFFECT_POWER, POWER_ON);
-                }
-                editor.commit();*/
                 break;
-            /*case R.id.nextTrack:
-                PlayerEventHandler.getPlayerEventInstance(this).next();
-                break;
-            case R.id.stopTrack:
-                PlayerEventHandler.getPlayerEventInstance(this).stop();
-                break;
-            case R.id.prevTrack:
-                PlayerEventHandler.getPlayerEventInstance(this).previous();
-                break;*/
             default:
 
                 break;
