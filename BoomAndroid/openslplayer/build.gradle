@@ -14,7 +14,7 @@ model {
             moduleName = 'AudioTrackActivity'
             toolchain = 'clang'
             stl       = 'c++_static'
-            CFlags.add('-std=c99')
+            CFlags.addAll(['-std=c99','-O2','-mfpu=neon'])
             /*stl       = 'gnustl_shared'*/
             /*cppFlags.addAll(['-I' + "${ndkDir}/sources/android/cpufeatures",
                              '-I' + file('src/main/jni/ndk_helper')])*/

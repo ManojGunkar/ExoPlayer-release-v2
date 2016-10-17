@@ -136,7 +136,7 @@ namespace android {
 
                     audioEngine->ProcessAudio((short*)mBuffer, mOutputBuffer, FRAME_COUNT * CHANNEL_COUNT);
                     int bufferSize = FRAME_COUNT * CHANNEL_COUNT * sizeof(float);
-                    
+
                     // enqueue another buffer
                     SLresult result = (*bqPlayerBufferQueue)->Enqueue(bqPlayerBufferQueue, mOutputBuffer, bufferSize);
                     if (result == SL_RESULT_BUFFER_INSUFFICIENT) {
@@ -483,7 +483,7 @@ namespace android {
     void Java_com_example_openslplayer_OpenSLPlayer_enableEqualizer(JNIEnv *env, jclass clazz,
                                                                         jboolean enabled) {
         /*openSLEqualizer->Enable(enabled);*/
-//        audioEngine->SetEffectsState(enabled);
+        audioEngine->SetEffectsState(enabled);
     }
 
     void Java_com_example_openslplayer_OpenSLPlayer_enableSuperBass(JNIEnv *env, jobject instance,
@@ -496,7 +496,7 @@ namespace android {
     void Java_com_example_openslplayer_OpenSLPlayer_enableHighQuality(JNIEnv *env, jobject instance,
                                                                  jboolean enable) {
 
-        audioEngine->SetHighQuality(true);
+        audioEngine->SetHighQuality(enable);
 
     }
 
