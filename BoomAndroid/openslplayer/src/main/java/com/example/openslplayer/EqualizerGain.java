@@ -8,9 +8,9 @@ import java.util.Map;
  */
 
 public class EqualizerGain {
-    private static Map<Integer, float[]> EQ_GAIN = new Hashtable<>();
+    private static Map<Integer, double[]> EQ_GAIN = new Hashtable<>();
 
-    public static float[] getEqGain(int equalizerId){
+    public static double[] getEqGain(int equalizerId){
         return EQ_GAIN.get(equalizerId);
     }
 
@@ -44,27 +44,28 @@ public class EqualizerGain {
         EQ_GAIN.put(20, EQ_RNB);
         EQ_GAIN.put(21, EQ_METAL);
     }
-
-    private static float EQ_AUTO[] = {};
-    private static float EQ_BASSBOOST[] = {};
-    private static float EQ_ACOUSTIC[] = {};
-    private static float EQ_SIXTIES[] = {};
-    private static float EQ_CLASSICAL[] = {};
-    private static float EQ_DUBSTEP[] = {};
-    private static float EQ_ELECTRONIC[] = {};
-    private static float EQ_FLAT[] = {};
-    private static float EQ_HIPHOP[] = {};
-    private static float EQ_HOUSE[] = {};
-    private static float EQ_JAZZ[] = {};
-    private static float EQ_LOUD[] = {};
-    private static float EQ_MUSIC[] = {};
-    private static float EQ_PARTY[] = {};
-    private static float EQ_POP[] = {};
-    private static float EQ_REGGAE[] = {};
-    private static float EQ_ROCK[] = {};
-    private static float EQ_SOFT[] = {};
-    private static float EQ_TREBLE[] = {};
-    private static float EQ_VOCALS[] = {};
-    private static float EQ_RNB[] = {};
-    private static float EQ_METAL[] = {};
+    
+    private static double EQ_AUTO[] = {4.0, 5.0, 4.5, 2.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 1.0, 4.0, 5.0, 4.0};
+    private static double EQ_BASSBOOST[] = {4.5, 5.5, 4.5, 2.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    private static double EQ_ACOUSTIC[] = {4.5, 5.5, 4.5, 4.0, 3.0, 0.0, 0.0, 1.0, 1.0, 2.0, 2.5, 1.75, 1.5, 3.25, 3.25, 4.5};
+    private static double EQ_SIXTIES[] = {3.0, 3.1, 3.0, 4.0, 4.5, 4.0, 1.5, -1.5, 2.0, 2.0, 0.0, -2.0, 0.0, 0.0, 1.0, 0.0};
+    private static double EQ_CLASSICAL[] = {4.0, 4.1, 3.7, 3.7, 3.3, 2.6, 1.0, 0.0, -0.5, -1.0, -0.5, 0.0, 2.0, 3.0, 3.5, 4.0};
+    private static double EQ_DUBSTEP[] = {5.0, 5.0, 4.5, 4.5, 3.0, 2.4, 2.0, 1.0, 0.0, -2.0, -0.5, 1.0, 2.5, 3.0, 4.5, 4.0};
+    private static double EQ_ELECTRONIC[] = {3.6, 4.1, 3.2, 2.0, 1.0, 0.0, 0.0, -1.0, -1.0, 3.0, 1.0, 3.0, 3.5, 4.0, 4.5, 5.0};
+    private static double EQ_FLAT[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    private static double EQ_HIPHOP[] = {4.0, 4.5, 4.1, 1.0, -1.0, 4.0, 3.0, -1.0, -1.5, -1.5, 0.0, 3.0, -1.0, -1.0, 3.0, 4.0};
+    private static double EQ_HOUSE[] = {-1.0, 1.0, 2.0, 4.0, 4.0, 4.0, 3.0, -2.0, -2.0, 0.0, -1.0, -2.0, 1.0, 3.0, 1.0, 0.0};
+    private static double EQ_JAZZ[] = {4.0, 4.0, 3.0, -1.0, 2.0, 3.0, 2.0, -1.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 4.0};
+    private static double EQ_LOUD[] = {4.0, 4.5, 4.0, 2.0, 3.0, 4.0, 2.0, 0.0, -1.0, 1.0, 4.0, 1.0, -1.0, 4.0, 4.0, 3.0};
+    private static double EQ_MUSIC[] = {4.0, 5.0, 4.5, 2.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 1.0, 4.0, 5.0, 4.0};
+    private static double EQ_PARTY[] = {4.5, 5.0, 4.0, 2.0, 1.0, 0.5, 0.0, -1.0, 2.5, 1.0, 1.0, 1.0, 1.5, 3.5, 5.0, 3.0};
+    private static double EQ_REGGAE[] = {1.0, 3.5, 5.0, 4.5, 4.5, 2.5, 1.0, 0.0, -1.0, -1.0, 0.0, 2.0, 3.0, 4.0, 2.5, 1.0};
+    private static double EQ_SOFT[] = {1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0, -1.0, 0.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0};
+    private static double EQ_TREBLE[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,1.0, 3.0, 5.0, 4.0, 2.0};
+    private static double EQ_VOCALS[] = {-1.0, -1.5, -1.0, -0.5, 0.0, 0.0, 1.0, 3.0, 4.0, 4.0, 2.0, 1.0, 0.0, -1.0, -2.0, -3.0};
+    private static double EQ_RNB[] = {3.0, 5.0, 4.0, 2.0, 1.0, 0.0, -1.0, -1.0, -1.0, 1.0, 2.0, 3.5, 4.0, 4.5, 4.0, 4.0};
+    private static double EQ_METAL[] = {5.0, 5.0, 4.5, 2.0, 0.0, 3.0, 2.0, 0.0, 0.0, 0.0, 2.0, 3.0, 0.0, 3.0, 4.0, 5.0};
+// need to update
+    private static double EQ_POP[] = {4.0, 5.0, 4.5, 2.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 1.0, 4.0, 5.0, 4.0};
+    private static double EQ_ROCK[] = {4.0, 5.0, 4.5, 2.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 1.0, 4.0, 5.0, 4.0};
 }
