@@ -108,7 +108,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         } else  if(position > headerAutoPos)
             position = position - mHistoryList.size() - mPlayingList.size() - mUpnextManualList.size() - 4;
 
-        return position;
+        return position == -1 ? 0 : position;
     }
 
     @Override
@@ -214,14 +214,17 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                 setOnItemClick(holder, QueueType.Manual_UpNext, itemPosition);
                 break;
             case ITEM_VIEW_TYPE_LIST_PLAYING:
-                itemPosition = getPosition(position);
-                holder.img.setImageDrawable(new ColorDrawable(0xffffffff));
-                setArt(holder, mPlayingList.get(itemPosition).getItemArtUrl(), whatView(position));
-                holder.name.setText(mPlayingList.get(itemPosition).getItemTitle());
-                holder.artistName.setText(((IMediaItem) mPlayingList.get(itemPosition)).getItemArtist());
-                holder.mainView.setBackgroundColor(0xffffffff);
-                holder.mainView.setElevation(dpToPx(context, 2));
-                setOnItemClick(holder, QueueType.Playing, itemPosition);
+
+                    itemPosition = getPosition(position);
+                    holder.img.setImageDrawable(new ColorDrawable(0xffffffff));
+//                Log.d("Item Position : "+itemPosition, "Position : "+position);
+                    setArt(holder, mPlayingList.get(itemPosition).getItemArtUrl(), whatView(position));
+                    holder.name.setText(mPlayingList.get(itemPosition).getItemTitle());
+                    holder.artistName.setText(((IMediaItem) mPlayingList.get(itemPosition)).getItemArtist());
+                    holder.mainView.setBackgroundColor(0xffffffff);
+                    holder.mainView.setElevation(dpToPx(context, 2));
+                    setOnItemClick(holder, QueueType.Playing, itemPosition);
+
                 break;
             case ITEM_VIEW_TYPE_LIST_HISTORY:
                 itemPosition = getPosition(position);
@@ -254,18 +257,18 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
             public void onClick(View v) {
                 switch (queueType){
                     case History:
-                        App.getPlayingQueueHandler().getPlayingQueue().addListItemToPlaying(queueType, itemPosition);
+                        App.getPlayingQueueHandler().getPlayingQueue().addHistoryItemToPlay(itemPosition);
                         updateList(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue());
                         break;
                     case Playing:
-                        PlayerEventHandler.getPlayerEventInstance(context).Play();
+                        PlayerEventHandler.getPlayerEventInstance(context).PlayPause();
                         break;
                     case Manual_UpNext:
-                        App.getPlayingQueueHandler().getPlayingQueue().addListItemToPlaying(queueType, itemPosition);
+                        App.getPlayingQueueHandler().getPlayingQueue().addUpNextToPlay(itemPosition, queueType);
                         updateList(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue());
                         break;
                     case Auto_UpNext:
-                        App.getPlayingQueueHandler().getPlayingQueue().addListItemToPlaying(queueType, itemPosition);
+                        App.getPlayingQueueHandler().getPlayingQueue().addUpNextToPlay(itemPosition, queueType);
                         updateList(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue());
                         break;
                     default:

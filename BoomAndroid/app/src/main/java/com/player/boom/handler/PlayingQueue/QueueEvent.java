@@ -8,6 +8,8 @@ public interface QueueEvent {
 
     public void onPlayingItemChanged();
 
+    public void onPlayingItemClicked();
+
     public void onQueueUpdated();
 }
 

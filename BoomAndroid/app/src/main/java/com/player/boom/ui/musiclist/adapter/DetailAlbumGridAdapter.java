@@ -339,7 +339,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                         switch (item.getItemId()) {
                             case R.id.popup_album_add_queue :
                                 if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                                        App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Manual_UpNext, collection, position);
+                                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemsToManualUpNext(collection, position);
                                 }
                                 break;
                         }

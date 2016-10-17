@@ -151,7 +151,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
                         switch (item.getItemId()) {
                             case R.id.popup_album_add_queue :
                                 if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                                    App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Manual_UpNext, items.get(position), -1);
+                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(items.get(position));
                                 }
                                 break;
                             default:

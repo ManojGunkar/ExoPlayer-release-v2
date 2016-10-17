@@ -136,14 +136,14 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                 animate(holder);
                 if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
                     if(collection.getItemType() == ItemType.PLAYLIST || collection.getItemType() == ItemType.BOOM_PLAYLIST){
-                        App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Playing, (MediaItem) collection.getMediaElement().get(position), -1);
+                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToPlay((MediaItem) collection.getMediaElement().get(position));
                         for (int i = position + 1; i < collection.getMediaElement().size(); i++) {
-                            App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Auto_UpNext, (MediaItem) collection.getMediaElement().get(i), -1);
+                            App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToAutoUpNext((MediaItem) collection.getMediaElement().get(i));
                         }
                     }else{
-                        App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Playing, ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position), -1);
+                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToPlay(((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
                         for (int i = position + 1; i < ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size(); i++) {
-                            App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Auto_UpNext, ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(i), -1);
+                            App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToAutoUpNext(((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(i));
                         }
                     }
                 }
@@ -165,9 +165,9 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                             case R.id.popup_song_add_queue :
                                 if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
                                     if(collection.getItemType() == ItemType.PLAYLIST || collection.getItemType() == ItemType.BOOM_PLAYLIST){
-                                        App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Manual_UpNext, (MediaItem) collection.getMediaElement().get(position), -1);
+                                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext((MediaItem) collection.getMediaElement().get(position));
                                     }else{
-                                        App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Manual_UpNext, (MediaItem) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position), -1);
+                                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext((MediaItem) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
                                     }
                                 }
                                 break;

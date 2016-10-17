@@ -19,9 +19,9 @@ import com.player.boom.R;
 import com.player.boom.task.IPlayerUIEvent;
 import com.player.boom.ui.widgets.CircleImageView;
 import com.player.boom.ui.widgets.CircularSeekBar;
+import com.player.boom.ui.widgets.CoverView.CircularCoverView;
 import com.player.boom.ui.widgets.RegularTextView;
 import com.player.boom.utils.Utils;
-import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -37,7 +37,7 @@ import static com.example.openslplayer.AudioEffect.POWER_OFF;
 public class BoomPlayerActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener, CircularSeekBar.OnCircularSeekBarChangeListener{
 
     private RegularTextView mSongName;
-    private CircleImageView mAlbumArt;
+    private CircularCoverView mAlbumArt;
     private CircularSeekBar mTrackSeek;
     private ImageView mPlayPauseBtn, mLibraryBtn, mAudioEffectBtn, mUpNextQueue;
     SharedPreferences pref;
@@ -61,7 +61,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
         mSongName = (RegularTextView) findViewById(R.id.media_item_name_txt);
         mTrackSeek = (CircularSeekBar)findViewById(R.id.track_seek);
-        mAlbumArt = (CircleImageView)findViewById(R.id.album_art);
+        mAlbumArt = (CircularCoverView)findViewById(R.id.album_art);
         mPlayPauseBtn = (ImageView)findViewById(R.id.play_pause_btn);
         mLibraryBtn = (ImageView)findViewById(R.id.library_btn);
         mAudioEffectBtn = (ImageView)findViewById(R.id.audio_effect_btn);
@@ -119,13 +119,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     mTrackSeek.setVisibility(View.VISIBLE);
 
                     if (isPathValid(PlayerEventHandler.getPlayerEventInstance(this).getPlayingItem().getItemArtUrl())) {
-                        int size = Utils.dpToPx(this, 50);
-                        param = new FrameLayout.LayoutParams(mTrackSeek.getWidth() - size, mTrackSeek.getHeight() - size);
-                        param.gravity = Gravity.CENTER;
-//                    mAlbumArt.setPadding(size, size, size, size);
-                        mAlbumArt.setLayoutParams(param);
-                        Picasso.with(this).load(new File(PlayerEventHandler.getPlayerEventInstance(this).getPlayingItem().getItemArtUrl()))
-                                .memoryPolicy(MemoryPolicy.NO_CACHE).error(getResources().getDrawable(R.drawable.default_album_art_home)).noFade().into(mAlbumArt);
+                        int size = Utils.dpToPx(this, 45);
+                        Picasso.with(this).load(new File(PlayerEventHandler.getPlayerEventInstance(this).getPlayingItem().getItemArtUrl())).resize(mTrackSeek.getWidth() - size, mTrackSeek.getHeight() - size).centerCrop()
+                                .error(getResources().getDrawable(R.drawable.default_album_art_home)).into(mAlbumArt);
                     } else {
                         mAlbumArt.setImageDrawable(getResources().getDrawable(R.drawable.default_album_art_home));
                     }
@@ -180,7 +176,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.play_pause_btn:
-                int play = PlayerEventHandler.getPlayerEventInstance(this).Play();
+                int play = PlayerEventHandler.getPlayerEventInstance(this).PlayPause();
                 if(play == 0){
                     mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_play, null));
                 }else if(play == 1){

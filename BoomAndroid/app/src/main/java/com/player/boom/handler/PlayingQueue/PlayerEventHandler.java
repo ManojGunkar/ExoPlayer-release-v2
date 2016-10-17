@@ -54,22 +54,24 @@ public class PlayerEventHandler implements QueueEvent {
     @Override
     public void onPlayingItemChanged() {
 
-        if(isPlaying() || mPlayer.isPause()){
+        if(isPlaying() || mPlayer.isPause())
             mPlayer.stop();
-        }
-
         playingItem = App.getPlayingQueueHandler().getPlayingQueue().getPlayingItem();
         if(null != playingItem) {
             mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
             mPlayer.play();
-        }else{
-            if (playerUIEvent != null)
-                uiHandler.post(new Runnable() {
+        }
+        if (playerUIEvent != null)
+            uiHandler.post(new Runnable() {
                     @Override public void run() {
                         playerUIEvent.updateUI();
                     }
                 });
-        }
+    }
+
+    @Override
+    public void onPlayingItemClicked() {
+        PlayPause();
     }
 
     @Override
@@ -109,7 +111,7 @@ public class PlayerEventHandler implements QueueEvent {
                     @Override public void run() {
                         playerUIEvent.updateUI();
                     }
-                }, 10);
+                }, 50);
         }
         @Override public void onPlayUpdate(final int percent, final long currentms, final long totalms) {
             if (playerUIEvent != null)
@@ -122,7 +124,22 @@ public class PlayerEventHandler implements QueueEvent {
 
         @Override
         public void onFinish() {
-            App.getPlayingQueueHandler().getPlayingQueue().finishTrack(true);
+            App.getPlayingQueueHandler().getPlayingQueue().addPlayingItemToHistory();
+            playingItem = App.getPlayingQueueHandler().getPlayingQueue().getNextPlayingItem();
+            if(null != playingItem) {
+                mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
+                mPlayer.play();
+                onQueueUpdated();
+            }else {
+                if (playerUIEvent != null) {
+                    uiHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            playerUIEvent.stop();
+                        }
+                    });
+                }
+            }
         }
 
         @Override public void onPlay() {
@@ -137,7 +154,7 @@ public class PlayerEventHandler implements QueueEvent {
         }
     };
 
-    public int Play() {
+    public int PlayPause() {
         if(isPlaying()){
             mPlayer.pause();
             return 0;
@@ -157,34 +174,6 @@ public class PlayerEventHandler implements QueueEvent {
     public void stop() {
         if(!mPlayer.isStopped()){
             mPlayer.stop();
-        }
-    }
-
-    public void next() {
-        if(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue().get(QueueType.Manual_UpNext).size() > 0){
-
-            App.getPlayingQueueHandler().getPlayingQueue().addListItemToPlaying(QueueType.Manual_UpNext, 0);
-
-        }else if(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue().get(QueueType.Auto_UpNext).size() > 0){
-
-            App.getPlayingQueueHandler().getPlayingQueue().addListItemToPlaying(QueueType.Auto_UpNext, 0);
-
-        }else{
-            Toast.makeText(context, "Up Next is Empty.", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public void previous() {
-        if(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue().get(QueueType.Manual_UpNext).size() > 0){
-
-            App.getPlayingQueueHandler().getPlayingQueue().addListItemToPlaying(QueueType.Manual_UpNext, App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue().get(QueueType.Manual_UpNext).size()-1);
-
-        }else if(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue().get(QueueType.Auto_UpNext).size() > 0){
-
-            App.getPlayingQueueHandler().getPlayingQueue().addListItemToPlaying(QueueType.Auto_UpNext, App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue().get(QueueType.Auto_UpNext).size()-1);
-
-        }else{
-            Toast.makeText(context, "Up Next is Empty.", Toast.LENGTH_LONG).show();
         }
     }
 

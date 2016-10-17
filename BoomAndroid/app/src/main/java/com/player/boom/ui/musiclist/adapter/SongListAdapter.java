@@ -101,7 +101,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
             public void onClick(View view) {
                 animate(holder);
                 if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                    App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Playing, itemList.get(position), -1);
+                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToPlay(itemList.get(position));
                 }
 
             }
@@ -121,7 +121,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                         switch (item.getItemId()) {
                             case R.id.popup_song_add_queue :
                                 if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                                    App.getPlayingQueueHandler().getPlayingQueue().addItemToQueue(QueueType.Manual_UpNext, itemList.get(position), -1);
+                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(itemList.get(position));
                                 }
                                 break;
                             case R.id.popup_song_add_playlist:
