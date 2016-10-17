@@ -189,6 +189,7 @@ public class OpenSLPlayer implements Runnable {
                 fd.close();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             //Log.e(LOG_TAG, "exception:"+e.getMessage());
             if (events != null) handler.post(new Runnable() { @Override public void run() { events.onError();  } });
             return;
@@ -211,6 +212,7 @@ public class OpenSLPlayer implements Runnable {
             bitrate = format.getInteger(MediaFormat.KEY_BIT_RATE);
 
         } catch (Exception e) {
+            e.printStackTrace();
             Log.e(LOG_TAG, "Reading format parameters exception:"+e.getMessage());
             // don't exit, tolerate this error, we'll fail later if this is critical
         }
@@ -308,6 +310,7 @@ public class OpenSLPlayer implements Runnable {
             try {
                 res = codec.dequeueOutputBuffer(info, kTimeOutUs);
             } catch (Exception e) {
+                e.printStackTrace();
             }
             if (res >= 0) {
                 if (info.size > 0) noOutputCounter = 0;
@@ -331,6 +334,7 @@ public class OpenSLPlayer implements Runnable {
                 try {
                     codec.releaseOutputBuffer(outputBufIndex, false);
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
 //                    Log.d(LOG_TAG, "saw output EOS.");
@@ -355,7 +359,7 @@ public class OpenSLPlayer implements Runnable {
             codec = null;
         }
         /*Stop player*/
-        boolean isShutdown;
+        boolean isShutdown = false;
         if(stop) {
             isShutdown = shutdown(false);//STOP
         }else{

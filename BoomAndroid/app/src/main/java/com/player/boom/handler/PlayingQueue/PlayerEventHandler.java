@@ -111,7 +111,7 @@ public class PlayerEventHandler implements QueueEvent {
                     @Override public void run() {
                         playerUIEvent.updateUI();
                     }
-                }, 50);
+                }, 80);
         }
         @Override public void onPlayUpdate(final int percent, final long currentms, final long totalms) {
             if (playerUIEvent != null)

@@ -390,13 +390,10 @@ namespace android {
 /*
  * Class:     com_example_openslplayer_OpenSLPlayer
  * Method:    shutdown
- * Signature: (Z)V
+ * Signature: (Z)Z
  */
     jboolean Java_com_example_openslplayer_OpenSLPlayer_shutdown(JNIEnv *env, jclass clazz,
                                                              jboolean enable) {
-        JavaVM **jvm;
-        env->GetJavaVM(jvm);
-
         env->DeleteGlobalRef(globalJavaAssetManager);
 
         stopPlayer(enable);
@@ -433,7 +430,7 @@ namespace android {
             engineObject = NULL;
             engineEngine = NULL;
         }
-        return JNI_TRUE;
+        return enable;
     }
 
 /*

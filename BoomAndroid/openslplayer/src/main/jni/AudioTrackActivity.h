@@ -77,7 +77,7 @@ namespace android {
 /*
  * Class:     com_example_openslplayer_OpenSLPlayer
  * Method:    shutdown
- * Signature: ()V
+ * Signature: (Z)Z
  */
     jboolean Java_com_example_openslplayer_OpenSLPlayer_shutdown
             (JNIEnv *, jclass, jboolean);
