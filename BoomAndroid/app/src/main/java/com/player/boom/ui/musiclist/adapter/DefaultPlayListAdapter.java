@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.player.boom.App;
 import com.player.boom.R;
+import com.player.boom.data.DeviceMediaCollection.MediaItem;
 import com.player.boom.data.MediaCollection.IMediaItemBase;
 import com.player.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.player.boom.data.MediaLibrary.MediaController;
@@ -259,8 +260,9 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.popup_album_add_queue :
+//                                items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
                                 if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToPlay(items.get(position));
+                                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemsToManualUpNext(items.get(position), -1);
                                 }
                                 break;
                             default:

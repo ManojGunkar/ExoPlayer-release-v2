@@ -142,7 +142,7 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
                         switch (item.getItemId()) {
                             case R.id.popup_album_add_queue :
                                 if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(itemList.get(position));
+                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemsToManualUpNext(itemList.get(position), -1);
                                 }
                                 break;
                             default:

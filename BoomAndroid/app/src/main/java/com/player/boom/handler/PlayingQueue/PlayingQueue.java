@@ -188,7 +188,7 @@ public class PlayingQueue {
     }
 
     public void addMediaItemsToManualUpNext(IMediaItemBase items, int position){
-        playingQueue.get(Auto_UpNext).addAll(MediaController.getInstance(context).getMediaCollectionItemsForQueue((MediaItemCollection)items, position));
+        playingQueue.get(Manual_UpNext).addAll(MediaController.getInstance(context).getMediaCollectionItemsForQueue((MediaItemCollection)items, position));
         QueueUpdated();
     }
 
