@@ -24,6 +24,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_POWER;
 import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_SETTING;
 import static com.example.openslplayer.AudioEffect.DEFAULT_POWER;
+import static com.example.openslplayer.AudioEffect.EFFECT_DEFAULT_POWER;
 import static com.example.openslplayer.AudioEffect.EQUALIZER_POSITION;
 import static com.example.openslplayer.AudioEffect.EQUALIZER_POWER;
 import static com.example.openslplayer.AudioEffect.SELECTED_EQUALIZER_POSITION;
@@ -74,7 +75,7 @@ public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdap
 
     @Override
     public void onBindViewHolder(final SimpleItemViewHolder holder, final int position) {
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
         boolean isEqualizerOn = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
 
         Typeface tf;
@@ -105,7 +106,7 @@ public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdap
         holder.eqImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
+                boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
                 boolean isEqualizerOn = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
                 if(isPowerOn && isEqualizerOn) {
                     editor = pref.edit();

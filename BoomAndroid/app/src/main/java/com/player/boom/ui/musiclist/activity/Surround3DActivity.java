@@ -43,6 +43,7 @@ import java.util.List;
 import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_POWER;
 import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_SETTING;
 import static com.example.openslplayer.AudioEffect.DEFAULT_POWER;
+import static com.example.openslplayer.AudioEffect.EFFECT_DEFAULT_POWER;
 import static com.example.openslplayer.AudioEffect.EQUALIZER_POSITION;
 import static com.example.openslplayer.AudioEffect.EQUALIZER_POWER;
 import static com.example.openslplayer.AudioEffect.FULL_BASS;
@@ -190,7 +191,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void onPowerSwitchUpdate(){
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
         if(isPowerOn) {
             mEffectSwitchTxt.setText("on");
             /*mEffectPowerBtn.setChecked(true);*/
@@ -209,7 +210,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void update3DSurround(){
         boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
 
         if(isPowerOn && is3DOn){
             m3DSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_surround, null));
@@ -230,7 +231,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void updateSpeakerInfo(){
         boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
 
         boolean isLeftFront = pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER);
         boolean isRightFront = pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER);
@@ -275,7 +276,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void updateFullBass(){
         boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
         boolean isFullBassOn = pref.getBoolean(FULL_BASS, DEFAULT_POWER);
 
         if(is3DOn && isPowerOn){
@@ -337,7 +338,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void updateIntensity(){
         boolean isIntensityOn = pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
 
         if(isPowerOn && isIntensityOn){
             mIntensitySwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.intensity, null));
@@ -370,7 +371,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void updateEqualizer(){
         boolean isEqualizerOn = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
 
         if(isPowerOn && isEqualizerOn){
             mEqualizerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.equalizer, null));
@@ -470,7 +471,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
         switch (v.getId()){
             case R.id.effect_switch_panel:
                 editor = pref.edit();
@@ -778,11 +779,12 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        editor = pref.edit();
-        mIntensitySeek.setProgress(pref.getInt(INTENSITY_POSITION, 50));
-        editor.putInt(INTENSITY_POSITION, progress);
-        editor.commit();
-        PlayerEventHandler.getPlayerEventInstance(this).setIntensityValue(progress/(double)100);
+        if(fromUser) {
+            editor = pref.edit();
+            mIntensitySeek.setProgress(pref.getInt(INTENSITY_POSITION, 50));
+            editor.putInt(INTENSITY_POSITION, progress);
+            editor.commit();
+        }
     }
 
     @Override
@@ -792,7 +794,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-
+        PlayerEventHandler.getPlayerEventInstance(this).setIntensityValue(pref.getInt(INTENSITY_POSITION, 50)/(double)100);
     }
 
     @Override

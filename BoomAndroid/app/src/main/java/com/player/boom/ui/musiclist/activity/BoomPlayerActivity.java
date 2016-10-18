@@ -28,6 +28,7 @@ import java.io.File;
 import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_POWER;
 import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_SETTING;
 import static com.example.openslplayer.AudioEffect.DEFAULT_POWER;
+import static com.example.openslplayer.AudioEffect.EFFECT_DEFAULT_POWER;
 import static com.example.openslplayer.AudioEffect.POWER_OFF;
 
 /**
@@ -221,7 +222,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void updateEffectIcon() {
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
         if(isPowerOn) {
             mAudioEffectBtn.setImageDrawable(getResources().getDrawable(R.drawable.boom_effect_on, null));
         }else{
