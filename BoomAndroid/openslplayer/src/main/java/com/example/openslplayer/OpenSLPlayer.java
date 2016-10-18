@@ -266,7 +266,7 @@ public class OpenSLPlayer implements Runnable {
         int noOutputCounterLimit = 10;
 
         state.set(PlayerStates.PLAYING);
-//        updatePlayerEffect();
+        updatePlayerEffect();
         while (!sawOutputEOS && noOutputCounter < noOutputCounterLimit && !stop) {
 
             if(playerThread.isInterrupted()){
@@ -456,53 +456,55 @@ public class OpenSLPlayer implements Runnable {
     public void updatePlayerEffect(){
         boolean isAudioEffect = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
             setEnableEffect(isAudioEffect);
-        boolean is3DAudio = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
-        setEnable3DAudio(is3DAudio);
-        boolean isIntensity = pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER);
-        if(isIntensity){
-            setIntensity(pref.getInt(INTENSITY_POSITION, 50)/(double)100);
-        }
-        boolean isEqualizer = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
-        setEnableEqualizer(isEqualizer);
-        boolean isFullBass = pref.getBoolean(FULL_BASS, DEFAULT_POWER);
-        setEnableSuperBass(isFullBass);
-        int eq = pref.getInt(SELECTED_EQUALIZER_POSITION, EQUALIZER_POSITION);
-        setEqualizerGain(eq);
+        if(isAudioEffect) {
+            boolean is3DAudio = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
+            setEnable3DAudio(is3DAudio);
+            boolean isIntensity = pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER);
+            if (isIntensity) {
+                setIntensity(pref.getInt(INTENSITY_POSITION, 50) / (double) 100);
+            }
+            boolean isEqualizer = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
+            setEnableEqualizer(isEqualizer);
+            boolean isFullBass = pref.getBoolean(FULL_BASS, DEFAULT_POWER);
+            setEnableSuperBass(isFullBass);
+            int eq = pref.getInt(SELECTED_EQUALIZER_POSITION, EQUALIZER_POSITION);
+            setEqualizerGain(eq);
 
-        if(pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_OFF){
-            setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_OFF);
-        }else if(pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_ON){
-            setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_ON);
-        }
-        if(pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_OFF){
-            setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_OFF);
-        }else if(pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_ON){
-            setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_ON);
-        }
-        if(pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_OFF){
-            setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_OFF);
-        }else if(pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_ON){
-            setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_ON);
-        }
-        if(pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_OFF){
-            setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_OFF);
-        }else if(pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_ON){
-            setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_ON);
-        }
-        if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_OFF){
-            setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_OFF);
-        }else if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_ON){
-            setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_ON);
-        }
-        if(pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_OFF){
-            setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_OFF);
-        }else if(pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_ON){
-            setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_ON);
-        }
-        if(pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER) == POWER_OFF){
-            setHighQualityEnable(POWER_OFF);
-        }else if(pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER) == POWER_ON){
-            setHighQualityEnable(POWER_ON);
+            if (pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_OFF) {
+                setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_OFF);
+            } else if (pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_ON) {
+                setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_ON);
+            }
+            if (pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_OFF) {
+                setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_OFF);
+            } else if (pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_ON) {
+                setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_ON);
+            }
+            if (pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_OFF) {
+                setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_OFF);
+            } else if (pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_ON) {
+                setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_ON);
+            }
+            if (pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_OFF) {
+                setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_OFF);
+            } else if (pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_ON) {
+                setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_ON);
+            }
+            if (pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_OFF) {
+                setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_OFF);
+            } else if (pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_ON) {
+                setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_ON);
+            }
+            if (pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_OFF) {
+                setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_OFF);
+            } else if (pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_ON) {
+                setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_ON);
+            }
+            if (pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER) == POWER_OFF) {
+                setHighQualityEnable(POWER_OFF);
+            } else if (pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER) == POWER_ON) {
+                setHighQualityEnable(POWER_ON);
+            }
         }
 
     }
@@ -511,7 +513,7 @@ public class OpenSLPlayer implements Runnable {
     public synchronized void setIntensityValue(double intensity) {
         try {
             if(isPlaying() || isPause())
-                setIntensity(intensity);
+                setIntensity((intensity-0.5)/0.5);
         }catch (Exception e){}
     }
 

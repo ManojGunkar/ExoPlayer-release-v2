@@ -794,7 +794,11 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+
+
         PlayerEventHandler.getPlayerEventInstance(this).setIntensityValue(pref.getInt(INTENSITY_POSITION, 50)/(double)100);
+
+
     }
 
     @Override
