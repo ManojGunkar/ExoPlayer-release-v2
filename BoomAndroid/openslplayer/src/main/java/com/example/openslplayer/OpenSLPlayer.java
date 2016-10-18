@@ -265,7 +265,7 @@ public class OpenSLPlayer implements Runnable {
         int noOutputCounterLimit = 10;
 
         state.set(PlayerStates.PLAYING);
-//        updatePlayerEffect();
+        updatePlayerEffect();
         while (!sawOutputEOS && noOutputCounter < noOutputCounterLimit && !stop) {
 
             if(playerThread.isInterrupted()){
