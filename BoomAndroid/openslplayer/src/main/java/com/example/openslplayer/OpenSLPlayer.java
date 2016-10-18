@@ -430,7 +430,7 @@ public class OpenSLPlayer implements Runnable {
 
     public native void setIntensity(double value);
 
-    public native void SetEqualizer(int id, double []bandGains);
+    public native void SetEqualizer(int id, float []bandGains);
 
     public native void SetSpeakerState(int speakerId, float value);
 

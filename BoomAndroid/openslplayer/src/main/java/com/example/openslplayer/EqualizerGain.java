@@ -10,8 +10,14 @@ import java.util.Map;
 public class EqualizerGain {
     private static Map<Integer, double[]> EQ_GAIN = new Hashtable<>();
 
-    public static double[] getEqGain(int equalizerId){
-        return EQ_GAIN.get(equalizerId);
+    public static float[] getEqGain(int equalizerId){
+        double[] gains = EQ_GAIN.get(equalizerId);
+        float[] floatGains = new float[gains.length];
+        for ( int i = 0; i < gains.length; i++ ){
+            floatGains[i] = (float) gains[i];
+        }
+
+        return floatGains;
     }
 
     public static int getEqualizerSize(){

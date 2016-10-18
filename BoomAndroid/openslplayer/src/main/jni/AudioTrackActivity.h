@@ -103,7 +103,7 @@ namespace android {
                                                                     jdouble value);
 
     void Java_com_example_openslplayer_OpenSLPlayer_SetEqualizer(JNIEnv *env, jobject instance, jint id,
-                                                                 jdoubleArray bandGains_);
+                                                                 jfloatArray bandGains_);
 
     void Java_com_example_openslplayer_OpenSLPlayer_SetSpeakerState(JNIEnv *env, jobject instance,
                                                                     jint speakerId, jfloat value);
