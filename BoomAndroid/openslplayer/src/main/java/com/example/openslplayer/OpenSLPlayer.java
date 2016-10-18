@@ -19,6 +19,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_POWER;
 import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_SETTING;
 import static com.example.openslplayer.AudioEffect.DEFAULT_POWER;
+import static com.example.openslplayer.AudioEffect.EFFECT_DEFAULT_POWER;
 import static com.example.openslplayer.AudioEffect.EQUALIZER_POSITION;
 import static com.example.openslplayer.AudioEffect.EQUALIZER_POWER;
 import static com.example.openslplayer.AudioEffect.FULL_BASS;
@@ -453,7 +454,7 @@ public class OpenSLPlayer implements Runnable {
     public static native boolean readAsset(AssetManager mgr);
 
     public void updatePlayerEffect(){
-        boolean isAudioEffect = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
+        boolean isAudioEffect = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
             setEnableEffect(isAudioEffect);
         boolean is3DAudio = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
         setEnable3DAudio(is3DAudio);
