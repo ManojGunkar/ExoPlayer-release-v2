@@ -562,9 +562,9 @@ public class OpenSLPlayer implements Runnable {
     }
 
     public void setHighQualityEnable(boolean highQualityEnable) {
-        try {
-            if(isPlaying() || isPause())
-                setHighQualityEnable(highQualityEnable);
-        }catch (Exception e){}
+//        try {
+//            if(isPlaying() || isPause())
+//                setHighQualityEnable(highQualityEnable);
+//        }catch (Exception e){}
     }
 }
