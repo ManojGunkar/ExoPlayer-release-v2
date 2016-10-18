@@ -128,17 +128,12 @@ public class OpenSLPlayer implements Runnable {
     public synchronized void syncNotify() {
         notify();
     }
-    public void stop() {
 
-        if(state.get() != PlayerStates.PAUSED) {
-            doStop();
-        }else{
-            play();
-            doStop();
+    public void stop(){
+        if(state.get() == PlayerStates.PAUSED) {
+            state.set(PlayerStates.PLAYING);
+            syncNotify();
         }
-    }
-
-    private void doStop(){
         stop = true;
         try {
             playerThread.join();
@@ -328,7 +323,7 @@ public class OpenSLPlayer implements Runnable {
                 if (chunk.length > 0) {
 
                     int i = 0;
-                    while (i != chunk.length) {
+                    while (i != chunk.length && !stop) {
 
                         i += write(chunk, i, chunk.length);
                     }
