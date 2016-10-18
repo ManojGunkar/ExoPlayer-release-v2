@@ -518,7 +518,7 @@ namespace android {
     void Java_com_example_openslplayer_OpenSLPlayer_enableSuperBass(JNIEnv *env, jobject instance,
                                                                jboolean enable) {
 
-        audioEngine->SetSuperBass(true);
+        audioEngine->SetSuperBass(enable);
 
     }
 
