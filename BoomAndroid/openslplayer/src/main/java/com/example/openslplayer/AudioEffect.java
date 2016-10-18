@@ -13,6 +13,7 @@ public class AudioEffect {
 
     public static boolean POWER_ON = true;
     public static boolean POWER_OFF = false;
+    public static boolean DEFAULT_POWER = true;
 
     public static int SPEAKER_COUNT = 6;
 

@@ -18,6 +18,7 @@ import java.nio.ByteBuffer;
 import static android.content.Context.MODE_PRIVATE;
 import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_POWER;
 import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_SETTING;
+import static com.example.openslplayer.AudioEffect.DEFAULT_POWER;
 import static com.example.openslplayer.AudioEffect.EQUALIZER_POSITION;
 import static com.example.openslplayer.AudioEffect.EQUALIZER_POWER;
 import static com.example.openslplayer.AudioEffect.FULL_BASS;
@@ -264,7 +265,7 @@ public class OpenSLPlayer implements Runnable {
         int noOutputCounterLimit = 10;
 
         state.set(PlayerStates.PLAYING);
-        updatePlayerEffect();
+//        updatePlayerEffect();
         while (!sawOutputEOS && noOutputCounter < noOutputCounterLimit && !stop) {
 
             if(playerThread.isInterrupted()){
@@ -452,51 +453,57 @@ public class OpenSLPlayer implements Runnable {
     public static native boolean readAsset(AssetManager mgr);
 
     public void updatePlayerEffect(){
-        boolean isAudioEffect = pref.getBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
+        boolean isAudioEffect = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
             setEnableEffect(isAudioEffect);
-        boolean is3DAudio = pref.getBoolean(THREE_D_SURROUND_POWER, POWER_OFF);
+        boolean is3DAudio = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
         setEnable3DAudio(is3DAudio);
-        boolean isIntensity = pref.getBoolean(INTENSITY_POWER, POWER_OFF);
+        boolean isIntensity = pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER);
         if(isIntensity){
-            setIntensity(pref.getInt(INTENSITY_POSITION, 50)/100);
+            setIntensity(pref.getInt(INTENSITY_POSITION, 50)/(double)100);
         }
-        boolean isEqualizer = pref.getBoolean(EQUALIZER_POWER, POWER_OFF);
+        boolean isEqualizer = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
         setEnableEqualizer(isEqualizer);
-        boolean isFullBass = pref.getBoolean(FULL_BASS, POWER_OFF);
+        boolean isFullBass = pref.getBoolean(FULL_BASS, DEFAULT_POWER);
         setEnableSuperBass(isFullBass);
         int eq = pref.getInt(SELECTED_EQUALIZER_POSITION, EQUALIZER_POSITION);
         setEqualizerGain(eq);
 
-        if(pref.getBoolean(SPEAKER_LEFT_FRONT, POWER_OFF) == POWER_OFF){
+        if(pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_OFF){
             setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_OFF);
-        }else if(pref.getBoolean(SPEAKER_LEFT_FRONT, POWER_OFF) == POWER_ON){
+        }else if(pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_ON){
             setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_ON);
         }
-        if(pref.getBoolean(SPEAKER_RIGHT_FRONT, POWER_OFF) == POWER_OFF){
+        if(pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_OFF){
             setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_OFF);
-        }else if(pref.getBoolean(SPEAKER_RIGHT_FRONT, POWER_OFF) == POWER_ON){
-            setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_OFF);
+        }else if(pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_ON){
+            setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_ON);
         }
-        if(pref.getBoolean(SPEAKER_TWEETER, POWER_OFF) == POWER_OFF){
+        if(pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_OFF){
             setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_OFF);
-        }else if(pref.getBoolean(SPEAKER_TWEETER, POWER_OFF) == POWER_ON){
-            setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_OFF);
+        }else if(pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_ON){
+            setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_ON);
         }
-        if(pref.getBoolean(SPEAKER_LEFT_SURROUND, POWER_OFF) == POWER_OFF){
+        if(pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_OFF){
             setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_OFF);
-        }else if(pref.getBoolean(SPEAKER_LEFT_SURROUND, POWER_OFF) == POWER_ON){
-            setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_OFF);
+        }else if(pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_ON){
+            setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_ON);
         }
-        if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, POWER_OFF) == POWER_OFF){
+        if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_OFF){
             setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_OFF);
-        }else if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, POWER_OFF) == POWER_ON){
-            setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_OFF);
+        }else if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_ON){
+            setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_ON);
         }
-        if(pref.getBoolean(SPEAKER_SUB_WOOFER, POWER_OFF) == POWER_OFF){
+        if(pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_OFF){
             setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_OFF);
-        }else if(pref.getBoolean(SPEAKER_SUB_WOOFER, POWER_OFF) == POWER_ON){
-            setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_OFF);
+        }else if(pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_ON){
+            setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_ON);
         }
+        if(pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER) == POWER_OFF){
+            setHighQualityEnable(POWER_OFF);
+        }else if(pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER) == POWER_ON){
+            setHighQualityEnable(POWER_ON);
+        }
+
     }
 
 
@@ -551,6 +558,13 @@ public class OpenSLPlayer implements Runnable {
         try {
             if(isPlaying() || isPause())
                 SetSpeakerState(speaker.ordinal(), value == true ? 1 : 0);
+        }catch (Exception e){}
+    }
+
+    public void setHighQualityEnable(boolean highQualityEnable) {
+        try {
+            if(isPlaying() || isPause())
+                setHighQualityEnable(highQualityEnable);
         }catch (Exception e){}
     }
 }

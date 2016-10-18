@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -43,6 +42,7 @@ import java.util.List;
 
 import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_POWER;
 import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_SETTING;
+import static com.example.openslplayer.AudioEffect.DEFAULT_POWER;
 import static com.example.openslplayer.AudioEffect.EQUALIZER_POSITION;
 import static com.example.openslplayer.AudioEffect.EQUALIZER_POWER;
 import static com.example.openslplayer.AudioEffect.FULL_BASS;
@@ -186,21 +186,11 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        editor = pref.edit();
-        if(isChecked){
-            editor.putBoolean(AUDIO_EFFECT_POWER, POWER_ON);
-        }else{
-            editor.putBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
-        }
-        editor.commit();
-        onPowerSwitchUpdate();
-        update3DSurround();
-        updateIntensity();
-        updateEqualizer();
+
     }
 
     public void onPowerSwitchUpdate(){
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
         if(isPowerOn) {
             mEffectSwitchTxt.setText("on");
             /*mEffectPowerBtn.setChecked(true);*/
@@ -215,12 +205,11 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             mEffectSwitchTxt.setTextColor(Color.WHITE);
             collapse();
         }
-        PlayerEventHandler.getPlayerEventInstance(this).setEffectEnable(isPowerOn);
     }
 
     public void update3DSurround(){
-        boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, POWER_OFF);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
+        boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
 
         if(isPowerOn && is3DOn){
             m3DSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_surround, null));
@@ -240,15 +229,15 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void updateSpeakerInfo(){
-        boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, POWER_OFF);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
+        boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
 
-        boolean isLeftFront = pref.getBoolean(SPEAKER_LEFT_FRONT, POWER_OFF);
-        boolean isRightFront = pref.getBoolean(SPEAKER_RIGHT_FRONT, POWER_OFF);
-        boolean isLeftSurround = pref.getBoolean(SPEAKER_LEFT_SURROUND, POWER_OFF);
-        boolean isRightSurround = pref.getBoolean(SPEAKER_RIGHT_SURROUND, POWER_OFF);
-        boolean isWoofer = pref.getBoolean(SPEAKER_SUB_WOOFER, POWER_OFF);
-        boolean isTweeter = pref.getBoolean(SPEAKER_TWEETER, POWER_OFF);
+        boolean isLeftFront = pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER);
+        boolean isRightFront = pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER);
+        boolean isLeftSurround = pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER);
+        boolean isRightSurround = pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER);
+        boolean isWoofer = pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER);
+        boolean isTweeter = pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER);
         if(isPowerOn && is3DOn) {
             if(isLeftFront && isRightFront && isLeftSurround && isRightSurround && isWoofer && isTweeter){
                 mSpeakerInfo.setVisibility(View.GONE);// All Speakers are on
@@ -285,9 +274,9 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void updateFullBass(){
-        boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, POWER_OFF);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
-        boolean isFullBassOn = pref.getBoolean(FULL_BASS, POWER_OFF);
+        boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
+        boolean isFullBassOn = pref.getBoolean(FULL_BASS, DEFAULT_POWER);
 
         if(is3DOn && isPowerOn){
             if(isFullBassOn){
@@ -304,40 +293,39 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             }
             mFullbassTxt.setTextColor(Color.WHITE);
         }
-        PlayerEventHandler.getPlayerEventInstance(this).setSuperBassEnable(isFullBassOn);
     }
 
     public void updateSpeakers(){
-        if(pref.getBoolean(SPEAKER_LEFT_FRONT, POWER_OFF) == POWER_OFF){
+        if(pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_OFF){
             mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.off_left_front, null));
-        }else if(pref.getBoolean(SPEAKER_LEFT_FRONT, POWER_OFF) == POWER_ON){
+        }else if(pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_ON){
             mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.on_left_front, null));
         }
-        if(pref.getBoolean(SPEAKER_RIGHT_FRONT, POWER_OFF) == POWER_OFF){
+        if(pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_OFF){
             mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.off_right_front, null));
-        }else if(pref.getBoolean(SPEAKER_RIGHT_FRONT, POWER_OFF) == POWER_ON){
+        }else if(pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_ON){
             mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.on_right_front, null));
         }
-        if(pref.getBoolean(SPEAKER_TWEETER, POWER_OFF) == POWER_OFF){
+        if(pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_OFF){
             mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.off_lefttweeter, null));
             mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.off_righttweeter, null));
-        }else if(pref.getBoolean(SPEAKER_TWEETER, POWER_OFF) == POWER_ON){
+        }else if(pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_ON){
             mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.on_lefttweeter, null));
             mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.on_righttweeter, null));
         }
-        if(pref.getBoolean(SPEAKER_LEFT_SURROUND, POWER_OFF) == POWER_OFF){
+        if(pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_OFF){
             mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_left_surround, null));
-        }else if(pref.getBoolean(SPEAKER_LEFT_SURROUND, POWER_OFF) == POWER_ON){
+        }else if(pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_ON){
             mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_left_surround, null));
         }
-        if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, POWER_OFF) == POWER_OFF){
+        if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_OFF){
             mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_right_surround, null));
-        }else if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, POWER_OFF) == POWER_ON){
+        }else if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_ON){
             mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_right_surround, null));
         }
-        if(pref.getBoolean(SPEAKER_SUB_WOOFER, POWER_OFF) == POWER_OFF){
+        if(pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_OFF){
             mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.off_subwoofer, null));
-        }else if(pref.getBoolean(SPEAKER_SUB_WOOFER, POWER_OFF) == POWER_ON){
+        }else if(pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_ON){
             mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.on_subwoofer, null));
         }
         if(MusicReceiver.isPlugged){
@@ -348,8 +336,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void updateIntensity(){
-        boolean isIntensityOn = pref.getBoolean(INTENSITY_POWER, POWER_OFF);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
+        boolean isIntensityOn = pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
 
         if(isPowerOn && isIntensityOn){
             mIntensitySwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.intensity, null));
@@ -357,13 +345,11 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             mIntensitySwitchTxt.setTextColor(Color.WHITE);
             mIntensityTxt.setTextColor(Color.WHITE);
             EnableSeek(true);
-//            mIntensitySeek.setEnabled(true);
         }else{
             mIntensitySwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.intensity_off, null));
             mIntensitySwitchTxt.setText("OFF");
             mIntensitySwitchTxt.setTextColor(Color.WHITE);
             mIntensityTxt.setTextColor(Color.WHITE);
-//            mIntensitySeek.setEnabled(false);
             EnableSeek(false);
         }
         mIntensitySeek.setProgress(pref.getInt(INTENSITY_POSITION, 50));
@@ -383,8 +369,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void updateEqualizer(){
-        boolean isEqualizerOn = pref.getBoolean(EQUALIZER_POWER, POWER_OFF);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
+        boolean isEqualizerOn = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
 
         if(isPowerOn && isEqualizerOn){
             mEqualizerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.equalizer, null));
@@ -403,39 +389,42 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void switch3DSurround(boolean isPowerOn){
         if(isPowerOn) {
-            boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, POWER_OFF);
+            boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
             editor = pref.edit();
             if (is3DOn) {
                 editor.putBoolean(THREE_D_SURROUND_POWER, POWER_OFF);
+                PlayerEventHandler.getPlayerEventInstance(this).set3DAudioEnable(POWER_OFF);
                 collapse();
             } else {
                 editor.putBoolean(THREE_D_SURROUND_POWER, POWER_ON);
+                PlayerEventHandler.getPlayerEventInstance(this).set3DAudioEnable(POWER_ON);
             }
             editor.commit();
             update3DSurround();
-            PlayerEventHandler.getPlayerEventInstance(this).set3DAudioEnable(!is3DOn);
-            if(pref.getBoolean(INTENSITY_POWER, POWER_OFF) == POWER_OFF){
+            if(pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER) == POWER_OFF){
                 switchIntensity(isPowerOn);
             }
-            if(pref.getBoolean(EQUALIZER_POWER, POWER_OFF) == POWER_OFF){
+            if(pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER) == POWER_OFF){
                 switchEqualizer(isPowerOn);
             }
         }
     }
 
     public void switchIntensity(boolean isPowerOn){
-        if((pref.getBoolean(THREE_D_SURROUND_POWER, POWER_OFF) == POWER_ON) &&
-                pref.getBoolean(INTENSITY_POWER, POWER_OFF) == POWER_ON){
+        if((pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER) == POWER_ON) &&
+                pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER) == POWER_ON){
             onTextViewTurn(mIntensityIndicator);
             return;
         }
         if(isPowerOn) {
-            boolean isIntensityOn = pref.getBoolean(INTENSITY_POWER, POWER_OFF);
+            boolean isIntensityOn = pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER);
             editor = pref.edit();
             if (isIntensityOn) {
                 editor.putBoolean(INTENSITY_POWER, POWER_OFF);
+                PlayerEventHandler.getPlayerEventInstance(this).setHighQualityEnable(POWER_OFF);
             } else {
                 editor.putBoolean(INTENSITY_POWER, POWER_ON);
+                PlayerEventHandler.getPlayerEventInstance(this).setHighQualityEnable(POWER_ON);
             }
             editor.commit();
             updateIntensity();
@@ -443,33 +432,36 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void switchEqualizer(boolean isPowerOn){
-        if((pref.getBoolean(THREE_D_SURROUND_POWER, POWER_OFF) == POWER_ON) &&
-                pref.getBoolean(EQUALIZER_POWER, POWER_OFF) == POWER_ON){
+        if((pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER) == POWER_ON) &&
+                pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER) == POWER_ON){
             onTextViewTurn(mEqualizerIndicator);
             return;
         }
         if(isPowerOn) {
-            boolean isEqualizerOn = pref.getBoolean(EQUALIZER_POWER, POWER_OFF);
+            boolean isEqualizerOn = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
             editor = pref.edit();
             if (isEqualizerOn) {
                 editor.putBoolean(EQUALIZER_POWER, POWER_OFF);
+                PlayerEventHandler.getPlayerEventInstance(this).setEqualizerEnable(POWER_OFF);
             } else {
                 editor.putBoolean(EQUALIZER_POWER, POWER_ON);
+                PlayerEventHandler.getPlayerEventInstance(this).setEqualizerEnable(POWER_ON);
             }
             editor.commit();
             updateEqualizer();
-            PlayerEventHandler.getPlayerEventInstance(this).setEqualizerEnable(!isEqualizerOn);
         }
     }
 
     public void switchSuperPass(boolean isPowerOn){
-        boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, POWER_OFF);
+        boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
         if(isPowerOn && is3DOn) {
             editor = pref.edit();
-            if(pref.getBoolean(FULL_BASS, POWER_OFF) == POWER_ON){
+            if(pref.getBoolean(FULL_BASS, DEFAULT_POWER) == POWER_ON){
                 editor.putBoolean(FULL_BASS, POWER_OFF);
+                PlayerEventHandler.getPlayerEventInstance(this).setSuperBassEnable(POWER_OFF);
             }else{
                 editor.putBoolean(FULL_BASS, POWER_ON);
+                PlayerEventHandler.getPlayerEventInstance(this).setSuperBassEnable(POWER_ON);
             }
             editor.commit();
             updateFullBass();
@@ -478,16 +470,16 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
+        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, DEFAULT_POWER);
         switch (v.getId()){
             case R.id.effect_switch_panel:
                 editor = pref.edit();
                 if(isPowerOn){
                     editor.putBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
-//                    m3DSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.toggle_off, null));
+                    PlayerEventHandler.getPlayerEventInstance(this).setEffectEnable(POWER_OFF);
                 }else{
                     editor.putBoolean(AUDIO_EFFECT_POWER, POWER_ON);
-//                    m3DSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.toggle_on, null));
+                    PlayerEventHandler.getPlayerEventInstance(this).setEffectEnable(POWER_ON);
                 }
                 editor.commit();
                 onPowerSwitchUpdate();
@@ -508,8 +500,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 switchSuperPass(isPowerOn);
                 break;
             case R.id.speaker_switch_btn:
-                boolean isSpeakerOn = pref.getBoolean(SPEAKER_POWER, POWER_OFF);
-                boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, POWER_OFF);
+                boolean isSpeakerOn = pref.getBoolean(SPEAKER_POWER, DEFAULT_POWER);
+                boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
                 if(isPowerOn && is3DOn) {
                     if(isExpended){
                         collapse();
@@ -521,13 +513,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
             case R.id.speaker_left_front:
-                if (pref.getBoolean(SPEAKER_LEFT_FRONT, POWER_OFF) == POWER_ON) {
+                if (pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_ON) {
                     mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.off_left_front, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_LEFT_FRONT, POWER_OFF);
                     editor.commit();
                     PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_OFF);
-                } else /*if (pref.getBoolean(SPEAKER_LEFT_FRONT, POWER_OFF) == POWER_OFF)*/ {
+                } else /*if (pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_OFF)*/ {
                     mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.on_left_front, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_LEFT_FRONT, POWER_ON);
@@ -537,13 +529,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 updateSpeakerInfo();
                 break;
             case R.id.speaker_right_front:
-                if (pref.getBoolean(SPEAKER_RIGHT_FRONT, POWER_OFF) == POWER_ON) {
+                if (pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_ON) {
                     mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.off_right_front, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_RIGHT_FRONT, POWER_OFF);
                     editor.commit();
                     PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_OFF);
-                } else /*if (pref.getBoolean(SPEAKER_RIGHT_FRONT, POWER_OFF) == POWER_OFF)*/ {
+                } else /*if (pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_OFF)*/ {
                     mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.on_right_front, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_RIGHT_FRONT, POWER_ON);
@@ -554,14 +546,14 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.speaker_left_tweeter:
             case R.id.speaker_right_tweeter:
-                if (pref.getBoolean(SPEAKER_TWEETER, POWER_OFF) == POWER_ON) {
+                if (pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_ON) {
                     mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.off_lefttweeter, null));
                     mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.off_righttweeter, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_TWEETER, POWER_OFF);
                     editor.commit();
                     PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_OFF);
-                } else /*if (pref.getBoolean(SPEAKER_TWEETER, POWER_OFF) == POWER_OFF)*/ {
+                } else /*if (pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_OFF)*/ {
                     mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.on_lefttweeter, null));
                     mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.on_righttweeter, null));
                     editor = pref.edit();
@@ -572,13 +564,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 updateSpeakerInfo();
                 break;
             case R.id.speaker_left_surround:
-                if (pref.getBoolean(SPEAKER_LEFT_SURROUND, POWER_OFF) == POWER_ON) {
+                if (pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_ON) {
                     mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_left_surround, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_LEFT_SURROUND, POWER_OFF);
                     editor.commit();
                     PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_OFF);
-                } else /*if (pref.getBoolean(SPEAKER_LEFT_SURROUND, POWER_OFF) == POWER_OFF)*/ {
+                } else /*if (pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_OFF)*/ {
                     mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_left_surround, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_LEFT_SURROUND, POWER_ON);
@@ -588,13 +580,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 updateSpeakerInfo();
                 break;
             case R.id.speaker_right_surround:
-                if (pref.getBoolean(SPEAKER_RIGHT_SURROUND, POWER_OFF) == POWER_ON) {
+                if (pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_ON) {
                     mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_right_surround, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_RIGHT_SURROUND, POWER_OFF);
                     editor.commit();
                     PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_OFF);
-                } else /*if (pref.getBoolean(SPEAKER_RIGHT_SURROUND, POWER_OFF) == POWER_OFF)*/ {
+                } else /*if (pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_OFF)*/ {
                     mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_right_surround, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_RIGHT_SURROUND, POWER_ON);
@@ -604,13 +596,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 updateSpeakerInfo();
                 break;
             case R.id.speaker_sub_woofer:
-                if (pref.getBoolean(SPEAKER_SUB_WOOFER, POWER_OFF) == POWER_ON) {
+                if (pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_ON) {
                     mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.off_subwoofer, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_SUB_WOOFER, POWER_OFF);
                     editor.commit();
                     PlayerEventHandler.getPlayerEventInstance(this).setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_OFF);
-                } else /*if (pref.getBoolean(SPEAKER_SUB_WOOFER, POWER_OFF) == POWER_OFF)*/ {
+                } else /*if (pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_OFF)*/ {
                     mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.on_subwoofer, null));
                     editor = pref.edit();
                     editor.putBoolean(SPEAKER_SUB_WOOFER, POWER_ON);
@@ -717,7 +709,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         collapsablelayout.measure(widthSpec, heightSpec);
         int height = collapsablelayout.getMeasuredHeight();
-        Log.d("Height : ", ""+height);
+        //Log.d("Height : ", ""+height);
 
         ValueAnimator mAnimator = slideAnimator(0, height);
         mAnimator.start();
@@ -790,7 +782,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         mIntensitySeek.setProgress(pref.getInt(INTENSITY_POSITION, 50));
         editor.putInt(INTENSITY_POSITION, progress);
         editor.commit();
-        PlayerEventHandler.getPlayerEventInstance(this).setIntensityValue(progress/100);
+        PlayerEventHandler.getPlayerEventInstance(this).setIntensityValue(progress/(double)100);
     }
 
     @Override

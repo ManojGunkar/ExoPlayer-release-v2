@@ -209,4 +209,8 @@ public class PlayerEventHandler implements QueueEvent {
     public void setSpeakerEnable(AudioEffect.Speaker speaker, boolean enable) {
         mPlayer.setSpeakerEnable(speaker, enable);
     }
+
+    public void setHighQualityEnable(boolean highQualityEnable) {
+        mPlayer.setHighQualityEnable(highQualityEnable);
+    }
 }
