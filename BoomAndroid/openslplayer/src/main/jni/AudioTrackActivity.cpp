@@ -537,12 +537,12 @@ namespace android {
     }
 
     void Java_com_example_openslplayer_OpenSLPlayer_SetEqualizer(JNIEnv *env, jobject instance, jint id,
-                                                            jdoubleArray bandGains_) {
-        jdouble *bandGains = env->GetDoubleArrayElements(bandGains_, NULL);
+                                                            jfloatArray bandGains_) {
+        jfloat *bandGains = env->GetFloatArrayElements(bandGains_, NULL);
 
         audioEngine->SetEqualizer(id, (float *) bandGains);
 
-        env->ReleaseDoubleArrayElements(bandGains_, bandGains, 0);
+        env->ReleaseFloatArrayElements(bandGains_, bandGains, 0);
     }
 
     void Java_com_example_openslplayer_OpenSLPlayer_SetSpeakerState(JNIEnv *env, jobject instance,
