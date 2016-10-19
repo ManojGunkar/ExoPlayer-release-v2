@@ -52,7 +52,7 @@ public class PlayerEventHandler implements QueueEvent {
     }
 
     @Override
-    public void onPlayingItemChanged() {
+    public synchronized void onPlayingItemChanged() {
 
         if(isPlaying() || mPlayer.isPause())
             mPlayer.stop();
@@ -61,12 +61,22 @@ public class PlayerEventHandler implements QueueEvent {
             mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
             mPlayer.play();
         }
-        if (playerUIEvent != null)
+        if (playerUIEvent != null) {
             uiHandler.post(new Runnable() {
-                @Override public void run() {
+                @Override
+                public void run() {
                     playerUIEvent.updateUI();
                 }
             });
+        }
+        if (queueUIEvent != null) {
+            uiHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    queueUIEvent.onQueueUiUpdated();
+                }
+            });
+        }
     }
 
     @Override

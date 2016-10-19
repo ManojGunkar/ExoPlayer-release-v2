@@ -137,9 +137,7 @@ public class PlayingQueue {
 
     public void addHistoryItemToPlay(int position){
         IMediaItemBase item = playingQueue.get(History).get(position);
-        if(playingQueue.get(Playing).size()>0){
-            addItemToHistory(playingQueue.get(Playing).remove(0));
-        }
+        addPlayingItemToHistory();
         playingQueue.get(Playing).add(item);
         removeHistoryItem(item);
         PlayingItemChanged();
@@ -148,14 +146,12 @@ public class PlayingQueue {
     public void addPlayingItemToHistory(){
         if(playingQueue.get(Playing).size()>0){
             addItemToHistory(playingQueue.get(Playing).remove(0));
+            playingQueue.get(Playing).clear();
         }
-        QueueUpdated();
     }
 
     public void addUpNextToPlay(int position, QueueType queueType){
-        if(playingQueue.get(Playing).size()>0){
-            addItemToHistory(playingQueue.get(Playing).remove(0));
-        }
+        addPlayingItemToHistory();
         if(queueType == Auto_UpNext){
             playingQueue.get(Playing).add(playingQueue.get(Auto_UpNext).remove(position));
         }else{//Manual_UpNext
@@ -164,20 +160,20 @@ public class PlayingQueue {
         PlayingItemChanged();
     }
 
-    public void addMediaItemToPlay(IMediaItemBase item){
+    public synchronized void addMediaItemToPlay(IMediaItemBase item){
         if(playingQueue.get(Playing).size() > 0){
             if(playingQueue.get(Playing).get(0).getItemId() != item.getItemId()) {
-                addItemToHistory(playingQueue.get(Playing).remove(0));
+                addPlayingItemToHistory();
                 playingQueue.get(Playing).add(item);
                 PlayingItemChanged();
             }else{
                 PlayPause();
+                QueueUpdated();
             }
         }else {
             playingQueue.get(Playing).add(item);
             PlayingItemChanged();
         }
-        QueueUpdated();
     }
 
     public void addMediaItemToAutoUpNext(IMediaItemBase item){
@@ -256,9 +252,7 @@ public class PlayingQueue {
 
 
     public IMediaItemBase getNextPlayingItem() {
-        if(playingQueue.get(Playing).size()>0){
-            addItemToHistory(playingQueue.get(Playing).remove(0));
-        }
+        addPlayingItemToHistory();
         if(null != getManualUpNextList() && getManualUpNextList().size()>0){
             playingQueue.get(Playing).add(playingQueue.get(Manual_UpNext).remove(0));
         }else if(null != getAutoUpNextList() && getAutoUpNextList().size()>0){
