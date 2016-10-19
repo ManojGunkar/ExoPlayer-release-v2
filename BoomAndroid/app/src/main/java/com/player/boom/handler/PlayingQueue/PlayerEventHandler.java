@@ -61,22 +61,12 @@ public class PlayerEventHandler implements QueueEvent {
             mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
             mPlayer.play();
         }
-        if (playerUIEvent != null) {
+        if (playerUIEvent != null)
             uiHandler.post(new Runnable() {
-                @Override
-                public void run() {
+                @Override public void run() {
                     playerUIEvent.updateUI();
                 }
             });
-        }
-        if (queueUIEvent != null) {
-            uiHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    queueUIEvent.onQueueUiUpdated();
-                }
-            });
-        }
     }
 
     @Override
@@ -117,11 +107,11 @@ public class PlayerEventHandler implements QueueEvent {
         }
         @Override public void onStart(String mime, int sampleRate, int channels, long duration) {
             if (playerUIEvent != null)
-                uiHandler.post(new Runnable() {
+                uiHandler.postDelayed(new Runnable() {
                     @Override public void run() {
                         playerUIEvent.updateUI();
                     }
-                });
+                }, 80);
         }
         @Override public void onPlayUpdate(final int percent, final long currentms, final long totalms) {
             if (playerUIEvent != null)
@@ -138,6 +128,7 @@ public class PlayerEventHandler implements QueueEvent {
             if(null != playingItem) {
                 mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
                 mPlayer.play();
+                onQueueUpdated();
             }else {
                 if (playerUIEvent != null) {
                     uiHandler.post(new Runnable() {
@@ -166,7 +157,7 @@ public class PlayerEventHandler implements QueueEvent {
         if(isPlaying()){
             mPlayer.pause();
             return 0;
-        } else/* if(mPlayer.isPause())*/{
+        } else /*if(mPlayer.isPause())*/{
             mPlayer.play();
             return 1;
         }
@@ -217,9 +208,5 @@ public class PlayerEventHandler implements QueueEvent {
 
     public void setHighQualityEnable(boolean highQualityEnable) {
         mPlayer.setHighQualityEnable(highQualityEnable);
-    }
-
-    public void enableDebug(boolean enable) {
-//        mPlayer.enableAudioEffectDebug(enable);
     }
 }
