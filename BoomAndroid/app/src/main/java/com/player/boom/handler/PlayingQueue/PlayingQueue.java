@@ -8,6 +8,7 @@ import android.util.Log;
 import com.player.boom.App;
 import com.player.boom.data.DeviceMediaCollection.MediaItem;
 import com.player.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.player.boom.data.MediaCollection.IMediaItem;
 import com.player.boom.data.MediaCollection.IMediaItemBase;
 import com.player.boom.data.MediaLibrary.ItemType;
 import com.player.boom.data.MediaLibrary.MediaController;
@@ -127,20 +128,25 @@ public class PlayingQueue {
 
     public void addItemToHistory(IMediaItemBase item){
         MediaController.getInstance(context).addSongsToList(ISHISTORY, item);
+        invalidateHistory();
     }
 
     public void removeHistoryItem(IMediaItemBase item){
         MediaController.getInstance(context).removeItemToList(ISHISTORY, item.getItemId());
+        invalidateHistory();
+    }
+
+    public void clearPlayingItem(){
+        if(playingQueue.get(Playing) != null){
+            playingQueue.get(Playing).clear();
+        }
     }
 
     public void addHistoryItemToPlay(int position){
         IMediaItemBase item = playingQueue.get(History).get(position);
-        if(playingQueue.get(Playing).size()>0){
-            addItemToHistory(playingQueue.get(Playing).remove(0));
-        }
+        addPlayingItemToHistory();
         playingQueue.get(Playing).add(item);
         removeHistoryItem(item);
-        invalidateHistory();
         PlayingItemChanged();
     }
 
@@ -148,14 +154,11 @@ public class PlayingQueue {
         if(playingQueue.get(Playing).size()>0){
             addItemToHistory(playingQueue.get(Playing).remove(0));
         }
-        invalidateHistory();
-        QueueUpdated();
+        clearPlayingItem();
     }
 
     public void addUpNextToPlay(int position, QueueType queueType){
-        if(playingQueue.get(Playing).size()>0){
-            addItemToHistory(playingQueue.get(Playing).remove(0));
-        }
+        addPlayingItemToHistory();
         if(queueType == Auto_UpNext){
             playingQueue.get(Playing).add(playingQueue.get(Auto_UpNext).remove(position));
         }else{//Manual_UpNext
@@ -165,19 +168,20 @@ public class PlayingQueue {
     }
 
     public void addMediaItemToPlay(IMediaItemBase item){
+        Log.d("Playing","Size : "+playingQueue.get(Playing).size());
         if(playingQueue.get(Playing).size() > 0){
             if(playingQueue.get(Playing).get(0).getItemId() != item.getItemId()) {
-                addItemToHistory(playingQueue.get(Playing).remove(0));
+                addPlayingItemToHistory();
                 playingQueue.get(Playing).add(item);
                 PlayingItemChanged();
             }else{
                 PlayPause();
+                QueueUpdated();
             }
         }else {
             playingQueue.get(Playing).add(item);
             PlayingItemChanged();
         }
-        QueueUpdated();
     }
 
     public void addMediaItemToAutoUpNext(IMediaItemBase item){
@@ -256,15 +260,13 @@ public class PlayingQueue {
 
 
     public IMediaItemBase getNextPlayingItem() {
-        if(playingQueue.get(Playing).size()>0){
-            addItemToHistory(playingQueue.get(Playing).remove(0));
-        }
+        addPlayingItemToHistory();
         if(null != getManualUpNextList() && getManualUpNextList().size()>0){
             playingQueue.get(Playing).add(playingQueue.get(Manual_UpNext).remove(0));
         }else if(null != getAutoUpNextList() && getAutoUpNextList().size()>0){
             playingQueue.get(Playing).add(playingQueue.get(Auto_UpNext).remove(0));
         }
-
+        PlayingItemChanged();
         return getPlayingItem();
     }
 }
