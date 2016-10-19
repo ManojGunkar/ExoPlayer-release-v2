@@ -106,7 +106,7 @@ namespace android {
             pthread_mutex_lock(&lock);
             if (mBuffer != NULL) {
                 free(mBuffer);
-                mBuffer == NULL;
+                mBuffer = NULL;
             }
             if (mOutputBuffer != NULL) {
                 free(mOutputBuffer);
@@ -134,9 +134,7 @@ namespace android {
             while (isPlay) {
                 //ALOGD("Enqueue : RingBufferSize : %d", ringBuffer->GetReadAvail());
                 if ( ringBuffer->GetReadAvail()>0 ) {
-
                     memset(mResampleBuffer, 0, FRAME_COUNT * CHANNEL_COUNT * sizeof(int32_t));
-                    memset(mBuffer, 0, FRAME_COUNT * CHANNEL_COUNT * sizeof(int16_t));
                     audioResampler->resample(mResampleBuffer, FRAME_COUNT, ringBuffer);
                     ditherAndClamp((int32_t*)mBuffer, mResampleBuffer, FRAME_COUNT);
 
