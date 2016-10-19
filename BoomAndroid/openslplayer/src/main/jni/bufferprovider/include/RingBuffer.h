@@ -24,6 +24,8 @@ namespace android {
 
         int GetSize();
 
+        void UnblockWrite();
+
         int GetWriteAvail();
 
         int GetReadAvail();
@@ -34,7 +36,7 @@ namespace android {
 
     private:
         pthread_mutex_t mutex;
-        //pthread_cond_t _cond;
+        pthread_cond_t _writeCond;
         jbyte *_data;
         int _size;
         int _readPtr;

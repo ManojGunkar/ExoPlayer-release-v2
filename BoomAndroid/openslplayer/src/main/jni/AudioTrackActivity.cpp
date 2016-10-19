@@ -348,10 +348,10 @@ namespace android {
 
         int written = 0;
         //ALOGD("Enter into Write Method");
-        if (ringBuffer->GetWriteAvail() > 0) {
-
+        SLuint32 state;
+        (*bqPlayerPlay)->GetPlayState(bqPlayerPlay, &state);
+        if ( state == SL_PLAYSTATE_PLAYING) {
             written = ringBuffer->Write(sData, offset, frameCount);
-            //ALOGD("Write data on Ring Buffer : %d", written);
         }
 
         if (!mThread->isPlay) {
@@ -380,6 +380,9 @@ namespace android {
             assert(SL_RESULT_SUCCESS == result);
             (void) result;
             playState = SL_PLAYSTATE_PAUSED;
+            if ( ringBuffer != nullptr ) {
+                ringBuffer->UnblockWrite();
+            }
             //ALOGD("playState = SL_PLAYSTATE_PAUSED");
         } else if (playState == SL_PLAYSTATE_PAUSED && enable) {
             result = (*bqPlayerPlay)->SetPlayState(bqPlayerPlay, SL_PLAYSTATE_PLAYING);
@@ -405,6 +408,10 @@ namespace android {
     }
 
     void stopPlayer(jboolean enable){
+        if ( ringBuffer != nullptr ) {
+            ringBuffer->UnblockWrite();
+        }
+
         while (ringBuffer->GetReadAvail()) {
                     //ALOGE("Not Stopped...!");
             if(!enable)

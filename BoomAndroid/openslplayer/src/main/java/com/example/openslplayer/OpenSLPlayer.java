@@ -175,261 +175,217 @@ public class OpenSLPlayer implements Runnable {
     @Override
     public void run() {
         android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
-        try {
-            Thread.sleep(10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        try {
-            // extractor gets information about the stream
-            extractor = new MediaExtractor();
-            // try to set the source, this might fail
-            try {
-                if (sourcePath != null) extractor.setDataSource(this.sourcePath);
-                if (sourceRawResId != -1) {
-                    AssetFileDescriptor fd = mContext.getResources().openRawResourceFd(sourceRawResId);
-                    extractor.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getDeclaredLength());
-                    fd.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                //Log.e(LOG_TAG, "exception:"+e.getMessage());
-                if (events != null) handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        events.onError();
-                    }
-                });
-                return;
-            }
 
-            // Read track header
-            MediaFormat format = null;
-            try {
-                format = extractor.getTrackFormat(0);
+        // extractor gets information about the stream
+        extractor = new MediaExtractor();
+        // try to set the source, this might fail
+        try {
+            if (sourcePath != null) extractor.setDataSource(this.sourcePath);
+            if (sourceRawResId != -1) {
+                AssetFileDescriptor fd = mContext.getResources().openRawResourceFd(sourceRawResId);
+                extractor.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getDeclaredLength());
+                fd.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            //Log.e(LOG_TAG, "exception:"+e.getMessage());
+            if (events != null) handler.post(new Runnable() { @Override public void run() { events.onError();  } });
+            return;
+        }
+
+        // Read track header
+        MediaFormat format = null;
+        try {
+            format = extractor.getTrackFormat(0);
 
 //            format.setInteger(MediaFormat.KEY_SAMPLE_RATE, 44100);
 //            format.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 2);
 //            format.setInteger(MediaFormat.KEY_BIT_RATE, 96000);
 
-                mime = format.getString(MediaFormat.KEY_MIME);
-                sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
-                channels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
-                // if duration is 0, we are probably playing a live stream
-                duration = format.getLong(MediaFormat.KEY_DURATION);
-                bitrate = format.getInteger(MediaFormat.KEY_BIT_RATE);
+            mime = format.getString(MediaFormat.KEY_MIME);
+            sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
+            channels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
+            // if duration is 0, we are probably playing a live stream
+            duration = format.getLong(MediaFormat.KEY_DURATION);
+            bitrate = format.getInteger(MediaFormat.KEY_BIT_RATE);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Reading format parameters exception:"+e.getMessage());
+            // don't exit, tolerate this error, we'll fail later if this is critical
+        }
+        Log.d(LOG_TAG, "Track info: mime:" + mime + " sampleRate:" + sampleRate + " channels:" + channels + " bitrate:" + bitrate + " duration:" + duration);
+
+        // check we have audio content we know
+        if (format == null || !mime.startsWith("audio/")) {
+            if (events != null) handler.post(new Runnable() { @Override public void run() { events.onError();  } });
+            return;
+        }
+        // create the actual decoder, using the mime to select
+        try {
+            codec = MediaCodec.createDecoderByType(mime);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // check we have a valid codec instance
+        if (codec == null) {
+            if (events != null) handler.post(new Runnable() { @Override public void run() { events.onError();  } });
+            return;
+        }
+
+        //state.set(PlayerStates.PAUSED);
+        if (events != null)
+            handler.post(new Runnable() {
+                @Override public void run() {
+                    events.onStart(mime, sampleRate, channels, duration);
+                }
+            });
+
+        codec.configure(format, null, null, 0);
+        codec.start();
+        ByteBuffer[] codecInputBuffers  = codec.getInputBuffers();
+        ByteBuffer[] codecOutputBuffers = codec.getOutputBuffers();
+
+        // configure OpenSLPlayer
+        createEngine(mContext.getAssets());
+        createAudioPlayer(1024*1024, sampleRate, channels);
+
+        extractor.selectTrack(0);
+
+        // start decoding
+        final long kTimeOutUs = 1000;
+        MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
+        boolean sawInputEOS = false;
+        boolean sawOutputEOS = false;
+        int noOutputCounter = 0;
+        int noOutputCounterLimit = 10;
+
+        state.set(PlayerStates.PLAYING);
+        updatePlayerEffect();
+        while (!sawOutputEOS && noOutputCounter < noOutputCounterLimit && !stop) {
+
+            if(playerThread.isInterrupted()){
+                return;
+            }
+
+            // pause implementation
+            waitPlay();
+
+            noOutputCounter++;
+            // read a buffer before feeding it to the decoder
+            if (!sawInputEOS) {
+                int inputBufIndex = codec.dequeueInputBuffer(kTimeOutUs);
+                if (inputBufIndex >= 0) {
+                    ByteBuffer dstBuf = codecInputBuffers[inputBufIndex];
+                    int sampleSize = extractor.readSampleData(dstBuf, 0);
+                    if (sampleSize < 0) {
+                        //Log.d(LOG_TAG, "saw input EOS. Stopping playback");
+                        sawInputEOS = true;
+                        sampleSize = 0;
+                    } else {
+                        presentationTimeUs = extractor.getSampleTime();
+                        final int percent = (duration == 0) ? 0 : (int) (100 * presentationTimeUs / duration);
+                        Log.d("Finish", "" + percent);
+                        if (events != null) handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                events.onPlayUpdate(percent, presentationTimeUs / 1000, duration / 1000);
+                            }
+                        });
+                    }
+
+                    codec.queueInputBuffer(inputBufIndex, 0, sampleSize, presentationTimeUs, sawInputEOS ? MediaCodec.BUFFER_FLAG_END_OF_STREAM : 0);
+
+                    if (!sawInputEOS) extractor.advance();
+
+                } else {
+                    //Log.e(LOG_TAG, "inputBufIndex " +inputBufIndex);
+                }
+            } // !sawInputEOS
+
+            // decode to PCM and push it to the OpenSLPlayer player
+            int res = 0;
+            try {
+                res = codec.dequeueOutputBuffer(info, kTimeOutUs);
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.e(LOG_TAG, "Reading format parameters exception:" + e.getMessage());
-                // don't exit, tolerate this error, we'll fail later if this is critical
             }
-            Log.d(LOG_TAG, "Track info: mime:" + mime + " sampleRate:" + sampleRate + " channels:" + channels + " bitrate:" + bitrate + " duration:" + duration);
+            if (res >= 0) {
+                if (info.size > 0) noOutputCounter = 0;
 
-            // check we have audio content we know
-            if (format == null || !mime.startsWith("audio/")) {
-                if (events != null) handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        events.onError();
+                int outputBufIndex = res;
+                ByteBuffer buf = codecOutputBuffers[outputBufIndex];
+
+                final byte[] chunk = new byte[info.size];
+                buf.get(chunk);
+                buf.clear();
+
+                if (chunk.length > 0) {
+
+                    int i = 0;
+                    while (i != chunk.length && !stop && state.get() == PlayerStates.PLAYING) {
+                        i += write(chunk, i, chunk.length);
                     }
-                });
-                return;
-            }
-            // create the actual decoder, using the mime to select
-            try {
-                codec = MediaCodec.createDecoderByType(mime);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            // check we have a valid codec instance
-            if (codec == null) {
-                if (events != null) handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        events.onError();
-                    }
-                });
-                return;
-            }
 
-            //state.set(PlayerStates.PAUSED);
-            if (events != null)
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        events.onStart(mime, sampleRate, channels, duration);
-                    }
-                });
-
-            codec.configure(format, null, null, 0);
-            codec.start();
-            ByteBuffer[] codecInputBuffers = codec.getInputBuffers();
-            ByteBuffer[] codecOutputBuffers = codec.getOutputBuffers();
-
-            // configure OpenSLPlayer
-            createEngine(mContext.getAssets());
-            createAudioPlayer(1024 * 1024, sampleRate, channels);
-
-            extractor.selectTrack(0);
-
-            // start decoding
-            final long kTimeOutUs = 1000;
-            MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
-            boolean sawInputEOS = false;
-            boolean sawOutputEOS = false;
-            int noOutputCounter = 0;
-            int noOutputCounterLimit = 10;
-
-            state.set(PlayerStates.PLAYING);
-            updatePlayerEffect();
-            while (!sawOutputEOS && noOutputCounter < noOutputCounterLimit && !stop) {
-
-                if (playerThread.isInterrupted()) {
-                    return;
                 }
-
-                // pause implementation
-                waitPlay();
-
-                noOutputCounter++;
-                // read a buffer before feeding it to the decoder
-                if (!sawInputEOS) {
-                    int inputBufIndex = codec.dequeueInputBuffer(kTimeOutUs);
-                    if (inputBufIndex >= 0) {
-                        ByteBuffer dstBuf = codecInputBuffers[inputBufIndex];
-                        int sampleSize = extractor.readSampleData(dstBuf, 0);
-                        if (sampleSize < 0) {
-                            //Log.d(LOG_TAG, "saw input EOS. Stopping playback");
-                            sawInputEOS = true;
-                            sampleSize = 0;
-                        } else {
-                            presentationTimeUs = extractor.getSampleTime();
-                            final int percent = (duration == 0) ? 0 : (int) (100 * presentationTimeUs / duration);
-                            Log.d("Finish", "" + percent);
-                            if (events != null) handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    events.onPlayUpdate(percent, presentationTimeUs / 1000, duration / 1000);
-                                }
-                            });
-                        }
-
-                        codec.queueInputBuffer(inputBufIndex, 0, sampleSize, presentationTimeUs, sawInputEOS ? MediaCodec.BUFFER_FLAG_END_OF_STREAM : 0);
-
-                        if (!sawInputEOS) extractor.advance();
-
-                    } else {
-                        //Log.e(LOG_TAG, "inputBufIndex " +inputBufIndex);
-                    }
-                } // !sawInputEOS
-
-                // decode to PCM and push it to the OpenSLPlayer player
-                int res = 0;
                 try {
-                    res = codec.dequeueOutputBuffer(info, kTimeOutUs);
+                    codec.releaseOutputBuffer(outputBufIndex, false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (res >= 0) {
-                    if (info.size > 0) noOutputCounter = 0;
-
-                    int outputBufIndex = res;
-                    ByteBuffer buf = codecOutputBuffers[outputBufIndex];
-
-                    final byte[] chunk = new byte[info.size];
-                    buf.get(chunk);
-                    buf.clear();
-
-                    if (chunk.length > 0) {
-
-                        int i = 0;
-                        while (i != chunk.length && !stop) {
-
-                            i += write(chunk, i, chunk.length);
-                        }
-
-                    }
-                    try {
-                        codec.releaseOutputBuffer(outputBufIndex, false);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
+                if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
 //                    Log.d(LOG_TAG, "saw output EOS.");
-                        sawOutputEOS = true;
-                    }
-                } else if (res == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                    codecOutputBuffers = codec.getOutputBuffers();
-//                Log.d(LOG_TAG, "output buffers have changed.");
-                } else if (res == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                    MediaFormat oformat = codec.getOutputFormat();
-//                Log.d(LOG_TAG, "output format has changed to " + oformat);
-                } else {
-//                Log.d(LOG_TAG, "dequeueOutputBuffer returned " + res);
+                    sawOutputEOS = true;
                 }
-            }
-
-            //Log.d(LOG_TAG, "stopping...");
-
-            if (codec != null) {
-                codec.stop();
-                codec.release();
-                codec = null;
-            }
-        /*Stop player*/
-            boolean isShutdown = false;
-            if (stop) {
-                isShutdown = shutdown(false);//STOP
+            } else if (res == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
+                codecOutputBuffers = codec.getOutputBuffers();
+//                Log.d(LOG_TAG, "output buffers have changed.");
+            } else if (res == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                MediaFormat oformat = codec.getOutputFormat();
+//                Log.d(LOG_TAG, "output format has changed to " + oformat);
             } else {
-                isShutdown = shutdown(true);// FINISH
-                if (isShutdown)
-                    isFinish = true;
+//                Log.d(LOG_TAG, "dequeueOutputBuffer returned " + res);
             }
-            // clear source and the other globals
-            sourcePath = null;
-            sourceRawResId = -1;
-            duration = 0;
-            mime = null;
-            sampleRate = 0;
-            channels = 0;
-            bitrate = 0;
-            presentationTimeUs = 0;
-            duration = 0;
+        }
+
+        //Log.d(LOG_TAG, "stopping...");
+
+        if(codec != null) {
+            codec.stop();
+            codec.release();
+            codec = null;
+        }
+        /*Stop player*/
+        boolean isShutdown = false;
+        if(stop) {
+            isShutdown = shutdown(false);//STOP
+        }else{
+            isShutdown = shutdown(true);// FINISH
+            if(isShutdown)
+                isFinish = true;
+        }
+        // clear source and the other globals
+        sourcePath = null;
+        sourceRawResId = -1;
+        duration = 0;
+        mime = null;
+        sampleRate = 0; channels = 0; bitrate = 0;
+        presentationTimeUs = 0; duration = 0;
 
 
-            state.set(PlayerStates.STOPPED);
-            stop = true;
+        state.set(PlayerStates.STOPPED);
+        stop = true;
 
-            if (noOutputCounter >= noOutputCounterLimit) {
-                if (events != null) handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        events.onError();
-                    }
-                });
-            } else if (isShutdown && isFinish) {
-                if (events != null) handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        events.onFinish();
-                    }
-                });
-            } else if (isShutdown && !isFinish) {
-                if (events != null) handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        events.onStop();
-                    }
-                });
-            }
-        }catch (IllegalStateException e){
-            e.printStackTrace();
+        if(noOutputCounter >= noOutputCounterLimit) {
+            if (events != null) handler.post(new Runnable() { @Override public void run() { events.onError();  } });
+        } else if(isShutdown && isFinish){
+            if (events != null) handler.post(new Runnable() { @Override public void run() { events.onFinish();  } });
+        } else if(isShutdown && !isFinish){
+            if (events != null) handler.post(new Runnable() { @Override public void run() { events.onStop();  } });
         }
     }
 
     public void SupportedCodec() {
-
         String results = "";
         int numCodecs = MediaCodecList.getCodecCount();
         for (int i = 0; i < numCodecs; i++) {

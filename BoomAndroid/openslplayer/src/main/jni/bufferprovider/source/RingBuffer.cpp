@@ -18,21 +18,33 @@ namespace android {
 
 
         pthread_mutex_init(&mutex, NULL);
-        //pthread_cond_init(&_cond, NULL);
+        pthread_cond_init(&_writeCond, NULL);
     }
 
     RingBuffer::~RingBuffer() {
         delete[] _data;
         delete[] _tempBuffer;
+        pthread_cond_destroy(&_writeCond);
     }
 
 // Set all data to 0 and flag buffer as empty.
     bool RingBuffer::Empty(void) {
+        pthread_mutex_lock(&mutex);
         memset(_data, 0, _size);
         _readPtr = 0;
         _writePtr = 0;
         _writeBytesAvail = _size;
+        pthread_cond_signal(&_writeCond);
+        pthread_mutex_unlock(&mutex);
         return true;
+    }
+
+
+    void RingBuffer::UnblockWrite()
+    {
+        pthread_mutex_lock(&mutex);
+        pthread_cond_signal(&_writeCond);
+        pthread_mutex_unlock(&mutex);
     }
 
     int RingBuffer::Read(jbyte *dataPtr, int numBytes) {
@@ -63,6 +75,7 @@ namespace android {
         _readPtr = (_readPtr + numBytes) % _size;
         _writeBytesAvail += numBytes;
 
+        pthread_cond_signal(&_writeCond);
         pthread_mutex_unlock(&mutex);
         return numBytes;
     }
@@ -72,6 +85,9 @@ namespace android {
     int RingBuffer::Write(jbyte *dataPtr, jint offset, jint numBytes) {
         pthread_mutex_lock(&mutex);
 
+        if (dataPtr == 0 || (numBytes - offset) <= 0 || _writeBytesAvail < numBytes) {
+            pthread_cond_wait(&_writeCond, &mutex);
+        }
 
         // If there's nothing to write or no room available, we can't write anything.
         if (dataPtr == 0 || (numBytes - offset) <= 0 || _writeBytesAvail == 0) {
