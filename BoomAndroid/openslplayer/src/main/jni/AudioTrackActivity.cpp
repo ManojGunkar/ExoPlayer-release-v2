@@ -20,16 +20,10 @@ namespace android {
 
 // output mix interfaces
     static SLObjectItf outputMixObject = NULL;
-    static SLEnvironmentalReverbItf outputMixEnvironmentalReverb = NULL;
-    static SLEqualizerItf outputMixEqualizer = NULL;
-// aux effect on the output mix, used by the buffer queue player
-    static SLEnvironmentalReverbSettings reverbSettings =
-            SL_I3DL2_ENVIRONMENT_PRESET_STONECORRIDOR;
 // buffer queue player interfaces
     static SLObjectItf bqPlayerObject = NULL;
     static SLPlayItf bqPlayerPlay;
     static SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue;
-    static SLEffectSendItf bqPlayerEffectSend;
     static SLVolumeItf bqPlayerVolume;
     static PlaybackThread *mThread;
     static RingBuffer *ringBuffer;
@@ -206,9 +200,9 @@ namespace android {
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
-        const SLInterfaceID ids[2] = {SL_IID_ENVIRONMENTALREVERB, SL_IID_EQUALIZER};
-        const SLboolean req[2] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE};
-        result = (*engineEngine)->CreateOutputMix(engineEngine, &outputMixObject, 2, ids, req);
+        const SLInterfaceID ids[2] = {};
+        const SLboolean req[] = {};
+        result = (*engineEngine)->CreateOutputMix(engineEngine, &outputMixObject, 0, nullptr, nullptr);
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
@@ -216,21 +210,6 @@ namespace android {
         result = (*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE);
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
-
-        result = (*outputMixObject)->GetInterface(outputMixObject, SL_IID_ENVIRONMENTALREVERB,
-                                                  &outputMixEnvironmentalReverb);
-        if (SL_RESULT_SUCCESS == result) {
-            reverbSettings = SL_I3DL2_ENVIRONMENT_PRESET_LARGEHALL;
-            result = (*outputMixEnvironmentalReverb)->SetEnvironmentalReverbProperties(
-                    outputMixEnvironmentalReverb, &reverbSettings);
-            (void)result;
-        }
-
-        result = (*outputMixObject)->GetInterface(outputMixObject, SL_IID_EQUALIZER, &outputMixEqualizer );
-
-        if (SL_RESULT_SUCCESS == result) {
-            (void)result;
-        }
     }
 
 /*
@@ -245,7 +224,7 @@ namespace android {
         SLresult result;
         // configure audio source
         SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE,
-                                                           8};
+                                                           4};
 
         SLAndroidDataFormat_PCM_EX format_pcm = {SL_ANDROID_DATAFORMAT_PCM_EX, 2, SL_SAMPLINGRATE_44_1,
                                                  SL_PCMSAMPLEFORMAT_FIXED_32, SL_PCMSAMPLEFORMAT_FIXED_32,
@@ -264,11 +243,11 @@ namespace android {
         SLDataSink audioSnk = {&loc_outmix, NULL};
 
         // create audio player
-        const SLInterfaceID ids[3] = { SL_IID_BUFFERQUEUE, SL_IID_EFFECTSEND, SL_IID_VOLUME };
-        const SLboolean req[3] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
+        const SLInterfaceID ids[3] = { SL_IID_BUFFERQUEUE, SL_IID_VOLUME };
+        const SLboolean req[3] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
 
         result = (*engineEngine)->CreateAudioPlayer(engineEngine, &bqPlayerObject, &audioSrc,
-                                                    &audioSnk, 3, ids, req);
+                                                    &audioSnk, 2, ids, req);
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
@@ -302,11 +281,6 @@ namespace android {
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
-        // get the effect send interface
-        result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_EFFECTSEND, &bqPlayerEffectSend);
-        assert(SL_RESULT_SUCCESS == result);
-        (void) result;
-
         // get the volume interface
         result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_VOLUME, &bqPlayerVolume);
         assert(SL_RESULT_SUCCESS == result);
@@ -314,10 +288,6 @@ namespace android {
 
         /* Before we start set volume to -3dB (-300mB) and enable equalizer */
         result = (*bqPlayerVolume)->SetVolumeLevel(bqPlayerVolume, -300);
-        assert(SL_RESULT_SUCCESS == result);
-        (void) result;
-
-        result = (*outputMixEqualizer)->SetEnabled(outputMixEqualizer, SL_BOOLEAN_TRUE);
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
@@ -457,8 +427,6 @@ namespace android {
         if (outputMixObject != NULL) {
             (*outputMixObject)->Destroy(outputMixObject);
             outputMixObject = NULL;
-            outputMixEqualizer = NULL;
-            outputMixEnvironmentalReverb = NULL;
         }
 
         // destroy engine object, and invalidate all associated interfaces
