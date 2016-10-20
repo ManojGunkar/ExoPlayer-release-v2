@@ -259,7 +259,7 @@ public class OpenSLPlayer implements Runnable {
 
         // configure OpenSLPlayer
         createEngine(mContext.getAssets());
-        createAudioPlayer(1024*1024, sampleRate, channels);
+        createAudioPlayer(256*1024, sampleRate, channels);
 
         extractor.selectTrack(0);
 
@@ -472,8 +472,6 @@ public class OpenSLPlayer implements Runnable {
 
     public static native void setMutAudioPlayer(boolean mute);
 
-    public static native boolean readAsset(AssetManager mgr);
-
     public void updatePlayerEffect(){
         boolean isAudioEffect = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
             setEnableEffect(isAudioEffect);
@@ -527,7 +525,6 @@ public class OpenSLPlayer implements Runnable {
                 setHighQualityEnable(POWER_ON);
             }
         }
-
     }
 
 

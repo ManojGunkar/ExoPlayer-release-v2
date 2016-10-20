@@ -76,12 +76,11 @@ namespace android {
         int32_t* mResampleBuffer;
         jbyte *mBuffer;
         uint8_t *mOutputBuffer;
-        size_t mSize;
         pthread_mutex_t lock;
 
     public:
         bool isPlay = false;
-        PlaybackThread() : mBuffer(NULL), mSize(0) {
+        PlaybackThread() : mBuffer(NULL) {
             mBuffer = (jbyte *) malloc(FRAME_COUNT * CHANNEL_COUNT * sizeof(int16_t));
             mOutputBuffer = (uint8_t *) malloc(FRAME_COUNT * CHANNEL_COUNT * sizeof(float));
             mResampleBuffer = new int32_t[FRAME_COUNT * CHANNEL_COUNT];
@@ -121,13 +120,9 @@ namespace android {
 
         void enqueueBuffer() {
             pthread_mutex_lock(&lock);
-            if (bqPlayerBufferQueue == NULL) {
-                pthread_mutex_unlock(&lock);
-                return;
-            }
-            while (isPlay) {
+            if (bqPlayerBufferQueue != NULL && isPlay ) {
                 //ALOGD("Enqueue : RingBufferSize : %d", ringBuffer->GetReadAvail());
-                if ( ringBuffer->GetReadAvail()>0 ) {
+                if ( ringBuffer->GetReadAvail() > 0 ) {
                     memset(mResampleBuffer, 0, FRAME_COUNT * CHANNEL_COUNT * sizeof(int32_t));
                     audioResampler->resample(mResampleBuffer, FRAME_COUNT, ringBuffer);
                     ditherAndClamp((int32_t*)mBuffer, mResampleBuffer, FRAME_COUNT);
@@ -138,18 +133,12 @@ namespace android {
                     // enqueue another buffer
                     SLresult result = (*bqPlayerBufferQueue)->Enqueue(bqPlayerBufferQueue, mOutputBuffer, bufferSize);
                     if (result == SL_RESULT_BUFFER_INSUFFICIENT) {
-                                //ALOGD("Enqueue : false");
+                        //ALOGD("Enqueue : false");
                         isPlay = false;
-                        return;
-                    } else {
-                                //ALOGD("Enqueue : true");
                     }
-                    break;
                 } else {
-                            //ALOGD("Enqueue : Ring Buffer Empty");
+                    //ALOGD("Enqueue : Ring Buffer Empty");
                     isPlay = false;
-                    pthread_mutex_unlock(&lock);
-                    return;
                 }
             }
             pthread_mutex_unlock(&lock);
@@ -166,12 +155,6 @@ namespace android {
             }
         }
     };
-
-    static void *thread_proc(void *x) {
-        PlaybackThread *playbackThread = (PlaybackThread *) x;
-        playbackThread->start();
-        pthread_exit(NULL);
-    }
 
 /*
  * Class:     com_example_openslplayer_OpenSLPlayer
@@ -324,8 +307,7 @@ namespace android {
 
         if (!mThread->isPlay) {
             mThread->isPlay = true;
-            pthread_t thread;
-            pthread_create(&thread, NULL, thread_proc, mThread);
+            mThread->enqueueBuffer();
         }
 
 
@@ -443,25 +425,6 @@ namespace android {
  * Method:    readAsset
  * Signature: (L)Z
  */
-    jboolean Java_com_example_openslplayer_OpenSLPlayer_readAsset(JNIEnv *env, jclass type,
-                                                                  jobject manager) {
-
-        AAssetManager *mgr = AAssetManager_fromJava(env, manager);
-        const char imageFilename[] = "README.txt";
-        AAsset *asset = AAssetManager_open(mgr, imageFilename,
-                                           AASSET_MODE_UNKNOWN);
-        if (NULL == asset) {
-                    //ALOGE("ASSERT_MANAGER", "_ASSET_NOT_FOUND_");
-            return JNI_FALSE;
-        }
-        long size = AAsset_getLength(asset);
-        char *buffer = (char *) malloc(sizeof(char) * size);
-        AAsset_read(asset, buffer, size);
-                //ALOGD("ASSERT_MANAGER", buffer);
-        //delete[] buffer;
-        AAsset_close(asset);
-        return JNI_TRUE;
-    }
 
     void Java_com_example_openslplayer_OpenSLPlayer_setVolumeAudioPlayer(JNIEnv *, jclass, jint) {
 

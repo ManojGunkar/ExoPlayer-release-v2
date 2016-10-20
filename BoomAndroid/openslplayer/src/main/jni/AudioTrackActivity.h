@@ -82,8 +82,6 @@ namespace android {
     jboolean Java_com_example_openslplayer_OpenSLPlayer_shutdown
             (JNIEnv *, jclass, jboolean);
 
-    jboolean Java_com_example_openslplayer_OpenSLPlayer_readAsset(JNIEnv *, jclass, jobject);
-
     void Java_com_example_openslplayer_OpenSLPlayer_enableAudioEffect(JNIEnv *env, jclass clazz,
                                                                   jboolean enabled);
 
