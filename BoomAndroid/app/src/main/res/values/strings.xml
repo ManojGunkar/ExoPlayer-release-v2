@@ -14,8 +14,8 @@
 
     <string name="History">History</string>
     <string name="Playing">Playing</string>
-    <string name="up_next_auto">Up Next Auto</string>
-    <string name="up_next_manual">Up Next - Manual</string>
+    <string name="up_next_auto">Next From</string>
+    <string name="up_next_manual">Up Next</string>
 
     <string name="added_to_playlist">Added to playlist</string>
     <string name="rename">Rename</string>
