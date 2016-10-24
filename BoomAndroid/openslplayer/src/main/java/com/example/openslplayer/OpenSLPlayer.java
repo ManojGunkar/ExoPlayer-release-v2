@@ -304,7 +304,6 @@ public class OpenSLPlayer implements Runnable {
                     } else {
                         presentationTimeUs = extractor.getSampleTime();
                         final int percent = (duration == 0) ? 0 : (int) (100 * presentationTimeUs / duration);
-                        Log.d("Finish", "" + percent);
                         if (events != null) handler.post(new Runnable() {
                             @Override
                             public void run() {
