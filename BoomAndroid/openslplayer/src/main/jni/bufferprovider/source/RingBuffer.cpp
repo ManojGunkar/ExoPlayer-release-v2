@@ -1,4 +1,5 @@
 #include <android/log.h>
+#include <Utilities/AutoLock.hpp>
 #include "../include/RingBuffer.h"
 #include "../../logger/log.h"
 
@@ -29,13 +30,12 @@ namespace android {
 
 // Set all data to 0 and flag buffer as empty.
     bool RingBuffer::Empty(void) {
-        pthread_mutex_lock(&mutex);
+        gdpl::AutoLock lock(&mutex);
         memset(_data, 0, _size);
         _readPtr = 0;
         _writePtr = 0;
         _writeBytesAvail = _size;
         pthread_cond_signal(&_writeCond);
-        pthread_mutex_unlock(&mutex);
         return true;
     }
 
@@ -83,7 +83,7 @@ namespace android {
 // Write to the ring buffer.  Do not overwrite data that has not yet
 // been read.
     int RingBuffer::Write(jbyte *dataPtr, jint offset, jint numBytes) {
-        pthread_mutex_lock(&mutex);
+        gdpl::AutoLock lock(&mutex);
 
         if (dataPtr == 0 || (numBytes - offset) <= 0 || _writeBytesAvail < numBytes) {
             pthread_cond_wait(&_writeCond, &mutex);
@@ -91,7 +91,6 @@ namespace android {
 
         // If there's nothing to write or no room available, we can't write anything.
         if (dataPtr == 0 || (numBytes - offset) <= 0 || _writeBytesAvail == 0) {
-            pthread_mutex_unlock(&mutex);
             return 0;
         }
 
@@ -115,7 +114,6 @@ namespace android {
         _writeBytesAvail -= numBytes;
 
         //pthread_cond_signal(&_cond);
-        pthread_mutex_unlock(&mutex);
         return numBytes;
     }
 
@@ -147,6 +145,7 @@ namespace android {
 //        pthread_mutex_unlock(&mutex);
 
         if ( this->GetReadAvail() <  requestedBytes ) {
+            LOGD("RingBuffer::getNextBuffer not enough data");
             requestedBytes = this->GetReadAvail();
             buffer->frameCount = this->GetReadAvail() / bytesPerFrame;
         }
