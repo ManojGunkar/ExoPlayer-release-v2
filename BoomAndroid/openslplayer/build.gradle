@@ -14,11 +14,12 @@ model {
             moduleName = 'AudioTrackActivity'
             toolchain = 'clang'
             stl       = 'c++_static'
-            CFlags.addAll(['-std=c99','-O2','-mfpu=neon'])
+            CFlags.addAll(['-std=c99'])
             /*stl       = 'gnustl_shared'*/
             /*cppFlags.addAll(['-I' + "${ndkDir}/sources/android/cpufeatures",
                              '-I' + file('src/main/jni/ndk_helper')])*/
-            cppFlags.addAll(['-std=c++11', '-Wall',/*'-fexceptions', '-frtti'*/
+            cppFlags.addAll(['-I' + file('src/main/jni/'),
+                             '-std=c++11', '-Wall',/*'-fexceptions', '-frtti'*/
                              '-fno-exceptions', '-fno-rtti'])
             ldFlags.addAll(['-L' + file('src/main/jni/libs')])
             ldLibs.addAll(['android','OpenSLES', 'log', 'AudioCore', 'ffts'])
