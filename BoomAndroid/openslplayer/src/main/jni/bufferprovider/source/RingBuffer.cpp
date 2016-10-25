@@ -2,6 +2,7 @@
 #include <Utilities/AutoLock.hpp>
 #include "../include/RingBuffer.h"
 #include "../../logger/log.h"
+#include "Utilities/AutoLock.hpp"
 
 namespace gdpl {
 
@@ -50,10 +51,9 @@ namespace gdpl {
     }
 
     int RingBuffer::Read(jbyte *dataPtr, int numBytes) {
-        pthread_mutex_lock(&mutex);
+        AutoLock lock(&mutex);
         // If there's nothing to read or no data available, then we can't read anything.
         if (dataPtr == 0 || numBytes <= 0 || _writeBytesAvail == _size) {
-            pthread_mutex_unlock(&mutex);
             return 0;
         }
 
@@ -78,7 +78,6 @@ namespace gdpl {
         _writeBytesAvail += numBytes;
 
         pthread_cond_signal(&_writeCond);
-        pthread_mutex_unlock(&mutex);
         return numBytes;
     }
 
@@ -137,14 +136,6 @@ namespace gdpl {
         //ALOGD("getNextBuffer", "Requested Frames = %d", buffer->frameCount);
 
         int requestedBytes = buffer->frameCount * kBytesPerFrame;
-
-//  TODO: In some extreme cases we may have to wait for data
-//        pthread_mutex_lock(&mutex);
-//        if ( this->GetReadAvail() < requestedBytes  ) {
-//            pthread_cond_wait(&_cond, &mutex);
-//        }
-//        pthread_mutex_unlock(&mutex);
-
         if ( this->GetReadAvail() <  requestedBytes ) {
             LOGD("RingBuffer::getNextBuffer not enough data");
             requestedBytes = this->GetReadAvail();
@@ -161,7 +152,6 @@ namespace gdpl {
 
     void RingBuffer::releaseBuffer(Buffer* buffer)
     {
-        memset(buffer->raw, 0, buffer->frameCount * kBytesPerFrame);
         buffer->frameCount = 0;
         if(buffer->raw != NULL)
             buffer->raw = NULL;
