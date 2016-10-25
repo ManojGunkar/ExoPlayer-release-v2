@@ -100,6 +100,8 @@ namespace gdpl
             bqPlayerBufferQueue = NULL;
         //    bqPlayerVolume = NULL;
         }
+
+        return SL_RESULT_SUCCESS;
     }
 
 
@@ -131,6 +133,8 @@ namespace gdpl
         if ( SL_RESULT_SUCCESS == result ) {
             playState = SL_PLAYSTATE_PAUSED;
         }
+
+        return result;
     }
 
 
@@ -147,14 +151,19 @@ namespace gdpl
     SLresult OpenSLPlayer::setupEngine() {
         SLresult result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
         assert(SL_RESULT_SUCCESS == result);
+        (void)result;
 
         // realize the engine
         result = (*engineObject)->Realize(engineObject, SL_BOOLEAN_FALSE);
         assert(SL_RESULT_SUCCESS == result);
+        (void)result;
+
 
         // get the engine interface, which is needed in order to create other objects
         result = (*engineObject)->GetInterface(engineObject, SL_IID_ENGINE, &engineEngine);
         assert(SL_RESULT_SUCCESS == result);
+        (void)result;
+
 
         const SLInterfaceID ids[] = {};
         const SLboolean req[] = {};
@@ -163,6 +172,8 @@ namespace gdpl
         if (SL_RESULT_SUCCESS == result) {
             result = (*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE);
         }
+
+        return result;
     }
 
 
@@ -180,6 +191,8 @@ namespace gdpl
             engineObject = NULL;
             engineEngine = NULL;
         }
+
+        return SL_RESULT_SUCCESS;
     }
 
 

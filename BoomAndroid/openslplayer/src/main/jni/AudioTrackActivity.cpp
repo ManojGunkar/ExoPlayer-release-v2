@@ -289,6 +289,8 @@ namespace gdpl {
         openSLPlayer->tearDown();
         delete openSLPlayer;
 
+        OpenSLPlayer::tearDownEngine();
+
 //        destroy buffers
         delete mThread;
         mThread = NULL;
