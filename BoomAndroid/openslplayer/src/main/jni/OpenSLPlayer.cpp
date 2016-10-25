@@ -98,7 +98,7 @@ namespace gdpl
             bqPlayerObject = NULL;
             bqPlayerPlay = NULL;
             bqPlayerBufferQueue = NULL;
-            bqPlayerVolume = NULL;
+        //    bqPlayerVolume = NULL;
         }
     }
 

@@ -56,7 +56,7 @@ namespace gdpl {
         SLObjectItf bqPlayerObject;
         SLPlayItf bqPlayerPlay;
         SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue;
-        SLVolumeItf bqPlayerVolume;
+        //SLVolumeItf bqPlayerVolume;
         SLuint32 playState;
 
         IDataSource* _dataSource;
