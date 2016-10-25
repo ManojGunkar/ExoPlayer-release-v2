@@ -42,8 +42,10 @@ namespace android {
     static AudioEngine* GetEngine() {
         static AudioEngine* engine = nullptr;
         if ( nullptr == engine ) {
-            return engine;
+            engine = new AudioEngine(FRAME_COUNT);
         }
+
+        return engine;
     }
 
 
@@ -173,6 +175,8 @@ namespace android {
 
         globalJavaAssetManager = env->NewGlobalRef(assetManager);
         InitAssetManager(AAssetManager_fromJava(env, globalJavaAssetManager));
+
+        GetEngine()->ResetEngine();
 
 
         // create engine
