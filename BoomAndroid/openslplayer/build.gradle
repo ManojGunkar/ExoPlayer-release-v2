@@ -12,8 +12,8 @@ model {
         ndk {
             platformVersion = 23
             moduleName = 'AudioTrackActivity'
-            toolchain = 'clang'
-            stl       = 'c++_static'
+            toolchain = 'gcc'
+            stl       = 'stlport_static'
             CFlags.addAll(['-std=c99'])
             /*stl       = 'gnustl_shared'*/
             /*cppFlags.addAll(['-I' + "${ndkDir}/sources/android/cpufeatures",

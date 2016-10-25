@@ -176,7 +176,7 @@ public class OpenSLPlayer implements Runnable {
     public void run() {
         android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
             try{
-                Thread.sleep(10);
+                Thread.sleep(1000);
             }catch (InterruptedException e){
 
             }
@@ -378,10 +378,18 @@ public class OpenSLPlayer implements Runnable {
         if(codec != null) {
             try {
                 codec.stop();
-            }catch (IllegalStateException e){}
+            }catch (IllegalStateException e){
+
+            }
             codec.release();
             codec = null;
         }
+
+        if ( extractor != null ) {
+            extractor.release();
+            extractor = null;
+        }
+
         /*Stop player*/
         boolean isShutdown = false;
         if(stop) {

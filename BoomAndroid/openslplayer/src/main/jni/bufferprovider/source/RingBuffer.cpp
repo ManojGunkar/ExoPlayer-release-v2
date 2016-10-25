@@ -3,12 +3,14 @@
 #include "../include/RingBuffer.h"
 #include "../../logger/log.h"
 
-namespace android {
+namespace gdpl {
 
-    static const int32_t kTempBufferSize = 1024*1024;
+    static const int32_t kTempBufferSize = 1024*100;
+    static const int kBytesPerFrame =  sizeof(int16_t) * 2; // assume 2 channels - stereo
+
 
     RingBuffer::RingBuffer(int sizeBytes) {
-        _data = new jbyte[sizeBytes];
+        _data = new uint8_t[sizeBytes];
         memset(_data, 0, sizeBytes);
         _size = sizeBytes;
         _readPtr = 0;
@@ -30,7 +32,7 @@ namespace android {
 
 // Set all data to 0 and flag buffer as empty.
     bool RingBuffer::Empty(void) {
-        gdpl::AutoLock lock(&mutex);
+        AutoLock lock(&mutex);
         memset(_data, 0, _size);
         _readPtr = 0;
         _writePtr = 0;
@@ -134,8 +136,7 @@ namespace android {
 
         //ALOGD("getNextBuffer", "Requested Frames = %d", buffer->frameCount);
 
-        int bytesPerFrame =  sizeof(int16_t) * 2; // assume 2 channels - stereo
-        int requestedBytes = buffer->frameCount * bytesPerFrame;
+        int requestedBytes = buffer->frameCount * kBytesPerFrame;
 
 //  TODO: In some extreme cases we may have to wait for data
 //        pthread_mutex_lock(&mutex);
@@ -147,7 +148,7 @@ namespace android {
         if ( this->GetReadAvail() <  requestedBytes ) {
             LOGD("RingBuffer::getNextBuffer not enough data");
             requestedBytes = this->GetReadAvail();
-            buffer->frameCount = this->GetReadAvail() / bytesPerFrame;
+            buffer->frameCount = this->GetReadAvail() / kBytesPerFrame;
         }
 
         this->Read((jbyte*)_tempBuffer, requestedBytes);
@@ -160,9 +161,9 @@ namespace android {
 
     void RingBuffer::releaseBuffer(Buffer* buffer)
     {
+        memset(buffer->raw, 0, buffer->frameCount * kBytesPerFrame);
         buffer->frameCount = 0;
         if(buffer->raw != NULL)
             buffer->raw = NULL;
     };
-
 }

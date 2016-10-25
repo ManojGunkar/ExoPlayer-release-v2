@@ -17,7 +17,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-namespace android {
+namespace gdpl {
 /*
  * Class:     com_example_openslplayer_OpenSLPlayer
  * Method:    createEngine
