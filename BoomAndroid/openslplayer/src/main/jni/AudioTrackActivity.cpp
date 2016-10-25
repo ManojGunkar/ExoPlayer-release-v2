@@ -32,12 +32,19 @@ namespace android {
     static AudioResampler *audioResampler;
 
 //    static OpenSLEqualizer *openSLEqualizer;
-    static AudioEngine *audioEngine;
 
     static const uint16_t UNITY_GAIN = 0x1000;
     static const int32_t FRAME_COUNT = 2048;
     static const int32_t SAMPLE_RATE = 44100;
     static const int32_t CHANNEL_COUNT = 2;
+
+
+    static AudioEngine* GetEngine() {
+        static AudioEngine* engine = nullptr;
+        if ( nullptr == engine ) {
+            return engine;
+        }
+    }
 
 
 
@@ -127,7 +134,7 @@ namespace android {
                     audioResampler->resample(mResampleBuffer, FRAME_COUNT, ringBuffer);
                     ditherAndClamp((int32_t*)mBuffer, mResampleBuffer, FRAME_COUNT);
 
-                    audioEngine->ProcessAudio((short*)mBuffer, mOutputBuffer, FRAME_COUNT * CHANNEL_COUNT);
+                    GetEngine()->ProcessAudio((short*)mBuffer, mOutputBuffer, FRAME_COUNT * CHANNEL_COUNT);
                     int bufferSize = FRAME_COUNT * CHANNEL_COUNT * sizeof(float);
 
                     // enqueue another buffer
@@ -280,9 +287,6 @@ namespace android {
         (void) result;
         playState = SL_PLAYSTATE_PLAYING;
 
-        /*Iitialize AudioEngine*/
-        audioEngine = new AudioEngine(FRAME_COUNT);
-
         //ALOGD("createAudioPlayer finish");
         return true;
     }
@@ -401,10 +405,6 @@ namespace android {
         delete audioResampler;
         audioResampler = NULL;
 
-        if ( audioEngine != NULL ) {
-            delete audioEngine;
-        }
-
         // destroy output mix object, and invalidate all associated interfaces
         if (outputMixObject != NULL) {
             (*outputMixObject)->Destroy(outputMixObject);
@@ -436,39 +436,39 @@ namespace android {
 
     void Java_com_example_openslplayer_OpenSLPlayer_enableAudioEffect(JNIEnv *env, jclass clazz,
                                                                       jboolean enabled){
-        audioEngine->SetEffectsState(enabled);
+        GetEngine()->SetEffectsState(enabled);
 
     }
 
     void Java_com_example_openslplayer_OpenSLPlayer_enable3DAudio(JNIEnv *env, jclass clazz,
                                                                       jboolean enabled) {
-        audioEngine->Set3DAudioState(enabled);
+        GetEngine()->Set3DAudioState(enabled);
     }
 
     void Java_com_example_openslplayer_OpenSLPlayer_enableEqualizer(JNIEnv *env, jclass clazz,
                                                                         jboolean enabled) {
         /*openSLEqualizer->Enable(enabled);*/
-        audioEngine->SetEffectsState(enabled);
+        GetEngine()->SetEffectsState(enabled);
     }
 
     void Java_com_example_openslplayer_OpenSLPlayer_enableSuperBass(JNIEnv *env, jobject instance,
                                                                jboolean enable) {
 
-        audioEngine->SetSuperBass(enable);
+        GetEngine()->SetSuperBass(enable);
 
     }
 
     void Java_com_example_openslplayer_OpenSLPlayer_enableHighQuality(JNIEnv *env, jobject instance,
                                                                  jboolean enable) {
 
-        audioEngine->SetHighQuality(enable);
+        GetEngine()->SetHighQuality(enable);
 
     }
 
     void Java_com_example_openslplayer_OpenSLPlayer_setIntensity(JNIEnv *env, jobject instance,
                                                                  jdouble value) {
 
-        audioEngine->SetIntensity(value);
+        GetEngine()->SetIntensity(value);
 
     }
 
@@ -476,7 +476,7 @@ namespace android {
                                                             jfloatArray bandGains_) {
         jfloat *bandGains = env->GetFloatArrayElements(bandGains_, NULL);
 
-        audioEngine->SetEqualizer(id, (float *) bandGains);
+        GetEngine()->SetEqualizer(id, (float *) bandGains);
 
         env->ReleaseFloatArrayElements(bandGains_, bandGains, 0);
     }
@@ -484,36 +484,36 @@ namespace android {
     void Java_com_example_openslplayer_OpenSLPlayer_SetSpeakerState(JNIEnv *env, jobject instance,
                                                                jint speakerId, jfloat value) {
 
-        audioEngine->SetSpeakerState(SpeakerID(speakerId), value);
+        GetEngine()->SetSpeakerState(SpeakerID(speakerId), value);
     }
 
     jboolean Java_com_example_openslplayer_OpenSLPlayer_Get3DAudioState(JNIEnv *env, jobject instance) {
 
-        return audioEngine->Get3DAudioState();
+        return GetEngine()->Get3DAudioState();
 
     }
 
     jboolean Java_com_example_openslplayer_OpenSLPlayer_GetEffectsState(JNIEnv *env, jobject instance) {
 
-        return audioEngine->GetEffectsState();
+        return GetEngine()->GetEffectsState();
 
     }
 
     jboolean Java_com_example_openslplayer_OpenSLPlayer_GetIntensity(JNIEnv *env, jobject instance) {
 
-        return audioEngine->GetIntensity();
+        return GetEngine()->GetIntensity();
 
     }
 
     jint Java_com_example_openslplayer_OpenSLPlayer_GetEqualizerId(JNIEnv *env, jobject instance) {
 
-        return audioEngine->GetEqualizerId();
+        return GetEngine()->GetEqualizerId();
 
     }
 
     jfloat Java_com_example_openslplayer_OpenSLPlayer_GetSpeakerState(JNIEnv *env, jobject instance,
                                                                jint speakerId) {
 
-        return audioEngine->GetSpeakerState(SpeakerID(speakerId));
+        return GetEngine()->GetSpeakerState(SpeakerID(speakerId));
     }
 }

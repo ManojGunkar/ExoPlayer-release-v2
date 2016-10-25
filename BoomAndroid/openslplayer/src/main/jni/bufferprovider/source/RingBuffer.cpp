@@ -16,7 +16,7 @@ namespace android {
         _writeBytesAvail = sizeBytes;
 
         _tempBuffer = new uint16_t[kTempBufferSize];
-
+        memset(_tempBuffer, 0, kTempBufferSize * sizeof(uint16_t));
 
         pthread_mutex_init(&mutex, NULL);
         pthread_cond_init(&_writeCond, NULL);
