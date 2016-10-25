@@ -358,7 +358,7 @@ namespace gdpl {
         jfloat *bandGains = env->GetFloatArrayElements(bandGains_, NULL);
 
         gdpl::AutoLock lock(&engineLock);
-        //    GetEngine()->SetEqualizer(id, (float *) bandGains);
+        GetEngine()->SetEqualizer(id, (float *) bandGains);
 
         env->ReleaseFloatArrayElements(bandGains_, bandGains, 0);
     }
