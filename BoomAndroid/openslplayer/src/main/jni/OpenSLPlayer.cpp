@@ -49,8 +49,8 @@ namespace gdpl
         SLDataSink audioSnk = {&loc_outmix, NULL};
 
         // create audio player
-        const SLInterfaceID ids[3] = { SL_IID_BUFFERQUEUE, SL_IID_VOLUME };
-        const SLboolean req[3] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
+        const SLInterfaceID ids[2] = { SL_IID_BUFFERQUEUE, SL_IID_VOLUME };
+        const SLboolean req[2] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
 
         SLresult result = (*engineEngine)->CreateAudioPlayer(engineEngine, &bqPlayerObject, &audioSrc,
                                                              &audioSnk, 2, ids, req);
@@ -79,9 +79,9 @@ namespace gdpl
         (void) result;
 
         // get the volume interface
-//        result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_VOLUME, &bqPlayerVolume);
-//        assert(SL_RESULT_SUCCESS == result);
-//        (void) result;
+        result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_VOLUME, &bqPlayerVolume);
+        assert(SL_RESULT_SUCCESS == result);
+        (void) result;
 //        /* Before we start set volume to -3dB (-300mB) and enable equalizer */
 //        result = (*bqPlayerVolume)->SetVolumeLevel(bqPlayerVolume, -300);
 //        assert(SL_RESULT_SUCCESS == result);
