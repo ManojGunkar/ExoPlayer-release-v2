@@ -35,13 +35,13 @@ namespace gdpl {
         pthread_mutex_t mutex;
         pthread_cond_t _writeCond;
         uint8_t *_data;
-        int _size;
+        size_t _size;
         int _readPtr;
         int _writePtr;
         int _writeBytesAvail;
 
 
-        uint16_t* _tempBuffer;
+        int16_t* _tempBuffer;
     };
 };
 

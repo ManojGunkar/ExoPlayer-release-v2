@@ -94,8 +94,8 @@ namespace gdpl {
     private:
 
         int32_t *mResampleBuffer;
-        jbyte *mBuffer;
-        uint8_t *mOutputBuffer;
+        int16_t *mBuffer;
+        float   *mOutputBuffer;
         pthread_mutex_t lock;
         AudioResampler *audioResampler;
 
@@ -103,16 +103,11 @@ namespace gdpl {
         bool isPlay = false;
 
         PlaybackThread(int32_t sampleRate) {
-            mBuffer = (jbyte *) malloc(FRAME_COUNT * CHANNEL_COUNT * sizeof(int16_t));
-            memset(mBuffer, 0, FRAME_COUNT * CHANNEL_COUNT * sizeof(int16_t));
+            mBuffer = (int16_t *)calloc(FRAME_COUNT * CHANNEL_COUNT, sizeof(int16_t));
+            mOutputBuffer = (float*)calloc(FRAME_COUNT * CHANNEL_COUNT, sizeof(float));
+            mResampleBuffer = (int32_t*)calloc(FRAME_COUNT * CHANNEL_COUNT, sizeof(int32_t));
 
-            mOutputBuffer = (uint8_t *) malloc(FRAME_COUNT * CHANNEL_COUNT * sizeof(float));
-            memset(mOutputBuffer, 0, FRAME_COUNT * CHANNEL_COUNT * sizeof(int16_t));
-
-            mResampleBuffer = new int32_t[FRAME_COUNT * CHANNEL_COUNT];
-
-            audioResampler = AudioResampler::create(16, CHANNEL_COUNT, SAMPLE_RATE,
-                                                    AudioResampler::HIGH_QUALITY);
+            audioResampler = AudioResampler::create(16, CHANNEL_COUNT, SAMPLE_RATE, AudioResampler::HIGH_QUALITY);
             audioResampler->setSampleRate(sampleRate);
             audioResampler->setVolume(UNITY_GAIN, UNITY_GAIN);
 
@@ -135,7 +130,10 @@ namespace gdpl {
                 mOutputBuffer = NULL;
             }
 
-            delete[] mResampleBuffer;
+            if ( mResampleBuffer != NULL ) {
+                free(mResampleBuffer);
+                mResampleBuffer = NULL;
+            }
             delete audioResampler;
         }
 
@@ -146,10 +144,10 @@ namespace gdpl {
             //ALOGD("~PlaybackThread");
         }
 
-        void getNextBuffer(gdpl::IDataSource::Buffer *buffer) {
+        void getNextBuffer(IDataSource::Buffer *buffer) {
             assert(buffer != nullptr);
-            gdpl::AutoLock guard(&lock);
-            gdpl::AutoLock guard2(&engineLock);
+            AutoLock guard(&lock);
+            AutoLock guard2(&engineLock);
 
             if (isPlay) {
                 //ALOGD("Enqueue : RingBufferSize : %d", ringBuffer->GetReadAvail());
@@ -157,10 +155,7 @@ namespace gdpl {
                     memset(mResampleBuffer, 0, FRAME_COUNT * CHANNEL_COUNT * sizeof(int32_t));
                     audioResampler->resample(mResampleBuffer, FRAME_COUNT, ringBuffer);
                     ditherAndClamp((int32_t *) mBuffer, mResampleBuffer, FRAME_COUNT);
-                    GetEngine()->ProcessAudio((short *) mBuffer, mOutputBuffer,
-                                              FRAME_COUNT * CHANNEL_COUNT);
-
-                    int bufferSize = FRAME_COUNT * CHANNEL_COUNT * sizeof(float);
+                    GetEngine()->ProcessAudio(mBuffer, mOutputBuffer, FRAME_COUNT * CHANNEL_COUNT);
 
                     // enqueue another buffer
                     buffer->data = mOutputBuffer;

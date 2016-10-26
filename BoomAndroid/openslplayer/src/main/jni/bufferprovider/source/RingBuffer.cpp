@@ -11,23 +11,21 @@ namespace gdpl {
 
 
     RingBuffer::RingBuffer(int sizeBytes) {
-        _data = new uint8_t[sizeBytes];
-        memset(_data, 0, sizeBytes);
+        _data = (uint8_t*)calloc(sizeBytes, sizeof(uint8_t));
         _size = sizeBytes;
         _readPtr = 0;
         _writePtr = 0;
         _writeBytesAvail = sizeBytes;
 
-        _tempBuffer = new uint16_t[kTempBufferSize];
-        memset(_tempBuffer, 0, kTempBufferSize * sizeof(uint16_t));
+        _tempBuffer = (int16_t*)calloc(kTempBufferSize, sizeof(int16_t));
 
         pthread_mutex_init(&mutex, NULL);
         pthread_cond_init(&_writeCond, NULL);
     }
 
     RingBuffer::~RingBuffer() {
-        delete[] _data;
-        delete[] _tempBuffer;
+        free(_data);
+        free(_tempBuffer);
         pthread_cond_destroy(&_writeCond);
     }
 
