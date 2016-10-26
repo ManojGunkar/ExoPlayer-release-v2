@@ -18,7 +18,7 @@ namespace gdpl {
             size_t size;
         };
 
-        virtual void getNextBuffer(Buffer* buffer);
+        virtual void getNextBuffer(Buffer* buffer) = 0;
     };
 
     class OpenSLPlayer {
@@ -56,7 +56,7 @@ namespace gdpl {
         SLObjectItf bqPlayerObject;
         SLPlayItf bqPlayerPlay;
         SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue;
-        //SLVolumeItf bqPlayerVolume;
+        SLVolumeItf bqPlayerVolume;
         SLuint32 playState;
 
         IDataSource* _dataSource;
