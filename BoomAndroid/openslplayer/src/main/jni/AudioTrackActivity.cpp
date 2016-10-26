@@ -44,6 +44,17 @@ namespace gdpl {
     }
 
 
+    static void RinseEngine() {
+        int16_t* inbuffer = (int16_t*)calloc(FRAME_COUNT*CHANNEL_COUNT, sizeof(int16_t));
+        float* outbuffer = (float*)calloc(FRAME_COUNT*CHANNEL_COUNT, sizeof(float));
+        for ( int i = 0; i < 4; i++ ) {
+            GetEngine()->ProcessAudio(inbuffer, outbuffer, FRAME_COUNT*CHANNEL_COUNT);
+        }
+        free(inbuffer);
+        free(outbuffer);
+    }
+
+
     /* Checks for error. If any errors exit the application! */
     void CheckErr(SLresult res) {
         if (res != SL_RESULT_SUCCESS) {
@@ -190,6 +201,8 @@ namespace gdpl {
 
         /*Iitialize AudioEngine*/
         GetEngine()->ResetEngine();
+        RinseEngine();
+
 
         ringBuffer = new RingBuffer(bufferSize);
         mThread = new PlaybackThread(samplerate);
