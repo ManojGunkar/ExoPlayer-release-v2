@@ -48,7 +48,7 @@ namespace gdpl {
         pthread_mutex_unlock(&mutex);
     }
 
-    int RingBuffer::Read(jbyte *dataPtr, int numBytes) {
+    int RingBuffer::Read(uint8_t *dataPtr, int numBytes) {
         AutoLock lock(&mutex);
         // If there's nothing to read or no data available, then we can't read anything.
         if (dataPtr == 0 || numBytes <= 0 || _writeBytesAvail == _size) {
@@ -81,7 +81,7 @@ namespace gdpl {
 
 // Write to the ring buffer.  Do not overwrite data that has not yet
 // been read.
-    int RingBuffer::Write(jbyte *dataPtr, jint offset, jint numBytes) {
+    int RingBuffer::Write(uint8_t *dataPtr, int offset, int numBytes) {
         gdpl::AutoLock lock(&mutex);
 
         if (dataPtr == 0 || (numBytes - offset) <= 0 || _writeBytesAvail < numBytes) {
@@ -140,7 +140,7 @@ namespace gdpl {
             buffer->frameCount = this->GetReadAvail() / kBytesPerFrame;
         }
 
-        this->Read((jbyte*)_tempBuffer, requestedBytes);
+        this->Read((uint8_t*)_tempBuffer, requestedBytes);
         buffer->raw = _tempBuffer;
 
         //ALOGD("getNextBuffer", "Available Frames = %d", buffer->frameCount);

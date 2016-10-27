@@ -222,7 +222,7 @@ namespace gdpl {
         int written = 0;
         //ALOGD("Enter into Write Method");
         if (openSLPlayer->getState() == SL_PLAYSTATE_PLAYING) {
-            written = ringBuffer->Write(sData, offset, frameCount);
+            written = ringBuffer->Write((uint8_t*)sData, offset, frameCount);
         }
 
         if (!mThread->isPlay && ringBuffer->GetWriteAvail() <= frameCount) {

@@ -13,9 +13,9 @@ namespace gdpl {
 
         ~RingBuffer();
 
-        int Read(jbyte *dataPtr, int numBytes);
+        int Read(uint8_t *dataPtr, int numBytes);
 
-        int Write(jbyte *dataPtr, jint numBytes, jint i);
+        int Write(uint8_t *dataPtr, int numBytes, int i);
 
         bool Empty(void);
 
