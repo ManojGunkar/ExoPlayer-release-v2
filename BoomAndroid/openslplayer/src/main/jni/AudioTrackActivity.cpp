@@ -91,14 +91,6 @@ namespace gdpl {
 
 
     class PlaybackThread : public gdpl::IDataSource {
-    private:
-
-        int32_t *mResampleBuffer;
-        int16_t *mBuffer;
-        float   *mOutputBuffer;
-        pthread_mutex_t lock;
-        AudioResampler *audioResampler;
-
     public:
         bool isPlay = false;
 
@@ -115,27 +107,6 @@ namespace gdpl {
             pthread_mutex_init(&lock, NULL);
         }
 
-
-        // release file buffer
-        void release() {
-            gdpl::AutoLock guard(&lock);
-
-            if (mBuffer != NULL) {
-                free(mBuffer);
-                mBuffer = NULL;
-            }
-
-            if (mOutputBuffer != NULL) {
-                free(mOutputBuffer);
-                mOutputBuffer = NULL;
-            }
-
-            if ( mResampleBuffer != NULL ) {
-                free(mResampleBuffer);
-                mResampleBuffer = NULL;
-            }
-            delete audioResampler;
-        }
 
         ~PlaybackThread() {
             isPlay = false;
@@ -166,6 +137,23 @@ namespace gdpl {
                 }
             }
         }
+
+    private:
+        void release() {
+            gdpl::AutoLock guard(&lock);
+            free(mBuffer);
+            free(mOutputBuffer);
+            free(mResampleBuffer);
+            delete audioResampler;
+        }
+
+    private:
+        int32_t *mResampleBuffer;
+        int16_t *mBuffer;
+        float   *mOutputBuffer;
+        pthread_mutex_t lock;
+        AudioResampler *audioResampler;
+
     };
 
 /*
