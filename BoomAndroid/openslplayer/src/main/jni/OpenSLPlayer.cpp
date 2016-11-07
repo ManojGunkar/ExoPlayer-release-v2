@@ -3,15 +3,19 @@
 //
 
 #include <assert.h>
+#include <logger/log.h>
 #include "OpenSLPlayer.hpp"
 
 
 namespace gdpl
 {
 
+    static const int BUFFER_COUNT = 8;
+
     static SLObjectItf engineObject = NULL;
     static SLObjectItf outputMixObject = NULL;
     static SLEngineItf engineEngine = NULL;
+    static uint32_t    engineSampleRate;
 
 
 
@@ -27,10 +31,10 @@ namespace gdpl
     {
         // configure audio source
         SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE,
-                                                           4};
+                                                           BUFFER_COUNT};
 
 #if 1
-        SLAndroidDataFormat_PCM_EX format_pcm = {SL_ANDROID_DATAFORMAT_PCM_EX, 2, SL_SAMPLINGRATE_44_1,
+        SLAndroidDataFormat_PCM_EX format_pcm = {SL_ANDROID_DATAFORMAT_PCM_EX, 2, engineSampleRate * 1000,
                                                  SL_PCMSAMPLEFORMAT_FIXED_32, SL_PCMSAMPLEFORMAT_FIXED_32,
                                                  SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
                                                  SL_BYTEORDER_LITTLEENDIAN,
@@ -49,7 +53,7 @@ namespace gdpl
         SLDataSink audioSnk = {&loc_outmix, NULL};
 
         // create audio player
-        const SLInterfaceID ids[2] = { SL_IID_BUFFERQUEUE, SL_IID_VOLUME };
+        const SLInterfaceID ids[2] = { SL_IID_ANDROIDSIMPLEBUFFERQUEUE, SL_IID_VOLUME };
         const SLboolean req[2] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
 
         SLresult result = (*engineEngine)->CreateAudioPlayer(engineEngine, &bqPlayerObject, &audioSrc,
@@ -68,13 +72,12 @@ namespace gdpl
         (void) result;
 
         // get the buffer queue interface
-        result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_BUFFERQUEUE,
-                                                 &bqPlayerBufferQueue);
+        result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_ANDROIDSIMPLEBUFFERQUEUE,
+                                                 &_bufferQueue);
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
-        result = (*bqPlayerBufferQueue)->RegisterCallback(bqPlayerBufferQueue,
-                                                          BufferQueueCallback, _dataSource);
+        result = (*_bufferQueue)->RegisterCallback(_bufferQueue, BufferQueueCallback, _dataSource);
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
@@ -97,7 +100,7 @@ namespace gdpl
             (*bqPlayerObject)->Destroy(bqPlayerObject);
             bqPlayerObject = NULL;
             bqPlayerPlay = NULL;
-            bqPlayerBufferQueue = NULL;
+            _bufferQueue = NULL;
         //    bqPlayerVolume = NULL;
         }
 
@@ -145,10 +148,15 @@ namespace gdpl
 
     void OpenSLPlayer::startReading()
     {
-        BufferQueueCallback(bqPlayerBufferQueue, _dataSource);
+        for ( int i = 0; i < BUFFER_COUNT; i++ ) {
+            BufferQueueCallback(_bufferQueue, _dataSource);
+        }
     }
 
-    SLresult OpenSLPlayer::setupEngine() {
+    SLresult OpenSLPlayer::setupEngine(uint32_t sampleRate) {
+
+        engineSampleRate = sampleRate;
+
         SLresult result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
         assert(SL_RESULT_SUCCESS == result);
         (void)result;
@@ -196,14 +204,24 @@ namespace gdpl
     }
 
 
+    uint32_t OpenSLPlayer::getEngineSampleRate() {
+        return engineSampleRate;
+    }
+
+
+
     void OpenSLPlayer::BufferQueueCallback(SLAndroidSimpleBufferQueueItf bq, void *context)
     {
         IDataSource* dataSource = (IDataSource*)context;
         IDataSource::Buffer buffer;
         dataSource->getNextBuffer(&buffer);
+
+//        SLAndroidSimpleBufferQueueState state;
+//        (*bq)->GetState(bq, &state);
+
         SLresult result = (*bq)->Enqueue(bq, buffer.data, buffer.size);
         if ( SL_RESULT_SUCCESS != result ) {
-
+            LOGD("OpenSLPlayer: Failed to enqueue buffer (%d)", result);
         }
     }
 }

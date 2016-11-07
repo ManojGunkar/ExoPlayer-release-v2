@@ -2,12 +2,15 @@
 #define LOG_TAG "AudioTrackActivity"
 #define DGB 1
 #include <stddef.h>
+#include <cmath>
 #include "logger/log.h"
 #include "AudioTrackActivity.h"
 #include "audioresampler/include/AudioResampler.h"
 #include "bufferprovider/include/RingBuffer.h"
 #include "audioFx/AudioEngine.h"
 #include "Utilities/AutoLock.hpp"
+#include "Utilities/Utility.h"
+
 #include "OpenSLPlayer.hpp"
 
 
@@ -18,8 +21,14 @@ namespace gdpl {
 
     class PlaybackThread;
 
+    static const uint16_t UNITY_GAIN = 0x1000;
+    static const int32_t DEFAULT_FRAME_COUNT = 2048;
+    static const int32_t CHANNEL_COUNT = 2;
+
+
     static jobject globalJavaAssetManager;
 
+    static int gFrameCount = DEFAULT_FRAME_COUNT;
     static PlaybackThread *mThread;
     static RingBuffer *ringBuffer;
     static pthread_mutex_t engineLock;
@@ -28,16 +37,10 @@ namespace gdpl {
 
 //    static OpenSLEqualizer *openSLEqualizer;
 
-    static const uint16_t UNITY_GAIN = 0x1000;
-    static const int32_t FRAME_COUNT = 2048;
-    static const int32_t SAMPLE_RATE = 44100;
-    static const int32_t CHANNEL_COUNT = 2;
-
-
     static AudioEngine *GetEngine() {
         static AudioEngine *engine = nullptr;
         if (nullptr == engine) {
-            engine = new AudioEngine(FRAME_COUNT);
+            engine = new AudioEngine(gFrameCount);
         }
 
         return engine;
@@ -45,10 +48,10 @@ namespace gdpl {
 
 
     static void RinseEngine() {
-        int16_t* inbuffer = (int16_t*)calloc(FRAME_COUNT*CHANNEL_COUNT, sizeof(int16_t));
-        float* outbuffer = (float*)calloc(FRAME_COUNT*CHANNEL_COUNT, sizeof(float));
+        int16_t* inbuffer = (int16_t*)calloc(gFrameCount*CHANNEL_COUNT, sizeof(int16_t));
+        float* outbuffer = (float*)calloc(gFrameCount*CHANNEL_COUNT, sizeof(float));
         for ( int i = 0; i < 4; i++ ) {
-            GetEngine()->ProcessAudio(inbuffer, outbuffer, FRAME_COUNT*CHANNEL_COUNT);
+            GetEngine()->ProcessAudio(inbuffer, outbuffer, gFrameCount*CHANNEL_COUNT);
         }
         free(inbuffer);
         free(outbuffer);
@@ -63,43 +66,19 @@ namespace gdpl {
         }
     }
 
-    static inline int16_t clamp16(int32_t sample) {
-        if ((sample >> 15) ^ (sample >> 31))
-            sample = 0x7FFF ^ (sample >> 31);
-        return sample;
-    }
-
-    static void ditherAndClamp(int32_t *out, int32_t const *sums, size_t c) {
-        for (size_t i = 0; i < c; i++) {
-            int32_t l = *sums++;
-            int32_t r = *sums++;
-            int32_t nl = l >> 12;
-            int32_t nr = r >> 12;
-            l = clamp16(nl);
-            r = clamp16(nr);
-            *out++ = (r << 16) | (l & 0xFFFF);
-        }
-    }
-
-    void memcpy_to_float_from_i16(float *dst, const int16_t *src, size_t count)
-    {
-        while (count--) {
-            *dst++ = *src++ / (float)32767;
-        }
-    }
-
 
 
     class PlaybackThread : public gdpl::IDataSource {
     public:
         bool isPlay = false;
 
-        PlaybackThread(int32_t sampleRate) {
-            mBuffer = (int16_t *)calloc(FRAME_COUNT * CHANNEL_COUNT, sizeof(int16_t));
-            mOutputBuffer = (float*)calloc(FRAME_COUNT * CHANNEL_COUNT, sizeof(float));
-            mResampleBuffer = (int32_t*)calloc(FRAME_COUNT * CHANNEL_COUNT, sizeof(int32_t));
+        PlaybackThread(int32_t sampleRate, uint32_t nativeSampleRate, uint32_t frameCount) {
+            _frameCount = frameCount;
+            mBuffer = (int16_t *)calloc(_frameCount * CHANNEL_COUNT, sizeof(int16_t));
+            mOutputBuffer = (float*)calloc(_frameCount * CHANNEL_COUNT, sizeof(float));
+            mResampleBuffer = (int32_t*)calloc(_frameCount * CHANNEL_COUNT, sizeof(int32_t));
 
-            audioResampler = AudioResampler::create(16, CHANNEL_COUNT, SAMPLE_RATE, AudioResampler::HIGH_QUALITY);
+            audioResampler = AudioResampler::create(16, CHANNEL_COUNT, nativeSampleRate, AudioResampler::HIGH_QUALITY);
             audioResampler->setSampleRate(sampleRate);
             audioResampler->setVolume(UNITY_GAIN, UNITY_GAIN);
 
@@ -117,20 +96,22 @@ namespace gdpl {
 
         void getNextBuffer(IDataSource::Buffer *buffer) {
             assert(buffer != nullptr);
+
             AutoLock guard(&lock);
             AutoLock guard2(&engineLock);
 
             if (isPlay) {
                 //ALOGD("Enqueue : RingBufferSize : %d", ringBuffer->GetReadAvail());
                 if (ringBuffer->GetReadAvail() > 0) {
-                    memset(mResampleBuffer, 0, FRAME_COUNT * CHANNEL_COUNT * sizeof(int32_t));
-                    audioResampler->resample(mResampleBuffer, FRAME_COUNT, ringBuffer);
-                    ditherAndClamp((int32_t *) mBuffer, mResampleBuffer, FRAME_COUNT);
-                    GetEngine()->ProcessAudio(mBuffer, mOutputBuffer, FRAME_COUNT * CHANNEL_COUNT);
+                    memset(mResampleBuffer, 0, _frameCount * CHANNEL_COUNT * sizeof(int32_t));
+                    audioResampler->resample(mResampleBuffer, _frameCount, ringBuffer);
+                    ditherAndClamp((int32_t *) mBuffer, mResampleBuffer, _frameCount);
+                    GetEngine()->ProcessAudio(mBuffer, mOutputBuffer, _frameCount * CHANNEL_COUNT);
+                    //memcpy_to_float_from_i16(mOutputBuffer, mBuffer, _frameCount * CHANNEL_COUNT);
 
                     // enqueue another buffer
                     buffer->data = mOutputBuffer;
-                    buffer->size = FRAME_COUNT * CHANNEL_COUNT * sizeof(float);
+                    buffer->size = _frameCount * CHANNEL_COUNT * sizeof(float);
                 } else {
                     //ALOGD("Enqueue : Ring Buffer Empty");
                     isPlay = false;
@@ -153,6 +134,7 @@ namespace gdpl {
         float   *mOutputBuffer;
         pthread_mutex_t lock;
         AudioResampler *audioResampler;
+        uint32_t _frameCount;
 
     };
 
@@ -162,11 +144,12 @@ namespace gdpl {
  * Signature: ()V
  */
     extern "C" void Java_com_example_openslplayer_OpenSLPlayer_createEngine(JNIEnv *env, jclass clazz,
-                                                                 jobject assetManager) {
+                                                                 jobject assetManager, jint sampleRate, jint inFrameCount) {
         globalJavaAssetManager = env->NewGlobalRef(assetManager);
         InitAssetManager(AAssetManager_fromJava(env, globalJavaAssetManager));
 
-        OpenSLPlayer::setupEngine();
+        gFrameCount = pow(2, round(log((double)inFrameCount))); // round off the frame count to nearest power of 2
+        OpenSLPlayer::setupEngine(sampleRate);
     }
 
 /*
@@ -188,7 +171,7 @@ namespace gdpl {
 
 
         ringBuffer = new RingBuffer(bufferSize);
-        mThread = new PlaybackThread(samplerate);
+        mThread = new PlaybackThread(samplerate, OpenSLPlayer::getEngineSampleRate(), gFrameCount);
 
         openSLPlayer = new gdpl::OpenSLPlayer(mThread);
         openSLPlayer->setup();
@@ -313,6 +296,7 @@ namespace gdpl {
     extern "C" void Java_com_example_openslplayer_OpenSLPlayer_enableAudioEffect(JNIEnv *env, jclass clazz,
                                                                       jboolean enabled) {
         gdpl::AutoLock lock(&engineLock);
+        LOGD("OpenSLPlayer: enableAudioEffect(%d)", enabled);
         GetEngine()->SetEffectsState(enabled);
 
     }
@@ -320,6 +304,7 @@ namespace gdpl {
     extern "C" void Java_com_example_openslplayer_OpenSLPlayer_enable3DAudio(JNIEnv *env, jclass clazz,
                                                                   jboolean enabled) {
         gdpl::AutoLock lock(&engineLock);
+        LOGD("OpenSLPlayer: enable3DAudio(%d)", enabled);
         GetEngine()->Set3DAudioState(enabled);
     }
 
@@ -327,6 +312,7 @@ namespace gdpl {
                                                                     jboolean enabled) {
         /*openSLEqualizer->Enable(enabled);*/
         gdpl::AutoLock lock(&engineLock);
+        LOGD("OpenSLPlayer: enableEqualizer(%d)", enabled);
         GetEngine()->SetEffectsState(enabled);
     }
 
@@ -334,18 +320,21 @@ namespace gdpl {
                                                                     jboolean enable) {
 
         gdpl::AutoLock lock(&engineLock);
+        LOGD("OpenSLPlayer: enableSuperBass(%d)", enable);
         GetEngine()->SetSuperBass(enable);
     }
 
     extern "C" void Java_com_example_openslplayer_OpenSLPlayer_enableHighQuality(JNIEnv *env, jobject instance,
                                                                       jboolean enable) {
         gdpl::AutoLock lock(&engineLock);
+        LOGD("OpenSLPlayer: enableHighQuality(%d)", enable);
         GetEngine()->SetHighQuality(enable);
     }
 
     extern "C" void Java_com_example_openslplayer_OpenSLPlayer_setIntensity(JNIEnv *env, jobject instance,
                                                                  jdouble value) {
         gdpl::AutoLock lock(&engineLock);
+        LOGD("OpenSLPlayer: setIntensity(%g)", value);
         GetEngine()->SetIntensity(value);
 
     }
@@ -356,6 +345,7 @@ namespace gdpl {
         jfloat *bandGains = env->GetFloatArrayElements(bandGains_, NULL);
 
         gdpl::AutoLock lock(&engineLock);
+        LOGD("OpenSLPlayer: SetEqualizer(%d)", id);
         GetEngine()->SetEqualizer(id, (float *) bandGains);
 
         env->ReleaseFloatArrayElements(bandGains_, bandGains, 0);

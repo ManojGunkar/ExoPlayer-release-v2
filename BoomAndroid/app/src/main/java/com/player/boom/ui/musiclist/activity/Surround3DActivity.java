@@ -477,12 +477,12 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 editor = pref.edit();
                 if(isPowerOn){
                     editor.putBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
-                    PlayerEventHandler.getPlayerEventInstance(this).setEffectEnable(POWER_OFF);
                 }else{
                     editor.putBoolean(AUDIO_EFFECT_POWER, POWER_ON);
-                    PlayerEventHandler.getPlayerEventInstance(this).setEffectEnable(POWER_ON);
                 }
                 editor.commit();
+
+                PlayerEventHandler.getPlayerEventInstance(this).updateEffect();
                 onPowerSwitchUpdate();
                 update3DSurround();
                 updateIntensity();

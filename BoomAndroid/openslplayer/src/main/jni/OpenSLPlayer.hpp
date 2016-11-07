@@ -44,9 +44,11 @@ namespace gdpl {
 
         void startReading();
 
-        static SLresult setupEngine();
+        static SLresult setupEngine(uint32_t sampleRate);
 
         static SLresult tearDownEngine();
+
+        static uint32_t getEngineSampleRate();
 
     private:
 
@@ -55,7 +57,7 @@ namespace gdpl {
     private:
         SLObjectItf bqPlayerObject;
         SLPlayItf bqPlayerPlay;
-        SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue;
+        SLAndroidSimpleBufferQueueItf _bufferQueue;
         SLVolumeItf bqPlayerVolume;
         SLuint32 playState;
 

@@ -24,7 +24,7 @@ namespace gdpl {
  * Signature: ()V
  */
     void Java_com_example_openslplayer_OpenSLPlayer_createEngine
-            (JNIEnv *, jclass, jobject);
+            (JNIEnv *, jclass, jobject, jint sampleRate, jint frameCount);
 
 /*
  * Class:     com_example_openslplayer_OpenSLPlayer
@@ -32,7 +32,7 @@ namespace gdpl {
  * Signature: (III)Z
  */
     jboolean Java_com_example_openslplayer_OpenSLPlayer_createAudioPlayer(JNIEnv *, jclass ,
-                                                                          jint , jint , jint );
+                                                                          jint , jint, jint );
 
 /*
  * Class:     com_example_openslplayer_OpenSLPlayer
