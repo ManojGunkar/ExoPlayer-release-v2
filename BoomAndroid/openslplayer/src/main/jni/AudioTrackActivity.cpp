@@ -23,6 +23,7 @@ namespace gdpl {
 
     static const uint16_t UNITY_GAIN = 0x1000;
     static const int32_t DEFAULT_FRAME_COUNT = 2048;
+    static const int32_t DEFAULT_SAMPLE_RATE = 44100;
     static const int32_t CHANNEL_COUNT = 2;
 
 
@@ -148,9 +149,11 @@ namespace gdpl {
         globalJavaAssetManager = env->NewGlobalRef(assetManager);
         InitAssetManager(AAssetManager_fromJava(env, globalJavaAssetManager));
 
-        gFrameCount = pow(2, round(log2((double)inFrameCount))); // round off the frame count to nearest power of 2
-        LOGD("Computed frame count is %d", gFrameCount);
-        OpenSLPlayer::setupEngine(sampleRate);
+//        gFrameCount = pow(2, round(log2((double)inFrameCount))); // round off the frame count to nearest power of 2
+//        LOGD("Computed frame count is %d", gFrameCount);
+//        OpenSLPlayer::setupEngine(sampleRate);
+        gFrameCount = DEFAULT_FRAME_COUNT;
+        OpenSLPlayer::setupEngine(DEFAULT_SAMPLE_RATE);
     }
 
 /*
