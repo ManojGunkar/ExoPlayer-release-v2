@@ -1,41 +1,42 @@
 #include <android/log.h>
+#include <Utilities/AutoLock.hpp>
 #include "../include/RingBuffer.h"
 #include "../../logger/log.h"
+#include "Utilities/AutoLock.hpp"
 
-namespace android {
+namespace gdpl {
 
-    static const int32_t kTempBufferSize = 1024*1024;
+    static const int32_t kTempBufferSize = 1024*100;
+    static const int kBytesPerFrame =  sizeof(int16_t) * 2; // assume 2 channels - stereo
+
 
     RingBuffer::RingBuffer(int sizeBytes) {
-        _data = new jbyte[sizeBytes];
-        memset(_data, 0, sizeBytes);
+        _data = (uint8_t*)calloc(sizeBytes, sizeof(uint8_t));
         _size = sizeBytes;
         _readPtr = 0;
         _writePtr = 0;
         _writeBytesAvail = sizeBytes;
 
-        _tempBuffer = new uint16_t[kTempBufferSize];
-
+        _tempBuffer = (int16_t*)calloc(kTempBufferSize, sizeof(int16_t));
 
         pthread_mutex_init(&mutex, NULL);
         pthread_cond_init(&_writeCond, NULL);
     }
 
     RingBuffer::~RingBuffer() {
-        delete[] _data;
-        delete[] _tempBuffer;
+        free(_data);
+        free(_tempBuffer);
         pthread_cond_destroy(&_writeCond);
     }
 
 // Set all data to 0 and flag buffer as empty.
     bool RingBuffer::Empty(void) {
-        pthread_mutex_lock(&mutex);
+        AutoLock lock(&mutex);
         memset(_data, 0, _size);
         _readPtr = 0;
         _writePtr = 0;
         _writeBytesAvail = _size;
         pthread_cond_signal(&_writeCond);
-        pthread_mutex_unlock(&mutex);
         return true;
     }
 
@@ -47,11 +48,10 @@ namespace android {
         pthread_mutex_unlock(&mutex);
     }
 
-    int RingBuffer::Read(jbyte *dataPtr, int numBytes) {
-        pthread_mutex_lock(&mutex);
+    int RingBuffer::Read(uint8_t *dataPtr, int numBytes) {
+        AutoLock lock(&mutex);
         // If there's nothing to read or no data available, then we can't read anything.
         if (dataPtr == 0 || numBytes <= 0 || _writeBytesAvail == _size) {
-            pthread_mutex_unlock(&mutex);
             return 0;
         }
 
@@ -76,14 +76,13 @@ namespace android {
         _writeBytesAvail += numBytes;
 
         pthread_cond_signal(&_writeCond);
-        pthread_mutex_unlock(&mutex);
         return numBytes;
     }
 
 // Write to the ring buffer.  Do not overwrite data that has not yet
 // been read.
-    int RingBuffer::Write(jbyte *dataPtr, jint offset, jint numBytes) {
-        pthread_mutex_lock(&mutex);
+    int RingBuffer::Write(uint8_t *dataPtr, int offset, int numBytes) {
+        gdpl::AutoLock lock(&mutex);
 
         if (dataPtr == 0 || (numBytes - offset) <= 0 || _writeBytesAvail < numBytes) {
             pthread_cond_wait(&_writeCond, &mutex);
@@ -91,7 +90,6 @@ namespace android {
 
         // If there's nothing to write or no room available, we can't write anything.
         if (dataPtr == 0 || (numBytes - offset) <= 0 || _writeBytesAvail == 0) {
-            pthread_mutex_unlock(&mutex);
             return 0;
         }
 
@@ -115,7 +113,6 @@ namespace android {
         _writeBytesAvail -= numBytes;
 
         //pthread_cond_signal(&_cond);
-        pthread_mutex_unlock(&mutex);
         return numBytes;
     }
 
@@ -136,22 +133,14 @@ namespace android {
 
         //ALOGD("getNextBuffer", "Requested Frames = %d", buffer->frameCount);
 
-        int bytesPerFrame =  sizeof(int16_t) * 2; // assume 2 channels - stereo
-        int requestedBytes = buffer->frameCount * bytesPerFrame;
-
-//  TODO: In some extreme cases we may have to wait for data
-//        pthread_mutex_lock(&mutex);
-//        if ( this->GetReadAvail() < requestedBytes  ) {
-//            pthread_cond_wait(&_cond, &mutex);
-//        }
-//        pthread_mutex_unlock(&mutex);
-
+        int requestedBytes = buffer->frameCount * kBytesPerFrame;
         if ( this->GetReadAvail() <  requestedBytes ) {
+            LOGD("RingBuffer::getNextBuffer not enough data");
             requestedBytes = this->GetReadAvail();
-            buffer->frameCount = this->GetReadAvail() / bytesPerFrame;
+            buffer->frameCount = this->GetReadAvail() / kBytesPerFrame;
         }
 
-        this->Read((jbyte*)_tempBuffer, requestedBytes);
+        this->Read((uint8_t*)_tempBuffer, requestedBytes);
         buffer->raw = _tempBuffer;
 
         //ALOGD("getNextBuffer", "Available Frames = %d", buffer->frameCount);
@@ -165,5 +154,4 @@ namespace android {
         if(buffer->raw != NULL)
             buffer->raw = NULL;
     };
-
 }

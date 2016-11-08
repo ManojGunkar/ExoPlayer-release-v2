@@ -5,20 +5,17 @@
 #ifndef RINGBUFFER_H_
 #define RINGBUFFER_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-namespace android {
+namespace gdpl {
+    using namespace android;
     class RingBuffer : public AudioBufferProvider {
     public:
         RingBuffer(int sizeBytes);
 
         ~RingBuffer();
 
-        int Read(jbyte *dataPtr, int numBytes);
+        int Read(uint8_t *dataPtr, int numBytes);
 
-        int Write(jbyte *dataPtr, jint numBytes, jint i);
+        int Write(uint8_t *dataPtr, int numBytes, int i);
 
         bool Empty(void);
 
@@ -37,17 +34,15 @@ namespace android {
     private:
         pthread_mutex_t mutex;
         pthread_cond_t _writeCond;
-        jbyte *_data;
-        int _size;
+        uint8_t *_data;
+        size_t _size;
         int _readPtr;
         int _writePtr;
         int _writeBytesAvail;
 
 
-        uint16_t* _tempBuffer;
+        int16_t* _tempBuffer;
     };
 };
-#ifdef __cplusplus
-}
-#endif
+
 #endif

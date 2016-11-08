@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.media.AudioManager;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.IOException;
@@ -174,12 +176,26 @@ public class OpenSLPlayer implements Runnable {
 
     @Override
     public void run() {
-        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
+        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
             try{
-                Thread.sleep(10);
+                Thread.sleep(100);
             }catch (InterruptedException e){
 
             }
+
+        AudioManager am = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
+        String sysSampleRateStr = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
+        int sysSampleRate = Integer.parseInt(sysSampleRateStr);
+        if ( sysSampleRate == 0 ) sysSampleRate = 44100; // if not available use 44.1kHz
+        String frameSizeStr = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
+        int sysFrameCount = Integer.parseInt(frameSizeStr);
+        if ( sysFrameCount == 0 ) sysFrameCount = 1024; // if not available use 4k buffer - 1024*2*2
+
+        Log.e(LOG_TAG, "sampleRate:"+sysSampleRate);
+        Log.e(LOG_TAG, "frameSize:"+frameSizeStr);
+
+
+
         // extractor gets information about the stream
         extractor = new MediaExtractor();
         // try to set the source, this might fail
@@ -258,8 +274,8 @@ public class OpenSLPlayer implements Runnable {
         }
 
         // configure OpenSLPlayer
-        createEngine(mContext.getAssets());
-        createAudioPlayer(256*1024, sampleRate, channels);
+        createEngine(mContext.getAssets(), sysSampleRate, sysFrameCount);
+        createAudioPlayer(256*1024, sampleRate, 2);
 
         extractor.selectTrack(0);
 
@@ -304,7 +320,6 @@ public class OpenSLPlayer implements Runnable {
                     } else {
                         presentationTimeUs = extractor.getSampleTime();
                         final int percent = (duration == 0) ? 0 : (int) (100 * presentationTimeUs / duration);
-                        Log.d("Finish", "" + percent);
                         if (events != null) handler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -379,10 +394,18 @@ public class OpenSLPlayer implements Runnable {
         if(codec != null) {
             try {
                 codec.stop();
-            }catch (IllegalStateException e){}
+            }catch (IllegalStateException e){
+
+            }
             codec.release();
             codec = null;
         }
+
+        if ( extractor != null ) {
+            extractor.release();
+            extractor = null;
+        }
+
         /*Stop player*/
         boolean isShutdown = false;
         if(stop) {
@@ -430,7 +453,7 @@ public class OpenSLPlayer implements Runnable {
     }
 
     /** Native methods, implemented in jni folder */
-    public native void createEngine(AssetManager assetManager);
+    public native void createEngine(AssetManager assetManager, int sampleRate, int frameCount);
 
     public native boolean createAudioPlayer(int size, int sampleRate, int bufferSize);
 
@@ -480,7 +503,7 @@ public class OpenSLPlayer implements Runnable {
             setEnable3DAudio(is3DAudio);
             boolean isIntensity = pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER);
             if (isIntensity) {
-                setIntensity(pref.getInt(INTENSITY_POSITION, 50) / (double) 100);
+                setIntensityValue(pref.getInt(INTENSITY_POSITION, 50) / (double) 100);
             }
             boolean isEqualizer = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
             setEnableEqualizer(isEqualizer);

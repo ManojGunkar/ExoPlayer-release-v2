@@ -187,6 +187,10 @@ public class PlayerEventHandler implements QueueEvent {
         mPlayer.seek(progress);
     }
 
+    public void updateEffect() {
+        mPlayer.updatePlayerEffect();
+    }
+
 
     public void setEffectEnable(boolean enable) {
         mPlayer.setEnableEffect(enable);
