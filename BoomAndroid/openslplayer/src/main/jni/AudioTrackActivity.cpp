@@ -28,7 +28,7 @@ namespace gdpl {
 
     static jobject globalJavaAssetManager;
 
-    static int gFrameCount = DEFAULT_FRAME_COUNT;
+    static int gFrameCount = 0;
     static PlaybackThread *mThread;
     static RingBuffer *ringBuffer;
     static pthread_mutex_t engineLock;
@@ -148,7 +148,8 @@ namespace gdpl {
         globalJavaAssetManager = env->NewGlobalRef(assetManager);
         InitAssetManager(AAssetManager_fromJava(env, globalJavaAssetManager));
 
-        gFrameCount = pow(2, round(log((double)inFrameCount))); // round off the frame count to nearest power of 2
+        gFrameCount = pow(2, round(log2((double)inFrameCount))); // round off the frame count to nearest power of 2
+        LOGD("Computed frame count is %d", gFrameCount);
         OpenSLPlayer::setupEngine(sampleRate);
     }
 
