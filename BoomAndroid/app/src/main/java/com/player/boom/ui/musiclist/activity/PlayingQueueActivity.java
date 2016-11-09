@@ -48,6 +48,7 @@ public class PlayingQueueActivity extends AppCompatActivity implements IQueueUIE
     private RecyclerView recyclerView;
     private PermissionChecker permissionChecker;
     private View emptyView;
+    public static final String ACTION_UPDATE_QUEUE = "ACTION_UPDATE_QUEUE";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
@@ -62,7 +63,6 @@ public class PlayingQueueActivity extends AppCompatActivity implements IQueueUIE
         recyclerView = (RecyclerView) findViewById(R.id.playing_queue_Container);
         emptyView = findViewById(R.id.playing_queue_empty_view);
         checkPermissions();
-        PlayerEventHandler.getPlayerEventInstance(this).setQueueUIEvent(this);
     }
 
     private void setupToolbar() {

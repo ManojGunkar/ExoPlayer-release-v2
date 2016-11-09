@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.player.boom.R;
+import com.player.boom.task.PlayerService;
 
 
 /**
@@ -20,7 +21,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        startService(new Intent(this, PlayerService.class));
         new Handler().postDelayed(new Runnable() {
 
             /*

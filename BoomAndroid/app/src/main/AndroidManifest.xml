@@ -16,6 +16,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme.Album">
 
+        <service android:name=".task.PlayerService" android:enabled="true"/>
         <activity
             android:name="com.player.boom.ui.musiclist.activity.SplashActivity"
             android:screenOrientation="portrait"

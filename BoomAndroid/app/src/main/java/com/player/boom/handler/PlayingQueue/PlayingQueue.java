@@ -261,4 +261,15 @@ public class PlayingQueue {
 
         return getPlayingItem();
     }
+
+    public enum REPEAT{
+        one,
+        all,
+        none,
+    }
+
+    public enum SHUFFLE{
+        all,
+        none,
+    }
 }

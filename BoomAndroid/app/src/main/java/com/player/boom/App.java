@@ -2,9 +2,12 @@ package com.player.boom;
 
 import android.app.Application;
 
-import com.player.boom.handler.PlayingQueueHandler;
+import com.player.boom.handler.PlayingQueue.PlayerEventHandler;
+import com.player.boom.handler.PlayingQueue.PlayingQueueHandler;
+import com.player.boom.task.PlayerService;
 import com.player.boom.utils.handlers.HistoryFavDBHelper;
 import com.player.boom.utils.handlers.PlaylistDBHelper;
+import com.player.boom.utils.handlers.UserPreferenceHandler;
 
 
 public class App extends Application {
@@ -16,6 +19,15 @@ public class App extends Application {
     private static PlaylistDBHelper boomPlayListhelper;
 
     private static HistoryFavDBHelper historyFavDBHelper;
+    private static PlayerService service;
+
+    public static void setService(PlayerService service) {
+        App.service = service;
+    }
+
+    public static PlayerEventHandler getPlayerEventHandler() {
+        return PlayerEventHandler.getPlayerEventInstance(application, service);
+    }
 
 
     @Override
@@ -57,5 +69,9 @@ public class App extends Application {
         application = null;
         playingQueueHandler.Terminate();
         /*playlistManager = null;*/
+    }
+
+    public static UserPreferenceHandler getUserPreferenceHandler() {
+        return new UserPreferenceHandler(application);
     }
 }

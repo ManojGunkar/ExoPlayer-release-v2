@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.player.boom.App;
 import com.player.boom.R;
 import com.player.boom.data.DeviceMediaCollection.MediaItem;
-import com.player.boom.handler.PlayerEventHandler;
+import com.player.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.player.boom.handler.PlayingQueue.PlayingQueue;
 import com.player.boom.ui.musiclist.activity.BoomPlayerActivity;
 import com.player.boom.ui.musiclist.activity.PlayingQueueActivity;

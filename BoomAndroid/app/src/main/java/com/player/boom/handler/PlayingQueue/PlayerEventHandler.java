@@ -1,8 +1,8 @@
 package com.player.boom.handler.PlayingQueue;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
-import android.widget.Toast;
 
 import com.example.openslplayer.AudioEffect;
 import com.example.openslplayer.OpenSLPlayer;
@@ -10,7 +10,9 @@ import com.example.openslplayer.PlayerEvents;
 import com.player.boom.App;
 import com.player.boom.data.DeviceMediaCollection.MediaItem;
 import com.player.boom.data.MediaCollection.IMediaItemBase;
-import com.player.boom.handler.IPlayerUIEvent;
+import com.player.boom.task.PlayerService;
+
+import static com.player.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.play;
 
 /**
  * Created by Rahul Agarwal on 03-10-16.
@@ -21,22 +23,27 @@ public class PlayerEventHandler implements QueueEvent {
     private static OpenSLPlayer mPlayer;
     private static PlayerEventHandler handler;
     private Context context;
-    private IPlayerUIEvent playerUIEvent = null;
-    private IQueueUIEvent queueUIEvent = null;
     private Handler uiHandler;
 
-    private PlayerEventHandler(Context context){
+    private PlayerService service;
+
+    private PlayerEventHandler(Context context, PlayerService service){
         this.context = context;
         mPlayer = new OpenSLPlayer(context, playerEvents);
+        this.service = service;
         App.getPlayingQueueHandler().getPlayingQueue().setQueueEvent(this);
         uiHandler = new Handler();
     }
 
-    public static PlayerEventHandler getPlayerEventInstance(Context context){
+    public static PlayerEventHandler getPlayerEventInstance(Context context, PlayerService service){
         if(handler == null){
-            handler = new PlayerEventHandler(context);
+            handler = new PlayerEventHandler(context, service);
         }
         return handler;
+    }
+
+    public OpenSLPlayer getPlayer(){
+        return mPlayer;
     }
 
     public boolean isPlaying(){
@@ -61,115 +68,70 @@ public class PlayerEventHandler implements QueueEvent {
             mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
             mPlayer.play();
         }
-        if (playerUIEvent != null) {
-            uiHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    playerUIEvent.updateUI();
-                }
-            });
-        }
-        if (queueUIEvent != null) {
-            uiHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    queueUIEvent.onQueueUiUpdated();
-                }
-            });
-        }
+        context.sendBroadcast(new Intent(PlayerService.ACTION_GET_SONG));
     }
 
     @Override
     public void onPlayingItemClicked() {
-        PlayPause();
+        PlayState state = PlayPause();
+
+        Intent intent = new Intent();
+        intent.setAction(PlayerService.ACTION_PLAYING_ITEM_CLICKED);
+        intent.putExtra("play_pause", state == play ? true : false );
+        context.sendBroadcast(intent);
     }
 
     @Override
     public void onQueueUpdated() {
-        if (queueUIEvent != null) {
-            uiHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    queueUIEvent.onQueueUiUpdated();
-                }
-            });
-        }
-    }
-
-    public void setQueueUIEvent(IQueueUIEvent event){
-        this.queueUIEvent = event;
-    }
-
-    public void setPlayerUIEvent(IPlayerUIEvent event){
-        this.playerUIEvent = event;
+        Intent intent = new Intent();
+        intent.setAction(PlayerService.ACTION_UPNEXT_UPDATE);
+        context.sendBroadcast(intent);
     }
 
     PlayerEvents playerEvents = new PlayerEvents() {
         @Override public void onStop() {
-            if (playerUIEvent != null) {
-                uiHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        playerUIEvent.stop();
-                    }
-                });
-            }
+            context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
         }
+
         @Override public void onStart(String mime, int sampleRate, int channels, long duration) {
-            if (playerUIEvent != null)
-                uiHandler.postDelayed(new Runnable() {
-                    @Override public void run() {
-                        playerUIEvent.updateUI();
-                    }
-                }, 80);
+//            if (playerUIEvent != null)
+//                uiHandler.postDelayed(new Runnable() {
+//                    @Override public void run() {
+//                        playerUIEvent.updateUI();
+//                    }
+//                }, 80);
         }
         @Override public void onPlayUpdate(final int percent, final long currentms, final long totalms) {
-            if (playerUIEvent != null)
-                uiHandler.post(new Runnable() {
-                    @Override public void run() {
-                        playerUIEvent.updateSeek(percent, currentms, totalms);
-                    }
-                });
+            Intent intent = new Intent();
+            intent.setAction(PlayerService.ACTION_TRACK_POSITION_UPDATE);
+            intent.putExtra("percent", percent);
+            context.sendBroadcast(intent);
         }
 
         @Override
         public void onFinish() {
-            playingItem = App.getPlayingQueueHandler().getPlayingQueue().getNextPlayingItem();
-            if(null != playingItem) {
-                mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
-                mPlayer.play();
-                onQueueUpdated();
-            }else {
-                if (playerUIEvent != null) {
-                    uiHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            playerUIEvent.stop();
-                        }
-                    });
-                }
-            }
+            playNextSong();
         }
 
         @Override public void onPlay() {
-            if (playerUIEvent != null)
-                uiHandler.post(new Runnable() {
-                    @Override public void run() {
-                        playerUIEvent.updateUI();
-                    }
-                });
+//            if (playerUIEvent != null)
+//                uiHandler.post(new Runnable() {
+//                    @Override public void run() {
+//                        playerUIEvent.updateUI();
+//                    }
+//                });
         }
         @Override public void onError() {
         }
     };
 
-    public int PlayPause() {
+    public PlayState PlayPause() {
         if(isPlaying()){
             mPlayer.pause();
-            return 0;
+            return PlayState.pause;
         } else /*if(mPlayer.isPause())*/{
             mPlayer.play();
-            return 1;
+            return play;
         }
     }
 
@@ -179,16 +141,16 @@ public class PlayerEventHandler implements QueueEvent {
         }
     }
 
+    public void release() {
+        mPlayer = null;
+    }
+
     public IMediaItemBase getPlayingItem() {
         return playingItem;
     }
 
     public void seek(int progress) {
         mPlayer.seek(progress);
-    }
-
-    public void updateEffect() {
-        mPlayer.updatePlayerEffect();
     }
 
 
@@ -222,5 +184,61 @@ public class PlayerEventHandler implements QueueEvent {
 
     public void setHighQualityEnable(boolean highQualityEnable) {
         mPlayer.setHighQualityEnable(highQualityEnable);
+    }
+
+    public void setRepeat(PlayingQueue.REPEAT repeat) {
+        switch (repeat){
+            case none:
+//                    App.getUserPreferenceHandler().setRepeatDisable();
+                break;
+            case one:
+//                App.getUserPreferenceHandler().setRepeatOneEnable();
+                break;
+            case all:
+//                App.getUserPreferenceHandler().setRepeatAllEnable();
+                break;
+        }
+    }
+
+    public void setShuffle(PlayingQueue.SHUFFLE shuffle) {
+        switch (shuffle){
+            case none:
+//                App.getUserPreferenceHandler().setShuffleEnable(false);
+                break;
+            case all:
+//                App.getUserPreferenceHandler().setShuffleEnable(true);
+                break;
+        }
+    }
+
+    public void playNextSong() {
+        playingItem = App.getPlayingQueueHandler().getPlayingQueue().getNextPlayingItem();
+        if(null != playingItem) {
+            mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
+            mPlayer.play();
+            onQueueUpdated();
+        }else {
+            context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
+        }
+    }
+
+    public void playPrevSong() {
+    }
+
+    public void stopPlayer() {
+        mPlayer.stop();
+    }
+
+    public void addSongToQueue() {
+    }
+
+    public void updateEffect() {
+
+    }
+
+    public enum PlayState {
+        play,
+        pause,
+        stop
     }
 }

@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/overflow_player_open_album"
-        android:title="@string/open_album"
+        android:title="open_album"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/overflow_player_open_artist"
-        android:title="@string/open_artist"
+        android:title="open_artist"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/popup_playlist_rename"
