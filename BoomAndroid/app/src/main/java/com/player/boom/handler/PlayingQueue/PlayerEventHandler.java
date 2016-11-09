@@ -94,12 +94,6 @@ public class PlayerEventHandler implements QueueEvent {
         }
 
         @Override public void onStart(String mime, int sampleRate, int channels, long duration) {
-//            if (playerUIEvent != null)
-//                uiHandler.postDelayed(new Runnable() {
-//                    @Override public void run() {
-//                        playerUIEvent.updateUI();
-//                    }
-//                }, 80);
         }
         @Override public void onPlayUpdate(final int percent, final long currentms, final long totalms) {
             Intent intent = new Intent();
@@ -114,12 +108,6 @@ public class PlayerEventHandler implements QueueEvent {
         }
 
         @Override public void onPlay() {
-//            if (playerUIEvent != null)
-//                uiHandler.post(new Runnable() {
-//                    @Override public void run() {
-//                        playerUIEvent.updateUI();
-//                    }
-//                });
         }
         @Override public void onError() {
         }
@@ -217,6 +205,7 @@ public class PlayerEventHandler implements QueueEvent {
             mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
             mPlayer.play();
             onQueueUpdated();
+            context.sendBroadcast(new Intent(PlayerService.ACTION_GET_SONG));
         }else {
             context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
         }

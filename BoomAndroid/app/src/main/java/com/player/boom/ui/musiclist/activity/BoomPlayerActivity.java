@@ -97,7 +97,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 mAlbumArt.setImageDrawable(getResources().getDrawable(R.drawable.default_album_art_home));
             }
             mSongName.setText(item.getItemTitle());
-            if (App.getPlayerEventHandler().isPlaying()) {
+            if (playing) {
                 mPlayPauseBtn.setVisibility(View.VISIBLE);
                 mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause, null));
             } else {
@@ -224,6 +224,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         super.onResume();
         isPlayerResume = true;
         updateEffectIcon();
+        updateTrackToPlayer((MediaItem) App.getPlayingQueueHandler().getPlayingQueue().getPlayingItem(), App.getPlayerEventHandler().isPlaying());
     }
 
     @Override

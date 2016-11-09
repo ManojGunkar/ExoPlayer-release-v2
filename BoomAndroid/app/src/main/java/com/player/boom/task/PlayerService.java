@@ -129,7 +129,7 @@ public class PlayerService extends Service {
             /*case ACTION_PLAY_SINGLE:
                 musicPlayerHandler.playSingleSong(intent.getLongExtra("songId", 0));
                 updatePlayer();
-                break;*/
+                break;
             case ACTION_REPEAT_SINGLE:
                 musicPlayerHandler.setRepeat(PlayingQueue.REPEAT.one);
                 break;
@@ -155,13 +155,12 @@ public class PlayerService extends Service {
                 break;
             case ACTION_CHANGE_SONG:
                 musicPlayerHandler.playNextSong();
-                break;
+                break;*/
             case ACTION_NOTI_CLICK:
                 final Intent i = new Intent();
-                    i.setClass(context, com.player.boom.ui.musiclist.activity.BoomPlayerActivity.class);
-//                    i.setAction(BoomPlayerActivity.ACTION_OPEN_PANEL);
+                    i.setClass(context, BoomPlayerActivity.class);
                     startActivity(i);
-                break;
+                break;/*
             case ACTION_NOTI_REMOVE:
                 notificationHandler.setNotificationActive(false);
                 musicPlayerHandler.stopPlayer();
@@ -169,6 +168,7 @@ public class PlayerService extends Service {
             case ACTION_ADD_QUEUE:
                 musicPlayerHandler.addSongToQueue();
                 break;
+                */
         }
     }
 

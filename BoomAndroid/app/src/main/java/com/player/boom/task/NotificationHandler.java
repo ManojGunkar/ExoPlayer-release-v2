@@ -13,6 +13,7 @@ import android.widget.RemoteViews;
 
 import com.player.boom.App;
 import com.player.boom.R;
+import com.player.boom.data.DeviceMediaCollection.MediaItem;
 import com.player.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -74,6 +75,70 @@ public class NotificationHandler {
             service.startForeground(NOTIFICATION_ID, notificationCompat);
         notificationManager.notify(NOTIFICATION_ID, notificationCompat);
         notificationActive = true;
+    }
+
+    public void updateNotificationDetails(MediaItem item, boolean isPlaying){
+        if (Build.VERSION.SDK_INT >= 16) {
+            notificationCompat.bigContentView.setTextViewText(R.id.noti_name, item.getItemTitle());
+            notificationCompat.bigContentView.setTextViewText(R.id.noti_artist, item.getItemArtist());
+            notificationCompat.contentView.setTextViewText(R.id.noti_name, item.getItemTitle());
+            notificationCompat.contentView.setTextViewText(R.id.noti_artist, item.getItemArtist());
+            Intent playClick = new Intent();
+            playClick.setAction(PlayerService.ACTION_PLAY_PAUSE_SONG);
+            PendingIntent playClickIntent = PendingIntent.getBroadcast(context, 21021, playClick, 0);
+            notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
+            notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
+            Intent prevClick = new Intent();
+            prevClick.setAction(PlayerService.ACTION_PREV_SONG);
+            PendingIntent prevClickIntent = PendingIntent.getBroadcast(context, 21121, prevClick, 0);
+            notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
+            notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
+            Intent nextClick = new Intent();
+            nextClick.setAction(PlayerService.ACTION_NEXT_SONG);
+            PendingIntent nextClickIntent = PendingIntent.getBroadcast(context, 21221, nextClick, 0);
+            notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
+            notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
+            String path = App.getPlayerEventHandler().getPlayingItem().getItemArtUrl();
+            int playStateRes;
+            if (isPlaying)
+                playStateRes = R.drawable.ic_pause_white_48dp;
+            else
+                playStateRes = R.drawable.ic_play_arrow_white_48dp;
+            notificationCompat.bigContentView
+                    .setImageViewResource(R.id.noti_play_button, playStateRes);
+            notificationCompat.contentView
+                    .setImageViewResource(R.id.noti_play_button, playStateRes);
+            if (path != null && !path.matches("")) {
+                Picasso.with(context).load(new File(path)).into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        notificationCompat.bigContentView.setImageViewBitmap(R.id.noti_album_art, bitmap);
+                        notificationCompat.contentView.setImageViewBitmap(R.id.noti_album_art, bitmap);
+                        notificationManager.notify(NOTIFICATION_ID, notificationCompat);
+                        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                            @Override
+                            public void onGenerated(Palette palette) {
+                                notificationCompat.color = palette.getDarkVibrantColor(
+                                        palette.getDarkMutedColor(
+                                                palette.getMutedColor(0xffffffff)));
+                                notificationManager.notify(NOTIFICATION_ID, notificationCompat);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                        setDefaultImageView();
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    }
+                });
+            } else {
+                setDefaultImageView();
+            }
+        }
     }
 
 
