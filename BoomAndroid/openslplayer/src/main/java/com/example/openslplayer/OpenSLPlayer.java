@@ -218,12 +218,14 @@ public class OpenSLPlayer implements Runnable {
         MediaFormat format = null;
         try {
             format = extractor.getTrackFormat(0);
-            mime = format.getString(MediaFormat.KEY_MIME);
-            sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
-            channels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
-            // if duration is 0, we are probably playing a live stream
-            duration = format.getLong(MediaFormat.KEY_DURATION);
-            bitrate = format.getInteger(MediaFormat.KEY_BIT_RATE);
+            if(format != null) {
+                mime = format.getString(MediaFormat.KEY_MIME);
+                sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
+                channels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
+                // if duration is 0, we are probably playing a live stream
+                duration = format.getLong(MediaFormat.KEY_DURATION);
+                bitrate = format.getInteger(MediaFormat.KEY_BIT_RATE);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

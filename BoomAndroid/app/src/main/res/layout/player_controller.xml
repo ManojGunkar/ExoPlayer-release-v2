@@ -50,8 +50,7 @@
                 android:layout_width="@dimen/controller_button_size"
                 android:layout_height="@dimen/controller_button_size"
                 android:layout_weight="1"
-                android:background="@drawable/unbounded_ripple"
-                android:src="@drawable/ic_play_arrow_white_48dp" />
+                android:background="@drawable/unbounded_ripple"/>
 
             <ImageView
                 android:id="@+id/controller_next"

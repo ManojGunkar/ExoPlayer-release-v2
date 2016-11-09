@@ -18,9 +18,7 @@ import android.widget.ImageView;
 
 import com.player.boom.App;
 import com.player.boom.data.DeviceMediaCollection.MediaItem;
-import com.player.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.player.boom.R;
-import com.player.boom.handler.IPlayerUIEvent;
 import com.player.boom.task.PlayerService;
 import com.player.boom.ui.widgets.CircularSeekBar;
 import com.player.boom.ui.widgets.CoverView.CircularCoverView;
@@ -90,8 +88,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mTrackSeek.setVisibility(View.VISIBLE);
 
             if (isPathValid(item.getItemArtUrl())) {
-                int size = Utils.dpToPx(this, 45);
-                Picasso.with(this).load(new File(item.getItemArtUrl())).resize(mTrackSeek.getWidth() - size, mTrackSeek.getHeight() - size).centerCrop()
+                Picasso.with(this).load(new File(item.getItemArtUrl())).resize((int)getResources().getDimension(R.dimen.home_album_art_size), (int)getResources().getDimension(R.dimen.home_album_art_size)).centerCrop()
                         .error(getResources().getDrawable(R.drawable.default_album_art_home)).into(mAlbumArt);
             } else {
                 mAlbumArt.setImageDrawable(getResources().getDrawable(R.drawable.default_album_art_home));

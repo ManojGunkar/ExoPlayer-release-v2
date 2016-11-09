@@ -67,9 +67,17 @@ public class PlayerEventHandler implements QueueEvent {
         if(null != playingItem) {
             mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
             mPlayer.play();
+            context.sendBroadcast(new Intent(PlayerService.ACTION_GET_SONG));
+        }else{
+            context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
         }
-        context.sendBroadcast(new Intent(PlayerService.ACTION_GET_SONG));
     }
+
+    public void playNextSong() {
+        App.getPlayingQueueHandler().getPlayingQueue().setNextPlayingItem();
+        onPlayingItemChanged();
+    }
+
 
     @Override
     public void onPlayingItemClicked() {
@@ -94,6 +102,7 @@ public class PlayerEventHandler implements QueueEvent {
         }
 
         @Override public void onStart(String mime, int sampleRate, int channels, long duration) {
+
         }
         @Override public void onPlayUpdate(final int percent, final long currentms, final long totalms) {
             Intent intent = new Intent();
@@ -108,6 +117,7 @@ public class PlayerEventHandler implements QueueEvent {
         }
 
         @Override public void onPlay() {
+
         }
         @Override public void onError() {
         }
@@ -196,18 +206,6 @@ public class PlayerEventHandler implements QueueEvent {
             case all:
 //                App.getUserPreferenceHandler().setShuffleEnable(true);
                 break;
-        }
-    }
-
-    public void playNextSong() {
-        playingItem = App.getPlayingQueueHandler().getPlayingQueue().getNextPlayingItem();
-        if(null != playingItem) {
-            mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
-            mPlayer.play();
-            onQueueUpdated();
-            context.sendBroadcast(new Intent(PlayerService.ACTION_GET_SONG));
-        }else {
-            context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
         }
     }
 

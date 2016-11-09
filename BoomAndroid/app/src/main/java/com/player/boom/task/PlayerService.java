@@ -12,7 +12,6 @@ import com.player.boom.App;
 import com.player.boom.R;
 import com.player.boom.data.DeviceMediaCollection.MediaItem;
 import com.player.boom.handler.PlayingQueue.PlayerEventHandler;
-import com.player.boom.handler.PlayingQueue.PlayingQueue;
 import com.player.boom.ui.musiclist.activity.BoomPlayerActivity;
 import com.player.boom.ui.musiclist.activity.PlayingQueueActivity;
 
@@ -125,6 +124,7 @@ public class PlayerService extends Service {
                 break;
             case ACTION_PLAY_STOP:
                 sendBroadcast(new Intent(BoomPlayerActivity.ACTION_TRACK_STOPPED));
+                updateNotificationPlayer(null, false);
                 break;
             /*case ACTION_PLAY_SINGLE:
                 musicPlayerHandler.playSingleSong(intent.getLongExtra("songId", 0));
@@ -159,6 +159,7 @@ public class PlayerService extends Service {
             case ACTION_NOTI_CLICK:
                 final Intent i = new Intent();
                     i.setClass(context, BoomPlayerActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                 break;/*
             case ACTION_NOTI_REMOVE:
@@ -177,14 +178,8 @@ public class PlayerService extends Service {
         i.setAction(BoomPlayerActivity.ACTION_ITEM_CLICKED);
         i.putExtra("play_pause", play_pause);
         sendBroadcast(i);
-        updateNotificationPlayer();
-                if(!play_pause){
-                    stopForeground(false);
-                    notificationHandler.setNotificationPlayer(true);
-                }else{
-                    notificationHandler.setNotificationPlayer(false);
-                }
-        notificationHandler.updateNotificationView();
+
+        updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), play_pause);
     }
 
     private void updatePlayingQueue() {
@@ -199,17 +194,23 @@ public class PlayerService extends Service {
         i.putExtra("playing_song", (MediaItem)musicPlayerHandler.getPlayingItem());
         i.putExtra("playing", musicPlayerHandler.isPlaying());
         sendBroadcast(i);
-        updateNotificationPlayer();
+        updateNotificationPlayer((MediaItem)musicPlayerHandler.getPlayingItem(), true);
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), true);
     }
 
-    private void updateNotificationPlayer() {
-        if (!notificationHandler.isNotificationActive())
+    private void updateNotificationPlayer(MediaItem playingItem, boolean playing) {
+        if(!playing){
+            stopForeground(false);
+            notificationHandler.setNotificationPlayer(true);
+        }else{
             notificationHandler.setNotificationPlayer(false);
-        if(musicPlayerHandler.getPlayingItem() != null)
-            notificationHandler.changeNotificationDetails(musicPlayerHandler.getPlayingItem().getItemTitle(),
-                    ((MediaItem)musicPlayerHandler.getPlayingItem()).getItemArtist(),
-                    musicPlayerHandler.getPlayingItem().getItemId(),
-                    musicPlayerHandler.isPlaying());
+        }
+        notificationHandler.changeNotificationDetails(playingItem, playing);
     }
 
     @Nullable

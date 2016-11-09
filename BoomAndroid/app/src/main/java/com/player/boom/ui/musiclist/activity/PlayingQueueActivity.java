@@ -2,8 +2,10 @@ package com.player.boom.ui.musiclist.activity;
 
 import android.Manifest;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,8 +26,6 @@ import android.widget.TextView;
 import com.player.boom.App;
 import com.player.boom.R;
 import com.player.boom.data.MediaCollection.IMediaItemBase;
-import com.player.boom.handler.PlayingQueue.IQueueUIEvent;
-import com.player.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.player.boom.handler.PlayingQueue.QueueType;
 import com.player.boom.ui.musiclist.adapter.PlayingQueueListAdapter;
 import com.player.boom.utils.PermissionChecker;
@@ -40,7 +40,7 @@ import java.util.Map;
  * Created by Rahul Agarwal on 29-09-16.
  */
 
-public class PlayingQueueActivity extends AppCompatActivity implements IQueueUIEvent{
+public class PlayingQueueActivity extends AppCompatActivity {
     Toolbar toolbar;
     ImageView toolImage;
     TextView toolTxt;
@@ -49,6 +49,34 @@ public class PlayingQueueActivity extends AppCompatActivity implements IQueueUIE
     private PermissionChecker permissionChecker;
     private View emptyView;
     public static final String ACTION_UPDATE_QUEUE = "ACTION_UPDATE_QUEUE";
+
+    private BroadcastReceiver upnextBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()){
+                case ACTION_UPDATE_QUEUE :
+                    final Map<QueueType, LinkedList<IMediaItemBase>> playingQueue = App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue();
+                    if(playingQueueListAdapter != null)
+                        playingQueueListAdapter.updateList(playingQueue);
+                    break;
+            }
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_UPDATE_QUEUE);
+        registerReceiver(upnextBroadcastReceiver, filter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(upnextBroadcastReceiver);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
@@ -177,12 +205,5 @@ public class PlayingQueueActivity extends AppCompatActivity implements IQueueUIE
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         permissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
-    public void onQueueUiUpdated() {
-        final Map<QueueType, LinkedList<IMediaItemBase>> playingQueue = App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue();
-        if(playingQueueListAdapter != null)
-            playingQueueListAdapter.updateList(playingQueue);
     }
 }

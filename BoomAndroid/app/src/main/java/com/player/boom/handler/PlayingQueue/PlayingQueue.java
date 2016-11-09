@@ -251,15 +251,13 @@ public class PlayingQueue {
     }
 
 
-    public IMediaItemBase getNextPlayingItem() {
+    public void setNextPlayingItem() {
         addPlayingItemToHistory();
         if(null != getManualUpNextList() && getManualUpNextList().size()>0){
             playingQueue.get(Playing).add(playingQueue.get(Manual_UpNext).remove(0));
         }else if(null != getAutoUpNextList() && getAutoUpNextList().size()>0){
             playingQueue.get(Playing).add(playingQueue.get(Auto_UpNext).remove(0));
         }
-
-        return getPlayingItem();
     }
 
     public enum REPEAT{

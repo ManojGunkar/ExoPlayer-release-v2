@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/notification_large_player"
     android:orientation="horizontal">
 
     <ImageView
@@ -9,8 +10,7 @@
         android:layout_width="@dimen/noti_big_img"
         android:layout_height="@dimen/noti_big_height"
         android:layout_weight="0"
-        android:scaleType="centerCrop"
-        android:src="@drawable/default_album_art" />
+        android:scaleType="centerCrop"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -70,8 +70,8 @@
                 android:layout_height="@dimen/noti_button_height"
                 android:layout_weight="1"
                 android:background="@drawable/unbounded_ripple"
-                android:padding="5dp"
-                android:src="@drawable/ic_play_arrow_white_48dp" />
+                android:src="@drawable/ic_pause"
+                android:padding="5dp"/>
 
             <ImageView
                 android:id="@+id/noti_next_button"
