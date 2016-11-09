@@ -176,7 +176,6 @@ public class OpenSLPlayer implements Runnable {
 
     @Override
     public void run() {
-        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
             try{
                 Thread.sleep(100);
             }catch (InterruptedException e){
