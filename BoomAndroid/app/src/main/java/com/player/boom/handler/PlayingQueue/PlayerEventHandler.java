@@ -220,7 +220,7 @@ public class PlayerEventHandler implements QueueEvent {
     }
 
     public void updateEffect() {
-
+        mPlayer.updatePlayerEffect();
     }
 
     public enum PlayState {

@@ -53,11 +53,12 @@ namespace gdpl
         SLDataSink audioSnk = {&loc_outmix, NULL};
 
         // create audio player
-        const SLInterfaceID ids[2] = { SL_IID_ANDROIDSIMPLEBUFFERQUEUE, SL_IID_VOLUME };
-        const SLboolean req[2] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
+        // NOTE: SL_IID_BASSBOOST is requested only to disable Fast Audio Path. It is not used anywhere
+        const SLInterfaceID ids[] = { SL_IID_ANDROIDSIMPLEBUFFERQUEUE, SL_IID_VOLUME, SL_IID_BASSBOOST };
+        const SLboolean req[] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
 
         SLresult result = (*engineEngine)->CreateAudioPlayer(engineEngine, &bqPlayerObject, &audioSrc,
-                                                             &audioSnk, 2, ids, req);
+                                                             &audioSnk, 3, ids, req);
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
