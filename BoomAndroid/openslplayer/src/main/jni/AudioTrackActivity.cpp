@@ -153,7 +153,7 @@ namespace gdpl {
 //        LOGD("Computed frame count is %d", gFrameCount);
 //        OpenSLPlayer::setupEngine(sampleRate);
         gFrameCount = DEFAULT_FRAME_COUNT;
-        OpenSLPlayer::setupEngine(sampleRate);
+        OpenSLPlayer::setupEngine(DEFAULT_SAMPLE_RATE);
     }
 
 /*
