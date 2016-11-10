@@ -41,7 +41,7 @@ namespace gdpl {
     static AudioEngine *GetEngine() {
         static AudioEngine *engine = nullptr;
         if (nullptr == engine) {
-            engine = new AudioEngine(gFrameCount);
+            engine = new AudioEngine(DEFAULT_SAMPLE_RATE, gFrameCount);
         }
 
         return engine;

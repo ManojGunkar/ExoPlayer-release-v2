@@ -24,15 +24,16 @@ static float Jazz[NUM_BANDS] = {4.0, 4.0, 3.0, -1.0, 2.0, 3.0, 2.0, -1.0, -2.0, 
 static float Loud[NUM_BANDS] = {4.0, 4.5, 4.0, 2.0, 3.0, 4.0, 2.0, 0.0, -1.0, 1.0, 4.0, 1.0, -1.0, 4.0, 4.0, 3.0};
 static float Metal[NUM_BANDS] = {5.0, 5.0, 4.5, 2.0, 0.0, 3.0, 2.0, 0.0, 0.0, 0.0, 2.0, 3.0, 0.0, 3.0, 4.0, 5.0};
 
-static float Music[NUM_BANDS] = {4.0, 5.0, 4.5, 2.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 1.0, 4.0, 5.0, 4.0};
-static float Pop[NUM_BANDS] = {-1.0, -0.5, -0.5, 0.0, 0.5, 2.5, 3.5, 4.5, 4.5, 3.0, 2.0, 1.0, 0.0, -0.5, -1.0, -1.5};
+//static float Music[NUM_BANDS] = {4.0, 5.0, 4.5, 2.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 1.0, 4.0, 5.0, 4.0};
+static float Music[NUM_BANDS] = {4.0, 5.0, 4.5, 2.0, 1.0, 1.0, 1.0, 0.0, 1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 3.0, 3.0};
+static float Pop[NUM_BANDS] = {1.0, 1.5, 2.0, 2.0, 2.5, 2.5, 3.0, 4.0, 4.0, 3.0, 2.0, 1.0, 0.0, 0.0, 0.0, 0.0};//done
 
 static float Party[NUM_BANDS] = {4.5, 5.0, 4.0, 2.0, 1.0, 0.5, 0.0, -1.0, 2.5, 1.0, 1.0, 1.0, 1.5, 3.5, 5.0, 3.0};
 static float Regge[NUM_BANDS] = {1.0, 3.5, 5.0, 4.5, 4.5, 2.5, 1.0, 0.0, -1.0, -1.0, 0.0, 2.0, 3.0, 4.0, 2.5, 1.0};
 static float Rock[NUM_BANDS] = {5.0, 4.5, 4.0, 3.0, 2.0, 1.0, 0.0, -1.0, -1.0, -1.0, 0.0, 0.0, 3.0, 4.0, 4.5, 4.5};
-static float Soft[NUM_BANDS] = {1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0, -1.0, 0.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0};
+static float Soft[NUM_BANDS] = {-1.5, -1.0, -0.5, 0.0, 0.0, 0.0, 0.0, -1.0, -1.0, 0.0, -1.0, 0.0, -1.0, -1.5, -1.5, -1.5};// done
 static float TrebleBoost[NUM_BANDS] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,1.0, 3.0, 5.0, 4.0, 2.0};
-static float Voclas[NUM_BANDS] = {-1.0, -1.5, -1.0, -0.5, 0.0, 0.0, 1.0, 3.0, 4.0, 4.0, 2.0, 1.0, 0.0, -1.0, -2.0, -3.0};
+static float Vocals[NUM_BANDS] = {-1.5, -1.5, -1.0, -0.5, 0.5, 0.5, 1.0, 2.0, 3.0, 2.0, 1.5, 1.0, 0.0, -1.0, -2.0, -3.0};// done
 static float RnB[NUM_BANDS] = {3.0, 5.0, 4.0, 2.0, 1.0, 0.0, -1.0, -1.0, -1.0, 1.0, 2.0, 3.5, 4.0, 4.5, 4.0, 4.0};
 static float Flat[NUM_BANDS] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
@@ -48,7 +49,7 @@ void InitAssetManager(AAssetManager *inAssetManager);
 
 class AudioEngine {
 public:
-    AudioEngine(int SampleSize);
+    AudioEngine(int sampleRate, int sampleSize);
     ~AudioEngine();
 
     int GetSampleSize();
@@ -93,6 +94,8 @@ public:
 
     void ProcessAudio(short *buffer, void *outBuffer, int size);
 
+    void WidenStereo(bool state);
+
 private:
     int mSampleSize;
     int mOutputSampleType;
@@ -103,6 +106,9 @@ private:
     float mIntensity;
     float mSpeakerState[NUM_SPEAKERS];
     SoundLayout *mLayout;
+    bool mHasNeon;
+
+    bool mWiden;
 };
 
 
