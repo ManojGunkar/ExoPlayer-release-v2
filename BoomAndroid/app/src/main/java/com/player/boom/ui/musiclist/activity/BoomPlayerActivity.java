@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-
+import com.example.openslplayer.AudioEffect;
 import com.player.boom.App;
 import com.player.boom.data.DeviceMediaCollection.MediaItem;
 import com.player.boom.R;
@@ -23,15 +22,8 @@ import com.player.boom.task.PlayerService;
 import com.player.boom.ui.widgets.CircularSeekBar;
 import com.player.boom.ui.widgets.CoverView.CircularCoverView;
 import com.player.boom.ui.widgets.RegularTextView;
-import com.player.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
-
 import java.io.File;
-
-import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_POWER;
-import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_SETTING;
-import static com.example.openslplayer.AudioEffect.EFFECT_DEFAULT_POWER;
-import static com.player.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.play;
 
 /**
  * Created by Rahul Agarwal on 30-09-16.
@@ -43,8 +35,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private CircularCoverView mAlbumArt;
     private CircularSeekBar mTrackSeek;
     private ImageView mPlayPauseBtn, mLibraryBtn, mAudioEffectBtn, mUpNextQueue;
-    SharedPreferences pref;
-    SharedPreferences.Editor editor;
+    AudioEffect audioEffectPreferenceHandler;
     private static boolean isUser = false;
     public static boolean isPlayerResume = true;
     public static final String ACTION_RECEIVE_SONG = "ACTION_RECEIVE_SONG";
@@ -130,7 +121,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void initViews(){
-        pref = App.getApplication().getSharedPreferences(AUDIO_EFFECT_SETTING, MODE_PRIVATE);
+        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
 
         mSongName = (RegularTextView) findViewById(R.id.media_item_name_txt);
         mTrackSeek = (CircularSeekBar)findViewById(R.id.track_seek);
@@ -149,6 +140,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         mAudioEffectBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                audioEffectPreferenceHandler.setEnableAudioEffect(!audioEffectPreferenceHandler.isAudioEffectOn());
+                updateEffectIcon();
                 return false;
             }
         });
@@ -238,8 +231,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void updateEffectIcon() {
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
-        if(isPowerOn) {
+        if(audioEffectPreferenceHandler.isAudioEffectOn()) {
             mAudioEffectBtn.setImageDrawable(getResources().getDrawable(R.drawable.boom_effect_on, null));
         }else{
             mAudioEffectBtn.setImageDrawable(getResources().getDrawable(R.drawable.boom_effect_off, null));

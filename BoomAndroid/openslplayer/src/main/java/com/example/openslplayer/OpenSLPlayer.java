@@ -1,7 +1,6 @@
 package com.example.openslplayer;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.AudioManager;
@@ -11,32 +10,9 @@ import android.media.MediaCodecList;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Log;
-
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import static android.content.Context.MODE_PRIVATE;
-import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_POWER;
-import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_SETTING;
-import static com.example.openslplayer.AudioEffect.DEFAULT_POWER;
-import static com.example.openslplayer.AudioEffect.EFFECT_DEFAULT_POWER;
-import static com.example.openslplayer.AudioEffect.EQUALIZER_POSITION;
-import static com.example.openslplayer.AudioEffect.EQUALIZER_POWER;
-import static com.example.openslplayer.AudioEffect.FULL_BASS;
-import static com.example.openslplayer.AudioEffect.INTENSITY_POSITION;
-import static com.example.openslplayer.AudioEffect.INTENSITY_POWER;
-import static com.example.openslplayer.AudioEffect.POWER_OFF;
-import static com.example.openslplayer.AudioEffect.POWER_ON;
-import static com.example.openslplayer.AudioEffect.SELECTED_EQUALIZER_POSITION;
-import static com.example.openslplayer.AudioEffect.SPEAKER_LEFT_FRONT;
-import static com.example.openslplayer.AudioEffect.SPEAKER_LEFT_SURROUND;
-import static com.example.openslplayer.AudioEffect.SPEAKER_RIGHT_FRONT;
-import static com.example.openslplayer.AudioEffect.SPEAKER_RIGHT_SURROUND;
-import static com.example.openslplayer.AudioEffect.SPEAKER_SUB_WOOFER;
-import static com.example.openslplayer.AudioEffect.SPEAKER_TWEETER;
-import static com.example.openslplayer.AudioEffect.THREE_D_SURROUND_POWER;
 
 /**
  * Created by Rahul Agarwal on 19-09-16.
@@ -48,7 +24,7 @@ public class OpenSLPlayer implements Runnable {
         System.loadLibrary("AudioTrackActivity");
     }
     public final String LOG_TAG = "OpenSLPlayer";
-    SharedPreferences pref;
+    AudioEffect audioEffectPreferenceHandler;
     private MediaExtractor extractor;
     private MediaCodec codec;
     private PlayerEvents events = null;
@@ -72,7 +48,7 @@ public class OpenSLPlayer implements Runnable {
     public OpenSLPlayer(Context context, PlayerEvents events) {
         setEventsListener(events);
         mContext = context;
-        pref = context.getSharedPreferences(AUDIO_EFFECT_SETTING, MODE_PRIVATE);
+        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(context);
         EqualizerGain.setEqGain();
     }
 
@@ -498,57 +474,30 @@ public class OpenSLPlayer implements Runnable {
     public static native void setMutAudioPlayer(boolean mute);
 
     public void updatePlayerEffect(){
-        boolean isAudioEffect = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
-            setEnableEffect(isAudioEffect);
-        if(isAudioEffect) {
-            boolean is3DAudio = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
-            setEnable3DAudio(is3DAudio);
-            boolean isIntensity = pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER);
-            if (isIntensity) {
-                setIntensityValue(pref.getInt(INTENSITY_POSITION, 50) / (double) 100);
-            }
-            boolean isEqualizer = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
-            setEnableEqualizer(isEqualizer);
-            boolean isFullBass = pref.getBoolean(FULL_BASS, DEFAULT_POWER);
-            setEnableSuperBass(isFullBass);
-            int eq = pref.getInt(SELECTED_EQUALIZER_POSITION, EQUALIZER_POSITION);
-            setEqualizerGain(eq);
 
-            if (pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_OFF) {
-                setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_OFF);
-            } else if (pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_ON) {
-                setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_ON);
+        setEnableEffect(audioEffectPreferenceHandler.isAudioEffectOn());
+        if(audioEffectPreferenceHandler.isAudioEffectOn()) {
+            setEnable3DAudio(audioEffectPreferenceHandler.is3DSurroundOn());
+            if (audioEffectPreferenceHandler.isIntensityOn()) {
+                setIntensityValue(audioEffectPreferenceHandler.getIntensity() / (double) 100);
             }
-            if (pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_OFF) {
-                setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_OFF);
-            } else if (pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_ON) {
-                setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_ON);
-            }
-            if (pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_OFF) {
-                setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_OFF);
-            } else if (pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_ON) {
-                setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_ON);
-            }
-            if (pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_OFF) {
-                setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_OFF);
-            } else if (pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_ON) {
-                setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_ON);
-            }
-            if (pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_OFF) {
-                setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_OFF);
-            } else if (pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_ON) {
-                setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_ON);
-            }
-            if (pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_OFF) {
-                setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_OFF);
-            } else if (pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_ON) {
-                setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_ON);
-            }
-            if (pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER) == POWER_OFF) {
-                setHighQualityEnable(POWER_OFF);
-            } else if (pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER) == POWER_ON) {
-                setHighQualityEnable(POWER_ON);
-            }
+            setEnableEqualizer(audioEffectPreferenceHandler.isEqualizerOn());
+            setEnableSuperBass(audioEffectPreferenceHandler.isFullBassOn());
+            setEqualizerGain(audioEffectPreferenceHandler.getSelectedEqualizerPosition());
+
+            setSpeakerEnable(AudioEffect.Speaker.FrontLeft, audioEffectPreferenceHandler.isLeftFrontSpeakerOn());
+
+            setSpeakerEnable(AudioEffect.Speaker.FrontRight, audioEffectPreferenceHandler.isRightFrontSpeakerOn());
+
+            setSpeakerEnable(AudioEffect.Speaker.Tweeter, audioEffectPreferenceHandler.isTweeterOn());
+
+            setSpeakerEnable(AudioEffect.Speaker.RearLeft, audioEffectPreferenceHandler.isLeftSurroundSpeakerOn());
+
+            setSpeakerEnable(AudioEffect.Speaker.RearRight, audioEffectPreferenceHandler.isRightSurroundSpeakerOn());
+
+            setSpeakerEnable(AudioEffect.Speaker.Woofer, audioEffectPreferenceHandler.isWooferOn());
+
+            setHighQualityEnable(audioEffectPreferenceHandler.isIntensityOn());
         }
     }
 

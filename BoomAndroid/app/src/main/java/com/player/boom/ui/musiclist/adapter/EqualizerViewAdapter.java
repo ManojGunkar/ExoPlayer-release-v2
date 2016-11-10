@@ -11,23 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.player.boom.App;
 import com.example.openslplayer.AudioEffect;
 import com.player.boom.R;
 import com.player.boom.ui.musiclist.activity.Surround3DActivity;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.content.Context.MODE_PRIVATE;
-import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_POWER;
-import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_SETTING;
-import static com.example.openslplayer.AudioEffect.DEFAULT_POWER;
-import static com.example.openslplayer.AudioEffect.EFFECT_DEFAULT_POWER;
-import static com.example.openslplayer.AudioEffect.EQUALIZER_POSITION;
-import static com.example.openslplayer.AudioEffect.EQUALIZER_POWER;
-import static com.example.openslplayer.AudioEffect.SELECTED_EQUALIZER_POSITION;
 import static com.example.openslplayer.AudioEffect.equalizer.off;
 import static com.example.openslplayer.AudioEffect.equalizer.on;
 
@@ -43,8 +33,7 @@ public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdap
     ArrayList<AudioEffect.equalizer> selection;
     private onEqualizerUpdate equalizerUpdateEvent = null;
     private Handler updateUIHandler = new Handler();
-    SharedPreferences pref;
-    SharedPreferences.Editor editor;
+    AudioEffect audioEffectPreferenceHandler;
 
     public EqualizerViewAdapter(Surround3DActivity surround3DActivity, List<String> eq_names, TypedArray eq_active_on,
                                 TypedArray eq_active_off, TypedArray eq_inactive_on, TypedArray eq_inactive_off) {
@@ -54,9 +43,9 @@ public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdap
         this.eq_active_off = eq_active_off;
         this.eq_inactive_on = eq_inactive_on;
         this.eq_inactive_off = eq_inactive_off;
-        pref = App.getApplication().getSharedPreferences(AUDIO_EFFECT_SETTING, MODE_PRIVATE);
+        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(context);
         this.selection = new ArrayList<>();
-        int pos = pref.getInt(SELECTED_EQUALIZER_POSITION, EQUALIZER_POSITION);
+        int pos = audioEffectPreferenceHandler.getSelectedEqualizerPosition();
         for(int i=0;i<eq_active_on.length(); i++){
             if(i == pos){
                 selection.add(on);
@@ -75,16 +64,12 @@ public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdap
 
     @Override
     public void onBindViewHolder(final SimpleItemViewHolder holder, final int position) {
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
-        boolean isEqualizerOn = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
-
         Typeface tf;
-
-        if(isPowerOn && isEqualizerOn){
+        if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.isEqualizerOn()){
             if(selection.get(position)== on){
                 holder.eqImg.setImageDrawable(eq_active_on.getDrawable(position));
                 tf = Typeface.createFromAsset(context.getAssets(), "fonts/TitilliumWeb-SemiBold.ttf");
-            }else /*if(selection.get(position)== Surround3DActivity.equalizer.off)*/{
+            }else {
                 holder.eqImg.setImageDrawable(eq_inactive_on.getDrawable(position));
                 tf = Typeface.createFromAsset(context.getAssets(), "fonts/TitilliumWeb-Regular.ttf");
             }
@@ -92,7 +77,7 @@ public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdap
             if(selection.get(position)== on){
                 holder.eqImg.setImageDrawable(eq_active_off.getDrawable(position));
                 tf = Typeface.createFromAsset(context.getAssets(), "fonts/TitilliumWeb-SemiBold.ttf");
-            }else /*if(selection.get(position)== Surround3DActivity.equalizer.off)*/{
+            }else {
                 holder.eqImg.setImageDrawable(eq_inactive_off.getDrawable(position));
                 tf = Typeface.createFromAsset(context.getAssets(), "fonts/TitilliumWeb-Regular.ttf");
             }
@@ -106,12 +91,8 @@ public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdap
         holder.eqImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
-                boolean isEqualizerOn = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
-                if(isPowerOn && isEqualizerOn) {
-                    editor = pref.edit();
-                    editor.putInt(SELECTED_EQUALIZER_POSITION, position);
-                    editor.commit();
+                if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.isEqualizerOn()) {
+                    audioEffectPreferenceHandler.setSelectedEqualizerPosition(position);
                     selection.clear();
                     for (int i = 0; i < eq_active_on.length(); i++) {
                         if (i == position) {

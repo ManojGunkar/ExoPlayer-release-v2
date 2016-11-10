@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -25,44 +24,17 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
-
 import com.example.openslplayer.AudioEffect;
 import com.player.boom.App;
 import com.player.boom.R;
-import com.player.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.player.boom.manager.MusicReceiver;
 import com.player.boom.ui.musiclist.adapter.EqualizerViewAdapter;
 import com.player.boom.ui.widgets.NegativeSeekBar;
 import com.player.boom.ui.widgets.ScrollEnableLayoutManager;
 import com.player.boom.ui.widgets.RegularTextView;
 import com.player.boom.utils.decorations.SimpleDividerItemDecoration;
-
 import java.util.Arrays;
 import java.util.List;
-
-import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_POWER;
-import static com.example.openslplayer.AudioEffect.AUDIO_EFFECT_SETTING;
-import static com.example.openslplayer.AudioEffect.DEFAULT_POWER;
-import static com.example.openslplayer.AudioEffect.EFFECT_DEFAULT_POWER;
-import static com.example.openslplayer.AudioEffect.EQUALIZER_POSITION;
-import static com.example.openslplayer.AudioEffect.EQUALIZER_POWER;
-import static com.example.openslplayer.AudioEffect.FULL_BASS;
-import static com.example.openslplayer.AudioEffect.HEADSET_PLUGGED_INFO;
-import static com.example.openslplayer.AudioEffect.INTENSITY_POSITION;
-import static com.example.openslplayer.AudioEffect.INTENSITY_POWER;
-import static com.example.openslplayer.AudioEffect.POWER_OFF;
-import static com.example.openslplayer.AudioEffect.POWER_ON;
-import static com.example.openslplayer.AudioEffect.SELECTED_EQUALIZER_POSITION;
-import static com.example.openslplayer.AudioEffect.SPEAKER_LEFT_FRONT;
-import static com.example.openslplayer.AudioEffect.SPEAKER_LEFT_SURROUND;
-import static com.example.openslplayer.AudioEffect.SPEAKER_POWER;
-import static com.example.openslplayer.AudioEffect.SPEAKER_RIGHT_FRONT;
-import static com.example.openslplayer.AudioEffect.SPEAKER_RIGHT_SURROUND;
-import static com.example.openslplayer.AudioEffect.SPEAKER_SUB_WOOFER;
-import static com.example.openslplayer.AudioEffect.SPEAKER_TWEETER;
-import static com.example.openslplayer.AudioEffect.THREE_D_SURROUND_POWER;
-import static com.player.boom.manager.MusicReceiver.HEADSET_PLUGGED;
-import static com.player.boom.manager.MusicReceiver.HEADSET_UNPLUGGED;
 
 /**
  * Created by Rahul Agarwal on 05-10-16.
@@ -83,8 +55,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     private ScrollEnableLayoutManager layoutManager;
     private EqualizerViewAdapter mEqualizerAdapter;
     private MusicReceiver musicReceiver;
-    SharedPreferences pref;
-    SharedPreferences.Editor editor;
+    private AudioEffect audioEffectPreferenceHandler;
     private boolean isExpended = false;
 
     @Override
@@ -92,6 +63,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_surround_3d);
 
+        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
         initViews();
         setupToolbar();
         fillEqualizer();
@@ -105,8 +77,6 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     public void initViews(){
 
         musicReceiver = new MusicReceiver(this);
-
-        pref = App.getApplication().getSharedPreferences(AUDIO_EFFECT_SETTING, MODE_PRIVATE);
 
         toolbar = (Toolbar)findViewById(R.id.effect_toolbar);
 
@@ -191,8 +161,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void onPowerSwitchUpdate(){
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
-        if(isPowerOn) {
+        if(audioEffectPreferenceHandler.isAudioEffectOn()) {
             mEffectSwitchTxt.setText("on");
             /*mEffectPowerBtn.setChecked(true);*/
             mEffectPowerBtn.setImageDrawable(getResources().getDrawable(R.drawable.toggle_on, null));
@@ -209,10 +178,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void update3DSurround(){
-        boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
-
-        if(isPowerOn && is3DOn){
+        if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()){
             m3DSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_surround, null));
             m3DSwitchTxt.setText("ON");
             m3DTxt.setTextColor(Color.WHITE);
@@ -230,16 +196,14 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void updateSpeakerInfo(){
-        boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
+        boolean isLeftFront = audioEffectPreferenceHandler.isLeftFrontSpeakerOn();
+        boolean isRightFront = audioEffectPreferenceHandler.isRightFrontSpeakerOn();
+        boolean isLeftSurround = audioEffectPreferenceHandler.isLeftSurroundSpeakerOn();
+        boolean isRightSurround = audioEffectPreferenceHandler.isRightSurroundSpeakerOn();
+        boolean isWoofer = audioEffectPreferenceHandler.isWooferOn();
+        boolean isTweeter = audioEffectPreferenceHandler.isTweeterOn();
 
-        boolean isLeftFront = pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER);
-        boolean isRightFront = pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER);
-        boolean isLeftSurround = pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER);
-        boolean isRightSurround = pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER);
-        boolean isWoofer = pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER);
-        boolean isTweeter = pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER);
-        if(isPowerOn && is3DOn) {
+        if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()) {
             if(isLeftFront && isRightFront && isLeftSurround && isRightSurround && isWoofer && isTweeter){
                 mSpeakerInfo.setVisibility(View.GONE);// All Speakers are on
                 mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_speakers, null));
@@ -275,19 +239,15 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void updateFullBass(){
-        boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
-        boolean isFullBassOn = pref.getBoolean(FULL_BASS, DEFAULT_POWER);
-
-        if(is3DOn && isPowerOn){
-            if(isFullBassOn){
+        if(audioEffectPreferenceHandler.is3DSurroundOn() && audioEffectPreferenceHandler.isAudioEffectOn()){
+            if(audioEffectPreferenceHandler.isFullBassOn()){
                 mFullBassRd.setImageDrawable(getResources().getDrawable(R.drawable.full_bass_on, null));
             }else{
                 mFullBassRd.setImageDrawable(getResources().getDrawable(R.drawable.full_bass_off, null));
             }
             mFullbassTxt.setTextColor(Color.WHITE);
         }else{
-            if(isFullBassOn){
+            if(audioEffectPreferenceHandler.isFullBassOn()){
                 mFullBassRd.setImageDrawable(getResources().getDrawable(R.drawable.full_bass_inactive_on, null));
             }else{
                 mFullBassRd.setImageDrawable(getResources().getDrawable(R.drawable.full_bass_inactive_off, null));
@@ -297,36 +257,36 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void updateSpeakers(){
-        if(pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_OFF){
+        if(!audioEffectPreferenceHandler.isLeftFrontSpeakerOn()){
             mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.off_left_front, null));
-        }else if(pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_ON){
+        }else {
             mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.on_left_front, null));
         }
-        if(pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_OFF){
+        if(!audioEffectPreferenceHandler.isRightFrontSpeakerOn()){
             mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.off_right_front, null));
-        }else if(pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_ON){
+        }else {
             mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.on_right_front, null));
         }
-        if(pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_OFF){
+        if(!audioEffectPreferenceHandler.isTweeterOn()){
             mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.off_lefttweeter, null));
             mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.off_righttweeter, null));
-        }else if(pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_ON){
+        }else {
             mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.on_lefttweeter, null));
             mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.on_righttweeter, null));
         }
-        if(pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_OFF){
+        if(!audioEffectPreferenceHandler.isLeftSurroundSpeakerOn()){
             mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_left_surround, null));
-        }else if(pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_ON){
+        }else {
             mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_left_surround, null));
         }
-        if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_OFF){
+        if(!audioEffectPreferenceHandler.isRightSurroundSpeakerOn()){
             mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_right_surround, null));
-        }else if(pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_ON){
+        }else {
             mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_right_surround, null));
         }
-        if(pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_OFF){
+        if(!audioEffectPreferenceHandler.isWooferOn()){
             mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.off_subwoofer, null));
-        }else if(pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_ON){
+        }else {
             mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.on_subwoofer, null));
         }
         if(MusicReceiver.isPlugged){
@@ -337,10 +297,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void updateIntensity(){
-        boolean isIntensityOn = pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
-
-        if(isPowerOn && isIntensityOn){
+        if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.isIntensityOn()){
             mIntensitySwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.intensity, null));
             mIntensitySwitchTxt.setText("ON");
             mIntensitySwitchTxt.setTextColor(Color.WHITE);
@@ -353,7 +310,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             mIntensityTxt.setTextColor(Color.WHITE);
             EnableSeek(false);
         }
-        mIntensitySeek.setProgress(pref.getInt(INTENSITY_POSITION, 50));
+        mIntensitySeek.setProgress(audioEffectPreferenceHandler.getIntensity());
     }
 
     private void EnableSeek(boolean isEnable){
@@ -370,10 +327,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void updateEqualizer(){
-        boolean isEqualizerOn = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
-
-        if(isPowerOn && isEqualizerOn){
+        if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.isEqualizerOn()){
             mEqualizerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.equalizer, null));
             mEqualizerSwitchTxt.setText("ON");
             mEqualizerSwitchTxt.setTextColor(Color.WHITE);
@@ -390,97 +344,83 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void switch3DSurround(boolean isPowerOn){
         if(isPowerOn) {
-            boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
-            editor = pref.edit();
-            if (is3DOn) {
-                editor.putBoolean(THREE_D_SURROUND_POWER, POWER_OFF);
-                App.getPlayerEventHandler().set3DAudioEnable(POWER_OFF);
+            if (audioEffectPreferenceHandler.is3DSurroundOn()) {
+                audioEffectPreferenceHandler.setEnable3DSurround(false);
+                App.getPlayerEventHandler().set3DAudioEnable(false);
                 collapse();
             } else {
-                editor.putBoolean(THREE_D_SURROUND_POWER, POWER_ON);
-                App.getPlayerEventHandler().set3DAudioEnable(POWER_ON);
+                audioEffectPreferenceHandler.setEnable3DSurround(true);
+                App.getPlayerEventHandler().set3DAudioEnable(true);
             }
-            editor.commit();
             update3DSurround();
-            if(pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER) == POWER_OFF){
+            if(!audioEffectPreferenceHandler.isIntensityOn()){
                 switchIntensity(isPowerOn);
             }
-            if(pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER) == POWER_OFF){
+            if(!audioEffectPreferenceHandler.isEqualizerOn()){
                 switchEqualizer(isPowerOn);
             }
         }
     }
 
     public void switchIntensity(boolean isPowerOn){
-        if((pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER) == POWER_ON) &&
-                pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER) == POWER_ON){
+        if(audioEffectPreferenceHandler.is3DSurroundOn() &&
+                audioEffectPreferenceHandler.isIntensityOn()){
             onTextViewTurn(mIntensityIndicator);
             return;
         }
         if(isPowerOn) {
-            boolean isIntensityOn = pref.getBoolean(INTENSITY_POWER, DEFAULT_POWER);
-            editor = pref.edit();
-            if (isIntensityOn) {
-                editor.putBoolean(INTENSITY_POWER, POWER_OFF);
-                App.getPlayerEventHandler().setHighQualityEnable(POWER_OFF);
+            if (audioEffectPreferenceHandler.isIntensityOn()) {
+                audioEffectPreferenceHandler.setEnableIntensity(false);
+                App.getPlayerEventHandler().setHighQualityEnable(false);
             } else {
-                editor.putBoolean(INTENSITY_POWER, POWER_ON);
-                App.getPlayerEventHandler().setHighQualityEnable(POWER_ON);
+                audioEffectPreferenceHandler.setEnableIntensity(true);
+                App.getPlayerEventHandler().setHighQualityEnable(true);
             }
-            editor.commit();
             updateIntensity();
         }
     }
 
     public void switchEqualizer(boolean isPowerOn){
-        if((pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER) == POWER_ON) &&
-                pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER) == POWER_ON){
+        if(audioEffectPreferenceHandler.is3DSurroundOn() &&
+                audioEffectPreferenceHandler.isEqualizerOn()){
             onTextViewTurn(mEqualizerIndicator);
             return;
         }
         if(isPowerOn) {
-            boolean isEqualizerOn = pref.getBoolean(EQUALIZER_POWER, DEFAULT_POWER);
-            editor = pref.edit();
-            if (isEqualizerOn) {
-                editor.putBoolean(EQUALIZER_POWER, POWER_OFF);
-                App.getPlayerEventHandler().setEqualizerEnable(POWER_OFF);
+            if (audioEffectPreferenceHandler.isEqualizerOn()) {
+                audioEffectPreferenceHandler.setEnableEqualizer(false);
+                App.getPlayerEventHandler().setEqualizerEnable(false);
             } else {
-                editor.putBoolean(EQUALIZER_POWER, POWER_ON);
-                App.getPlayerEventHandler().setEqualizerEnable(POWER_ON);
+                audioEffectPreferenceHandler.setEnableEqualizer(true);
+                App.getPlayerEventHandler().setEqualizerEnable(true);
             }
-            editor.commit();
             updateEqualizer();
         }
     }
 
     public void switchSuperPass(boolean isPowerOn){
-        boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
-        if(isPowerOn && is3DOn) {
-            editor = pref.edit();
-            if(pref.getBoolean(FULL_BASS, DEFAULT_POWER) == POWER_ON){
-                editor.putBoolean(FULL_BASS, POWER_OFF);
-                App.getPlayerEventHandler().setSuperBassEnable(POWER_OFF);
+        if(isPowerOn && audioEffectPreferenceHandler.is3DSurroundOn()) {
+            if(audioEffectPreferenceHandler.isFullBassOn()){
+                audioEffectPreferenceHandler.setEnableFullBass(false);
+                App.getPlayerEventHandler().setSuperBassEnable(false);
             }else{
-                editor.putBoolean(FULL_BASS, POWER_ON);
-                App.getPlayerEventHandler().setSuperBassEnable(POWER_ON);
+                audioEffectPreferenceHandler.setEnableFullBass(true);
+                App.getPlayerEventHandler().setSuperBassEnable(true);
             }
-            editor.commit();
             updateFullBass();
         }
     }
 
     @Override
     public void onClick(View v) {
-        boolean isPowerOn = pref.getBoolean(AUDIO_EFFECT_POWER, EFFECT_DEFAULT_POWER);
+        boolean isPowerOn = audioEffectPreferenceHandler.isAudioEffectOn();
         switch (v.getId()){
             case R.id.effect_switch_panel:
-                editor = pref.edit();
                 if(isPowerOn){
-                    editor.putBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
+                    audioEffectPreferenceHandler.setEnableAudioEffect(false);
                 }else{
-                    editor.putBoolean(AUDIO_EFFECT_POWER, POWER_ON);
+                    audioEffectPreferenceHandler.setEnableAudioEffect(true);
                 }
-                editor.commit();
 
                 App.getPlayerEventHandler().updateEffect();
                 onPowerSwitchUpdate();
@@ -501,9 +441,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 switchSuperPass(isPowerOn);
                 break;
             case R.id.speaker_switch_btn:
-                boolean isSpeakerOn = pref.getBoolean(SPEAKER_POWER, DEFAULT_POWER);
-                boolean is3DOn = pref.getBoolean(THREE_D_SURROUND_POWER, DEFAULT_POWER);
-                if(isPowerOn && is3DOn) {
+                if(isPowerOn && audioEffectPreferenceHandler.is3DSurroundOn()) {
                     if(isExpended){
                         collapse();
                         isExpended = false;
@@ -514,101 +452,77 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
             case R.id.speaker_left_front:
-                if (pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_ON) {
+                if (audioEffectPreferenceHandler.isLeftFrontSpeakerOn()) {
                     mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.off_left_front, null));
-                    editor = pref.edit();
-                    editor.putBoolean(SPEAKER_LEFT_FRONT, POWER_OFF);
-                    editor.commit();
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_OFF);
-                } else /*if (pref.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER) == POWER_OFF)*/ {
+                    audioEffectPreferenceHandler.setEnableLeftFrontSpeaker(false);
+                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontLeft, false);
+                } else {
                     mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.on_left_front, null));
-                    editor = pref.edit();
-                    editor.putBoolean(SPEAKER_LEFT_FRONT, POWER_ON);
-                    editor.commit();
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontLeft, POWER_ON);
+                    audioEffectPreferenceHandler.setEnableLeftFrontSpeaker(true);
+                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontLeft, true);
                 }
                 updateSpeakerInfo();
                 break;
             case R.id.speaker_right_front:
-                if (pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_ON) {
+                if (audioEffectPreferenceHandler.isRightFrontSpeakerOn()) {
                     mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.off_right_front, null));
-                    editor = pref.edit();
-                    editor.putBoolean(SPEAKER_RIGHT_FRONT, POWER_OFF);
-                    editor.commit();
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_OFF);
-                } else /*if (pref.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER) == POWER_OFF)*/ {
+                    audioEffectPreferenceHandler.setEnableRightFrontSpeaker(false);
+                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontRight, false);
+                } else {
                     mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.on_right_front, null));
-                    editor = pref.edit();
-                    editor.putBoolean(SPEAKER_RIGHT_FRONT, POWER_ON);
-                    editor.commit();
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontRight, POWER_ON);
+                    audioEffectPreferenceHandler.setEnableRightFrontSpeaker(true);
+                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontRight, true);
                 }
                 updateSpeakerInfo();
                 break;
             case R.id.speaker_left_tweeter:
             case R.id.speaker_right_tweeter:
-                if (pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_ON) {
+                if (audioEffectPreferenceHandler.isTweeterOn()) {
                     mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.off_lefttweeter, null));
                     mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.off_righttweeter, null));
-                    editor = pref.edit();
-                    editor.putBoolean(SPEAKER_TWEETER, POWER_OFF);
-                    editor.commit();
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_OFF);
-                } else /*if (pref.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER) == POWER_OFF)*/ {
+                    audioEffectPreferenceHandler.setEnableTweeter(false);
+                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Tweeter, false);
+                } else {
                     mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.on_lefttweeter, null));
                     mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.on_righttweeter, null));
-                    editor = pref.edit();
-                    editor.putBoolean(SPEAKER_TWEETER, POWER_ON);
-                    editor.commit();
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Tweeter, POWER_ON);
+                    audioEffectPreferenceHandler.setEnableTweeter(true);
+                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Tweeter, true);
                 }
                 updateSpeakerInfo();
                 break;
             case R.id.speaker_left_surround:
-                if (pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_ON) {
+                if (audioEffectPreferenceHandler.isLeftSurroundSpeakerOn()) {
                     mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_left_surround, null));
-                    editor = pref.edit();
-                    editor.putBoolean(SPEAKER_LEFT_SURROUND, POWER_OFF);
-                    editor.commit();
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_OFF);
-                } else /*if (pref.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER) == POWER_OFF)*/ {
+                    audioEffectPreferenceHandler.setEnableLeftSurroundSpeaker(false);
+                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearLeft, false);
+                } else {
                     mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_left_surround, null));
-                    editor = pref.edit();
-                    editor.putBoolean(SPEAKER_LEFT_SURROUND, POWER_ON);
-                    editor.commit();
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearLeft, POWER_ON);
+                    audioEffectPreferenceHandler.setEnableLeftSurroundSpeaker(true);
+                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearLeft, true);
                 }
                 updateSpeakerInfo();
                 break;
             case R.id.speaker_right_surround:
-                if (pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_ON) {
+                if (audioEffectPreferenceHandler.isRightSurroundSpeakerOn()) {
                     mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_right_surround, null));
-                    editor = pref.edit();
-                    editor.putBoolean(SPEAKER_RIGHT_SURROUND, POWER_OFF);
-                    editor.commit();
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_OFF);
-                } else /*if (pref.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER) == POWER_OFF)*/ {
+                    audioEffectPreferenceHandler.setEnableRightSurroundSpeaker(false);
+                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearRight, false);
+                } else {
                     mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_right_surround, null));
-                    editor = pref.edit();
-                    editor.putBoolean(SPEAKER_RIGHT_SURROUND, POWER_ON);
-                    editor.commit();
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearRight, POWER_ON);
+                    audioEffectPreferenceHandler.setEnableRightSurroundSpeaker(true);
+                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearRight, true);
                 }
                 updateSpeakerInfo();
                 break;
             case R.id.speaker_sub_woofer:
-                if (pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_ON) {
+                if (audioEffectPreferenceHandler.isWooferOn()) {
                     mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.off_subwoofer, null));
-                    editor = pref.edit();
-                    editor.putBoolean(SPEAKER_SUB_WOOFER, POWER_OFF);
-                    editor.commit();
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_OFF);
-                } else /*if (pref.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER) == POWER_OFF)*/ {
+                    audioEffectPreferenceHandler.setEnableWoofer(false);
+                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, false);
+                } else {
                     mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.on_subwoofer, null));
-                    editor = pref.edit();
-                    editor.putBoolean(SPEAKER_SUB_WOOFER, POWER_ON);
-                    editor.commit();
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, POWER_ON);
+                    audioEffectPreferenceHandler.setEnableWoofer(true);
+                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, true);
                 }
                 updateSpeakerInfo();
                 break;
@@ -672,8 +586,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                         recyclerView.setLayoutManager(layoutManager);
                         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(Surround3DActivity.this, 0));
                         recyclerView.setHasFixedSize(true);
-                        int pos = pref.getInt(SELECTED_EQUALIZER_POSITION, EQUALIZER_POSITION);
-                        recyclerView.scrollToPosition(pos);
+                        recyclerView.scrollToPosition(audioEffectPreferenceHandler.getSelectedEqualizerPosition());
                         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                             @Override
                             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -780,10 +693,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if(fromUser) {
-            editor = pref.edit();
-            mIntensitySeek.setProgress(pref.getInt(INTENSITY_POSITION, 50));
-            editor.putInt(INTENSITY_POSITION, progress);
-            editor.commit();
+            audioEffectPreferenceHandler.setIntensity(progress);
         }
     }
 
@@ -794,23 +704,19 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        App.getPlayerEventHandler().setIntensityValue(pref.getInt(INTENSITY_POSITION, 50)/(double)100);
+        App.getPlayerEventHandler().setIntensityValue(audioEffectPreferenceHandler.getIntensity()/(double)100);
     }
 
     @Override
     public void onHeadsetUnplugged() {
         mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.man_normal, null));
-        editor = pref.edit();
-        editor.putBoolean("speaker_center_man", HEADSET_UNPLUGGED);
-        editor.commit();
+        audioEffectPreferenceHandler.setEnableHeadsetPlugged(false);
     }
 
     @Override
     public void onHeadsetPlugged() {
         mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.man_plugged, null));
-        editor = pref.edit();
-        editor.putBoolean(HEADSET_PLUGGED_INFO, HEADSET_PLUGGED);
-        editor.commit();
+        audioEffectPreferenceHandler.setEnableHeadsetPlugged(true);
     }
 
     @Override
