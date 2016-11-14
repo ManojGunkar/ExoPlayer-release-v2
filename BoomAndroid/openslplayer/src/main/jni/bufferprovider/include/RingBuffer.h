@@ -32,16 +32,16 @@ namespace gdpl {
         virtual void releaseBuffer(Buffer* buffer);
 
     private:
-        pthread_mutex_t mutex;
-        pthread_cond_t _writeCond;
-        uint8_t *_data;
-        size_t _size;
-        int _readPtr;
-        int _writePtr;
-        int _writeBytesAvail;
+        const size_t _size;
 
+        pthread_mutex_t _mutex;
+        pthread_cond_t  _writeCond;
+        uint8_t*        _data;
+        int             _readPtr;
+        int             _writePtr;
+        int             _writeBytesAvail;
 
-        int16_t* _tempBuffer;
+        int16_t*        _tempBuffer;
     };
 };
 

@@ -6,8 +6,11 @@
 #define BOOMANDROID_OPENSLPLAYER_H
 
 #include <stdlib.h>
+#include <pthread.h>
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
+
+
 namespace gdpl {
 
 
@@ -25,6 +28,8 @@ namespace gdpl {
     public:
 
         OpenSLPlayer(IDataSource* dataSource);
+
+        ~OpenSLPlayer();
 
         SLresult setup();
 
@@ -44,6 +49,13 @@ namespace gdpl {
 
         void startReading();
 
+        void stopReading();
+
+        bool isReading() const {
+            return _isReading;
+        }
+
+
         static SLresult setupEngine(uint32_t sampleRate);
 
         static SLresult tearDownEngine();
@@ -53,6 +65,7 @@ namespace gdpl {
     private:
 
         static void BufferQueueCallback(SLAndroidSimpleBufferQueueItf bq, void *context);
+        void enqueue();
 
     private:
         SLObjectItf bqPlayerObject;
@@ -60,8 +73,9 @@ namespace gdpl {
         SLAndroidSimpleBufferQueueItf _bufferQueue;
         SLVolumeItf bqPlayerVolume;
         SLuint32 playState;
-
+        bool     _isReading;
         IDataSource* _dataSource;
+        pthread_mutex_t _mutex;
     };
 }
 

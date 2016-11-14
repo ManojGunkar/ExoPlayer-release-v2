@@ -6,20 +6,22 @@
 
 namespace gdpl {
 
-    static const int32_t kTempBufferSize = 1024*100;
     static const int kBytesPerFrame =  sizeof(int16_t) * 2; // assume 2 channels - stereo
 
 
-    RingBuffer::RingBuffer(int sizeBytes) {
-        _data = (uint8_t*)calloc(sizeBytes, sizeof(uint8_t));
-        _size = sizeBytes;
+    RingBuffer::RingBuffer(int sizeBytes): _size(sizeBytes)
+    {
+        _data = (uint8_t*)calloc(_size, sizeof(uint8_t));
         _readPtr = 0;
         _writePtr = 0;
         _writeBytesAvail = sizeBytes;
 
-        _tempBuffer = (int16_t*)calloc(kTempBufferSize, sizeof(int16_t));
+        _tempBuffer = (int16_t*)calloc(_size, sizeof(int16_t));
 
-        pthread_mutex_init(&mutex, NULL);
+        pthread_mutexattr_t attr;
+        pthread_mutexattr_init(&attr);
+        pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+        pthread_mutex_init(&_mutex, &attr);
         pthread_cond_init(&_writeCond, NULL);
     }
 
@@ -31,7 +33,7 @@ namespace gdpl {
 
 // Set all data to 0 and flag buffer as empty.
     bool RingBuffer::Empty(void) {
-        AutoLock lock(&mutex);
+        AutoLock lock(&_mutex);
         memset(_data, 0, _size);
         _readPtr = 0;
         _writePtr = 0;
@@ -43,13 +45,13 @@ namespace gdpl {
 
     void RingBuffer::UnblockWrite()
     {
-        pthread_mutex_lock(&mutex);
+        pthread_mutex_lock(&_mutex);
         pthread_cond_signal(&_writeCond);
-        pthread_mutex_unlock(&mutex);
+        pthread_mutex_unlock(&_mutex);
     }
 
     int RingBuffer::Read(uint8_t *dataPtr, int numBytes) {
-        AutoLock lock(&mutex);
+        AutoLock lock(&_mutex);
         // If there's nothing to read or no data available, then we can't read anything.
         if (dataPtr == 0 || numBytes <= 0 || _writeBytesAvail == _size) {
             return 0;
@@ -82,10 +84,10 @@ namespace gdpl {
 // Write to the ring buffer.  Do not overwrite data that has not yet
 // been read.
     int RingBuffer::Write(uint8_t *dataPtr, int offset, int numBytes) {
-        gdpl::AutoLock lock(&mutex);
+        gdpl::AutoLock lock(&_mutex);
 
         if (dataPtr == 0 || (numBytes - offset) <= 0 || _writeBytesAvail < numBytes) {
-            pthread_cond_wait(&_writeCond, &mutex);
+            pthread_cond_wait(&_writeCond, &_mutex);
         }
 
         // If there's nothing to write or no room available, we can't write anything.
@@ -121,10 +123,12 @@ namespace gdpl {
     }
 
     int RingBuffer::GetWriteAvail(void) {
+        AutoLock lock(&_mutex);
         return _writeBytesAvail;
     }
 
     int RingBuffer::GetReadAvail(void) {
+        AutoLock lock(&_mutex);
         return _size - _writeBytesAvail;
     }
 
@@ -132,6 +136,7 @@ namespace gdpl {
     status_t RingBuffer::getNextBuffer(Buffer* buffer) {
 
         //ALOGD("getNextBuffer", "Requested Frames = %d", buffer->frameCount);
+        AutoLock lock(&_mutex);
 
         int requestedBytes = buffer->frameCount * kBytesPerFrame;
         if ( this->GetReadAvail() <  requestedBytes ) {

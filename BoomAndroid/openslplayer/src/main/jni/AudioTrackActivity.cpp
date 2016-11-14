@@ -101,22 +101,20 @@ namespace gdpl {
             AutoLock guard(&lock);
             AutoLock guard2(&engineLock);
 
-            if (isPlay) {
-                //ALOGD("Enqueue : RingBufferSize : %d", ringBuffer->GetReadAvail());
-                if (ringBuffer->GetReadAvail() > 0) {
-                    memset(mResampleBuffer, 0, _frameCount * CHANNEL_COUNT * sizeof(int32_t));
-                    audioResampler->resample(mResampleBuffer, _frameCount, ringBuffer);
-                    ditherAndClamp((int32_t *) mBuffer, mResampleBuffer, _frameCount);
-                    GetEngine()->ProcessAudio(mBuffer, mOutputBuffer, _frameCount * CHANNEL_COUNT);
-                    //memcpy_to_float_from_i16(mOutputBuffer, mBuffer, _frameCount * CHANNEL_COUNT);
+            if (ringBuffer->GetReadAvail() > 0) {
+                memset(mResampleBuffer, 0, _frameCount * CHANNEL_COUNT * sizeof(int32_t));
+                audioResampler->resample(mResampleBuffer, _frameCount, ringBuffer);
+                ditherAndClamp((int32_t *) mBuffer, mResampleBuffer, _frameCount);
+                GetEngine()->ProcessAudio(mBuffer, mOutputBuffer, _frameCount * CHANNEL_COUNT);
+                //memcpy_to_float_from_i16(mOutputBuffer, mBuffer, _frameCount * CHANNEL_COUNT);
 
-                    // enqueue another buffer
-                    buffer->data = mOutputBuffer;
-                    buffer->size = _frameCount * CHANNEL_COUNT * sizeof(float);
-                } else {
-                    //ALOGD("Enqueue : Ring Buffer Empty");
-                    isPlay = false;
-                }
+                // enqueue another buffer
+                buffer->data = mOutputBuffer;
+                buffer->size = _frameCount * CHANNEL_COUNT * sizeof(float);
+            } else {
+                //ALOGD("Enqueue : Ring Buffer Empty");
+                buffer->data = nullptr;
+                buffer->size = 0;
             }
         }
 
@@ -200,8 +198,7 @@ namespace gdpl {
             written = ringBuffer->Write((uint8_t*)sData, offset, frameCount);
         }
 
-        if (!mThread->isPlay && ringBuffer->GetWriteAvail() <= frameCount) {
-            mThread->isPlay = true;
+        if (!openSLPlayer->isReading() && ringBuffer->GetWriteAvail() <= frameCount) {
             openSLPlayer->startReading();
         }
 
@@ -243,6 +240,8 @@ namespace gdpl {
         if (ringBuffer != NULL) {
             ringBuffer->Empty();
         }
+
+        openSLPlayer->stopReading();
     }
 
     void stopPlayer(jboolean enable) {

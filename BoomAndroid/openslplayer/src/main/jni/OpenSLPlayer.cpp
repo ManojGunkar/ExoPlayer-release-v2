@@ -4,13 +4,14 @@
 
 #include <assert.h>
 #include <logger/log.h>
+#include "Utilities/AutoLock.hpp"
 #include "OpenSLPlayer.hpp"
 
 
 namespace gdpl
 {
 
-    static const int BUFFER_COUNT = 4;
+    static const int BUFFER_COUNT = 2;
 
     static SLObjectItf engineObject = NULL;
     static SLObjectItf outputMixObject = NULL;
@@ -21,9 +22,17 @@ namespace gdpl
 
 
     OpenSLPlayer::OpenSLPlayer(IDataSource* dataSource)
-    :_dataSource(dataSource)
+    :_dataSource(dataSource), _isReading(false)
     {
+        pthread_mutexattr_t attr;
+        pthread_mutexattr_init(&attr);
+        pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+        pthread_mutex_init(&_mutex, &attr);
+    }
 
+    OpenSLPlayer::~OpenSLPlayer()
+    {
+        pthread_mutex_destroy(&_mutex);
     }
 
 
@@ -78,7 +87,7 @@ namespace gdpl
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
-        result = (*_bufferQueue)->RegisterCallback(_bufferQueue, BufferQueueCallback, _dataSource);
+        result = (*_bufferQueue)->RegisterCallback(_bufferQueue, BufferQueueCallback, this);
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
@@ -149,10 +158,20 @@ namespace gdpl
 
     void OpenSLPlayer::startReading()
     {
+        AutoLock lock(&_mutex);
+        _isReading = true;
+        (*_bufferQueue)->Clear(_bufferQueue);
         for ( int i = 0; i < BUFFER_COUNT; i++ ) {
-            BufferQueueCallback(_bufferQueue, _dataSource);
+            enqueue();
         }
     }
+
+    void OpenSLPlayer::stopReading()
+    {
+        AutoLock lock(&_mutex);
+        _isReading = false;
+    }
+
 
     SLresult OpenSLPlayer::setupEngine(uint32_t sampleRate) {
 
@@ -213,16 +232,36 @@ namespace gdpl
 
     void OpenSLPlayer::BufferQueueCallback(SLAndroidSimpleBufferQueueItf bq, void *context)
     {
-        IDataSource* dataSource = (IDataSource*)context;
+        OpenSLPlayer* self = (OpenSLPlayer*)context;
+        self->enqueue();
+
+    }
+
+    void OpenSLPlayer::enqueue()
+    {
+        AutoLock lock(&_mutex);
+        if (!_isReading) {
+            return;
+        }
+
         IDataSource::Buffer buffer;
-        dataSource->getNextBuffer(&buffer);
+        _dataSource->getNextBuffer(&buffer);
+        bool success = true;
+        if ( buffer.size > 0 && buffer.data != nullptr ) {
+            SLresult result = (*_bufferQueue)->Enqueue(_bufferQueue, buffer.data, buffer.size);
+            if ( SL_RESULT_SUCCESS != result ) {
+                LOGE("OpenSLPlayer: Failed to enqueue buffer (%d)", result);
+                success = false;
+            }
+        }
+        else {
+            LOGE("OpenSLPlayer: No data to enqueue");
+            success = false;
+        }
 
-//        SLAndroidSimpleBufferQueueState state;
-//        (*bq)->GetState(bq, &state);
-
-        SLresult result = (*bq)->Enqueue(bq, buffer.data, buffer.size);
-        if ( SL_RESULT_SUCCESS != result ) {
-            LOGD("OpenSLPlayer: Failed to enqueue buffer (%d)", result);
+        if ( !success ) {
+        //    stopReading();
         }
     }
+
 }
