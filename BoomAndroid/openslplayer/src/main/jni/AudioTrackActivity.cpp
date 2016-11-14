@@ -41,7 +41,7 @@ namespace gdpl {
     static AudioEngine *GetEngine() {
         static AudioEngine *engine = nullptr;
         if (nullptr == engine) {
-            engine = new AudioEngine(DEFAULT_SAMPLE_RATE, gFrameCount);
+            engine = new AudioEngine(OpenSLPlayer::getEngineSampleRate(), gFrameCount);
         }
 
         return engine;
@@ -153,7 +153,7 @@ namespace gdpl {
 //        LOGD("Computed frame count is %d", gFrameCount);
 //        OpenSLPlayer::setupEngine(sampleRate);
         gFrameCount = DEFAULT_FRAME_COUNT;
-        OpenSLPlayer::setupEngine(DEFAULT_SAMPLE_RATE);
+        OpenSLPlayer::setupEngine(sampleRate);
     }
 
 /*
