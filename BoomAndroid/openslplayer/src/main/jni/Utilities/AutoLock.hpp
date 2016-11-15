@@ -6,6 +6,7 @@
 #define BOOMANDROID_AUTOLOCK_H
 
 #include <pthread.h>
+#include "Mutex.h"
 
 namespace gdpl {
     class AutoLock
@@ -13,6 +14,10 @@ namespace gdpl {
     public:
         AutoLock(pthread_mutex_t* lock): _mutex(lock)
         {
+            Lock();
+        }
+
+        AutoLock(Mutex* mutex): _mutex(mutex->GetNative()) {
             Lock();
         }
 
