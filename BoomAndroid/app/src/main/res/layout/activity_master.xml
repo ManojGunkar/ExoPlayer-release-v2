@@ -40,6 +40,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <fragment
+            class="com.player.boom.ui.musiclist.fragment.SearchViewFragment"
+            android:id="@+id/search_content"
+            android:tag="@string/search_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
     <android.support.design.widget.NavigationView
         android:id="@+id/navigationView"

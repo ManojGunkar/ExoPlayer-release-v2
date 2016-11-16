@@ -17,12 +17,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Random;
+
 import static com.player.boom.handler.PlayingQueue.QueueType.*;
 
 /**
  * Created by Rahul Agarwal on 16-09-16.
  */
 public class PlayingQueue {
+
+    private static PlayingQueue.SHUFFLE mShuffle = PlayingQueue.SHUFFLE.none;
+    private static PlayingQueue.REPEAT mRepeat = PlayingQueue.REPEAT.none;
 
     private QueueEvent queueEvent = null;
     Handler eventHandler = new Handler();
@@ -34,6 +39,7 @@ public class PlayingQueue {
     private LinkedList<IMediaItemBase> mUpNextList = new LinkedList<>();
     private LinkedList<IMediaItemBase> mCurrentList = new LinkedList<>();
     private LinkedList<IMediaItemBase> mAutoNextList = new LinkedList<>();
+    private LinkedList<IMediaItemBase> ghostList = new LinkedList<>();
 
     private static PlayingQueue handler;
 
@@ -114,6 +120,47 @@ public class PlayingQueue {
             return playingQueue.get(Auto_UpNext);
         }
     }
+
+    /****************************************************************************************************************************/
+//    Assist ghost list
+
+    public boolean isPreviousItem(){
+        long currentSongIndex = ghostList.indexOf(getPlayingItem());
+        if(currentSongIndex == 0)
+            return false;
+        return true;
+    }
+
+    public boolean isNextItemItem(){
+        long currentSongIndex = ghostList.indexOf(getPlayingItem());
+        if(currentSongIndex == ghostList.size()-1)
+            return false;
+        return true;
+    }
+
+    public IMediaItemBase nextPlayItem(){
+        int currentSongIndex = ghostList.indexOf(getPlayingItem());
+        if(mRepeat == REPEAT.none) {
+            if (currentSongIndex < ghostList.size() - 1) {
+                return ghostList.get(currentSongIndex + 1);
+            }
+        }else if(mRepeat == REPEAT.all) {
+
+        }
+        return null;
+    }
+
+    public IMediaItemBase prevPlayItem(){
+        int currentSongIndex = ghostList.indexOf(getPlayingItem());
+        if(currentSongIndex > 0 ){
+            return ghostList.get(currentSongIndex - 1);
+        }
+        return null;
+    }
+
+
+
+
 
     /***************************************************************************************************************************/
 //    Queue Manipulation
@@ -251,14 +298,59 @@ public class PlayingQueue {
     }
 
 
-    public void setNextPlayingItem() {
-        addPlayingItemToHistory();
-        if(null != getManualUpNextList() && getManualUpNextList().size()>0){
-            playingQueue.get(Playing).add(playingQueue.get(Manual_UpNext).remove(0));
-        }else if(null != getAutoUpNextList() && getAutoUpNextList().size()>0){
-            playingQueue.get(Playing).add(playingQueue.get(Auto_UpNext).remove(0));
+    public void setNextPlayingItem(boolean isUser) {
+        if(mRepeat == REPEAT.none || (mRepeat == REPEAT.one && isUser)){
+            addPlayingItemToHistory();
+            if (null != getManualUpNextList() && getManualUpNextList().size() > 0) {
+                playingQueue.get(Playing).add(playingQueue.get(Manual_UpNext).remove(0));
+            } else if (null != getAutoUpNextList() && getAutoUpNextList().size() > 0) {
+                setNextShuffledItem(Auto_UpNext);
+            }
+        }
+
+        else if(mRepeat == REPEAT.one && !isUser){
+//          Item will not change, same item will play
+        }
+
+
+        else if(mRepeat == REPEAT.all){
+            if(null != getManualUpNextList() && getManualUpNextList().size() > 0){
+                addPlayingItemToHistory();
+                playingQueue.get(Playing).add(playingQueue.get(Manual_UpNext).remove(0));
+            }else if(null != getAutoUpNextList() && getAutoUpNextList().size() > 0){
+                addNextItemToUpnext();
+                setNextShuffledItem(Auto_UpNext);
+            }
         }
     }
+
+    private void setNextShuffledItem(QueueType queueType){
+        if(mShuffle == SHUFFLE.all){
+            Random rand = new Random();
+            if(queueType == Auto_UpNext && playingQueue.get(queueType).size()>0){
+                playingQueue.get(Playing).add(playingQueue.get(queueType).remove(rand.nextInt(playingQueue.get(queueType).size())+1));
+            }
+        }else{
+            playingQueue.get(Playing).add(playingQueue.get(queueType).remove(0));
+        }
+    }
+
+
+    private void addNextItemToUpnext() {
+        if(mRepeat == REPEAT.all) {
+            playingQueue.get(Auto_UpNext).add(playingQueue.get(Playing).remove(0));
+            playingQueue.get(Playing).clear();
+        }
+    }
+
+    public void setShuffle() {
+        mShuffle = App.getUserPreferenceHandler().getShuffle();
+    }
+
+    public void setRepeat() {
+        mRepeat = App.getUserPreferenceHandler().getRepeat();
+    }
+
 
     public enum REPEAT{
         one,

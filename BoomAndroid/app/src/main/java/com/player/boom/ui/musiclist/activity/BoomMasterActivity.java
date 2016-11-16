@@ -1,10 +1,16 @@
 package com.player.boom.ui.musiclist.activity;
 
 import android.annotation.TargetApi;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +24,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.player.boom.R;
+import com.player.boom.handler.search.Search;
+import com.player.boom.ui.musiclist.fragment.SearchViewFragment;
 
 /**
  * Created by Rahul Agarwal on 31-08-2016.
@@ -27,17 +36,19 @@ import com.player.boom.R;
 public class BoomMasterActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     DrawerLayout drawerLayout;
     FrameLayout activityContainer;
+    Fragment mSearchResult;
     Toolbar toolbar;
     ImageView toolImage;
     TextView toolTxt;
     SearchView searchView;
-    MenuItem searchItem;
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         drawerLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.activity_master, null);
         activityContainer = (FrameLayout) drawerLayout.findViewById(R.id.activity_content);
         getLayoutInflater().inflate(layoutResID, activityContainer, true);
         super.setContentView(drawerLayout);
+
+        mSearchResult = getSupportFragmentManager().findFragmentById(R.id.search_content);
 
         setupToolbar();
         setupDrawer();
@@ -103,22 +114,9 @@ public class BoomMasterActivity extends AppCompatActivity implements NavigationV
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.search_button_menu, menu);
+        menuInflater.inflate(R.menu.search_menu, menu);
 
-        searchItem = menu.findItem(R.id.action_search);
-
-        searchItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-
-
-//                Intent i = new Intent(BoomMasterActivity.this, SearchResult.class);
-//                startActivity(i);
-
-                return false;
-            }
-        });
-/* *
+        MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchItem.getActionView();
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
 
@@ -128,19 +126,22 @@ public class BoomMasterActivity extends AppCompatActivity implements NavigationV
         registerSearchListeners();
 
         MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-
+                activityContainer.setVisibility(View.GONE);
+                ft.show(mSearchResult);
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-
+                activityContainer.setVisibility(View.VISIBLE);
+                ft.hide(mSearchResult);
                 return true;
             }
         });
-* */
+
         return true;
     }
 
@@ -152,6 +153,7 @@ public class BoomMasterActivity extends AppCompatActivity implements NavigationV
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                fetchAndUpdateSearchResult(query);
                 return false;
             }
 
@@ -167,6 +169,11 @@ public class BoomMasterActivity extends AppCompatActivity implements NavigationV
 
             }
         });
+    }
+
+    private void fetchAndUpdateSearchResult(String query) {
+        ((SearchViewFragment)mSearchResult).updateSearchResult(query);
+        searchView.clearFocus();
     }
 
     @Override

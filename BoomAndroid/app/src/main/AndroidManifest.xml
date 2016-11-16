@@ -76,18 +76,6 @@
                 android:resource="@xml/searchable"/>
         </activity>
 
-        <activity android:name="com.player.boom.ui.musiclist.activity.SearchResult"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Search">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
-        </activity>
-
         <activity android:name="com.player.boom.ui.musiclist.activity.AlbumActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -116,6 +104,20 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Album">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
+
+
+
+        <activity android:name="com.player.boom.ui.musiclist.activity.SearchDetailListActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Effect">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>

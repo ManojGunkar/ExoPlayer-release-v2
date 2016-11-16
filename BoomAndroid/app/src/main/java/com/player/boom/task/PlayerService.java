@@ -23,11 +23,9 @@ import java.io.IOException;
 public class PlayerService extends Service {
 
 //    public static final String ACTION_PLAY_SINGLE = "ACTION_PLAY_SINGLE";
-    public static final String ACTION_REPEAT_SINGLE = "ACTION_REPEAT_SINGLE";
-    public static final String ACTION_REPEAT_ALL_SONGS = "ACTION_REPEAT_ALL_SONGS";
-    public static final String ACTION_REPEAT_NONE = "ACTION_REPEAT_NONE";
+    public static final String ACTION_REPEAT_SONG = "ACTION_REPEAT_SONG";
     public static final String ACTION_SHUFFLE_SONG = "ACTION_SHUFFLE_SONG";
-    public static final String ACTION_SHUFFLE_NONE = "ACTION_SHUFFLE_NONE";
+
     public static final String ACTION_GET_SONG = "ACTION_GET_SONG";
     public static final String ACTION_NOTI_CLICK = "ACTION_NOTI_CLICK";
     public static final String ACTION_NOTI_REMOVE = "ACTION_NOTI_REMOVE";
@@ -66,11 +64,8 @@ public class PlayerService extends Service {
             musicPlayerHandler = App.getPlayerEventHandler();
         IntentFilter filter = new IntentFilter();
 //        filter.addAction(ACTION_PLAY_SINGLE);
-        filter.addAction(ACTION_REPEAT_SINGLE);
-        filter.addAction(ACTION_REPEAT_ALL_SONGS);
-        filter.addAction(ACTION_REPEAT_NONE);
+        filter.addAction(ACTION_REPEAT_SONG);
         filter.addAction(ACTION_SHUFFLE_SONG);
-        filter.addAction(ACTION_SHUFFLE_NONE);
         filter.addAction(ACTION_GET_SONG);
         filter.addAction(ACTION_NEXT_SONG);
         filter.addAction(ACTION_PREV_SONG);
@@ -115,16 +110,25 @@ public class PlayerService extends Service {
                 updatePlayingQueue();
                 break;
             case ACTION_TRACK_POSITION_UPDATE:
-                Intent seek = new Intent(BoomPlayerActivity.ACTION_UPDATE_TRACK_SEEK);
-                seek.putExtra("percent", intent.getIntExtra("percent", 0));
-                sendBroadcast(seek);
+                trackSeekUpdate(true, intent);
                 break;
             case ACTION_SEEK_SONG:
-                musicPlayerHandler.seek(intent.getIntExtra("seek", 0));
+                trackSeekUpdate(false, intent);
                 break;
             case ACTION_PLAY_STOP:
                 sendBroadcast(new Intent(BoomPlayerActivity.ACTION_TRACK_STOPPED));
                 updateNotificationPlayer(null, false);
+                break;
+            case ACTION_SHUFFLE_SONG:
+                sendBroadcast(new Intent(BoomPlayerActivity.ACTION_UPDATE_SHUFFLE));
+                musicPlayerHandler.resetShuffle();
+                break;
+            case ACTION_REPEAT_SONG :
+                sendBroadcast(new Intent(BoomPlayerActivity.ACTION_UPDATE_REPEAT));
+                musicPlayerHandler.resetRepeat();
+                break;
+            case ACTION_NEXT_SONG :
+                musicPlayerHandler.playNextSong(true);
                 break;
             /*case ACTION_PLAY_SINGLE:
                 musicPlayerHandler.playSingleSong(intent.getLongExtra("songId", 0));
@@ -170,6 +174,16 @@ public class PlayerService extends Service {
                 musicPlayerHandler.addSongToQueue();
                 break;
                 */
+        }
+    }
+
+    private synchronized void trackSeekUpdate(boolean isUser, Intent intent){
+        if(isUser){
+            Intent seek = new Intent(BoomPlayerActivity.ACTION_UPDATE_TRACK_SEEK);
+            seek.putExtra("percent", intent.getIntExtra("percent", 0));
+            sendBroadcast(seek);
+        }else{
+            musicPlayerHandler.seek(intent.getIntExtra("seek", 0));
         }
     }
 

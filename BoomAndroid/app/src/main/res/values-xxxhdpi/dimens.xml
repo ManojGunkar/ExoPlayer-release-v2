@@ -12,5 +12,5 @@
     <dimen name="fullbass_txt">16sp</dimen>//62
     <dimen name="eq_txt">10sp</dimen>
 
-    <dimen name="home_album_art_size">547dp</dimen>
+    <dimen name="home_album_art_size">180dp</dimen>
 </resources>

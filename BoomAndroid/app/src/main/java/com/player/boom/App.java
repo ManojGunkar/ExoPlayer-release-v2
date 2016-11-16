@@ -21,6 +21,8 @@ public class App extends Application {
     private static HistoryFavDBHelper historyFavDBHelper;
     private static PlayerService service;
 
+    private static UserPreferenceHandler userPreferenceHandler;
+
     public static void setService(PlayerService service) {
         App.service = service;
     }
@@ -43,6 +45,8 @@ public class App extends Application {
         historyFavDBHelper = new HistoryFavDBHelper(application);
 
         playingQueueHandler.getPlayingQueue().getPlayingQueue();
+
+        userPreferenceHandler = new UserPreferenceHandler(application);
 
     }
 
@@ -72,6 +76,6 @@ public class App extends Application {
     }
 
     public static UserPreferenceHandler getUserPreferenceHandler() {
-        return new UserPreferenceHandler(application);
+        return userPreferenceHandler;
     }
 }

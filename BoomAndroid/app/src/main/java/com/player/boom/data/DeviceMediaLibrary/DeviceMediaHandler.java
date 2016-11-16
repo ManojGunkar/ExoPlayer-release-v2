@@ -162,7 +162,7 @@ public class DeviceMediaHandler {
     }
 
     public void QueryMediaSearchResult(String query) {
-        DeviceMediaQuery.getSearchResult(query);
+//        DeviceMediaQuery.getSearchResult(query);
     }
 
     public void createBoomPlaylist(String input) {

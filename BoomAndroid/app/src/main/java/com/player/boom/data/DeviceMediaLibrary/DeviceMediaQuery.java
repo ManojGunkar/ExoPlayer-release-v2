@@ -11,6 +11,8 @@ import com.player.boom.data.DeviceMediaCollection.MediaItem;
 import com.player.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.player.boom.data.MediaLibrary.ItemType;
 import com.player.boom.data.MediaLibrary.MediaType;
+import com.player.boom.handler.search.SearchResult;
+
 import java.util.ArrayList;
 
 /**
@@ -835,7 +837,156 @@ public class DeviceMediaQuery {
         return songList;
     }
 
-    public static void getSearchResult(String query) {
+    /*********************************************Search Queries*******************************************************/
 
+    public static SearchResult searchSong(Context context, String sQuery, boolean isPartial) {
+        ArrayList<MediaItem> songList = new ArrayList<>();
+        final String where = MediaStore.Audio.Media.IS_MUSIC + "=1 AND "
+                + MediaStore.Audio.Media.TITLE + " LIKE '%" + sQuery.replace("'", "''") + "%'";
+        final String orderBy = MediaStore.Audio.Media.TITLE;
+        Cursor songListCursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                null, where, null, orderBy);
+        int count = 0;
+        if (songListCursor != null && songListCursor.moveToFirst()) {
+
+            int Song_Id_Column = songListCursor.getColumnIndex
+                    (MediaStore.Audio.Media._ID);
+
+            int Song_Name_Column = songListCursor.getColumnIndex
+                    (MediaStore.Audio.Media.TITLE);
+
+            int Song_Display_Name_Column = songListCursor.getColumnIndex
+                    (MediaStore.Audio.Media.DISPLAY_NAME);
+
+            int Song_Path_Column = songListCursor.getColumnIndex
+                    (MediaStore.Audio.Media.DATA);
+
+            int Album_ID_Column = songListCursor.getColumnIndex
+                    (MediaStore.Audio.Media.ALBUM_ID);
+
+            int Album_Name_Column = songListCursor.getColumnIndex
+                    (MediaStore.Audio.Media.ALBUM);
+
+            int Artist_ID_Column = songListCursor.getColumnIndex
+                    (MediaStore.Audio.Media.ARTIST_ID);
+
+            int Artist_Name_Column = songListCursor.getColumnIndex
+                    (MediaStore.Audio.Media.ARTIST);
+
+            int Duration_Column = songListCursor.getColumnIndex
+                    (MediaStore.Audio.Media.DURATION);
+
+            int Date_Added_Column = songListCursor.getColumnIndex
+                    (MediaStore.Audio.Media.DATE_ADDED);
+
+            do{
+                songList.add(new MediaItem(songListCursor.getLong(Song_Id_Column), songListCursor.getString(Song_Name_Column), songListCursor.getString(Song_Display_Name_Column), songListCursor.getString(Song_Path_Column), songListCursor.getLong(Album_ID_Column), songListCursor.getString(Album_Name_Column), songListCursor.getLong(Artist_ID_Column), songListCursor.getString(Artist_Name_Column), songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column), getAlbumArtByAlbum(context, songListCursor.getString(Album_Name_Column)), ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB));
+
+                if(isPartial && count == 3){
+                    break;
+                }
+                count++;
+            }while (songListCursor.moveToNext());
+        count = songListCursor.getCount();
+        }
+        if (songListCursor != null) {
+            songListCursor.close();
+        }
+        return new SearchResult(songList, count);
     }
+
+    public static SearchResult searchAlbum(Context context, String sQuery, boolean isPartial) {
+        ArrayList<MediaItemCollection> albumList = new ArrayList<>();
+        System.gc();
+        String orderBy;
+//        if(isOrderByAlbum){
+        orderBy = MediaStore.Audio.Albums.ALBUM;
+//        }else{
+//            orderBy = MediaStore.Audio.Albums.ARTIST;
+//        }
+
+        final String where = MediaStore.Audio.Albums.ALBUM + " LIKE '%" + sQuery.replace("'", "''") + "%'";
+        Cursor albumListCursor = context.getContentResolver().
+                query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, null, where, null, orderBy);
+        int count = 0;
+        if (albumListCursor != null && albumListCursor.moveToFirst()) {
+            //get columns
+            int Item_ID_Column = albumListCursor.getColumnIndex
+                    (MediaStore.Audio.Albums._ID);
+
+            int Item_Title_Column = albumListCursor.getColumnIndex
+                    (MediaStore.Audio.Albums.ALBUM);
+
+            int Item_Sub_Title_Column = albumListCursor.getColumnIndex
+                    (MediaStore.Audio.Albums.ARTIST);
+
+            int Item_Count_Column = albumListCursor.getColumnIndex
+                    (MediaStore.Audio.Albums.NUMBER_OF_SONGS);
+
+            int Item_Album_Art_Path_Column = albumListCursor.getColumnIndex
+                    (MediaStore.Audio.Albums.ALBUM_ART);
+
+            //add albums to list
+            do {
+                if(albumListCursor.getInt(Item_Count_Column) > 0)
+                    albumList.add(new MediaItemCollection(albumListCursor.getLong(Item_ID_Column), albumListCursor.getString(Item_Title_Column),
+                            albumListCursor.getString(Item_Sub_Title_Column), albumListCursor.getString(Item_Album_Art_Path_Column),
+                            albumListCursor.getInt(Item_Count_Column), 0,  ItemType.ALBUM, MediaType.DEVICE_MEDIA_LIB));
+
+                if(isPartial && count == 3){
+                    break;
+                }
+                count++;
+            } while (albumListCursor.moveToNext());
+            count = albumListCursor.getCount();
+        }
+        if (albumListCursor != null) {
+            albumListCursor.close();
+        }
+        return new SearchResult(albumList, count);
+    }
+
+    public static SearchResult searchArtist(Context context, String sQuery, boolean isPartial) {
+        ArrayList<MediaItemCollection> artistList = new ArrayList<>();
+        final String where = MediaStore.Audio.Artists.ARTIST + " LIKE '%" + sQuery.replace("'", "''") + "%'";
+        final String orderBy = MediaStore.Audio.Artists.ARTIST;
+        Cursor artistListCursor = context.getContentResolver().
+                query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, null, where, null, orderBy);
+        int count = 0;
+        if (artistListCursor != null && artistListCursor.moveToFirst()) {
+            //get columns
+
+            int Item_ID_Column = artistListCursor.getColumnIndex
+                    (MediaStore.Audio.Artists._ID);
+
+            int Item_Title_Column = artistListCursor.getColumnIndex
+                    (MediaStore.Audio.Artists.ARTIST);
+
+            int numOfAlbumsColumn = artistListCursor.getColumnIndex
+                    (MediaStore.Audio.Artists.NUMBER_OF_ALBUMS);
+
+            int Item_Count_Column = artistListCursor.getColumnIndex
+                    (MediaStore.Audio.Artists.NUMBER_OF_TRACKS);
+
+            //add albums to list
+            do {
+
+                artistList.add(new MediaItemCollection(artistListCursor.getLong(Item_ID_Column), artistListCursor.getString(Item_Title_Column),
+                        null, getAlbumArtByArtist(context, artistListCursor.getString(Item_Title_Column)),
+                        artistListCursor.getInt(Item_Count_Column), artistListCursor.getInt(numOfAlbumsColumn), ItemType.ARTIST,
+                        MediaType.DEVICE_MEDIA_LIB));
+
+                if(isPartial && count == 3){
+                    break;
+                }
+                count++;
+            } while (artistListCursor.moveToNext());
+            count = artistListCursor.getCount();
+        }
+        if (artistListCursor != null) {
+            artistListCursor.close();
+        }
+        return new SearchResult(artistList, count);
+    }
+
 }

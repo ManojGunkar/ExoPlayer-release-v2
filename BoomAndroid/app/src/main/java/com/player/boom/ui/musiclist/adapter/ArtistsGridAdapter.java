@@ -98,7 +98,6 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
                     public void run() {
                         Intent i = new Intent(context, DetailAlbumActivity.class);
                         i.putExtra("mediaItemCollection", itemList.get(position));
-                        i.putExtra("albumColor", holder.defaultAlbumColor);
                         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                                 (Activity) context,
                                 new Pair<View, String>(holder.defaultImg, "transition:imgholder1")

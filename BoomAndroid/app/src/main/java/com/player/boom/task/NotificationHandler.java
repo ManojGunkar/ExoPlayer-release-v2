@@ -100,6 +100,7 @@ public class NotificationHandler {
             notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, GONE);
 
             setNoTrackImageView();
+            notificationManager.notify(NOTIFICATION_ID, notificationCompat);
             return;
         }else if(Build.VERSION.SDK_INT >= 16){
             notificationCompat.bigContentView.setViewVisibility(R.id.noti_name, VISIBLE);

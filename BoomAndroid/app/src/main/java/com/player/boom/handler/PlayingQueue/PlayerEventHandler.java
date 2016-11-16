@@ -73,8 +73,8 @@ public class PlayerEventHandler implements QueueEvent {
         }
     }
 
-    public void playNextSong() {
-        App.getPlayingQueueHandler().getPlayingQueue().setNextPlayingItem();
+    public void playNextSong(boolean isUser) {
+        App.getPlayingQueueHandler().getPlayingQueue().setNextPlayingItem(isUser);
         onPlayingItemChanged();
     }
 
@@ -113,7 +113,7 @@ public class PlayerEventHandler implements QueueEvent {
 
         @Override
         public void onFinish() {
-            playNextSong();
+            playNextSong(false);
         }
 
         @Override public void onPlay() {
@@ -221,6 +221,14 @@ public class PlayerEventHandler implements QueueEvent {
 
     public void updateEffect() {
         mPlayer.updatePlayerEffect();
+    }
+
+    public void resetShuffle() {
+        App.getPlayingQueueHandler().getPlayingQueue().setShuffle();
+    }
+
+    public void resetRepeat() {
+        App.getPlayingQueueHandler().getPlayingQueue().setRepeat();
     }
 
     public enum PlayState {

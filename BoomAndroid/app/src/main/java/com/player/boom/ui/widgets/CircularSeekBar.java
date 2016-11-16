@@ -57,7 +57,7 @@ public class CircularSeekBar extends View {
     /**
      * The Width of the background arc for the CircularSeekBar 
      */
-    private int mArcWidth = 2;
+    private int mArcWidth = 4;
 
     /**
      * The Angle to start drawing this Arc from
