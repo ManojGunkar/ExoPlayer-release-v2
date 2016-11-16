@@ -8,6 +8,9 @@
 
 //#include "SoundLayout.hpp"
 
+
+
+
 #define NUM_BANDS 16
 #define NUM_SPEAKERS 6
 #define SAMPLE_TYPE_FLOAT 1
@@ -37,7 +40,10 @@ static float Vocals[NUM_BANDS] = {-1.5, -1.5, -1.0, -0.5, 0.5, 0.5, 1.0, 2.0, 3.
 static float RnB[NUM_BANDS] = {3.0, 5.0, 4.0, 2.0, 1.0, 0.0, -1.0, -1.0, -1.0, 1.0, 2.0, 3.5, 4.0, 4.5, 4.0, 4.0};
 static float Flat[NUM_BANDS] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
-
+#define eOverEar 0
+#define eOnEar 1
+#define eInEar 2
+#define eInCanal 3
 
 #include <android/asset_manager.h>
 
@@ -67,6 +73,8 @@ public:
 
     void SetIntensity(float value); // value from -1.0 to +1.0
     float GetIntensity();
+    void SetHeadPhoneType(int headpHoneType);
+    int GetHeadPhoneType();
 
     // should be a 16-band equalier with pre-defined mid-frequencies
 //  1 -  36.0
@@ -109,6 +117,7 @@ private:
     bool mHasNeon;
 
     bool mWiden;
+    int mHeadPhoneType;
 };
 
 
