@@ -3,6 +3,7 @@ package com.player.boom.handler.PlayingQueue;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.util.Log;
 
 import com.example.openslplayer.AudioEffect;
 import com.example.openslplayer.OpenSLPlayer;
@@ -61,8 +62,9 @@ public class PlayerEventHandler implements QueueEvent {
     @Override
     public synchronized void onPlayingItemChanged() {
 
-        if(isPlaying() || mPlayer.isPause())
+        if(isPlaying() || mPlayer.isPause()) {
             mPlayer.stop();
+        }
         playingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
         if(null != playingItem) {
             mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
@@ -74,10 +76,22 @@ public class PlayerEventHandler implements QueueEvent {
     }
 
     public void playNextSong(boolean isUser) {
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         App.getPlayingQueueHandler().getUpNextList().setNextPlayingItem(isUser);
-        onPlayingItemChanged();
     }
 
+    public void playPrevSong() {
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        App.getPlayingQueueHandler().getUpNextList().setPreviousPlayingItem();
+    }
 
     @Override
     public void onPlayingItemClicked() {
@@ -117,7 +131,8 @@ public class PlayerEventHandler implements QueueEvent {
         }
 
         @Override public void onPlay() {
-
+            boolean i =isPlaying();
+            Log.d("hbjhbn", "jnkj"+i);
         }
         @Override public void onError() {
         }
@@ -182,9 +197,6 @@ public class PlayerEventHandler implements QueueEvent {
 
     public void setHighQualityEnable(boolean highQualityEnable) {
         mPlayer.setHighQualityEnable(highQualityEnable);
-    }
-
-    public void playPrevSong() {
     }
 
     public void stopPlayer() {

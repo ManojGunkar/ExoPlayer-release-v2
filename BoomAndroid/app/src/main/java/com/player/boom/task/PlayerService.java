@@ -130,6 +130,9 @@ public class PlayerService extends Service {
             case ACTION_NEXT_SONG :
                 musicPlayerHandler.playNextSong(true);
                 break;
+            case ACTION_PREV_SONG:
+                musicPlayerHandler.playPrevSong();
+                break;
             /*case ACTION_PLAY_SINGLE:
                 musicPlayerHandler.playSingleSong(intent.getLongExtra("songId", 0));
                 updatePlayer();
@@ -206,7 +209,7 @@ public class PlayerService extends Service {
         Intent i = new Intent();
         i.setAction(BoomPlayerActivity.ACTION_RECEIVE_SONG);
         i.putExtra("playing_song", (MediaItem)musicPlayerHandler.getPlayingItem());
-        i.putExtra("playing", musicPlayerHandler.isPlaying());
+        i.putExtra("playing", true);
         sendBroadcast(i);
         updateNotificationPlayer((MediaItem)musicPlayerHandler.getPlayingItem(), true);
         try {

@@ -401,15 +401,33 @@ public class OpenSLPlayer implements Runnable {
         sampleRate = 0; channels = 0; bitrate = 0;
         presentationTimeUs = 0; duration = 0;
 
-        state.set(PlayerStates.STOPPED);
         stop = true;
+        if(state.get() != PlayerStates.STOPPED) {
+            state.set(PlayerStates.STOPPED);
 
-        if(noOutputCounter >= noOutputCounterLimit) {
-            if (events != null) handler.post(new Runnable() { @Override public void run() { events.onError();  } });
-        } else if(isShutdown && isFinish){
-            if (events != null) handler.post(new Runnable() { @Override public void run() { events.onFinish();  } });
-        } else if(isShutdown && !isFinish){
-            if (events != null) handler.post(new Runnable() { @Override public void run() { events.onStop();  } });
+
+            if (noOutputCounter >= noOutputCounterLimit) {
+                if (events != null) handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        events.onError();
+                    }
+                });
+            } else if (isShutdown && isFinish) {
+                if (events != null) handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        events.onFinish();
+                    }
+                });
+            } else if (isShutdown && !isFinish) {
+                if (events != null) handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        events.onStop();
+                    }
+                });
+            }
         }
     }
 

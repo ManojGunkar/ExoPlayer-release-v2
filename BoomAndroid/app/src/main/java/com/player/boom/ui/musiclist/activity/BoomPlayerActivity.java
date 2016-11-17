@@ -311,13 +311,13 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         mTrackSeek.setOnCircularSeekBarChangeListener(this);
 //        mTrackSeek.setTouchInSide(false);
 
-//        mAlbumArt.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                Log.e("Player", "Touch");
-//                return true;
-//            }
-//        });
+        mAlbumArt.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.e("Player", "Touch");
+                return true;
+            }
+        });
 
         updateEffectIcon();
     }

@@ -301,12 +301,26 @@ public class UpNextList {
     }
 
     public void setPreviousPlayingItem(){
-        managePlayedItem(mCurrentList.remove(0));
         int prevSize = ghostList.size();
+        MediaItem playingItem = null;
         if(prevSize > 0){
-            mCurrentList.add(new UpNextItem(ghostList.get(prevSize - 1), Auto_UpNext));
+            playingItem = (MediaItem) ghostList.remove(prevSize - 1);
+        }
+        managePreviousItem(mCurrentList.remove(0));
+        if(null != playingItem){
+            mCurrentList.add(new UpNextItem(playingItem, Auto_UpNext));
         }
         PlayingItemChanged();
+    }
+
+    private void managePreviousItem(UpNextItem item) {
+        addItemToHistory(item.getUpNextItem());
+        addItemToUpNextFrom(item);
+    }
+
+    private void addItemToUpNextFrom(UpNextItem item) {
+        if(item.getUpNextItemType() == Auto_UpNext)
+            mAutoNextList.add(PlayItemIndex, item.getUpNextItem());
     }
 
     public boolean isPrevious(){
@@ -342,8 +356,8 @@ public class UpNextList {
         if(item.getUpNextItemType() == Auto_UpNext)
             if(ghostList.contains(item.getUpNextItem())) {
                 ghostList.remove(item.getUpNextItem());
-                ghostList.add(item.getUpNextItem());
             }
+        ghostList.add(item.getUpNextItem());
     }
 
     private void addItemToHistory(IMediaItemBase item){
