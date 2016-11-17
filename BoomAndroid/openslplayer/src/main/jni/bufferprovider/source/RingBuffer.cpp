@@ -146,7 +146,7 @@ namespace gdpl {
         }
 
         this->Read((uint8_t*)_tempBuffer, requestedBytes);
-        buffer->raw = _tempBuffer;
+        buffer->raw = (buffer->frameCount != 0)? _tempBuffer : NULL;
 
         //ALOGD("getNextBuffer", "Available Frames = %d", buffer->frameCount);
 
