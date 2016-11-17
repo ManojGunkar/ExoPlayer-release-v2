@@ -169,6 +169,7 @@ namespace gdpl {
 
         /*Iitialize AudioEngine*/
         GetEngine()->ResetEngine();
+        GetEngine()->SetHeadPhoneType(eOnEar);
         RinseEngine();
 
 
