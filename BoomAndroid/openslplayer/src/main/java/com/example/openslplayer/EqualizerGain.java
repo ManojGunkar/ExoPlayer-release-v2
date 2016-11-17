@@ -51,29 +51,27 @@ public class EqualizerGain {
         EQ_GAIN.put(21, EQ_METAL);
     }
     
-    private static final double EQ_BASSBOOST[] = {4.5, 5.5, 4.5, 3.0, 2.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    private static final double EQ_ACOUSTIC[] = {4.5, 5.5, 4.5, 4.0, 3.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.5, 1.75, 1.5, 3.75, 3.75, 4.5};
-    private static final double EQ_SIXTIES[] = {3.0, 3.1, 3.0, 4.0, 4.5, 4.0, 1.5, -1.5, 2.0, 2.0, 0.0, -2.0, 0.0, 0.0, 1.0, 0.0};
-    private static final double EQ_CLASSICAL[] = {4.0, 4.1, 3.7, 3.7, 3.3, 2.6, 1.0, 0.0, -0.5, -1.0, -0.5, 0.0, 2.0, 3.0, 3.5, 4.0};
-    private static final double EQ_DUBSTEP[] = {5.0, 5.0, 4.5, 4.5, 3.0, 2.4, 2.0, 1.0, 0.0, -2.0, -0.5, 1.0, 2.5, 3.0, 4.5, 4.0};
-    private static final double EQ_ELECTRONIC[] = {3.6, 4.1, 3.2, 2.0, 1.0, 0.0, 0.0, -1.0, -1.0, 3.0, 1.0, 3.0, 3.5, 4.0, 4.5, 5.0};
-    private static final double EQ_FLAT[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    private static final double EQ_HIPHOP[] = {4.0, 4.5, 4.1, 1.0, -1.0, 4.0, 3.0, -1.0, -1.5, -1.5, 0.0, 3.0, -1.0, -1.0, 3.0, 4.0};
-    private static final double EQ_HOUSE[] = {-1.0, 1.0, 2.0, 4.0, 4.0, 4.0, 3.0, -2.0, -2.0, 0.0, -1.0, -2.0, 1.0, 3.0, 1.0, 0.0};
-    private static final double EQ_JAZZ[] = {4.0, 4.0, 3.0, -1.0, 2.0, 3.0, 2.0, -1.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 4.0};
-    private static final double EQ_LOUD[] = {4.0, 4.5, 4.0, 2.0, 3.0, 4.0, 2.0, 0.0, -1.0, 1.0, 4.0, 1.0, -1.0, 4.0, 4.0, 3.0};
-//    private static double EQ_MUSIC[] = {4.0, 5.0, 4.5, 2.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 1.0, 4.0, 5.0, 4.0};
-    private static final double EQ_MUSIC[] = {4.0, 5.0, 4.5, 3.0, 4.0, 4.0, 3.0, 2.0, 2.0, 3.0, 2.0, 3.0, 1.0, 3.0, 4.0, 3.0};
-    private static final double EQ_PARTY[] = {4.5, 5.0, 4.0, 2.0, 2.0, 1.5, 1.0, -1.0, 2.5, 1.0, 1.0, 1.0, 1.5, 3.5, 5.0, 3.0};
-    private static final double EQ_REGGAE[] = {1.0, 3.5, 5.0, 4.5, 4.5, 2.5, 1.0, 0.0, -1.0, -1.0, 0.0, 2.0, 3.0, 4.0, 2.5, 1.0};
-    private static final double EQ_SOFT[] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 0.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0};
-    private static final double EQ_TREBLE[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,1.0, 3.0, 5.0, 4.0, 2.0};
-    private static final double EQ_VOCALS[] = {-1.0, -1.5, -1.0, -0.5, 1.0, 1.0, 2.0, 3.0, 4.0, 4.0, 2.0, 1.0, 0.0, -1.0, -2.0, -3.0};
-    private static final double EQ_RNB[] = {3.0, 5.0, 4.0, 2.0, 2.0, 1.0, 0.0, 0.0, -1.0, 1.0, 2.0, 3.5, 4.0, 4.5, 4.0, 4.0};
-    private static final double EQ_METAL[] = {5.0, 5.0, 4.5, 2.0, 1.0, 3.0, 2.0, 0.0, 0.0, 0.0, 2.0, 3.0, 0.0, 3.0, 4.0, 5.0};
+    private static double EQ_BASSBOOST[] = {4.5, 5.5, 4.5, 3.0, 2.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    private static double EQ_ACOUSTIC[] = {4.5, 5.5, 4.5, 4.0, 3.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.5, 1.75, 1.5, 3.75, 3.75, 4.5};
+    private static double EQ_SIXTIES[] = {3.0, 3.1, 3.0, 4.0, 4.5, 4.0, 1.5, -1.5, 2.0, 2.0, 0.0, -2.0, 0.0, 0.0, 1.0, 0.0};
+    private static double EQ_CLASSICAL[] = {4.0, 4.1, 3.7, 3.7, 3.3, 2.6, 1.0, 0.0, -0.5, -1.0, -0.5, 0.0, 2.0, 3.0, 3.5, 4.0};
+    private static double EQ_DUBSTEP[] = {5.0, 5.0, 4.5, 4.5, 3.0, 2.4, 2.0, 1.0, 0.0, -2.0, -0.5, 1.0, 2.5, 3.0, 4.5, 4.0};
+    private static double EQ_ELECTRONIC[] = {3.6, 4.1, 3.2, 2.0, 1.0, 0.0, 0.0, -1.0, -1.0, 3.0, 1.0, 3.0, 3.5, 4.0, 4.5, 5.0};
+    private static double EQ_FLAT[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    private static double EQ_HIPHOP[] = {4.0, 4.5, 4.1, 1.0, -1.0, 4.0, 3.0, -1.0, -1.5, -1.5, 0.0, 3.0, -1.0, -1.0, 3.0, 4.0};
+    private static double EQ_HOUSE[] = {-1.0, 1.0, 2.0, 4.0, 4.0, 4.0, 3.0, -2.0, -2.0, 0.0, -1.0, -2.0, 1.0, 3.0, 1.0, 0.0};
+    private static double EQ_JAZZ[] = {4.0, 4.0, 3.0, -1.0, 2.0, 3.0, 2.0, -1.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 4.0};
+    private static double EQ_LOUD[] = {4.0, 4.5, 4.0, 2.0, 3.0, 4.0, 2.0, 0.0, -1.0, 1.0, 4.0, 1.0, -1.0, 4.0, 4.0, 3.0};
+    private static double EQ_MUSIC[] = {4.0, 5.0, 4.5, 2.6, 2.0, 2.21, 2.0, 2.5, 1.75, 2.0, 2.0, 3.0, 3.0, 4.0, 4.75, 4.2};
+    private static double EQ_PARTY[] = {4.5, 5.0, 4.0, 2.0, 2.0, 1.5, 1.0, -1.0, 2.5, 1.0, 1.0, 1.0, 1.5, 3.5, 5.0, 3.0};
+    private static double EQ_REGGAE[] = {1.0, 3.5, 5.0, 4.5, 4.5, 2.5, 1.0, 0.0, -1.0, -1.0, 0.0, 2.0, 3.0, 4.0, 2.5, 1.0};
+    private static double EQ_SOFT[] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 0.0, -1.0, 0.0, -1.0, -1.0, -1.0, -1.0};
+    private static double EQ_TREBLE[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,1.0, 3.0, 5.0, 4.0, 2.0};
+    private static double EQ_VOCALS[] = {-1.0, -1.5, -1.0, -0.5, 1.0, 1.0, 2.0, 3.0, 4.0, 4.0, 2.0, 1.0, 0.0, -1.0, -2.0, -3.0};
+    private static double EQ_RNB[] = {3.0, 5.0, 4.0, 2.0, 2.0, 1.0, 0.0, 0.0, -1.0, 1.0, 2.0, 3.5, 4.0, 4.5, 4.0, 4.0};
+    private static double EQ_METAL[] = {5.0, 5.0, 4.5, 2.0, 1.0, 3.0, 2.0, 0.0, 0.0, 0.0, 2.0, 3.0, 0.0, 3.0, 4.0, 5.0};
 // need to update
-    private static final double EQ_POP[] = {4.0, 5.0, 4.5, 2.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 1.0, 4.0, 5.0, 4.0};
-    private static final double EQ_ROCK[] = {4.0, 5.0, 4.5, 2.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 1.0, 4.0, 5.0, 4.0};
-    private static final double EQ_AUTO[] = EQ_MUSIC;
-
+    private static double EQ_POP[] = {4.0, 5.0, 4.5, 2.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 1.0, 4.0, 5.0, 4.0};
+    private static double EQ_ROCK[] = {4.0, 5.0, 4.5, 2.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 2.0, 3.0, 1.0, 4.0, 5.0, 4.0};
+    private static double EQ_AUTO[] = EQ_MUSIC;
 }
