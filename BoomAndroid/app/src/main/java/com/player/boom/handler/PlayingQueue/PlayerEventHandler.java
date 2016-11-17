@@ -63,7 +63,7 @@ public class PlayerEventHandler implements QueueEvent {
 
         if(isPlaying() || mPlayer.isPause())
             mPlayer.stop();
-        playingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingList().get(0).getUpNextItem();
+        playingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
         if(null != playingItem) {
             mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
             mPlayer.play();

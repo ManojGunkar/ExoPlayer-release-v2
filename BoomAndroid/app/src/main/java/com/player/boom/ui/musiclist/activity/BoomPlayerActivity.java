@@ -60,7 +60,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     AudioEffect audioEffectPreferenceHandler;
     private static boolean isUser = false;
     public static boolean isPlayerResume = true;
-    public static String mCurrentArtUrl = "albumart";
     public static final String ACTION_RECEIVE_SONG = "ACTION_RECEIVE_SONG";
     public static final String ACTION_ITEM_CLICKED = "ACTION_ITEM_CLICKED";
     public static final String ACTION_TRACK_STOPPED = "ACTION_TRACK_STOPPED";
@@ -132,71 +131,71 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    private void updateAlbumArt(final String mCurrentArtUrl){
+        if (isPathValid(mCurrentArtUrl)) {
+            new Action() {
+                private Bitmap img;
+
+                @NonNull
+                @Override
+                public String id() {
+                    return TAG;
+                }
+
+                @Nullable
+                @Override
+                protected Object run() throws InterruptedException {
+                    if (mCurrentArtUrl != null && (new File(mCurrentArtUrl)).exists()) {
+                        return null;
+                    } else {
+                        return img = BitmapFactory.decodeResource(getBaseContext().getResources(),
+                                R.drawable.default_album_art_home);
+                    }
+                }
+
+                @Override
+                protected void done(@Nullable final Object result) {
+                    if (mCurrentArtUrl != null && (new File(mCurrentArtUrl)).exists()) {
+                        Picasso.with(BoomPlayerActivity.this).load(new File(mCurrentArtUrl)).resize((int) getResources().getDimension(R.dimen.home_album_art_size), (int) getResources().getDimension(R.dimen.home_album_art_size))
+                                .centerCrop().noFade().into(new Target() {
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, bitmap);
+                                Bitmap blurredBitmap = blur(BoomPlayerActivity.this, bitmap);
+                                mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
+                            }
+
+                            @Override
+                            public void onBitmapFailed(Drawable errorDrawable) {
+                                ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, (Bitmap) result);
+                            }
+
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                            }
+                        });
+                        return;
+                    }
+                    ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, img);
+                    mPlayerBackground.setBackground(new BitmapDrawable(getResources(), img));
+                }
+            }.execute();
+        } else {
+            ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, BitmapFactory.decodeResource(getBaseContext().getResources(),
+                    R.drawable.default_album_art_home));
+        }
+    }
+
     private void updateTrackToPlayer(final MediaItem item, boolean playing) {
         if(item != null){
             mTitleTxt.setVisibility(View.VISIBLE);
             mSubTitleTxt.setVisibility(View.VISIBLE);
             mTrackSeek.setVisibility(View.VISIBLE);
             mSubTitleTxt.setSelected(true);
-            if((null == mCurrentArtUrl) || !mCurrentArtUrl.equals(item.getItemArtUrl())) {
-                mCurrentArtUrl = item.getItemArtUrl();
-                if (isPathValid(item.getItemArtUrl())) {
-                    new Action() {
-                        private Bitmap img;
 
-                        @NonNull
-                        @Override
-                        public String id() {
-                            return TAG;
-                        }
+            updateAlbumArt(item.getItemArtUrl());
 
-                        @Nullable
-                        @Override
-                        protected Object run() throws InterruptedException {
-                            if (mCurrentArtUrl != null && (new File(mCurrentArtUrl)).exists()) {
-                                return null;
-                            } else {
-                                img = BitmapFactory.decodeResource(getBaseContext().getResources(),
-                                        R.drawable.default_album_art_home);
-                            }
-                            return null;
-                        }
-
-                        @Override
-                        protected void done(@Nullable Object result) {
-                            if (mCurrentArtUrl != null && (new File(mCurrentArtUrl)).exists()) {
-                                Picasso.with(BoomPlayerActivity.this).load(new File(mCurrentArtUrl)).resize((int) getResources().getDimension(R.dimen.home_album_art_size), (int) getResources().getDimension(R.dimen.home_album_art_size))
-                                        .centerCrop().noFade().into(new Target() {
-                                    @Override
-                                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                        ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, bitmap);
-                                        Bitmap blurredBitmap = blur(BoomPlayerActivity.this, bitmap);
-                                        mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
-                                    }
-
-                                    @Override
-                                    public void onBitmapFailed(Drawable errorDrawable) {
-                                        img = BitmapFactory.decodeResource(getBaseContext().getResources(),
-                                                R.drawable.default_album_art_home);
-                                        ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, img);
-                                    }
-
-                                    @Override
-                                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                                    }
-                                });
-                                return;
-                            }
-                            ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, img);
-                            mPlayerBackground.setBackground(new BitmapDrawable(getResources(), img));
-                        }
-                    }.execute();
-                } else {
-                    ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, BitmapFactory.decodeResource(getBaseContext().getResources(),
-                            R.drawable.default_album_art_home));
-                }
-            }
             mTitleTxt.setText(item.getItemTitle());
             mSubTitleTxt.setText(item.getItemArtist());
             if (playing) {
@@ -310,15 +309,15 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         });
 
         mTrackSeek.setOnCircularSeekBarChangeListener(this);
-        mTrackSeek.setTouchInSide(false);
+//        mTrackSeek.setTouchInSide(false);
 
-        mAlbumArt.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Log.e("Player", "Touch");
-                return true;
-            }
-        });
+//        mAlbumArt.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                Log.e("Player", "Touch");
+//                return true;
+//            }
+//        });
 
         updateEffectIcon();
     }

@@ -86,6 +86,10 @@ public class UpNextList {
         return mCurrentList;
     }
 
+    public IMediaItemBase getPlayingItem(){
+        return mCurrentList.size() > 0 ? mCurrentList.get(0).getUpNextItem() : null;
+    }
+
     public LinkedList<IMediaItemBase> getManualUpNextList(){
         return getItemList(Manual_UpNext);
     }
@@ -247,7 +251,7 @@ public class UpNextList {
                 addItemToHistory(mCurrentList.remove(0).getUpNextItem());
                 mCurrentList.add(new UpNextItem(mAutoNextList.remove(PlayItemIndex), Auto_UpNext));
             } else {
-
+                managePlayedItem(mCurrentList.remove(0));
             }
         }
         /* Repeat is One and user interaction is false*/
