@@ -23,11 +23,11 @@ import android.widget.Toast;
 
 import com.player.boom.App;
 import com.player.boom.R;
+import com.player.boom.data.MediaCollection.IMediaItemBase;
 import com.player.boom.data.MediaCollection.IMediaItemCollection;
 import com.player.boom.data.DeviceMediaCollection.MediaItem;
 import com.player.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.player.boom.data.MediaLibrary.ItemType;
-import com.player.boom.handler.PlayingQueue.QueueType;
 import com.player.boom.ui.musiclist.ListDetail;
 import com.player.boom.ui.musiclist.activity.DeviceMusicActivity;
 import com.player.boom.ui.widgets.IconizedMenu;
@@ -37,6 +37,8 @@ import com.player.boom.utils.async.Action;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapter.SimpleItemViewHolder> {
@@ -134,17 +136,11 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             @Override
             public void onClick(View view) {
                 animate(holder);
-                if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
+                if(App.getPlayingQueueHandler().getUpNextList()!=null){
                     if(collection.getItemType() == ItemType.PLAYLIST || collection.getItemType() == ItemType.BOOM_PLAYLIST){
-                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToPlay((MediaItem) collection.getMediaElement().get(position));
-                        for (int i = position + 1; i < collection.getMediaElement().size(); i++) {
-                            App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToAutoUpNext((MediaItem) collection.getMediaElement().get(i));
-                        }
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), position);
                     }else{
-                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToPlay(((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
-                        for (int i = position + 1; i < ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size(); i++) {
-                            App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToAutoUpNext(((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(i));
-                        }
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), position);
                     }
                 }
             }
@@ -163,11 +159,11 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.popup_song_add_queue :
-                                if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
+                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
                                     if(collection.getItemType() == ItemType.PLAYLIST || collection.getItemType() == ItemType.BOOM_PLAYLIST){
-                                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext((MediaItem) collection.getMediaElement().get(position));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) collection.getMediaElement().get(position));
                                     }else{
-                                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext((MediaItem) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
                                     }
                                 }
                                 break;

@@ -13,16 +13,19 @@ import android.widget.Toast;
 
 import com.player.boom.App;
 import com.player.boom.R;
+import com.player.boom.data.MediaCollection.IMediaItemBase;
 import com.player.boom.data.MediaCollection.IMediaItemCollection;
 import com.player.boom.data.DeviceMediaCollection.MediaItem;
 import com.player.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.player.boom.data.MediaLibrary.ItemType;
-import com.player.boom.handler.PlayingQueue.QueueType;
 import com.player.boom.ui.musiclist.ListDetail;
 import com.player.boom.ui.musiclist.activity.AlbumActivity;
 import com.player.boom.ui.widgets.IconizedMenu;
 import com.player.boom.utils.PermissionChecker;
 import com.player.boom.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Rahul Agarwal on 8/9/2016.
@@ -101,18 +104,12 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
             @Override
             public void onClick(View view) {
 
-                if (App.getPlayingQueueHandler().getPlayingQueue() != null) {
+                if (App.getPlayingQueueHandler().getUpNextList() != null) {
                     if (item.getItemType() == ItemType.ALBUM) {
 
-                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToPlay(item.getMediaElement().get(position));
-                        for (int i = position + 1; i < item.getMediaElement().size(); i++) {
-                            App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToAutoUpNext(item.getMediaElement().get(i));
-                        }
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) item.getMediaElement(), position);
                 } else {
-                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToPlay(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
-                        for (int i = position + 1; i < item.getMediaElement().size(); i++) {
-                            App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToAutoUpNext(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
-                        }
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), position);
                 }
             }
             }
@@ -131,22 +128,22 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.popup_song_add_queue :
-                                if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
+                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
                                     if (item.getItemType() == ItemType.ALBUM) {
-                                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(item.getMediaElement().get(position));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) item.getMediaElement().get(position));
                                     }else{
-                                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
                                     }
                                 }
                                 break;
                             case R.id.popup_song_add_playlist :
                                 Utils util = new Utils(context);
                                 if (item.getItemType() == ItemType.ALBUM) {
-                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(item.getMediaElement().get(position));
-                                }else{
-                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
-                                }
                                     util.addToPlaylist((AlbumActivity)context, item.getMediaElement().get(position));
+                                }else{
+                                    util.addToPlaylist((AlbumActivity)context, ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                }
+
                                 break;
                             case R.id.popup_song_add_fav :
                                 Toast.makeText((AlbumActivity)context, "Under Development...!", Toast.LENGTH_LONG).show();

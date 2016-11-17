@@ -55,9 +55,8 @@ public class PlayingQueueActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
                 case ACTION_UPDATE_QUEUE :
-                    final Map<QueueType, LinkedList<IMediaItemBase>> playingQueue = App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue();
                     if(playingQueueListAdapter != null)
-                        playingQueueListAdapter.updateList(playingQueue);
+                        playingQueueListAdapter.updateList(App.getPlayingQueueHandler().getUpNextList());
                     break;
             }
         }
@@ -130,7 +129,6 @@ public class PlayingQueueActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final Map<QueueType, LinkedList<IMediaItemBase>> playingQueue = App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue();
                 final GridLayoutManager gridLayoutManager =
                         new GridLayoutManager(PlayingQueueActivity.this, 1);
                         runOnUiThread(new Runnable() {
@@ -141,19 +139,11 @@ public class PlayingQueueActivity extends AppCompatActivity {
                         recyclerView.setLayoutManager(gridLayoutManager);
                         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(PlayingQueueActivity.this, Utils.getWindowWidth(PlayingQueueActivity.this)));
                         recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(PlayingQueueActivity.this, 0)));
-                        playingQueueListAdapter = new PlayingQueueListAdapter(PlayingQueueActivity.this, playingQueue);
+                        playingQueueListAdapter = new PlayingQueueListAdapter(PlayingQueueActivity.this, App.getPlayingQueueHandler().getUpNextList());
                         recyclerView.setAdapter(playingQueueListAdapter);
                         recyclerView.setHasFixedSize(true);
                     }
                 });
-                if (playingQueue.size() < 1) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            listIsEmpty();
-                        }
-                    });
-                }
             }
         }).start();
     }

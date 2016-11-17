@@ -3,7 +3,7 @@ package com.player.boom.utils.handlers;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.player.boom.handler.PlayingQueue.PlayingQueue;
+import com.player.boom.handler.PlayingQueue.UpNextList;
 
 
 public class UserPreferenceHandler {
@@ -67,22 +67,22 @@ public class UserPreferenceHandler {
     }
 
 
-    public PlayingQueue.REPEAT getRepeat(){
+    public UpNextList.REPEAT getRepeat(){
         if(shp.getBoolean(REPEAT_ALL, false)){
-            return PlayingQueue.REPEAT.all;
+            return UpNextList.REPEAT.all;
         }else if(shp.getBoolean(REPEAT_ONE, false)){
-            return PlayingQueue.REPEAT.one;
+            return UpNextList.REPEAT.one;
         }else{
-            return PlayingQueue.REPEAT.none;
+            return UpNextList.REPEAT.none;
         }
     }
 
 
-    public PlayingQueue.SHUFFLE getShuffle(){
+    public UpNextList.SHUFFLE getShuffle(){
         if(shp.getBoolean(SHUFFLE, false)){
-            return PlayingQueue.SHUFFLE.all;
+            return UpNextList.SHUFFLE.all;
         }else{
-            return PlayingQueue.SHUFFLE.none;
+            return UpNextList.SHUFFLE.none;
         }
     }
 }

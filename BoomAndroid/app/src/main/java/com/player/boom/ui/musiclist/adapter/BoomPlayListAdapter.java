@@ -23,13 +23,13 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import com.player.boom.App;
 import com.player.boom.R;
+import com.player.boom.data.DeviceMediaCollection.MediaItem;
 import com.player.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.player.boom.data.MediaCollection.IMediaItemBase;
 import com.player.boom.data.MediaCollection.IMediaItemCollection;
 import com.player.boom.data.MediaLibrary.ItemType;
 import com.player.boom.data.MediaLibrary.MediaController;
 import com.player.boom.data.MediaLibrary.MediaType;
-import com.player.boom.handler.PlayingQueue.QueueType;
 import com.player.boom.ui.musiclist.activity.SongsDetailListActivity;
 import com.player.boom.utils.PermissionChecker;
 import com.player.boom.utils.Utils;
@@ -37,6 +37,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Rahul Agarwal on 28-09-16.
@@ -263,8 +264,9 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.popup_add_queue :
-                                if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(items.get(position));
+                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                                    ((MediaItemCollection)items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(items.get(position));
                                 }
                                 break;
                             case R.id.popup_playlist_delete :

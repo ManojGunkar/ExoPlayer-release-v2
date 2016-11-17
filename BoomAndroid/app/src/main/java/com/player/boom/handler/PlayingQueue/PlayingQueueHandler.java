@@ -10,11 +10,11 @@ import com.player.boom.App;
 public class PlayingQueueHandler {
 
     private static PlayingQueueHandler handler;
-    private static PlayingQueue playingQueue;
+    private static UpNextList upNextList;
 
     private PlayingQueueHandler(Context application){
-        if(playingQueue == null){
-            playingQueue = PlayingQueue.getQueueInstance(application);
+        if(upNextList == null){
+            upNextList = UpNextList.getUpNextInstance(application);
         }
     }
 
@@ -25,13 +25,13 @@ public class PlayingQueueHandler {
         return handler;
     }
 
-    public PlayingQueue getPlayingQueue() {
-        return playingQueue;
+    public UpNextList getUpNextList() {
+        return upNextList;
     }
 
 
     public void Terminate() {
         handler = null;
-        PlayingQueue.Terminate();
+        UpNextList.Terminate();
     }
 }

@@ -24,11 +24,14 @@ import android.widget.Toast;
 
 import com.player.boom.App;
 import com.player.boom.R;
+import com.player.boom.data.DeviceMediaCollection.MediaItem;
 import com.player.boom.data.MediaCollection.IMediaItemBase;
 import com.player.boom.data.DeviceMediaCollection.MediaItemCollection;
-import com.player.boom.handler.PlayingQueue.QueueType;
+import com.player.boom.data.MediaCollection.IMediaItemCollection;
+import com.player.boom.data.MediaLibrary.MediaController;
 import com.player.boom.ui.musiclist.activity.AlbumActivity;
 import com.player.boom.ui.musiclist.activity.DetailAlbumActivity;
+import com.player.boom.ui.musiclist.activity.SongsDetailListActivity;
 import com.player.boom.utils.PermissionChecker;
 import com.player.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
@@ -36,6 +39,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Rahul Agarwal on 8/8/2016.
@@ -140,8 +144,11 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.popup_album_add_queue :
-                                if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemsToManualUpNext(itemList.get(position), -1);
+                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                                    itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
+                                    ((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
+
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(((IMediaItemCollection)itemList.get(position).getMediaElement().get(itemList.get(position).getCurrentIndex())));
                                 }
                                 break;
                             default:

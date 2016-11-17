@@ -3,6 +3,9 @@ package com.player.boom.handler.PlayingQueue;
 import android.content.Context;
 import android.os.Handler;
 
+import com.player.boom.App;
+import com.player.boom.data.DeviceMediaCollection.MediaItem;
+import com.player.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.player.boom.data.MediaCollection.IMediaItem;
 import com.player.boom.data.MediaCollection.IMediaItemBase;
 import com.player.boom.data.MediaCollection.IMediaItemCollection;
@@ -79,8 +82,8 @@ public class UpNextList {
         return getItemList(History);
     }
 
-    public UpNextItem getPlayingItem(){
-        return mCurrentList.get(0);
+    public LinkedList<UpNextItem> getPlayingList(){
+        return mCurrentList;
     }
 
     public LinkedList<IMediaItemBase> getManualUpNextList(){
@@ -94,11 +97,19 @@ public class UpNextList {
     /******************************************************************************************************************/
 
     public void setShuffle() {
-        //mShuffle = App.getUserPreferenceHandler().getShuffle();
+        mShuffle = App.getUserPreferenceHandler().getShuffle();
     }
 
     public void setRepeat() {
-        //mRepeat = App.getUserPreferenceHandler().getRepeat();
+        mRepeat = App.getUserPreferenceHandler().getRepeat();
+    }
+
+    public static void Terminate() {
+
+    }
+
+    public int size() {
+        return mHistoryList.size()+mUpNextList.size()+mAutoNextList.size();
     }
 
     public enum REPEAT{
@@ -112,11 +123,48 @@ public class UpNextList {
         none,
     }
 
+    /**************************************************************************************************************************/
+//    Callbacks to update UI
+
+    public void PlayPause(){
+        if (queueEvent != null){
+            eventHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    queueEvent.onPlayingItemClicked();
+                }
+            });
+        }
+    }
+    //  Queue and Playing Item Update
+    public void PlayingItemChanged(){
+        if (queueEvent != null){
+            eventHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    queueEvent.onPlayingItemChanged();
+                }
+            });
+        }
+    }
+    //  Only Queue update
+    public void QueueUpdated(){
+        if (queueEvent != null){
+            eventHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    queueEvent.onQueueUpdated();
+                }
+            });
+        }
+    }
+
+
     /******************************************************************************************************************/
 
 //    itemList -> list of collection
 //    position -> Now Playing Item position in item list.
-    public void addToPlay(ArrayList<IMediaItem> itemList, int position){
+    public void addToPlay(ArrayList<MediaItem> itemList, int position){
         if(position > 0){
             setItemListAsPrevious(itemList.subList(0, position));
         }
@@ -124,6 +172,7 @@ public class UpNextList {
         if(itemList.size() > position+1){
             setItemListAsUpNextFrom(itemList.subList(position+1, itemList.size()));
         }
+        PlayingItemChanged();
     }
 
 //    selected Collection, Like Album, artist.
@@ -136,6 +185,7 @@ public class UpNextList {
         if(collection.getMediaElement().size() > position+1){
             setItemListAsUpNextFrom(collection.getMediaElement().subList(position+1, collection.getMediaElement().size()));
         }
+        PlayingItemChanged();
     }
 
     public void addToPlay(QueueType queueType, int position){
@@ -167,10 +217,17 @@ public class UpNextList {
                 }
                 break;
         }
+        PlayingItemChanged();
     }
 
-    public void addItemListToUpNext(List<? extends IMediaItemBase> itemList){
-        mUpNextList.addAll(itemList);
+    public void addItemListToUpNext(IMediaItemBase itemList){
+        mUpNextList.addAll(((MediaItemCollection)itemList).getMediaElement());
+        QueueUpdated();
+    }
+
+    public void addItemListToUpNext(MediaItem item){
+        mUpNextList.add(item);
+        QueueUpdated();
     }
 
     public void setNextPlayingItem(boolean isUser){
@@ -235,6 +292,7 @@ public class UpNextList {
                 mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), Auto_UpNext));
             }
         }
+        PlayingItemChanged();
     }
 
     public void setPreviousPlayingItem(){
@@ -243,6 +301,7 @@ public class UpNextList {
         if(prevSize > 0){
             mCurrentList.add(new UpNextItem(ghostList.get(prevSize - 1), Auto_UpNext));
         }
+        PlayingItemChanged();
     }
 
     public boolean isPrevious(){
@@ -285,6 +344,7 @@ public class UpNextList {
     private void addItemToHistory(IMediaItemBase item){
         MediaController.getInstance(context).addSongsToList(ISHISTORY, item);
         invalidateHistory();
+        QueueUpdated();
     }
 
     private void invalidateHistory(){

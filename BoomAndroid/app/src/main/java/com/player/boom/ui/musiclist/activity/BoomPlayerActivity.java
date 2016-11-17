@@ -37,7 +37,6 @@ import com.player.boom.ui.widgets.CircularSeekBar;
 import com.player.boom.ui.widgets.CoverView.CircularCoverView;
 import com.player.boom.ui.widgets.RegularTextView;
 import com.player.boom.utils.async.Action;
-import com.player.boom.utils.handlers.UserPreferenceHandler;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -139,7 +138,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mSubTitleTxt.setVisibility(View.VISIBLE);
             mTrackSeek.setVisibility(View.VISIBLE);
             mSubTitleTxt.setSelected(true);
-            if(!mCurrentArtUrl.equals(item.getItemArtUrl())) {
+            if((null == mCurrentArtUrl) || !mCurrentArtUrl.equals(item.getItemArtUrl())) {
                 mCurrentArtUrl = item.getItemArtUrl();
                 if (isPathValid(item.getItemArtUrl())) {
                     new Action() {
@@ -392,7 +391,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         super.onResume();
         isPlayerResume = true;
         updateEffectIcon();
-        updateTrackToPlayer((MediaItem) App.getPlayingQueueHandler().getPlayingQueue().getPlayingItem(), App.getPlayerEventHandler().isPlaying());
+        updateTrackToPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingList().size() > 0 ? (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingList().get(0).getUpNextItem() : null, App.getPlayerEventHandler().isPlaying());
     }
 
     @Override
@@ -404,7 +403,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        App.getPlayingQueueHandler().getPlayingQueue().finishTrack(false);
         unregisterReceiver(mPlayerBroadcastReceiver);
     }
 

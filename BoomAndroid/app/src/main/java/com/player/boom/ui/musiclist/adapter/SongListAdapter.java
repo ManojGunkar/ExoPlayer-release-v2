@@ -26,8 +26,8 @@ import com.player.boom.App;
 import com.player.boom.R;
 import com.player.boom.data.MediaCollection.IMediaItemBase;
 import com.player.boom.data.DeviceMediaCollection.MediaItem;
+import com.player.boom.data.MediaCollection.IMediaItemCollection;
 import com.player.boom.data.MediaLibrary.ItemType;
-import com.player.boom.handler.PlayingQueue.QueueType;
 import com.player.boom.ui.musiclist.activity.DeviceMusicActivity;
 import com.player.boom.ui.widgets.IconizedMenu;
 import com.player.boom.utils.PermissionChecker;
@@ -37,6 +37,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Rahul Agarwal on 8/8/2016.
@@ -100,8 +101,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
             @Override
             public void onClick(View view) {
                 animate(holder);
-                if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToPlay(itemList.get(position));
+                if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay(itemList, position);
                 }
 
             }
@@ -120,9 +121,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.popup_song_add_queue :
-                                if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                                    App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToManualUpNext(itemList.get(position));
-                                }
+                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(itemList.get(position));
                                 break;
                             case R.id.popup_song_add_playlist:
                                 Utils util = new Utils(context);

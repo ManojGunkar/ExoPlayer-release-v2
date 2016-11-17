@@ -42,6 +42,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Rahul Agarwal on 14-11-16.
@@ -268,9 +269,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                 @Override
                 public void onClick(View view) {
                     animate(holder);
-                    if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToPlay(songs.get(getPosition(position)));
-                    }
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) songs, getPosition(position));
                 }
             });
         }

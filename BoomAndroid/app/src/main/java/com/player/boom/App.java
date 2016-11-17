@@ -44,7 +44,7 @@ public class App extends Application {
 
         historyFavDBHelper = new HistoryFavDBHelper(application);
 
-        playingQueueHandler.getPlayingQueue().getPlayingQueue();
+        playingQueueHandler.getUpNextList();
 
         userPreferenceHandler = new UserPreferenceHandler(application);
 

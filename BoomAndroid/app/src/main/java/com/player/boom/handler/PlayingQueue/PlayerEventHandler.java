@@ -31,7 +31,7 @@ public class PlayerEventHandler implements QueueEvent {
         this.context = context;
         mPlayer = new OpenSLPlayer(context, playerEvents);
         this.service = service;
-        App.getPlayingQueueHandler().getPlayingQueue().setQueueEvent(this);
+        App.getPlayingQueueHandler().getUpNextList().setQueueEvent(this);
         uiHandler = new Handler();
     }
 
@@ -63,7 +63,7 @@ public class PlayerEventHandler implements QueueEvent {
 
         if(isPlaying() || mPlayer.isPause())
             mPlayer.stop();
-        playingItem = App.getPlayingQueueHandler().getPlayingQueue().getPlayingItem();
+        playingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingList().get(0).getUpNextItem();
         if(null != playingItem) {
             mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
             mPlayer.play();
@@ -74,7 +74,7 @@ public class PlayerEventHandler implements QueueEvent {
     }
 
     public void playNextSong(boolean isUser) {
-        App.getPlayingQueueHandler().getPlayingQueue().setNextPlayingItem(isUser);
+        App.getPlayingQueueHandler().getUpNextList().setNextPlayingItem(isUser);
         onPlayingItemChanged();
     }
 
@@ -184,31 +184,6 @@ public class PlayerEventHandler implements QueueEvent {
         mPlayer.setHighQualityEnable(highQualityEnable);
     }
 
-    public void setRepeat(PlayingQueue.REPEAT repeat) {
-        switch (repeat){
-            case none:
-//                    App.getUserPreferenceHandler().setRepeatDisable();
-                break;
-            case one:
-//                App.getUserPreferenceHandler().setRepeatOneEnable();
-                break;
-            case all:
-//                App.getUserPreferenceHandler().setRepeatAllEnable();
-                break;
-        }
-    }
-
-    public void setShuffle(PlayingQueue.SHUFFLE shuffle) {
-        switch (shuffle){
-            case none:
-//                App.getUserPreferenceHandler().setShuffleEnable(false);
-                break;
-            case all:
-//                App.getUserPreferenceHandler().setShuffleEnable(true);
-                break;
-        }
-    }
-
     public void playPrevSong() {
     }
 
@@ -224,11 +199,11 @@ public class PlayerEventHandler implements QueueEvent {
     }
 
     public void resetShuffle() {
-        App.getPlayingQueueHandler().getPlayingQueue().setShuffle();
+        App.getPlayingQueueHandler().getUpNextList().setShuffle();
     }
 
     public void resetRepeat() {
-        App.getPlayingQueueHandler().getPlayingQueue().setRepeat();
+        App.getPlayingQueueHandler().getUpNextList().setRepeat();
     }
 
     public enum PlayState {

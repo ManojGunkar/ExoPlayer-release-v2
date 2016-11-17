@@ -23,11 +23,11 @@ import android.widget.TextView;
 
 import com.player.boom.App;
 import com.player.boom.R;
+import com.player.boom.data.MediaCollection.IMediaItemBase;
 import com.player.boom.data.MediaCollection.IMediaItemCollection;
 import com.player.boom.data.MediaLibrary.ItemType;
 import com.player.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.player.boom.data.MediaLibrary.MediaController;
-import com.player.boom.handler.PlayingQueue.QueueType;
 import com.player.boom.ui.musiclist.ListDetail;
 import com.player.boom.ui.musiclist.activity.AlbumActivity;
 import com.player.boom.ui.musiclist.activity.DetailAlbumActivity;
@@ -39,6 +39,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Rahul Agarwal on 8/10/2016.
@@ -338,9 +339,16 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.popup_album_add_queue :
-                                if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemsToManualUpNext(collection, position);
+                                if(itemView == ITEM_VIEW_SONG){
+                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(position));
+                                }else if (itemView == ITEM_VIEW_ALBUM) {
+                                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                                        ((IMediaItemCollection)collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(position));
+                                    }
                                 }
+
                                 break;
                         }
                         return false;

@@ -27,6 +27,7 @@
                     android:layout_height="0dp"
                     android:layout_weight=".6"
                     android:background="@color/default_yellow_dark"
+                    android:visibility="invisible"
                     android:orientation="horizontal"
                     android:weightSum="1">
                     <LinearLayout
@@ -71,6 +72,7 @@
                     android:layout_height="0dp"
                     android:layout_weight=".5"
                     android:background="@color/colorPrimary"
+                    android:visibility="invisible"
                     android:orientation="horizontal"
                     android:weightSum="1">
                     <LinearLayout
@@ -157,6 +159,7 @@
                 android:layout_height="0dp"
                 android:layout_weight=".06"
                 android:background="@color/default_yellow_dark"
+                android:visibility="invisible"
                 android:orientation="horizontal"
                 android:weightSum="1">
                 <LinearLayout
@@ -231,6 +234,7 @@
                 android:layout_height="0dp"
                 android:layout_weight=".2"
                 android:background="@color/colorPrimary"
+                android:visibility="invisible"
                 android:orientation="horizontal"
                 android:weightSum="1">
                 <LinearLayout

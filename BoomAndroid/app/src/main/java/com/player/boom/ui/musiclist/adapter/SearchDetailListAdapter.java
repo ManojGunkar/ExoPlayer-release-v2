@@ -30,6 +30,7 @@ import com.player.boom.R;
 import com.player.boom.data.DeviceMediaCollection.MediaItem;
 import com.player.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.player.boom.data.MediaCollection.IMediaItemBase;
+import com.player.boom.data.MediaCollection.IMediaItemCollection;
 import com.player.boom.handler.search.SearchResult;
 import com.player.boom.ui.musiclist.activity.AlbumActivity;
 import com.player.boom.ui.musiclist.activity.DetailAlbumActivity;
@@ -82,8 +83,8 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                 @Override
                 public void onClick(View view) {
                     animate(holder);
-                    if(App.getPlayingQueueHandler().getPlayingQueue()!=null){
-                        App.getPlayingQueueHandler().getPlayingQueue().addMediaItemToPlay(resultItemList.get(position));
+                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) resultItemList, position);
                     }
                 }
             });

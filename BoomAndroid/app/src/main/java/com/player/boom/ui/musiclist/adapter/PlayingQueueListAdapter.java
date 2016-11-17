@@ -16,16 +16,16 @@ import com.player.boom.App;
 import com.player.boom.R;
 import com.player.boom.data.MediaCollection.IMediaItem;
 import com.player.boom.data.MediaCollection.IMediaItemBase;
-import com.player.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.player.boom.handler.PlayingQueue.QueueType;
+import com.player.boom.handler.PlayingQueue.UpNextList;
 import com.player.boom.ui.widgets.RoundedTransformation;
 import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.util.LinkedList;
-import java.util.Map;
 
 import static android.view.LayoutInflater.from;
+import static com.player.boom.handler.PlayingQueue.QueueType.History;
 import static com.player.boom.utils.ImageConverter.getRoundedCornerBitmap;
 import static com.player.boom.utils.Utils.dpToPx;
 import static com.player.boom.utils.Utils.getBitmapOfVector;
@@ -45,31 +45,31 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     public static final int ITEM_VIEW_TYPE_LIST_AUTO = 7;
     public static final int ITEM_VIEW_TYPE_NULL = 8;
     private LinkedList<IMediaItemBase> mHistoryList;
-    private LinkedList<IMediaItemBase> mPlayingList;
+    private LinkedList<UpNextList.UpNextItem> mPlaying;
     private LinkedList<IMediaItemBase> mUpnextManualList;
     private LinkedList<IMediaItemBase> mUpnextAutoList;
     private int headerHistoryPos, headerPlayingPos, headerManualPos,
             headerAutoPos, totalSize;
     private Context context;
 
-    public PlayingQueueListAdapter(Context context, Map<QueueType, LinkedList<IMediaItemBase>> playingQueue) {
+    public PlayingQueueListAdapter(Context context, UpNextList playingQueue) {
         this.context = context;
-        init(playingQueue.get(QueueType.History), playingQueue.get(QueueType.Playing), playingQueue.get(QueueType.Manual_UpNext), playingQueue.get(QueueType.Auto_UpNext));
+        init(playingQueue.getHistoryList(), playingQueue.getPlayingList(), playingQueue.getManualUpNextList(), playingQueue.getAutoUpNextList());
     }
 
 
-    private void init(LinkedList<IMediaItemBase> history, LinkedList<IMediaItemBase> playing, LinkedList<IMediaItemBase> upnext, LinkedList<IMediaItemBase> upnextAuto) {
+    private void init(LinkedList<IMediaItemBase> history, LinkedList<UpNextList.UpNextItem> playing, LinkedList<IMediaItemBase> upnext, LinkedList<IMediaItemBase> upnextAuto) {
         this.mHistoryList = history;
-        this.mPlayingList = playing;
+        this.mPlaying = playing;
         this.mUpnextManualList = upnext;
         this.mUpnextAutoList = upnextAuto;
 
 
         headerHistoryPos = 0;
         headerPlayingPos = mHistoryList.size() + 1;
-        headerManualPos = mHistoryList.size() + mPlayingList.size() + 2;
-        headerAutoPos = mHistoryList.size() + mPlayingList.size() + mUpnextManualList.size() + 3;
-        this.totalSize = mHistoryList.size() + mPlayingList.size() + mUpnextManualList.size() + mUpnextAutoList.size() + 4;
+        headerManualPos = mHistoryList.size() + mPlaying.size() + 2;
+        headerAutoPos = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + 3;
+        this.totalSize = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + mUpnextAutoList.size() + 4;
     }
 
     public int whatView(int position) {
@@ -93,8 +93,8 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
             return ITEM_VIEW_TYPE_NULL;
     }
 
-    public void updateList(Map<QueueType, LinkedList<IMediaItemBase>> playingQueue) {
-        init(playingQueue.get(QueueType.History), playingQueue.get(QueueType.Playing), playingQueue.get(QueueType.Manual_UpNext), playingQueue.get(QueueType.Auto_UpNext));
+    public void updateList(UpNextList playingQueue) {
+        init(playingQueue.getHistoryList(), playingQueue.getPlayingList(), playingQueue.getManualUpNextList(), playingQueue.getAutoUpNextList());
         notifyDataSetChanged();
     }
 
@@ -104,9 +104,9 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         } else if (position > headerPlayingPos && position < headerManualPos) {
             position = position - mHistoryList.size() - 2;
         } else if (position > headerManualPos && position < headerAutoPos) {
-            position = position - mHistoryList.size() - mPlayingList.size() - 3;
+            position = position - mHistoryList.size() - mPlaying.size() - 3;
         } else  if(position > headerAutoPos)
-            position = position - mHistoryList.size() - mPlayingList.size() - mUpnextManualList.size() - 4;
+            position = position - mHistoryList.size() - mPlaying.size() - mUpnextManualList.size() - 4;
 
         return position == -1 ? 0 : position;
     }
@@ -116,38 +116,18 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         View itemView;
         switch (viewType) {
             case ITEM_VIEW_TYPE_HEADER_PLAYING:
-//                if (mPlayingList.size() <= 0) {
-//                    itemView = from(parent.getContext()).
-//                            inflate(R.layout.empty_search_layout, parent, false);
-//                    return new SimpleItemViewHolder(itemView);
-//                }
                 itemView = from(parent.getContext()).
                         inflate(R.layout.header_playing_queue, parent, false);
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_HEADER_MANUAL:
-//                if (mUpnextManualList.size() <= 0) {
-//                    itemView = from(parent.getContext()).
-//                            inflate(R.layout.empty_search_layout, parent, false);
-//                    return new SimpleItemViewHolder(itemView);
-//                }
                 itemView = from(parent.getContext()).
                         inflate(R.layout.header_playing_queue, parent, false);
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_HEADER_HISTORY:
-//                if (mHistoryList.size() <= 0) {
-//                    itemView = from(parent.getContext()).
-//                            inflate(R.layout.empty_search_layout, parent, false);
-//                    return new SimpleItemViewHolder(itemView);
-//                }
                 itemView = from(parent.getContext()).
                         inflate(R.layout.header_playing_queue, parent, false);
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_HEADER_AUTO :
-//                if (mUpnextAutoList.size() <= 0) {
-//                    itemView = from(parent.getContext()).
-//                            inflate(R.layout.empty_search_layout, parent, false);
-//                    return new SimpleItemViewHolder(itemView);
-//                }
                 itemView = from(parent.getContext()).
                         inflate(R.layout.header_playing_queue, parent, false);
                 return new SimpleItemViewHolder(itemView);
@@ -176,30 +156,18 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         int itemPosition;
         switch (whatView(position)) {
             case ITEM_VIEW_TYPE_HEADER_MANUAL:
-//                if (mUpnextManualList.size() <= 0) {
-//                    return;
-//                }
                 setHeaderBg(holder);
                 holder.headerText.setText(R.string.up_next_manual);
                 break;
             case ITEM_VIEW_TYPE_HEADER_PLAYING:
-//                if (mPlayingList.size() <= 0) {
-//                    return;
-//                }
                 setHeaderBg(holder);
                 holder.headerText.setText(R.string.Playing);
                 break;
             case ITEM_VIEW_TYPE_HEADER_HISTORY:
-//                if (mHistoryList.size() <= 0) {
-//                    return;
-//                }
                 setHeaderBg(holder);
                 holder.headerText.setText(R.string.History);
                 break;
             case ITEM_VIEW_TYPE_HEADER_AUTO:
-//                if (mUpnextAutoList.size() <= 0) {
-//                    return;
-//                }
                 setHeaderBg(holder);
                 holder.headerText.setText(R.string.up_next_auto);
                 break;
@@ -216,9 +184,9 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
             case ITEM_VIEW_TYPE_LIST_PLAYING:
                 itemPosition = getPosition(position);
                 holder.img.setImageDrawable(new ColorDrawable(0xffffffff));
-                setArt(holder, mPlayingList.get(itemPosition).getItemArtUrl(), whatView(position));
-                holder.name.setText(mPlayingList.get(itemPosition).getItemTitle());
-                holder.artistName.setText(((IMediaItem) mPlayingList.get(itemPosition)).getItemArtist());
+                setArt(holder, mPlaying.get(itemPosition).getUpNextItem().getItemArtUrl(), whatView(position));
+                holder.name.setText(mPlaying.get(itemPosition).getUpNextItem().getItemTitle());
+                holder.artistName.setText(((IMediaItem) mPlaying.get(itemPosition).getUpNextItem()).getItemArtist());
                 holder.mainView.setBackgroundColor(0xffffffff);
                 holder.mainView.setElevation(dpToPx(context, 2));
                 setOnItemClick(holder, QueueType.Playing, itemPosition);
@@ -231,7 +199,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                 holder.artistName.setText(((IMediaItem) mHistoryList.get(itemPosition)).getItemArtist());
                 holder.mainView.setBackgroundColor(0xffffffff);
                 holder.mainView.setElevation(dpToPx(context, 2));
-                setOnItemClick(holder, QueueType.History, itemPosition);
+                setOnItemClick(holder, History, itemPosition);
                 break;
             case ITEM_VIEW_TYPE_LIST_AUTO:
                 itemPosition = getPosition(position);
@@ -254,19 +222,16 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
             public void onClick(View v) {
                 switch (queueType){
                     case History:
-                        App.getPlayingQueueHandler().getPlayingQueue().addHistoryItemToPlay(itemPosition);
-                        updateList(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue());
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay(History, itemPosition);
                         break;
                     case Playing:
                         App.getPlayerEventHandler().onPlayingItemClicked();
                         break;
                     case Manual_UpNext:
-                        App.getPlayingQueueHandler().getPlayingQueue().addUpNextToPlay(itemPosition, queueType);
-                        updateList(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue());
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay(queueType, itemPosition);
                         break;
                     case Auto_UpNext:
-                        App.getPlayingQueueHandler().getPlayingQueue().addUpNextToPlay(itemPosition, queueType);
-                        updateList(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue());
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay(queueType, itemPosition);
                         break;
                     default:
                         break;
@@ -277,8 +242,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void setHeaderBg(SimpleItemViewHolder holder) {
-//        holder.mainView.setBackgroundColor(getColor(context, R.color.appBackground));
-//        holder.mainView.setBackgroundColor(0xffffffff);
         holder.mainView.setElevation(dpToPx(context, 2));
     }
 
@@ -354,9 +317,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         if (path != null && !path.equals("null")) {
             with(context).load(new File(path)).error(R.drawable.default_album_art).resize(dpToPx(context, 60),
                     dpToPx(context, 60)).centerCrop().memoryPolicy(NO_CACHE).into(holder.img);
-//                with(context).load(new File(path)).error(R.drawable.default_album_art).transform(new RoundedTransformation(100, 0))
-//                        .noFade().resize(dpToPx(context, 60),
-//                        dpToPx(context, 60)).centerCrop().memoryPolicy(NO_CACHE).into(holder.img);
         } else {
             setDefaultView(holder, what);
         }
