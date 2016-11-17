@@ -253,6 +253,7 @@ public class UpNextList {
         /* Repeat is One and user interaction is false*/
         else if(mRepeat == REPEAT.one && !isUser/* && mShuffle == SHUFFLE.none*/){
 //            same item will play again, so just call playing item change listener
+
         }
         /* Only Repeat is All and Shuffle if Off*/
         else if(mRepeat == REPEAT.all && mShuffle == SHUFFLE.none){
