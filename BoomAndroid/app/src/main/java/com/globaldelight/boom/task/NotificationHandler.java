@@ -11,6 +11,7 @@ import android.os.Build;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.utils.Utils;
@@ -20,6 +21,7 @@ import com.squareup.picasso.Target;
 import java.io.File;
 
 import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 /**
@@ -130,16 +132,28 @@ public class NotificationHandler {
                         .setImageViewResource(R.id.noti_play_button, R.drawable.ic_play);
             }
 
-            notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
-            notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
+            if(App.getPlayerEventHandler().isNext()){
+                notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
+                notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
+            }else{
+                notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, INVISIBLE);
+                notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, INVISIBLE);
+            }
+
+
             Intent nextClick = new Intent();
             nextClick.setAction(PlayerService.ACTION_NEXT_SONG);
             PendingIntent nextClickIntent = PendingIntent.getBroadcast(context, 10102, nextClick, 0);
             notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
             notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
 
-            notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
-            notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
+            if(App.getPlayerEventHandler().isPrevious()){
+                notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
+                notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
+            }else{
+                notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, INVISIBLE);
+                notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, INVISIBLE);
+            }
             Intent prevClick = new Intent();
             prevClick.setAction(PlayerService.ACTION_PREV_SONG);
             PendingIntent prevClickIntent = PendingIntent.getBroadcast(context, 10103, prevClick, 0);

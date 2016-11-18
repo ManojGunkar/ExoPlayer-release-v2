@@ -41,6 +41,9 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.TimerTask;
 
 /**
  * Created by Rahul Agarwal on 30-09-16.
@@ -51,7 +54,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private static final float BITMAP_SCALE = 0.4f;
     private static final float BLUR_RADIUS = 25.0f;
     private static final String TAG = "BoomPlayerActivity";
-    private RegularTextView mTitleTxt, mSubTitleTxt;
+    private RegularTextView mTitleTxt, mSubTitleTxt, mPlayedTime, mRemainsTime;
     private CircularCoverView mAlbumArt;
     private CircularSeekBar mTrackSeek;
     private ImageView mPlayPauseBtn, mLibraryBtn, mAudioEffectBtn, mUpNextQueue;
@@ -66,7 +69,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     public static final String ACTION_UPDATE_TRACK_SEEK = "ACTION_UPDATE_TRACK_SEEK";
     public static final String ACTION_UPDATE_SHUFFLE = "ACTION_UPDATE_SHUFFLE";
     public static final String ACTION_UPDATE_REPEAT = "ACTION_UPDATE_REPEAT";
-
 
     public ImageView mShuffleBtn, mRepeatBtn, mNextBtn, mPrevBtn, mAddToPlayList, mFavourite, mPlayerMore;
 
@@ -84,6 +86,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     boolean prev_enable = intent.getBooleanExtra("is_previous", false);
                     boolean next_enable = intent.getBooleanExtra("is_next", false);
                     updatePreviousNext(prev_enable, next_enable);
+
                     break;
                 case ACTION_ITEM_CLICKED :
                     if(intent.getBooleanExtra("play_pause", false) == false){
@@ -111,10 +114,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     private void updateShuffle(boolean isUser){
         if(isUser) {
-            App.getUserPreferenceHandler().resetShuffle();
             sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
         }
-
         switch (App.getUserPreferenceHandler().getShuffle()){
             case none:
                 mShuffleBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_shuffle_off));
@@ -127,7 +128,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     private void updateRepeat(boolean isUser){
         if(isUser) {
-            App.getUserPreferenceHandler().resetRepeat();
             sendBroadcast(new Intent(PlayerService.ACTION_REPEAT_SONG));
         }
         switch (App.getUserPreferenceHandler().getRepeat()){
@@ -231,6 +231,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 mPlayPauseBtn.setVisibility(View.VISIBLE);
                 mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_play, null));
             }
+
         }else{
             param = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             param.gravity = Gravity.CENTER;
@@ -241,6 +242,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mPlayPauseBtn.setVisibility(View.INVISIBLE);
             mAlbumArt.setImageDrawable(getResources().getDrawable(R.drawable.no_song_selected));
         }
+
+        updateShuffle(false);
+        updateRepeat(false);
     }
 
     public static void ImageViewAnimatedChange(Context context, final ImageView v, final Bitmap new_image) {
@@ -315,6 +319,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         mRepeatBtn = (ImageView) findViewById(R.id.player_repeat_btn);
 
         mPlayerMore = (ImageView)findViewById(R.id.player_more_btn);
+
+        mPlayedTime = (RegularTextView) findViewById(R.id.played_time);
+        mRemainsTime = (RegularTextView) findViewById(R.id.remains_time);
+
 
         mPlayerBackground = (FrameLayout)findViewById(R.id.player_background);
 
@@ -497,5 +505,29 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         tmpOut.copyTo(outputBitmap);
 
         return outputBitmap;
+    }
+
+    class TrackTimerTask extends TimerTask {
+        Long itemDuration = null;
+        public TrackTimerTask(Long time){
+            itemDuration = time;
+        }
+        @Override
+        public void run() {
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat simpleDateFormat =
+                    new SimpleDateFormat("HH:mm:ss a");
+            final String remainsTime = simpleDateFormat.format(itemDuration--);
+            final String playedTime = simpleDateFormat.format(0);
+
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    mRemainsTime.setText("-"+remainsTime);
+                    mPlayedTime.setText(playedTime);
+                }
+            });
+        }
     }
 }

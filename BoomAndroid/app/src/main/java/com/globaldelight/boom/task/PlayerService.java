@@ -121,12 +121,12 @@ public class PlayerService extends Service {
                 updateNotificationPlayer(null, false);
                 break;
             case ACTION_SHUFFLE_SONG:
-                sendBroadcast(new Intent(BoomPlayerActivity.ACTION_UPDATE_SHUFFLE));
                 musicPlayerHandler.resetShuffle();
+                sendBroadcast(new Intent(BoomPlayerActivity.ACTION_UPDATE_SHUFFLE));
                 break;
             case ACTION_REPEAT_SONG :
-                sendBroadcast(new Intent(BoomPlayerActivity.ACTION_UPDATE_REPEAT));
                 musicPlayerHandler.resetRepeat();
+                sendBroadcast(new Intent(BoomPlayerActivity.ACTION_UPDATE_REPEAT));
                 break;
             case ACTION_NEXT_SONG :
                 musicPlayerHandler.playNextSong(true);
@@ -210,6 +210,7 @@ public class PlayerService extends Service {
         Intent i = new Intent();
         i.setAction(BoomPlayerActivity.ACTION_RECEIVE_SONG);
         i.putExtra("playing_song", (MediaItem)musicPlayerHandler.getPlayingItem());
+        i.putExtra("playing", true);
         i.putExtra("is_previous", musicPlayerHandler.isPrevious());
         i.putExtra("is_next", musicPlayerHandler.isNext());
 
