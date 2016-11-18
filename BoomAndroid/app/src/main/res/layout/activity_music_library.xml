@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.player.boom.ui.widgets.MusicListTabs.MusicTabBar
+    <com.globaldelight.boom.ui.widgets.MusicListTabs.MusicTabBar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:id="@+id/tab_bar"

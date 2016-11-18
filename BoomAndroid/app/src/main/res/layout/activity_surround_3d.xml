@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:theme="@style/ToolbarSearchTheme">
-        <com.player.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.ui.widgets.RegularTextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Effects"
@@ -50,7 +50,7 @@
                     android:layout_weight=".5"
                     android:orientation="horizontal">
 
-                    <com.player.boom.ui.widgets.RegularTextView
+                    <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Effects"
@@ -59,7 +59,7 @@
                         android:textStyle="normal"
                         android:textSize="@dimen/effect_switch_txt"
                         android:id="@+id/effect_txt" />
-                    <com.player.boom.ui.widgets.RegularTextView
+                    <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
@@ -130,7 +130,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
-                            <com.player.boom.ui.widgets.RegularTextView
+                            <com.globaldelight.boom.ui.widgets.RegularTextView
                                 android:textStyle="normal"
                                 android:textSize="@dimen/toolbar_titile"
                                 android:layout_width="wrap_content"
@@ -139,7 +139,7 @@
                                 android:textColor="@color/white"
                                 android:maxLines="1"
                                 android:id="@+id/three_d_txt" />
-                            <com.player.boom.ui.widgets.RegularTextView
+                            <com.globaldelight.boom.ui.widgets.RegularTextView
                                 android:textStyle="bold"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -177,7 +177,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".77">
-                        <com.player.boom.ui.widgets.RegularTextView
+                        <com.globaldelight.boom.ui.widgets.RegularTextView
                             android:id="@+id/speaker_info"
                             android:textStyle="normal"
                             android:textSize="@dimen/speaker_info"
@@ -211,7 +211,7 @@
                             android:layout_height="wrap_content"
                             android:src="@drawable/full_bass_off"
                             android:id="@+id/full_bass_radio" />
-                        <com.player.boom.ui.widgets.RegularTextView
+                        <com.globaldelight.boom.ui.widgets.RegularTextView
                             android:id="@+id/fullbass_txt"
                             android:textStyle="normal"
                             android:textSize="@dimen/fullbass_txt"
@@ -359,7 +359,7 @@
                         android:layout_weight=".77"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
-                        <com.player.boom.ui.widgets.RegularTextView
+                        <com.globaldelight.boom.ui.widgets.RegularTextView
                             android:textStyle="normal"
                             android:textSize="@dimen/toolbar_titile"
                             android:layout_width="wrap_content"
@@ -370,7 +370,7 @@
                             android:maxLines="1"
                             android:id="@+id/intensity_txt" />
 
-                        <com.player.boom.ui.widgets.RegularTextView
+                        <com.globaldelight.boom.ui.widgets.RegularTextView
                             android:textStyle="bold"
                             android:textSize="@dimen/toolbar_titile"
                             android:layout_width="wrap_content"
@@ -400,7 +400,7 @@
                                 android:gravity="center_vertical"
                                 android:layout_marginLeft="5dp"
                                 android:orientation="vertical">
-                                <com.player.boom.ui.widgets.RegularTextView
+                                <com.globaldelight.boom.ui.widgets.RegularTextView
                                     android:textStyle="normal"
                                     android:textSize="@dimen/speaker_info"
                                     android:layout_width="wrap_content"
@@ -408,7 +408,7 @@
                                     android:text="3D needs"
                                     android:maxLines="1"
                                     android:textColor="#c3cc20"/>
-                                <com.player.boom.ui.widgets.RegularTextView
+                                <com.globaldelight.boom.ui.widgets.RegularTextView
                                     android:textStyle="normal"
                                     android:textSize="@dimen/speaker_info"
                                     android:layout_width="wrap_content"
@@ -421,7 +421,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <com.player.boom.ui.widgets.NegativeSeekBar
+                <com.globaldelight.boom.ui.widgets.NegativeSeekBar
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="33dp"
@@ -472,7 +472,7 @@
                         android:layout_weight=".77"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
-                        <com.player.boom.ui.widgets.RegularTextView
+                        <com.globaldelight.boom.ui.widgets.RegularTextView
                             android:textStyle="normal"
                             android:textSize="@dimen/toolbar_titile"
                             android:layout_width="wrap_content"
@@ -483,7 +483,7 @@
                             android:maxLines="1"
                             android:id="@+id/equalizer_txt" />
 
-                        <com.player.boom.ui.widgets.RegularTextView
+                        <com.globaldelight.boom.ui.widgets.RegularTextView
                             android:textStyle="bold"
                             android:textSize="@dimen/toolbar_titile"
                             android:layout_width="wrap_content"
@@ -512,7 +512,7 @@
                                 android:layout_marginLeft="5dp"
                                 android:orientation="vertical">
 
-                                <com.player.boom.ui.widgets.RegularTextView
+                                <com.globaldelight.boom.ui.widgets.RegularTextView
                                     android:textStyle="normal"
                                     android:textSize="@dimen/speaker_info"
                                     android:layout_width="wrap_content"
@@ -520,7 +520,7 @@
                                     android:text="3D needs"
                                     android:maxLines="1"
                                     android:textColor="#c3cc20"/>
-                                <com.player.boom.ui.widgets.RegularTextView
+                                <com.globaldelight.boom.ui.widgets.RegularTextView
                                     android:textStyle="normal"
                                     android:textSize="@dimen/speaker_info"
                                     android:layout_width="wrap_content"

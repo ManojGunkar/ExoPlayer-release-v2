@@ -138,11 +138,11 @@ namespace gdpl {
     };
 
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    createEngine
  * Signature: ()V
  */
-    extern "C" void Java_com_example_openslplayer_OpenSLPlayer_createEngine(JNIEnv *env, jclass clazz,
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_createEngine(JNIEnv *env, jclass clazz,
                                                                  jobject assetManager, jint sampleRate, jint inFrameCount) {
         globalJavaAssetManager = env->NewGlobalRef(assetManager);
         InitAssetManager(AAssetManager_fromJava(env, globalJavaAssetManager));
@@ -155,11 +155,11 @@ namespace gdpl {
     }
 
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    createAudioPlayer
  * Signature: (III)Z
  */
-    extern "C" jboolean Java_com_example_openslplayer_OpenSLPlayer_createAudioPlayer(JNIEnv *env, jclass clazz,
+    extern "C" jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_createAudioPlayer(JNIEnv *env, jclass clazz,
                                                                           jint bufferSize,
                                                                           jint samplerate,
                                                                           jint channel) {
@@ -184,11 +184,11 @@ namespace gdpl {
     }
 
     /*
-     * Class:     com_example_openslplayer_OpenSLPlayer
+     * Class:     com_globaldelight_boomplayer_OpenSLPlayer
      * Method:    write
      * Signature: (BII)V
      */
-    extern "C" jint Java_com_example_openslplayer_OpenSLPlayer_write(JNIEnv *env, jobject instance,
+    extern "C" jint Java_com_globaldelight_boomplayer_OpenSLPlayer_write(JNIEnv *env, jobject instance,
                                                           jbyteArray sData_, jint offset,
                                                           jint frameCount) {
         jbyte *sData = env->GetByteArrayElements(sData_, NULL);
@@ -210,11 +210,11 @@ namespace gdpl {
     }
 
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    setPlayingAudioPlayer
  * Signature: (Z)V
  */
-    extern "C" void Java_com_example_openslplayer_OpenSLPlayer_setPlayingAudioPlayer(JNIEnv *env, jclass clazz,
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_setPlayingAudioPlayer(JNIEnv *env, jclass clazz,
                                                                           jboolean enable) {
         SLresult result;
         // set the player's state to playing
@@ -231,11 +231,11 @@ namespace gdpl {
 
 
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    seekTo
  * Signature: (J)V
  */
-    extern "C" void Java_com_example_openslplayer_OpenSLPlayer_seekTo(JNIEnv *env, jclass type,
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_seekTo(JNIEnv *env, jclass type,
                                                            jlong position) {
         // TODO
         if (ringBuffer != NULL) {
@@ -260,11 +260,11 @@ namespace gdpl {
     }
 
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    shutdown
  * Signature: (Z)Z
  */
-    extern "C" jboolean Java_com_example_openslplayer_OpenSLPlayer_shutdown(JNIEnv *env, jclass clazz,
+    extern "C" jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_shutdown(JNIEnv *env, jclass clazz,
                                                                  jboolean enable) {
         env->DeleteGlobalRef(globalJavaAssetManager);
 
@@ -284,20 +284,20 @@ namespace gdpl {
     }
 
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    readAsset
  * Signature: (L)Z
  */
 
-    extern "C" void Java_com_example_openslplayer_OpenSLPlayer_setVolumeAudioPlayer(JNIEnv *, jclass, jint) {
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_setVolumeAudioPlayer(JNIEnv *, jclass, jint) {
 
     }
 
-    extern "C" void Java_com_example_openslplayer_OpenSLPlayer_setMutAudioPlayer(JNIEnv *, jclass, jboolean) {
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_setMutAudioPlayer(JNIEnv *, jclass, jboolean) {
 
     }
 
-    extern "C" void Java_com_example_openslplayer_OpenSLPlayer_enableAudioEffect(JNIEnv *env, jclass clazz,
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableAudioEffect(JNIEnv *env, jclass clazz,
                                                                       jboolean enabled) {
         gdpl::AutoLock lock(&engineLock);
         LOGD("OpenSLPlayer: enableAudioEffect(%d)", enabled);
@@ -305,14 +305,14 @@ namespace gdpl {
 
     }
 
-    extern "C" void Java_com_example_openslplayer_OpenSLPlayer_enable3DAudio(JNIEnv *env, jclass clazz,
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_enable3DAudio(JNIEnv *env, jclass clazz,
                                                                   jboolean enabled) {
         gdpl::AutoLock lock(&engineLock);
         LOGD("OpenSLPlayer: enable3DAudio(%d)", enabled);
         GetEngine()->Set3DAudioState(enabled);
     }
 
-    extern "C" void Java_com_example_openslplayer_OpenSLPlayer_enableEqualizer(JNIEnv *env, jclass clazz,
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableEqualizer(JNIEnv *env, jclass clazz,
                                                                     jboolean enabled) {
         /*openSLEqualizer->Enable(enabled);*/
         gdpl::AutoLock lock(&engineLock);
@@ -320,7 +320,7 @@ namespace gdpl {
         GetEngine()->SetEffectsState(enabled);
     }
 
-    extern "C" void Java_com_example_openslplayer_OpenSLPlayer_enableSuperBass(JNIEnv *env, jobject instance,
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableSuperBass(JNIEnv *env, jobject instance,
                                                                     jboolean enable) {
 
         gdpl::AutoLock lock(&engineLock);
@@ -328,14 +328,14 @@ namespace gdpl {
         GetEngine()->SetSuperBass(enable);
     }
 
-    extern "C" void Java_com_example_openslplayer_OpenSLPlayer_enableHighQuality(JNIEnv *env, jobject instance,
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableHighQuality(JNIEnv *env, jobject instance,
                                                                       jboolean enable) {
         gdpl::AutoLock lock(&engineLock);
         LOGD("OpenSLPlayer: enableHighQuality(%d)", enable);
         GetEngine()->SetHighQuality(enable);
     }
 
-    extern "C" void Java_com_example_openslplayer_OpenSLPlayer_setIntensity(JNIEnv *env, jobject instance,
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_setIntensity(JNIEnv *env, jobject instance,
                                                                  jdouble value) {
         gdpl::AutoLock lock(&engineLock);
         LOGD("OpenSLPlayer: setIntensity(%g)", value);
@@ -343,7 +343,7 @@ namespace gdpl {
 
     }
 
-    extern "C" void Java_com_example_openslplayer_OpenSLPlayer_SetEqualizer(JNIEnv *env, jobject instance,
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_SetEqualizer(JNIEnv *env, jobject instance,
                                                                  jint id,
                                                                  jfloatArray bandGains_) {
         jfloat *bandGains = env->GetFloatArrayElements(bandGains_, NULL);
@@ -355,14 +355,14 @@ namespace gdpl {
         env->ReleaseFloatArrayElements(bandGains_, bandGains, 0);
     }
 
-    extern "C" void Java_com_example_openslplayer_OpenSLPlayer_SetSpeakerState(JNIEnv *env, jobject instance,
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_SetSpeakerState(JNIEnv *env, jobject instance,
                                                                     jint speakerId, jfloat value) {
 
         gdpl::AutoLock lock(&engineLock);
         GetEngine()->SetSpeakerState(SpeakerID(speakerId), value);
     }
 
-    extern "C" jboolean Java_com_example_openslplayer_OpenSLPlayer_Get3DAudioState(JNIEnv *env,
+    extern "C" jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_Get3DAudioState(JNIEnv *env,
                                                                         jobject instance) {
 
         gdpl::AutoLock lock(&engineLock);
@@ -370,7 +370,7 @@ namespace gdpl {
 
     }
 
-    extern "C" jboolean Java_com_example_openslplayer_OpenSLPlayer_GetEffectsState(JNIEnv *env,
+    extern "C" jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_GetEffectsState(JNIEnv *env,
                                                                         jobject instance) {
 
         gdpl::AutoLock lock(&engineLock);
@@ -378,20 +378,20 @@ namespace gdpl {
 
     }
 
-    extern "C" jboolean Java_com_example_openslplayer_OpenSLPlayer_GetIntensity(JNIEnv *env,
+    extern "C" jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_GetIntensity(JNIEnv *env,
                                                                      jobject instance) {
         gdpl::AutoLock lock(&engineLock);
         return GetEngine()->GetIntensity();
 
     }
 
-    extern "C" jint Java_com_example_openslplayer_OpenSLPlayer_GetEqualizerId(JNIEnv *env, jobject instance) {
+    extern "C" jint Java_com_globaldelight_boomplayer_OpenSLPlayer_GetEqualizerId(JNIEnv *env, jobject instance) {
         gdpl::AutoLock lock(&engineLock);
         return GetEngine()->GetEqualizerId();
 
     }
 
-    extern "C" jfloat Java_com_example_openslplayer_OpenSLPlayer_GetSpeakerState(JNIEnv *env, jobject instance,
+    extern "C" jfloat Java_com_globaldelight_boomplayer_OpenSLPlayer_GetSpeakerState(JNIEnv *env, jobject instance,
                                                                       jint speakerId) {
 
         gdpl::AutoLock lock(&engineLock);

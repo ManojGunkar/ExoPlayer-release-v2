@@ -13,4 +13,27 @@
     <dimen name="eq_txt">10sp</dimen>
 
     <dimen name="home_album_art_size">180dp</dimen>
+
+    <!--Player Screen-->
+
+    <dimen name="seventy_six_px">19dp</dimen>
+    <dimen name="one_hundred_eight_px">27dp</dimen>
+    <dimen name="seventy_two_px">18dp</dimen>
+    <dimen name="fifty_four_px">29dp</dimen>
+    <dimen name="three_hundred_ten_px">77dp</dimen>
+    <dimen name="twenty_eight_px">14dp</dimen>
+    <dimen name="sixty_eight_px">17dp</dimen>
+    <dimen name="two_hundred_sixteen_px">54dp</dimen>
+    <dimen name="two_hundred_eighty_px">70dp</dimen>
+    <dimen name="one_hundred_sixty_px">40dp</dimen>
+    <dimen name="two_hundred_px">50dp</dimen>
+    <dimen name="eighty_px">20dp</dimen>
+    <dimen name="thirty_two_px">8dp</dimen>
+
+    <dimen name="eighty_eighty_pt">22sp</dimen>
+    <dimen name="sixty_eight_pt">17sp</dimen>
+
+
+
+
 </resources>

@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:gravity="left|center_vertical"
         android:layout_weight=".5">
-        <com.player.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/search_header_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         android:layout_height="match_parent"
         android:gravity="right|center_vertical"
         android:layout_weight=".5">
-        <com.player.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/search_header_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

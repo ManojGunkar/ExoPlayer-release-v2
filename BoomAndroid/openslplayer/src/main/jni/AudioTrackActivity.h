@@ -19,102 +19,102 @@ extern "C" {
 #endif
 namespace gdpl {
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    createEngine
  * Signature: ()V
  */
-    void Java_com_example_openslplayer_OpenSLPlayer_createEngine
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_createEngine
             (JNIEnv *, jclass, jobject, jint sampleRate, jint frameCount);
 
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    createAudioPlayer
  * Signature: (III)Z
  */
-    jboolean Java_com_example_openslplayer_OpenSLPlayer_createAudioPlayer(JNIEnv *, jclass ,
+    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_createAudioPlayer(JNIEnv *, jclass ,
                                                                           jint , jint, jint );
 
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    write
  * Signature: (Z)V
  */
-    jint Java_com_example_openslplayer_OpenSLPlayer_write(JNIEnv *, jobject, jbyteArray, jint,
+    jint Java_com_globaldelight_boomplayer_OpenSLPlayer_write(JNIEnv *, jobject, jbyteArray, jint,
                                                           jint);
 
 
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    setPlayingAudioPlayer
  * Signature: (Z)V
  */
-    void Java_com_example_openslplayer_OpenSLPlayer_setPlayingAudioPlayer
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_setPlayingAudioPlayer
             (JNIEnv *, jclass, jboolean);
 
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    seekTo
  * Signature: (I)V
  */
-    void Java_com_example_openslplayer_OpenSLPlayer_seekTo(JNIEnv *, jclass, jlong);
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_seekTo(JNIEnv *, jclass, jlong);
 
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    setVolumeAudioPlayer
  * Signature: (I)V
  */
-    void Java_com_example_openslplayer_OpenSLPlayer_setVolumeAudioPlayer
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_setVolumeAudioPlayer
             (JNIEnv *, jclass, jint);
 
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    setMutAudioPlayer
  * Signature: (Z)V
  */
-    void Java_com_example_openslplayer_OpenSLPlayer_setMutAudioPlayer
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_setMutAudioPlayer
             (JNIEnv *, jclass, jboolean);
 
 /*
- * Class:     com_example_openslplayer_OpenSLPlayer
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    shutdown
  * Signature: (Z)Z
  */
-    jboolean Java_com_example_openslplayer_OpenSLPlayer_shutdown
+    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_shutdown
             (JNIEnv *, jclass, jboolean);
 
-    void Java_com_example_openslplayer_OpenSLPlayer_enableAudioEffect(JNIEnv *env, jclass clazz,
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableAudioEffect(JNIEnv *env, jclass clazz,
                                                                   jboolean enabled);
 
-    void Java_com_example_openslplayer_OpenSLPlayer_enable3DAudio(JNIEnv *env, jclass clazz,
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_enable3DAudio(JNIEnv *env, jclass clazz,
                                                                   jboolean enabled);
 
-    void Java_com_example_openslplayer_OpenSLPlayer_enableEqualizer(JNIEnv *env, jclass clazz,
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableEqualizer(JNIEnv *env, jclass clazz,
                                                                     jboolean enabled);
 
-    void Java_com_example_openslplayer_OpenSLPlayer_enableSuperBass(JNIEnv *env, jobject instance,
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableSuperBass(JNIEnv *env, jobject instance,
                                                                     jboolean enable);
 
-    void Java_com_example_openslplayer_OpenSLPlayer_enableHighQuality(JNIEnv *env, jobject instance,
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableHighQuality(JNIEnv *env, jobject instance,
                                                                       jboolean enable);
 
-    void Java_com_example_openslplayer_OpenSLPlayer_setIntensity(JNIEnv *env, jobject instance,
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_setIntensity(JNIEnv *env, jobject instance,
                                                                     jdouble value);
 
-    void Java_com_example_openslplayer_OpenSLPlayer_SetEqualizer(JNIEnv *env, jobject instance, jint id,
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_SetEqualizer(JNIEnv *env, jobject instance, jint id,
                                                                  jfloatArray bandGains_);
 
-    void Java_com_example_openslplayer_OpenSLPlayer_SetSpeakerState(JNIEnv *env, jobject instance,
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_SetSpeakerState(JNIEnv *env, jobject instance,
                                                                     jint speakerId, jfloat value);
 
-    jboolean Java_com_example_openslplayer_OpenSLPlayer_Get3DAudioState(JNIEnv *env, jobject instance);
+    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_Get3DAudioState(JNIEnv *env, jobject instance);
 
-    jboolean Java_com_example_openslplayer_OpenSLPlayer_GetEffectsState(JNIEnv *env, jobject instance);
+    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_GetEffectsState(JNIEnv *env, jobject instance);
 
-    jboolean Java_com_example_openslplayer_OpenSLPlayer_GetIntensity(JNIEnv *env, jobject instance);
+    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_GetIntensity(JNIEnv *env, jobject instance);
 
-    jint Java_com_example_openslplayer_OpenSLPlayer_GetEqualizerId(JNIEnv *env, jobject instance);
+    jint Java_com_globaldelight_boomplayer_OpenSLPlayer_GetEqualizerId(JNIEnv *env, jobject instance);
 
-    jfloat Java_com_example_openslplayer_OpenSLPlayer_GetSpeakerState(JNIEnv *env, jobject instance,
+    jfloat Java_com_globaldelight_boomplayer_OpenSLPlayer_GetSpeakerState(JNIEnv *env, jobject instance,
                                                                       jint speakerId);
 };
 #ifdef __cplusplus
