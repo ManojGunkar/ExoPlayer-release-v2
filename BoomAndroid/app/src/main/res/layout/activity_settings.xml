@@ -11,8 +11,7 @@
         android:id="@+id/settings_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:theme="@style/ToolbarSearchTheme"
-        android:theme="@style/AppTheme.ActionBar">
+        app:theme="@style/ToolbarSearchTheme">
 
         <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/toolbr_title"
