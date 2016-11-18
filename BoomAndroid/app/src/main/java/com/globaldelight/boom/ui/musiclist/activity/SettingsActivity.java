@@ -748,11 +748,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 number_picker.invalidate();
                 break;
             } catch (NoSuchFieldException e) {
-                Log.w("setNumberPickerTextColor", e);
+                Log.w("setNumberPickerTextColo", e);
             } catch (IllegalAccessException e) {
-                Log.w("setNumberPickerTextColor", e);
+                Log.w("setNumberPickerTextColo", e);
             } catch (IllegalArgumentException e) {
-                Log.w("setNumberPickerTextColor", e);
+                Log.w("setNumberPickerTextColo", e);
             }
 
         }

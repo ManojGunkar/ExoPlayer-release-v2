@@ -1,6 +1,7 @@
 package com.globaldelight.boom.analytics;
 
 import android.content.Context;
+import android.provider.Settings;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
@@ -14,12 +15,23 @@ public class MixPanelAnalyticHelper {
 
     public static String projectToken = "598c4011c2d961ef3b7f248459fa30c7";
 
+    private static String SENDER_ID = "862807752058";
+
     public static MixpanelAPI getInstance(Context context) {
 
 
         return MixpanelAPI.getInstance(context, projectToken);
     }
 
+    public static void initPushNotification(Context context) {
+        MixpanelAPI mMixpanel = getInstance(context);
+        MixpanelAPI.People people = mMixpanel.getPeople();
+
+        String android_id = Settings.Secure.getString(context.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        people.identify("12345");
+        people.initPushHandling(SENDER_ID);
+    }
     public static void track(Context context, String eventName) {
 
         getInstance(context).track(eventName);
@@ -34,5 +46,6 @@ public class MixPanelAnalyticHelper {
 
 
     }
+
 
 }

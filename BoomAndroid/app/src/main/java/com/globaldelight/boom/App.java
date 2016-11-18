@@ -116,7 +116,7 @@ public class App extends Application implements SensorEventListener {
             //Toast.makeText(getApplicationContext(),
             //       "You have shaken your phone", Toast.LENGTH_SHORT).show();
             sendMessageShakeEvent();
-
+            // TODO
 
         }
 

@@ -22,16 +22,18 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.ui.musiclist.activity.DeviceMusicActivity;
 import com.globaldelight.boom.ui.widgets.IconizedMenu;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
+import com.globaldelight.boom.utils.async.Action;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -101,7 +103,10 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                 animate(holder);
                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
                     App.getPlayingQueueHandler().getUpNextList().addToPlay(itemList, position);
+
                 }
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_SONG_SECTION);
+
 
             }
         });

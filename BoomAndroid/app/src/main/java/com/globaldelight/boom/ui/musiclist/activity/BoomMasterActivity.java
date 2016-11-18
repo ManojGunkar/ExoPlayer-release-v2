@@ -23,7 +23,10 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
 
 /**
@@ -196,6 +199,7 @@ public class BoomMasterActivity extends AppCompatActivity implements NavigationV
                 drawerLayout.closeDrawer(Gravity.LEFT);
                 break;
             case R.id.navigation_close:
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_LIBRARY_CLOSE_BUTTON_TAPPED);
                 finish();
                 break;
         }
