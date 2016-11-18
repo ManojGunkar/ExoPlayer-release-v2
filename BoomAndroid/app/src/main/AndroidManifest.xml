@@ -9,6 +9,24 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
+
+    <!-- optional permission - highly recommended -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- optional permission -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Mixp permission -->
+    <permission
+        android:name="com.globaldelight.boom.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.globaldelight.boom.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+
+
+
     <application
         android:name="com.globaldelight.boom.App"
         android:allowBackup="true"
@@ -129,8 +147,21 @@
         <!--<activity android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />-->
+
+
+        <activity android:name=".ui.musiclist.activity.SettingsActivity"></activity>
+
+        <receiver android:name=".utils.SleepAlarm" />
+
+        <receiver
+            android:name="com.mixpanel.android.mpmetrics.GCMReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.globaldelight.boom" />
+            </intent-filter>
+        </receiver>
     </application>
-
-
-
 </manifest>
