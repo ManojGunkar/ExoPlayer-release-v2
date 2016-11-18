@@ -2,6 +2,8 @@ package com.globaldelight.boom.analytics;
 
 import android.content.Context;
 
+import com.flurry.android.FlurryAgent;
+
 import org.json.JSONObject;
 
 import java.util.HashMap;

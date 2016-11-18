@@ -3,6 +3,8 @@ package com.globaldelight.boom.analytics;
 import android.app.Application;
 import android.content.Context;
 
+import com.appsflyer.AppsFlyerLib;
+
 import java.util.Map;
 
 /**

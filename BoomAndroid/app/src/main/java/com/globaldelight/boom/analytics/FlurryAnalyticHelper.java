@@ -7,6 +7,11 @@ package com.globaldelight.boom.analytics;
 
 import android.content.Context;
 import android.util.Log;
+
+import com.flurry.android.FlurryAgent;
+import com.flurry.android.FlurryEventRecordStatus;
+import com.globaldelight.boom.utils.Logger;
+
 import java.util.HashMap;
 import java.util.Map;
 

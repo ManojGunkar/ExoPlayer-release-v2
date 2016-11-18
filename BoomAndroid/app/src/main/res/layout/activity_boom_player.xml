@@ -35,6 +35,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
+                    android:visibility="invisible"
                     android:layout_weight="12.345">
                     <ImageView
                         android:id="@+id/player_shuffle_btn"
@@ -64,6 +65,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="right|center_vertical"
+                    android:visibility="invisible"
                     android:layout_weight="12.345">
                     <ImageView
                         android:id="@+id/player_repeat_btn"
@@ -91,6 +93,7 @@
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:visibility="invisible"
                         android:text="time1"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sixty_eight_pt1"/>
@@ -123,6 +126,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
+                    android:visibility="invisible"
                     android:layout_weight="14">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:layout_width="match_parent"
@@ -274,7 +278,7 @@
                 android:layout_marginLeft="@dimen/sixty_eight_px"
                 android:layout_marginRight="@dimen/sixty_eight_px"
                 android:orientation="horizontal"
-
+                android:visibility="invisible"
                 android:weightSum="1">
                 <LinearLayout
                     android:layout_width="0dp"
