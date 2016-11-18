@@ -101,6 +101,12 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 case ACTION_UPDATE_TRACK_SEEK :
                     if(!isUser)
                         mTrackSeek.setProgress(intent.getIntExtra("percent", 0));
+                    SimpleDateFormat simpleDateFormat =
+                            new SimpleDateFormat("m:ss");
+                    final String remainsTime = simpleDateFormat.format(intent.getLongExtra("totalms", 0) - intent.getLongExtra("currentms", 0));
+                    final String playedTime = simpleDateFormat.format(intent.getLongExtra("currentms", 0));
+                    mPlayedTime.setText(playedTime);
+                    mRemainsTime.setText("-"+remainsTime);
                     break;
                 case ACTION_UPDATE_SHUFFLE:
                     updateShuffle(false);

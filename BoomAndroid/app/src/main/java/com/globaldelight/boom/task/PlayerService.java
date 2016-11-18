@@ -185,6 +185,8 @@ public class PlayerService extends Service {
         if(isUser){
             Intent seek = new Intent(BoomPlayerActivity.ACTION_UPDATE_TRACK_SEEK);
             seek.putExtra("percent", intent.getIntExtra("percent", 0));
+            seek.putExtra("currentms", intent.getLongExtra("currentms", 0));
+            seek.putExtra("totalms", intent.getLongExtra("totalms", 0));
             sendBroadcast(seek);
         }else{
             musicPlayerHandler.seek(intent.getIntExtra("seek", 0));

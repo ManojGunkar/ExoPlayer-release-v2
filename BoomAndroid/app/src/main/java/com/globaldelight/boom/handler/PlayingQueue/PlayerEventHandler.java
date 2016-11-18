@@ -122,6 +122,8 @@ public class PlayerEventHandler implements QueueEvent {
             Intent intent = new Intent();
             intent.setAction(PlayerService.ACTION_TRACK_POSITION_UPDATE);
             intent.putExtra("percent", percent);
+            intent.putExtra("currentms", currentms);
+            intent.putExtra("totalms", totalms);
             context.sendBroadcast(intent);
         }
 
