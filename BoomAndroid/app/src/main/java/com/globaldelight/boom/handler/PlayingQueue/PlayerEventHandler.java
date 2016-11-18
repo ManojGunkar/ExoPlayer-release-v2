@@ -218,6 +218,14 @@ public class PlayerEventHandler implements QueueEvent {
         App.getPlayingQueueHandler().getUpNextList().setRepeat();
     }
 
+    public boolean isPrevious() {
+        return App.getPlayingQueueHandler().getUpNextList().isPrevious();
+    }
+
+    public boolean isNext() {
+        return App.getPlayingQueueHandler().getUpNextList().isNext();
+    }
+
     public enum PlayState {
         play,
         pause,

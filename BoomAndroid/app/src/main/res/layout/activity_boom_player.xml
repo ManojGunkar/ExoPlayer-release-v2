@@ -20,12 +20,12 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2.031"/>
+                android:layout_weight="3.031"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="4.257"
+                android:layout_weight="5.0"
                 android:layout_marginLeft="@dimen/eighty_px"
                 android:layout_marginRight="@dimen/eighty_px"
                 android:orientation="horizontal"
@@ -85,27 +85,30 @@
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="top"
-                    android:layout_weight="12.345">
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_weight="14">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="time1"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/sixty_eight_pt"/>
+                        android:textSize="@dimen/sixty_eight_pt1"/>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="75.31">
+                    android:layout_height="match_parent"
+                    android:paddingLeft="@dimen/thirty_two_px"
+                    android:paddingRight="@dimen/thirty_two_px"
+                    android:gravity="center"
+                    android:layout_weight="72">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:textStyle="normal"
                         android:textSize="@dimen/sixty_eight_pt"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center_horizontal|top"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
                         android:textColor="@color/white"
@@ -118,13 +121,14 @@
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="right|top"
-                    android:layout_weight="12.345">
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_weight="14">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="time2"
+                        android:gravity="center_horizontal"
+                        android:text="time"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sixty_eight_pt"/>
                 </LinearLayout>
@@ -134,7 +138,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="10.156"/>
+                android:layout_weight="8.413"/>
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -187,6 +191,7 @@
                         android:id="@+id/player_prev_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:visibility="invisible"
                         android:src="@drawable/ic_boom_previous"/>
                 </LinearLayout>
 
@@ -199,6 +204,7 @@
                         android:id="@+id/player_next_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:visibility="invisible"
                         android:src="@drawable/ic_boom_next"/>
                 </LinearLayout>
 
@@ -213,8 +219,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="14.765"
-                android:layout_marginLeft="@dimen/one_hundred_sixty_px"
-                android:layout_marginRight="@dimen/one_hundred_sixty_px"
                 android:weightSum="1"
                 android:orientation="horizontal">
 

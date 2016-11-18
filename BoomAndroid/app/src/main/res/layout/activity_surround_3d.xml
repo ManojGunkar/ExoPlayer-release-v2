@@ -1,551 +1,535 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/three_d_layout"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#020308"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/effect_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:theme="@style/ToolbarSearchTheme">
+
         <com.globaldelight.boom.ui.widgets.RegularTextView
+            android:id="@+id/toolbr_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Effects"
-            android:gravity="center_vertical|left"
-            android:textColor="@color/white"
-            android:textStyle="normal"
+            android:gravity="center_vertical|start"
             android:maxLines="1"
-            android:id="@+id/toolbr_title"
-            android:textSize="@dimen/toolbar_titile" />
+            android:text="@string/title_effects"
+            android:textColor="@color/white"
+            android:textSize="@dimen/toolbar_titile"
+            android:textStyle="normal" />
     </android.support.v7.widget.Toolbar>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <LinearLayout
                 android:id="@+id/effect_switch_panel"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:gravity="center_vertical"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:elevation="10dp"
                 android:background="#020b17"
-                android:weightSum="1"
-                android:orientation="horizontal">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical|left"
-                    android:layout_weight=".5"
+                    android:layout_weight=".8"
+                    android:gravity="center_vertical|start"
                     android:orientation="horizontal">
 
                     <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/effect_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Effects"
+                        android:layout_marginStart="@dimen/one_fourty_eight_pt"
+                        android:maxLines="1"
+                        android:text="@string/title_effects"
                         android:textColor="@color/white"
-                        android:maxLines="1"
-                        android:textStyle="normal"
                         android:textSize="@dimen/effect_switch_txt"
-                        android:id="@+id/effect_txt" />
+                        android:textStyle="normal" />
+
                     <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/effect_switch_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:text="on"
-                        android:textColor="#ffffff"
+                        android:layout_marginStart="@dimen/twenty_pt"
                         android:maxLines="1"
-                        android:textStyle="bold"
+                        android:text="@string/switch_on"
+                        android:textColor="#ffffff"
                         android:textSize="@dimen/effect_switch_txt"
-                        android:id="@+id/effect_switch_txt" />
+                        android:textStyle="bold" />
                 </LinearLayout>
+
                 <LinearLayout
+                    android:id="@+id/gh"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_weight=".5"
-                    android:gravity="center_vertical|right">
-                    <ImageView
-                        android:id="@+id/effect_power_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/toggle_off"/>
-                    <!--<ToggleButton
-                        android:id="@+id/effect_power_btn"
-                        android:layout_width="30dp"
-                        android:layout_height="18dp"
-                        android:background="@drawable/toggle_selector"
-                        android:text=""
-                        android:textOff=""
-                        android:textOn=""/>-->
+                    android:layout_height="wrap_content"
+
+                    android:layout_weight=".2"
+                    android:orientation="horizontal">
+
+                    <Switch
+                        android:id="@+id/effect_power_switch"
+                        style="@style/RedSwitch"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="@dimen/one_ten_pt"
+
+                        android:theme="@style/RedSwitch" />
                 </LinearLayout>
+
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:paddingBottom="30dp"
-                android:paddingTop="30dp"
-                android:paddingRight="30dp"
                 android:orientation="vertical">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:weightSum="1"
-                    android:orientation="horizontal">
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".23"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/three_d_surround_off"
-                            android:id="@+id/three_d_switch_btn" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical|left"
-                        android:layout_weight=".6"
-                        android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-                            <com.globaldelight.boom.ui.widgets.RegularTextView
-                                android:textStyle="normal"
-                                android:textSize="@dimen/toolbar_titile"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="3D Surround"
-                                android:textColor="@color/white"
-                                android:maxLines="1"
-                                android:id="@+id/three_d_txt" />
-                            <com.globaldelight.boom.ui.widgets.RegularTextView
-                                android:textStyle="bold"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
-                                android:textSize="@dimen/toolbar_titile"
-                                android:text="ON"
-                                android:textColor="@color/white"
-                                android:maxLines="1"
-                                android:id="@+id/three_d_switch_txt" />
-                        </LinearLayout>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:layout_weight=".13"
-                        android:gravity="center_vertical|right">
-                        <ImageView
-                            android:id="@+id/speaker_switch_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/three_d_speakers_off"/>
-                    </LinearLayout>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <RelativeLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:weightSum="1"
-                    android:orientation="horizontal">
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".23"/>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".77">
-                        <com.globaldelight.boom.ui.widgets.RegularTextView
-                            android:id="@+id/speaker_info"
-                            android:textStyle="normal"
-                            android:textSize="@dimen/speaker_info"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Some speakers are Off"
-                            android:maxLines="1"
-                            android:textColor="@color/white"/>
-                    </LinearLayout>
-                </LinearLayout>
-                <LinearLayout
+                    android:layout_marginTop="@dimen/one_ten_pt">
 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:weightSum="1"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal">
-                    <LinearLayout
-                        android:layout_width="0dp"
+
+                    <ImageView
+                        android:id="@+id/three_d_switch_btn"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight=".23"/>
-                    <LinearLayout
-                        android:id="@+id/full_bass_panel"
-                        android:layout_width="0dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="@dimen/one_fifty_two_pt"
+                        android:src="@drawable/three_d_surround_off" />
+
+
+                    <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/three_d_txt"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_weight=".77">
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/full_bass_off"
-                            android:id="@+id/full_bass_radio" />
-                        <com.globaldelight.boom.ui.widgets.RegularTextView
-                            android:id="@+id/fullbass_txt"
-                            android:textStyle="normal"
-                            android:textSize="@dimen/fullbass_txt"
-                            android:layout_marginLeft="10dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Full Bass"
-                            android:maxLines="1"
-                            android:textColor="@color/white"/>
-                    </LinearLayout>
-                </LinearLayout>
+                        android:layout_alignBottom="@+id/speaker_switch_btn"
+                        android:layout_marginStart="@dimen/seventy_four_pt"
+
+                        android:layout_toEndOf="@+id/three_d_switch_btn"
+                        android:maxLines="1"
+                        android:text="@string/title_3d_surround"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/toolbar_titile"
+                        android:textStyle="normal" />
+
+                    <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/three_d_switch_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_alignBaseline="@+id/three_d_txt"
+                        android:layout_marginStart="@dimen/twenty_pt"
+                        android:layout_toEndOf="@+id/three_d_txt"
+                        android:maxLines="1"
+                        android:text="@string/switch_on"
+
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/toolbar_titile"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/speaker_switch_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/one_fifty_six_pt"
+                        android:src="@drawable/three_d_speakers_off" />
+
+                    <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/speaker_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/three_d_txt"
+                        android:layout_below="@+id/three_d_txt"
+
+                        android:layout_marginTop="@dimen/fourty_four_pt"
+                        android:maxLines="1"
+                        android:text="@string/speaker_status_some_off"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/speaker_info" />
+
+                </RelativeLayout>
+
+
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/collapsable_layout"
                 android:layout_width="match_parent"
-                android:layout_height="350dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:layout_height="@dimen/one_thousand_four_hundred_pt"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:orientation="horizontal"/>
+                    android:orientation="horizontal"
+                    android:visibility="gone" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="20dp"
-                    android:animateLayoutChanges="true">
+                    android:animateLayoutChanges="true"
+                    android:paddingBottom="@dimen/fourty_pt">
 
                     <ImageView
                         android:id="@+id/speaker_right_front"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="85dp"
-                        android:layout_marginTop="20dp"
-                        android:src="@drawable/off_right_front"
+                        android:layout_alignParentEnd="true"
                         android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true" />
+                        android:layout_marginEnd="@dimen/effect_speaker_right_front_margin_end"
+                        android:layout_marginTop="@dimen/effect_speaker_right_front_margin_top"
+                        android:src="@drawable/off_right_front" />
                     <!--android:src="@drawable/on_right_front"-->
                     <ImageView
                         android:id="@+id/speaker_left_front"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="80dp"
-                        android:src="@drawable/off_left_front"
+                        android:layout_alignParentStart="true"
                         android:layout_alignTop="@+id/speaker_right_front"
-                        android:layout_alignParentStart="true" />
+                        android:layout_marginStart="@dimen/effect_speaker_left_front_margin_start"
+                        android:src="@drawable/off_left_front" />
                     <!--android:src="@drawable/on_left_front"-->
                     <ImageView
                         android:id="@+id/speaker_left_surround"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="1dp"
-                        android:layout_marginTop="28dp"
-                        android:src="@drawable/off_left_surround"
+                        android:layout_alignStart="@+id/speaker_left_tweeter"
                         android:layout_below="@+id/speaker_left_tweeter"
-                        android:layout_alignStart="@+id/speaker_left_tweeter" />
+                        android:layout_marginStart="@dimen/effect_speaker_left_surround_margin_start"
+                        android:layout_marginTop="@dimen/effect_speaker_left_surround_margin_top"
+                        android:src="@drawable/off_left_surround" />
                     <!--android:src="@drawable/on_left_surround"-->
                     <ImageView
                         android:id="@+id/speaker_right_surround"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/off_right_surround"
                         android:layout_alignEnd="@+id/speaker_right_tweeter"
-                        android:layout_alignTop="@+id/speaker_left_surround" />
+                        android:layout_alignTop="@+id/speaker_left_surround"
+                        android:src="@drawable/off_right_surround" />
                     <!--android:src="@drawable/on_right_surround"-->
                     <ImageView
                         android:id="@+id/speaker_left_tweeter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="33dp"
-                        android:src="@drawable/off_lefttweeter"
-                        android:layout_below="@+id/speaker_left_front"
                         android:layout_alignParentStart="true"
-                        android:layout_marginTop="50dp" />
+                        android:layout_below="@+id/speaker_left_front"
+                        android:layout_marginStart="@dimen/effect_speaker_left_tweeter_margin_start"
+                        android:layout_marginTop="@dimen/effect_speaker_left_tweeter_margin_top"
+                        android:src="@drawable/off_lefttweeter" />
                     <!--android:src="@drawable/on_lefttweeter"-->
                     <ImageView
                         android:id="@+id/speaker_right_tweeter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="27dp"
-                        android:src="@drawable/off_righttweeter"
                         android:layout_above="@+id/speaker_left_surround"
-                        android:layout_alignParentEnd="true" />
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/effect_speaker_right_tweeter_margin_end"
+                        android:src="@drawable/off_righttweeter" />
                     <!--android:src="@drawable/on_righttweeter"-->
                     <ImageView
                         android:id="@+id/speaker_center_man"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:layout_marginTop="39dp"
-                        android:src="@drawable/man_off"
                         android:layout_below="@+id/speaker_right_front"
-                        android:layout_centerHorizontal="true" />
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="39dp"
+                        android:clickable="false"
+                        android:src="@drawable/man_off" />
                     <!--android:src="@drawable/man_plugged"-->
                     <ImageView
                         android:id="@+id/speaker_sub_woofer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/off_subwoofer"
-                        android:layout_marginTop="23dp"
                         android:layout_below="@+id/speaker_left_surround"
-                        android:layout_centerHorizontal="true" />
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/effect_speaker_sub_woofer_margin_top"
+                        android:src="@drawable/off_subwoofer" />
                     <!--android:src="@drawable/on_right_surround"-->
                 </RelativeLayout>
-            </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="#222327"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="30dp"
-                android:paddingTop="30dp"
-                android:paddingRight="30dp"
-                android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/full_bass_panel"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:gravity="center_vertical"
+
                     android:orientation="horizontal">
-                    <LinearLayout
-                        android:layout_width="0dp"
+
+                    <ImageView
+                        android:id="@+id/full_bass_radio"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight=".23"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/intensity_off"
-                            android:id="@+id/intensity_switch_btn" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="0dp"
+                        android:src="@drawable/full_bass_off" />
+
+                    <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/fullbass_txt"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight=".77"
+                        android:layout_marginLeft="@dimen/fullbass_txt_margin_left"
+                        android:maxLines="1"
+                        android:text="@string/full_bass"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/fullbass_txt"
+                        android:textStyle="normal" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginLeft="@dimen/one_twenty_pt"
+                android:layout_marginRight="@dimen/one_twenty_pt"
+                android:layout_marginTop="@dimen/one_fifty_four_pt"
+                android:background="#222327" />
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/one_ten_pt">
+
+
+                <ImageView
+                    android:id="@+id/intensity_switch_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginStart="@dimen/one_fifty_two_pt"
+                    android:src="@drawable/intensity_off" />
+
+
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/intensity_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/intensity_switch_btn"
+                    android:layout_marginStart="@dimen/seventy_four_pt"
+
+                    android:layout_toEndOf="@+id/intensity_switch_btn"
+                    android:maxLines="1"
+                    android:text="@string/title_intensity"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/toolbar_titile"
+                    android:textStyle="normal" />
+
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/intensity_switch_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+
+                    android:layout_alignBaseline="@+id/intensity_txt"
+                    android:layout_marginStart="@dimen/twenty_pt"
+                    android:layout_toEndOf="@+id/intensity_txt"
+                    android:maxLines="1"
+                    android:text="@string/switch_on"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/toolbar_titile"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/intensity_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/ninety_two_pt"
+                    android:layout_toEndOf="@+id/intensity_switch_txt"
+                    android:orientation="horizontal"
+                    android:visibility="invisible">
+
+                    <TextView
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="@dimen/effect_intensity_indicator_text_margin_bottom"
+                        android:layout_marginTop="@dimen/effect_intensity_indicator_text_margin_top"
+                        android:background="@color/progress_gray" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/effect_intensity_indicator_regular_text_wrapper_margin_left"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal">
-                        <com.globaldelight.boom.ui.widgets.RegularTextView
-                            android:textStyle="normal"
-                            android:textSize="@dimen/toolbar_titile"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Intensity"
-                            android:textColor="@color/white"
-                            android:layout_marginRight="5dp"
-                            android:maxLines="1"
-                            android:id="@+id/intensity_txt" />
+                        android:orientation="vertical">
 
                         <com.globaldelight.boom.ui.widgets.RegularTextView
-                            android:textStyle="bold"
-                            android:textSize="@dimen/toolbar_titile"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="ON"
-                            android:textColor="@color/white"
-                            android:layout_marginRight="20dp"
                             android:maxLines="1"
-                            android:id="@+id/intensity_switch_txt" />
+                            android:text="@string/req_of_3d"
+                            android:textColor="#c3cc20"
+                            android:textSize="@dimen/speaker_info"
+                            android:textStyle="normal" />
 
-                        <LinearLayout
-                            android:id="@+id/intensity_indicator"
+                        <com.globaldelight.boom.ui.widgets.RegularTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:visibility="invisible"
-                            android:gravity="center_vertical">
-                            <TextView
-                                android:layout_width="1dp"
-                                android:layout_height="match_parent"
-                                android:layout_marginBottom="3dp"
-                                android:layout_marginTop="3dp"
-                                android:background="@color/progress_gray"/>
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
-                                android:layout_marginLeft="5dp"
-                                android:orientation="vertical">
-                                <com.globaldelight.boom.ui.widgets.RegularTextView
-                                    android:textStyle="normal"
-                                    android:textSize="@dimen/speaker_info"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="3D needs"
-                                    android:maxLines="1"
-                                    android:textColor="#c3cc20"/>
-                                <com.globaldelight.boom.ui.widgets.RegularTextView
-                                    android:textStyle="normal"
-                                    android:textSize="@dimen/speaker_info"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="intensity ON"
-                                    android:maxLines="1"
-                                    android:textColor="#c3cc20"/>
-                            </LinearLayout>
-                        </LinearLayout>
+                            android:layout_marginTop="@dimen/twenty_four_pt"
+                            android:maxLines="1"
+                            android:text="@string/req_intensity"
+                            android:textColor="#c3cc20"
+                            android:textSize="@dimen/speaker_info"
+                            android:textStyle="normal" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <com.globaldelight.boom.ui.widgets.NegativeSeekBar
+                    android:id="@+id/intensity_seek"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="33dp"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginTop="20dp"
+
+                    android:layout_alignStart="@+id/intensity_switch_btn"
+                    android:layout_below="@+id/intensity_switch_btn"
+                    android:layout_marginRight="@dimen/one_fifty_six_pt"
+                    android:layout_marginTop="@dimen/one_thirty_two_pt"
                     android:max="100"
                     android:progress="50"
                     android:progressDrawable="@android:color/transparent"
-                    android:id="@+id/intensity_seek"/>
-            </LinearLayout>
 
-            <TextView
+                    />
+
+            </RelativeLayout>
+
+            <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:background="#222327"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"/>
+                android:layout_marginLeft="@dimen/one_twenty_pt"
+                android:layout_marginRight="@dimen/one_twenty_pt"
+                android:layout_marginTop="@dimen/one_fifty_four_pt"
+                android:background="#222327" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="30dp"
-                android:paddingTop="30dp"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/one_ten_pt">
+
+
+                <ImageView
+                    android:id="@+id/equalizer_switch_btn"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:paddingRight="30dp"
-                    android:weightSum="1"
-                    android:orientation="horizontal">
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".23"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/equalizer_off"
-                            android:id="@+id/equalizer_switch_btn" />
-                    </LinearLayout>
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="@dimen/one_fifty_two_pt"
+                    android:src="@drawable/equalizer_off" />
+
+
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/equalizer_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/equalizer_switch_btn"
+                    android:layout_marginStart="@dimen/seventy_four_pt"
+
+                    android:layout_toEndOf="@+id/equalizer_switch_btn"
+                    android:maxLines="1"
+                    android:text="@string/title_equalizer"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/toolbar_titile"
+                    android:textStyle="normal" />
+
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/equalizer_switch_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+
+                    android:layout_alignBaseline="@+id/equalizer_txt"
+                    android:layout_marginStart="@dimen/twenty_pt"
+                    android:layout_toEndOf="@+id/equalizer_txt"
+                    android:maxLines="1"
+                    android:text="@string/switch_on"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/toolbar_titile"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/equalizer_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/ninety_two_pt"
+                    android:layout_toEndOf="@+id/equalizer_switch_txt"
+                    android:orientation="horizontal"
+                    android:visibility="invisible">
+
+                    <TextView
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="@dimen/effect_intensity_indicator_text_margin_bottom"
+                        android:layout_marginTop="@dimen/effect_intensity_indicator_text_margin_top"
+                        android:background="@color/progress_gray" />
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight=".77"
+                        android:layout_marginLeft="@dimen/effect_intensity_indicator_regular_text_wrapper_margin_left"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal">
-                        <com.globaldelight.boom.ui.widgets.RegularTextView
-                            android:textStyle="normal"
-                            android:textSize="@dimen/toolbar_titile"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Equalizer"
-                            android:textColor="@color/white"
-                            android:layout_marginRight="5dp"
-                            android:maxLines="1"
-                            android:id="@+id/equalizer_txt" />
+                        android:orientation="vertical">
 
                         <com.globaldelight.boom.ui.widgets.RegularTextView
-                            android:textStyle="bold"
-                            android:textSize="@dimen/toolbar_titile"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="ON"
-                            android:textColor="@color/white"
-                            android:layout_marginRight="20dp"
                             android:maxLines="1"
-                            android:id="@+id/equalizer_switch_txt" />
-                        <LinearLayout
-                            android:id="@+id/equalizer_indicator"
+                            android:text="@string/req_of_3d"
+                            android:textColor="#c3cc20"
+                            android:textSize="@dimen/speaker_info"
+                            android:textStyle="normal" />
+
+                        <com.globaldelight.boom.ui.widgets.RegularTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:visibility="invisible"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-                            <TextView
-                                android:layout_width="1dp"
-                                android:layout_height="match_parent"
-                                android:layout_marginBottom="3dp"
-                                android:layout_marginTop="3dp"
-                                android:background="@color/progress_gray"/>
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
-                                android:orientation="vertical">
-
-                                <com.globaldelight.boom.ui.widgets.RegularTextView
-                                    android:textStyle="normal"
-                                    android:textSize="@dimen/speaker_info"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="3D needs"
-                                    android:maxLines="1"
-                                    android:textColor="#c3cc20"/>
-                                <com.globaldelight.boom.ui.widgets.RegularTextView
-                                    android:textStyle="normal"
-                                    android:textSize="@dimen/speaker_info"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="equalizer ON"
-                                    android:maxLines="1"
-                                    android:textColor="#c3cc20"/>
-                            </LinearLayout>
-                        </LinearLayout>
-
+                            android:layout_marginTop="@dimen/twenty_four_pt"
+                            android:maxLines="1"
+                            android:text="@string/req_equlaizer"
+                            android:textColor="#c3cc20"
+                            android:textSize="@dimen/speaker_info"
+                            android:textStyle="normal" />
                     </LinearLayout>
-
-
                 </LinearLayout>
+
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/eq_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_below="@+id/equalizer_switch_btn"
+                    android:layout_marginTop="@dimen/one_thirty_two_pt"
+
                     android:background="#020308"
-                    android:overScrollMode="never"
-                    android:layout_marginTop="20dp"/>
+                    android:overScrollMode="never" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginLeft="@dimen/one_twenty_pt"
+                android:layout_marginRight="@dimen/one_twenty_pt"
+                android:layout_marginTop="@dimen/one_fifty_four_pt"
+                android:background="#222327"
+                android:visibility="invisible" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

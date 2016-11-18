@@ -2,5 +2,30 @@
 <resources>
     <color name="colorPrimary">#ae0327</color>
     <color name="colorPrimaryDark">#830025</color>
-    <color name="colorAccent">#FF4081</color>
-</resources>
+    <color name="colorAccent">#ae0327</color>
+    <color name="colorBackground">#020308</color>
+    <color name="dark_shade">#414A4C</color>
+    <color name="white_active">#ffffff</color>
+    <color name="white_shade">#828587</color>
+    <color name="white_light_shade">#A5A5A5</color>
+    <color name="blue_holo">#33b5e5</color>
+    <color name="green_holo">#00ff00</color>
+    <color name="yellow">#e5e500</color>
+    <color name="coachbubble">#9b002d</color>
+    <color name="coachbubble_bg">#b60035</color>
+    <color name="start_timer_button_color">#69e456</color>
+    <color name="start_timer_button_solid_color">#03ae1d</color>
+    <color name="reset_timer_button_color">#e45674</color>
+    <color name="reset_timer_button_solid_color">#ae0327</color>
+    <color name="cancel_timer_button_color">#56b7e4</color>
+    <color name="cancel_timer_button_solid_color">#0339ae</color>
+    <color name="play_que_header_bg">#061019</color>
+    <color name="play_que_decs_txt">#59595C</color>
+    <color name="swipe_delete_bg">#ae0327</color>
+    <color name="swipe_delete_undo_btn">#fff084</color>
+    <color name="drag_item_bg">#020308</color>
+    <color name="transparent">#80FFFFFF</color>
+
+
+</resources><!--
+<color name="colorAccent">#FF4081</color>-->

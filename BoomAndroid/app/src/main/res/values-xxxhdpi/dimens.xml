@@ -11,10 +11,69 @@
     <dimen name="speaker_info">15sp</dimen>//52
     <dimen name="fullbass_txt">16sp</dimen>//62
     <dimen name="eq_txt">10sp</dimen>
+    <dimen name="eq_item_text">11sp</dimen>
+    <dimen name="tooltip_txt">17sp</dimen>
+    <dimen name="play_queue_header_txt">14sp</dimen>
+    <dimen name="play_queue_row_txt">15sp</dimen>
+    <dimen name="play_queue_row_desc_txt">14sp</dimen>
 
-    <dimen name="home_album_art_size">180dp</dimen>
 
-    <!--Player Screen-->
+    <!--3d surround-->
+    <dimen name="eight_pt">2dp</dimen>
+    <dimen name="eighty_pt">20dp</dimen>
+    <dimen name="one_fourty_eight_pt">37dp</dimen>
+
+    <dimen name="one_twenty_pt">30dp</dimen>
+    <dimen name="fourty_pt">10dp</dimen>
+    <dimen name="twenty_pt">5dp</dimen>
+
+    <dimen name="one_thousand_four_hundred_pt">350dp</dimen>
+    <dimen name="sixty_pt">15dp</dimen>
+    <dimen name="two_twenty_four_pt">56dp</dimen>
+    <dimen name="one_ten_pt">28dp</dimen>
+    <dimen name="one_fifty_two_pt">38dp</dimen>
+    <dimen name="one_fifty_four_pt">39dp</dimen>
+    <dimen name="one_fifty_six_pt">39dp</dimen>
+
+    <dimen name="twenty_four_pt">6dp</dimen>
+    <dimen name="fourty_four_pt">11dp</dimen>
+    <dimen name="seventy_four_pt">19dp</dimen>
+    <dimen name="seventy_six_pt">19dp</dimen>
+
+    <dimen name="one_thirty_two_pt">33dp</dimen>
+    <dimen name="ninety_two_pt">23dp</dimen>
+    <dimen name="two_fifty_two_pt">63dp</dimen>
+    <dimen name="one_twelve_pt">28dp</dimen>
+
+    <!--setting-->
+    <!-- settings-->
+    <dimen name="settings_item_title_size">17sp</dimen>
+    <dimen name="settings_item_description_size">16sp</dimen>
+    <dimen name="settings_timer_txt_size">25sp</dimen>
+    <dimen name="thirty_six_pt">12dp</dimen>
+
+    <dimen name="sixty_eight_pt">17dp</dimen>
+    <dimen name="sixty_four_pt">16dp</dimen>
+    <dimen name="five_hundred_ninety_two_pt">148dp</dimen>
+    <dimen name="four_hundred_thirty_six_pt">109dp</dimen>
+    <dimen name="eighty_two_pt">21dp</dimen>
+    <dimen name="thirty_four_pt">9dp</dimen>
+    <dimen name="five_hundred_eighty_eight_pt">147dp</dimen>
+    <dimen name="six_hundred_seventy_eight_pt">170dp</dimen>
+    <dimen name="six_hundred_pt">150dp</dimen>
+    <dimen name="one_hundred__eight_pt">27dp</dimen>
+    <dimen name="one_hundred_thirty_six_pt">34dp</dimen>
+    <dimen name="one_hundred_eighty_two_pt">46dp</dimen>
+    <dimen name="eight_hundred_ninety_two_pt">223dp</dimen>
+    <dimen name="fifty_eight_pt">15dp</dimen>
+    <dimen name="twenty_eight_pt">7dp</dimen>
+    <dimen name="one_hundred_sixty_two_pt">41dp</dimen>
+    <dimen name="one_hundred_twelve_pt">28dp</dimen>
+    <dimen name="two_hundred_twenty_pt">55dp</dimen>
+    <dimen name="seventy_two_pt">18dp</dimen>
+    <dimen name="one_hundred_eighty_six_pt">47dp</dimen>
+
+
 
     <dimen name="seventy_six_px">19dp</dimen>
     <dimen name="one_hundred_eight_px">27dp</dimen>
@@ -31,9 +90,9 @@
     <dimen name="thirty_two_px">8dp</dimen>
 
     <dimen name="eighty_eighty_pt">22sp</dimen>
-    <dimen name="sixty_eight_pt">17sp</dimen>
+    <dimen name="sixty_eight_pt1">17sp</dimen>
 
 
-
+    <dimen name="home_album_art_size">180dp</dimen>
 
 </resources>

@@ -66,9 +66,11 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     public static final String ACTION_UPDATE_TRACK_SEEK = "ACTION_UPDATE_TRACK_SEEK";
     public static final String ACTION_UPDATE_SHUFFLE = "ACTION_UPDATE_SHUFFLE";
     public static final String ACTION_UPDATE_REPEAT = "ACTION_UPDATE_REPEAT";
+    public static final String ACTION_UPDATE_NEXT_PREVIOUS = "ACTION_UPDATE_NEXT_PREVIOUS";
+    public static final String ACTION_UPDATE_NEXT = "ACTION_UPDATE_NEXT";
 
 
-    public ImageView mShuffleBtn, mRepeatBtn, mNextBtn, mPrevBtn;
+    public ImageView mShuffleBtn, mRepeatBtn, mNextBtn, mPrevBtn, mAddToPlayList, mFavourite, mPlayerMore;
 
     FrameLayout.LayoutParams param;
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
@@ -81,6 +83,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     if(item != null){
                         updateTrackToPlayer(item, intent.getBooleanExtra("playing", false));
                     }
+                    boolean prev_enable = intent.getBooleanExtra("is_previous", false);
+                    boolean next_enable = intent.getBooleanExtra("is_next", false);
+                    updatePreviousNext(prev_enable, next_enable);
                     break;
                 case ACTION_ITEM_CLICKED :
                     if(intent.getBooleanExtra("play_pause", false) == false){
@@ -128,6 +133,20 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             case all:
 //mRepeatBtn.setImageDrawable();
                 break;
+        }
+    }
+
+    private void updatePreviousNext(boolean prev_enable, boolean next_enable){
+        if(prev_enable){
+            mPrevBtn.setVisibility(View.VISIBLE);
+        }else{
+            mPrevBtn.setVisibility(View.INVISIBLE);
+        }
+
+        if(next_enable){
+            mNextBtn.setVisibility(View.VISIBLE);
+        }else{
+            mNextBtn.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -298,6 +317,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         mUpNextQueue.setOnClickListener(this);
         mShuffleBtn.setOnClickListener(this);
         mRepeatBtn.setOnClickListener(this);
+
+        mNextBtn.setOnClickListener(this);
+        mPrevBtn.setOnClickListener(this);
 
         mAudioEffectBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

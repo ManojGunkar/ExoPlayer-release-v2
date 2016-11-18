@@ -26,7 +26,69 @@
     <string name="pref_status_trans">Fully Transparent Statusbar</string>
     <string name="pref_nav_trans">Fully Transparent Navigationbar</string>
     <string name="pref_draw_over">Shade over album art</string>
-    <string name="cant_play_song">Can not Play Songs</string>
-    <string name="search_fragment">Search Result</string>
+
+    <!--#d surround-->
+    <string name="title_effects">Effects</string>
+    <string name="switch_on">ON</string>
+    <string name="switch_off">OFF</string>
+    <string name="title_3d_surround">3D Surround</string>
+    <string name="title_intensity">Intensity</string>
+    <string name="title_equalizer">Equalizer</string>
+    <string name="speaker_status_some_off">Some speakers are Off</string>
+    <string name="full_bass">Full Bass</string>
+    <string name="req_of_3d">3D needs</string>
+    <string name="req_intensity">intensity ON</string>
+    <string name="req_equlaizer">equalizer ON</string>
+
+
+    <!--Setting-->
+    <string name="title_settings">Settings</string>
+    <string name="title_headphone_type">Select Headphone type</string>
+    <string name="on_ear">On Ear</string>
+    <string name="in_ear">In Ear</string>
+    <string name="in_canal">In Canal</string>
+    <string name="over_ear">Over Ear</string>
+
+    <string name="timer_start">Start Timer</string>
+    <string name="timer_cancel">Cancel</string>
+    <string name="timer_reset">Reset</string>
+
+    <string name="title_sort_albums">Sort Albums</string>
+    <string name="sort_by_artist">By Artist</string>
+    <string name="sort_by_title">By Title Albums</string>
+
+    <string name="title_shake">Set Shake Gesture</string>
+    <string name="description_shake">Please choose the action you\'d like triggered when you shake your device.</string>
+    <string name="shake_action_none">None</string>
+    <string name="shake_action_next">Play Next Song</string>
+    <string name="shake_action_playorpause">Play or Pause the song</string>
+
+    <string name="title_crossfade">Set Crossfade</string>
+    <string name="description_crossfade">Select the crossfade duration between tracks.</string>
+    <string name="description_note_crossfade">(Not applicable for Live streaming)</string>
+
+    <string name="title_sleep_timer">Sleep Timer</string>
+    <string name="sleep_timer_description">Set a sleep timer to turn off music automatically after a set amount of time.</string>
+    <string name="sleep_timer_description_active">Your sleep timer is ON. \n Music will stop playing at </string>
+    <!-- about-->
+    <string name="title_about">Boom for Android v1.1</string>
+    <string name="description_about">Delightful Surround Sound Engineered by Global Delight</string>
+    <string name="rate_app">Rate on Play Store</string>
+    <string name="share_app">Share</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="about_technology">The Technology of immersive surround audio on headphones is patent pending</string>
+    <string name="copyright">\u00a9 2016,Global Delight Technologies Pvt Ltd. All rights reserved.</string>
+
+    <!-- Tutorial-->
+    <string name="tutorial_boom_effect"> Tap here to experience \n the song with Boom!</string>
+    <string name="tutorial_boom_effect_poweron">Tap to turn Effects ON/OFF</string>
+
+    <!-- Menu-->
+    <string name="playque_menu_remove">Remove</string>
+    <string name="playlist_menu_addtoqueue">Add To Queue</string>
+    <string name="playlist_menu_delete_list">Delete Playlist</string>
+    <string name="search_fragment">Search</string>
+    <string name="cant_play_song">Song can\'t played...!</string>
+
 
 </resources>

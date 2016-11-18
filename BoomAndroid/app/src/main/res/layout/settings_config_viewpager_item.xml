@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/five_hundred_ninety_two_pt">
+    <!-- android:layout_marginLeft="@dimen/one_ten_pt"-->
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/img_pager_item"
+       />
+
+    <com.globaldelight.boom.ui.widgets.RegularTextView
+        android:text="Select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/settings_item_title_size"
+        android:gravity="center_horizontal"
+
+        android:id="@+id/img_pager_item_title"
+        android:textColor="@color/white_shade"
+        android:textStyle="normal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/img_pager_item" />
+    <!-- android:scaleType="fitXY"-->
+</RelativeLayout>

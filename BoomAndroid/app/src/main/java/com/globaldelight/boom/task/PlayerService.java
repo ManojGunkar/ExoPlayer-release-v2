@@ -210,7 +210,9 @@ public class PlayerService extends Service {
         Intent i = new Intent();
         i.setAction(BoomPlayerActivity.ACTION_RECEIVE_SONG);
         i.putExtra("playing_song", (MediaItem)musicPlayerHandler.getPlayingItem());
-        i.putExtra("playing", true);
+        i.putExtra("is_previous", musicPlayerHandler.isPrevious());
+        i.putExtra("is_next", musicPlayerHandler.isNext());
+
         sendBroadcast(i);
         updateNotificationPlayer((MediaItem)musicPlayerHandler.getPlayingItem(), true);
         try {

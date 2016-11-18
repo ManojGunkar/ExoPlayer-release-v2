@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#020308"
+    tools:context="com.globaldelight.boom.ui.musiclist.activity.SettingsActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/settings_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:theme="@style/ToolbarSearchTheme"
+        android:theme="@style/AppTheme.ActionBar">
+
+        <com.globaldelight.boom.ui.widgets.RegularTextView
+            android:id="@+id/toolbr_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|start"
+            android:maxLines="1"
+            android:text="@string/title_settings"
+            android:textColor="@color/white"
+            android:textSize="@dimen/toolbar_titile"
+            android:textStyle="normal" />
+    </android.support.v7.widget.Toolbar>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/settings_toolbar">
+
+        <LinearLayout
+            android:id="@+id/mainContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:orientation="vertical">
+
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/title_headphone_select"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sixty_eight_pt"
+                    android:layout_marginTop="@dimen/one_ten_pt"
+                    android:text="@string/title_headphone_type"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/settings_item_title_size"
+                    android:textStyle="bold" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/head_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ninety_two_pt"
+                    android:overScrollMode="never" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+
+                android:layout_marginTop="@dimen/one_ten_pt"
+                android:background="@color/black_shade" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+
+                android:orientation="vertical">
+
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/title_sort_albums"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sixty_eight_pt"
+
+                    android:layout_marginTop="@dimen/one_ten_pt"
+                    android:text="@string/title_sort_albums"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/settings_item_title_size"
+                    android:textStyle="bold" />
+
+                <RadioGroup
+                    android:id="@+id/radio_group_sort"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ninety_two_pt"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/radio_artist"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sixty_eight_pt"
+                        android:buttonTint="@color/colorPrimary"
+                        android:text="@string/sort_by_artist"
+                        android:textSize="@dimen/settings_item_title_size"
+                        android:textColor="@color/white" />
+
+                    <RadioButton
+                        android:id="@+id/radio_album"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sixty_eight_pt"
+                        android:layout_marginTop="@dimen/eighty_two_pt"
+                        android:buttonTint="@color/colorPrimary"
+                        android:textSize="@dimen/settings_item_title_size"
+                        android:text="@string/sort_by_title"
+                        android:textColor="@color/white" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginTop="@dimen/one_ten_pt"
+                android:background="@color/black_shade" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:orientation="vertical">
+
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/title_shake_config"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginStart="@dimen/sixty_eight_pt"
+                    android:layout_marginTop="@dimen/one_ten_pt"
+                    android:text="@string/title_shake"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/settings_item_title_size"
+                    android:textStyle="bold" />
+
+
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/textView4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sixty_four_pt"
+                    android:layout_marginStart="@dimen/sixty_eight_pt"
+                    android:layout_marginEnd="@dimen/sixty_eight_pt"
+                    android:inputType="textMultiLine"
+                    android:text="@string/description_shake"
+                    android:textColor="@color/white_shade"
+                    android:textSize="@dimen/settings_item_description_size"
+                    android:textStyle="normal" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ninety_two_pt"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5">
+
+                        <ImageView
+                            android:id="@+id/imageView"
+                            android:layout_width="@dimen/five_hundred_eighty_eight_pt"
+                            android:layout_height="@dimen/six_hundred_seventy_eight_pt"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/set_shake" />
+                    </LinearLayout>
+
+                    <RadioGroup
+                        android:id="@+id/radio_group_shake"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:layout_weight="0.5"
+                        android:orientation="vertical">
+
+                        <RadioButton
+                            android:id="@+id/radio_none"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/sixty_eight_pt"
+                            android:layout_marginTop="@dimen/eighty_two_pt"
+                            android:buttonTint="@color/colorPrimary"
+                            android:text="@string/shake_action_none"
+                            android:textSize="@dimen/settings_item_title_size"
+                            android:textColor="@color/white" />
+
+                        <RadioButton
+                            android:id="@+id/radio_next_song"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/sixty_eight_pt"
+                            android:layout_marginTop="@dimen/eighty_two_pt"
+                            android:buttonTint="@color/colorPrimary"
+                            android:text="@string/shake_action_next"
+                            android:textSize="@dimen/settings_item_title_size"
+                            android:textColor="@color/white" />
+
+                        <RadioButton
+                            android:id="@+id/radio_play_pause"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/sixty_eight_pt"
+                            android:layout_marginTop="@dimen/eighty_two_pt"
+                            android:buttonTint="@color/colorPrimary"
+                            android:text="@string/shake_action_playorpause"
+                            android:textSize="@dimen/settings_item_title_size"
+                            android:textColor="@color/white" />
+                    </RadioGroup>
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginTop="@dimen/one_ten_pt"
+                android:background="@color/black_shade" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+                    <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/title_cross_fade"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_gravity="left"
+                        android:layout_marginStart="@dimen/sixty_eight_pt"
+                        android:layout_marginTop="@dimen/one_ten_pt"
+                        android:text="@string/title_crossfade"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/settings_item_title_size"
+                        android:textStyle="bold"
+
+                        />
+
+                    <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/textView14"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/title_cross_fade"
+                        android:layout_toStartOf="@+id/switch_cross_fade"
+                        android:layout_marginTop="@dimen/sixty_four_pt"
+                        android:inputType="textMultiLine"
+                        android:text="@string/description_crossfade"
+                        android:textColor="@color/white_shade"
+                        android:paddingLeft="@dimen/sixty_eight_pt"
+
+                        android:textSize="@dimen/settings_item_description_size"
+
+                        android:textStyle="normal" />
+
+                    <Switch
+                        android:id="@+id/switch_cross_fade"
+                        style="@style/RedSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignTop="@+id/title_cross_fade"
+                        android:layout_gravity="right"
+                        android:layout_marginEnd="@dimen/one_hundred__eight_pt"
+                        android:layout_marginTop="@dimen/thirty_six_pt"
+                        android:gravity="right"
+                        android:theme="@style/RedSwitch" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/ninety_two_pt">
+
+                    <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/seek_text"
+                        android:layout_width="@dimen/one_hundred_eighty_two_pt"
+                        android:layout_height="@dimen/ninety_two_pt"
+                        android:layout_above="@+id/textView2"
+                        android:layout_centerHorizontal="true"
+                        android:background="#222327"
+                        android:gravity="center"
+                        android:text="00.00"
+                        android:textColor="@color/white"
+
+                        android:textSize="@dimen/settings_item_title_size"
+                        android:textStyle="normal" />
+
+                    <SeekBar
+                        android:id="@+id/seekBar"
+                        android:layout_width="@dimen/eight_hundred_ninety_two_pt"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/one_hundred_thirty_six_pt"
+                        android:gravity="center"
+                        android:thumbTint="@color/colorPrimary"
+                        android:thumbTintMode="src_atop"
+                        android:minHeight="2dip"
+                        android:maxHeight="2dip"
+
+                        android:max="100"
+                        android:progressDrawable="@drawable/custom_seekbar"
+                        />
+                   <!-- style="@style/CustomSeekBar"
+
+                    android:progressTint="@color/colorPrimary"
+                    android:progressTintMode="add"
+                    android:secondaryProgressTint="@color/white_shade"
+                    android:secondaryProgressTintMode="src_in"-->
+
+                    <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_alignTop="@+id/seekBar"
+                        android:layout_toStartOf="@+id/seekBar"
+
+                        android:gravity="center"
+                        android:text="0 sec"
+                        android:textColor="@color/white_shade"
+                        android:textSize="@dimen/settings_item_title_size"
+                        android:textStyle="normal" />
+
+                    <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/seekBar"
+                        android:layout_toEndOf="@+id/seekBar"
+                        android:text="10 sec"
+                        android:textColor="@color/white_shade"
+                        android:textSize="@dimen/settings_item_title_size"
+                        android:textStyle="normal"
+
+                        />
+
+                </RelativeLayout>
+
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/textView6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginTop="@dimen/fifty_eight_pt"
+                    android:inputType="textMultiLine"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:text="@string/description_note_crossfade"
+                    android:textColor="@color/white_shade"
+                    android:textSize="@dimen/settings_item_description_size"
+                    android:textStyle="normal" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginTop="@dimen/one_ten_pt"
+                android:background="@color/black_shade" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/one_ten_pt"
+                android:orientation="vertical">
+
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/title_sleep_timer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sixty_eight_pt"
+
+
+                    android:text="@string/title_sleep_timer"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/settings_item_title_size"
+                    android:textStyle="bold" />
+
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/description_timer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:paddingLeft="@dimen/sixty_eight_pt"
+                    android:paddingRight="@dimen/sixty_eight_pt"
+                    android:layout_marginTop="@dimen/ninety_two_pt"
+                    android:inputType="textMultiLine"
+                    android:text="@string/sleep_timer_description"
+                    android:textColor="@color/white_shade"
+                    android:textSize="@dimen/settings_item_description_size"
+                    android:textStyle="normal" />
+
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/txtTimer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/eighty_pt"
+                    android:layout_marginTop="@dimen/ninety_two_pt"
+                    android:gravity="center_horizontal"
+                    android:text="00:00:00"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/settings_timer_txt_size"
+                    android:textStyle="normal"
+
+                    android:visibility="gone" />
+
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/txtStopTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/ninety_two_pt"
+                    android:gravity="center"
+                    android:inputType="textMultiLine"
+                    android:text="Hour :  Minute"
+                    android:textColor="@color/white_shade"
+                    android:textSize="@dimen/settings_item_description_size"
+                    android:textStyle="normal" />
+
+                <TimePicker
+                    android:id="@+id/timePicker"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:numbersBackgroundColor="#57e326"
+                    android:numbersSelectorColor="#675543"
+                    android:numbersTextColor="#995394"
+                    android:textColorPrimary="#359875"
+                    android:textColorSecondary="#897530"
+                    android:textSize="@dimen/settings_item_title_size"
+                    android:timePickerMode="spinner" />
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_timer_cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/round_button_cancel"
+                        android:text="@string/timer_cancel"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/settings_item_description_size"
+                        android:visibility="gone" />
+
+                    <Button
+                        android:id="@+id/btn_timer_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/round_button_start"
+                        android:text="@string/timer_start"
+                        android:textColor="@color/white"
+
+                        android:textSize="@dimen/settings_item_description_size" />
+
+                    <Button
+                        android:id="@+id/btn_timer_reset"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+
+                        android:background="@drawable/round_button_reset"
+                        android:text="@string/timer_reset"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/settings_item_description_size"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginTop="@dimen/one_ten_pt"
+                android:background="#222327"
+                android:visibility="invisible"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

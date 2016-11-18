@@ -24,6 +24,10 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Switch;
+
+import com.globaldelight.boom.ui.widgets.TooltipWindow;
+import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -40,11 +44,11 @@ import java.util.List;
  * Created by Rahul Agarwal on 05-10-16.
  */
 
-public class Surround3DActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, MusicReceiver.updateMusic, CompoundButton.OnCheckedChangeListener, EqualizerViewAdapter.onEqualizerUpdate {
+public class Surround3DActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, MusicReceiver.updateMusic, EqualizerViewAdapter.onEqualizerUpdate {
     private RegularTextView mToolbarTitle, mEffectTxt, mEffectSwitchTxt, m3DTxt, m3DSwitchTxt, mSpeakerInfo, mFullbassTxt,
             mIntensityTxt, mIntensitySwitchTxt, mEqualizerTxt, mEqualizerSwitchTxt;
     private LinearLayout mIntensityIndicator, mEqualizerIndicator, mFullBassPanel;
-    private /*ToggleButton*/ ImageView mEffectPowerBtn;
+    private /*ToggleButton*/ Switch mEffectPowerBtn;
     private ImageView m3DSwitchBtn, mIntensitySwitchBtn, mEqualizerSwitchBtn, mSpeakerSwitchBtn, mFullBassRd;
     private ImageView mSpeakerLeftFront, mSpeakerRightFront, mTweeterLeft, mTweeterRight,
             mSpeakerLeftSurround, mSpeakerRightSurround, mSpeakerSubWoofer, mCenterMan;
@@ -57,6 +61,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     private MusicReceiver musicReceiver;
     private AudioEffect audioEffectPreferenceHandler;
     private boolean isExpended = false;
+    TooltipWindow tipWindow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,6 +77,22 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         update3DSurround();
         updateIntensity();
         updateEqualizer();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus)
+            showCoachMark();
+        //Log.d("activated","focus change");
+    }
+
+    public void showCoachMark() {
+        boolean mAppNewLaunch = Preferences.readBoolean(Surround3DActivity.this, Preferences.APP_NEW_LAUNCH, true);
+        if (mAppNewLaunch && !audioEffectPreferenceHandler.isAudioEffectOn()) {
+            tipWindow = new TooltipWindow(Surround3DActivity.this, TooltipWindow.DRAW_BOTTOM, getResources().getString(R.string.tutorial_boom_effect_poweron));
+            tipWindow.showToolTip(findViewById(R.id.effect_power_switch), TooltipWindow.DRAW_ARROW_TOP_RIGHT);
+        }
     }
 
     public void initViews(){
@@ -108,7 +129,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         mIntensityIndicator = (LinearLayout)findViewById(R.id.intensity_indicator);
         mEqualizerIndicator = (LinearLayout)findViewById(R.id.equalizer_indicator);
 
-        mEffectPowerBtn = (ImageView) findViewById(R.id.effect_power_btn);//onclick
+        mEffectPowerBtn = (Switch) findViewById(R.id.effect_power_switch);//onclick
         m3DSwitchBtn = (ImageView)findViewById(R.id.three_d_switch_btn);//onclick
         mIntensitySwitchBtn = (ImageView)findViewById(R.id.intensity_switch_btn);//onclick
         mEqualizerSwitchBtn = (ImageView)findViewById(R.id.equalizer_switch_btn);//onclick
@@ -153,24 +174,39 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
         mIntensitySeek.setProgress(50);
         mIntensitySeek.setOnSeekBarChangeListener(this);
-    }
 
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        mEffectPowerBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(audioEffectPreferenceHandler.isAudioEffectOn()){
+                    audioEffectPreferenceHandler.setEnableAudioEffect(false);
+                }else{
+                    audioEffectPreferenceHandler.setEnableAudioEffect(true);
+                }
 
+                App.getPlayerEventHandler().updateEffect();
+                onPowerSwitchUpdate();
+                update3DSurround();
+                updateIntensity();
+                updateEqualizer();
+                if (tipWindow != null && tipWindow.isTooltipShown()) {
+                    tipWindow.dismissTooltip();
+                }
+            }
+        });
     }
 
     public void onPowerSwitchUpdate(){
+        mEffectPowerBtn.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
+
         if(audioEffectPreferenceHandler.isAudioEffectOn()) {
             mEffectSwitchTxt.setText("on");
             /*mEffectPowerBtn.setChecked(true);*/
-            mEffectPowerBtn.setImageDrawable(getResources().getDrawable(R.drawable.toggle_on, null));
             mEffectTxt.setTextColor(Color.WHITE);
             mEffectSwitchTxt.setTextColor(Color.WHITE);
         }else{
             mEffectSwitchTxt.setText("off");
             /*mEffectPowerBtn.setChecked(false);*/
-            mEffectPowerBtn.setImageDrawable(getResources().getDrawable(R.drawable.toggle_off, null));
             mEffectTxt.setTextColor(Color.WHITE);
             mEffectSwitchTxt.setTextColor(Color.WHITE);
             collapse();
@@ -415,7 +451,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         boolean isPowerOn = audioEffectPreferenceHandler.isAudioEffectOn();
         switch (v.getId()){
-            case R.id.effect_switch_panel:
+           /* case R.id.effect_switch_panel:
                 if(isPowerOn){
                     audioEffectPreferenceHandler.setEnableAudioEffect(false);
                 }else{
@@ -427,7 +463,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 update3DSurround();
                 updateIntensity();
                 updateEqualizer();
-                break;
+                break;*/
             case R.id.three_d_switch_btn :
                 switch3DSurround(isPowerOn);
                 break;

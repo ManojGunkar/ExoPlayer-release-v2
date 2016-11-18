@@ -12,4 +12,5 @@
     <color name="default_yellow_dark">#FFFF00</color>
 
     <color name="normal">#ffcccccc</color>
+    <color name="black_shade">#222327</color>
 </resources>
