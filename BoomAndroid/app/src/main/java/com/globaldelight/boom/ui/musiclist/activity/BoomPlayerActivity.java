@@ -66,8 +66,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     public static final String ACTION_UPDATE_TRACK_SEEK = "ACTION_UPDATE_TRACK_SEEK";
     public static final String ACTION_UPDATE_SHUFFLE = "ACTION_UPDATE_SHUFFLE";
     public static final String ACTION_UPDATE_REPEAT = "ACTION_UPDATE_REPEAT";
-    public static final String ACTION_UPDATE_NEXT_PREVIOUS = "ACTION_UPDATE_NEXT_PREVIOUS";
-    public static final String ACTION_UPDATE_NEXT = "ACTION_UPDATE_NEXT";
 
 
     public ImageView mShuffleBtn, mRepeatBtn, mNextBtn, mPrevBtn, mAddToPlayList, mFavourite, mPlayerMore;
@@ -102,36 +100,45 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                         mTrackSeek.setProgress(intent.getIntExtra("percent", 0));
                     break;
                 case ACTION_UPDATE_SHUFFLE:
-                    updateShuffle();
+                    updateShuffle(false);
                     break;
                 case ACTION_UPDATE_REPEAT :
-                    updateRepeat();
+                    updateRepeat(false);
                     break;
             }
         }
     };
 
-    private void updateShuffle(){
+    private void updateShuffle(boolean isUser){
+        if(isUser) {
+            App.getUserPreferenceHandler().resetShuffle();
+            sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
+        }
+
         switch (App.getUserPreferenceHandler().getShuffle()){
             case none:
-//                mShuffleBtn.setImageDrawable();
+                mShuffleBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_shuffle_off));
                 break;
             case all:
-//                mShuffleBtn.setImageDrawable();
+                mShuffleBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_shuffle_on));
                 break;
         }
     }
 
-    private void updateRepeat(){
+    private void updateRepeat(boolean isUser){
+        if(isUser) {
+            App.getUserPreferenceHandler().resetRepeat();
+            sendBroadcast(new Intent(PlayerService.ACTION_REPEAT_SONG));
+        }
         switch (App.getUserPreferenceHandler().getRepeat()){
             case none:
-//mRepeatBtn.setImageDrawable();
+                mRepeatBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_repeat_off));
                 break;
             case one:
-//mRepeatBtn.setImageDrawable();
+                mRepeatBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_repeat_one));
                 break;
             case all:
-//mRepeatBtn.setImageDrawable();
+                mRepeatBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_repeat_all));
                 break;
         }
     }
@@ -392,12 +399,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 startEffectActivity();
                 break;
             case R.id.player_shuffle_btn:
-                App.getUserPreferenceHandler().resetShuffle();
-                sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
+                updateShuffle(true);
                 break;
             case R.id.player_repeat_btn:
-                App.getUserPreferenceHandler().resetRepeat();
-                sendBroadcast(new Intent(PlayerService.ACTION_REPEAT_SONG));
+                updateRepeat(true);
                 break;
             case R.id.player_next_btn:
                 sendBroadcast(new Intent(PlayerService.ACTION_NEXT_SONG));

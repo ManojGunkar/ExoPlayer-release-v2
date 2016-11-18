@@ -149,7 +149,10 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />-->
 
 
-        <activity android:name=".ui.musiclist.activity.SettingsActivity"></activity>
+        <activity android:name=".ui.musiclist.activity.SettingsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Effect"/>
 
         <receiver android:name=".utils.SleepAlarm" />
 
