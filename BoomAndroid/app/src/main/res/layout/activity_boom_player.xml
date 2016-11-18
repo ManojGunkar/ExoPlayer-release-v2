@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:layout_width="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:background="#000000">
 
     <FrameLayout
         android:id="@+id/player_background"
@@ -11,11 +11,11 @@
 
         <LinearLayout
             android:id="@+id/player_root_view"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:weightSum="100"
-            android:background="#D90d0f11">
+            android:background="#D90d0f11"
+            android:orientation="vertical"
+            android:weightSum="100">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -25,18 +25,18 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="5.0"
                 android:layout_marginLeft="@dimen/eighty_px"
                 android:layout_marginRight="@dimen/eighty_px"
+                android:layout_weight="5.0"
                 android:orientation="horizontal"
                 android:weightSum="100">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="12.345"
                     android:gravity="center_vertical"
-                    android:visibility="invisible"
-                    android:layout_weight="12.345">
+                    android:visibility="invisible">
                     <ImageView
                         android:id="@+id/player_shuffle_btn"
                         android:layout_width="wrap_content"
@@ -47,26 +47,26 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="75.31"
                     android:paddingLeft="@dimen/thirty_two_px"
-                    android:paddingRight="@dimen/thirty_two_px"
-                    android:layout_weight="75.31">
+                    android:paddingRight="@dimen/thirty_two_px">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
-                        android:textStyle="bold"
-                        android:textSize="@dimen/toolbar_titile"
+                        android:id="@+id/player_title_txt"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:textColor="#c3cc20"
                         android:maxLines="1"
-                        android:id="@+id/player_title_txt" />
+                        android:textColor="#c3cc20"
+                        android:textSize="@dimen/toolbar_titile"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="12.345"
                     android:gravity="right|center_vertical"
-                    android:visibility="invisible"
-                    android:layout_weight="12.345">
+                    android:visibility="invisible">
                     <ImageView
                         android:id="@+id/player_repeat_btn"
                         android:layout_width="wrap_content"
@@ -79,55 +79,55 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="4.296"
                 android:layout_marginLeft="@dimen/eighty_px"
                 android:layout_marginRight="@dimen/eighty_px"
+                android:layout_weight="4.296"
                 android:orientation="horizontal"
                 android:weightSum="100">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:layout_weight="14">
+                    android:layout_weight="14"
+                    android:gravity="center">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
                         android:text="time1"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/sixty_eight_pt1"/>
+                        android:textSize="@dimen/sixty_eight_pt1"
+                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:paddingLeft="@dimen/thirty_two_px"
-                    android:paddingRight="@dimen/thirty_two_px"
+                    android:layout_weight="72"
                     android:gravity="center"
-                    android:layout_weight="72">
+                    android:paddingLeft="@dimen/thirty_two_px"
+                    android:paddingRight="@dimen/thirty_two_px">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
-                        android:textStyle="normal"
-                        android:textSize="@dimen/sixty_eight_pt"
+                        android:id="@+id/player_subtitle_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:ellipsize="marquee"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
-                        android:textColor="@color/white"
-                        android:ellipsize="marquee"
+                        android:gravity="center"
                         android:marqueeRepeatLimit="marquee_forever"
                         android:scrollHorizontally="true"
                         android:singleLine="true"
-                        android:id="@+id/player_subtitle_txt" />
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sixty_eight_pt"
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="14"
                     android:gravity="center"
-                    android:visibility="invisible"
-                    android:layout_weight="14">
+                    android:visibility="invisible">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -147,22 +147,22 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="36.125"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:layout_weight="36.125">
 
                 <com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView
+                    android:id="@+id/album_art"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/default_album_art_home"
                     android:layout_gravity="center"
-                    android:id="@+id/album_art"/>
+                    android:src="@drawable/default_album_art_home" />
 
                 <com.globaldelight.boom.ui.widgets.CircularSeekBar
+                    android:id="@+id/track_seek"
                     android:layout_width="208dp"
                     android:layout_height="208dp"
-                    android:padding="@dimen/twenty_eight_px"
                     android:layout_gravity="center"
-                    android:id="@+id/track_seek"/>
+                    android:padding="@dimen/twenty_eight_px" />
 
                 <ImageView
                     android:id="@+id/play_pause_btn"
@@ -180,36 +180,36 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="5.156"
                 android:layout_marginLeft="@dimen/two_hundred_sixteen_px"
                 android:layout_marginRight="@dimen/two_hundred_sixteen_px"
+                android:layout_weight="5.156"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="top"
-                    android:layout_weight=".5">
+                    android:layout_weight=".5"
+                    android:gravity="top">
                     <ImageView
                         android:id="@+id/player_prev_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
-                        android:src="@drawable/ic_boom_previous"/>
+                        android:src="@drawable/ic_boom_previous"
+                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="right|top"
-                    android:layout_weight=".5">
+                    android:layout_weight=".5"
+                    android:gravity="right|top">
                     <ImageView
                         android:id="@+id/player_next_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
-                        android:src="@drawable/ic_boom_next"/>
+                        android:src="@drawable/ic_boom_next"
+                        android:visibility="invisible" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -223,14 +223,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="14.765"
-                android:weightSum="1"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:layout_weight=".3">
+                    android:layout_weight=".3"
+                    android:gravity="center">
                     <ImageView
                         android:id="@+id/library_btn"
                         android:layout_width="wrap_content"
@@ -241,22 +241,22 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:layout_weight=".4">
+                    android:layout_weight=".4"
+                    android:gravity="center">
                     <ImageView
                         android:id="@+id/audio_effect_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:clickable="true"
-                        android:tintMode="src_atop"
-                        android:src="@drawable/ic_boom_effect_off"/>
+                        android:src="@drawable/ic_boom_effect_off"
+                        android:tintMode="src_atop" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:layout_weight=".3">
+                    android:layout_weight=".3"
+                    android:gravity="center">
                     <ImageView
                         android:id="@+id/up_next_queue_btn"
                         android:layout_width="wrap_content"
@@ -274,17 +274,16 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="8.186"
                 android:layout_marginLeft="@dimen/sixty_eight_px"
                 android:layout_marginRight="@dimen/sixty_eight_px"
+                android:layout_weight="8.186"
                 android:orientation="horizontal"
-                android:visibility="invisible"
                 android:weightSum="1">
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:layout_weight=".3">
+                    android:layout_weight=".3"
+                    android:gravity="center_vertical">
                     <ImageView
                         android:id="@+id/player_add_to_playlist"
                         android:layout_width="wrap_content"
@@ -294,8 +293,8 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:layout_weight=".4">
+                    android:layout_weight=".4"
+                    android:gravity="center">
                     <ImageView
                         android:id="@+id/player_fav_btn"
                         android:layout_width="wrap_content"
@@ -305,8 +304,8 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="right|center_vertical"
-                    android:layout_weight=".3">
+                    android:layout_weight=".3"
+                    android:gravity="right|center_vertical">
                     <ImageView
                         android:id="@+id/player_more_btn"
                         android:layout_width="wrap_content"
