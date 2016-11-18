@@ -307,6 +307,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         mShuffleBtn = (ImageView) findViewById(R.id.player_shuffle_btn);
         mRepeatBtn = (ImageView) findViewById(R.id.player_repeat_btn);
 
+        mPlayerMore = (ImageView)findViewById(R.id.player_more_btn);
+
         mPlayerBackground = (FrameLayout)findViewById(R.id.player_background);
 
         mPlayerRootView.setPadding(0, getStatusBarHeight(), 0, 0);
@@ -320,6 +322,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
         mNextBtn.setOnClickListener(this);
         mPrevBtn.setOnClickListener(this);
+
+        mPlayerMore.setOnClickListener(this);
 
         mAudioEffectBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -401,10 +405,18 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             case R.id.player_prev_btn:
                 sendBroadcast(new Intent(PlayerService.ACTION_PREV_SONG));
                 break;
+            case R.id.player_more_btn:
+                startSettingActivity();
             default:
 
                 break;
         }
+    }
+
+    private void startSettingActivity() {
+        Intent i = new Intent(BoomPlayerActivity.this, SettingsActivity.class);
+        startActivity(i);
+        overridePendingTransition(R.anim.push_up_in, R.anim.stay_out);
     }
 
     @Override
