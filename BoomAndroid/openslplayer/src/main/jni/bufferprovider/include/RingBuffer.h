@@ -41,7 +41,7 @@ namespace gdpl {
         int             _writePtr;
         int             _writeBytesAvail;
 
-        int16_t*        _tempBuffer;
+        uint8_t*        _tempBuffer;
     };
 };
 

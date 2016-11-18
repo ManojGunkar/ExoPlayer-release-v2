@@ -16,7 +16,7 @@ namespace gdpl {
         _writePtr = 0;
         _writeBytesAvail = sizeBytes;
 
-        _tempBuffer = (int16_t*)calloc(_size, sizeof(int16_t));
+        _tempBuffer = (uint8_t*)calloc(_size, sizeof(uint8_t));
 
         pthread_mutexattr_t attr;
         pthread_mutexattr_init(&attr);
@@ -145,7 +145,7 @@ namespace gdpl {
             buffer->frameCount = this->GetReadAvail() / kBytesPerFrame;
         }
 
-        this->Read((uint8_t*)_tempBuffer, requestedBytes);
+        this->Read(_tempBuffer, requestedBytes);
         buffer->raw = (buffer->frameCount != 0)? _tempBuffer : NULL;
 
         //ALOGD("getNextBuffer", "Available Frames = %d", buffer->frameCount);
