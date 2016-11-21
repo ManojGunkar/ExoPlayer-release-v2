@@ -50,7 +50,6 @@ public class DeviceMediaHandler {
             case BOOM_PLAYLIST:
                 return App.getBoomPlayListHelper().getAllPlaylist();
             case FAVOURITE:
-
                 break;
             default:
                 break;
@@ -188,7 +187,7 @@ public class DeviceMediaHandler {
         App.getBoomPlayListHelper().renamePlaylist(input, itemId);
     }
 
-    public LinkedList<? extends IMediaItemBase> getHistoryList(boolean ishistory) {
+    public LinkedList<? extends IMediaItemBase> getHistoryFavList(boolean ishistory) {
         return App.getHistoryFavDBHelper().getSongList(ishistory);
     }
 

@@ -47,7 +47,7 @@
 
     <style name="ToolbarTheme" parent="Widget.AppCompat.SearchView">
         <item name="searchViewStyle">@android:style/Widget.Material.Light.SearchView</item>
-        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:background">#1A0d0f11</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="android:textColorHint">@android:color/white</item>

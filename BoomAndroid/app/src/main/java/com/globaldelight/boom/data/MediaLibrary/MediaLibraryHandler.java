@@ -82,8 +82,8 @@ public class MediaLibraryHandler implements IMediaLibrary{
         DeviceMediaHandler.getInstance(context).renameBoomPlaylist(input, itemId);
     }
 
-    public LinkedList<? extends IMediaItemBase> getHistoryItemsForQueue(boolean ishistory) {
-        return DeviceMediaHandler.getInstance(context).getHistoryList(ishistory);
+    public LinkedList<? extends IMediaItemBase> getHistoryFavList(boolean ishistory) {
+        return DeviceMediaHandler.getInstance(context).getHistoryFavList(ishistory);
     }
 
     public void clearList(boolean ishistory) {

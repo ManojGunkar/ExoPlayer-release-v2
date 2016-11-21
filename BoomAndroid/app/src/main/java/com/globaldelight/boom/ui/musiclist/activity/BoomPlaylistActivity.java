@@ -67,7 +67,7 @@ public class BoomPlaylistActivity extends BoomMasterActivity {
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
-                        setArtistList();
+                        setPlayListList();
                     }
 
                     @Override
@@ -77,7 +77,7 @@ public class BoomPlaylistActivity extends BoomMasterActivity {
                 });
     }
 
-    private void setArtistList() {
+    private void setPlayListList() {
 
 
         new Thread(new Runnable() {

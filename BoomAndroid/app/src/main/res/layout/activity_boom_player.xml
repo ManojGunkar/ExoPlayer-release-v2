@@ -35,13 +35,11 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:visibility="invisible"
                     android:layout_weight="12.345">
                     <ImageView
                         android:id="@+id/player_shuffle_btn"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_shuffle_off"/>
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -65,13 +63,11 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="right|center_vertical"
-                    android:visibility="invisible"
                     android:layout_weight="12.345">
                     <ImageView
                         android:id="@+id/player_repeat_btn"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_repeat_off"/>
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -80,8 +76,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="4.296"
-                android:layout_marginLeft="@dimen/eighty_px"
-                android:layout_marginRight="@dimen/eighty_px"
+                android:layout_marginLeft="@dimen/two_px"
+                android:layout_marginRight="@dimen/two_px"
                 android:orientation="horizontal"
                 android:weightSum="100">
 
@@ -89,12 +85,11 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:layout_weight="14">
+                    android:layout_weight="14.5">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
-                        android:text="time1"
+                        android:id="@+id/played_time"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sixty_eight_pt1"/>
                 </LinearLayout>
@@ -105,13 +100,12 @@
                     android:paddingLeft="@dimen/thirty_two_px"
                     android:paddingRight="@dimen/thirty_two_px"
                     android:gravity="center"
-                    android:layout_weight="72">
+                    android:layout_weight="70">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:textStyle="normal"
                         android:textSize="@dimen/sixty_eight_pt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
                         android:textColor="@color/white"
@@ -126,13 +120,11 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:visibility="invisible"
-                    android:layout_weight="14">
+                    android:layout_weight="15.5">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="time"
+                        android:id="@+id/remains_time"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sixty_eight_pt"/>
                 </LinearLayout>
@@ -151,23 +143,23 @@
                 android:layout_gravity="center">
 
                 <com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/default_album_art_home"
+                    android:layout_width="@dimen/home_album_art_size"
+                    android:layout_height="@dimen/home_album_art_size"
                     android:layout_gravity="center"
                     android:id="@+id/album_art"/>
 
                 <com.globaldelight.boom.ui.widgets.CircularSeekBar
-                    android:layout_width="208dp"
-                    android:layout_height="208dp"
+                    android:layout_width="@dimen/eight_hundred_thirty_two"
+                    android:layout_height="@dimen/eight_hundred_thirty_two"
                     android:padding="@dimen/twenty_eight_px"
                     android:layout_gravity="center"
                     android:id="@+id/track_seek"/>
 
                 <ImageView
                     android:id="@+id/play_pause_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:scaleType="fitXY"
                     android:layout_gravity="center"/>
 
             </FrameLayout>
@@ -278,7 +270,7 @@
                 android:layout_marginLeft="@dimen/sixty_eight_px"
                 android:layout_marginRight="@dimen/sixty_eight_px"
                 android:orientation="horizontal"
-                android:visibility="invisible"
+
                 android:weightSum="1">
                 <LinearLayout
                     android:layout_width="0dp"

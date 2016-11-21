@@ -89,6 +89,7 @@
     <string name="playlist_menu_delete_list">Delete Playlist</string>
     <string name="search_fragment">Search</string>
     <string name="cant_play_song">Song can\'t played...!</string>
+    <string name="title_favourite_list">Favourite</string>
 
 
 </resources>

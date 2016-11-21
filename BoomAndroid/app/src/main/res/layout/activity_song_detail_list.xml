@@ -134,7 +134,7 @@
         android:layout_marginRight="25dp"
         android:clickable="true"
         android:elevation="12dp"
-        android:src="@drawable/ic_play"
+        android:src="@drawable/ic_player_play"
         android:visibility="visible"
         app:backgroundTint="@color/colorPrimary"
         app:borderWidth="0dp"

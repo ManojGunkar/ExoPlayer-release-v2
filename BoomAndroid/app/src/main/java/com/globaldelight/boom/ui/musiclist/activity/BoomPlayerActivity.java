@@ -37,6 +37,8 @@ import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -44,6 +46,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Rahul Agarwal on 30-09-16.
@@ -83,16 +86,16 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     if(item != null){
                         updateTrackToPlayer(item, intent.getBooleanExtra("playing", false));
                     }
-                    boolean prev_enable = intent.getBooleanExtra("is_previous", false);
-                    boolean next_enable = intent.getBooleanExtra("is_next", false);
-                    updatePreviousNext(prev_enable, next_enable);
+//                    boolean prev_enable = intent.getBooleanExtra("is_previous", false);
+//                    boolean next_enable = intent.getBooleanExtra("is_next", false);
+//                    updatePreviousNext(prev_enable, next_enable);
 
                     break;
                 case ACTION_ITEM_CLICKED :
                     if(intent.getBooleanExtra("play_pause", false) == false){
-                        mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_play, null));
+                        mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_player_play, null));
                     }else{
-                        mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause, null));
+                        mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_player_pause, null));
                     }
                     break;
                 case ACTION_TRACK_STOPPED :
@@ -101,27 +104,29 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 case ACTION_UPDATE_TRACK_SEEK :
                     if(!isUser)
                         mTrackSeek.setProgress(intent.getIntExtra("percent", 0));
-                    SimpleDateFormat simpleDateFormat =
-                            new SimpleDateFormat("m:ss");
-                    final String remainsTime = simpleDateFormat.format(intent.getLongExtra("totalms", 0) - intent.getLongExtra("currentms", 0));
-                    final String playedTime = simpleDateFormat.format(intent.getLongExtra("currentms", 0));
-                    mPlayedTime.setText(playedTime);
-                    mRemainsTime.setText("-"+remainsTime);
+
+                    long totalMillis = intent.getLongExtra("totalms", 0);
+                    long currentMillis = intent.getLongExtra("currentms", 0);
+                    mPlayedTime.setText(String.format("%02d:%02d",
+                            TimeUnit.MILLISECONDS.toMinutes(currentMillis),
+                            TimeUnit.MILLISECONDS.toSeconds(currentMillis ) -
+                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentMillis))));
+                    mRemainsTime.setText("-"+String.format("%02d:%02d",
+                            TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis),
+                            TimeUnit.MILLISECONDS.toSeconds(totalMillis - currentMillis) -
+                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis))));
                     break;
                 case ACTION_UPDATE_SHUFFLE:
-                    updateShuffle(false);
+                    updateShuffle();
                     break;
                 case ACTION_UPDATE_REPEAT :
-                    updateRepeat(false);
+                    updateRepeat();
                     break;
             }
         }
     };
 
-    private void updateShuffle(boolean isUser){
-        if(isUser) {
-            sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
-        }
+    private void updateShuffle(){
         switch (App.getUserPreferenceHandler().getShuffle()){
             case none:
                 mShuffleBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_shuffle_off));
@@ -132,10 +137,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void updateRepeat(boolean isUser){
-        if(isUser) {
-            sendBroadcast(new Intent(PlayerService.ACTION_REPEAT_SONG));
-        }
+    private void updateRepeat(){
         switch (App.getUserPreferenceHandler().getRepeat()){
             case none:
                 mRepeatBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_repeat_off));
@@ -187,35 +189,55 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
                 @Override
                 protected void done(@Nullable final Object result) {
-                    if (mCurrentArtUrl != null && (new File(mCurrentArtUrl)).exists()) {
-                        Picasso.with(BoomPlayerActivity.this).load(new File(mCurrentArtUrl)).resize((int) getResources().getDimension(R.dimen.home_album_art_size), (int) getResources().getDimension(R.dimen.home_album_art_size))
-                                .centerCrop().noFade().into(new Target() {
-                            @Override
-                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mCurrentArtUrl != null && (new File(mCurrentArtUrl)).exists()) {
+                                Log.d("ImageLoad", "Always call --");
+//                                File file = new File(mCurrentArtUrl);
+                                Bitmap bitmap = BitmapFactory.decodeFile(mCurrentArtUrl);
+                                bitmap = Bitmap.createScaledBitmap(bitmap, (int) getResources().getDimension(R.dimen.home_album_art_size),
+                                        (int) getResources().getDimension(R.dimen.home_album_art_size), false);
+//                                bitmap.setHeight((int) getResources().getDimension(R.dimen.home_album_art_size));
+//                                bitmap.setWidth((int) getResources().getDimension(R.dimen.home_album_art_size));
                                 ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, bitmap);
                                 Bitmap blurredBitmap = blur(BoomPlayerActivity.this, bitmap);
                                 mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
-                            }
 
-                            @Override
-                            public void onBitmapFailed(Drawable errorDrawable) {
-                                ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, (Bitmap) result);
+//                                Picasso.with(BoomPlayerActivity.this).load(file).resize((int) getResources().getDimension(R.dimen.home_album_art_size), (int) getResources().getDimension(R.dimen.home_album_art_size))
+//                                        .centerCrop().priority(Picasso.Priority.HIGH).memoryPolicy(MemoryPolicy.NO_CACHE).into(new Target() {
+//                                    @Override
+//                                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+//                                        Log.d("ImageLoad", "Always");
+//                                        ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, bitmap);
+//                                        Bitmap blurredBitmap = blur(BoomPlayerActivity.this, bitmap);
+//                                        mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
+//                                    }
+//
+//                                    @Override
+//                                    public void onBitmapFailed(Drawable errorDrawable) {
+//                                        ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, (Bitmap) result);
+//                                        Bitmap blurredBitmap = blur(BoomPlayerActivity.this, (Bitmap) result);
+//                                        mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
+//                                    }
+//
+//                                    @Override
+//                                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+//
+//                                    }
+//                                });
                             }
-
-                            @Override
-                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                            }
-                        });
-                        return;
-                    }
-                    ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, img);
-                    mPlayerBackground.setBackground(new BitmapDrawable(getResources(), img));
+                        }
+                    });
                 }
             }.execute();
         } else {
             ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, BitmapFactory.decodeResource(getBaseContext().getResources(),
                     R.drawable.default_album_art_home));
+            Bitmap blurredBitmap = blur(BoomPlayerActivity.this, BitmapFactory.decodeResource(getBaseContext().getResources(),
+                    R.drawable.default_album_art_home));
+            mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
+
         }
     }
 
@@ -232,10 +254,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mSubTitleTxt.setText(item.getItemArtist());
             if (playing) {
                 mPlayPauseBtn.setVisibility(View.VISIBLE);
-                mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause, null));
+                mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_player_pause, null));
             } else {
                 mPlayPauseBtn.setVisibility(View.VISIBLE);
-                mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_play, null));
+                mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_player_play, null));
             }
 
         }else{
@@ -248,9 +270,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mPlayPauseBtn.setVisibility(View.INVISIBLE);
             mAlbumArt.setImageDrawable(getResources().getDrawable(R.drawable.no_song_selected));
         }
-
-        updateShuffle(false);
-        updateRepeat(false);
+        updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isPrevious());
+        updateShuffle();
+        updateRepeat();
     }
 
     public static void ImageViewAnimatedChange(Context context, final ImageView v, final Bitmap new_image) {
@@ -292,6 +314,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         intentFilter.addAction(ACTION_ITEM_CLICKED);
         intentFilter.addAction(ACTION_TRACK_STOPPED);
         intentFilter.addAction(ACTION_UPDATE_TRACK_SEEK);
+        intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
+        intentFilter.addAction(ACTION_UPDATE_REPEAT);
         registerReceiver(mPlayerBroadcastReceiver, intentFilter);
     }
 
@@ -351,7 +375,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             public boolean onLongClick(View v) {
                 audioEffectPreferenceHandler.setEnableAudioEffect(!audioEffectPreferenceHandler.isAudioEffectOn());
                 updateEffectIcon();
-                return false;
+                return true;
             }
         });
 
@@ -381,19 +405,16 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private void startEffectActivity(){
         Intent queueIntent = new Intent(BoomPlayerActivity.this, Surround3DActivity.class);
         startActivity(queueIntent);
-        overridePendingTransition(R.anim.push_up_in, R.anim.stay_out);
     }
 
     private void startUpNextActivity() {
         Intent queueIntent = new Intent(BoomPlayerActivity.this, PlayingQueueActivity.class);
         startActivity(queueIntent);
-        overridePendingTransition(R.anim.push_up_in, R.anim.stay_out);
     }
 
     private void startLibraryActivity() {
         Intent listIntent = new Intent(BoomPlayerActivity.this, DeviceMusicActivity.class);
         startActivity(listIntent);
-        overridePendingTransition(R.anim.push_up_in, R.anim.stay_out);
     }
 
 
@@ -413,10 +434,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 startEffectActivity();
                 break;
             case R.id.player_shuffle_btn:
-                updateShuffle(true);
+                sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
                 break;
             case R.id.player_repeat_btn:
-                updateRepeat(true);
+                sendBroadcast(new Intent(PlayerService.ACTION_REPEAT_SONG));
                 break;
             case R.id.player_next_btn:
                 sendBroadcast(new Intent(PlayerService.ACTION_NEXT_SONG));

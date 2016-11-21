@@ -144,6 +144,18 @@
                 android:resource="@xml/searchable"/>
         </activity>
 
+        <activity android:name="com.globaldelight.boom.ui.musiclist.activity.FavouriteListActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Effect">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
+
         <!--<activity android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />-->

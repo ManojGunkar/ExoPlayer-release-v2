@@ -94,7 +94,7 @@ public class SongsDetailListActivity extends AppCompatActivity {
         int width = Utils.getWindowWidth(this);
         int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
         int height = Utils.getWindowHeight(this) - panelSize * 4;
-        Size size = new Size(width, height);
+        Size size = new Size(width, width);
         setAlbumArt(size);
 
         if (collapsingToolbarLayout != null)

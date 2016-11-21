@@ -139,19 +139,19 @@ public class PlayerService extends Service {
                 updatePlayer();
                 break;
             case ACTION_REPEAT_SINGLE:
-                musicPlayerHandler.setRepeat(PlayingQueue.REPEAT.one);
+                musicPlayerHandler.resetRepeat(PlayingQueue.REPEAT.one);
                 break;
             case ACTION_REPEAT_ALL_SONGS:
-                musicPlayerHandler.setRepeat(PlayingQueue.REPEAT.all);
+                musicPlayerHandler.resetRepeat(PlayingQueue.REPEAT.all);
                 break;
             case ACTION_REPEAT_NONE:
-                musicPlayerHandler.setRepeat(PlayingQueue.REPEAT.none);
+                musicPlayerHandler.resetRepeat(PlayingQueue.REPEAT.none);
                 break;
             case ACTION_SHUFFLE_SONG:
-                musicPlayerHandler.setShuffle(PlayingQueue.SHUFFLE.all);
+                musicPlayerHandler.resetShuffle(PlayingQueue.SHUFFLE.all);
                 break;
             case ACTION_SHUFFLE_NONE:
-                musicPlayerHandler.setShuffle(PlayingQueue.SHUFFLE.none);
+                musicPlayerHandler.resetShuffle(PlayingQueue.SHUFFLE.none);
                 break;
 
             case ACTION_NEXT_SONG:

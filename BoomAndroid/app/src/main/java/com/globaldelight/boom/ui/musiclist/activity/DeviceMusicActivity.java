@@ -27,7 +27,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
     private LinearLayout mContainer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme_Main);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_music_library);
@@ -108,7 +108,8 @@ public class DeviceMusicActivity extends BoomMasterActivity{
 
     @Override
     public void onBackPressed() {
-            super.onBackPressed();
+        finish();
+        overridePendingTransition(R.anim.stay_out, R.anim.slide_out_left);
     }
 
     @Override

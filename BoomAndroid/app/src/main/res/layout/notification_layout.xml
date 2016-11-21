@@ -62,7 +62,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/unbounded_ripple"
                 android:padding="5dp"
-                android:src="@drawable/ic_skip_previous_white_48dp" />
+                android:src="@drawable/ic_boom_previous" />
 
             <ImageView
                 android:id="@+id/noti_play_button"
@@ -70,7 +70,7 @@
                 android:layout_height="@dimen/noti_button_height"
                 android:layout_weight="1"
                 android:background="@drawable/unbounded_ripple"
-                android:src="@drawable/ic_pause"
+                android:src="@drawable/ic_player_pause"
                 android:padding="5dp"/>
 
             <ImageView
@@ -80,7 +80,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/unbounded_ripple"
                 android:padding="5dp"
-                android:src="@drawable/ic_skip_next_white_48dp" />
+                android:src="@drawable/ic_boom_next" />
         </LinearLayout>
 
     </LinearLayout>

@@ -80,8 +80,8 @@ public class AlbumActivity extends AppCompatActivity {
         int width = Utils.getWindowWidth(this);
         int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
         int height = Utils.getWindowHeight(this) - panelSize * 4;
-        setAlbumArtSize(width, height);
-        setAlbumArt(width, height);
+        setAlbumArtSize(width, width);
+        setAlbumArt(width, width);
 
         if (collapsingToolbarLayout != null)
             collapsingToolbarLayout.setTitle(" ");

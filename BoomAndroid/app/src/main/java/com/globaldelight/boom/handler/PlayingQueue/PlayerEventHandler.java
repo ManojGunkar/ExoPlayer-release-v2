@@ -212,12 +212,12 @@ public class PlayerEventHandler implements QueueEvent {
         mPlayer.updatePlayerEffect();
     }
 
-    public void resetShuffle() {
-        App.getPlayingQueueHandler().getUpNextList().setShuffle();
+    public boolean resetShuffle() {
+        return App.getPlayingQueueHandler().getUpNextList().resetShuffle();
     }
 
-    public void resetRepeat() {
-        App.getPlayingQueueHandler().getUpNextList().setRepeat();
+    public boolean resetRepeat() {
+        return App.getPlayingQueueHandler().getUpNextList().resetRepeat();
     }
 
     public boolean isPrevious() {

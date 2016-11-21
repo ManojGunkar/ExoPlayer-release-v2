@@ -87,10 +87,14 @@
     <dimen name="one_hundred_sixty_px">40dp</dimen>
     <dimen name="two_hundred_px">50dp</dimen>
     <dimen name="eighty_px">20dp</dimen>
+    <dimen name="four_px">10dp</dimen>
+    <dimen name="two_px">5dp</dimen>
     <dimen name="thirty_two_px">8dp</dimen>
 
     <dimen name="eighty_eighty_pt">22sp</dimen>
     <dimen name="sixty_eight_pt1">17sp</dimen>
+
+    <dimen name="eight_hundred_thirty_two">208dp</dimen>
 
 
     <dimen name="home_album_art_size">180dp</dimen>

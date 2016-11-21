@@ -65,6 +65,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.push_up_in, R.anim.stay_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_surround_3d);
 
@@ -89,7 +90,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void showCoachMark() {
         boolean mAppNewLaunch = Preferences.readBoolean(Surround3DActivity.this, Preferences.APP_NEW_LAUNCH, true);
-        if (mAppNewLaunch && !audioEffectPreferenceHandler.isAudioEffectOn()) {
+        if (mAppNewLaunch) {
             tipWindow = new TooltipWindow(Surround3DActivity.this, TooltipWindow.DRAW_BOTTOM, getResources().getString(R.string.tutorial_boom_effect_poweron));
             tipWindow.showToolTip(findViewById(R.id.effect_power_switch), TooltipWindow.DRAW_ARROW_TOP_RIGHT);
         }
@@ -594,10 +595,17 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.stay_out, R.anim.push_up_out);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                super.onBackPressed();
+                finish();
+                overridePendingTransition(R.anim.stay_out, R.anim.push_up_out);
                 break;
         }
         return super.onOptionsItemSelected(item);

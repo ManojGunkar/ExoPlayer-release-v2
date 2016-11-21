@@ -73,7 +73,7 @@ public class PlayingQueueActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
+        overridePendingTransition(R.anim.slide_in_right, R.anim.stay_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playing_queue);
 
@@ -190,5 +190,11 @@ public class PlayingQueueActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         permissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.stay_out, R.anim.slide_out_right);
     }
 }

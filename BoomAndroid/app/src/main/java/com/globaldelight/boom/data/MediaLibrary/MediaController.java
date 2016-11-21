@@ -69,8 +69,12 @@ public class MediaController implements IMediaController{
         MediaLibraryHandler.getInstance(context).renameBoomPlaylist(input, itemId);
     }
 
-    public LinkedList<? extends IMediaItemBase> getHistoryItemsForQueue(boolean ishistory) {
-        return MediaLibraryHandler.getInstance(context).getHistoryItemsForQueue(ishistory);
+    public LinkedList<? extends IMediaItemBase> getHistoryItemsForQueue() {
+        return MediaLibraryHandler.getInstance(context).getHistoryFavList(true);
+    }
+
+    public LinkedList<? extends IMediaItemBase> getFavouriteListItems() {
+        return MediaLibraryHandler.getInstance(context).getHistoryFavList(false);
     }
 
     public void clearList(boolean ishistory) {

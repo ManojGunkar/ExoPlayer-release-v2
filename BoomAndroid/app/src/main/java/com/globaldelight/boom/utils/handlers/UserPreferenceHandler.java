@@ -31,30 +31,35 @@ public class UserPreferenceHandler {
     }
 
 
-    public void resetRepeat(){
+    public UpNextList.REPEAT resetRepeat(){
         if(shp.getBoolean(REPEAT_NONE, true)){
             shp.edit().putBoolean(REPEAT_NONE, false).apply();
             shp.edit().putBoolean(REPEAT_ONE, true).apply();
             shp.edit().putBoolean(REPEAT_ALL, false).apply();
+            return UpNextList.REPEAT.one;
         }else if(shp.getBoolean(REPEAT_ONE, false)){
             shp.edit().putBoolean(REPEAT_NONE, false).apply();
             shp.edit().putBoolean(REPEAT_ONE, false).apply();
             shp.edit().putBoolean(REPEAT_ALL, true).apply();
+            return UpNextList.REPEAT.all;
         }else if(shp.getBoolean(REPEAT_ALL, false)){
             shp.edit().putBoolean(REPEAT_NONE, true).apply();
             shp.edit().putBoolean(REPEAT_ONE, false).apply();
             shp.edit().putBoolean(REPEAT_ALL, false).apply();
         }
+        return UpNextList.REPEAT.none;
     }
 
-    public void resetShuffle(){
+    public UpNextList.SHUFFLE resetShuffle(){
         if(shp.getBoolean(SHUFFLE_NONE, true)){
             shp.edit().putBoolean(SHUFFLE_NONE, false).apply();
             shp.edit().putBoolean(SHUFFLE, true).apply();
+            return UpNextList.SHUFFLE.all;
         }else if(shp.getBoolean(SHUFFLE, false)){
             shp.edit().putBoolean(SHUFFLE_NONE, true).apply();
             shp.edit().putBoolean(SHUFFLE, false).apply();
         }
+        return UpNextList.SHUFFLE.none;
     }
 
 

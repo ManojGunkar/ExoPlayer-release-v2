@@ -224,7 +224,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                         App.getPlayingQueueHandler().getUpNextList().addToPlay(QueueType.History, itemPosition);
                         break;
                     case Playing:
-                        App.getPlayerEventHandler().onPlayingItemClicked();
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay(QueueType.Playing, itemPosition);
                         break;
                     case Manual_UpNext:
                         App.getPlayingQueueHandler().getUpNextList().addToPlay(queueType, itemPosition);

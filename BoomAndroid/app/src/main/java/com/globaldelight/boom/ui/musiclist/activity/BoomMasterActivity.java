@@ -191,8 +191,8 @@ public class BoomMasterActivity extends AppCompatActivity implements NavigationV
                 drawerLayout.closeDrawer(Gravity.LEFT);
                 break;
             case R.id.navigation_boom_favourites:
-//                intent = new Intent(BoomMasterActivity.this, PlayingQueueActivity.class);
-//                startActivity(intent);
+                intent = new Intent(BoomMasterActivity.this, FavouriteListActivity.class);
+                startActivity(intent);
                 drawerLayout.closeDrawer(Gravity.LEFT);
                 break;
             case R.id.navigation_close:
