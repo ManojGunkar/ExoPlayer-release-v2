@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
+import android.media.AudioManager;
 
 import com.globaldelight.boomplayer.AudioEffect;
 import com.globaldelight.boomplayer.OpenSLPlayer;
@@ -14,12 +15,13 @@ import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.play;
+import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.stop;
 
 /**
  * Created by Rahul Agarwal on 03-10-16.
  */
 
-public class PlayerEventHandler implements QueueEvent {
+public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocusChangeListener {
     private static IMediaItemBase playingItem;
     private static OpenSLPlayer mPlayer;
     private static PlayerEventHandler handler;
@@ -27,10 +29,14 @@ public class PlayerEventHandler implements QueueEvent {
     private Handler uiHandler;
 
     private PlayerService service;
+    private AudioManager  audioManager;
+    private AudioManager.OnAudioFocusChangeListener focusChangeListener;
 
     private PlayerEventHandler(Context context, PlayerService service){
         this.context = context;
         mPlayer = new OpenSLPlayer(context, playerEvents);
+        audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        focusChangeListener = this;
         this.service = service;
         App.getPlayingQueueHandler().getUpNextList().setQueueEvent(this);
         uiHandler = new Handler();
@@ -63,13 +69,17 @@ public class PlayerEventHandler implements QueueEvent {
     public synchronized void onPlayingItemChanged() {
 
         if(isPlaying() || mPlayer.isPause()) {
+            audioManager.abandonAudioFocus(this);
             mPlayer.stop();
         }
         playingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
         if(null != playingItem) {
-            mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
-            mPlayer.play();
-            context.sendBroadcast(new Intent(PlayerService.ACTION_GET_SONG));
+            int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+            if ( result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED ) {
+                mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
+                mPlayer.play();
+                context.sendBroadcast(new Intent(PlayerService.ACTION_GET_SONG));
+            }
         }else{
             context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
         }
@@ -112,6 +122,7 @@ public class PlayerEventHandler implements QueueEvent {
 
     PlayerEvents playerEvents = new PlayerEvents() {
         @Override public void onStop() {
+            audioManager.abandonAudioFocus(focusChangeListener);
             context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
         }
 
@@ -142,16 +153,24 @@ public class PlayerEventHandler implements QueueEvent {
 
     public PlayState PlayPause() {
         if(isPlaying()){
+            audioManager.abandonAudioFocus(this);
             mPlayer.pause();
             return PlayState.pause;
         } else /*if(mPlayer.isPause())*/{
-            mPlayer.play();
-            return play;
+            int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                mPlayer.play();
+                return play;
+            }
+            else {
+                return stop;
+            }
         }
     }
 
     public void stop() {
         if(!mPlayer.isStopped()){
+            audioManager.abandonAudioFocus(this);
             mPlayer.stop();
         }
     }
@@ -202,6 +221,7 @@ public class PlayerEventHandler implements QueueEvent {
     }
 
     public void stopPlayer() {
+        audioManager.abandonAudioFocus(this);
         mPlayer.stop();
     }
 
@@ -232,5 +252,14 @@ public class PlayerEventHandler implements QueueEvent {
         play,
         pause,
         stop
+    }
+
+    @Override
+    public void onAudioFocusChange(int focusChange) {
+        if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+            audioManager.abandonAudioFocus(this);
+            this.onPlayingItemClicked();
+        }
+        //TODO: Handle transient changes / ducking
     }
 }
