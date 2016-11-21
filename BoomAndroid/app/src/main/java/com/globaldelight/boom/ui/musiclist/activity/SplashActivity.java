@@ -92,12 +92,10 @@ public class SplashActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            Preferences.writeString(this, Preferences.APP_LAST_OPEN, currentDate);
-
             MixPanelAnalyticHelper.initPushNotification(this);
-
-
+            MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
+            MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_APP_OPEN, currentDate);
+            Preferences.writeString(this, Preferences.APP_LAST_OPEN, currentDate);
 
 
         }else{

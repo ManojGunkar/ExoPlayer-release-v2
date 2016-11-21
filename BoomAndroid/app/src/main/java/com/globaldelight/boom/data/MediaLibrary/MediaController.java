@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
@@ -54,6 +56,7 @@ public class MediaController implements IMediaController{
 
     public void createBoomPlaylist(String input) {
         MediaLibraryHandler.getInstance(context).createBoomPlaylist(input);
+        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
 
     }
 

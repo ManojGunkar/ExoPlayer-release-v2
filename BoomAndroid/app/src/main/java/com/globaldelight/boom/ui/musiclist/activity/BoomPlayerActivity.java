@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.renderscript.Allocation;
@@ -28,19 +27,17 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.globaldelight.boomplayer.AudioEffect;
+import com.globaldelight.boom.App;
+import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.widgets.CircularSeekBar;
 import com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView;
-import com.globaldelight.boom.utils.async.Action;
-import com.globaldelight.boom.App;
-import com.globaldelight.boom.R;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+import com.globaldelight.boom.utils.async.Action;
+import com.globaldelight.boomplayer.AudioEffect;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -54,28 +51,26 @@ import java.util.concurrent.TimeUnit;
 
 public class BoomPlayerActivity extends AppCompatActivity implements View.OnClickListener, CircularSeekBar.OnCircularSeekBarChangeListener {
 
-    private static final float BITMAP_SCALE = 0.4f;
-    private static final float BLUR_RADIUS = 25.0f;
-    private static final String TAG = "BoomPlayerActivity";
-    private RegularTextView mTitleTxt, mSubTitleTxt, mPlayedTime, mRemainsTime;
-    private CircularCoverView mAlbumArt;
-    private CircularSeekBar mTrackSeek;
-    private ImageView mPlayPauseBtn, mLibraryBtn, mAudioEffectBtn, mUpNextQueue;
-    FrameLayout mPlayerBackground;
-    LinearLayout mPlayerRootView;
-    AudioEffect audioEffectPreferenceHandler;
-    private static boolean isUser = false;
-    public static boolean isPlayerResume = true;
     public static final String ACTION_RECEIVE_SONG = "ACTION_RECEIVE_SONG";
     public static final String ACTION_ITEM_CLICKED = "ACTION_ITEM_CLICKED";
     public static final String ACTION_TRACK_STOPPED = "ACTION_TRACK_STOPPED";
     public static final String ACTION_UPDATE_TRACK_SEEK = "ACTION_UPDATE_TRACK_SEEK";
     public static final String ACTION_UPDATE_SHUFFLE = "ACTION_UPDATE_SHUFFLE";
     public static final String ACTION_UPDATE_REPEAT = "ACTION_UPDATE_REPEAT";
-
+    private static final float BITMAP_SCALE = 0.4f;
+    private static final float BLUR_RADIUS = 25.0f;
+    private static final String TAG = "BoomPlayerActivity";
+    public static boolean isPlayerResume = true;
+    private static boolean isUser = false;
     public ImageView mShuffleBtn, mRepeatBtn, mNextBtn, mPrevBtn, mAddToPlayList, mFavourite, mPlayerMore;
-
+    FrameLayout mPlayerBackground;
+    LinearLayout mPlayerRootView;
+    AudioEffect audioEffectPreferenceHandler;
     FrameLayout.LayoutParams param;
+    private RegularTextView mTitleTxt, mSubTitleTxt, mPlayedTime, mRemainsTime;
+    private CircularCoverView mAlbumArt;
+    private CircularSeekBar mTrackSeek;
+    private ImageView mPlayPauseBtn, mLibraryBtn, mAudioEffectBtn, mUpNextQueue;
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -125,6 +120,40 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             }
         }
     };
+
+    public static void ImageViewAnimatedChange(Context context, final ImageView v, final Bitmap new_image) {
+        final Animation anim_out = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
+        final Animation anim_in = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
+        anim_out.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                v.setImageBitmap(new_image);
+                anim_in.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                    }
+                });
+                v.startAnimation(anim_in);
+            }
+        });
+        v.startAnimation(anim_out);
+    }
 
     private void updateShuffle(){
         switch (App.getUserPreferenceHandler().getShuffle()){
@@ -275,27 +304,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         updateRepeat();
     }
 
-    public static void ImageViewAnimatedChange(Context context, final ImageView v, final Bitmap new_image) {
-        final Animation anim_out = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
-        final Animation anim_in  = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
-        anim_out.setAnimationListener(new Animation.AnimationListener()
-        {
-            @Override public void onAnimationStart(Animation animation) {}
-            @Override public void onAnimationRepeat(Animation animation) {}
-            @Override public void onAnimationEnd(Animation animation)
-            {
-                v.setImageBitmap(new_image);
-                anim_in.setAnimationListener(new Animation.AnimationListener() {
-                    @Override public void onAnimationStart(Animation animation) {}
-                    @Override public void onAnimationRepeat(Animation animation) {}
-                    @Override public void onAnimationEnd(Animation animation) {}
-                });
-                v.startAnimation(anim_in);
-            }
-        });
-        v.startAnimation(anim_out);
-    }
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         getWindow().getDecorView().setSystemUiVisibility(
@@ -426,6 +434,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.up_next_queue_btn:
                 startUpNextActivity();
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_QUEUE_BUTTON_FROM_PLAYER_SCREEN);
+
                 break;
             case R.id.library_btn:
                 startLibraryActivity();
@@ -441,9 +451,13 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.player_next_btn:
                 sendBroadcast(new Intent(PlayerService.ACTION_NEXT_SONG));
+                AnalyticsHelper.songSelectionChanged(this, null);
+
+
                 break;
             case R.id.player_prev_btn:
                 sendBroadcast(new Intent(PlayerService.ACTION_PREV_SONG));
+                AnalyticsHelper.songSelectionChanged(this, null);
                 break;
             case R.id.player_more_btn:
                 startSettingActivity();

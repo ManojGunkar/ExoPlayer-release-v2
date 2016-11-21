@@ -3,7 +3,11 @@ package com.globaldelight.boom.analytics;
 import android.content.Context;
 
 import com.flurry.android.FlurryAgent;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boomplayer.AudioEffect;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -98,6 +102,21 @@ public class AnalyticsHelper {
 
     public static final String EVENT_INTENSITY_TURNED_ON = "intensity_turned_on";
     public static final String EVENT_INTENSITY_TURNED_OFF = "intensity_turned_off";
+    public static final String EVENT_MOVE_TO_NEXT_SONG = "move_to_next_song";
+    public static final String EVENT_MOVE_TO_PRE_SONG = "move_to_previous_song";
+    public static final String PARAM_SONG_WITH_EQ = "Song_with_effect_eq";
+    public static final String PARAM_SONG_WITH_3D = "Song_with_effect_3d";
+    public static final String PARAM_SONG_WITH_INTENSITY = "Song_with_effect_intensity";
+    public static final String PARAM_ARTIST_NAME = "artist_name";
+    public static final String PARAM_GENRE = "song_genre";
+    public static final String PARAM_SONG_SELECTED = "Song_selected";
+    public static final String EVENT_UPDATE_PLAYBACK_SESSION = "update_playback_session";
+   /* public static final String EVENT_HEAD_PHONE_PROFILE_NAME = "headphone_profile_name";
+    public static final String PARAM_IN_CANAL = "in_canal";
+    public static final String PARAM_OVER_EAR = "over_ear";
+    public static final String PARAM_ON_EAR = "on_ear";*/
+    //public static final String EVENT_CREATED_NEW_PLAYLIST = "created_new_playlist";
+
 
     public static void logCommonEventWithStatus(Context ctx, String eventName, boolean status) {
         //flurry
@@ -121,10 +140,67 @@ public class AnalyticsHelper {
         MixPanelAnalyticHelper.getInstance(ctx).registerSuperProperties(props);
     }
 
+    public static void songSelectionChanged(Context context, IMediaItemBase songInfo) {
+        AudioEffect audioEffectPreferenceHandler;
+        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(context);
+        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_TRACK_SELECTION_CHANGED);
+        MixpanelAPI mixpanel = MixPanelAnalyticHelper.getInstance(context);
+        MixPanelAnalyticHelper.getInstance(context).getPeople().increment(EVENT_SONG_COUNT, 1);
+
+
+        JSONObject properties = new JSONObject();
+
+
+        // properties.put(AnalyticsHelper.EVENT_MOVE_TO_NEXT_SONG, 1);
+        if (audioEffectPreferenceHandler.isAudioEffectOn()) {
+            if (audioEffectPreferenceHandler.isEqualizerOn()) {
+                mixpanel.getPeople().increment(PARAM_SONG_WITH_EQ, 1);
+                try {
+                    properties.put(AnalyticsHelper.PARAM_SONG_WITH_EQ, true);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (audioEffectPreferenceHandler.is3DSurroundOn()) {
+                mixpanel.getPeople().increment(PARAM_SONG_WITH_3D, 1);
+                try {
+                    properties.put(AnalyticsHelper.PARAM_SONG_WITH_3D, true);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            if (audioEffectPreferenceHandler.isIntensityOn()) {
+                mixpanel.getPeople().increment(PARAM_SONG_WITH_INTENSITY, 1);
+                try {
+                    properties.put(AnalyticsHelper.PARAM_SONG_WITH_INTENSITY, true);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+        mixpanel.track(EVENT_TRACK_SELECTION_CHANGED, properties);
+
+    }
+
+    public static void trackHeadPhoneUsed(Context context, String headPhoneType) throws JSONException {
+
+        HashMap<String, String> articleParams = new HashMap<>();
+        articleParams.put(AnalyticsHelper.PARAM_SELECTED_HEADPHONE_TYPE, "over_ear");
+        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_HEADPHONE_TYPE_CHANGED, articleParams);
+
+        MixpanelAPI mixpanel = MixPanelAnalyticHelper.getInstance(context);
+        JSONObject properties = new JSONObject();
+        properties.put(PARAM_SELECTED_HEADPHONE_TYPE, headPhoneType);
+        mixpanel.track(EVENT_HEADPHONE_TYPE_CHANGED, properties);
+        mixpanel.registerSuperProperties(properties);
+        mixpanel.getPeople().set(properties);
+    }
+
     public void logCommonEvent(Context context, String event) {
        FlurryAgent.logEvent(event);
         MixPanelAnalyticHelper.getInstance(context).track(event);
     }
-
-
 }

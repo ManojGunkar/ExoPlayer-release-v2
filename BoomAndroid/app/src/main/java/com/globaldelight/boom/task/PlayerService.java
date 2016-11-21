@@ -9,12 +9,12 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
-import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
-import com.globaldelight.boom.ui.musiclist.activity.PlayingQueueActivity;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.ui.musiclist.activity.BoomPlayerActivity;
+import com.globaldelight.boom.ui.musiclist.activity.PlayingQueueActivity;
 
 import java.io.IOException;
 
@@ -105,6 +105,13 @@ public class PlayerService extends Service {
                 break;
             case ACTION_PLAY_PAUSE_SONG:
                 PlayerEventHandler.PlayState state = musicPlayerHandler.PlayPause();
+                /*if(state.play==PlayerEventHandler.PlayState.play)
+                {
+                    MixPanelAnalyticHelper.getInstance(context).timeEvent(AnalyticsHelper.EVENT_UPDATE_PLAYBACK_SESSION);
+                }else{
+                    MixPanelAnalyticHelper.getInstance(context).track(AnalyticsHelper.EVENT_UPDATE_PLAYBACK_SESSION);
+                }*/
+
                 updatePlayPause(state == PlayerEventHandler.PlayState.play ? true : false);
                 break;
             case ACTION_UPNEXT_UPDATE:

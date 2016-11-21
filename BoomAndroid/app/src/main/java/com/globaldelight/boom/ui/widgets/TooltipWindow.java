@@ -103,8 +103,8 @@ public class TooltipWindow {
         // tipWindow.setWidth(200);
 
         tipWindow.setOutsideTouchable(true);
-        //tipWindow.setTouchable(true);
-//tipWindow.setFocusable(true);
+        tipWindow.setTouchable(false);
+        tipWindow.setFocusable(false);
         tipWindow.setBackgroundDrawable(new BitmapDrawable());
 
         tipWindow.setContentView(contentView);
@@ -158,6 +158,12 @@ public class TooltipWindow {
 */
 // send message to handler to dismiss tipWindow after X milliseconds
 //handler.sendEmptyMessageDelayed(MSG_DISMISS_TOOLTIP, 4000);
+      /* anchor.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });*/
     }
 
     public boolean isTooltipShown() {

@@ -2,41 +2,41 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.globaldelight.boom">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!-- optional permission - highly recommended -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- optional permission -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- Mixp permission -->
-    <permission
-        android:name="com.globaldelight.boom.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-
-
+    <!-- <permission
+         android:name="com.globaldelight.boom.permission.C2D_MESSAGE"
+         android:protectionLevel="signature" />-->
+    <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-
+    <!--In-app billing-->
+    <uses-permission android:name="com.android.vending.BILLING" />
 
 
     <application
-        android:name="com.globaldelight.boom.App"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme.Album">
+        <service
+            android:name=".task.PlayerService"
+            android:enabled="true" />
 
-        <service android:name="com.globaldelight.boom.task.PlayerService" android:enabled="true"/>
         <activity
-            android:name="com.globaldelight.boom.ui.musiclist.activity.SplashActivity"
+            android:name=".ui.musiclist.activity.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Splash">
             <intent-filter>
@@ -46,128 +46,131 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.globaldelight.boom.ui.musiclist.activity.Surround3DActivity"
+            android:name=".ui.musiclist.activity.Surround3DActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Effect"/>
-
+            android:theme="@style/AppTheme.Effect" />
         <activity
-            android:name="com.globaldelight.boom.ui.musiclist.activity.BoomPlayerActivity"
+            android:name=".ui.musiclist.activity.BoomPlayerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Player"/>
-
+            android:theme="@style/AppTheme.Player" />
         <activity
-            android:name="com.globaldelight.boom.ui.musiclist.activity.DeviceMusicActivity"
+            android:name=".ui.musiclist.activity.DeviceMusicActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Main">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable" />
         </activity>
-
         <activity
-            android:name="com.globaldelight.boom.ui.musiclist.activity.PlayingQueueActivity"
+            android:name=".ui.musiclist.activity.PlayingQueueActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Main">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable" />
         </activity>
-
         <activity
-            android:name="com.globaldelight.boom.ui.musiclist.activity.BoomPlaylistActivity"
+            android:name=".ui.musiclist.activity.BoomPlaylistActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Main">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable" />
         </activity>
-
-        <activity android:name="com.globaldelight.boom.ui.musiclist.activity.AlbumActivity"
+        <activity
+            android:name=".ui.musiclist.activity.AlbumActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Album">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable" />
         </activity>
-
-        <activity android:name="com.globaldelight.boom.ui.musiclist.activity.DetailAlbumActivity"
+        <activity
+            android:name=".ui.musiclist.activity.DetailAlbumActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Album">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable" />
         </activity>
-
-        <activity android:name="com.globaldelight.boom.ui.musiclist.activity.SongsDetailListActivity"
+        <activity
+            android:name=".ui.musiclist.activity.SongsDetailListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Album">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable" />
         </activity>
-
-
-
-        <activity android:name="com.globaldelight.boom.ui.musiclist.activity.SearchDetailListActivity"
+        <activity
+            android:name=".ui.musiclist.activity.SearchDetailListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Effect">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable" />
         </activity>
-
-        <activity android:name="com.globaldelight.boom.ui.musiclist.activity.FavouriteListActivity"
+        <activity
+            android:name=".ui.musiclist.activity.FavouriteListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Effect">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable" />
         </activity>
 
-        <!--<activity android:name="com.spotify.sdk.android.authentication.LoginActivity"
+        <!--
+            <activity android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />-->
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        -->
 
-
-        <activity android:name=".ui.musiclist.activity.SettingsActivity"
+        <activity
+            android:name=".ui.musiclist.activity.SettingsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Effect"/>
+            android:theme="@style/AppTheme.Effect" />
 
         <receiver android:name=".utils.SleepAlarm" />
-
         <receiver
             android:name="com.mixpanel.android.mpmetrics.GCMReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
@@ -178,5 +181,11 @@
                 <category android:name="com.globaldelight.boom" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".test.InAppTestActivity"
+
+            ></activity>
+        <activity android:name=".test.AppsFlyerTestActivity"></activity>
     </application>
+
 </manifest>
