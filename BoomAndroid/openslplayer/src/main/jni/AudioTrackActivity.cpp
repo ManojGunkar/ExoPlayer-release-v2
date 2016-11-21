@@ -42,6 +42,8 @@ namespace gdpl {
         static AudioEngine *engine = nullptr;
         if (nullptr == engine) {
             engine = new AudioEngine(OpenSLPlayer::getEngineSampleRate(), gFrameCount);
+            engine->SetHeadPhoneType(eOnEar);
+
         }
 
         return engine;
@@ -169,7 +171,6 @@ namespace gdpl {
 
         /*Iitialize AudioEngine*/
         GetEngine()->ResetEngine();
-        GetEngine()->SetHeadPhoneType(eOnEar);
         RinseEngine();
 
 
@@ -396,5 +397,18 @@ namespace gdpl {
 
         gdpl::AutoLock lock(&engineLock);
         return GetEngine()->GetSpeakerState(SpeakerID(speakerId));
+    }
+
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_setHeadPhoneType(JNIEnv *env, jobject instance,
+                                                                         jint headphoneType)
+    {
+        gdpl::AutoLock lock(&engineLock);
+        GetEngine()->SetHeadPhoneType(headphoneType);
+    }
+
+    extern "C"  jint Java_com_globaldelight_boomplayer_OpenSLPlayer_getHeadPhoneType(JNIEnv *env, jobject instance)
+    {
+        gdpl::AutoLock lock(&engineLock);
+        return GetEngine()->GetHeadPhoneType();
     }
 }
