@@ -649,14 +649,10 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-<<<<<<< HEAD
                 finish();
                 overridePendingTransition(R.anim.stay_out, R.anim.push_up_out);
-=======
-                super.onBackPressed();
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_EFFECTS_BACK_BUTTON_TAPPED);
 
->>>>>>> c0dc283f0c7d34e39b241677133120bb062fa49f
                 break;
         }
         return super.onOptionsItemSelected(item);
