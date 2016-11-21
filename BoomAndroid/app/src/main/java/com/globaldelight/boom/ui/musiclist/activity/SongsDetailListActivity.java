@@ -30,13 +30,13 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
-import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
-import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.ui.musiclist.adapter.ItemSongListAdapter;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.ui.musiclist.ListDetail;
+import com.globaldelight.boom.ui.musiclist.adapter.ItemSongListAdapter;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
@@ -130,9 +130,9 @@ public class SongsDetailListActivity extends AppCompatActivity {
 
     public void getCollectionData(){
         //              ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
-        if(collection.getItemType() == ItemType.BOOM_PLAYLIST && collection.getMediaElement().isEmpty())
+        if (collection.getItemType() == ItemType.BOOM_PLAYLIST && collection.getMediaElement().isEmpty()) {
             collection.setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
-
+        } else
         //ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
         if(collection.getItemType() == ItemType.PLAYLIST && collection.getMediaElement().isEmpty()) {
             collection.setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
@@ -326,16 +326,6 @@ public class SongsDetailListActivity extends AppCompatActivity {
         albumArt.setImageDrawable(getResources().getDrawable(R.drawable.default_art_header));
     }
 
-    public class Size{
-        int width;
-        int height;
-
-        public Size(int width, int height){
-            this.width = width;
-            this.height = height;
-        }
-    }
-
     private void setForAnimation() {
         rv.scrollTo(0, 100);
     }
@@ -386,5 +376,15 @@ public class SongsDetailListActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    public class Size {
+        int width;
+        int height;
+
+        public Size(int width, int height) {
+            this.width = width;
+            this.height = height;
+        }
     }
 }
