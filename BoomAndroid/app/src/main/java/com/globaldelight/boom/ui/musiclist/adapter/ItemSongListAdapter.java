@@ -21,29 +21,32 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.globaldelight.boom.App;
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.activity.DeviceMusicActivity;
 import com.globaldelight.boom.ui.widgets.IconizedMenu;
 import com.globaldelight.boom.utils.PermissionChecker;
-import com.globaldelight.boom.utils.async.Action;
-import com.globaldelight.boom.App;
-import com.globaldelight.boom.R;
 import com.globaldelight.boom.utils.Utils;
+import com.globaldelight.boom.utils.async.Action;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.globaldelight.boom.data.MediaLibrary.ItemType.BOOM_PLAYLIST;
+import static com.globaldelight.boom.data.MediaLibrary.ItemType.PLAYLIST;
+import static com.globaldelight.boom.data.MediaLibrary.ItemType.SONGS;
+
 
 public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapter.SimpleItemViewHolder> {
 
-    private static final String TAG = "ItemSongListAdapter-TAG";
     public static final int TYPE_HEADER = 111;
     public static final int TYPE_ITEM = 222;
+    private static final String TAG = "ItemSongListAdapter-TAG";
     private MediaItemCollection collection;
     private PermissionChecker permissionChecker;
     private int selectedSongId = -1;
@@ -95,7 +98,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
         }else if(position >= 1){
             int pos = position -1;
-            if(collection.getItemType() == ItemType.PLAYLIST || collection.getItemType() == ItemType.BOOM_PLAYLIST){
+            if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                 currentItem = (MediaItem) collection.getMediaElement().get(pos);
             }else{
                 currentItem = (MediaItem) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(pos);
@@ -134,8 +137,24 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             @Override
             public void onClick(View view) {
                 animate(holder);
+                switch (collection.getItemType()) {
+                    case BOOM_PLAYLIST:
+
+                        break;
+                    case PLAYLIST:
+
+                        break;
+                    case ARTIST:
+
+                        break;
+                    case GENRE:
+
+                        break;
+                }
+
+
                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                    if(collection.getItemType() == ItemType.PLAYLIST || collection.getItemType() == ItemType.BOOM_PLAYLIST){
+                    if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                         App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), position);
                     }else{
                         App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), position);
@@ -158,7 +177,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                         switch (item.getItemId()) {
                             case R.id.popup_song_add_queue :
                                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                                    if(collection.getItemType() == ItemType.PLAYLIST || collection.getItemType() == ItemType.BOOM_PLAYLIST){
+                                    if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                                         App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) collection.getMediaElement().get(position));
                                     }else{
                                         App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
@@ -166,7 +185,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                                 }
                                 break;
                             case R.id.popup_song_add_playlist :
-                                if(collection.getItemType() == ItemType.BOOM_PLAYLIST){
+                                if (collection.getItemType() == BOOM_PLAYLIST) {
 
                                 }else {
                                     Utils util = new Utils(activity);
@@ -278,7 +297,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             selectedSongId = -1;
             selectedHolder = null;
         } else {
-            if (activity != null && collection.getItemType() == ItemType.SONGS)
+            if (activity != null && collection.getItemType() == SONGS)
                 ((DeviceMusicActivity) activity).killActivity();
         }
     }
