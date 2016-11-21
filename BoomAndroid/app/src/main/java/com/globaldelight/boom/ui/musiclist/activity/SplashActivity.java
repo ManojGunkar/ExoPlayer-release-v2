@@ -7,8 +7,16 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
+import com.globaldelight.boom.task.PlayerService;
+import com.globaldelight.boom.utils.handlers.Preferences;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,6 +30,14 @@ import java.util.Date;
 public class SplashActivity extends AppCompatActivity {
 
     private static final long SPLASH_TIME_OUT = 2000;
+    MixpanelAPI mixpanel;
+    JSONObject propsFirst, propsLast;
+    String currentDate;
+
+    public static String getToday(String format) {
+        Date date = new Date();
+        return new SimpleDateFormat(format).format(date);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,6 +62,44 @@ public class SplashActivity extends AppCompatActivity {
                     finish();
                 }
             }, SPLASH_TIME_OUT);
+
+            //flurry
+            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_APP_OPEN);
+            //new Launch of app.Use for tutorial
+            Preferences.writeBoolean(SplashActivity.this, Preferences.APP_NEW_LAUNCH, true);
+            //get current date
+            currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+            //get last opened date
+            String lastOpen = Preferences.readString(this, Preferences.APP_LAST_OPEN, currentDate);
+            mixpanel = MixPanelAnalyticHelper.getInstance(this);
+
+
+            //register first app open once as super property
+            propsFirst = new JSONObject();
+            try {
+                propsFirst.put(AnalyticsHelper.EVENT_FIRST_VISIT, currentDate);
+                mixpanel.registerSuperPropertiesOnce(propsFirst);//super property
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            propsLast = new JSONObject();
+
+
+            try {
+                propsLast.put(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
+                mixpanel.registerSuperProperties(propsLast);//super property
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Preferences.writeString(this, Preferences.APP_LAST_OPEN, currentDate);
+
+            MixPanelAnalyticHelper.initPushNotification(this);
+
+
+
+
         }else{
             Toast.makeText(this, "App Expired...!", Toast.LENGTH_LONG).show();
             finish();
@@ -85,9 +139,9 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-
-    public static String getToday(String format){
-        Date date = new Date();
-        return new SimpleDateFormat(format).format(date);
+    @Override
+    protected void onDestroy() {
+        MixPanelAnalyticHelper.getInstance(this).flush();
+        super.onDestroy();
     }
 }

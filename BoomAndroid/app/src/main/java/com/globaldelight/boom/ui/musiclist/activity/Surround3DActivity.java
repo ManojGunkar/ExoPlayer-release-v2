@@ -26,17 +26,21 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
 
-import com.globaldelight.boom.ui.widgets.TooltipWindow;
-import com.globaldelight.boom.utils.handlers.Preferences;
-import com.globaldelight.boomplayer.AudioEffect;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.manager.MusicReceiver;
 import com.globaldelight.boom.ui.musiclist.adapter.EqualizerViewAdapter;
 import com.globaldelight.boom.ui.widgets.NegativeSeekBar;
-import com.globaldelight.boom.ui.widgets.ScrollEnableLayoutManager;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
+import com.globaldelight.boom.ui.widgets.ScrollEnableLayoutManager;
+import com.globaldelight.boom.ui.widgets.TooltipWindow;
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
+import com.globaldelight.boom.utils.handlers.Preferences;
+import com.globaldelight.boomplayer.AudioEffect;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,6 +49,7 @@ import java.util.List;
  */
 
 public class Surround3DActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, MusicReceiver.updateMusic, EqualizerViewAdapter.onEqualizerUpdate {
+    TooltipWindow tipWindow;
     private RegularTextView mToolbarTitle, mEffectTxt, mEffectSwitchTxt, m3DTxt, m3DSwitchTxt, mSpeakerInfo, mFullbassTxt,
             mIntensityTxt, mIntensitySwitchTxt, mEqualizerTxt, mEqualizerSwitchTxt;
     private LinearLayout mIntensityIndicator, mEqualizerIndicator, mFullBassPanel;
@@ -61,14 +66,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     private MusicReceiver musicReceiver;
     private AudioEffect audioEffectPreferenceHandler;
     private boolean isExpended = false;
-    TooltipWindow tipWindow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         overridePendingTransition(R.anim.push_up_in, R.anim.stay_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_surround_3d);
-
+        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_EFFECTS);
         audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
         initViews();
         setupToolbar();
@@ -205,13 +209,17 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             /*mEffectPowerBtn.setChecked(true);*/
             mEffectTxt.setTextColor(Color.WHITE);
             mEffectSwitchTxt.setTextColor(Color.WHITE);
+            MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_EFFECTS_TURNED_ON);
         }else{
             mEffectSwitchTxt.setText("off");
             /*mEffectPowerBtn.setChecked(false);*/
             mEffectTxt.setTextColor(Color.WHITE);
             mEffectSwitchTxt.setTextColor(Color.WHITE);
             collapse();
+            MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
         }
+        FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffectPreferenceHandler.isAudioEffectOn());
+
     }
 
     public void update3DSurround(){
@@ -220,16 +228,19 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             m3DSwitchTxt.setText("ON");
             m3DTxt.setTextColor(Color.WHITE);
             m3DSwitchTxt.setTextColor(Color.WHITE);
+            MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_3D_TURNED_ON);
         }else{
             m3DSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_surround_off, null));
             m3DSwitchTxt.setText("OFF");
             m3DTxt.setTextColor(Color.WHITE);
             m3DSwitchTxt.setTextColor(Color.WHITE);
             mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_speakers_off, null));
+            MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_3D_TURNED_OFF);
         }
         updateSpeakerInfo();
         updateFullBass();
         updateSpeakers();
+        FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_3D_STATE_CHANGED, audioEffectPreferenceHandler.is3DSurroundOn());
     }
 
     public void updateSpeakerInfo(){
@@ -283,6 +294,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 mFullBassRd.setImageDrawable(getResources().getDrawable(R.drawable.full_bass_off, null));
             }
             mFullbassTxt.setTextColor(Color.WHITE);
+            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FULL_BASS_ENABLED);
         }else{
             if(audioEffectPreferenceHandler.isFullBassOn()){
                 mFullBassRd.setImageDrawable(getResources().getDrawable(R.drawable.full_bass_inactive_on, null));
@@ -290,6 +302,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 mFullBassRd.setImageDrawable(getResources().getDrawable(R.drawable.full_bass_inactive_off, null));
             }
             mFullbassTxt.setTextColor(Color.WHITE);
+            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FULL_BASS_DISABLED);
         }
     }
 
@@ -340,14 +353,17 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             mIntensitySwitchTxt.setTextColor(Color.WHITE);
             mIntensityTxt.setTextColor(Color.WHITE);
             EnableSeek(true);
+            MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_INTENSITY_TURNED_ON);
         }else{
             mIntensitySwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.intensity_off, null));
             mIntensitySwitchTxt.setText("OFF");
             mIntensitySwitchTxt.setTextColor(Color.WHITE);
             mIntensityTxt.setTextColor(Color.WHITE);
             EnableSeek(false);
+            MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_INTENSITY_TURNED_OFF);
         }
         mIntensitySeek.setProgress(audioEffectPreferenceHandler.getIntensity());
+        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_INTENSITY_STATE_CHANGED);
     }
 
     private void EnableSeek(boolean isEnable){
@@ -369,14 +385,17 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             mEqualizerSwitchTxt.setText("ON");
             mEqualizerSwitchTxt.setTextColor(Color.WHITE);
             mEqualizerTxt.setTextColor(Color.WHITE);
+            MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_EQ_TURNED_ON);
         }else{
             mEqualizerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.equalizer_off, null));
             mEqualizerSwitchTxt.setText("OFF");
             mEqualizerSwitchTxt.setTextColor(Color.WHITE);
             mEqualizerTxt.setTextColor(Color.WHITE);
+            MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_EQ_TURNED_OFF);
         }
         if(mEqualizerAdapter != null)
             mEqualizerAdapter.updateList();
+        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_EQ_STATE_CHANGED);
     }
 
     public void switch3DSurround(boolean isPowerOn){
@@ -397,6 +416,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 switchEqualizer(isPowerOn);
             }
         }
+        //FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_3D_STATE_CHANGED, audioEffectPreferenceHandler.is3DSurroundOn());
+
     }
 
     public void switchIntensity(boolean isPowerOn){
@@ -493,22 +514,30 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.off_left_front, null));
                     audioEffectPreferenceHandler.setEnableLeftFrontSpeaker(false);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontLeft, false);
+                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_LEFT_SPEAKER_OFF);
                 } else {
                     mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.on_left_front, null));
                     audioEffectPreferenceHandler.setEnableLeftFrontSpeaker(true);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontLeft, true);
+                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_LEFT_SPEAKER_ON);
+
                 }
                 updateSpeakerInfo();
+
                 break;
             case R.id.speaker_right_front:
                 if (audioEffectPreferenceHandler.isRightFrontSpeakerOn()) {
                     mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.off_right_front, null));
                     audioEffectPreferenceHandler.setEnableRightFrontSpeaker(false);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontRight, false);
+                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_RIGHT_SPEAKER_OFF);
+
                 } else {
                     mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.on_right_front, null));
                     audioEffectPreferenceHandler.setEnableRightFrontSpeaker(true);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontRight, true);
+                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_RIGHT_SPEAKER_ON);
+
                 }
                 updateSpeakerInfo();
                 break;
@@ -519,11 +548,15 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.off_righttweeter, null));
                     audioEffectPreferenceHandler.setEnableTweeter(false);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Tweeter, false);
+                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_TWEETER_OFF);
+
                 } else {
                     mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.on_lefttweeter, null));
                     mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.on_righttweeter, null));
                     audioEffectPreferenceHandler.setEnableTweeter(true);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Tweeter, true);
+                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_TWEETER_ON);
+
                 }
                 updateSpeakerInfo();
                 break;
@@ -532,10 +565,14 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_left_surround, null));
                     audioEffectPreferenceHandler.setEnableLeftSurroundSpeaker(false);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearLeft, false);
+                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_LEFT_SPEAKER_OFF);
+
                 } else {
                     mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_left_surround, null));
                     audioEffectPreferenceHandler.setEnableLeftSurroundSpeaker(true);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearLeft, true);
+                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_LEFT_SPEAKER_ON);
+
                 }
                 updateSpeakerInfo();
                 break;
@@ -544,10 +581,14 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_right_surround, null));
                     audioEffectPreferenceHandler.setEnableRightSurroundSpeaker(false);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearRight, false);
+                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_RIGHT_SPEAKER_OFF);
+
                 } else {
                     mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_right_surround, null));
                     audioEffectPreferenceHandler.setEnableRightSurroundSpeaker(true);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearRight, true);
+                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_RIGHT_SPEAKER_ON);
+
                 }
                 updateSpeakerInfo();
                 break;
@@ -556,10 +597,14 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.off_subwoofer, null));
                     audioEffectPreferenceHandler.setEnableWoofer(false);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, false);
+                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SUBWOOFER_OFF);
+
                 } else {
                     mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.on_subwoofer, null));
                     audioEffectPreferenceHandler.setEnableWoofer(true);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, true);
+                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SUBWOOFER_ON);
+
                 }
                 updateSpeakerInfo();
                 break;
@@ -604,8 +649,14 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+<<<<<<< HEAD
                 finish();
                 overridePendingTransition(R.anim.stay_out, R.anim.push_up_out);
+=======
+                super.onBackPressed();
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_EFFECTS_BACK_BUTTON_TAPPED);
+
+>>>>>>> c0dc283f0c7d34e39b241677133120bb062fa49f
                 break;
         }
         return super.onOptionsItemSelected(item);
