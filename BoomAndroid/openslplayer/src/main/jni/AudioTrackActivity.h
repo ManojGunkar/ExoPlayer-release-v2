@@ -116,6 +116,10 @@ namespace gdpl {
 
     jfloat Java_com_globaldelight_boomplayer_OpenSLPlayer_GetSpeakerState(JNIEnv *env, jobject instance,
                                                                       jint speakerId);
+
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_setHeadphoneType(JNIEnv *env, jobject instance,
+                                                                          jint headphoneType);
+    jint Java_com_globaldelight_boomplayer_OpenSLPlayer_getHeadphoneType(JNIEnv *env, jobject instance);
 };
 #ifdef __cplusplus
 }

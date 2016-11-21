@@ -448,6 +448,8 @@ public class OpenSLPlayer implements Runnable {
         Log.d("Supported Formats : ", results);
     }
 
+
+
     /** Native methods, implemented in jni folder */
     public native void createEngine(AssetManager assetManager, int sampleRate, int frameCount);
 
@@ -458,6 +460,18 @@ public class OpenSLPlayer implements Runnable {
     public static native void setPlayingAudioPlayer(boolean isPlaying);
 
     public static native void seekTo(long position);
+
+
+    public static final int OVER_EAR_HEADPHONE = 0;
+    public static final int ON_EAR_HEADPHONE = 1;
+    public static final int IN_EAR_HEADPHONE = 2;
+    public static final int IN_CANAL_HEADPHONE = 3;
+
+
+
+    public native void setHeadPhoneType(int headPhoneType);
+
+    public native int getHeadPhoneType();
 
     public native void enableAudioEffect(boolean enable);
 
@@ -490,6 +504,7 @@ public class OpenSLPlayer implements Runnable {
     public static native void setVolumeAudioPlayer(int millibel);
 
     public static native void setMutAudioPlayer(boolean mute);
+
 
     public void updatePlayerEffect(){
 
