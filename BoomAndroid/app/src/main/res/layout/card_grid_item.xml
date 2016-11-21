@@ -4,72 +4,60 @@
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:padding="2dp"
-
+    android:layout_margin="6dp"
     android:orientation="vertical">
     <FrameLayout
         android:id="@+id/card_grid_img_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/color400"
         android:transitionName="transition:imgholder">
         <ImageView
             android:id="@+id/card_grid_default_img"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:scaleType="centerCrop"
             android:visibility="gone" />
 
         <TableLayout
             android:id="@+id/card_grid_art_table"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:visibility="gone" >
 
             <TableRow
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 
             <ImageView
                 android:id="@+id/card_grid_art_img1"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"/>
 
             <ImageView
                 android:id="@+id/card_grid_art_img2"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"/>
 
-            <ImageView
-                android:id="@+id/card_grid_art_img3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="centerCrop"/>
         </TableRow>
 
             <TableRow
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
                 <ImageView
+                    android:id="@+id/card_grid_art_img3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerCrop"/>
+
+                <ImageView
                     android:id="@+id/card_grid_art_img4"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scaleType="centerCrop"/>
 
-                <ImageView
-                    android:id="@+id/card_grid_art_img5"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scaleType="centerCrop"/>
-
-                <ImageView
-                    android:id="@+id/card_grid_art_img6"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scaleType="centerCrop"/>
             </TableRow>
 
         </TableLayout>
@@ -79,15 +67,12 @@
     <LinearLayout
         android:id="@+id/card_grid_bottom"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/album_grid_text_panel_height"
-        android:background="#e5e5e5"
+        android:layout_height="wrap_content"
+        android:background="#10141d"
         android:weightSum="1"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:paddingTop="6dp"
-        android:paddingLeft="8dp"
-        android:paddingBottom="6dp"
-        android:paddingRight="2dp">
+        android:padding="@dimen/fourty_two_pt">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -97,36 +82,34 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <TextView
+            <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/card_grid_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.8"
+                android:layout_weight="1"
                 android:singleLine="true"
-                android:textColor="@color/album_grid_name_default"
-                android:textSize="@dimen/grid_item_title_size" />
+                android:textColor="@color/white"
+                android:textSize="@dimen/seventy_two_px" />
 
             <ImageView
                 android:id="@+id/card_grid_menu"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="3dp"
-                android:layout_weight="0.2"
                 android:background="@drawable/unbounded_ripple"
                 android:backgroundTint="#434343"
-                android:src="@drawable/over_flow_menu"
+                android:src="@drawable/ic_more_button_playlists"
                 android:theme="@style/Theme.AppCompat.Light" />
 
         </LinearLayout>
 
-        <TextView
+        <com.globaldelight.boom.ui.widgets.CoachMarkTextView
             android:id="@+id/card_grid_sub_title"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight=".5"
             android:singleLine="true"
-            android:textColor="@color/album_grid_artist_default"
-            android:textSize="@dimen/grid_item_desc_size" />
+            android:textColor="#8d8f91"
+            android:textSize="@dimen/fifty_four_px" />
 
     </LinearLayout>
 

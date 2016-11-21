@@ -165,7 +165,7 @@
                         android:maxLines="1"
                         android:text="@string/speaker_status_some_off"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/speaker_info" />
+                        android:textSize="@dimen/sixty_pt_txt" />
 
                 </RelativeLayout>
 
@@ -380,7 +380,7 @@
                             android:maxLines="1"
                             android:text="@string/req_of_3d"
                             android:textColor="#c3cc20"
-                            android:textSize="@dimen/speaker_info"
+                            android:textSize="@dimen/sixty_pt_txt"
                             android:textStyle="normal" />
 
                         <com.globaldelight.boom.ui.widgets.RegularTextView
@@ -390,7 +390,7 @@
                             android:maxLines="1"
                             android:text="@string/req_intensity"
                             android:textColor="#c3cc20"
-                            android:textSize="@dimen/speaker_info"
+                            android:textSize="@dimen/sixty_pt_txt"
                             android:textStyle="normal" />
                     </LinearLayout>
                 </LinearLayout>
@@ -494,7 +494,7 @@
                             android:maxLines="1"
                             android:text="@string/req_of_3d"
                             android:textColor="#c3cc20"
-                            android:textSize="@dimen/speaker_info"
+                            android:textSize="@dimen/sixty_pt_txt"
                             android:textStyle="normal" />
 
                         <com.globaldelight.boom.ui.widgets.RegularTextView
@@ -504,7 +504,7 @@
                             android:maxLines="1"
                             android:text="@string/req_equlaizer"
                             android:textColor="#c3cc20"
-                            android:textSize="@dimen/speaker_info"
+                            android:textSize="@dimen/sixty_pt_txt"
                             android:textStyle="normal" />
                     </LinearLayout>
                 </LinearLayout>

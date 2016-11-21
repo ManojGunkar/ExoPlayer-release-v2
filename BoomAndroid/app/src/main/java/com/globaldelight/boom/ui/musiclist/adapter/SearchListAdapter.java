@@ -27,6 +27,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.globaldelight.boom.handler.search.SearchResult;
+import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -401,12 +403,14 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
         public TextView headerText, headerCount;
 
         //For Song Lists
-        public TextView name, artistName;
+        public RegularTextView name;
+        public CoachMarkTextView artistName;
         public View menu;
         public ImageView img;
 
 //        For Album grid
-        public TextView title, subTitle;
+        public RegularTextView title;
+        public CoachMarkTextView subTitle;
         public ImageView defaultImg;
         public View gridBottomBg, grid_menu;
         public TableLayout artTable;
@@ -421,12 +425,12 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             headerCount = (TextView) itemView.findViewById(R.id.search_header_count);
 
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
-            name = (TextView) itemView.findViewById(R.id.song_item_name);
+            name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
             menu = itemView.findViewById(R.id.song_item_menu);
-            artistName = (TextView) itemView.findViewById(R.id.song_item_artist);
+            artistName = (CoachMarkTextView) itemView.findViewById(R.id.song_item_artist);
 
-            title = (TextView) itemView.findViewById(R.id.card_grid_title);
-            subTitle = (TextView) itemView.findViewById(R.id.card_grid_sub_title);
+            title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
+            subTitle = (CoachMarkTextView) itemView.findViewById(R.id.card_grid_sub_title);
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
             gridBottomBg = itemView.findViewById(R.id.card_grid_bottom);

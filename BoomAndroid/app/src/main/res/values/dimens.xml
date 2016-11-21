@@ -26,7 +26,7 @@
     <dimen name="effect_switch_panel_padding_right">20dp</dimen>
     <dimen name="effect_switch_panel_elevation">10dp</dimen>
     <dimen name="effect_switch_txt">17sp</dimen>
-    <dimen name="speaker_info">12sp</dimen>
+    <dimen name="sixty_pt_txt">12sp</dimen>
     <dimen name="effect_switch_txt_margin_left">5dp</dimen>
     <dimen name="effect_screen_main_layout_pading_top">30dp</dimen>
     <dimen name="effect_screen_main_layout_pading_bottom">30dp</dimen>

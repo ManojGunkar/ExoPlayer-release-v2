@@ -8,16 +8,12 @@
         android:id="@+id/albumsListContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/appBackground"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:paddingRight="5dp"/>
+        android:background="@color/appBackground"/>
 
     <LinearLayout
         android:id="@+id/album_empty_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color400"
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone" />

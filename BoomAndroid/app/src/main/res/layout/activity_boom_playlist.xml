@@ -24,7 +24,7 @@
         android:id="@+id/add_boom_playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_alarm_add_white_24dp"
+        android:src="@drawable/ic_floating_play_albums"
         android:layout_margin="16dp"
         app:layout_anchor="@+id/playlistContainer"
         app:layout_anchorGravity="bottom|end"

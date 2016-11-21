@@ -27,6 +27,8 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumActivity;
+import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
@@ -182,7 +184,8 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView title, subTitle;
+        public RegularTextView title;
+        public CoachMarkTextView subTitle;
         public ImageView defaultImg;
         public View gridBottomBg, grid_menu, mainView;
         public TableLayout artTable;
@@ -191,8 +194,8 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            title = (TextView) itemView.findViewById(R.id.card_grid_title);
-            subTitle = (TextView) itemView.findViewById(R.id.card_grid_sub_title);
+            title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
+            subTitle = (CoachMarkTextView) itemView.findViewById(R.id.card_grid_sub_title);
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
             gridBottomBg = itemView.findViewById(R.id.card_grid_bottom);

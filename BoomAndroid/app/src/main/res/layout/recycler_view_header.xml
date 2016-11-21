@@ -1,37 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="20dp">
+    android:layout_height="@dimen/four_hundred_fourtee_eight_px"
+    android:gravity="center_vertical">
 
-        <!-- Title -->
-        <TextView
-            android:id="@+id/header_title"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:maxLines="1"
-            android:textSize="22sp"
-            android:textStyle="bold"/>
+            android:orientation="vertical">
 
-        <!-- Subtitle -->
-        <TextView
-            android:id="@+id/header_sub_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:textStyle="italic"/>
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/header_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:layout_marginLeft="@dimen/seventy_six_px"
+                    android:layout_marginRight="@dimen/seventy_six_px"
+                    android:maxLines="1"
+                    android:textSize="@dimen/eighty_pt"
+                    android:textStyle="bold"/>
 
-        <!-- Detail -->
-        <TextView
-            android:id="@+id/header_detail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:textStyle="italic"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="100"
+                    android:layout_marginLeft="@dimen/seventy_four_pt"
+                    android:layout_marginRight="@dimen/seventy_four_pt"
+                    android:layout_marginTop="@dimen/fourty_pt"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="75.389"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/artist"/>
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="@dimen/thirty_two_px"
+                                    android:gravity="center_vertical"
+                                    android:orientation="vertical">
+                                        <com.globaldelight.boom.ui.widgets.RegularTextView
+                                            android:id="@+id/header_sub_title"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:maxLines="1"
+                                            android:textColor="@color/white"
+                                            android:textSize="@dimen/seventy_two_pt"
+                                            android:textStyle="normal"/>
+
+                                        <!-- Detail -->
+                                        <com.globaldelight.boom.ui.widgets.CoachMarkTextView
+                                            android:id="@+id/header_detail"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="@dimen/twenty_pt"
+                                            android:maxLines="1"
+                                            android:textColor="#8d8f91"
+                                            android:textSize="@dimen/fifty_six_pt"
+                                            android:textStyle="normal"/>
+                                </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="14"
+                            android:gravity="center">
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_shuffle_on"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="3.611"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="7"
+                            android:gravity="center">
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_player_more_button"/>
+                        </LinearLayout>
+
+                </LinearLayout>
+
+        </LinearLayout>
 </LinearLayout>

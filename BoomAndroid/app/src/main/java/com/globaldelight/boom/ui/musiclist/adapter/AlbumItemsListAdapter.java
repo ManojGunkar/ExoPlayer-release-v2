@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +20,9 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumActivity;
+import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.IconizedMenu;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 
@@ -176,7 +179,9 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
         public TextView name, count, duration;
         public View mainView, menu;
 
-        public TextView headerTitle, headerSubTitle, headerDetail;
+        public RegularTextView headerTitle, headerSubTitle;
+        public CoachMarkTextView headerDetail;
+        ImageView mShuffle, mMore;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
@@ -186,9 +191,9 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
             count = (TextView) itemView.findViewById(R.id.album_item_count);
             menu = itemView.findViewById(R.id.album_item_menu);
 
-            headerTitle = (TextView) itemView.findViewById(R.id.header_title);
-            headerSubTitle = (TextView) itemView.findViewById(R.id.header_sub_title);
-            headerDetail = (TextView) itemView.findViewById(R.id.header_detail);
+            headerTitle = (RegularTextView) itemView.findViewById(R.id.header_title);
+            headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
+            headerDetail = (CoachMarkTextView) itemView.findViewById(R.id.header_detail);
         }
     }
 

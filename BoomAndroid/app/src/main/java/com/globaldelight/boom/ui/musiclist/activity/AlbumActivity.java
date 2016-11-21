@@ -35,6 +35,7 @@ import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.utils.Utils;
+import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;

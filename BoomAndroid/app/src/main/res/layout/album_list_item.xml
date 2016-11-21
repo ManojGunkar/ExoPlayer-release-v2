@@ -2,48 +2,76 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?android:attr/selectableItemBackground"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/two_hunderd_twenty_px"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:weightSum="1"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/album_item_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_weight="0"
-        android:padding="15dp"
-        android:textColor="#9a9a9a"
-        android:textSize="16sp" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_weight=".8">
 
-    <TextView
-        android:id="@+id/album_item_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:padding="18dp"
-        android:singleLine="true"
-        android:textColor="#000"
-        android:textSize="18sp" />
+            <com.globaldelight.boom.ui.widgets.RegularTextView
+                android:id="@+id/album_item_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/one_fifty_six_pt"
+                android:text="1"
+                android:textColor="@color/white"
+                android:textSize="@dimen/seventy_two_pt_txt" />
 
-    <TextView
-        android:id="@+id/album_item_duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:padding="15dp"
-        android:textColor="#9a9a9a" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/one_hundred_four_px"
+                android:orientation="vertical">
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/album_item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ahbjhdjsndskjcnkjs kckckdc kjcnkd"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/seventy_two_pt_txt"  />
 
-    <ImageView
-        android:id="@+id/album_item_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="12dp"
-        android:layout_weight="0"
-        android:background="@drawable/unbounded_ripple"
-        android:foregroundTint="#434343"
-        android:padding="5dp"
-        android:src="@drawable/over_flow_menu"
-        android:theme="@style/Theme.AppCompat.Light" />
+                <com.globaldelight.boom.ui.widgets.CoachMarkTextView
+                    android:id="@+id/album_item_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="jdjcnkjdnckml"
+                    android:textColor="#8d8f91"
+                    android:textSize="@dimen/fifty_six_pt_txt"/>
+            </LinearLayout>
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".2"
+            android:layout_marginRight="@dimen/fifty_eight_pt"
+            android:gravity="center_vertical|right">
+            <ImageView
+                android:id="@+id/album_item_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/unbounded_ripple"
+                android:foregroundTint="#434343"
+                android:padding="5dp"
+                android:src="@drawable/over_flow_menu"
+                android:theme="@style/Theme.AppCompat.Light" />
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#313232"/>
 </LinearLayout>

@@ -30,7 +30,9 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.ui.musiclist.activity.DeviceMusicActivity;
+import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.IconizedMenu;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
@@ -227,7 +229,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView name, artistName;
+        public RegularTextView name;
+        public CoachMarkTextView artistName;
         public View mainView, menu;
         public ImageView img;
 
@@ -235,9 +238,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
             super(itemView);
             mainView = itemView;
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
-            name = (TextView) itemView.findViewById(R.id.song_item_name);
+            name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
             menu = itemView.findViewById(R.id.song_item_menu);
-            artistName = (TextView) itemView.findViewById(R.id.song_item_artist);
+            artistName = (CoachMarkTextView) itemView.findViewById(R.id.song_item_artist);
         }
     }
 

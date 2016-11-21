@@ -28,6 +28,8 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumActivity;
 import com.globaldelight.boom.ui.musiclist.activity.DetailAlbumActivity;
+import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
@@ -60,7 +62,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
     @Override
     public GenreGridAdapter.SimpleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).
-                inflate(R.layout.card_detail_album_item, parent, false);
+                inflate(R.layout.card_grid_item, parent, false);
         return new SimpleItemViewHolder(itemView);
     }
 
@@ -108,7 +110,6 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
                     public void run() {
                         Intent i = new Intent(context, DetailAlbumActivity.class);
                         i.putExtra("mediaItemCollection", items.get(position));
-                        i.putExtra("albumColor", holder.defaultAlbumColor);
                         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                                 (Activity) context,
                                 new Pair<View, String>(holder.defaultImg, "transition:imgholder1")
@@ -201,8 +202,8 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public int defaultAlbumColor;
-        public TextView title, subTitle;
+        public RegularTextView title;
+        public CoachMarkTextView subTitle;
         public ImageView defaultImg;
         public View gridBottomBg, grid_menu, mainView;
         public TableLayout artTable;
@@ -211,14 +212,13 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            mainView = itemView;
-            title = (TextView) itemView.findViewById(R.id.card_sub_grid_title);
-            subTitle = (TextView) itemView.findViewById(R.id.card_sub_grid_sub_title);
-            defaultImg = (ImageView) itemView.findViewById(R.id.card_sub_grid_default_img);
-            artTable = (TableLayout) itemView.findViewById(R.id.card_sub_grid_art_table);
-            gridBottomBg = itemView.findViewById(R.id.card_sub_grid_bottom);
-            grid_menu = itemView.findViewById(R.id.card_sub_grid_menu);
-            imgPanel = (FrameLayout) itemView.findViewById(R.id.card_sub_grid_img_panel);
+            title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
+            subTitle = (CoachMarkTextView) itemView.findViewById(R.id.card_grid_sub_title);
+            defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
+            artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
+            gridBottomBg = itemView.findViewById(R.id.card_grid_bottom);
+            grid_menu = itemView.findViewById(R.id.card_grid_menu);
+            imgPanel = (FrameLayout) itemView.findViewById(R.id.card_grid_img_panel);
         }
     }
 }

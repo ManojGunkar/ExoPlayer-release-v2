@@ -2,52 +2,68 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?android:attr/selectableItemBackground"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:padding="2dp">
-
-    <ImageView
-        android:id="@+id/song_item_img"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:scaleType="centerCrop"
-        android:layout_weight="0" />
-
+    android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_height="@dimen/two_hunderd_twenty_px"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:weightSum="100"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/song_item_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textColor="#000"
-            android:textSize="16sp" />
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_weight="21.80">
+            <ImageView
+                android:id="@+id/song_item_img"
+                android:layout_width="@dimen/one_eighty_six_pt"
+                android:layout_height="@dimen/one_eighty_six_pt"
+                android:scaleType="centerCrop"/>
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/song_item_artist"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textColor="#989898"
-            android:textSize="14sp" />
+            android:layout_weight="67.2"
+            android:orientation="vertical">
+
+            <com.globaldelight.boom.ui.widgets.RegularTextView
+                android:id="@+id/song_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/seventy_two_pt_txt" />
+
+            <com.globaldelight.boom.ui.widgets.CoachMarkTextView
+                android:id="@+id/song_item_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textColor="#59595c"
+                android:textSize="@dimen/fifty_six_pt_txt" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="11">
+            <ImageView
+                android:id="@+id/song_item_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/unbounded_ripple"
+                android:foregroundTint="#434343"
+                android:src="@drawable/over_flow_menu"
+                android:theme="@style/Theme.AppCompat.Light" />
+        </LinearLayout>
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/song_item_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
-        android:layout_weight="0"
-        android:background="@drawable/unbounded_ripple"
-        android:foregroundTint="#434343"
-        android:padding="5dp"
-        android:src="@drawable/over_flow_menu"
-        android:theme="@style/Theme.AppCompat.Light" />
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#313232"/>
 </LinearLayout>

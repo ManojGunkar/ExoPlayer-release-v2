@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="appBackground">#FAFAFA</color>
+    <color name="appBackground">#020308</color>
     <color name="color400">#78909C</color>
     <color name="album_grid_name_default">#000000</color>
     <color name="album_grid_artist_default">#9a9a9a</color>

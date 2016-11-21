@@ -80,7 +80,7 @@
     <LinearLayout
         android:id="@+id/card_sub_grid_bottom"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/album_grid_text_panel_height"
+        android:layout_height="@dimen/two_zero_two_px"
         android:background="#e5e5e5"
         android:weightSum="1"
         android:gravity="center_vertical"

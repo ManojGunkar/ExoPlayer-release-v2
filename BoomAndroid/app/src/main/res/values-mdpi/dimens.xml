@@ -22,7 +22,7 @@
 
     <dimen name="toolbar_titile">19sp</dimen>
     <dimen name="effect_switch_txt">17sp</dimen>
-    <dimen name="speaker_info">12sp</dimen>
+    <dimen name="sixty_pt_txt">12sp</dimen>
     <dimen name="fullbass_txt">14sp</dimen>
     <dimen name="eq_txt">10sp</dimen>
 
