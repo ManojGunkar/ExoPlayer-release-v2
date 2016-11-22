@@ -258,7 +258,11 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     public void onAudioFocusChange(int focusChange) {
         if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
             audioManager.abandonAudioFocus(this);
-            this.onPlayingItemClicked();
+            mPlayer.pause();
+            Intent intent = new Intent();
+            intent.setAction(PlayerService.ACTION_PLAYING_ITEM_CLICKED);
+            intent.putExtra("play_pause", false );
+            context.sendBroadcast(intent);
         }
         //TODO: Handle transient changes / ducking
     }

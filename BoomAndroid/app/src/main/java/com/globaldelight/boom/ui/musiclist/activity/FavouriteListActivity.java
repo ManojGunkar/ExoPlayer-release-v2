@@ -27,6 +27,8 @@ import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 /**
@@ -75,15 +77,15 @@ public class FavouriteListActivity extends AppCompatActivity {
             public void run() {
                 final LinkedList<? extends IMediaItemBase> favList = MediaController.getInstance(FavouriteListActivity.this).getFavouriteListItems();
                 final GridLayoutManager gridLayoutManager =
-                        new GridLayoutManager(FavouriteListActivity.this, 2);
+                        new GridLayoutManager(FavouriteListActivity.this, 1);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                         gridLayoutManager.scrollToPosition(0);
                         recyclerView.setLayoutManager(gridLayoutManager);
-                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(FavouriteListActivity.this, Utils.getWindowWidth(FavouriteListActivity.this)));
-                        recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(FavouriteListActivity.this, 0)));
+//                        Comparator cmp = Collections.reverseOrder();
+//                        Collections.sort(favList, cmp);
                         adapter = new FavouriteListAdapter(FavouriteListActivity.this, recyclerView, favList, permissionChecker);
                         recyclerView.setAdapter(adapter);
                         recyclerView.setHasFixedSize(true);

@@ -212,7 +212,7 @@ public class UpNextList {
     }
 
     public void addToPlay(QueueType queueType, int position){
-        if(mCurrentList.size() == 1){
+        if(mCurrentList.size() == 1 && queueType != QueueType.Playing){
             managePlayedItem(true);
         }
 

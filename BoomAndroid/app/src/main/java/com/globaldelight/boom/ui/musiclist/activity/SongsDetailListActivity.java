@@ -237,43 +237,43 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         switch (count){
             case 1:
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
                 break;
             case 2:
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
                 Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
                 Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
                 break;
             case 3:
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
                 Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
                 Picasso.with(this).load(new File(Urls.get(2))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Picasso.with(this).load(new File(Urls.get(2))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
                 break;
             case 4:
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
                 Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
                 Picasso.with(this).load(new File(Urls.get(2))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
                 Picasso.with(this).load(new File(Urls.get(3))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
                 break;
         }
     }
@@ -291,7 +291,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        MenuInflater menuInflater = getMenuInflater();
+        /*MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.search_menu, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -299,16 +299,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-//        ImageView v = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_voice_btn);
-//        searchView.setBackground(getResources().getDrawable(R.drawable.card_background));
-//        getMenuInflater().inflate(R.menu.main_menu, menu);
-//
-//        MenuItem menuItem = menu.findItem(R.id.action_search);
-//
-//        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-//        setupSearchView(searchView);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));*/
         return true;
 
     }

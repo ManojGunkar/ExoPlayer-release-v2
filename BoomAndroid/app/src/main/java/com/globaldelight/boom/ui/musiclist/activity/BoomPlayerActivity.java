@@ -490,14 +490,18 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 if(isUser){
                     MediaController.getInstance(this).removeItemToList(false, App.getPlayerEventHandler().getPlayingItem().getItemId());
                     Snackbar.make(mPlayerRootView, "Playing Song removed from favorite.", Snackbar.LENGTH_LONG).show();
+                    mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_normal));
+                }else {
+                    mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_selected));
                 }
-                mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_normal));
             } else {
                 if(isUser){
                     MediaController.getInstance(this).addSongsToList(false, App.getPlayerEventHandler().getPlayingItem());
                     Snackbar.make(mPlayerRootView, "Playing Song added as favorite.", Snackbar.LENGTH_LONG).show();
+                    mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_selected));
+                }else{
+                    mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_normal));
                 }
-                mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_selected));
             }
         }
     }

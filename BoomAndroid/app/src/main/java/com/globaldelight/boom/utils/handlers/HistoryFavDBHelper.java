@@ -165,7 +165,7 @@ public class HistoryFavDBHelper extends SQLiteOpenHelper {
         if(isHistory){
             query = "SELECT  * FROM " + TABLE_HISTORY;
         }else{
-            query = "SELECT  * FROM " + TABLE_FAVORITE;
+            query = "SELECT  * FROM " + TABLE_FAVORITE + " ORDER BY "+SONG_KEY_ID + " DESC";
         }
         Cursor cursor = db.rawQuery(query, null);
 
