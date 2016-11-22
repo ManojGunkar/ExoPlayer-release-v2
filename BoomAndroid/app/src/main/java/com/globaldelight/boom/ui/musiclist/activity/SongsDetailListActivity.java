@@ -40,7 +40,6 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.adapter.ItemSongListAdapter;
-import com.globaldelight.boom.ui.musiclist.adapter.PlayingQueueListAdapter;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
@@ -373,7 +372,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
             }
 
 
-            @Override
+           /* @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 int position = viewHolder.getAdapterPosition();
 
@@ -387,7 +386,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
                     return 0;
                 }
                 return super.getSwipeDirs(recyclerView, viewHolder);
-            }/**/
+            }*//**/
 
            /* @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
