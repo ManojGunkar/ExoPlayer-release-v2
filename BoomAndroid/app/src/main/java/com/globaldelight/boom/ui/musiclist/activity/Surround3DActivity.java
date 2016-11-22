@@ -89,7 +89,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus)
             showCoachMark();
-        //Log.d("activated","focus change");
+
     }
 
     public void showCoachMark() {
@@ -101,11 +101,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void initViews(){
-
         musicReceiver = new MusicReceiver(this);
-
         toolbar = (Toolbar)findViewById(R.id.effect_toolbar);
-
         mToolbarTitle = (RegularTextView) findViewById(R.id.toolbr_title);
         mToolbarTitle.setTextColor(Color.WHITE);
         mEffectTxt = (RegularTextView) findViewById(R.id.effect_txt);
@@ -157,7 +154,6 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         //        Surround3DLinesView view = new Surround3DLinesView(this, Color.BLACK);
 //        collapsablelayout.addView(view);
         collapsablelayout.setVisibility(View.GONE);
-
 //        mEffectPowerBtn.setOnCheckedChangeListener(this);
 
         mEffectSwitchPanel.setOnClickListener(this);

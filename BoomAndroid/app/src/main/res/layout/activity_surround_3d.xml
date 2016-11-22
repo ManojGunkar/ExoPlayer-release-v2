@@ -424,7 +424,8 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/one_ten_pt">
+                android:layout_marginTop="@dimen/one_ten_pt"
+                android:background="@color/appBackground">
 
 
                 <ImageView
@@ -509,16 +510,16 @@
                     </LinearLayout>
                 </LinearLayout>
 
-
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/eq_recycler"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_below="@+id/equalizer_switch_btn"
-                    android:layout_marginTop="@dimen/one_thirty_two_pt"
-
-                    android:background="#020308"
-                    android:overScrollMode="never" />
+                    android:layout_marginTop="@dimen/one_hundred_thirty_six_pt"
+                    android:background="@color/appBackground"
+                    android:overScrollMode="never"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp" />
 
             </RelativeLayout>
 
@@ -529,7 +530,7 @@
                 android:layout_marginRight="@dimen/one_twenty_pt"
                 android:layout_marginTop="@dimen/one_fifty_four_pt"
                 android:background="#222327"
-                android:visibility="invisible" />
+                android:visibility="visible" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

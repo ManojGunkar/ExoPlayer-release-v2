@@ -11,9 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.ui.musiclist.activity.Surround3DActivity;
 import com.globaldelight.boomplayer.AudioEffect;
-import com.globaldelight.boom.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +27,13 @@ import static com.globaldelight.boomplayer.AudioEffect.equalizer.on;
 
 public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdapter.SimpleItemViewHolder> {
 
-    private Activity context;
     TypedArray eq_active_on, eq_active_off, eq_inactive_on, eq_inactive_off;
     List<String> eq_names;
     ArrayList<AudioEffect.equalizer> selection;
+    AudioEffect audioEffectPreferenceHandler;
+    private Activity context;
     private onEqualizerUpdate equalizerUpdateEvent = null;
     private Handler updateUIHandler = new Handler();
-    AudioEffect audioEffectPreferenceHandler;
 
     public EqualizerViewAdapter(Surround3DActivity surround3DActivity, List<String> eq_names, TypedArray eq_active_on,
                                 TypedArray eq_active_off, TypedArray eq_inactive_on, TypedArray eq_inactive_off) {
@@ -124,6 +124,14 @@ public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdap
         return eq_active_on.length();
     }
 
+    public void setEqualizerUpdateEvent(onEqualizerUpdate equalizerUpdateEvent) {
+        this.equalizerUpdateEvent = equalizerUpdateEvent;
+    }
+
+    public interface onEqualizerUpdate {
+        public void updateEqualizerType(int position);
+    }
+
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
         public ImageView eqImg;
         public TextView eqTxt;
@@ -134,13 +142,5 @@ public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdap
             eqImg = (ImageView) itemView.findViewById(R.id.eq_img);
             eqTxt = (TextView)  itemView.findViewById(R.id.eq_txt);
         }
-    }
-
-    public interface onEqualizerUpdate{
-        public void updateEqualizerType(int position);
-    }
-
-    public void setEqualizerUpdateEvent(onEqualizerUpdate equalizerUpdateEvent) {
-        this.equalizerUpdateEvent = equalizerUpdateEvent;
     }
 }
