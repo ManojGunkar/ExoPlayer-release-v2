@@ -238,7 +238,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                                     Utils util = new Utils(context);
                                     ((MediaItemCollection)resultItemList.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((MediaItemCollection)resultItemList.get(position)));
                                     ((MediaItemCollection)((MediaItemCollection)resultItemList.get(position)).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((MediaItemCollection)resultItemList.get(position)));
-
+//
                                     util.addToPlaylist(activity, ((IMediaItemCollection)((IMediaItemCollection)resultItemList.get(position)).getMediaElement().get(((IMediaItemCollection)resultItemList.get(position)).getCurrentIndex())).getMediaElement());
                                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                     break;
