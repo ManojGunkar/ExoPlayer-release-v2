@@ -94,7 +94,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void showCoachMark() {
         boolean mAppNewLaunch = Preferences.readBoolean(Surround3DActivity.this, Preferences.APP_NEW_LAUNCH, true);
-        if (mAppNewLaunch) {
+        if (mAppNewLaunch && !audioEffectPreferenceHandler.isAudioEffectOn()) {
             tipWindow = new TooltipWindow(Surround3DActivity.this, TooltipWindow.DRAW_BOTTOM, getResources().getString(R.string.tutorial_boom_effect_poweron));
             tipWindow.showToolTip(findViewById(R.id.effect_power_switch), TooltipWindow.DRAW_ARROW_TOP_RIGHT);
         }
