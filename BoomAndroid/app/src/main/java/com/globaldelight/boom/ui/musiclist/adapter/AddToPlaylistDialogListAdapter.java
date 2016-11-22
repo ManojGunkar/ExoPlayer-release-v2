@@ -29,15 +29,15 @@ import static android.widget.Toast.makeText;
 
 public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPlaylistDialogListAdapter.SimpleItemViewHolder> {
 
-    private ArrayList<? extends IMediaItemBase> items;
-    private IMediaItemBase song;
+    private ArrayList<? extends IMediaItemBase> playList;
+    private ArrayList<? extends IMediaItemBase> songList;
     private Context context;
     private MaterialDialog dialog;
 
-    public AddToPlaylistDialogListAdapter(Context context, ArrayList<? extends IMediaItemBase>  items, IMediaItemBase song) {
+    public AddToPlaylistDialogListAdapter(Context context, ArrayList<? extends IMediaItemBase>  playList, ArrayList<? extends IMediaItemBase> songList) {
         this.context = context;
-        this.items = items;
-        this.song = song;
+        this.playList = playList;
+        this.songList = songList;
     }
 
     @Override
@@ -50,9 +50,9 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
     @Override
     public void onBindViewHolder(final SimpleItemViewHolder holder, final int position) {
         holder.mainView.setBackgroundColor(0xffffffff);
-        holder.name.setText(items.get(position).getItemTitle());
+        holder.name.setText(playList.get(position).getItemTitle());
         holder.count.setText(context.getResources().getString(R.string.songs)
-                + " " + ((MediaItemCollection)items.get(position)).getItemCount());
+                + " " + ((MediaItemCollection) playList.get(position)).getItemCount());
         holder.menu.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,7 +65,7 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
                                 renameDialog(position);
                                 break;
                             case R.id.popup_playlist_delete:
-                                MediaController.getInstance(context).deleteBoomPlaylist(((MediaItemCollection) items.get(position)).getItemId());
+                                MediaController.getInstance(context).deleteBoomPlaylist(((MediaItemCollection) playList.get(position)).getItemId());
                                 updateNewList(MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
                                 break;
                         }
@@ -79,8 +79,8 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
         holder.mainView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                MediaController.getInstance(context).addSongToBoomPlayList(((MediaItemCollection) items.get(position)).getItemId(), song);
-                items = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB);
+                MediaController.getInstance(context).addSongToBoomPlayList(((MediaItemCollection) playList.get(position)).getItemId(), songList);
+                playList = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB);
                 notifyDataSetChanged();
                 dialog.dismiss();
                 makeText(context, R.string.added_to_playlist, LENGTH_SHORT).show();
@@ -89,16 +89,16 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
     }
 
     public void updateNewList(ArrayList<? extends IMediaItemBase> newList) {
-        items = newList;
+        playList = newList;
         notifyDataSetChanged();
     }
 
     public void playPlaylist(final int position) {
-        if (((IMediaItemCollection)items.get(position)).getItemCount() != 0)
+        if (((IMediaItemCollection) playList.get(position)).getItemCount() != 0)
             new Thread(new Runnable() {
                 public void run() {
 
-//                    App.getPlayingQueueHandler().setPlayListAndPlay(items.get(position), true);
+//                    App.getPlayingQueueHandler().setPlayListAndPlay(playList.get(position), true);
 
                 }
             }).start();
@@ -117,7 +117,7 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
                     renameDialog(position);
                 } else {
                     MediaController.getInstance(context).renameBoomPlaylist(edittext.getText().toString(),
-                            items.get(position).getItemId());
+                            playList.get(position).getItemId());
                     updateNewList(MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
                     notifyDataSetChanged();
                 }
@@ -138,11 +138,11 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return playList.size();
     }
 
     public void updateList(ArrayList<? extends IMediaItemBase> allPlaylist) {
-        this.items = allPlaylist;
+        this.playList = allPlaylist;
         notifyDataSetChanged();
     }
 

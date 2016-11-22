@@ -21,6 +21,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -53,6 +55,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     private MediaItemCollection collection;
     private PermissionChecker permissionChecker;
     private Context context;
+    private Activity activity;
     private  RecyclerView recyclerView;
     private ListDetail listDetail;
 
@@ -63,6 +66,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     public DetailAlbumGridAdapter(DetailAlbumActivity detailAlbumActivity, RecyclerView recyclerView,
                                   IMediaItemCollection collection, ListDetail listDetail, PermissionChecker permissionChecker) {
         this.context = detailAlbumActivity;
+        activity = detailAlbumActivity;
         this.recyclerView = recyclerView;
         this.collection = (MediaItemCollection) collection;
         this.permissionChecker = permissionChecker;
@@ -264,35 +268,23 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
         holder.grid_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(context, view);
-                popupMenu.inflate(R.menu.album_popup);
-
-                // Force icons to show
-                Object menuHelper;
-                Class[] argTypes;
-                try {
-                    Field fMenuHelper = PopupMenu.class.getDeclaredField("mPopup");
-                    fMenuHelper.setAccessible(true);
-                    menuHelper = fMenuHelper.get(popupMenu);
-                    argTypes = new Class[] { boolean.class };
-                    menuHelper.getClass().getDeclaredMethod("setForceShowIcon", argTypes).invoke(menuHelper, true);
-                } catch (Exception e) {
-                    // Possible exceptions are NoSuchMethodError and NoSuchFieldError
-                    //
-                    // In either case, an exception indicates something is wrong with the reflection code, or the
-                    // structure of the PopupMenu class or its dependencies has changed.
-                    //
-                    // These exceptions should never happen since we're shipping the AppCompat library in our own apk,
-                    // but in the case that they do, we simply can't force icons to display, so log the error and
-                    // show the menu normally.
-
-                    Log.w(TAG, "error forcing menu icons to show", e);
-                }
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                PopupMenu pm = new PopupMenu(context, view);
+                pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.popup_album_add_queue :
+                                if(itemView == ITEM_VIEW_SONG){
+                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                }else if (itemView == ITEM_VIEW_ALBUM) {
+                                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                                        ((IMediaItemCollection)collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                    }
+                                }
+                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(position));
+                                break;
+                            case R.id.popup_album_add_playlist:
+                                Utils util = new Utils(context);
                                 if(itemView == ITEM_VIEW_SONG){
                                     ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
                                     App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(position));
@@ -302,16 +294,17 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                                         App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(position));
                                     }
                                 }
-
+                                util.addToPlaylist(activity, ((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement());
+                                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                 break;
                         }
                         return false;
                     }
                 });
-                popupMenu.show();
+                pm.inflate(R.menu.album_popup);
+                pm.show();
             }
         });
-
     }
 
     private Size setSize(SimpleItemViewHolder holder) {

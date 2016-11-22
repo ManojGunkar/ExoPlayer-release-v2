@@ -121,12 +121,12 @@ public class Utils {
         return resUri;
     }
 
-    public void addToPlaylist(final Activity activity, final IMediaItemBase song) {
+    public void addToPlaylist(final Activity activity, final ArrayList<? extends IMediaItemBase> songList) {
 
         ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(activity).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getPlayList(context)*/;
 
         final AddToPlaylistDialogListAdapter adapter = new AddToPlaylistDialogListAdapter(context,
-                playList, song);
+                playList, songList);
         RecyclerView rv = (RecyclerView) activity.getLayoutInflater()
                 .inflate(R.layout.addtoplaylist, null);
         rv.setLayoutManager(new LinearLayoutManager(context));
@@ -141,7 +141,7 @@ public class Utils {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        newPlaylistDialog(activity, song);
+                        newPlaylistDialog(activity, songList);
 
                     }
                 })
@@ -155,7 +155,7 @@ public class Utils {
         adapter.setDialog(dialog);
     }
 
-    private void newPlaylistDialog(final Activity activity, final IMediaItemBase song) {
+    private void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song) {
         new MaterialDialog.Builder(context)
                 .title(R.string.new_playlist)
                 .input(null, null, new MaterialDialog.InputCallback() {

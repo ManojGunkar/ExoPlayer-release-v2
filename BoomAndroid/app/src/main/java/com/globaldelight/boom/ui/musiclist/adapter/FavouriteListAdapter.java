@@ -126,8 +126,8 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
                                 App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(itemList.get(position));
                                 break;
                             case R.id.popup_song_add_playlist:
-                                Utils util = new Utils(context);
-                                util.addToPlaylist(((AppCompatActivity)context), itemList.get(position));
+//                                Utils util = new Utils(context);
+//                                util.addToPlaylist(((AppCompatActivity)context), itemList.get(position));
 
                                 break;
                         }

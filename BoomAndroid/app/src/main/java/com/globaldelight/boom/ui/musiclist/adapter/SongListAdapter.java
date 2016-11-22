@@ -5,11 +5,13 @@ import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -29,6 +31,7 @@ import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.activity.DeviceMusicActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.IconizedMenu;
@@ -112,16 +115,12 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
 
             }
         });
+
         holder.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-                IconizedMenu PopupMenu = new IconizedMenu(activity.getWindow().getContext(), anchorView);
-                Menu menu = PopupMenu.getMenu();
-                MenuInflater inflater = PopupMenu.getMenuInflater();
-                inflater.inflate(R.menu.song_popup, PopupMenu.getMenu());
-                PopupMenu.show();
-
-                PopupMenu.setOnMenuItemClickListener(new IconizedMenu.OnMenuItemClickListener() {
+                PopupMenu pm = new PopupMenu(context, anchorView);
+                pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
@@ -130,13 +129,27 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                                 break;
                             case R.id.popup_song_add_playlist:
                                 Utils util = new Utils(context);
-                                util.addToPlaylist(activity, itemList.get(position));
-
+                                ArrayList list = new ArrayList<IMediaItemBase>();
+                                list.add(itemList.get(position));
+                                util.addToPlaylist(activity, list);
+                                break;
+                            case R.id.popup_song_add_fav :
+                                if(MediaController.getInstance(context).isFavouriteItems(itemList.get(position).getItemId())){
+                                    MediaController.getInstance(context).removeItemToList(false, itemList.get(position).getItemId());
+                                }else{
+                                    MediaController.getInstance(context).addSongsToList(false, itemList.get(position));
+                                }
                                 break;
                         }
                         return false;
                     }
                 });
+                if(MediaController.getInstance(context).isFavouriteItems(itemList.get(position).getItemId())){
+                    pm.inflate(R.menu.song_remove_fav);
+                }else{
+                    pm.inflate(R.menu.song_add_fav);
+                }
+                pm.show();
             }
         });
     }

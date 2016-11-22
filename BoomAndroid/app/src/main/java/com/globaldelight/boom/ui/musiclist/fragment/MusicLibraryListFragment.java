@@ -130,7 +130,7 @@ public class MusicLibraryListFragment extends Fragment {
                         recyclerView.setLayoutManager(gridLayoutManager);
                         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, Utils.getWindowWidth(context)));
                         recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(context, 0)));
-                        albumsGridAdapter = new AlbumsGridAdapter(context, recyclerView, albumList, permissionChecker);
+                        albumsGridAdapter = new AlbumsGridAdapter(context, getActivity(), recyclerView, albumList, permissionChecker);
                         recyclerView.setAdapter(albumsGridAdapter);
                         recyclerView.setHasFixedSize(true);
                     }
@@ -162,7 +162,7 @@ public class MusicLibraryListFragment extends Fragment {
                         recyclerView.setLayoutManager(gridLayoutManager);
                         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, Utils.getWindowWidth(context)));
                         recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(context, 0)));
-                        artistsGridAdapter = new ArtistsGridAdapter(context, recyclerView, artistList, permissionChecker);
+                        artistsGridAdapter = new ArtistsGridAdapter(context, getActivity(), recyclerView, artistList, permissionChecker);
                         recyclerView.setAdapter(artistsGridAdapter);
                         recyclerView.setHasFixedSize(true);
                     }
@@ -193,7 +193,7 @@ public class MusicLibraryListFragment extends Fragment {
                         recyclerView.setLayoutManager(gridLayoutManager);
                         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, Utils.getWindowWidth(context)));
                         recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(context, 0)));
-                        defaultPlayListAdapter = new DefaultPlayListAdapter(context, recyclerView, playList, permissionChecker);
+                        defaultPlayListAdapter = new DefaultPlayListAdapter(context, getActivity(), recyclerView, playList, permissionChecker);
                         recyclerView.setAdapter(defaultPlayListAdapter);
                         recyclerView.setHasFixedSize(true);
                     }
@@ -225,7 +225,7 @@ public class MusicLibraryListFragment extends Fragment {
                         recyclerView.setLayoutManager(gridLayoutManager);
                         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, Utils.getWindowWidth(context)));
                         recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(context, 0)));
-                        genreGridAdapter = new GenreGridAdapter(context, recyclerView, genreList, permissionChecker);
+                        genreGridAdapter = new GenreGridAdapter(context, getActivity(), recyclerView, genreList, permissionChecker);
                         recyclerView.setAdapter(genreGridAdapter);
                         recyclerView.setHasFixedSize(true);
                     }

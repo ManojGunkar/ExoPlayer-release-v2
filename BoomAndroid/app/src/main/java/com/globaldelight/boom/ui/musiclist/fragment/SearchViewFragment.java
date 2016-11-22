@@ -54,7 +54,7 @@ public class SearchViewFragment extends Fragment {
             }
         });
         recyclerView.setLayoutManager(manager);
-        adapter = new SearchListAdapter(context, searchRes, recyclerView);
+        adapter = new SearchListAdapter(context, getActivity(), searchRes, recyclerView);
         recyclerView.addItemDecoration(new SearchListSpacesItemDecoration(2, adapter));
         recyclerView.setAdapter(adapter);
         recyclerView.setVisibility(View.VISIBLE);

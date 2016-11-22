@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/popup_album_add_queue"
+        android:id="@+id/popup_song_add_queue"
         android:icon="@drawable/ic_menu_selected"
         android:title="Add to Up Next"
         android:showAsAction="ifRoom" />
     <item
-        android:id="@+id/popup_album_add_playlist"
+        android:id="@+id/popup_song_add_playlist"
         android:icon="@drawable/ic_menu_selected"
         android:title="Add to Boom Playlist"
+        android:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/popup_song_add_fav"
+        android:icon="@drawable/ic_menu_selected"
+        android:title="Add to Boom Favourites"
         android:showAsAction="ifRoom" />
 </menu>

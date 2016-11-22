@@ -187,7 +187,6 @@
                         android:id="@+id/player_prev_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
                         android:src="@drawable/ic_boom_previous"/>
                 </LinearLayout>
 
@@ -200,7 +199,6 @@
                         android:id="@+id/player_next_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
                         android:src="@drawable/ic_boom_next"/>
                 </LinearLayout>
 

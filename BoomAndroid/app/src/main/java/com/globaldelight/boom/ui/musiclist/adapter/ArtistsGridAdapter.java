@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -51,11 +52,13 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
     ArrayList<MediaItemCollection> itemList;
     private PermissionChecker permissionChecker;
     private Context context;
+    private Activity activity;
     private  RecyclerView recyclerView;
 
-    public ArtistsGridAdapter(Context context, RecyclerView recyclerView,
+    public ArtistsGridAdapter(Context context, FragmentActivity activity, RecyclerView recyclerView,
                               ArrayList<? extends IMediaItemBase> itemList, PermissionChecker permissionChecker) {
         this.context = context;
+        this.activity = activity;
         this.recyclerView = recyclerView;
         this.itemList = (ArrayList<MediaItemCollection>) itemList;
         this.permissionChecker = permissionChecker;
@@ -118,31 +121,8 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
         holder.grid_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-                PopupMenu popupMenu = new PopupMenu(context, anchorView);
-                popupMenu.inflate(R.menu.album_popup);
-
-                // Force icons to show
-                Object menuHelper;
-                Class[] argTypes;
-                try {
-                    Field fMenuHelper = PopupMenu.class.getDeclaredField("mPopup");
-                    fMenuHelper.setAccessible(true);
-                    menuHelper = fMenuHelper.get(popupMenu);
-                    argTypes = new Class[] { boolean.class };
-                    menuHelper.getClass().getDeclaredMethod("setForceShowIcon", argTypes).invoke(menuHelper, true);
-                } catch (Exception e) {
-                    // Possible exceptions are NoSuchMethodError and NoSuchFieldError
-                    //
-                    // In either case, an exception indicates something is wrong with the reflection code, or the
-                    // structure of the PopupMenu class or its dependencies has changed.
-                    //
-                    // These exceptions should never happen since we're shipping the AppCompat library in our own apk,
-                    // but in the case that they do, we simply can't force icons to display, so log the error and
-                    // show the menu normally.
-
-                    Log.w(TAG, "error forcing menu icons to show", e);
-                }
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                PopupMenu pm = new PopupMenu(context, anchorView);
+                pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
@@ -154,13 +134,20 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
                                     App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(((IMediaItemCollection)itemList.get(position).getMediaElement().get(itemList.get(position).getCurrentIndex())));
                                 }
                                 break;
-                            default:
-                                Toast.makeText((AlbumActivity)context, "Under Development...!", Toast.LENGTH_LONG).show();
+                            case R.id.popup_album_add_playlist:
+                                Utils util = new Utils(context);
+                                itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
+                                ((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
+
+                                util.addToPlaylist(activity, ((IMediaItemCollection)itemList.get(position).getMediaElement().get(itemList.get(position).getCurrentIndex())).getMediaElement());
+                                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                break;
                         }
                         return false;
                     }
                 });
-                popupMenu.show();
+                pm.inflate(R.menu.album_popup);
+                pm.show();
             }
         });
 

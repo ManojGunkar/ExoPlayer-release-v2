@@ -1,6 +1,7 @@
 package com.globaldelight.boom.ui.musiclist.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,8 +17,10 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
@@ -119,13 +122,9 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
         holder.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-                IconizedMenu PopupMenu = new IconizedMenu(context, anchorView);
-                Menu menu = PopupMenu.getMenu();
-                MenuInflater inflater = PopupMenu.getMenuInflater();
-                inflater.inflate(R.menu.song_popup, PopupMenu.getMenu());
-                PopupMenu.show();
 
-                PopupMenu.setOnMenuItemClickListener(new IconizedMenu.OnMenuItemClickListener() {
+                PopupMenu pm = new PopupMenu(context, anchorView);
+                pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
@@ -138,21 +137,32 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                                     }
                                 }
                                 break;
-                            case R.id.popup_song_add_playlist :
+                            case R.id.popup_song_add_playlist:
                                 Utils util = new Utils(context);
                                 if (item.getItemType() == ItemType.ALBUM) {
-                                    util.addToPlaylist((AlbumActivity)context, item.getMediaElement().get(position));
+                                    util.addToPlaylist((AlbumActivity)context, (ArrayList<? extends IMediaItemBase>) item.getMediaElement().get(position));
                                 }else{
-                                    util.addToPlaylist((AlbumActivity)context, ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                    util.addToPlaylist((AlbumActivity)context, (ArrayList<? extends IMediaItemBase>) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
                                 }
 
                                 break;
                             case R.id.popup_song_add_fav :
-                                Toast.makeText((AlbumActivity)context, "Under Development...!", Toast.LENGTH_LONG).show();
+                                if(MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())){
+                                    MediaController.getInstance(context).removeItemToList(false, item.getMediaElement().get(position).getItemId());
+                                }else{
+                                    MediaController.getInstance(context).addSongsToList(false, item.getMediaElement().get(position));
+                                }
+                                break;
                         }
                         return false;
                     }
                 });
+                if(MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())){
+                    pm.inflate(R.menu.song_remove_fav);
+                }else{
+                    pm.inflate(R.menu.song_add_fav);
+                }
+                pm.show();
             }
         });
     }

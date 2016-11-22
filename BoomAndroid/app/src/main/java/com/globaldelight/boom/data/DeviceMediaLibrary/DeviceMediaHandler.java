@@ -179,8 +179,8 @@ public class DeviceMediaHandler {
         App.getBoomPlayListHelper().deletePlaylist(itemId);
     }
 
-    public void addSongToBoomPlayList(long itemId, IMediaItemBase iMediaItemBase) {
-        App.getBoomPlayListHelper().addSong(itemId, iMediaItemBase);
+    public void addSongToBoomPlayList(long itemId, ArrayList<? extends IMediaItemBase> iMediaItemBase) {
+        App.getBoomPlayListHelper().addSongs(iMediaItemBase, itemId);
     }
 
     public void renameBoomPlaylist(String input, long itemId) {

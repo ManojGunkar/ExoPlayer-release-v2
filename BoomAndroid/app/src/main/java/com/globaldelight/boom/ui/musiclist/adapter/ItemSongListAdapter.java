@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -30,7 +31,9 @@ import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
+import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.activity.DeviceMusicActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
@@ -185,13 +188,8 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         holder.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-                IconizedMenu PopupMenu = new IconizedMenu(activity.getWindow().getContext(), anchorView);
-                Menu menu = PopupMenu.getMenu();
-                MenuInflater inflater = PopupMenu.getMenuInflater();
-                inflater.inflate(R.menu.song_popup, PopupMenu.getMenu());
-                PopupMenu.show();
-
-                PopupMenu.setOnMenuItemClickListener(new IconizedMenu.OnMenuItemClickListener() {
+                PopupMenu pm = new PopupMenu(activity, anchorView);
+                pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
@@ -204,21 +202,32 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                                     }
                                 }
                                 break;
-                            case R.id.popup_song_add_playlist :
+                            case R.id.popup_song_add_playlist:
                                 if (collection.getItemType() == BOOM_PLAYLIST) {
 
                                 }else {
                                     Utils util = new Utils(activity);
-                                    util.addToPlaylist(activity, collection.getMediaElement().get(position));
+                                    util.addToPlaylist(activity, (ArrayList<? extends IMediaItemBase>) collection.getMediaElement().get(position));
                                 }
                                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                 break;
                             case R.id.popup_song_add_fav :
-                                Toast.makeText(activity, "Under Development...!", Toast.LENGTH_LONG).show();
+                                if(MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())){
+                                    MediaController.getInstance(activity).removeItemToList(false, collection.getMediaElement().get(position).getItemId());
+                                }else{
+                                    MediaController.getInstance(activity).addSongsToList(false, collection.getMediaElement().get(position));
+                                }
+                                break;
                         }
                         return false;
                     }
                 });
+                if(MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())){
+                    pm.inflate(R.menu.song_remove_fav);
+                }else{
+                    pm.inflate(R.menu.song_add_fav);
+                }
+                pm.show();
             }
         });
     }

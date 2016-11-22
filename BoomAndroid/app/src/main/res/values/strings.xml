@@ -2,7 +2,7 @@
     <string name="app_name">Boom</string>
     <string name="all_songs">All Songs</string>
     <string name="songs">Songs</string>
-    <string name="song">Song</string>
+    <string name="songList">Song</string>
     <string name="albums">Albums</string>
     <string name="album">Album</string>
     <string name="artists">Artists</string>
@@ -61,7 +61,7 @@
     <string name="description_shake">Please choose the action you\'d like triggered when you shake your device.</string>
     <string name="shake_action_none">None</string>
     <string name="shake_action_next">Play Next Song</string>
-    <string name="shake_action_playorpause">Play or Pause the song</string>
+    <string name="shake_action_playorpause">Play or Pause the songList</string>
 
     <string name="title_crossfade">Set Crossfade</string>
     <string name="description_crossfade">Select the crossfade duration between tracks.</string>
@@ -80,7 +80,7 @@
     <string name="copyright">\u00a9 2016,Global Delight Technologies Pvt Ltd. All rights reserved.</string>
 
     <!-- Tutorial-->
-    <string name="tutorial_boom_effect"> Tap here to experience \n the song with Boom!</string>
+    <string name="tutorial_boom_effect"> Tap here to experience \n the songList with Boom!</string>
     <string name="tutorial_boom_effect_poweron">Tap to turn Effects ON/OFF</string>
 
     <!-- Menu-->
@@ -90,6 +90,7 @@
     <string name="search_fragment">Search</string>
     <string name="cant_play_song">Song can\'t played...!</string>
     <string name="title_favourite_list">Favourite</string>
+    <string name="song">Song</string>
 
 
 </resources>
