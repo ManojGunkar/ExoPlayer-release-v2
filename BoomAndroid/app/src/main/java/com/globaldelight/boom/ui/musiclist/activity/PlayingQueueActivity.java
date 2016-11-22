@@ -228,7 +228,7 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
             boolean initiated;
 
             private void init() {
-                background = new ColorDrawable(getResources().getColor(R.color.swipe_delete_bg));
+                background = new ColorDrawable(getResources().getColor(R.color.colorPrimary));
 
              /*  xMark = ContextCompat.getDrawable(PlayingQueueActivity.this, R.drawable.ic_clear_24dp);
                 xMark.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
@@ -360,7 +360,7 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
             boolean initiated;
 
             private void init() {
-                background = new ColorDrawable(getResources().getColor(R.color.drag_item_bg));
+                background = new ColorDrawable(getResources().getColor(R.color.colorPrimary));
                 initiated = true;
             }
 

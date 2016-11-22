@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
@@ -69,14 +68,12 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     private int headerHistoryPos, headerPlayingPos, headerManualPos,
             headerAutoPos, totalSize;
     private Context context;
-    //added by nidhin
     private Handler handler = new Handler(); // hanlder for running delayed runnables
     private boolean undoOn = true; // is undo on, you can turn it on from the toolbar menu
 
     public PlayingQueueListAdapter(Context context, UpNextList playingQueue, OnStartDragListener dragListener) {
         this.context = context;
         init(playingQueue.getHistoryList(), playingQueue.getPlayingList(), playingQueue.getManualUpNextList(), playingQueue.getAutoUpNextList());
-        //added by nidhin
         font = Typeface.createFromAsset(context.getAssets(), "fonts/TitilliumWeb-Regular.ttf");
         this.mOnStartDragListener = dragListener;
         itemsPendingRemoval = new ArrayList<>();
@@ -90,7 +87,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         this.mUpnextAutoList = upnextAuto;
 
         updateHeaderPosition();
-
     }
 
     public void updateHeaderPosition() {
@@ -159,10 +155,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
             position = position - mHistoryList.size() - mPlaying.size() - mUpnextManualList.size() - 4;
             listType = 7;
         }
-
         return new ListPosition(listType, position == -1 ? 0 : position);
-
-
     }
     @Override
     public SimpleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -298,9 +291,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     } catch (IndexOutOfBoundsException e) {
                         e.printStackTrace();
                     }
-
                 }
-
                 break;
             case ITEM_VIEW_TYPE_LIST_PLAYING:
                 itemPosition = getPosition(position);
@@ -368,7 +359,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     setOnItemClick(holder, QueueType.Auto_UpNext, itemPosition);
                     setDragHandle(holder);
                 }
-
                 break;
             default:
                 break;
@@ -418,43 +408,10 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         holder.mainView.setElevation(dpToPx(context, 2));
     }
 
-    private void setSongArt(String path, SimpleItemViewHolder holder) {
-        int size = dpToPx(context, 50);
-        if (path != null)
-            with(context).load(new File(path)).resize(size,
-                    size).centerCrop().into(holder.img);
-        else {
-            holder.img.setImageBitmap(getBitmapOfVector(context, R.drawable.default_album_art,
-                    size, size));
-        }
-
-    }
-
-    public void setImageToView(String url, final SimpleItemViewHolder holder) {
-        with(context).load(new File(url)).into(new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, LoadedFrom from) {
-                Bitmap circularBitmap = getRoundedCornerBitmap(bitmap, 100);
-                holder.img.setImageBitmap(circularBitmap);
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-            }
-        });
-    }
-
     private void setArt(SimpleItemViewHolder holder, String path, int what) {
         //For album art
         if (path != null) {
             if (isFilePathExist(path)) {
-//                new AlbumItemLoad(context, path, holder).execute();
                 setAlbumArt(path, holder, what);
             } else setDefaultView(holder, what);
         } else {
@@ -512,23 +469,16 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
                 switch (queueType) {
                     case History:
-                        LinkedList<IMediaItemBase> linkedlist = App.getPlayingQueueHandler().getUpNextList().getHistoryList();
-                        if (linkedlist != null) {
-                            while (!linkedlist.isEmpty()) {
-                                //App.getPlayingQueueHandler().getUpNextList().removeHistoryItem((linkedlist.getFirst()));
-                                // linkedlist.removeFirst();
-                            }
+                        if (App.getPlayingQueueHandler().getUpNextList().getHistoryList().size() > 0) {
+                            App.getPlayingQueueHandler().getUpNextList().clearHistory();
                             updateList(App.getPlayingQueueHandler().getUpNextList());
                         }
                         break;
 
                     case Manual_UpNext:
                         if (itemsPendingRemoval.size() == 0) {//block clear when single item delete on wait
-                            LinkedList<IMediaItemBase> linkedlistManual = App.getPlayingQueueHandler().getUpNextList().getManualUpNextList();
-                            if (linkedlistManual != null) {
-                                while (!linkedlistManual.isEmpty()) {
-                                    linkedlistManual.removeFirst();
-                                }
+                            if (App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0) {
+                                App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().clear();
                                 updateList(App.getPlayingQueueHandler().getUpNextList());
                             }
                         } else {
@@ -546,12 +496,8 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                         break;
                     case Auto_UpNext:
                         if (itemsPendingRemoval.size() == 0) {//block clear when single item delete on wait
-
-                            LinkedList<IMediaItemBase> linkedlistAuto = App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList();
-                            if (linkedlistAuto != null) {
-                                while (!linkedlistAuto.isEmpty()) {
-                                    linkedlistAuto.removeFirst();
-                                }
+                            if (App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
+                                App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().clear();
                                 updateList(App.getPlayingQueueHandler().getUpNextList());
                             }
                         } else {
@@ -570,10 +516,8 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     default:
                         break;
                 }
-
             }
         });
-
     }
 
     public int getViewPosition(ListPosition listPositionData) {
@@ -602,8 +546,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         }
         return normalposition;
     }
-    //added by nidhin
-
     public LinkedList<IMediaItemBase> getListForType(int type) {
 
         switch (type) {
@@ -718,8 +660,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                 break;
 
         }
-
-
     }
 
     public boolean isPendingRemoval(int position) {
@@ -729,10 +669,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
     public boolean isUndoOn() {
         return undoOn;
-    }
-
-    public void setUndoOn(boolean undoOn) {
-        this.undoOn = undoOn;
     }
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
@@ -747,23 +683,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         public View mainView;
         public ImageView img;
 
-
-        /*
-
-            public LinkedList<IMediaItemBase> getListForType(int type) {
-
-                switch (type) {
-                   *//* case ITEM_VIEW_TYPE_LIST_PLAYING:
-                return mPlayingList;*//*
-            case ITEM_VIEW_TYPE_LIST_HISTORY:
-                return mHistoryList;
-            case ITEM_VIEW_TYPE_LIST_MANUAL:
-                return mUpnextManualList;
-            case ITEM_VIEW_TYPE_LIST_AUTO:
-                return mUpnextAutoList;
-        }
-        return null;
-    }*/
         public ImageView imgHandle;
         // public ImageView imgMenu;
         public Button undoButton;
@@ -784,245 +703,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
             name = (RegularTextView) itemView.findViewById(R.id.queue_item_name);
             // menu = itemView.findViewById(R.id.queue_item_menu);
             artistName = (RegularTextView) itemView.findViewById(R.id.queue_item_artist);
-            //itemView.setOnCreateContextMenuListener(this);
-
         }
-
-        public void setOnClearBottonClick(final SimpleItemViewHolder holder, final QueueType queueType, final int itemPosition) {
-            holder.buttonClrear.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    switch (queueType) {
-                        case History:
-                            LinkedList<IMediaItemBase> linkedlist = App.getPlayingQueueHandler().getUpNextList().getHistoryList();
-                            if (linkedlist != null) {
-                                //while (!linkedlist.isEmpty()) {
-                                //App.getPlayingQueueHandler().getUpNextList().removeHistoryItem((linkedlist.getFirst()));
-                                // linkedlist.removeFirst();
-                                // }
-                                // updateList(App.getPlayingQueueHandler().getPlayingQueue().getPlayingQueue());
-                            }
-                            break;
-                        case Playing:
-                            break;
-                        case Manual_UpNext:
-                            if (itemsPendingRemoval.size() == 0) {//block clear when single item delete on wait
-                                LinkedList<IMediaItemBase> linkedlistManual = App.getPlayingQueueHandler().getUpNextList().getManualUpNextList();
-                                if (linkedlistManual != null) {
-                                    while (!linkedlistManual.isEmpty()) {
-                                        linkedlistManual.removeFirst();
-                                    }
-                                    updateList(App.getPlayingQueueHandler().getUpNextList());
-                                }
-                            } else {
-                                holder.buttonClrear.setTextColor(Color.RED);
-                                final Handler handler = new Handler();
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        holder.buttonClrear.setTextColor(context.getResources().getColor(R.color.white));
-                                    }
-                                }, 1000);
-
-                            }
-                            break;
-                        case Auto_UpNext:
-                            if (itemsPendingRemoval.size() == 0) {//block clear when single item delete on wait
-
-                                LinkedList<IMediaItemBase> linkedlistAuto = App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList();
-                                if (linkedlistAuto != null) {
-                                    while (!linkedlistAuto.isEmpty()) {
-                                        linkedlistAuto.removeFirst();
-                                    }
-                                    updateList(App.getPlayingQueueHandler().getUpNextList());
-                                }
-                            } else {
-                                holder.buttonClrear.setTextColor(Color.RED);
-                                final Handler handler = new Handler();
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        holder.buttonClrear.setTextColor(context.getResources().getColor(R.color.white));
-                                    }
-                                }, 1000);
-
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-
-                }
-            });
-
-        }
-
-        public int getViewPosition(ListPosition listPositionData) {
-            int normalposition = listPositionData.getItemPosition();
-            switch (listPositionData.getListType()) {
-                case ITEM_VIEW_TYPE_LIST_PLAYING:
-                    normalposition = headerPlayingPos + listPositionData.getItemPosition() + 1;
-                    break;
-
-
-                case ITEM_VIEW_TYPE_LIST_HISTORY:
-                    normalposition = headerHistoryPos + listPositionData.getItemPosition() + 1;
-                    break;
-
-
-                case ITEM_VIEW_TYPE_LIST_MANUAL:
-
-                    normalposition = headerManualPos + listPositionData.getItemPosition() + 1;
-
-                    break;
-
-                case ITEM_VIEW_TYPE_LIST_AUTO:
-                    normalposition = headerAutoPos + listPositionData.getItemPosition() + 1;
-                    break;
-
-            }
-            return normalposition;
-        }
-
-        public boolean pendingSwipeListContains(ListPosition
-                                                        item) {
-
-            for (ListPosition lItem : itemsPendingRemoval) {
-                if (lItem.getItemPosition() == item.getItemPosition() && lItem.getListType() == item.getListType()) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public Runnable getSwipePendingRunnable(ListPosition item) {
-
-            for (Map.Entry<ListPosition, Runnable> entry : pendingRunnables.entrySet()) {
-                if (entry.getKey().getItemPosition() == item.getItemPosition() && entry.getKey().getListType() == item.getListType()) {
-                    return entry.getValue();
-
-                }
-            }
-            //System.out.println(entry.getKey() + "/" + entry.getValue());
-            return null;
-        }
-
-        public synchronized void removeSwipePendingRunnable(ListPosition item) {
-            try {
-                for (Map.Entry<ListPosition, Runnable> entry : pendingRunnables.entrySet()) {
-                    if (entry.getKey().getItemPosition() == item.getItemPosition() && entry.getKey().getListType() == item.getListType()) {
-
-                        Log.d("removing", entry.getKey().getItemPosition() + "");
-                        pendingRunnables.remove(entry.getKey());
-                        //System.out.println(entry.getKey() + "/" + entry.getValue());
-
-                    }
-                }
-            } catch (ConcurrentModificationException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-   /* public void setUndoOn(boolean undoOn) {
-        this.undoOn = undoOn;
-    }*/
-
-        public boolean isSwipeDeleteAllowed(int postion) {
-            ListPosition objPosition = getPositionObject(postion);
-            if (itemsPendingRemoval.size() < deleteCountControl && (objPosition.getListType() == ITEM_VIEW_TYPE_LIST_MANUAL || objPosition.getListType() == ITEM_VIEW_TYPE_LIST_AUTO)) {
-                return true;
-            }
-            return false;
-        }
-
-        public void removeFromPendingList(ListPosition item) {
-            for (ListPosition lItem : itemsPendingRemoval) {
-                if (lItem.getItemPosition() == item.getItemPosition() && lItem.getListType() == item.getListType()) {
-                    // pendingRunnables.remove(lItem);
-                    // pendingRunnableRemove(item);
-                    itemsPendingRemoval.remove(lItem);
-
-                    break;
-                }
-            }
-        }
-
-        public void swipedItemPendingRemoval(int position) {
-            final ListPosition item = getPositionObject(position);
-            boolean contains = pendingSwipeListContains(item);
-            //final String item = items.get(position);
-
-
-            if (!contains && itemsPendingRemoval.size() < deleteCountControl) {
-                itemsPendingRemoval.add(item);
-                // this will redraw row in "undo" state
-                notifyItemChanged(position);
-                // let's create, store and post a runnable to remove the item
-                Runnable pendingRemovalRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        // remove(items.indexOf(item));
-                        removeSwipedItem(item);
-                    }
-                };
-                handler.postDelayed(pendingRemovalRunnable, PENDING_REMOVAL_TIMEOUT);
-                pendingRunnables.put(item, pendingRemovalRunnable);
-            }
-        }
-
-        public void removeSwipedItem(ListPosition item) {
-
-            int type = item.getListType();
-
-            if (pendingSwipeListContains(item)) {
-                removeFromPendingList(item);
-            }
-
-            int normalposition = getViewPosition(item);
-            switch (type) {
-                case ITEM_VIEW_TYPE_LIST_PLAYING:
-                    break;
-
-                case ITEM_VIEW_TYPE_LIST_HISTORY:
-                    break;
-
-                case ITEM_VIEW_TYPE_LIST_MANUAL:
-                    mUpnextManualList.remove(item.getItemPosition());
-
-
-                    //notifyItemRemoved(normalposition);
-                    // headerAutoPos=headerAutoPos-1;
-                    updateHeaderPosition();
-                    notifyDataSetChanged();
-
-
-                    break;
-
-                case ITEM_VIEW_TYPE_LIST_AUTO:
-                    mUpnextAutoList.remove(item.getItemPosition());
-                    //notifyItemRemoved(normalposition);
-
-                    updateHeaderPosition();
-                    notifyDataSetChanged();
-                    break;
-
-            }
-
-
-        }
-
-        public boolean isPendingRemoval(int position) {
-            // String item = items.get(position);
-            ListPosition item = getPositionObject(position);
-            return itemsPendingRemoval.contains(item);
-        }
-
-        public boolean isUndoOn() {
-            return undoOn;
-        }
-
     }
 
     public class ListPosition {

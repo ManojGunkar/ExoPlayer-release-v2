@@ -120,6 +120,11 @@ public class UpNextList {
         return mHistoryList.size()+mUpNextList.size()+mAutoNextList.size();
     }
 
+    public void clearHistory() {
+        MediaController.getInstance(context).clearList(true);
+        getItemList(QueueType.History);
+    }
+
     public enum REPEAT{
         one,
         all,

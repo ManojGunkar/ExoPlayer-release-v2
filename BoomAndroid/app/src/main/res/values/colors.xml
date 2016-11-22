@@ -21,9 +21,8 @@
     <color name="cancel_timer_button_solid_color">#0339ae</color>
     <color name="play_que_header_bg">#061019</color>
     <color name="play_que_decs_txt">#59595C</color>
-    <color name="swipe_delete_bg">#ae0327</color>
     <color name="swipe_delete_undo_btn">#fff084</color>
-    <color name="drag_item_bg">#020308</color>
+    <!--<color name="drag_item_bg">#020308</color>-->
     <color name="transparent">#80FFFFFF</color>
 
 
