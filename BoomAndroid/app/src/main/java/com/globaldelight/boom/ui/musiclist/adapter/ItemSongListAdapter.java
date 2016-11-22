@@ -365,5 +365,4 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         }
     }
 
-
 }

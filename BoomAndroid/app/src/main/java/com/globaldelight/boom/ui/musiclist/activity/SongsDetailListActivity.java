@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -346,20 +344,12 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
     private void setUpItemTouchHelper() {
 
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN
-                , ItemTouchHelper.LEFT) {
-
-            // we want to cache these and not allocate anything repeatedly in the onChildDraw method
-            Drawable background;
-            boolean initiated;
-
-            private void init() {
-                background = new ColorDrawable(getResources().getColor(R.color.colorPrimary));
+                , 0) {
 
 
-                initiated = true;
-            }
 
-            // not important, we don't want drag & drop
+
+
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
 
@@ -372,73 +362,22 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
             }
 
 
-           /* @Override
-            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                int position = viewHolder.getAdapterPosition();
-
-
-                PlayingQueueListAdapter testAdapter = (PlayingQueueListAdapter) recyclerView.getAdapter();
-                if (!testAdapter.isSwipeDeleteAllowed(position)) {
-                    return 0;
-                }
-
-                if (testAdapter.isUndoOn() && testAdapter.isPendingRemoval(position)) {
-                    return 0;
-                }
-                return super.getSwipeDirs(recyclerView, viewHolder);
-            }*//**/
-
-           /* @Override
+            @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                int swipedPosition = viewHolder.getAdapterPosition();
-                PlayingQueueListAdapter adapter = (PlayingQueueListAdapter) rv.getAdapter();
-                boolean undoOn = adapter.isUndoOn();
-                if (undoOn) {
-                    adapter.swipedItemPendingRemoval(swipedPosition);
-                } else {
-                    adapter.removeSwipedItem(adapter.getPositionObject(swipedPosition));
-                }
-            }*/
+
+
+            }
 
             @Override
             public boolean isLongPressDragEnabled() {
                 return false;
             }
 
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-            }
-
-           /* @Override
-            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
 
 
-
-
-                View itemView = viewHolder.itemView;
-
-                // not sure why, but this method get's called for viewholder that are already swiped away
-                if (viewHolder.getAdapterPosition() == -1) {
-                    // not interested in those
-                    return;
-                }
-
-                if (!initiated) {
-                    init();
-                }
-
-                // draw red background
-                background.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
-                background.draw(c);
-
-
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-            }*/
 
 
         };
-        //  ItemTouchHelper mItemTouchHelper;
         mItemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         mItemTouchHelper.attachToRecyclerView(rv);
     }
