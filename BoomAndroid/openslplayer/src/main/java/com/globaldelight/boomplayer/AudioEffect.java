@@ -24,6 +24,8 @@ public class AudioEffect {
 
     private static int EQUALIZER_POSITION = 0;
 
+    private static String HEAD_PHONE_TYPE = "audio_head_phone_type";
+
     private static String AUDIO_EFFECT_POWER = "audio_effect_power";
     private static String THREE_D_SURROUND_POWER = "3d_surround_power";
     private static String INTENSITY_POWER = "intensity_power";
@@ -44,6 +46,37 @@ public class AudioEffect {
     private static String SPEAKER_POWER = "speaker_power";
 
     private static String FULL_BASS = "full_bass";
+
+    public int getHeadPhoneType() {
+        return shp.getInt(HEAD_PHONE_TYPE, headphone.OVER_EAR.ordinal());
+    }
+
+    public enum headphone {
+        OVER_EAR,
+        ON_EAR,
+        IN_EAR,
+        IN_CANAL;
+
+        private static final Map<Integer, headphone> lookup = new HashMap<Integer, headphone>();
+
+        static{
+            int ordinal = 0;
+            for (headphone suit : EnumSet.allOf(headphone.class)) {
+                lookup.put(ordinal, suit);
+                ordinal+= 1;
+            }
+        }
+
+        public static headphone fromOrdinal(int ordinal) {
+            return lookup.get(ordinal);
+        }
+    }
+
+
+    public void setHeadPhoneType(headphone type){
+        editor.putInt(HEAD_PHONE_TYPE, type.ordinal());
+        editor.commit();
+    }
 
     public enum equalizer{
         on,

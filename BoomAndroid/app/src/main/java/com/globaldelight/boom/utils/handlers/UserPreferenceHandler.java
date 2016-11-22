@@ -14,6 +14,11 @@ public class UserPreferenceHandler {
     private static final String REPEAT_NONE = "repeat_none";
     private static final String SHUFFLE = "shuffle";
     private static final String SHUFFLE_NONE = "shuffle_none";
+
+    private static final String ALBUM_SORTED = "album_sorted";
+    public static final int ALBUM_SORTED_BY_ARTIST = 0;
+    public static final int ALBUM_SORTED_BY_TITLE = 1;
+
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
 
@@ -89,5 +94,13 @@ public class UserPreferenceHandler {
         }else{
             return UpNextList.SHUFFLE.none;
         }
+    }
+
+    public void setAlbumSorted(int type){
+        shp.edit().putInt(ALBUM_SORTED, type).apply();
+    }
+
+    public int getSortedByAlbum() {
+        return shp.getInt(ALBUM_SORTED, ALBUM_SORTED_BY_TITLE);
     }
 }

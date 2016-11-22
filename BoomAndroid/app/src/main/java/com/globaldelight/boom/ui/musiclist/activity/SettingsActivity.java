@@ -31,6 +31,7 @@ import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
@@ -40,8 +41,10 @@ import com.globaldelight.boom.utils.HeadSetType;
 import com.globaldelight.boom.utils.PlayerSettings;
 import com.globaldelight.boom.utils.SleepAlarm;
 import com.globaldelight.boom.utils.handlers.Preferences;
+import com.globaldelight.boom.utils.handlers.UserPreferenceHandler;
 import com.globaldelight.boom.utils.helpers.ISwipeRefresh;
 import com.globaldelight.boom.utils.helpers.OnScrollTouchListenerControl;
+import com.globaldelight.boomplayer.AudioEffect;
 
 import org.json.JSONException;
 
@@ -53,7 +56,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, ISwipeRefresh, RadioGroup.OnCheckedChangeListener {
 
@@ -96,7 +98,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private RecyclerView mRecyclerView;
     private HeadSetListAdapter headSetAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
+    private AudioEffect audioEffectPreferenceHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,7 +110,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         initPagerItems();
-
+        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
         // lblTitleHeadphoneSelect = (RegularTextView) findViewById(R.id.title_headphone_select);
 
         //section sort albums
@@ -188,42 +190,25 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     if (i == position) {
                         headSetTypeList.get(i).setActive(true);
 
+                        int type;
+                        if(position == 0){
+                            type = 0;
+                        }else if(position == 1){
+                            type = 3;
+                        }else{
+                            type = 1;
+                        }
+                        audioEffectPreferenceHandler.setHeadPhoneType(AudioEffect.headphone.fromOrdinal(type));
+                        try {
+                            AnalyticsHelper.trackHeadPhoneUsed(SettingsActivity.this, AudioEffect.headphone.fromOrdinal(type).toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        App.getPlayerEventHandler().setHeadPhoneType(type);
                     } else
                         headSetTypeList.get(i).setActive(false);
                 }
                 headSetAdapter.notifyDataSetChanged();
-
-                switch (position + 1) {
-
-                    case OVER_EAR:
-                        Preferences.writeString(mContext, Preferences.HEADPHONE_CONFIG_ID, PlayerSettings.HeadphoneType.OVER_EAR.toString());
-
-                        try {
-                            AnalyticsHelper.trackHeadPhoneUsed(SettingsActivity.this, PlayerSettings.HeadphoneType.OVER_EAR.toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    case IN_CANAL:
-                        Preferences.writeString(mContext, Preferences.HEADPHONE_CONFIG_ID, PlayerSettings.HeadphoneType.IN_CANAL.toString());
-                        try {
-                            AnalyticsHelper.trackHeadPhoneUsed(SettingsActivity.this, PlayerSettings.HeadphoneType.IN_CANAL.toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    case ON_EAR:
-                        Preferences.writeString(mContext, Preferences.HEADPHONE_CONFIG_ID, PlayerSettings.HeadphoneType.ON_EAR.toString());
-                        try {
-                            AnalyticsHelper.trackHeadPhoneUsed(SettingsActivity.this, PlayerSettings.HeadphoneType.ON_EAR.toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        break;
-
-
-                }
-
             }
         });
 
@@ -241,8 +226,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         rbNext = (RadioButton) findViewById(R.id.radio_next_song);
 
         rbPlay = (RadioButton) findViewById(R.id.radio_play_pause);
-
-
     }
 
     public void initPagerItems() {
@@ -380,8 +363,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             timePicker.setCurrentHour(0);
             timePicker.setCurrentMinute(1);
         }
-
-
     }
 
     public void cancelTimer() {
@@ -459,19 +440,14 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                             TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
                             TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
                     txtTimer.setText(hms);
-
                 }
-
                 public void onFinish() {
                     txtTimer.setText("00:00:00");
                 }
-
             }.start();
         } else {
             setUiTimerEditMode();
         }
-
-
     }
 
     public void setUiTimerEditMode() {
@@ -605,91 +581,31 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             case android.R.id.home:
                 super.onBackPressed();
                 break;
-//            case R.id.action_menu_done:
-                // do someing
-                //saveBoomSettings();
-                // Intent i = new Intent(SettingsActivity.this, AboutActivity.class);
-                // startActivity(i);
-//                break;
-
         }
         return true;
     }
 
-   /* public void saveBoomSettings() {
-
-
-
-
-
-        int selectedSortId = radioButtonSortGroup.getCheckedRadioButtonId();
-
-       *//* switch (selectedSortId) {
-            case R.id.radio_artist:
-                Preferences.writeInteger(mContext, Preferences.ALBUM_SORT_PREF, PlayerSettings.SORT_BY_ARTIST);
-                break;
-            case R.id.radio_album:
-                Preferences.writeInteger(mContext, Preferences.ALBUM_SORT_PREF, PlayerSettings.SORT_BY_ALBUM);
-                break;
-
-        }
-        int selectedShakeId = radioButtonShakeGroup.getCheckedRadioButtonId();
-
-        switch (selectedShakeId) {
-            case R.id.radio_none:
-                Preferences.writeInteger(mContext, Preferences.SHAKE_GESTURE_PREF, PlayerSettings.SHAKE_GESTURE_NONE);
-                break;
-            case R.id.radio_next_song:
-                Preferences.writeInteger(mContext, Preferences.SHAKE_GESTURE_PREF, PlayerSettings.SHAKE_GESTURE_NEXT);
-                break;
-            case R.id.radio_play_pause:
-                Preferences.writeInteger(mContext, Preferences.SHAKE_GESTURE_PREF, PlayerSettings.SHAKE_GESTURE_PLAY);
-                break;
-
-
-        }*//*
-        if (crossfadeSwich.isEnabled()) {
-            int crossfadeValue = slideseekbar.getProgress();
-            Preferences.writeInteger(mContext, Preferences.CROSS_FADE_VALUE, crossfadeValue);
-            Preferences.writeBoolean(mContext, Preferences.CROSS_FADE_ENABLE, true);
-        }
-        // finish();
-
-    }*/
-
     public void loadStoredSettings() {
-
-        String selectedHeadset = Preferences.readString(mContext, Preferences.HEADPHONE_CONFIG_ID, PlayerSettings.HeadphoneType.OVER_EAR.toString());
-        PlayerSettings.HeadphoneType selectedHeadType = PlayerSettings.HeadphoneType.toHeadPhone(selectedHeadset);
-        switch (selectedHeadType) {
+        int selectedHeadType = audioEffectPreferenceHandler.getHeadPhoneType();
+        switch (AudioEffect.headphone.fromOrdinal(selectedHeadType)) {
             case OVER_EAR:
                 headSetTypeList.get(0).setActive(true);
-
-
                 break;
             case IN_CANAL:
                 headSetTypeList.get(1).setActive(true);
-
-
                 break;
             case ON_EAR:
                 headSetTypeList.get(2).setActive(true);
-
                 break;
-
         }
         headSetAdapter.notifyDataSetChanged();
 
-        //Log.d("SELECTED oPTIOS", selectedHeadsetOption + "");
-        String selectedSortOption = Preferences.readString(mContext, Preferences.ALBUM_SORT_PREF, PlayerSettings.SortAlbum.SORT_BY_ALBUM.toString());
-        PlayerSettings.SortAlbum selectedAlbum = PlayerSettings.SortAlbum.toSortAlbum(selectedSortOption);
-        switch (selectedAlbum) {
-            case SORT_BY_ARTIST:
-
+        int type = App.getUserPreferenceHandler().getSortedByAlbum();
+        switch (type) {
+            case UserPreferenceHandler.ALBUM_SORTED_BY_ARTIST:
                 rbArtist.setChecked(true);
                 break;
-            case SORT_BY_ALBUM:
-
+            case UserPreferenceHandler.ALBUM_SORTED_BY_TITLE:
                 rbAlbum.setChecked(true);
                 break;
 
@@ -789,12 +705,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         if (group.getId() == R.id.radio_group_sort) {
             switch (checkedId) {
                 case R.id.radio_artist:
-                    Preferences.writeString(mContext, Preferences.ALBUM_SORT_PREF, PlayerSettings.SortAlbum.SORT_BY_ARTIST.toString()
-                    );
+                    App.getUserPreferenceHandler().setAlbumSorted(UserPreferenceHandler.ALBUM_SORTED_BY_ARTIST);
                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SORT_BY_ARTIST);
                     break;
                 case R.id.radio_album:
-                    Preferences.writeString(mContext, Preferences.ALBUM_SORT_PREF, PlayerSettings.SortAlbum.SORT_BY_ALBUM.toString());
+                    App.getUserPreferenceHandler().setAlbumSorted(UserPreferenceHandler.ALBUM_SORTED_BY_TITLE);
                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SORT_BY_ALBUM);
                     break;
 

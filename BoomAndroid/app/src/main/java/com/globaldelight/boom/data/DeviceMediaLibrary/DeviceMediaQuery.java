@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.handler.search.SearchResult;
 import com.globaldelight.boom.R;
@@ -12,6 +13,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.utils.handlers.UserPreferenceHandler;
 
 import java.util.ArrayList;
 
@@ -111,11 +113,11 @@ public class DeviceMediaQuery {
         ArrayList<MediaItemCollection> albumList = new ArrayList<>();
         System.gc();
         String orderBy;
-//        if(isOrderByAlbum){
+        if(App.getUserPreferenceHandler().getSortedByAlbum() == UserPreferenceHandler.ALBUM_SORTED_BY_TITLE){
             orderBy = MediaStore.Audio.Albums.ALBUM;
-//        }else{
-//            orderBy = MediaStore.Audio.Albums.ARTIST;
-//        }
+        }else{
+            orderBy = MediaStore.Audio.Albums.ARTIST;
+        }
         Cursor albumListCursor = context.getContentResolver().
                 query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, null, null, null, orderBy);
 

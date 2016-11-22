@@ -225,12 +225,14 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         mPlayer.stop();
     }
 
-    public void addSongToQueue() {
-    }
-
     public void updateEffect() {
         mPlayer.updatePlayerEffect();
     }
+
+    public void setHeadPhoneType(int headPhoneType) {
+        mPlayer.setHeadPhone(headPhoneType);
+    }
+
 
     public boolean resetShuffle() {
         return App.getPlayingQueueHandler().getUpNextList().resetShuffle();

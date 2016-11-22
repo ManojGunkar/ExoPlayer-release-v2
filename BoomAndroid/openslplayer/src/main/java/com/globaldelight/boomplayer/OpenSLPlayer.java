@@ -461,14 +461,6 @@ public class OpenSLPlayer implements Runnable {
 
     public static native void seekTo(long position);
 
-
-    public static final int OVER_EAR_HEADPHONE = 0;
-    public static final int ON_EAR_HEADPHONE = 1;
-    public static final int IN_EAR_HEADPHONE = 2;
-    public static final int IN_CANAL_HEADPHONE = 3;
-
-
-
     public native void setHeadPhoneType(int headPhoneType);
 
     public native int getHeadPhoneType();
@@ -531,6 +523,8 @@ public class OpenSLPlayer implements Runnable {
             setSpeakerEnable(AudioEffect.Speaker.Woofer, audioEffectPreferenceHandler.isWooferOn());
 
             setHighQualityEnable(audioEffectPreferenceHandler.isIntensityOn());
+
+            setHeadPhone(audioEffectPreferenceHandler.getHeadPhoneType());
         }
     }
 
@@ -594,5 +588,9 @@ public class OpenSLPlayer implements Runnable {
 //            if(isPlaying() || isPause())
 //                setHighQualityEnable(highQualityEnable);
 //        }catch (Exception e){}
+    }
+
+    public void setHeadPhone(int type){
+        setHeadPhoneType(type);
     }
 }

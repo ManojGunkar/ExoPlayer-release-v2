@@ -10,8 +10,6 @@ public class Preferences {
 
     public static final int MODE = Context.MODE_WORLD_WRITEABLE;
 
-    public static final String HEADPHONE_CONFIG_ID = "HEADPHONE_CONFIG_ID";
-    public static final String ALBUM_SORT_PREF = "ALBUM_SORT_PREF";
 
     public static final String SHAKE_GESTURE_PREF = "SHAKE_GESTURE_PREF";
     public static final String CROSS_FADE_ENABLE = "CROSS_FADE_ENABLE";
