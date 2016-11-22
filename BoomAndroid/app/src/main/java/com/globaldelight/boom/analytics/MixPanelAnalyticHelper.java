@@ -29,7 +29,7 @@ public class MixPanelAnalyticHelper {
 
         String android_id = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        people.identify("12345");
+        people.identify(android_id);
         people.initPushHandling(SENDER_ID);
     }
     public static void track(Context context, String eventName) {

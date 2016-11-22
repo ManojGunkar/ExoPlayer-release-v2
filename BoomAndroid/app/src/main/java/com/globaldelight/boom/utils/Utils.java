@@ -27,13 +27,16 @@ import android.view.WindowManager;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.ui.musiclist.adapter.AddToPlaylistDialogListAdapter;
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
-import com.globaldelight.boom.R;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -57,84 +60,6 @@ public class Utils {
     public static int dpToPx(Context context, int dp) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-    }
-
-    public void addToPlaylist(final Activity activity, final IMediaItemBase song) {
-
-        ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(activity).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getPlayList(context)*/;
-
-        final AddToPlaylistDialogListAdapter adapter = new AddToPlaylistDialogListAdapter(context,
-                playList, song);
-        RecyclerView rv = (RecyclerView) activity.getLayoutInflater()
-                .inflate(R.layout.addtoplaylist, null);
-        rv.setLayoutManager(new LinearLayoutManager(context));
-        rv.addItemDecoration(new SimpleDividerItemDecoration(context, 1));
-
-        rv.setAdapter(adapter);
-        MaterialDialog dialog = new MaterialDialog.Builder(context)
-                .title(R.string.add_to_playlist)
-                .customView(rv, false)
-                .positiveText(R.string.new_playlist)
-                .negativeText(R.string.close)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        newPlaylistDialog(activity, song);
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        materialDialog.dismiss();
-                    }
-                })
-                .show();
-        adapter.setDialog(dialog);
-    }
-
-    private void newPlaylistDialog(final Activity activity, final IMediaItemBase song) {
-        new MaterialDialog.Builder(context)
-                .title(R.string.new_playlist)
-                .input(null, null, new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(MaterialDialog dialog, CharSequence input) {
-                        if (!input.toString().matches("")) {
-
-                            MediaController.getInstance(context).createBoomPlaylist(input.toString());
-                            addToPlaylist(activity, song);
-                        }
-                    }
-                }).show();
-    }
-
-    private void setAsRingtone(String filepath) {
-        File ringtoneFile = new File(filepath);
-
-        ContentValues content = new ContentValues();
-        content.put(MediaStore.MediaColumns.DATA, ringtoneFile.getAbsolutePath());
-        content.put(MediaStore.MediaColumns.TITLE, ringtoneFile.getName());
-        content.put(MediaStore.MediaColumns.SIZE, 215454);
-        content.put(MediaStore.MediaColumns.MIME_TYPE, "audio/*");
-        content.put(MediaStore.Audio.Media.DURATION, 230);
-        content.put(MediaStore.Audio.Media.IS_RINGTONE, true);
-        content.put(MediaStore.Audio.Media.IS_NOTIFICATION, true);
-        content.put(MediaStore.Audio.Media.IS_ALARM, true);
-        content.put(MediaStore.Audio.Media.IS_MUSIC, true);
-
-        Uri uri = MediaStore.Audio.Media.getContentUriForPath(
-                ringtoneFile.getAbsolutePath());
-
-
-//        context.getContentResolver().delete(uri, MediaStore.MediaColumns.DATA + "=\"" + ringtoneFile.getAbsolutePath() + "\"",
-//                null);
-        Uri newUri = context.getContentResolver().insert(uri, content);
-        RingtoneManager.setActualDefaultRingtoneUri(
-                context, RingtoneManager.TYPE_RINGTONE,
-                newUri);
-    }
-
-    private Spanned getString(@StringRes int string) {
-        return Html.fromHtml(context.getResources().getString(string));
     }
 
     public static int getWindowWidth(Context context) {
@@ -165,12 +90,6 @@ public class Utils {
         return bm;
     }
 
-    /*public static int dpToPx(Context context, int dp) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
-    }*/
-
     public static int pxToDp(Context context, int px) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
@@ -179,10 +98,11 @@ public class Utils {
 
     /**
      * get uri to any resource type
+     *
      * @param context - context
-     * @param resId - resource id
-     * @throws Resources.NotFoundException if the given ID does not exist.
+     * @param resId   - resource id
      * @return - Uri to resource by given id
+     * @throws Resources.NotFoundException if the given ID does not exist.
      */
     public static final Uri getUriToResource(@NonNull Context context, @AnyRes int resId) throws Resources.NotFoundException {
         /** Return a Resources instance for your application's package. */
@@ -199,5 +119,92 @@ public class Utils {
                 + '/' + res.getResourceEntryName(resId));
         /** return uri */
         return resUri;
+    }
+
+    public void addToPlaylist(final Activity activity, final IMediaItemBase song) {
+
+        ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(activity).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getPlayList(context)*/;
+
+        final AddToPlaylistDialogListAdapter adapter = new AddToPlaylistDialogListAdapter(context,
+                playList, song);
+        RecyclerView rv = (RecyclerView) activity.getLayoutInflater()
+                .inflate(R.layout.addtoplaylist, null);
+        rv.setLayoutManager(new LinearLayoutManager(context));
+        rv.addItemDecoration(new SimpleDividerItemDecoration(context, 1));
+
+        rv.setAdapter(adapter);
+        MaterialDialog dialog = new MaterialDialog.Builder(context)
+                .title(R.string.add_to_playlist)
+                .customView(rv, false)
+                .positiveText(R.string.new_playlist)
+                .negativeText(R.string.close)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        newPlaylistDialog(activity, song);
+
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        materialDialog.dismiss();
+                    }
+                })
+                .show();
+        adapter.setDialog(dialog);
+    }
+
+    private void newPlaylistDialog(final Activity activity, final IMediaItemBase song) {
+        new MaterialDialog.Builder(context)
+                .title(R.string.new_playlist)
+                .input(null, null, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        if (!input.toString().matches("")) {
+
+                            MediaController.getInstance(context).createBoomPlaylist(input.toString());
+                            addToPlaylist(activity, song);
+                            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
+                            MixPanelAnalyticHelper.getInstance(context).getPeople().set(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST, input.toString());
+                        }
+                    }
+                }).show();
+    }
+
+    /*public static int dpToPx(Context context, int dp) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
+    }*/
+
+    private void setAsRingtone(String filepath) {
+        File ringtoneFile = new File(filepath);
+
+        ContentValues content = new ContentValues();
+        content.put(MediaStore.MediaColumns.DATA, ringtoneFile.getAbsolutePath());
+        content.put(MediaStore.MediaColumns.TITLE, ringtoneFile.getName());
+        content.put(MediaStore.MediaColumns.SIZE, 215454);
+        content.put(MediaStore.MediaColumns.MIME_TYPE, "audio/*");
+        content.put(MediaStore.Audio.Media.DURATION, 230);
+        content.put(MediaStore.Audio.Media.IS_RINGTONE, true);
+        content.put(MediaStore.Audio.Media.IS_NOTIFICATION, true);
+        content.put(MediaStore.Audio.Media.IS_ALARM, true);
+        content.put(MediaStore.Audio.Media.IS_MUSIC, true);
+
+        Uri uri = MediaStore.Audio.Media.getContentUriForPath(
+                ringtoneFile.getAbsolutePath());
+
+
+//        context.getContentResolver().delete(uri, MediaStore.MediaColumns.DATA + "=\"" + ringtoneFile.getAbsolutePath() + "\"",
+//                null);
+        Uri newUri = context.getContentResolver().insert(uri, content);
+        RingtoneManager.setActualDefaultRingtoneUri(
+                context, RingtoneManager.TYPE_RINGTONE,
+                newUri);
+    }
+
+    private Spanned getString(@StringRes int string) {
+        return Html.fromHtml(context.getResources().getString(string));
     }
 }

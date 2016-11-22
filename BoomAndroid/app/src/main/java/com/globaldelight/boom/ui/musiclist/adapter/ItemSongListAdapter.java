@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
@@ -139,7 +141,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             @Override
             public void onClick(View view) {
                 animate(holder);
-                switch (collection.getItemType()) {
+              /*  switch (collection.getItemType()) {
                     case BOOM_PLAYLIST:
 
                         break;
@@ -152,7 +154,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                     case GENRE:
 
                         break;
-                }
+                }*/
 
 
                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
@@ -193,6 +195,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                                     Utils util = new Utils(activity);
                                     util.addToPlaylist(activity, collection.getMediaElement().get(position));
                                 }
+                                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                 break;
                             case R.id.popup_song_add_fav :
                                 Toast.makeText(activity, "Under Development...!", Toast.LENGTH_LONG).show();

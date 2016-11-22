@@ -23,7 +23,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumActivity;
@@ -31,8 +33,6 @@ import com.globaldelight.boom.ui.musiclist.activity.DetailAlbumActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
-import com.globaldelight.boom.R;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 

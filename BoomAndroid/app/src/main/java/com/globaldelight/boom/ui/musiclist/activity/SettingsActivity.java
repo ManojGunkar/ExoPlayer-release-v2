@@ -43,6 +43,8 @@ import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boom.utils.helpers.ISwipeRefresh;
 import com.globaldelight.boom.utils.helpers.OnScrollTouchListenerControl;
 
+import org.json.JSONException;
+
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -50,8 +52,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
@@ -192,27 +192,33 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                         headSetTypeList.get(i).setActive(false);
                 }
                 headSetAdapter.notifyDataSetChanged();
-                Map<String, String> articleParams;
+
                 switch (position + 1) {
 
                     case OVER_EAR:
                         Preferences.writeString(mContext, Preferences.HEADPHONE_CONFIG_ID, PlayerSettings.HeadphoneType.OVER_EAR.toString());
-                        articleParams = new HashMap<>();
-                        articleParams.put(AnalyticsHelper.PARAM_SELECTED_HEADPHONE_TYPE, "over_ear");
-                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_HEADPHONE_TYPE_CHANGED, articleParams);
 
+                        try {
+                            AnalyticsHelper.trackHeadPhoneUsed(SettingsActivity.this, PlayerSettings.HeadphoneType.OVER_EAR.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case IN_CANAL:
                         Preferences.writeString(mContext, Preferences.HEADPHONE_CONFIG_ID, PlayerSettings.HeadphoneType.IN_CANAL.toString());
-                        articleParams = new HashMap<>();
-                        articleParams.put(AnalyticsHelper.PARAM_SELECTED_HEADPHONE_TYPE, "in_canal");
-                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_HEADPHONE_TYPE_CHANGED, articleParams);
+                        try {
+                            AnalyticsHelper.trackHeadPhoneUsed(SettingsActivity.this, PlayerSettings.HeadphoneType.IN_CANAL.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case ON_EAR:
                         Preferences.writeString(mContext, Preferences.HEADPHONE_CONFIG_ID, PlayerSettings.HeadphoneType.ON_EAR.toString());
-                        articleParams = new HashMap<>();
-                        articleParams.put(AnalyticsHelper.PARAM_SELECTED_HEADPHONE_TYPE, "on_ear");
-                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_HEADPHONE_TYPE_CHANGED, articleParams);
+                        try {
+                            AnalyticsHelper.trackHeadPhoneUsed(SettingsActivity.this, PlayerSettings.HeadphoneType.ON_EAR.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         break;
 
 

@@ -183,20 +183,15 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         mEffectPowerBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(audioEffectPreferenceHandler.isAudioEffectOn()){
-                    audioEffectPreferenceHandler.setEnableAudioEffect(false);
-                }else{
-                    audioEffectPreferenceHandler.setEnableAudioEffect(true);
-                }
-
+                audioEffectPreferenceHandler.setEnableAudioEffect(isChecked);
                 App.getPlayerEventHandler().updateEffect();
                 onPowerSwitchUpdate();
                 update3DSurround();
                 updateIntensity();
                 updateEqualizer();
-                if (tipWindow != null && tipWindow.isTooltipShown()) {
+               /* if (tipWindow != null && tipWindow.isTooltipShown()) {
                     tipWindow.dismissTooltip();
-                }
+                }*/
             }
         });
     }
@@ -779,6 +774,9 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     protected void onPause() {
         super.onPause();
         unregisterReceiver(musicReceiver);
+        if (tipWindow != null && tipWindow.isTooltipShown()) {
+            tipWindow.dismissTooltip();
+        }
     }
 
     @Override
