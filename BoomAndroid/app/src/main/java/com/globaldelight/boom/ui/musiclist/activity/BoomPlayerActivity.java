@@ -542,6 +542,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     protected void onPause() {
         super.onPause();
         isPlayerResume = false;
+        if (tipWindow != null) {
+            tipWindow.dismissTooltip();
+        }
     }
 
     @Override

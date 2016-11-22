@@ -1,24 +1,20 @@
 package com.globaldelight.boom.handler.PlayingQueue;
 
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
-import android.media.AudioManager;
-import android.content.ComponentName;
 
+import com.globaldelight.boom.App;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.globaldelight.boomplayer.OpenSLPlayer;
 import com.globaldelight.boomplayer.PlayerEvents;
-import com.globaldelight.boom.App;
-import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
-import com.globaldelight.boom.task.PlayerService;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 
 import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.play;
@@ -33,13 +29,47 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     private static OpenSLPlayer mPlayer;
     private static PlayerEventHandler handler;
     private Context context;
-    private Handler uiHandler;
+    PlayerEvents playerEvents = new PlayerEvents() {
+        @Override
+        public void onStop() {
+            context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
+        }
 
+        @Override
+        public void onStart(String mime, int sampleRate, int channels, long duration) {
+
+        }
+
+        @Override
+        public void onPlayUpdate(final int percent, final long currentms, final long totalms) {
+            Intent intent = new Intent();
+            intent.setAction(PlayerService.ACTION_TRACK_POSITION_UPDATE);
+            intent.putExtra("percent", percent);
+            intent.putExtra("currentms", currentms);
+            intent.putExtra("totalms", totalms);
+            context.sendBroadcast(intent);
+        }
+
+        @Override
+        public void onFinish() {
+            playNextSong(false);
+        }
+
+        @Override
+        public void onPlay() {
+            boolean i = isPlaying();
+            Log.d("hbjhbn", "jnkj" + i);
+        }
+
+        @Override
+        public void onError() {
+        }
+    };
+    private Handler uiHandler;
     private PlayerService service;
     private AudioManager  audioManager;
     private AudioManager.OnAudioFocusChangeListener focusChangeListener;
     private MediaSession session;
-
     private MediaSession.Callback mediaSessionCallback = new MediaSession.Callback(){
         @Override
         public void onPlay() {
@@ -154,41 +184,11 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         context.sendBroadcast(intent);
     }
 
-    PlayerEvents playerEvents = new PlayerEvents() {
-        @Override public void onStop() {
-            context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
-        }
-
-        @Override public void onStart(String mime, int sampleRate, int channels, long duration) {
-
-        }
-        @Override public void onPlayUpdate(final int percent, final long currentms, final long totalms) {
-            Intent intent = new Intent();
-            intent.setAction(PlayerService.ACTION_TRACK_POSITION_UPDATE);
-            intent.putExtra("percent", percent);
-            intent.putExtra("currentms", currentms);
-            intent.putExtra("totalms", totalms);
-            context.sendBroadcast(intent);
-        }
-
-        @Override
-        public void onFinish() {
-            playNextSong(false);
-        }
-
-        @Override public void onPlay() {
-            boolean i =isPlaying();
-            Log.d("hbjhbn", "jnkj"+i);
-        }
-        @Override public void onError() {
-        }
-    };
-
     public PlayState PlayPause() {
         if(isPlaying()){
             setSessionState(PlaybackState.STATE_PAUSED);
             return PlayState.pause;
-        } else /*if(mPlayer.isPause())*/{
+        } else {
             if ( requestAudioFocus() ) {
                 setSessionState(PlaybackState.STATE_PLAYING);
                 return play;
@@ -279,13 +279,6 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         return App.getPlayingQueueHandler().getUpNextList().isNext();
     }
 
-    public enum PlayState {
-        play,
-        pause,
-        stop
-    }
-
-
     void registerSession() {
         if ( session == null ) {
             session = new MediaSession(context, context.getPackageName());
@@ -304,11 +297,9 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         session.setActive(true);
     }
 
-
     void unregisterSession() {
         session.release();
     }
-
 
     void setSessionState(int state)
     {
@@ -333,7 +324,6 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
                 break;
         }
     }
-
 
     public boolean requestAudioFocus() {
         int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
@@ -366,5 +356,11 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
             mPlayer.pause();
         }
         context.sendBroadcast(intent);
+    }
+
+    public enum PlayState {
+        play,
+        pause,
+        stop
     }
 }

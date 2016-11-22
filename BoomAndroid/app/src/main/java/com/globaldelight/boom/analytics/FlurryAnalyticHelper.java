@@ -26,7 +26,7 @@ public static void init(Context context){
             .withLogEnabled(true)
             .withLogLevel(Log.DEBUG)
             .build(context, "PX85XVXZH4HVWST8Z7V3");
-    // FlurryAgent.init(this, FLURRY_APIKEY);
+
     Logger.LOGD("Initialized FLurry Agent");
 
 
@@ -40,12 +40,10 @@ public static void init(Context context){
     public static FlurryEventRecordStatus logEventWithStatus(String event, boolean status) {
 
         Map<String, String> articleParams = new HashMap<>();
-//param keys and values have to be of String type
         if (status)
             articleParams.put(AnalyticsHelper.PARAM_STATUS, AnalyticsHelper.PARAM_STATUS_ON);
         else
             articleParams.put(AnalyticsHelper.PARAM_STATUS, AnalyticsHelper.PARAM_STATUS_OFF);
-//up to 10 params can be logged with each event
 
 
         return FlurryAgent.logEvent(event, articleParams);

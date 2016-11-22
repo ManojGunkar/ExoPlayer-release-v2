@@ -530,7 +530,7 @@
                 android:layout_marginRight="@dimen/one_twenty_pt"
                 android:layout_marginTop="@dimen/one_fifty_four_pt"
                 android:background="#222327"
-                android:visibility="visible" />
+                android:visibility="invisible" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

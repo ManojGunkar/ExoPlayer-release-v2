@@ -37,7 +37,6 @@ import com.globaldelight.boom.ui.widgets.NegativeSeekBar;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.ui.widgets.ScrollEnableLayoutManager;
 import com.globaldelight.boom.ui.widgets.TooltipWindow;
-import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boomplayer.AudioEffect;
 
@@ -193,6 +192,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void onPowerSwitchUpdate(){
+
         mEffectPowerBtn.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
         if(audioEffectPreferenceHandler.isAudioEffectOn()) {
@@ -666,7 +666,6 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     @Override
                     public void run() {
                         recyclerView.setLayoutManager(layoutManager);
-                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(Surround3DActivity.this, 0));
                         recyclerView.setHasFixedSize(true);
                         recyclerView.scrollToPosition(audioEffectPreferenceHandler.getSelectedEqualizerPosition());
                         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
