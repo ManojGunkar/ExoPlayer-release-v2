@@ -14,6 +14,7 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 
+import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.play;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.stop;
 
@@ -258,14 +259,18 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
 
     @Override
     public void onAudioFocusChange(int focusChange) {
-        if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-            audioManager.abandonAudioFocus(this);
-            mPlayer.pause();
-            Intent intent = new Intent();
-            intent.setAction(PlayerService.ACTION_PLAYING_ITEM_CLICKED);
+        Intent intent = new Intent();
+        intent.setAction(PlayerService.ACTION_PLAYING_ITEM_CLICKED);
+        if (focusChange == AUDIOFOCUS_LOSS_TRANSIENT) {
             intent.putExtra("play_pause", false );
-            context.sendBroadcast(intent);
+            mPlayer.pause();
+        } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+            intent.putExtra("play_pause", true );
+            mPlayer.play();
+        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+            intent.putExtra("play_pause", false );
+            mPlayer.pause();
         }
-        //TODO: Handle transient changes / ducking
+        context.sendBroadcast(intent);
     }
 }
