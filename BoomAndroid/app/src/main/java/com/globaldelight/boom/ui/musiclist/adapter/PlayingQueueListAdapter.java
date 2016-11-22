@@ -2,10 +2,8 @@ package com.globaldelight.boom.ui.musiclist.adapter;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.view.MotionEventCompat;
@@ -17,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
@@ -26,7 +25,6 @@ import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.ui.widgets.RoundedTransformation;
 import com.globaldelight.boom.utils.OnStartDragListener;
-import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,12 +35,9 @@ import java.util.List;
 import java.util.Map;
 
 import static android.view.LayoutInflater.from;
-import static com.globaldelight.boom.utils.ImageConverter.getRoundedCornerBitmap;
 import static com.globaldelight.boom.utils.Utils.dpToPx;
-import static com.globaldelight.boom.utils.Utils.getBitmapOfVector;
 import static com.globaldelight.boom.utils.Utils.getUriToResource;
 import static com.squareup.picasso.MemoryPolicy.NO_CACHE;
-import static com.squareup.picasso.Picasso.LoadedFrom;
 import static com.squareup.picasso.Picasso.with;
 
 public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueListAdapter.SimpleItemViewHolder> {
@@ -85,7 +80,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         this.mPlaying = playing;
         this.mUpnextManualList = upnext;
         this.mUpnextAutoList = upnextAuto;
-
         updateHeaderPosition();
     }
 
@@ -248,7 +242,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
                 item = getPositionObject(position);
                 if (pendingSwipeListContains(item)) {
-                    holder.itemView.setBackgroundColor(Color.GRAY);
+                    holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
                     holder.layout.setVisibility(View.GONE);
                     holder.undoButton.setVisibility(View.INVISIBLE);
                     holder.undoButton.setOnClickListener(new View.OnClickListener() {
@@ -319,7 +313,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
                 if (pendingSwipeListContains(item)) {
                     // we need to show the "undo" state of the row
-                    holder.itemView.setBackgroundColor(Color.GRAY);
+                    holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
 
                     holder.layout.setVisibility(View.GONE);
                     holder.undoButton.setVisibility(View.INVISIBLE);
