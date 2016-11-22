@@ -8,15 +8,18 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +36,7 @@ import com.globaldelight.boom.ui.musiclist.activity.DeviceMusicActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.IconizedMenu;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
+import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
@@ -51,6 +55,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     public static final int TYPE_HEADER = 111;
     public static final int TYPE_ITEM = 222;
     private static final String TAG = "ItemSongListAdapter-TAG";
+    OnStartDragListener mOnStartDragListener;
     private MediaItemCollection collection;
     private PermissionChecker permissionChecker;
     private int selectedSongId = -1;
@@ -59,17 +64,26 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     private MediaItem currentItem;
     private ListDetail listDetail;
 
-    public ItemSongListAdapter(Activity activity, IMediaItemCollection collection, ListDetail listDetail, PermissionChecker permissionChecker) {
+    /* public ItemSongListAdapter(Activity activity, IMediaItemCollection collection, ListDetail listDetail, PermissionChecker permissionChecker) {
+         this.activity = activity;
+         this.collection = (MediaItemCollection) collection;
+         this.permissionChecker = permissionChecker;
+         this.listDetail = listDetail;
+     }*/
+    public ItemSongListAdapter(Activity activity, IMediaItemCollection collection, ListDetail listDetail, PermissionChecker permissionChecker, OnStartDragListener dragListener) {
         this.activity = activity;
         this.collection = (MediaItemCollection) collection;
         this.permissionChecker = permissionChecker;
         this.listDetail = listDetail;
+        this.mOnStartDragListener = dragListener;
     }
-
     @Override
     public ItemSongListAdapter.SimpleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView;
-        if(viewType == TYPE_ITEM) {
+        View itemView = null;
+        if (viewType == TYPE_ITEM && collection.getItemType() == BOOM_PLAYLIST) {
+            itemView = LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.boomplaylist_card_song_item, parent, false);
+        } else if (viewType == TYPE_ITEM && collection.getItemType() != BOOM_PLAYLIST) {
             itemView = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.card_song_item, parent, false);
         }else{
@@ -100,9 +114,9 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                 holder.headerDetail.setVisibility(View.GONE);
             }
 
-        }else if(position >= 1){
+        } else if (position >= 1 && collection.getItemType() != BOOM_PLAYLIST) {
             int pos = position -1;
-            if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
+            if (collection.getItemType() == PLAYLIST) {
                 currentItem = (MediaItem) collection.getMediaElement().get(pos);
             }else{
                 currentItem = (MediaItem) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(pos);
@@ -118,6 +132,22 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             selectedSongId = -1;
             selectedHolder = null;
             setOnClicks(holder, pos);
+
+        } else if (position >= 1 && collection.getItemType() == BOOM_PLAYLIST) {
+            int pos = position - 1;
+            currentItem = (MediaItem) collection.getMediaElement().get(pos);
+            holder.undoButton.setVisibility(View.INVISIBLE);
+            holder.name.setText(currentItem.getItemTitle());
+            holder.artistName.setText(currentItem.getItemArtist());
+            holder.mainView.setElevation(0);
+            setAlbumArt(currentItem.getItemArtUrl(), holder);
+            if (selectedHolder != null)
+                selectedHolder.mainView.setBackgroundColor(ContextCompat
+                        .getColor(activity, R.color.appBackground));
+            selectedSongId = -1;
+            selectedHolder = null;
+            setOnClicks(holder, pos);
+            setDragHandle(holder);
         }
     }
 
@@ -141,20 +171,6 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             @Override
             public void onClick(View view) {
                 animate(holder);
-              /*  switch (collection.getItemType()) {
-                    case BOOM_PLAYLIST:
-
-                        break;
-                    case PLAYLIST:
-
-                        break;
-                    case ARTIST:
-
-                        break;
-                    case GENRE:
-
-                        break;
-                }*/
 
 
                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
@@ -207,6 +223,20 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         });
     }
 
+    public void setDragHandle(final SimpleItemViewHolder holder) {
+
+        holder.imgHandle.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEventCompat.getActionMasked(event) ==
+                        MotionEvent.ACTION_DOWN || MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                    mOnStartDragListener.onStartDrag(holder);
+                }
+                return false;
+            }
+        });
+
+    }
     public void updateNewList(IMediaItemCollection collection) {
         this.collection = (MediaItemCollection) collection;
         notifyDataSetChanged();
@@ -313,8 +343,11 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         public View mainView, menu;
         public ImageView img;
 
+
         public RegularTextView headerTitle, headerSubTitle;
         public CoachMarkTextView headerDetail;
+        public Button undoButton;
+        public ImageView imgHandle;
         ImageView mShuffle, mMore;
 
         public SimpleItemViewHolder(View itemView) {
@@ -324,7 +357,8 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             name = (TextView) itemView.findViewById(R.id.song_item_name);
             menu = itemView.findViewById(R.id.song_item_menu);
             artistName = (TextView) itemView.findViewById(R.id.song_item_artist);
-
+            undoButton = (Button) itemView.findViewById(R.id.undo_button);
+            imgHandle = (ImageView) itemView.findViewById(R.id.song_item_handle);
             headerTitle = (RegularTextView) itemView.findViewById(R.id.header_title);
             headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
             headerDetail = (CoachMarkTextView) itemView.findViewById(R.id.header_detail);

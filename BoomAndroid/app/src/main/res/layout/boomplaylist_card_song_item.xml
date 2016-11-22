@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/two_hunderd_twenty_px"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:weightSum="100"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_weight="21.80">
+            <ImageView
+                android:id="@+id/song_item_img"
+                android:layout_width="@dimen/one_eighty_six_pt"
+                android:layout_height="@dimen/one_eighty_six_pt"
+                android:scaleType="centerCrop"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="67.2"
+            android:orientation="vertical">
+
+            <com.globaldelight.boom.ui.widgets.RegularTextView
+                android:id="@+id/song_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/seventy_two_pt_txt" />
+
+            <com.globaldelight.boom.ui.widgets.CoachMarkTextView
+                android:id="@+id/song_item_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textColor="#59595c"
+                android:textSize="@dimen/fifty_six_pt_txt" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="11">
+            <ImageView
+                android:id="@+id/song_item_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/unbounded_ripple"
+                android:foregroundTint="#434343"
+                android:src="@drawable/over_flow_menu"
+                android:theme="@style/Theme.AppCompat.Light" />
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#313232"/>
+</LinearLayout>-->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="56dp">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/viewcontent"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/two_hundred_twenty_pt"
+        android:background="@color/colorBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/song_item_handle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ninety_two_pt"
+            android:layout_weight="0"
+            android:scaleType="centerCrop"
+            android:src="@drawable/rearange" />
+
+        <ImageView
+            android:id="@+id/song_item_img"
+            android:layout_width="@dimen/one_hundred_eighty_six_pt"
+            android:layout_height="@dimen/one_hundred_eighty_six_pt"
+            android:layout_marginLeft="@dimen/ninety_two_pt"
+            android:layout_weight="0"
+            android:scaleType="centerCrop" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/seventy_two_pt"
+
+            android:layout_weight="1"
+            android:background="@color/colorBackground"
+            android:orientation="vertical">
+
+            <com.globaldelight.boom.ui.widgets.RegularTextView
+                android:id="@+id/song_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="test"
+                android:textColor="@color/white"
+                android:textSize="@dimen/play_queue_row_txt"
+                android:typeface="normal" />
+
+            <com.globaldelight.boom.ui.widgets.RegularTextView
+                android:id="@+id/song_item_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="test"
+                android:textColor="@color/play_que_decs_txt"
+                android:textSize="@dimen/play_queue_row_desc_txt"
+                android:typeface="normal" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/song_item_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/seventy_two_pt"
+            android:background="@drawable/unbounded_ripple"
+            android:foregroundTint="#434343"
+            android:src="@drawable/over_flow_menu"
+            android:theme="@style/Theme.AppCompat.Light" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/undo_button"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:text="UNDO"
+        android:textAllCaps="true"
+        android:textColor="@color/swipe_delete_undo_btn" />
+
+
+</FrameLayout>

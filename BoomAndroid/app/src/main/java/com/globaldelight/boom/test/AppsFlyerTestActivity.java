@@ -13,7 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AppsFlyerTestActivity extends AppCompatActivity {
-
+    /**
+     * Integrated appsflyer to project and done all setup.Need to upload purchase details after the inapp purchaes complete
+     **/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

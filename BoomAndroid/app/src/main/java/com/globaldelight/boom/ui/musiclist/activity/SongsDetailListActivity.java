@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,6 +20,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,22 +40,24 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.adapter.ItemSongListAdapter;
+import com.globaldelight.boom.ui.musiclist.adapter.PlayingQueueListAdapter;
+import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
-import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Rahul Agarwal on 8/1/2016.
  */
 
-public class SongsDetailListActivity extends AppCompatActivity {
+public class SongsDetailListActivity extends AppCompatActivity implements OnStartDragListener {
     Toolbar toolbar;
     private RecyclerView rv;
-    private ImageView albumArt, artImg1, artImg2, artImg3, artImg4, artImg5, artImg6;
+    private ImageView albumArt, artImg1, artImg2, artImg3, artImg4;
     private PermissionChecker permissionChecker;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private AppBarLayout appbarlayout;
@@ -60,7 +65,7 @@ public class SongsDetailListActivity extends AppCompatActivity {
     private ItemSongListAdapter itemSongListAdapter;
     private IMediaItemCollection collection;
     private ListDetail listDetail;
-
+    private ItemTouchHelper mItemTouchHelper;
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,8 +86,6 @@ public class SongsDetailListActivity extends AppCompatActivity {
         artImg2 = (ImageView)findViewById(R.id.song_detail_list_art_img2);
         artImg3 = (ImageView)findViewById(R.id.song_detail_list_art_img3);
         artImg4 = (ImageView)findViewById(R.id.song_detail_list_art_img4);
-        artImg5 = (ImageView)findViewById(R.id.song_detail_list_art_img5);
-        artImg6 = (ImageView)findViewById(R.id.song_detail_list_art_img6);
 
         tblAlbumArt = (TableLayout)findViewById(R.id.song_detail_list_art_table);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingtoolbarlayout_song_detail_list);
@@ -152,7 +155,7 @@ public class SongsDetailListActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         rv.setLayoutManager(llm);
-                        rv.addItemDecoration(new SimpleDividerItemDecoration(SongsDetailListActivity.this, 0));
+//                        rv.addItemDecoration(new SimpleDividerItemDecoration(SongsDetailListActivity.this, 0));
                         rv.setHasFixedSize(true);
                         rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
                             @Override
@@ -174,8 +177,12 @@ public class SongsDetailListActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                        itemSongListAdapter = new ItemSongListAdapter(SongsDetailListActivity.this, collection, listDetail, permissionChecker);
+                        itemSongListAdapter = new ItemSongListAdapter(SongsDetailListActivity.this, collection, listDetail, permissionChecker, SongsDetailListActivity.this);
                         rv.setAdapter(itemSongListAdapter);
+                        if (collection.getItemType() == ItemType.BOOM_PLAYLIST) {
+                            setUpItemTouchHelper();
+                        }
+
                     }
                 });
             }
@@ -222,14 +229,12 @@ public class SongsDetailListActivity extends AppCompatActivity {
 
     private void setSongsArtImage(final Size size, final ArrayList<String> Urls) {
 
-        int count = Urls.size()>6?6:Urls.size();
-        TableRow.LayoutParams param = new TableRow.LayoutParams(size.width/3, size.height/2);
+        int count = Urls.size() > 4 ? 4 : Urls.size();
+        TableRow.LayoutParams param = new TableRow.LayoutParams(size.width / 2, size.height / 2);
         artImg1.setLayoutParams(param);
         artImg2.setLayoutParams(param);
         artImg3.setLayoutParams(param);
         artImg4.setLayoutParams(param);
-        artImg5.setLayoutParams(param);
-        artImg6.setLayoutParams(param);
 
 
         switch (count){
@@ -242,10 +247,6 @@ public class SongsDetailListActivity extends AppCompatActivity {
                         .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
                         .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg5);
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg6);
                 break;
             case 2:
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
@@ -256,10 +257,6 @@ public class SongsDetailListActivity extends AppCompatActivity {
                         .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
                 Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.default_album_art, null))
                         .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg5);
-                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg6);
                 break;
             case 3:
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
@@ -270,10 +267,6 @@ public class SongsDetailListActivity extends AppCompatActivity {
                         .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
                 Picasso.with(this).load(new File(Urls.get(2))).error(getResources().getDrawable(R.drawable.default_album_art, null))
                         .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg5);
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg6);
                 break;
             case 4:
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
@@ -284,38 +277,6 @@ public class SongsDetailListActivity extends AppCompatActivity {
                         .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
                 Picasso.with(this).load(new File(Urls.get(3))).error(getResources().getDrawable(R.drawable.default_album_art, null))
                         .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg5);
-                Picasso.with(this).load(new File(Urls.get(3))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg6);
-                break;
-            case 5:
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Picasso.with(this).load(new File(Urls.get(2))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Picasso.with(this).load(new File(Urls.get(3))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                Picasso.with(this).load(new File(Urls.get(4))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg5);
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg6);
-                break;
-            case 6:
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Picasso.with(this).load(new File(Urls.get(2))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Picasso.with(this).load(new File(Urls.get(3))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                Picasso.with(this).load(new File(Urls.get(4))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg5);
-                Picasso.with(this).load(new File(Urls.get(5))).error(getResources().getDrawable(R.drawable.default_album_art, null))
-                        .centerCrop().resize(size.width/3, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg6);
                 break;
         }
     }
@@ -378,6 +339,111 @@ public class SongsDetailListActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    @Override
+    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+        mItemTouchHelper.startDrag(viewHolder);
+    }
+
+    private void setUpItemTouchHelper() {
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN
+                , ItemTouchHelper.LEFT) {
+
+            // we want to cache these and not allocate anything repeatedly in the onChildDraw method
+            Drawable background;
+            boolean initiated;
+
+            private void init() {
+                background = new ColorDrawable(getResources().getColor(R.color.colorPrimary));
+
+
+                initiated = true;
+            }
+
+            // not important, we don't want drag & drop
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+
+
+                if (collection.getMediaElement().size() > 0 && target.getAdapterPosition() > 0) {
+                    Collections.swap(collection.getMediaElement(), viewHolder.getAdapterPosition() - 1, target.getAdapterPosition() - 1);
+                    itemSongListAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                }
+                return false;
+            }
+
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                int position = viewHolder.getAdapterPosition();
+
+
+                PlayingQueueListAdapter testAdapter = (PlayingQueueListAdapter) recyclerView.getAdapter();
+                if (!testAdapter.isSwipeDeleteAllowed(position)) {
+                    return 0;
+                }
+
+                if (testAdapter.isUndoOn() && testAdapter.isPendingRemoval(position)) {
+                    return 0;
+                }
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }/**/
+
+           /* @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                int swipedPosition = viewHolder.getAdapterPosition();
+                PlayingQueueListAdapter adapter = (PlayingQueueListAdapter) rv.getAdapter();
+                boolean undoOn = adapter.isUndoOn();
+                if (undoOn) {
+                    adapter.swipedItemPendingRemoval(swipedPosition);
+                } else {
+                    adapter.removeSwipedItem(adapter.getPositionObject(swipedPosition));
+                }
+            }*/
+
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+
+           /* @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+
+
+
+                View itemView = viewHolder.itemView;
+
+                // not sure why, but this method get's called for viewholder that are already swiped away
+                if (viewHolder.getAdapterPosition() == -1) {
+                    // not interested in those
+                    return;
+                }
+
+                if (!initiated) {
+                    init();
+                }
+
+                // draw red background
+                background.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
+                background.draw(c);
+
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }*/
+
+
+        };
+        //  ItemTouchHelper mItemTouchHelper;
+        mItemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        mItemTouchHelper.attachToRecyclerView(rv);
+    }
+
     public class Size {
         int width;
         int height;
@@ -387,4 +453,5 @@ public class SongsDetailListActivity extends AppCompatActivity {
             this.height = height;
         }
     }
+
 }

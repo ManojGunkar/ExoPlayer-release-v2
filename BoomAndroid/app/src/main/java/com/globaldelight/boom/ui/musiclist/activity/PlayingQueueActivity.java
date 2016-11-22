@@ -51,7 +51,6 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
     private RecyclerView recyclerView;
     private PermissionChecker permissionChecker;
     private View emptyView;
-    //added by nidhin
     private ItemTouchHelper mItemTouchHelper;
     private BroadcastReceiver upnextBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -107,7 +106,6 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
         }catch (IllegalStateException e){}
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//            getSupportActionBar().setTitle("Music Library"/*getIntent().getStringExtra("name")*/);
         }
     }
 
@@ -208,9 +206,6 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
         overridePendingTransition(R.anim.stay_out, R.anim.slide_out_right);
     }
 
-
-    //added by nidhin
-
     /**
      * This is the standard support library way of implementing "swipe to delete" feature. You can do custom drawing in onChildDraw method
      * but whatever you draw will disappear once the swipe is over, and while the items are animating to their new position the recycler view
@@ -223,16 +218,12 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
 
             // we want to cache these and not allocate anything repeatedly in the onChildDraw method
             Drawable background;
-            Drawable xMark;
-            //  int xMarkMargin;
             boolean initiated;
 
             private void init() {
                 background = new ColorDrawable(getResources().getColor(R.color.colorPrimary));
 
-             /*  xMark = ContextCompat.getDrawable(PlayingQueueActivity.this, R.drawable.ic_clear_24dp);
-                xMark.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-                xMarkMargin = (int) PlayingQueueActivity.this.getResources().getDimension(R.dimen.ic_clear_margin);*/
+
                 initiated = true;
             }
 
@@ -241,11 +232,9 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
 
 
-                // Logger.LOGD("****************", "start=" + viewHolder.getAdapterPosition() + "stop " + target.getAdapterPosition());
                 PlayingQueueListAdapter.ListPosition start = playingQueueListAdapter.getPositionObject(viewHolder.getAdapterPosition());
-                // Log.d("From", "pos" + start.getItemPosition() + " list=" + start.getListType());
+
                 PlayingQueueListAdapter.ListPosition to = playingQueueListAdapter.getPositionObject(target.getAdapterPosition());
-                //  Log.d("to", "pos" + to.getItemPosition() + " list=" + to.getListType());
 
 
                 if (to.getListType() == start.getListType()) {
@@ -259,20 +248,12 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
                 return false;
             }
 
-            /* //defines the enabled move directions in each state (idle, swiping, dragging).
-             @Override
-             public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                 return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG,
-                         ItemTouchHelper.DOWN | ItemTouchHelper.UP );
-                 // return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG,
-                 //  ItemTouchHelper.DOWN | ItemTouchHelper.UP | ItemTouchHelper.START | ItemTouchHelper.END );
-             }*/
+
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 int position = viewHolder.getAdapterPosition();
 
 
-                //playingQueueListAdapter = new PlayingQueueListAdapter(PlayingQueueActivity.this, playingQueue,recyclerView);
                 PlayingQueueListAdapter testAdapter = (PlayingQueueListAdapter) recyclerView.getAdapter();
                 if (!testAdapter.isSwipeDeleteAllowed(position)) {
                     return 0;
@@ -304,8 +285,6 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
             @Override
             public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
 
-                // PlayingQueueListAdapter.ListPosition objPosition=adapter.getPosition(viewHolder.getAdapterPosition());
-
 
                 View itemView = viewHolder.itemView;
 
@@ -322,21 +301,6 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
                 // draw red background
                 background.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
                 background.draw(c);
-
-                // draw x mark
-
-                   /* int itemHeight = itemView.getBottom() - itemView.getTop();
-                    int intrinsicWidth = xMark.getIntrinsicWidth();
-                    int intrinsicHeight = xMark.getIntrinsicWidth();
-
-                    int xMarkLeft = itemView.getRight() - xMarkMargin - intrinsicWidth;
-                    int xMarkRight = itemView.getRight() - xMarkMargin;
-                    int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight) / 2;
-                    int xMarkBottom = xMarkTop + intrinsicHeight;
-                    xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom);
-
-                    xMark.draw(c);
-*/
 
 
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
