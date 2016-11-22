@@ -80,6 +80,10 @@ public class MediaController implements IMediaController{
         return MediaLibraryHandler.getInstance(context).getHistoryFavList(false);
     }
 
+    public boolean isFavouriteItems(long itemId) {
+        return MediaLibraryHandler.getInstance(context).isFavouriteItems(itemId);
+    }
+
     public void clearList(boolean ishistory) {
         MediaLibraryHandler.getInstance(context).clearList(ishistory);
     }

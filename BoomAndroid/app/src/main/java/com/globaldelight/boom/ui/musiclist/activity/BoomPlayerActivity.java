@@ -9,12 +9,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -32,6 +34,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.widgets.CircularSeekBar;
 import com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView;
@@ -279,6 +282,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
             updateAlbumArt(item.getItemArtUrl());
 
+            updateFavoriteTrack(false);
+
             mTitleTxt.setText(item.getItemTitle());
             mSubTitleTxt.setText(item.getItemArtist());
             if (playing) {
@@ -356,6 +361,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         mShuffleBtn = (ImageView) findViewById(R.id.player_shuffle_btn);
         mRepeatBtn = (ImageView) findViewById(R.id.player_repeat_btn);
 
+        mAddToPlayList = (ImageView) findViewById(R.id.player_add_to_playlist);
+        mFavourite = (ImageView)findViewById(R.id.player_fav_btn);
         mPlayerMore = (ImageView)findViewById(R.id.player_more_btn);
 
         mPlayedTime = (RegularTextView) findViewById(R.id.played_time);
@@ -376,6 +383,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         mNextBtn.setOnClickListener(this);
         mPrevBtn.setOnClickListener(this);
 
+        mAddToPlayList.setOnClickListener(this);
+        mFavourite.setOnClickListener(this);
         mPlayerMore.setOnClickListener(this);
 
         mAudioEffectBtn.setOnLongClickListener(new View.OnLongClickListener() {
@@ -388,7 +397,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         });
 
         mTrackSeek.setOnCircularSeekBarChangeListener(this);
-//        mTrackSeek.setTouchInSide(false);
 
         mAlbumArt.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -452,18 +460,45 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             case R.id.player_next_btn:
                 sendBroadcast(new Intent(PlayerService.ACTION_NEXT_SONG));
                 AnalyticsHelper.songSelectionChanged(this, null);
-
-
                 break;
             case R.id.player_prev_btn:
                 sendBroadcast(new Intent(PlayerService.ACTION_PREV_SONG));
                 AnalyticsHelper.songSelectionChanged(this, null);
+                break;
+            case R.id.player_add_to_playlist:
+                addToPlayList();
+                break;
+            case R.id.player_fav_btn:
+                updateFavoriteTrack(true);
                 break;
             case R.id.player_more_btn:
                 startSettingActivity();
             default:
 
                 break;
+        }
+    }
+
+    private void addToPlayList() {
+
+    }
+
+    private void updateFavoriteTrack(boolean isUser) {
+        if(App.getPlayerEventHandler().getPlayingItem() != null) {
+            boolean isCurrentTrackFav = MediaController.getInstance(this).isFavouriteItems(App.getPlayerEventHandler().getPlayingItem().getItemId());
+            if (isCurrentTrackFav) {
+                if(isUser){
+                    MediaController.getInstance(this).removeItemToList(false, App.getPlayerEventHandler().getPlayingItem().getItemId());
+                    Snackbar.make(mPlayerRootView, "Playing Song removed from favorite.", Snackbar.LENGTH_LONG).show();
+                }
+                mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_normal));
+            } else {
+                if(isUser){
+                    MediaController.getInstance(this).addSongsToList(false, App.getPlayerEventHandler().getPlayingItem());
+                    Snackbar.make(mPlayerRootView, "Playing Song added as favorite.", Snackbar.LENGTH_LONG).show();
+                }
+                mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_selected));
+            }
         }
     }
 

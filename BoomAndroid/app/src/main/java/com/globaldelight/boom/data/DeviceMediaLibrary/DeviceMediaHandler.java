@@ -202,4 +202,8 @@ public class DeviceMediaHandler {
     public void removeItemToList(boolean ishistory, long itemId) {
         App.getHistoryFavDBHelper().removeSong(ishistory, itemId);
     }
+
+    public boolean isFavouriteItems(long itemId) {
+        return App.getHistoryFavDBHelper().isFavouriteItems(itemId);
+    }
 }

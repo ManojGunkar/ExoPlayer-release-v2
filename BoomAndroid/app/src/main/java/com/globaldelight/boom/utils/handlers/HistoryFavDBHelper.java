@@ -188,4 +188,17 @@ public class HistoryFavDBHelper extends SQLiteOpenHelper {
         db.close();
         return songList;
     }
+
+    public boolean isFavouriteItems(long itemId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT  * FROM " + TABLE_FAVORITE+ " WHERE " +
+                SONG_KEY_REAL_ID + "='" + itemId + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
 }

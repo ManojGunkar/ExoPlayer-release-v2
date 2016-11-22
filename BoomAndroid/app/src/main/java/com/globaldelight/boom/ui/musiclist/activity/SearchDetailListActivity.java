@@ -104,7 +104,7 @@ public class SearchDetailListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        MenuInflater menuInflater = getMenuInflater();
+       /* MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.search_menu, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -113,7 +113,8 @@ public class SearchDetailListActivity extends AppCompatActivity {
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        return true;
+        return true;*/
+        return false;
     }
 
     @Override

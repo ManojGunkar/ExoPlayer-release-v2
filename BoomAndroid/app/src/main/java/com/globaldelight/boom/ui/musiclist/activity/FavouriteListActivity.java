@@ -10,6 +10,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.globaldelight.boom.R;
@@ -54,7 +55,12 @@ public class FavouriteListActivity extends AppCompatActivity {
 
         mToolbarTitle = (RegularTextView) findViewById(R.id.favourite_list_toolbar_title);
         mToolbarTitle.setTextColor(Color.WHITE);
-
+        try {
+            setSupportActionBar(toolbar);
+        }catch (IllegalStateException e){}
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         recyclerView = (RecyclerView) findViewById(R.id.rv_favourite_list);
 
         emptyView = findViewById(R.id.fav_empty_view);
@@ -125,5 +131,15 @@ public class FavouriteListActivity extends AppCompatActivity {
 
     public void killActivity() {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                super.onBackPressed();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

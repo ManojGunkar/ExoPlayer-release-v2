@@ -156,7 +156,7 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        MenuInflater menuInflater = getMenuInflater();
+        /*MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.search_menu, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -164,7 +164,7 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));*/
         return true;
     }
 

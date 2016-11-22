@@ -189,7 +189,7 @@ public class DetailAlbumActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        MenuInflater menuInflater = getMenuInflater();
+        /*MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.search_menu, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -197,18 +197,8 @@ public class DetailAlbumActivity extends AppCompatActivity {
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-//        ImageView v = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_voice_btn);
-//        searchView.setBackground(getResources().getDrawable(R.drawable.card_background));
-//        getMenuInflater().inflate(R.menu.main_menu, menu);
-//
-//        MenuItem menuItem = menu.findItem(R.id.action_search);
-//
-//        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-//        setupSearchView(searchView);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));*/
         return true;
-
     }
 
     @Override

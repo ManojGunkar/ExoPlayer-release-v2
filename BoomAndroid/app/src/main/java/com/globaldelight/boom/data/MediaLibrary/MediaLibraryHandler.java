@@ -97,4 +97,8 @@ public class MediaLibraryHandler implements IMediaLibrary{
     public void removeItemToList(boolean ishistory, long itemId) {
         DeviceMediaHandler.getInstance(context).removeItemToList(ishistory, itemId);
     }
+
+    public boolean isFavouriteItems(long itemId) {
+        return DeviceMediaHandler.getInstance(context).isFavouriteItems(itemId);
+    }
 }

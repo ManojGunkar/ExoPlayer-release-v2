@@ -8,13 +8,12 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/search_view_results"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:id="@+id/search_empty_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color400"
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone" />

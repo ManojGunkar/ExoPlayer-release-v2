@@ -143,7 +143,6 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                 }
             });
         }
-        holder.mainView.setBackgroundColor(0xffffffff);
         holder.mainView.setElevation(dpToPx(2));
     }
 

@@ -82,7 +82,7 @@ public class MusicLibraryListFragment extends Fragment {
                     @Override
                     public void run() {
                         recyclerView.setLayoutManager(llm);
-                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, 0));
+//                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, 0));
                         recyclerView.setHasFixedSize(true);
                         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                             @Override
