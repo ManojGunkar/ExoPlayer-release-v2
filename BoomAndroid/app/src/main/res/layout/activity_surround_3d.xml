@@ -516,8 +516,6 @@
                     android:layout_height="match_parent"
                     android:layout_below="@+id/equalizer_switch_btn"
                     android:layout_marginTop="@dimen/one_thirty_two_pt"
-
-                    android:background="#020308"
                     android:overScrollMode="never" />
 
             </RelativeLayout>
