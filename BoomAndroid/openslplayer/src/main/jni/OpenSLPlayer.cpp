@@ -106,8 +106,6 @@ namespace gdpl
 
     SLresult OpenSLPlayer::tearDown()
     {
-        AutoLock lock(&_mutex);
-
         if (bqPlayerObject != NULL) {
             (*bqPlayerObject)->Destroy(bqPlayerObject);
             bqPlayerObject = NULL;
