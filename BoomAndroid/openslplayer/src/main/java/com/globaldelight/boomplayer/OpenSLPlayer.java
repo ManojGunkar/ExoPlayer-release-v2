@@ -50,6 +50,26 @@ public class OpenSLPlayer implements Runnable {
         mContext = context;
         audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(context);
         EqualizerGain.setEqGain();
+
+        AudioManager am = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
+
+        String sampleRateStr = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
+        int sampleRate = Integer.parseInt(sampleRateStr);
+        if ( sampleRate == 0 ) sampleRate = 44100; // if not available use 44.1kHz
+
+        String frameSizeStr = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
+        int frameCount = Integer.parseInt(frameSizeStr);
+        if ( frameCount == 0 ) frameCount = 1024; // if not available use 4k buffer - 1024*2*2
+
+        Log.e(LOG_TAG, "sampleRate:"+sampleRate);
+        Log.e(LOG_TAG, "frameSize:"+frameCount);
+
+        createEngine(mContext.getAssets(), sampleRate, frameCount);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        releaseEngine();
     }
 
     /**
@@ -159,18 +179,6 @@ public class OpenSLPlayer implements Runnable {
 
             }
 
-        AudioManager am = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
-        String sysSampleRateStr = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
-        int sysSampleRate = Integer.parseInt(sysSampleRateStr);
-        if ( sysSampleRate == 0 ) sysSampleRate = 44100; // if not available use 44.1kHz
-        String frameSizeStr = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
-        int sysFrameCount = Integer.parseInt(frameSizeStr);
-        if ( sysFrameCount == 0 ) sysFrameCount = 1024; // if not available use 4k buffer - 1024*2*2
-
-        Log.e(LOG_TAG, "sampleRate:"+sysSampleRate);
-        Log.e(LOG_TAG, "frameSize:"+frameSizeStr);
-
-
 
         // extractor gets information about the stream
         extractor = new MediaExtractor();
@@ -252,7 +260,6 @@ public class OpenSLPlayer implements Runnable {
         }
 
         // configure OpenSLPlayer
-        createEngine(mContext.getAssets(), sysSampleRate, sysFrameCount);
         createAudioPlayer(256*1024, sampleRate, 2);
 
         extractor.selectTrack(0);
@@ -452,6 +459,8 @@ public class OpenSLPlayer implements Runnable {
 
     /** Native methods, implemented in jni folder */
     public native void createEngine(AssetManager assetManager, int sampleRate, int frameCount);
+
+    public native void releaseEngine();
 
     public native boolean createAudioPlayer(int size, int sampleRate, int bufferSize);
 

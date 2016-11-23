@@ -37,15 +37,8 @@ namespace gdpl {
     gdpl::OpenSLPlayer *openSLPlayer;
 
 //    static OpenSLEqualizer *openSLEqualizer;
-
-    static AudioEngine *GetEngine() {
-        static AudioEngine *engine = nullptr;
-        if (nullptr == engine) {
-            engine = new AudioEngine(OpenSLPlayer::getEngineSampleRate(), gFrameCount);
-            engine->SetHeadPhoneType(eOnEar);
-
-        }
-
+    static AudioEngine *engine = nullptr;
+    inline static AudioEngine *GetEngine() {
         return engine;
     }
 
@@ -154,6 +147,20 @@ namespace gdpl {
 //        OpenSLPlayer::setupEngine(sampleRate);
         gFrameCount = DEFAULT_FRAME_COUNT;
         OpenSLPlayer::setupEngine(sampleRate);
+        engine = new AudioEngine(sampleRate, gFrameCount);
+        engine->SetHeadPhoneType(eOnEar);
+    }
+
+/*
+ * Class:     com_globaldelight_boomplayer_OpenSLPlayer
+ * Method:    releaseEngine
+ * Signature: ()V
+ */
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_releaseEngine(JNIEnv *env, jclass clazz)
+    {
+        env->DeleteGlobalRef(globalJavaAssetManager);
+        OpenSLPlayer::tearDownEngine();
+        delete engine;
     }
 
 /*
@@ -267,13 +274,9 @@ namespace gdpl {
  */
     extern "C" jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_shutdown(JNIEnv *env, jclass clazz,
                                                                  jboolean enable) {
-        env->DeleteGlobalRef(globalJavaAssetManager);
-
         stopPlayer(enable);
         openSLPlayer->tearDown();
         delete openSLPlayer;
-
-        OpenSLPlayer::tearDownEngine();
 
 //        destroy buffers
         delete mThread;
