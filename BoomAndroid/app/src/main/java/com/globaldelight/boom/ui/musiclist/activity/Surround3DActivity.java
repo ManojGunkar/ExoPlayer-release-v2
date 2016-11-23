@@ -37,7 +37,6 @@ import com.globaldelight.boom.ui.widgets.NegativeSeekBar;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.ui.widgets.ScrollEnableLayoutManager;
 import com.globaldelight.boom.ui.widgets.TooltipWindow;
-import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boomplayer.AudioEffect;
 
@@ -89,7 +88,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus)
             showCoachMark();
-        //Log.d("activated","focus change");
+
     }
 
     public void showCoachMark() {
@@ -101,11 +100,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void initViews(){
-
         musicReceiver = new MusicReceiver(this);
-
         toolbar = (Toolbar)findViewById(R.id.effect_toolbar);
-
         mToolbarTitle = (RegularTextView) findViewById(R.id.toolbr_title);
         mToolbarTitle.setTextColor(Color.WHITE);
         mEffectTxt = (RegularTextView) findViewById(R.id.effect_txt);
@@ -157,7 +153,6 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         //        Surround3DLinesView view = new Surround3DLinesView(this, Color.BLACK);
 //        collapsablelayout.addView(view);
         collapsablelayout.setVisibility(View.GONE);
-
 //        mEffectPowerBtn.setOnCheckedChangeListener(this);
 
         mEffectSwitchPanel.setOnClickListener(this);
@@ -197,6 +192,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void onPowerSwitchUpdate(){
+
         mEffectPowerBtn.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
         if(audioEffectPreferenceHandler.isAudioEffectOn()) {
@@ -670,7 +666,6 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     @Override
                     public void run() {
                         recyclerView.setLayoutManager(layoutManager);
-                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(Surround3DActivity.this, 0));
                         recyclerView.setHasFixedSize(true);
                         recyclerView.scrollToPosition(audioEffectPreferenceHandler.getSelectedEqualizerPosition());
                         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {

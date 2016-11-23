@@ -83,4 +83,5 @@
       <dimen name="effect_layout_padding_left">30dp</dimen>
       <dimen name="effect_layout_padding_top">30dp</dimen>
       <dimen name="effect_layout_padding_bottom">30dp</dimen>-->
+   
 </resources>
