@@ -49,7 +49,7 @@
     <dimen name="one_twelve_pt">28dp</dimen>
 
     <dimen name="two_zero_two_px">51dp</dimen>
-
+    <dimen name="fourty_eight_pt">12sp</dimen>
     <dimen name="fourty_two_pt">10dp</dimen>
     <!--setting-->
     <!-- settings-->
@@ -94,6 +94,8 @@
     <dimen name="two_hundred_sixteen_px">54dp</dimen>
     <dimen name="two_hundred_eighty_px">70dp</dimen>
     <dimen name="one_hundred_sixty_px">40dp</dimen>
+    <dimen name="one_hundred_sixteen_px">29dp</dimen>
+    <dimen name="one_hundred_seventy_six_px">44dp</dimen>
     <dimen name="two_hundred_px">50dp</dimen>
     <dimen name="eighty_px">20dp</dimen>
     <dimen name="four_px">10dp</dimen>

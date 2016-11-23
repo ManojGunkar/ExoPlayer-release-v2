@@ -27,6 +27,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -521,6 +522,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_normal));
                 }
             }
+        }else{
+            Toast.makeText(this, "No Song Selected", Toast.LENGTH_SHORT).show();
         }
     }
 

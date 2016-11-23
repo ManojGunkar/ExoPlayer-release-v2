@@ -514,6 +514,8 @@
                     android:id="@+id/eq_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
                     android:layout_below="@+id/equalizer_switch_btn"
                     android:layout_marginTop="@dimen/one_thirty_two_pt"
                     android:overScrollMode="never" />

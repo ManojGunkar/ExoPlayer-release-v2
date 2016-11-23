@@ -179,14 +179,12 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 audioEffectPreferenceHandler.setEnableAudioEffect(isChecked);
-                App.getPlayerEventHandler().updateEffect();
+                if(App.getPlayerEventHandler().getPlayingItem() != null)
+                    App.getPlayerEventHandler().updateEffect();
                 onPowerSwitchUpdate();
                 update3DSurround();
                 updateIntensity();
                 updateEqualizer();
-               /* if (tipWindow != null && tipWindow.isTooltipShown()) {
-                    tipWindow.dismissTooltip();
-                }*/
             }
         });
     }
