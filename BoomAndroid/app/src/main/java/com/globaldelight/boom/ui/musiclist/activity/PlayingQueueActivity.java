@@ -135,12 +135,12 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
                     @Override
                     public void run() {
                         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                        gridLayoutManager.scrollToPosition(0);
                         recyclerView.setLayoutManager(gridLayoutManager);
                         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(PlayingQueueActivity.this, Utils.getWindowWidth(PlayingQueueActivity.this)));
                         recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(PlayingQueueActivity.this, 0)));
                         playingQueueListAdapter = new PlayingQueueListAdapter(PlayingQueueActivity.this, App.getPlayingQueueHandler().getUpNextList(), PlayingQueueActivity.this);
                         recyclerView.setAdapter(playingQueueListAdapter);
+                        gridLayoutManager.scrollToPosition(playingQueueListAdapter.getPlayingHeaderPosition());
                         recyclerView.setHasFixedSize(true);
                         setUpItemTouchHelper();
                         //setUpAnimationDecoratorHelper();

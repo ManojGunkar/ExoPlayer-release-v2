@@ -121,9 +121,17 @@ public class Utils {
         return resUri;
     }
 
-    public void addToPlaylist(final Activity activity, final ArrayList<? extends IMediaItemBase> songList) {
+    public void addToPlaylist(final Activity activity, final ArrayList<? extends IMediaItemBase> songList, final String fromPlaylist) {
 
         ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(activity).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getPlayList(context)*/;
+
+        if(fromPlaylist != null){
+            for(int i=0; i< playList.size(); i++){
+                if(playList.get(i).getItemTitle().equalsIgnoreCase(fromPlaylist)){
+                    playList.remove(i);
+                }
+            }
+        }
 
         final AddToPlaylistDialogListAdapter adapter = new AddToPlaylistDialogListAdapter(context,
                 playList, songList);
@@ -141,7 +149,7 @@ public class Utils {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        newPlaylistDialog(activity, songList);
+                        newPlaylistDialog(activity, songList, fromPlaylist);
 
                     }
                 })
@@ -155,7 +163,7 @@ public class Utils {
         adapter.setDialog(dialog);
     }
 
-    private void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song) {
+    private void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
         new MaterialDialog.Builder(context)
                 .title(R.string.new_playlist)
                 .input(null, null, new MaterialDialog.InputCallback() {
@@ -164,7 +172,7 @@ public class Utils {
                         if (!input.toString().matches("")) {
 
                             MediaController.getInstance(context).createBoomPlaylist(input.toString());
-                            addToPlaylist(activity, song);
+                            addToPlaylist(activity, song, fromPlaylist);
                             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
                             MixPanelAnalyticHelper.getInstance(context).getPeople().set(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST, input.toString());
                         }

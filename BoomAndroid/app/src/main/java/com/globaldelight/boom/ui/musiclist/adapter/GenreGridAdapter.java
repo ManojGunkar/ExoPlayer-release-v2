@@ -144,7 +144,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
                                 items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
                                 ((IMediaItemCollection)items.get(position).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
 
-                                util.addToPlaylist(activity, ((IMediaItemCollection)items.get(position).getMediaElement().get(items.get(position).getCurrentIndex())).getMediaElement());
+                                util.addToPlaylist(activity, ((IMediaItemCollection)items.get(position).getMediaElement().get(items.get(position).getCurrentIndex())).getMediaElement(), null);
                                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                 break;
                         }

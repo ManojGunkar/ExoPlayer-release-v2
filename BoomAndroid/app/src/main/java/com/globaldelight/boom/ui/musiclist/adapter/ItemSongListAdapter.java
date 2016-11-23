@@ -203,29 +203,49 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                                 }
                                 break;
                             case R.id.popup_song_add_playlist:
-                                if (collection.getItemType() == BOOM_PLAYLIST) {
-
+                                Utils util = new Utils(activity);
+                                ArrayList list = new ArrayList();
+                                if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
+                                    list.add(collection.getMediaElement().get(position));
+                                    util.addToPlaylist(activity, list , null);
                                 }else {
-                                    Utils util = new Utils(activity);
-                                    util.addToPlaylist(activity, (ArrayList<? extends IMediaItemBase>) collection.getMediaElement().get(position));
+                                    list.add(((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
+                                    util.addToPlaylist(activity, list , null);
+
                                 }
                                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                 break;
                             case R.id.popup_song_add_fav :
-                                if(MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())){
-                                    MediaController.getInstance(activity).removeItemToList(false, collection.getMediaElement().get(position).getItemId());
+                                if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
+                                    if(MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())){
+                                        MediaController.getInstance(activity).removeItemToList(false, collection.getMediaElement().get(position).getItemId());
+                                    }else{
+                                        MediaController.getInstance(activity).addSongsToList(false, collection.getMediaElement().get(position));
+                                    }
                                 }else{
-                                    MediaController.getInstance(activity).addSongsToList(false, collection.getMediaElement().get(position));
+                                    if(MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())){
+                                        MediaController.getInstance(activity).removeItemToList(false, ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position).getItemId());
+                                    }else{
+                                        MediaController.getInstance(activity).addSongsToList(false, ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
+                                    }
                                 }
                                 break;
                         }
                         return false;
                     }
                 });
-                if(MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())){
-                    pm.inflate(R.menu.song_remove_fav);
+                if(collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST){
+                    if(MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())){
+                        pm.inflate(R.menu.song_remove_fav);
+                    }else{
+                        pm.inflate(R.menu.song_add_fav);
+                    }
                 }else{
-                    pm.inflate(R.menu.song_add_fav);
+                    if(MediaController.getInstance(activity).isFavouriteItems(((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position).getItemId())){
+                        pm.inflate(R.menu.song_remove_fav);
+                    }else{
+                        pm.inflate(R.menu.song_add_fav);
+                    }
                 }
                 pm.show();
             }

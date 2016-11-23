@@ -1,7 +1,9 @@
 package com.globaldelight.boom.ui.musiclist.adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -15,16 +17,21 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.ui.musiclist.activity.AlbumActivity;
+import com.globaldelight.boom.ui.musiclist.activity.BoomPlaylistActivity;
 import com.globaldelight.boom.ui.musiclist.activity.SongsDetailListActivity;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -78,9 +85,6 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
             setSongsArtImage(holder, position, size, ((IMediaItemCollection)items.get(position)).getArtUrlList());
         }else if(((IMediaItemCollection)items.get(position)).getArtUrlList().size() == 0){
             holder.defaultImg.setVisibility(View.VISIBLE);
-//            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(size.width, size.height);
-//            holder.defaultImg.setLayoutParams(layoutParams);
-
             setDefaultImage(holder.defaultImg, size.width, size.height);
         }else{
             holder.mainView.setVisibility(View.GONE);
@@ -190,54 +194,69 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
         holder.grid_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(context, view);
-                popupMenu.inflate(R.menu.playlist_boom_menu);
-
-                // Force icons to show
-                Object menuHelper;
-                Class[] argTypes;
-                try {
-                    Field fMenuHelper = PopupMenu.class.getDeclaredField("mPopup");
-                    fMenuHelper.setAccessible(true);
-                    menuHelper = fMenuHelper.get(popupMenu);
-                    argTypes = new Class[] { boolean.class };
-                    menuHelper.getClass().getDeclaredMethod("setForceShowIcon", argTypes).invoke(menuHelper, true);
-                } catch (Exception e) {
-                    // Possible exceptions are NoSuchMethodError and NoSuchFieldError
-                    //
-                    // In either case, an exception indicates something is wrong with the reflection code, or the
-                    // structure of the PopupMenu class or its dependencies has changed.
-                    //
-                    // These exceptions should never happen since we're shipping the AppCompat library in our own apk,
-                    // but in the case that they do, we simply can't force icons to display, so log the error and
-                    // show the menu normally.
-
-                    Log.w(TAG, "error forcing menu icons to show", e);
-                }
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                PopupMenu pm = new PopupMenu(context, view);
+                pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
                             case R.id.popup_add_queue :
                                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
                                     ((MediaItemCollection)items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
                                     App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(items.get(position));
                                 }
                                 break;
-                            case R.id.popup_playlist_delete :
+                            case R.id.popup_playlist_rename:
+                                renameDialog(position);
+                                break;
+                            case R.id.popup_add_playlist :
+                                ((MediaItemCollection)items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
+                                Utils util = new Utils(context);
+                                util.addToPlaylist((BoomPlaylistActivity)context, ((MediaItemCollection)items.get(position)).getMediaElement(), ((MediaItemCollection) items.get(position)).getItemTitle());
+                                break;
+                            case R.id.popup_playlist_delete:
                                 MediaController.getInstance(context).deleteBoomPlaylist(items.get(position).getItemId());
                                 updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
-                                Snackbar.make(recyclerView, "PlayList Deleted...!", Snackbar.LENGTH_LONG).show();
+                                Toast.makeText(context, "PlayList Deleted.", Toast.LENGTH_SHORT).show();
                                 break;
                         }
                         return false;
                     }
                 });
-                popupMenu.show();
+                pm.inflate(R.menu.playlist_boom_menu);
+                pm.show();
             }
         });
 
     }
+
+    private void renameDialog(final int position) {
+        final EditText edittext = new EditText(context);
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setTitle("Rename");
+
+        alert.setView(edittext);
+
+        alert.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                if (edittext.getText().toString().matches("")) {
+                    renameDialog(position);
+                } else {
+                    MediaController.getInstance(context).renameBoomPlaylist(edittext.getText().toString(),
+                            items.get(position).getItemId());
+                    updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                    notifyDataSetChanged();
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+
+        alert.show();
+    }
+
 
     private boolean fileExist(String albumArtPath) {
         File imgFile = new File(albumArtPath);

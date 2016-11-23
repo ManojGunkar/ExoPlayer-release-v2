@@ -543,6 +543,10 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
     }
 
+    public int getPlayingHeaderPosition() {
+        return headerPlayingPos = mHistoryList.size() + 1;
+    }
+
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
 

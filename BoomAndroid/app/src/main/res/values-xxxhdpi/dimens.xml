@@ -80,6 +80,8 @@
     <dimen name="seventy_two_pt">18dp</dimen>
     <dimen name="one_hundred_eighty_six_pt">47dp</dimen>
 
+    <dimen name="two_hundred_sixteen_pt">56dp</dimen>
+
     <dimen name="fifty_six_pt_txt">14dp</dimen>
     <dimen name="seventy_two_pt_txt">18sp</dimen>
     <dimen name="one_hundred_four_px">26dp</dimen>

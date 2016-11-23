@@ -140,9 +140,9 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                             case R.id.popup_song_add_playlist:
                                 Utils util = new Utils(context);
                                 if (item.getItemType() == ItemType.ALBUM) {
-                                    util.addToPlaylist((AlbumActivity)context, (ArrayList<? extends IMediaItemBase>) item.getMediaElement().get(position));
+                                    util.addToPlaylist((AlbumActivity)context, (ArrayList<? extends IMediaItemBase>) item.getMediaElement().get(position), null);
                                 }else{
-                                    util.addToPlaylist((AlbumActivity)context, (ArrayList<? extends IMediaItemBase>) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                    util.addToPlaylist((AlbumActivity)context, (ArrayList<? extends IMediaItemBase>) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position), null);
                                 }
 
                                 break;

@@ -131,7 +131,7 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
                                 Utils util = new Utils(context);
                                 itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
 
-                                util.addToPlaylist(activity, itemList.get(position).getMediaElement());
+                                util.addToPlaylist(activity, itemList.get(position).getMediaElement(), null);
                                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                 break;
                         }

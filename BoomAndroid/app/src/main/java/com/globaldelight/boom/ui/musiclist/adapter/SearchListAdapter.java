@@ -262,7 +262,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                                     ((MediaItemCollection)artists.get(getPosition(position))).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((MediaItemCollection)artists.get(getPosition(position))));
                                     ((MediaItemCollection)((MediaItemCollection)artists.get(getPosition(position))).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((MediaItemCollection)artists.get(getPosition(position))));
 
-                                    util.addToPlaylist(activity, ((IMediaItemCollection)((IMediaItemCollection)artists.get(getPosition(position))).getMediaElement().get(((IMediaItemCollection)artists.get(getPosition(position))).getCurrentIndex())).getMediaElement());
+                                    util.addToPlaylist(activity, ((IMediaItemCollection)((IMediaItemCollection)artists.get(getPosition(position))).getMediaElement().get(((IMediaItemCollection)artists.get(getPosition(position))).getCurrentIndex())).getMediaElement(), null);
                                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                     break;
                             }
@@ -318,7 +318,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                                     Utils util = new Utils(context);
                                     ((MediaItemCollection)albums.get(getPosition(position))).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) albums.get(getPosition(position))));
 
-                                    util.addToPlaylist(activity, ((MediaItemCollection)albums.get(getPosition(position))).getMediaElement());
+                                    util.addToPlaylist(activity, ((MediaItemCollection)albums.get(getPosition(position))).getMediaElement(), null);
                                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                     break;
                             }
@@ -360,7 +360,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                                     Utils util = new Utils(context);
                                     ArrayList list = new ArrayList<IMediaItemBase>();
                                     list.add(songs.get(getPosition(position)));
-                                    util.addToPlaylist(activity, list);
+                                    util.addToPlaylist(activity, list, null);
                                     break;
                                 case R.id.popup_song_add_fav :
                                     if(MediaController.getInstance(context).isFavouriteItems(songs.get(getPosition(position)).getItemId())){

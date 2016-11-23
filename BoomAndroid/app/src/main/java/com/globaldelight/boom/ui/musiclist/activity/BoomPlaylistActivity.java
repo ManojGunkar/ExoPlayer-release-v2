@@ -1,6 +1,10 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +23,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.adapter.BoomPlayListAdapter;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
@@ -54,10 +59,28 @@ public class BoomPlaylistActivity extends BoomMasterActivity {
         });
     }
 
+    private BroadcastReceiver updateList = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()){
+                case PlayerService.ACTION_UPDATE_BOOM_PLAYLIST:
+                        if(boomPlayListAdapter != null){
+                            boomPlayListAdapter.updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                        }
+                    break;
+            }
+        }
+    };
+
+
+
     private void init() {
         recyclerView = (RecyclerView) findViewById(R.id.playlistContainer);
         emptyView = findViewById(R.id.playlist_empty_view);
         checkPermissions();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(PlayerService.ACTION_UPDATE_BOOM_PLAYLIST);
+        registerReceiver(updateList, intentFilter);
     }
 
     private void checkPermissions() {
@@ -168,6 +191,7 @@ public class BoomPlaylistActivity extends BoomMasterActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(updateList);
         Log.d("BoomPlaylistActivity", "Destroy");
     }
 }

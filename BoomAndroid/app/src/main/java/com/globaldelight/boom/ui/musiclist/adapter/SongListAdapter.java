@@ -111,8 +111,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
 
                 }
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_SONG_SECTION);
-
-
             }
         });
 
@@ -131,7 +129,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                                 Utils util = new Utils(context);
                                 ArrayList list = new ArrayList<IMediaItemBase>();
                                 list.add(itemList.get(position));
-                                util.addToPlaylist(activity, list);
+                                util.addToPlaylist(activity, list, null);
                                 break;
                             case R.id.popup_song_add_fav :
                                 if(MediaController.getInstance(context).isFavouriteItems(itemList.get(position).getItemId())){
@@ -150,6 +148,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                     pm.inflate(R.menu.song_add_fav);
                 }
                 pm.show();
+                notifyDataSetChanged();
             }
         });
     }

@@ -7,8 +7,10 @@ import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.task.PlayerService;
@@ -28,10 +30,14 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     private static IMediaItemBase playingItem;
     private static OpenSLPlayer mPlayer;
     private static PlayerEventHandler handler;
+    private static int NEXT = 0;
+    private static int PREVIOUS = 1;
+    private static int PLAYER_DIRECTION;
     private Context context;
     PlayerEvents playerEvents = new PlayerEvents() {
         @Override
         public void onStop() {
+            playingItem = null;
             context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
         }
 
@@ -57,12 +63,19 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
 
         @Override
         public void onPlay() {
-            boolean i = isPlaying();
-            Log.d("hbjhbn", "jnkj" + i);
         }
 
         @Override
         public void onError() {
+            if(isNext() && PLAYER_DIRECTION == NEXT) {
+                playNextSong(false);
+            }else if(isPrevious() && PLAYER_DIRECTION == PREVIOUS) {
+                playPrevSong();
+            }else {
+                App.getPlayingQueueHandler().getUpNextList().managePlayedItem(true);
+                context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
+            }
+            Toast.makeText(context, "Error in playing Song", Toast.LENGTH_SHORT).show();
         }
     };
     private Handler uiHandler;
@@ -73,12 +86,22 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     private MediaSession.Callback mediaSessionCallback = new MediaSession.Callback(){
         @Override
         public void onPlay() {
-            handler.onPlayingItemClicked();
+            mPlayer.play();
+
+            Intent intent = new Intent();
+            intent.setAction(PlayerService.ACTION_PLAYING_ITEM_CLICKED);
+            intent.putExtra("play_pause", true );
+            context.sendBroadcast(intent);
         }
 
         @Override
         public void onPause() {
-            handler.onPlayingItemClicked();
+            mPlayer.pause();
+
+            Intent intent = new Intent();
+            intent.setAction(PlayerService.ACTION_PLAYING_ITEM_CLICKED);
+            intent.putExtra("play_pause", false );
+            context.sendBroadcast(intent);
         }
 
         @Override
@@ -143,6 +166,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
                 mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
                 setSessionState(PlaybackState.STATE_PLAYING);
                 context.sendBroadcast(new Intent(PlayerService.ACTION_GET_SONG));
+                AnalyticsHelper.songSelectionChanged(context, playingItem);
             }
         }else{
             context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
@@ -155,6 +179,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        PLAYER_DIRECTION = NEXT;
         App.getPlayingQueueHandler().getUpNextList().setNextPlayingItem(isUser);
     }
 
@@ -164,6 +189,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        PLAYER_DIRECTION = PREVIOUS;
         App.getPlayingQueueHandler().getUpNextList().setPreviousPlayingItem();
     }
 
@@ -318,7 +344,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
                 break;
 
             case PlaybackState.STATE_STOPPED:
-                if (mPlayer.isPlaying()) {
+                if (mPlayer.isPlaying() || mPlayer.isPause()) {
                     mPlayer.stop();
                 }
                 break;

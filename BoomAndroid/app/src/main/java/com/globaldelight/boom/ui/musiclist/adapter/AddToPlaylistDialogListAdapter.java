@@ -2,6 +2,7 @@ package com.globaldelight.boom.ui.musiclist.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -18,6 +19,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.task.PlayerService;
 
 import java.util.ArrayList;
 import static android.app.AlertDialog.Builder;
@@ -84,6 +86,7 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
                 notifyDataSetChanged();
                 dialog.dismiss();
                 makeText(context, R.string.added_to_playlist, LENGTH_SHORT).show();
+                context.sendBroadcast(new Intent(PlayerService.ACTION_UPDATE_BOOM_PLAYLIST));
             }
         });
     }

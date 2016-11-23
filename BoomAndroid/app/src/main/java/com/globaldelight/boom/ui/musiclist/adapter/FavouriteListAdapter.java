@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.activity.FavouriteListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.IconizedMenu;
@@ -38,6 +40,7 @@ import com.globaldelight.boom.utils.async.Action;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -109,31 +112,35 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
 
             }
         });
+
         holder.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-                IconizedMenu PopupMenu = new IconizedMenu(((AppCompatActivity)context).getWindow().getContext(), anchorView);
-                Menu menu = PopupMenu.getMenu();
-                MenuInflater inflater = PopupMenu.getMenuInflater();
-                inflater.inflate(R.menu.song_popup, PopupMenu.getMenu());
-                PopupMenu.show();
-
-                PopupMenu.setOnMenuItemClickListener(new IconizedMenu.OnMenuItemClickListener() {
+                PopupMenu pm = new PopupMenu(context, anchorView);
+                pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.popup_song_add_queue :
-                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(itemList.get(position));
+                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) itemList.get(position));
                                 break;
                             case R.id.popup_song_add_playlist:
-//                                Utils util = new Utils(context);
-//                                util.addToPlaylist(((AppCompatActivity)context), itemList.get(position));
-
+                                Utils util = new Utils(context);
+                                ArrayList list = new ArrayList<IMediaItemBase>();
+                                list.add(itemList.get(position));
+                                util.addToPlaylist((FavouriteListActivity)context, list, null);
+                                break;
+                            case R.id.popup_song_add_fav :
+                                MediaController.getInstance(context).removeItemToList(false, itemList.get(position).getItemId());
+                                itemList = MediaController.getInstance(context).getFavouriteListItems();
+                                notifyDataSetChanged();
                                 break;
                         }
                         return false;
                     }
                 });
+                pm.inflate(R.menu.song_remove_fav);
+                pm.show();
             }
         });
     }

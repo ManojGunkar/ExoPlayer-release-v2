@@ -204,7 +204,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
                                 Utils util = new Utils(context);
                                 items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
 
-                                util.addToPlaylist(activity, items.get(position).getMediaElement());
+                                util.addToPlaylist(activity, items.get(position).getMediaElement(), null);
                                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                 break;
                         }

@@ -86,19 +86,26 @@
                 android:id="@+id/card_grid_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight=".8"
                 android:singleLine="true"
                 android:textColor="@color/white"
                 android:textSize="@dimen/seventy_two_px" />
 
-            <ImageView
-                android:id="@+id/card_grid_menu"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/unbounded_ripple"
-                android:backgroundTint="#434343"
-                android:src="@drawable/ic_more_button_playlists"
-                android:theme="@style/Theme.AppCompat.Light" />
+                android:layout_height="match_parent"
+                android:gravity="right"
+                android:layout_weight=".2">
+                <ImageView
+                    android:id="@+id/card_grid_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/unbounded_ripple"
+                    android:backgroundTint="#434343"
+                    android:src="@drawable/ic_more_button_playlists"
+                    android:padding="5dp"
+                    android:theme="@style/Theme.AppCompat.Light"/>
+            </LinearLayout>
 
         </LinearLayout>
 

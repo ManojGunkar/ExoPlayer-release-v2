@@ -49,6 +49,8 @@ import java.util.Calendar;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+import static com.flurry.sdk.li.i;
+
 /**
  * Created by Rahul Agarwal on 30-09-16.
  */
@@ -199,8 +201,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void updateAlbumArt(final String mCurrentArtUrl){
-        if (isPathValid(mCurrentArtUrl)) {
+    private void updateAlbumArt(final MediaItem item){
+        if (isPathValid(item.getItemArtUrl())) {
             new Action() {
                 private Bitmap img;
 
@@ -213,7 +215,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 @Nullable
                 @Override
                 protected Object run() throws InterruptedException {
-                    if (mCurrentArtUrl != null && (new File(mCurrentArtUrl)).exists()) {
+                    if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
                         return null;
                     } else {
                         return img = BitmapFactory.decodeResource(getBaseContext().getResources(),
@@ -226,10 +228,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (mCurrentArtUrl != null && (new File(mCurrentArtUrl)).exists()) {
+                            if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
                                 Log.d("ImageLoad", "Always call --");
-//                                File file = new File(mCurrentArtUrl);
-                                Bitmap bitmap = BitmapFactory.decodeFile(mCurrentArtUrl);
+//                                File file = new File(item.getItemArtUrl());
+                                Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
                                 bitmap = Bitmap.createScaledBitmap(bitmap, (int) getResources().getDimension(R.dimen.home_album_art_size),
                                         (int) getResources().getDimension(R.dimen.home_album_art_size), false);
 //                                bitmap.setHeight((int) getResources().getDimension(R.dimen.home_album_art_size));
@@ -266,12 +268,13 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 }
             }.execute();
         } else {
-            ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, BitmapFactory.decodeResource(getBaseContext().getResources(),
-                    R.drawable.default_album_art_home));
-            Bitmap blurredBitmap = blur(BoomPlayerActivity.this, BitmapFactory.decodeResource(getBaseContext().getResources(),
-                    R.drawable.default_album_art_home));
-            mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
-
+            if(item != null) {
+                ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, BitmapFactory.decodeResource(getBaseContext().getResources(),
+                        R.drawable.default_album_art_home));
+                Bitmap blurredBitmap = blur(BoomPlayerActivity.this, BitmapFactory.decodeResource(getBaseContext().getResources(),
+                        R.drawable.default_album_art_home));
+                mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
+            }
         }
     }
 
@@ -280,9 +283,14 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mTitleTxt.setVisibility(View.VISIBLE);
             mSubTitleTxt.setVisibility(View.VISIBLE);
             mTrackSeek.setVisibility(View.VISIBLE);
+            mRemainsTime.setVisibility(View.VISIBLE);
+            mPlayedTime.setVisibility(View.VISIBLE);
+            mNextBtn.setVisibility(View.VISIBLE);
+            mPrevBtn.setVisibility(View.VISIBLE);
             mSubTitleTxt.setSelected(true);
+            mFavourite.setVisibility(View.VISIBLE);
 
-            updateAlbumArt(item.getItemArtUrl());
+            updateAlbumArt(item);
 
             updateFavoriteTrack(false);
 
@@ -295,7 +303,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 mPlayPauseBtn.setVisibility(View.VISIBLE);
                 mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_player_play, null));
             }
-
+            updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
         }else{
             param = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             param.gravity = Gravity.CENTER;
@@ -304,9 +312,13 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mSubTitleTxt.setVisibility(View.GONE);
             mTrackSeek.setVisibility(View.INVISIBLE);
             mPlayPauseBtn.setVisibility(View.INVISIBLE);
-            mAlbumArt.setImageDrawable(getResources().getDrawable(R.drawable.no_song_selected));
+            ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, BitmapFactory.decodeResource(getBaseContext().getResources(),
+                    R.drawable.no_song_selected));
+            mRemainsTime.setVisibility(View.INVISIBLE);
+            mPlayedTime.setVisibility(View.INVISIBLE);
+            mFavourite.setVisibility(View.INVISIBLE);
         }
-        updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isPrevious());
+        updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
         updateShuffle();
         updateRepeat();
     }
@@ -462,7 +474,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             case R.id.up_next_queue_btn:
                 startUpNextActivity();
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_QUEUE_BUTTON_FROM_PLAYER_SCREEN);
-
                 break;
             case R.id.library_btn:
                 startLibraryActivity();
@@ -478,11 +489,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.player_next_btn:
                 sendBroadcast(new Intent(PlayerService.ACTION_NEXT_SONG));
-                AnalyticsHelper.songSelectionChanged(this, null);
                 break;
             case R.id.player_prev_btn:
                 sendBroadcast(new Intent(PlayerService.ACTION_PREV_SONG));
-                AnalyticsHelper.songSelectionChanged(this, null);
                 break;
             case R.id.player_add_to_playlist:
                 addToPlayList();
@@ -538,7 +547,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         super.onResume();
         isPlayerResume = true;
         updateEffectIcon();
-        updateTrackToPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingList().size() > 0 ? (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingList().get(0).getUpNextItem() : null, App.getPlayerEventHandler().isPlaying());
+        updateTrackToPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingList().size() > 0 ?
+                (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingList().get(0).getUpNextItem() :
+                null, App.getPlayerEventHandler().isPlaying());
     }
 
     @Override
