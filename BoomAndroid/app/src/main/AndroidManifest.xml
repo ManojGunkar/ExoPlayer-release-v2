@@ -186,6 +186,9 @@
             android:exported="true"
             ></activity>
         <activity android:name=".test.AppsFlyerTestActivity"></activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="2e9ac4a0d1804747ddcb10dcbcea0f8f63ba1c23" />
     </application>
 
 </manifest>

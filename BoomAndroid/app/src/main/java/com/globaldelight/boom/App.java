@@ -9,6 +9,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
@@ -19,6 +20,7 @@ import com.globaldelight.boom.utils.handlers.HistoryFavDBHelper;
 import com.globaldelight.boom.utils.handlers.PlaylistDBHelper;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boom.utils.handlers.UserPreferenceHandler;
+import io.fabric.sdk.android.Fabric;
 
 
 public class App extends Application implements SensorEventListener {
@@ -70,6 +72,7 @@ public class App extends Application implements SensorEventListener {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
 
         application = this;
 
