@@ -1,4 +1,4 @@
-package com.globaldelight.boom.test;
+package com.globaldelight.boom.purchase;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -6,24 +6,40 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.test.util.IabHelper;
-import com.globaldelight.boom.test.util.IabResult;
-import com.globaldelight.boom.test.util.Inventory;
-import com.globaldelight.boom.test.util.Purchase;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.purchase.util.IabHelper;
+import com.globaldelight.boom.purchase.util.IabResult;
+import com.globaldelight.boom.purchase.util.Inventory;
+import com.globaldelight.boom.purchase.util.Purchase;
+import com.globaldelight.boom.ui.widgets.RegularButton;
+import com.globaldelight.boomplayer.AudioEffect;
 
-public class InAppTestActivity extends AppCompatActivity {
+public class InAppPurchaseActivity extends AppCompatActivity {
     public static final String TAG = "In-APP";
     static final String SKU_BOOM_3D_SURROUND = "android.test.purchased";
     // (arbitrary) request code for the purchase flow
     static final int RC_REQUEST = 10001;
     IabHelper mHelper;
+    RegularButton buyButton;
+    RegularButton restoreButton;
+    private AudioEffect audioEffectPreferenceHandler;
     // Callback for when a purchase is finished
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-            Log.d(TAG, "Purchase finished: " + result + ", purchase: " + purchase);
+            Log.d(TAG, "Purchase is finished: " + result.getResponse() + ", purchase: " + purchase);
+/*
+          Purchase data: {"packageName":"com.globaldelight.boom","orderId":"transactionId.android.test.purchased","productId":"android.test.purchased","developerPayload":"","purchaseTime":0,"purchaseState":0,"purchaseToken":"inapp:com.globaldelight.boom:android.test.purchased"}
+*/
+
+            if (result.getResponse() == IabHelper.IABHELPER_USER_CANCELLED) {
+                AnalyticsHelper.purchaseCancelled();
+
+            }
+
+
+
 
             // if we were disposed of in the meantime, quit.
             if (mHelper == null) return;
@@ -49,10 +65,13 @@ public class InAppTestActivity extends AppCompatActivity {
             if (purchase.getSku().equals(SKU_BOOM_3D_SURROUND)) {
                 // bought the premium upgrade!
                 Log.d(TAG, "Purchase is premium upgrade. Congratulating user.");
-                /*alert("Thank you for upgrading to premium!");
-                mIsPremium = true;
-                updateUi();
-                setWaitScreen(false);*/
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(InAppPurchaseActivity.this, R.style.AppCompatAlertDialogStyle);
+                builder.setTitle("Congratulations");
+                builder.setMessage("Thank you for purchasing Boom Magical Effects Pack");
+                builder.setPositiveButton("OK", null);
+                builder.show();
+                onSuccessPurchase();
             }
 
         }
@@ -104,7 +123,26 @@ public class InAppTestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_in_app_test);
+        setContentView(R.layout.activity_in_app);
+        buyButton = (RegularButton) findViewById(R.id.buyButton);
+        restoreButton = (RegularButton) findViewById(R.id.restore);
+        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
+        buyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newPurchase();
+            }
+        });
+        restoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mHelper.queryInventoryAsync(mGotInventoryListener);
+                } catch (IabHelper.IabAsyncInProgressException e) {
+                    complain("Error querying inventory. Another async operation in progress.");
+                }
+            }
+        });
         // compute your public key and store it in base64EncodedPublicKey
         String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgiRZhXAbnXPjPhiuR3u6JsojGI8zmLk9YRma6j1Hc3uCXytO344tIcgHjwyNVDzMJ+U1ounor+A7ON6Uu7alb6+uuVqYgp68aA7GXg8OwHvqYJO0qzogQnPv3eyuDYtYq4EmMuc0PefCXrCdLQyUAS9bGCCianhyBknQVD8JPJZDT2mzjK73XgKT5BeWrmq1QEfWggaqXGXW+3g0DrWtC+u4BwljYrrcl3bX/KammReI/LIFKQIPb11nOrTsgG0ik2IrxaOOo0VTrDHn3Phk8Xg27/8Y7P4bAtSvQyF5U0u+vDoT6L6nKfZ4jEEwOk7XhasWL6pl7+oPzOR9NDCYEwIDAQAB";
         // Create the helper, passing it our context and the public key to verify signatures with
@@ -146,6 +184,7 @@ public class InAppTestActivity extends AppCompatActivity {
 //                }
             }
         });
+        buyButton.setTransformationMethod(null);
 
     }
 
@@ -189,7 +228,7 @@ public class InAppTestActivity extends AppCompatActivity {
 
     void complain(String message) {
         Log.e(TAG, "**** TrivialDrive Error: " + message);
-        alert("Error: " + message);
+        // alert("Error: " + message);
     }
 
     void alert(String message) {
@@ -210,7 +249,7 @@ public class InAppTestActivity extends AppCompatActivity {
         mHelper = null;
     }
 
-    public void newPurchase(View view) {
+    public void newPurchase() {
 
         Log.d(TAG, "Launching purchase flow for gas.");
 
@@ -273,6 +312,26 @@ public class InAppTestActivity extends AppCompatActivity {
     }
 
     public void userAlreadyPurchased() {
-        Toast.makeText(this, "User already owned", Toast.LENGTH_SHORT).show();
+
+
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(InAppPurchaseActivity.this, R.style.AppCompatAlertDialogStyle);
+        builder.setTitle("Congratulations");
+        builder.setMessage("You had already purchased Boom Magical Effects Pack.Thank you for purchasing.");
+        builder.setPositiveButton("OK", null);
+        builder.show();
+        audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.PAID_USER);
+        finish();
+    }
+
+    public void onSuccessPurchase() {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(InAppPurchaseActivity.this, R.style.AppCompatAlertDialogStyle);
+        builder.setTitle("Congratulations");
+        builder.setMessage("Thank you for purchasing Boom Magical Effects Pack");
+        builder.setPositiveButton("OK", null);
+        builder.show();
+        audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.PAID_USER);
+        finish();
     }
 }

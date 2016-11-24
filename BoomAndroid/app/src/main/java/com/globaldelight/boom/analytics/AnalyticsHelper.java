@@ -117,6 +117,10 @@ public class AnalyticsHelper {
     public static final String PARAM_ON_EAR = "on_ear";*/
     //public static final String EVENT_CREATED_NEW_PLAYLIST = "created_new_playlist";
 
+    public static final String EVENT_OPEN_STORE = "store_opened";
+    public static final String PARAM_DATE = "date";
+    public static final String EVENT_PURCHASE_FAILED = "purchase_failed";
+    public static final String EVENT_PURCHASE_CANCELLED = "purchase_cancelled";
 
     public static void logCommonEventWithStatus(Context ctx, String eventName, boolean status) {
         //flurry
@@ -199,8 +203,26 @@ public class AnalyticsHelper {
         mixpanel.getPeople().set(properties);
     }
 
+    public static void purchaseCancelled() {
+
+    }
+
+    public static void purchaseSuccess() {
+
+    }
+
+    public static void purchaseFailed() {
+
+    }
+
     public void logCommonEvent(Context context, String event) {
        FlurryAgent.logEvent(event);
         MixPanelAnalyticHelper.getInstance(context).track(event);
+    }
+
+    public void storeOpened(Context context, String event) {
+        FlurryAnalyticHelper.logEvent(EVENT_OPEN_STORE);
+        JSONObject properties = new JSONObject();
+        //properties.put(PARAM_DATE, headPhoneType);
     }
 }

@@ -19,11 +19,11 @@ public class AudioEffect {
     private static boolean POWER_OFF = false;
     private static boolean DEFAULT_POWER = true;
     private static boolean EFFECT_DEFAULT_POWER = false;
-
+    private static int DEFAULT_USER_PURCHASE_TYPE = 0;
     private static int SPEAKER_COUNT = 6;
 
     private static int EQUALIZER_POSITION = 0;
-
+    private static String USER_PURCHASE_TYPE = "user_purchase_type";
     private static String HEAD_PHONE_TYPE = "audio_head_phone_type";
 
     private static String AUDIO_EFFECT_POWER = "audio_effect_power";
@@ -46,64 +46,6 @@ public class AudioEffect {
     private static String SPEAKER_POWER = "speaker_power";
 
     private static String FULL_BASS = "full_bass";
-
-    public int getHeadPhoneType() {
-        return shp.getInt(HEAD_PHONE_TYPE, headphone.OVER_EAR.ordinal());
-    }
-
-    public enum headphone {
-        OVER_EAR,
-        ON_EAR,
-        IN_EAR,
-        IN_CANAL;
-
-        private static final Map<Integer, headphone> lookup = new HashMap<Integer, headphone>();
-
-        static{
-            int ordinal = 0;
-            for (headphone suit : EnumSet.allOf(headphone.class)) {
-                lookup.put(ordinal, suit);
-                ordinal+= 1;
-            }
-        }
-
-        public static headphone fromOrdinal(int ordinal) {
-            return lookup.get(ordinal);
-        }
-    }
-
-
-    public void setHeadPhoneType(headphone type){
-        editor.putInt(HEAD_PHONE_TYPE, type.ordinal());
-        editor.commit();
-    }
-
-    public enum equalizer{
-        on,
-        off,
-    }
-
-    public enum Speaker{
-        FrontLeft,
-        FrontRight,
-        RearLeft,
-        RearRight,
-        Woofer,
-        Tweeter;
-        private static final Map<Integer, Speaker> lookup = new HashMap<Integer, Speaker>();
-        static{
-            int ordinal = 0;
-            for (Speaker suit : EnumSet.allOf(Speaker.class)) {
-                lookup.put(ordinal, suit);
-                ordinal+= 1;
-            }
-        }
-
-        public static Speaker fromOrdinal(int ordinal) {
-            return lookup.get(ordinal);
-        }
-    }
-
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
 
@@ -112,10 +54,28 @@ public class AudioEffect {
         editor = shp.edit();
     }
 
-    public static AudioEffect getAudioEffectInstance(Context context){
-        if(handler == null)
+    public static AudioEffect getAudioEffectInstance(Context context) {
+        if (handler == null)
             handler = new AudioEffect(context);
         return handler;
+    }
+
+    public int getHeadPhoneType() {
+        return shp.getInt(HEAD_PHONE_TYPE, headphone.OVER_EAR.ordinal());
+    }
+
+    public void setHeadPhoneType(headphone type){
+        editor.putInt(HEAD_PHONE_TYPE, type.ordinal());
+        editor.commit();
+    }
+
+    public int getUserPurchaseType() {
+        return shp.getInt(USER_PURCHASE_TYPE, purchase.FIVE_DAY_OFFER.ordinal());
+    }
+
+    public void setUserPurchaseType(purchase purchaseType) {
+        editor.putInt(USER_PURCHASE_TYPE, purchaseType.ordinal());
+        editor.commit();
     }
 
     public boolean isAudioEffectOn(){
@@ -153,13 +113,13 @@ public class AudioEffect {
         return shp.getInt(INTENSITY_POSITION, 50);
     }
 
-    public void setEnableIntensity(boolean enableIntensity) {
-        editor.putBoolean(INTENSITY_POWER, enableIntensity);
+    public void setIntensity(int intensity) {
+        editor.putInt(INTENSITY_POSITION, intensity);
         editor.commit();
     }
 
-    public void setIntensity(int intensity) {
-        editor.putInt(INTENSITY_POSITION, intensity);
+    public void setEnableIntensity(boolean enableIntensity) {
+        editor.putBoolean(INTENSITY_POWER, enableIntensity);
         editor.commit();
     }
 
@@ -239,4 +199,75 @@ public class AudioEffect {
         editor.putBoolean(HEADSET_PLUGGED_INFO, enable);
         editor.commit();
     }
+
+    public enum headphone {
+        OVER_EAR,
+        ON_EAR,
+        IN_EAR,
+        IN_CANAL;
+
+        private static final Map<Integer, headphone> lookup = new HashMap<Integer, headphone>();
+
+        static {
+            int ordinal = 0;
+            for (headphone suit : EnumSet.allOf(headphone.class)) {
+                lookup.put(ordinal, suit);
+                ordinal += 1;
+            }
+        }
+
+        public static headphone fromOrdinal(int ordinal) {
+            return lookup.get(ordinal);
+        }
+    }
+
+    public enum purchase {
+        NORMAL_USER,
+        FIVE_DAY_OFFER,
+        PAID_USER;
+
+
+        private static final Map<Integer, purchase> lookup = new HashMap<Integer, purchase>();
+
+        static {
+            int ordinal = 0;
+            for (purchase suit : EnumSet.allOf(purchase.class)) {
+                lookup.put(ordinal, suit);
+                ordinal += 1;
+            }
+        }
+
+        public static purchase fromOrdinal(int ordinal) {
+            return lookup.get(ordinal);
+        }
+    }
+
+    public enum equalizer {
+        on,
+        off,
+    }
+
+    public enum Speaker {
+        FrontLeft,
+        FrontRight,
+        RearLeft,
+        RearRight,
+        Woofer,
+        Tweeter;
+        private static final Map<Integer, Speaker> lookup = new HashMap<Integer, Speaker>();
+
+        static {
+            int ordinal = 0;
+            for (Speaker suit : EnumSet.allOf(Speaker.class)) {
+                lookup.put(ordinal, suit);
+                ordinal += 1;
+            }
+        }
+
+        public static Speaker fromOrdinal(int ordinal) {
+            return lookup.get(ordinal);
+        }
+    }
+
+
 }

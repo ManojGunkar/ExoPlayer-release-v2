@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.globaldelight.boom.test.util;
+package com.globaldelight.boom.purchase.util;
 
 import android.app.Activity;
 import android.app.PendingIntent;

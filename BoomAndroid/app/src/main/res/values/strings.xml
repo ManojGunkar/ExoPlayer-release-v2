@@ -114,4 +114,11 @@
     <!-- library-->
     <string name="title_library">Music Library</string>
 
+    <!--inapp-->
+    <string name="purchase_item_title">Magical Effects Pack</string>
+    <string name="purchase_item_desc1">Enjoy 3D Surround.all EQ, and full</string>
+    <string name="purchase_item_desc2">Intensity control with a single purchase!</string>
+    <string name="purchase_buton_text">Buy Now @ $ 3.99 </string>
+    <string name="purchase_restore_txt">Restore Purchases</string>
+
 </resources>

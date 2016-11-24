@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.globaldelight.boom.test.util;
+package com.globaldelight.boom.purchase.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;

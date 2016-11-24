@@ -103,8 +103,8 @@
                         android:layout_marginStart="@dimen/sixty_eight_pt"
                         android:buttonTint="@color/colorPrimary"
                         android:text="@string/sort_by_artist"
-                        android:textSize="@dimen/settings_item_title_size"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/settings_item_title_size" />
 
                     <RadioButton
                         android:id="@+id/radio_album"
@@ -113,9 +113,9 @@
                         android:layout_marginStart="@dimen/sixty_eight_pt"
                         android:layout_marginTop="@dimen/eighty_two_pt"
                         android:buttonTint="@color/colorPrimary"
-                        android:textSize="@dimen/settings_item_title_size"
                         android:text="@string/sort_by_title"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/settings_item_title_size" />
                 </RadioGroup>
             </LinearLayout>
 
@@ -148,9 +148,9 @@
                     android:id="@+id/textView4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sixty_four_pt"
-                    android:layout_marginStart="@dimen/sixty_eight_pt"
                     android:layout_marginEnd="@dimen/sixty_eight_pt"
+                    android:layout_marginStart="@dimen/sixty_eight_pt"
+                    android:layout_marginTop="@dimen/sixty_four_pt"
                     android:inputType="textMultiLine"
                     android:text="@string/description_shake"
                     android:textColor="@color/white_shade"
@@ -193,8 +193,8 @@
                             android:layout_marginTop="@dimen/eighty_two_pt"
                             android:buttonTint="@color/colorPrimary"
                             android:text="@string/shake_action_none"
-                            android:textSize="@dimen/settings_item_title_size"
-                            android:textColor="@color/white" />
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/settings_item_title_size" />
 
                         <RadioButton
                             android:id="@+id/radio_next_song"
@@ -204,8 +204,8 @@
                             android:layout_marginTop="@dimen/eighty_two_pt"
                             android:buttonTint="@color/colorPrimary"
                             android:text="@string/shake_action_next"
-                            android:textSize="@dimen/settings_item_title_size"
-                            android:textColor="@color/white" />
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/settings_item_title_size" />
 
                         <RadioButton
                             android:id="@+id/radio_play_pause"
@@ -215,8 +215,8 @@
                             android:layout_marginTop="@dimen/eighty_two_pt"
                             android:buttonTint="@color/colorPrimary"
                             android:text="@string/shake_action_playorpause"
-                            android:textSize="@dimen/settings_item_title_size"
-                            android:textColor="@color/white" />
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/settings_item_title_size" />
                     </RadioGroup>
                 </LinearLayout>
             </LinearLayout>
@@ -260,12 +260,12 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_below="@+id/title_cross_fade"
-                        android:layout_toStartOf="@+id/switch_cross_fade"
                         android:layout_marginTop="@dimen/sixty_four_pt"
+                        android:layout_toStartOf="@+id/switch_cross_fade"
                         android:inputType="textMultiLine"
+                        android:paddingLeft="@dimen/sixty_eight_pt"
                         android:text="@string/description_crossfade"
                         android:textColor="@color/white_shade"
-                        android:paddingLeft="@dimen/sixty_eight_pt"
 
                         android:textSize="@dimen/settings_item_description_size"
 
@@ -312,13 +312,13 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="@dimen/one_hundred_thirty_six_pt"
                         android:gravity="center"
+                        android:max="100"
+                        android:maxHeight="2dip"
+                        android:minHeight="2dip"
+                        android:progressDrawable="@drawable/custom_seekbar"
+
                         android:thumbTint="@color/colorPrimary"
                         android:thumbTintMode="src_atop"
-                        android:minHeight="2dip"
-                        android:maxHeight="2dip"
-
-                        android:max="100"
-                        android:progressDrawable="@drawable/custom_seekbar"
                         />
                    <!-- style="@style/CustomSeekBar"
 
@@ -361,10 +361,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
-                    android:layout_marginTop="@dimen/fifty_eight_pt"
-                    android:inputType="textMultiLine"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/fifty_eight_pt"
                     android:gravity="center_horizontal"
+                    android:inputType="textMultiLine"
                     android:text="@string/description_note_crossfade"
                     android:textColor="@color/white_shade"
                     android:textSize="@dimen/settings_item_description_size"
@@ -401,10 +401,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
-                    android:paddingLeft="@dimen/sixty_eight_pt"
-                    android:paddingRight="@dimen/sixty_eight_pt"
                     android:layout_marginTop="@dimen/ninety_two_pt"
                     android:inputType="textMultiLine"
+                    android:paddingLeft="@dimen/sixty_eight_pt"
+                    android:paddingRight="@dimen/sixty_eight_pt"
                     android:text="@string/sleep_timer_description"
                     android:textColor="@color/white_shade"
                     android:textSize="@dimen/settings_item_description_size"
@@ -502,8 +502,27 @@
                 android:layout_height="1px"
                 android:layout_marginTop="@dimen/one_ten_pt"
                 android:background="#222327"
-                android:visibility="invisible"/>
+                android:visibility="visible" />
 
+            <com.globaldelight.boom.ui.widgets.RegularButton
+                android:id="@+id/buyButton"
+                android:layout_width="@dimen/one_thousand_twenty_eight"
+                android:layout_height="@dimen/two_hundred_eight"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/one_ten_pt"
+                android:background="@drawable/purchase_button"
+                android:onClick="openStore"
+                android:text="@string/purchase_buton_text"
+                android:textColor="@color/white"
+                android:textSize="@dimen/purchase_item_button_size"
+                android:typeface="normal" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginTop="@dimen/one_ten_pt"
+                android:background="#222327"
+                android:visibility="invisible"/>
         </LinearLayout>
     </ScrollView>
 

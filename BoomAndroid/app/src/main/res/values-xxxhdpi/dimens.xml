@@ -16,12 +16,15 @@
     <dimen name="play_queue_header_txt">14sp</dimen>
     <dimen name="play_queue_row_txt">15sp</dimen>
     <dimen name="play_queue_row_desc_txt">14sp</dimen>
+    <dimen name="purchase_item_title_size">24sp</dimen>
+    <dimen name="purchase_item_desc_size">16sp</dimen>
+    <dimen name="purchase_item_button_size">26sp</dimen>
 
     <dimen name="two_fourty_eight_px">62dp</dimen>
     <!--3d surround-->
     <dimen name="eight_pt">2dp</dimen>
     <dimen name="eighty_pt">20dp</dimen>
-    <dimen name="one_fourty_eight_pt">37dp</dimen>
+    <dimen name="one_hundred_fourty_eight_pt">37dp</dimen>
 
     <dimen name="one_twenty_pt">30dp</dimen>
     <dimen name="fourty_pt">8dp</dimen>
@@ -116,4 +119,11 @@
     <dimen name="twelve_pt">12dp</dimen>
     <dimen name="hundred_px">25dp</dimen>
     <dimen name="fourty_eight_px">12dp</dimen>
+    <dimen name="one_thousand_four_hundered_fourty">360dp</dimen>
+    <dimen name="one_thousand_one_hundered_fourty">285dp</dimen>
+    <dimen name="two_hundred_sixty_four">66dp</dimen>
+    <dimen name="two_hundred_fourty_eight">62dp</dimen>
+    <dimen name="one_thousand_twenty_eight">257dp</dimen>
+    <dimen name="two_hundred_eight">52dp</dimen>
+
 </resources>

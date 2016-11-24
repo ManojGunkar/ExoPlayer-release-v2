@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.globaldelight.boom.test.util;
+package com.globaldelight.boom.purchase.util;
 
 /**
  * Represents the result of an in-app billing operation.

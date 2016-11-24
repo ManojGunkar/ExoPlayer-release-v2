@@ -6,7 +6,6 @@ import android.media.AudioManager;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
@@ -35,6 +34,11 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     private static int PREVIOUS = 1;
     private static int PLAYER_DIRECTION;
     private Context context;
+    private Handler uiHandler;
+    private PlayerService service;
+    private AudioManager audioManager;
+    private AudioManager.OnAudioFocusChangeListener focusChangeListener;
+    private MediaSession session;
     PlayerEvents playerEvents = new PlayerEvents() {
         @Override
         public void onStop() {
@@ -84,11 +88,6 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
             onPlayingItemChanged();
         }
     };
-    private Handler uiHandler;
-    private PlayerService service;
-    private AudioManager  audioManager;
-    private AudioManager.OnAudioFocusChangeListener focusChangeListener;
-    private MediaSession session;
     private MediaSession.Callback mediaSessionCallback = new MediaSession.Callback(){
         @Override
         public void onPlay() {
@@ -255,6 +254,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     }
 
     public void set3DAudioEnable(boolean enable) {
+
         mPlayer.setEnable3DAudio(enable);
     }
 

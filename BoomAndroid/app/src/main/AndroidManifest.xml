@@ -182,7 +182,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".test.InAppTestActivity"
+        <activity
+            android:name=".purchase.InAppPurchaseActivity"
             android:exported="true"
             ></activity>
         <activity android:name=".test.AppsFlyerTestActivity"></activity>

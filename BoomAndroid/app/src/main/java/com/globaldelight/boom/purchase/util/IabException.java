@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.globaldelight.boom.test.util;
+package com.globaldelight.boom.purchase.util;
 
 /**
  * Exception thrown when something went wrong with in-app billing.

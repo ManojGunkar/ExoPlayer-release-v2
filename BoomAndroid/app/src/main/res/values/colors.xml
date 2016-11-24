@@ -42,7 +42,9 @@
     <color name="eq_txt_inactive">#757677</color>
     <color name="eq_txt_effectoff_active">#59595c</color>
     <color name="eq_txt_effectoff_inactive">#37383b</color>
-
-
+    <!--
+       store
+       -->
+    <color name="purchase_desc_color">#8d8d8d</color>
 </resources><!--
 <color name="colorAccent">#FF4081</color>-->

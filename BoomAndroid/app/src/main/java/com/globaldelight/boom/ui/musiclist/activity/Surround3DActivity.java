@@ -397,8 +397,21 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 App.getPlayerEventHandler().set3DAudioEnable(false);
                 collapse();
             } else {
-                audioEffectPreferenceHandler.setEnable3DSurround(true);
-                App.getPlayerEventHandler().set3DAudioEnable(true);
+                int purchaseType = audioEffectPreferenceHandler.getUserPurchaseType();
+                switch (AudioEffect.purchase.fromOrdinal(purchaseType)) {
+                    case NORMAL_USER:
+                        break;
+                    case PAID_USER:
+                        audioEffectPreferenceHandler.setEnable3DSurround(true);
+                        App.getPlayerEventHandler().set3DAudioEnable(true);
+                        break;
+                    case FIVE_DAY_OFFER:
+                        audioEffectPreferenceHandler.setEnable3DSurround(true);
+                        App.getPlayerEventHandler().set3DAudioEnable(true);
+                        break;
+                }
+
+
             }
             update3DSurround();
             if(!audioEffectPreferenceHandler.isIntensityOn()){
