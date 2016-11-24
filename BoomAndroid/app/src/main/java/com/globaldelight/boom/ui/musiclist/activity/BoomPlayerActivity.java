@@ -17,7 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,6 +39,7 @@ import com.globaldelight.boom.ui.widgets.CircularSeekBar;
 import com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.ui.widgets.TooltipWindow;
+import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boomplayer.AudioEffect;
 
@@ -227,7 +227,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                         @Override
                         public void run() {
                             if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
-                                Log.d("ImageLoad", "Always call --");
+                                Logger.LOGD("ImageLoad", "Always call --");
 //                                File file = new File(item.getItemArtUrl());
                                 Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
                                 bitmap = Bitmap.createScaledBitmap(bitmap, (int) getResources().getDimension(R.dimen.home_album_art_size),
@@ -429,7 +429,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         mAlbumArt.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.e("Player", "Touch");
+                Logger.LOGE("Player", "Touch");
                 return true;
             }
         });
@@ -529,7 +529,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         }else{
-            Toast.makeText(this, "No Song Selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.no_song), Toast.LENGTH_SHORT).show();
         }
     }
 

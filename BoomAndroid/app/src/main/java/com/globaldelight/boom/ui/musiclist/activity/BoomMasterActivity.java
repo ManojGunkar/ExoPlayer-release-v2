@@ -90,7 +90,7 @@ public class BoomMasterActivity extends AppCompatActivity implements NavigationV
         toolImage = (ImageView)findViewById(R.id.toolImg);
         toolTxt = (TextView) findViewById(R.id.toolTitle);
         setToolbarImage(R.drawable.ic_album_white_24dp);
-        setToolbarTitle("Music Library");
+        setToolbarTitle(getResources().getString(R.string.title_library));
         toolTxt.setTextSize(18);
         try {
             setSupportActionBar(toolbar);

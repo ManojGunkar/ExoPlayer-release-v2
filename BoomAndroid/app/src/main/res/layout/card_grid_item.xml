@@ -101,7 +101,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/unbounded_ripple"
-                    android:backgroundTint="#434343"
+                    android:backgroundTint="@color/card_grid_item_title_background_tint"
                     android:padding="5dp"
                     android:src="@drawable/ic_more_button_playlists"
                     android:theme="@style/Theme.AppCompat.Light"/>

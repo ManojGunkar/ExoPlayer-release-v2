@@ -75,6 +75,7 @@
     <string name="title_sleep_timer">Sleep Timer</string>
     <string name="sleep_timer_description">Set a sleep timer to turn off music automatically after a set amount of time.</string>
     <string name="sleep_timer_description_active">Your sleep timer is ON. \n Music will stop playing at </string>
+    <string name="invalid_timer_entry">Enter valid sleep interval.</string>
     <!-- about-->
     <string name="title_about">Boom for Android v1.1</string>
     <string name="description_about">Delightful Surround Sound Engineered by Global Delight</string>
@@ -101,10 +102,16 @@
     <!-- Player-->
     <string name="added_to_favorite">Playing Song added as favorite.</string>
     <string name="removed_from_favorite">Playing Song removed from favorite.</string>
+    <string name="no_song">No Song Selected.</string>
     <!-- Boom Playlist-->
     <string name="boom_playlist_title">Boom Playlist</string>
     <string name="playlist_created">PlayList Created.</string>
     <string name="playlist_deleted">PlayList Deleted.</string>
     <string name="txt_undo">UNDO</string>
+    <string name="dialog_txt_cancel">Cancel</string>
+    <string name="dialog_txt_rename">Rename</string>
+    <string name="dialog_txt_done">Done</string>
+    <!-- library-->
+    <string name="title_library">Music Library</string>
 
 </resources>

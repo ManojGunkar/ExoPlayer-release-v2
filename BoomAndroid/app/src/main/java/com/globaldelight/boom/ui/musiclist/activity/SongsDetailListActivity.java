@@ -3,7 +3,6 @@ package com.globaldelight.boom.ui.musiclist.activity;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -16,12 +15,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -38,6 +35,7 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.adapter.ItemSongListAdapter;
+import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
@@ -318,7 +316,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            Log.d("Query : ", query);
+            Logger.LOGD("Query : ", query);
         }
     }
 

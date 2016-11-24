@@ -59,22 +59,13 @@ import java.util.concurrent.TimeUnit;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, ISwipeRefresh, RadioGroup.OnCheckedChangeListener {
 
-    public static final int OVER_EAR = 1;
-    //private SettingsConfigViewPagerAdapter mAdapter;
-    //private RegularTextView lblTitleHeadphoneSelect;
-    public static final int IN_CANAL = 2;
-    public static final int ON_EAR = 3;
-    public static boolean isTimerRunning;
+
     protected View view;
     Resources system;
     RadioButton rbNone, rbNext, rbPlay, rbArtist, rbAlbum;
-    //private RegularTextView lblTitleSortAlbums;
     private RadioGroup radioButtonSortGroup;
-    // private RegularTextView lblTitleShake;
     private RadioGroup radioButtonShakeGroup;
-    // private RegularTextView lblTitleCrossFade;
     private Switch crossfadeSwich;
-    //private RegularTextView lblTitleSleepTimer;
     private TimePicker timePicker;
     private Button btnTimerStart;
     private Button btnTimerCancel;
@@ -86,7 +77,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private SeekBar slideseekbar;
     private boolean seekbarfocus;
     private ArrayList<HeadSetType> headSetTypeList;
-    // public static int selectedHeadsetOption = 0;
     private Context mContext;
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
@@ -111,19 +101,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         initPagerItems();
         audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
-        // lblTitleHeadphoneSelect = (RegularTextView) findViewById(R.id.title_headphone_select);
-
-        //section sort albums
-        //lblTitleSortAlbums = (RegularTextView) findViewById(R.id.title_sort_albums);
         radioButtonSortGroup = (RadioGroup) findViewById(R.id.radio_group_sort);
         radioButtonSortGroup.setOnCheckedChangeListener(this);
-
         //section shake
-        //lblTitleShake = (RegularTextView) findViewById(R.id.title_shake_config);
         radioButtonShakeGroup = (RadioGroup) findViewById(R.id.radio_group_shake);
         radioButtonShakeGroup.setOnCheckedChangeListener(this);
         //section crossfade
-        //lblTitleCrossFade = (RegularTextView) findViewById(R.id.title_cross_fade);
         crossfadeSwich = (Switch) findViewById(R.id.switch_cross_fade);
         slideseekbar = (SeekBar) findViewById(R.id.seekBar);
         slideseekbar.setEnabled(false);
@@ -138,10 +121,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         });
 
         //section timer
-
-        //lblTitleSleepTimer = (RegularTextView) findViewById(R.id.title_sleep_timer);
-
-
         timePicker = (TimePicker) findViewById(R.id.timePicker);
         timePicker.setIs24HourView(true);
 
@@ -286,12 +265,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             minute = timePicker.getCurrentMinute();
         }
         if (hour == 0 && minute == 0) {
-            Toast.makeText(mContext, "Enter valid sleep interval", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, mContext.getResources().getString(R.string.invalid_timer_entry), Toast.LENGTH_SHORT).show();
             setUiTimerEditMode();
             return;
         }
-
-        // Log.d("sleep time", hour + ":" + minute);
 
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");//yyyy:MM:dd:HH:mm
 
@@ -311,13 +288,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         SimpleDateFormat sdftime = new SimpleDateFormat("hh:mm:ss aa");//yyyy:MM:dd:HH:mm
         String endtime = sdftime.format(calendar.getTime());
-        //txtStopTime.setText("Music will stop playing at " + endtime);
         txtDescTimer.setText(getResources().getString(R.string.sleep_timer_description_active) + " " + endtime);
-        String dateString = sdf.format(new Date(System.currentTimeMillis()));
-        // txtStopTime.append(dateString);
+        //String dateString = sdf.format(new Date(System.currentTimeMillis()));
         sleepTime = endDate.getTime() - date.getTime();
-        //txtStopTime.append("  " + sleepTime);
-
         alarmMgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(mContext, SleepAlarm.class);
         alarmIntent = PendingIntent.getBroadcast(mContext, 0, i, 0);

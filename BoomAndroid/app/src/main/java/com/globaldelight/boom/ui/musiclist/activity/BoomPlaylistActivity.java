@@ -13,7 +13,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -25,6 +24,7 @@ import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.adapter.BoomPlayListAdapter;
+import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
@@ -181,7 +181,7 @@ public class BoomPlaylistActivity extends BoomMasterActivity {
 
     @Override
     protected void onPause() {
-        Log.d("BoomPlaylistActivity", "Pause");
+        Logger.LOGD("BoomPlaylistActivity", "Pause");
         super.onPause();
     }
 
@@ -189,6 +189,6 @@ public class BoomPlaylistActivity extends BoomMasterActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(updateList);
-        Log.d("BoomPlaylistActivity", "Destroy");
+        Logger.LOGD("BoomPlaylistActivity", "Destroy");
     }
 }

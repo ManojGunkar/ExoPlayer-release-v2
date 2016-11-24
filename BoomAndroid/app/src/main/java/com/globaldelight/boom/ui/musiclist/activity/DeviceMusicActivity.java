@@ -10,11 +10,12 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.widget.LinearLayout;
 
+import com.globaldelight.boom.R;
+import com.globaldelight.boom.ui.musiclist.fragment.MusicLibraryListFragment;
 import com.globaldelight.boom.ui.widgets.MusicListTabs.MusicTabBar;
 import com.globaldelight.boom.ui.widgets.MusicListTabs.MusicTabLayout;
 import com.globaldelight.boom.ui.widgets.MusicListTabs.TabBarStyle;
-import com.globaldelight.boom.R;
-import com.globaldelight.boom.ui.musiclist.fragment.MusicLibraryListFragment;
+import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.PermissionChecker;
 
 public class DeviceMusicActivity extends BoomMasterActivity{
@@ -77,31 +78,6 @@ public class DeviceMusicActivity extends BoomMasterActivity{
         mTabBar.attachToViewPager(mViewPager,customTabLayout,mTabBarStyle);
     }
 
-    private class ListPageAdapter extends FragmentPagerAdapter {
-
-        private int[] items={R.string.songs, R.string.albums, R.string.artists, R.string.playlists, R.string.genres};
-
-        public ListPageAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            Log.d("Item No : ", "Item_"+i);
-            return MusicLibraryListFragment.getInstance(0, items[i]);
-        }
-
-        @Override
-        public int getCount() {
-            return items.length;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return getResources().getString(items[position]);
-        }
-    }
-
     public void killActivity() {
         super.onBackPressed();
     }
@@ -114,14 +90,14 @@ public class DeviceMusicActivity extends BoomMasterActivity{
 
     @Override
     protected void onPause() {
-        Log.d("DeviceMusicActivity", "Pause");
+        Logger.LOGD("DeviceMusicActivity", "Pause");
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("DeviceMusicActivity", "Destroy");
+        Logger.LOGD("DeviceMusicActivity", "Destroy");
     }
 
     private void checkPermissions() {
@@ -148,5 +124,30 @@ public class DeviceMusicActivity extends BoomMasterActivity{
 
     public void setPermissionChecker(PermissionChecker permissionChecker) {
         this.permissionChecker = permissionChecker;
+    }
+
+    private class ListPageAdapter extends FragmentPagerAdapter {
+
+        private int[] items = {R.string.songs, R.string.albums, R.string.artists, R.string.playlists, R.string.genres};
+
+        public ListPageAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            Log.d("Item No : ", "Item_" + i);
+            return MusicLibraryListFragment.getInstance(0, items[i]);
+        }
+
+        @Override
+        public int getCount() {
+            return items.length;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return getResources().getString(items[position]);
+        }
     }
 }
