@@ -71,8 +71,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
     public void updateHeaderPosition() {
         headerHistoryPos = 0;
-
-        headerHistoryPos = 0;
         headerPlayingPos = mHistoryList.size() + 1;
         headerManualPos = mHistoryList.size() + mPlaying.size() + 2;
         headerAutoPos = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + 3;
@@ -124,16 +122,16 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
         if (position > headerHistoryPos && position < headerPlayingPos) {
             position = position - 1;
-            listType = 4;
+            listType = ITEM_VIEW_TYPE_LIST_HISTORY;
         } else if (position > headerPlayingPos && position < headerManualPos) {
             position = position - mHistoryList.size() - 2;
-            listType = 5;
+            listType = ITEM_VIEW_TYPE_LIST_PLAYING;
         } else if (position > headerManualPos && position < headerAutoPos) {
             position = position - mHistoryList.size() - mPlaying.size() - 3;
-            listType = 6;
+            listType = ITEM_VIEW_TYPE_LIST_MANUAL;
         } else if (position > headerAutoPos) {
             position = position - mHistoryList.size() - mPlaying.size() - mUpnextManualList.size() - 4;
-            listType = 7;
+            listType = ITEM_VIEW_TYPE_LIST_AUTO;
         }
         return new ListPosition(listType, position == -1 ? 0 : position);
     }

@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<FrameLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/albumsListContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/appBackground"/>
-
+    android:background="@color/appBackground"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
     <LinearLayout
-        android:id="@+id/album_empty_view"
+        android:id="@+id/lib_progress"
+        style="@style/GenericProgressBackground">
+        <ProgressBar
+            style="@style/GenericProgressIndicator"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/lib_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone" />
-</LinearLayout>
+        android:orientation="vertical">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/albumsListContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/appBackground"/>
+
+        <LinearLayout
+            android:id="@+id/album_empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone" />
+    </LinearLayout>
+</FrameLayout>

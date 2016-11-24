@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.LinearLayout;
 
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -34,6 +35,7 @@ public class MusicLibraryListFragment extends Fragment {
     private boolean isOrderByAlbum=true;
     private Context context;
     private View mainView;
+    private LinearLayout mLibContainer, mLibProgress;
     private RecyclerView recyclerView;
     private SongListAdapter songListAdapter;
     private AlbumsGridAdapter albumsGridAdapter;
@@ -76,6 +78,7 @@ public class MusicLibraryListFragment extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
+
                 final ArrayList<? extends IMediaItemBase> songList = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB) /*MediaQuery.getSongList(context)*/;
                 final LinearLayoutManager llm = new LinearLayoutManager(context);
                 getActivity().runOnUiThread(new Runnable() {
@@ -109,6 +112,7 @@ public class MusicLibraryListFragment extends Fragment {
                         if (songList.size() < 1) {
                             listIsEmpty();
                         }
+                        mLibContainer.setVisibility(View.VISIBLE);
                     }
                 });
             }
@@ -133,6 +137,7 @@ public class MusicLibraryListFragment extends Fragment {
                         albumsGridAdapter = new AlbumsGridAdapter(context, getActivity(), recyclerView, albumList, permissionChecker);
                         recyclerView.setAdapter(albumsGridAdapter);
                         recyclerView.setHasFixedSize(true);
+                        mLibContainer.setVisibility(View.VISIBLE);
                     }
                 });
                 if (albumList.size() < 1) {
@@ -165,6 +170,7 @@ public class MusicLibraryListFragment extends Fragment {
                         artistsGridAdapter = new ArtistsGridAdapter(context, getActivity(), recyclerView, artistList, permissionChecker);
                         recyclerView.setAdapter(artistsGridAdapter);
                         recyclerView.setHasFixedSize(true);
+                        mLibContainer.setVisibility(View.VISIBLE);
                     }
                 });
                 if (artistList.size() < 1) {
@@ -196,6 +202,7 @@ public class MusicLibraryListFragment extends Fragment {
                         defaultPlayListAdapter = new DefaultPlayListAdapter(context, getActivity(), recyclerView, playList, permissionChecker);
                         recyclerView.setAdapter(defaultPlayListAdapter);
                         recyclerView.setHasFixedSize(true);
+                        mLibContainer.setVisibility(View.VISIBLE);
                     }
                 });
                 if (playList.size() < 1) {
@@ -228,6 +235,7 @@ public class MusicLibraryListFragment extends Fragment {
                         genreGridAdapter = new GenreGridAdapter(context, getActivity(), recyclerView, genreList, permissionChecker);
                         recyclerView.setAdapter(genreGridAdapter);
                         recyclerView.setHasFixedSize(true);
+                        mLibContainer.setVisibility(View.VISIBLE);
                     }
                 });
                 if (genreList.size() < 1) {
@@ -243,13 +251,18 @@ public class MusicLibraryListFragment extends Fragment {
     }
 
     public void listIsEmpty() {
+        mLibContainer.setVisibility(View.VISIBLE);
+        mLibProgress.setVisibility(View.GONE);
         emptyView.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
     }
 
     private void initViews() {
+        mLibContainer = (LinearLayout)mainView.findViewById(R.id.lib_container);
+        mLibProgress = (LinearLayout)mainView.findViewById(R.id.lib_progress);
         recyclerView = (RecyclerView) mainView.findViewById(R.id.albumsListContainer);
         emptyView = mainView.findViewById(R.id.album_empty_view);
+        mLibContainer.setVisibility(View.GONE);
         fetchMusicList();
     }
 
