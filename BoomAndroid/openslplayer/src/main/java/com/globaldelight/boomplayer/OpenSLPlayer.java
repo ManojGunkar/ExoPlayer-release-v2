@@ -418,7 +418,6 @@ public class OpenSLPlayer implements Runnable {
                     @Override
                     public void run() {
                         events.onErrorPlayAgain();
-                        Log.d("Error : ", "Start Play Again");
                     }
                 });
             } else if (isShutdown && isFinish) {
