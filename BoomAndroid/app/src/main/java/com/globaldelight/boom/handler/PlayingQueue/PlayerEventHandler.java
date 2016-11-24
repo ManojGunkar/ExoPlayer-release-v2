@@ -386,7 +386,13 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
             intent.putExtra("play_pause", false );
             mPlayer.pause();
         }
-        context.sendBroadcast(intent);
+        else {
+            intent = null;
+        }
+
+        if ( intent != null ) {
+            context.sendBroadcast(intent);
+        }
     }
 
     public enum PlayState {
