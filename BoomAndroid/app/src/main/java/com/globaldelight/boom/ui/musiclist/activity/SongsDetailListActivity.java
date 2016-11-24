@@ -265,7 +265,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
                         .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
                 break;
-            case 4:
+            default:
                 Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.default_album_art, null))
                         .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
                 Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.default_album_art, null))

@@ -70,11 +70,6 @@
                                 android:layout_height="wrap_content"
                                 android:scaleType="centerCrop"/>
 
-                            <ImageView
-                                android:id="@+id/song_detail_list_art_img3"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:scaleType="centerCrop"/>
                         </TableRow>
 
                         <TableRow
@@ -82,22 +77,17 @@
                             android:layout_height="wrap_content" >
 
                             <ImageView
+                                android:id="@+id/song_detail_list_art_img3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:scaleType="centerCrop"/>
+
+                            <ImageView
                                 android:id="@+id/song_detail_list_art_img4"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:scaleType="centerCrop"/>
 
-                            <ImageView
-                                android:id="@+id/song_detail_list_art_img5"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:scaleType="centerCrop"/>
-
-                            <ImageView
-                                android:id="@+id/song_detail_list_art_img6"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:scaleType="centerCrop"/>
                         </TableRow>
 
                     </TableLayout>

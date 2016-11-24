@@ -417,7 +417,8 @@ public class OpenSLPlayer implements Runnable {
                 if (events != null) handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        events.onError();
+                        events.onErrorPlayAgain();
+                        Log.d("Error : ", "Start Play Again");
                     }
                 });
             } else if (isShutdown && isFinish) {

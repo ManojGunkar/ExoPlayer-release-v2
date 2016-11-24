@@ -10,4 +10,5 @@ public interface PlayerEvents {
         public void onFinish();
         public void onStop();
         public void onError();
+        public void onErrorPlayAgain();
 }

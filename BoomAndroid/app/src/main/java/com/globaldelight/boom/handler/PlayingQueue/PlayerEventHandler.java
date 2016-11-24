@@ -77,6 +77,11 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
             }
             Toast.makeText(context, "Error in playing Song", Toast.LENGTH_SHORT).show();
         }
+
+        @Override
+        public void onErrorPlayAgain() {
+            onPlayingItemChanged();
+        }
     };
     private Handler uiHandler;
     private PlayerService service;

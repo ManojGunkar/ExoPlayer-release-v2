@@ -22,6 +22,8 @@ import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.ui.widgets.RoundedTransformation;
 import com.globaldelight.boom.utils.OnStartDragListener;
+import com.globaldelight.boom.utils.Utils;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -70,11 +72,63 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     }
 
     public void updateHeaderPosition() {
+
+
+
+        /*if(mHistoryList.size() > 0){
+            headerHistoryPos = 0;
+        }
+
+        if (mHistoryList.size() > 0 && mPlaying.size() > 0){
+            headerPlayingPos = mHistoryList.size() + 1;
+        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0){
+            headerPlayingPos = 0;
+        }
+
+        if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0){
+            headerManualPos = mHistoryList.size() + mPlaying.size() + 2;
+        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0){
+            headerManualPos = mPlaying.size() + 1;
+        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0) {
+            headerManualPos = mHistoryList.size() + 1;
+        }else if(mHistoryList.size() == 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0){
+            headerManualPos = 0;
+        }
+
+        if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
+            headerAutoPos = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + 3;
+        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
+            headerAutoPos = mPlaying.size() + mUpnextManualList.size() + 2;
+        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
+            headerAutoPos = mHistoryList.size() + mUpnextManualList.size() + 2;
+        }else if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+            headerAutoPos = mHistoryList.size() + mPlaying.size() + 2;
+        }else if(mHistoryList.size() == 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
+            headerAutoPos = mUpnextManualList.size() + 1;
+        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+            headerAutoPos = mHistoryList.size() + 1;
+        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+            headerAutoPos = mPlaying.size() + 1;
+        }else if(mHistoryList.size() == 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+            headerAutoPos = 0;
+        }
+
+        if(mHistoryList.size() == 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
+            headerHistoryPos = 0;
+            headerPlayingPos = 1;
+            headerManualPos = 2;
+            headerAutoPos = 3;
+        }*/
+        if((mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0) ||
+                mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + mUpnextAutoList.size() == 0)
         headerHistoryPos = 0;
         headerPlayingPos = mHistoryList.size() + 1;
         headerManualPos = mHistoryList.size() + mPlaying.size() + 2;
         headerAutoPos = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + 3;
         this.totalSize = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + mUpnextAutoList.size() + 4;
+        /*this.totalSize = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + mUpnextAutoList.size() +
+                (mHistoryList.size() > 0 ? 1 : 0) + (mPlaying.size() > 0 ? 1 : 0) + (mUpnextManualList.size() > 0 ? 1 : 0) +
+                (mUpnextAutoList.size() > 0 ? 1 : 0);*/
 
     }
 
@@ -105,6 +159,98 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     }
 
     private int getPosition(int position) {
+
+        /*if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
+
+        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
+
+        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() == 0){
+
+        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+
+        }
+
+        else if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
+
+        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() == 0){
+
+        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+
+        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() == 0){
+
+        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+
+        }else if(mHistoryList.size() == 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
+
+        }
+
+        else if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() == 0){
+
+        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
+
+        }else if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+
+        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
+
+        }
+
+        else if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+
+        }
+
+        else if(mHistoryList.size() == 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+
+        }*/
+
+
+        /*if(mHistoryList.size() > 0 && mPlaying.size() > 0){
+
+
+
+            if (position > headerHistoryPos && position < headerPlayingPos) {
+                position = position - 1;
+            }else if(position > headerPlayingPos && position < headerManualPos && mUpnextManualList.size() > 0){
+                position = position - 1;
+            }else if(position > headerPlayingPos && position < headerAutoPos && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+                position = position - 1;
+            }else if(position > headerPlayingPos && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
+                position = position - 1;
+            }else if(position > headerPlayingPos && position < headerManualPos && mUpnextManualList.size() > 0){
+                position = position - mHistoryList.size() - 2;
+            }else if(position > headerPlayingPos && position < headerAutoPos && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+                position = position - mHistoryList.size() - 2;
+            }else if(position > headerPlayingPos && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
+                position = position - mHistoryList.size() - 2;
+            }
+
+        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0){
+            if (position > headerHistoryPos && position < headerManualPos) {
+                position = position - 1;
+            }else if(position > headerPlayingPos && position < headerAutoPos && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+                position = position - 1;
+            }else if(position > headerPlayingPos && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
+                position = position - 1;
+            }
+        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+            if (position > headerHistoryPos && position < headerAutoPos) {
+                position = position - 1;
+            }
+        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
+            if (position > headerHistoryPos)
+                position = position - 1;
+        }*/
+//        if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
+//            if (position > headerPlayingPos)
+//                position = position - 1;
+//        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() == 0){
+//            if (position > headerPlayingPos && position < headerManualPos) {
+//                position = position - 1;
+//            }
+//        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
+//            if (position > headerPlayingPos && position < headerAutoPos) {
+//                position = position - 1;
+//            }
+//        }
         if (position > headerHistoryPos && position < headerPlayingPos) {
             position = position - 1;
         } else if (position > headerPlayingPos && position < headerManualPos) {
@@ -371,47 +517,19 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     }
 
     private void setArt(SimpleItemViewHolder holder, String path, int what) {
-        //For album art
-        if (path != null) {
-            if (isFilePathExist(path)) {
-                setAlbumArt(path, holder, what);
-            } else setDefaultView(holder, what);
-        } else {
-            setDefaultView(holder, what);
+        int size = dpToPx(context, (int) context.getResources().getDimension(R.dimen.one_hundred_eighty_six_pt));
+        if (path != null && !path.equals("null"))
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.default_album_art, null)).resize(size,
+                    size).centerCrop().into(holder.img);
+        else{
+            setDefaultArt(holder, size);
         }
     }
 
-    private boolean isFilePathExist(String albumArtPath) {
-        File imgFile = new File(albumArtPath);
-        return imgFile.exists();
-    }
+    private void setDefaultArt(SimpleItemViewHolder holder, int size) {
 
-    private void setDefaultView(SimpleItemViewHolder holder, int what) {
-        switch (what) {
-            case ITEM_VIEW_TYPE_LIST_PLAYING:
-                with(context).load(getUriToResource(context, R.drawable.default_album_art)).error(R.drawable.default_album_art).resize(dpToPx(context, 60),
-                        dpToPx(context, 60)).centerCrop().memoryPolicy(NO_CACHE).into(holder.img);
-                break;
-            case ITEM_VIEW_TYPE_LIST_HISTORY:
-                with(context).load(getUriToResource(context, R.drawable.default_album_art)).error(R.drawable.default_album_art).resize(dpToPx(context, 60),
-                        dpToPx(context, 60)).centerCrop().memoryPolicy(NO_CACHE).into(holder.img);
-                break;
-            case ITEM_VIEW_TYPE_LIST_MANUAL:
-                with(context).load(getUriToResource(context, R.drawable.default_album_art)).error(R.drawable.default_album_art).transform(new RoundedTransformation(100, 0))
-                        .noFade().resize(dpToPx(context, 60),
-                        dpToPx(context, 60)).centerCrop().memoryPolicy(NO_CACHE).into(holder.img);
-                break;
-        }
-    }
-
-    private void setAlbumArt(String path, SimpleItemViewHolder holder, int what) {
-
-        if (path != null && !path.equals("null")) {
-            with(context).load(new File(path)).error(R.drawable.default_album_art).resize(dpToPx(context, 60),
-                    dpToPx(context, 60)).centerCrop().memoryPolicy(NO_CACHE).into(holder.img);
-        } else {
-            setDefaultView(holder, what);
-        }
+        holder.img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art,
+                size, size));
     }
 
     @Override
