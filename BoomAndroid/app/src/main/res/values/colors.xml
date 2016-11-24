@@ -38,5 +38,11 @@
     -->
     <color name="line_view">#222327</color>
     <color name="effect_powerpanel">#020b17</color>
+    <color name="eq_txt_active">#b8b8b9</color>
+    <color name="eq_txt_inactive">#757677</color>
+    <color name="eq_txt_effectoff_active">#59595c</color>
+    <color name="eq_txt_effectoff_inactive">#37383b</color>
+
+
 </resources><!--
 <color name="colorAccent">#FF4081</color>-->

@@ -24,8 +24,8 @@
         android:id="@+id/add_boom_playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/sixty_four_pt"
         android:src="@drawable/ic_floating_playlist_addtracks"
-        android:layout_margin="16dp"
         app:layout_anchor="@+id/playlistContainer"
         app:layout_anchorGravity="bottom|end"
         app:layout_behavior="com.globaldelight.boom.ui.musiclist.FloatingScrollBehavior"/>

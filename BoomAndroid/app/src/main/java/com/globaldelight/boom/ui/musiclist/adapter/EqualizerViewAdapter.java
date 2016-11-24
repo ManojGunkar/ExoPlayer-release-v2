@@ -2,7 +2,6 @@ package com.globaldelight.boom.ui.musiclist.adapter;
 
 import android.app.Activity;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
@@ -66,30 +65,30 @@ public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdap
     @Override
     public void onBindViewHolder(final SimpleItemViewHolder holder, final int position) {
         Typeface tf;
-        String color;
+        int textColor;
         if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.isEqualizerOn()){
             if(selection.get(position)== on){
                 holder.eqImg.setImageDrawable(eq_active_on.getDrawable(position));
-                color = "#b8b8b9";
+                textColor = context.getResources().getColor(R.color.eq_txt_active);
                 tf = Typeface.createFromAsset(context.getAssets(), "fonts/TitilliumWeb-SemiBold.ttf");
             }else {
                 holder.eqImg.setImageDrawable(eq_inactive_on.getDrawable(position));
-                color = "#757677";
+                textColor = context.getResources().getColor(R.color.eq_txt_inactive);
                 tf = Typeface.createFromAsset(context.getAssets(), "fonts/TitilliumWeb-Regular.ttf");
             }
         }else{
             if(selection.get(position)== on){
                 holder.eqImg.setImageDrawable(eq_active_off.getDrawable(position));
-                color = "#59595c";
+                textColor = context.getResources().getColor(R.color.eq_txt_effectoff_active);
                 tf = Typeface.createFromAsset(context.getAssets(), "fonts/TitilliumWeb-SemiBold.ttf");
             }else {
                 holder.eqImg.setImageDrawable(eq_inactive_off.getDrawable(position));
-                color = "#37383b";
+                textColor = context.getResources().getColor(R.color.eq_txt_effectoff_inactive);
                 tf = Typeface.createFromAsset(context.getAssets(), "fonts/TitilliumWeb-Regular.ttf");
             }
         }
         holder.eqTxt.setTypeface(tf);
-        holder.eqTxt.setTextColor(Color.parseColor(color));
+        holder.eqTxt.setTextColor(textColor);
         holder.eqTxt.setText(eq_names.get(position));
         onClick(holder, position);
     }

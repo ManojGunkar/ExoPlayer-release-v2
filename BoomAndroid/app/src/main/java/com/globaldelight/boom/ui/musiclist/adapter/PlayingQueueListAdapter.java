@@ -42,7 +42,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     public static final int ITEM_VIEW_TYPE_LIST_MANUAL = 6;
     public static final int ITEM_VIEW_TYPE_LIST_AUTO = 7;
     public static final int ITEM_VIEW_TYPE_NULL = 8;
-    private static final int PENDING_REMOVAL_TIMEOUT = 3000; // 3sec
+    private static final int PENDING_REMOVAL_TIMEOUT = 3000;
     final Handler swipeDeletehandler = new Handler();
     public ListPosition itemDelete;
     OnStartDragListener mOnStartDragListener;
@@ -558,7 +558,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         public ImageView img;
 
         public ImageView imgHandle;
-        // public ImageView imgMenu;
         public Button undoButton;
         /*functions to implement swipe delete action-made for multi delete*/
         public LinearLayout layout;
@@ -573,9 +572,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
             undoButton = (Button) itemView.findViewById(R.id.undo_button);
             img = (ImageView) itemView.findViewById(R.id.queue_item_img);
             imgHandle = (ImageView) itemView.findViewById(R.id.queue_item_handle);
-            // imgMenu = (ImageView) itemView.findViewById(R.id.queue_item_menu);
             name = (RegularTextView) itemView.findViewById(R.id.queue_item_name);
-            // menu = itemView.findViewById(R.id.queue_item_menu);
             artistName = (RegularTextView) itemView.findViewById(R.id.queue_item_artist);
         }
     }
