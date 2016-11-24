@@ -17,7 +17,7 @@
     <dimen name="play_queue_row_txt">15sp</dimen>
     <dimen name="play_queue_row_desc_txt">14sp</dimen>
 
-
+    <dimen name="two_fourty_eight_px">62dp</dimen>
     <!--3d surround-->
     <dimen name="eight_pt">2dp</dimen>
     <dimen name="eighty_pt">20dp</dimen>
@@ -97,7 +97,7 @@
     <dimen name="two_hundred_eighty_px">70dp</dimen>
     <dimen name="one_hundred_sixty_px">40dp</dimen>
     <dimen name="one_hundred_sixteen_px">29dp</dimen>
-    <dimen name="one_hundred_seventy_six_px">44dp</dimen>
+    <dimen name="one_hundred_fourty_px">23dp</dimen>
     <dimen name="two_hundred_px">50dp</dimen>
     <dimen name="eighty_px">20dp</dimen>
     <dimen name="four_px">10dp</dimen>

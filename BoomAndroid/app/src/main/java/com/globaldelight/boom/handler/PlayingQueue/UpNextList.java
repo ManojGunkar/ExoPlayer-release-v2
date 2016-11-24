@@ -198,7 +198,7 @@ public class UpNextList {
         PlayingItemChanged();
     }
 
-//    selected Collection, Like Album, artist.
+//    selected Collection, Like Album, ic_artist.
 //    index of now Playing item of the collection
     public void addToPlay(IMediaItemCollection collection, int position){
         if(position > 0){
@@ -217,6 +217,7 @@ public class UpNextList {
                 UpNextItem item = new UpNextItem(mHistoryList.remove(position), queueType);
                 managePlayedItem(true);
                 mCurrentList.add(item);
+                PlayingItemChanged();
                 break;
             case Playing:
                 PlayPause();
@@ -224,6 +225,7 @@ public class UpNextList {
             case Manual_UpNext:
                 managePlayedItem(true);
                 mCurrentList.add(new UpNextItem(mUpNextList.remove(position), queueType));
+                PlayingItemChanged();
                 break;
             case Auto_UpNext:
                 managePlayedItem(true);
@@ -241,9 +243,9 @@ public class UpNextList {
                 else if(mRepeat == REPEAT.all/* && mShuffle == SHUFFLE.none*/){
                     mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), queueType));
                 }
+                PlayingItemChanged();
                 break;
         }
-        PlayingItemChanged();
     }
 
     public void addItemListToUpNext(IMediaItemBase itemList){

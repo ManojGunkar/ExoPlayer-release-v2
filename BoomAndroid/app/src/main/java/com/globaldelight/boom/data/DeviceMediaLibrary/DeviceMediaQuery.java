@@ -440,7 +440,7 @@ public class DeviceMediaQuery {
         return songList;
     }
 
-    //    get art url of the artist
+    //    get art url of the ic_artist
     private static String getAlbumArtByArtist(Context context, String artist) {
 
         final String where = MediaStore.Audio.Media.ARTIST + "=?";

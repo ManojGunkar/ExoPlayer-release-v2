@@ -2,33 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/search_header_holder"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/two_fourty_eight_px"
     android:background="@color/appBackground"
     android:orientation="horizontal"
-    android:paddingTop="@dimen/one_hundred_seventy_six_px"
-    android:paddingBottom="@dimen/seventy_two_px"
+    android:paddingTop="@dimen/seventy_two_px"
     android:paddingLeft="@dimen/one_hundred_sixteen_px"
     android:paddingRight="@dimen/one_hundred_twelve_pt"
     android:weightSum="1">
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="left"
+        android:layout_height="match_parent"
+        android:gravity="left|center_vertical"
         android:layout_weight=".5">
         <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/search_header_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="normal"
+            android:text="Artists"
             android:textSize="@dimen/eighty_px"
             android:textColor="@color/white"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="right"
+        android:layout_height="match_parent"
+        android:gravity="right|center_vertical"
         android:layout_weight=".5">
         <LinearLayout
             android:layout_width="wrap_content"
@@ -41,6 +41,7 @@
             android:clickable="true"
             android:textStyle="bold"
             android:textSize="@dimen/fourty_eight_pt"
+            android:text="32 MORE"
             android:padding="@dimen/thirty_two_px"
             android:textColor="@color/white"/>
         </LinearLayout>

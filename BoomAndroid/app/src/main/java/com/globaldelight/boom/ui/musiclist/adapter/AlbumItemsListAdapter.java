@@ -172,7 +172,6 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
         if(item.getItemType() == ItemType.ALBUM){
             return item.getItemCount()+1;
         }else{
-            
             return ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size()+1;
         }
     }
