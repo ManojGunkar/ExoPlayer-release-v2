@@ -121,7 +121,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         }*/
         if((mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0) ||
                 mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + mUpnextAutoList.size() == 0)
-        headerHistoryPos = 0;
+            headerHistoryPos = 0;
         headerPlayingPos = mHistoryList.size() + 1;
         headerManualPos = mHistoryList.size() + mPlaying.size() + 2;
         headerAutoPos = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + 3;

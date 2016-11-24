@@ -212,21 +212,21 @@ public class UpNextList {
     }
 
     public void addToPlay(QueueType queueType, int position){
-        if(mCurrentList.size() == 1 && queueType != QueueType.Playing){
-            managePlayedItem(true);
-        }
-
         switch (queueType){
             case History:
-                mCurrentList.add(new UpNextItem(mHistoryList.remove(position), queueType));
+                UpNextItem item = new UpNextItem(mHistoryList.remove(position), queueType);
+                managePlayedItem(true);
+                mCurrentList.add(item);
                 break;
             case Playing:
                 PlayPause();
                 break;
             case Manual_UpNext:
+                managePlayedItem(true);
                 mCurrentList.add(new UpNextItem(mUpNextList.remove(position), queueType));
                 break;
             case Auto_UpNext:
+                managePlayedItem(true);
                 PlayItemIndex = position;
                 /* Shuffle will not effect on random selection*/
                 if(mRepeat == REPEAT.none/* && mShuffle == SHUFFLE.none*/){
@@ -274,7 +274,7 @@ public class UpNextList {
                 }
                 mCurrentList.add(new UpNextItem(mAutoNextList.remove(PlayItemIndex), QueueType.Auto_UpNext));
             } else {
-//                managePlayedItem(mCurrentList.remove(0));
+                managePlayedItem(true);
             }
         }
         /* Repeat is One and user interaction is false*/
@@ -402,6 +402,7 @@ public class UpNextList {
             if(isRemove){
                 addItemToHistory(mCurrentList.get(0).getUpNextItem());
                 addItemAsPrevious(mCurrentList.remove(0));
+                mCurrentList.clear();
             }else{
                 addItemToHistory(mCurrentList.get(0).getUpNextItem());
                 addItemAsPrevious(mCurrentList.get(0));
@@ -410,11 +411,12 @@ public class UpNextList {
     }
 
     private void addItemAsPrevious(UpNextItem item) {
-        if(item.getUpNextItemType() == QueueType.Auto_UpNext)
-            if(ghostList.contains(item.getUpNextItem())) {
+        if(item.getUpNextItemType() == QueueType.Auto_UpNext) {
+            if (ghostList.contains(item.getUpNextItem())) {
                 ghostList.remove(item.getUpNextItem());
             }
-        ghostList.add(item.getUpNextItem());
+            ghostList.add(item.getUpNextItem());
+        }
     }
 
     private void addItemToHistory(IMediaItemBase item){

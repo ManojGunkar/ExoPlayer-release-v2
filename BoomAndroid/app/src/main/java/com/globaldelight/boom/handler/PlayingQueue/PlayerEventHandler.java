@@ -19,6 +19,7 @@ import com.globaldelight.boomplayer.OpenSLPlayer;
 import com.globaldelight.boomplayer.PlayerEvents;
 
 import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
+import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.pause;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.play;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.stop;
 
@@ -218,7 +219,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     public PlayState PlayPause() {
         if(isPlaying()){
             setSessionState(PlaybackState.STATE_PAUSED);
-            return PlayState.pause;
+            return pause;
         } else {
             if ( requestAudioFocus() ) {
                 setSessionState(PlaybackState.STATE_PLAYING);

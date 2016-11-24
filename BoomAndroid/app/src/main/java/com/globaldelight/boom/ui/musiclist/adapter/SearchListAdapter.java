@@ -125,29 +125,59 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
         View itemView;
         switch (viewType) {
             case ITEM_VIEW_TYPE_HEADER_ALBUMS:
-                itemView = LayoutInflater.from(parent.getContext()).
-                        inflate(R.layout.search_header, parent, false);
+                if(albums.size() > 0) {
+                    itemView = LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.search_header, parent, false);
+                }else{
+                    itemView = LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.search_row_hide, parent, false);
+                }
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_HEADER_SONGS:
+                if(songs.size() > 0) {
                 itemView = LayoutInflater.from(parent.getContext()).
                         inflate(R.layout.search_header, parent, false);
+                }else{
+                    itemView = LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.search_row_hide, parent, false);
+                }
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_HEADER_ARTISTS:
-                itemView = LayoutInflater.from(parent.getContext()).
-                        inflate(R.layout.search_header, parent, false);
+                if(artists.size() > 0){
+                    itemView = LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.search_header, parent, false);
+                }else{
+                    itemView = LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.search_row_hide, parent, false);
+                }
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_LIST_SONG:
-                itemView = LayoutInflater.from(parent.getContext()).
-                        inflate(R.layout.card_song_item, parent, false);
+                if(songs.size() > 0) {
+                    itemView = LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.card_song_item, parent, false);
+                }else{
+                    itemView = LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.search_row_hide, parent, false);
+                }
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_LIST_ARTIST:
-                itemView = LayoutInflater.from(parent.getContext()).
-                        inflate(R.layout.card_grid_item, parent, false);
+                if(artists.size() > 0){
+                    itemView = LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.card_grid_item, parent, false);
+                }else{
+                    itemView = LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.search_row_hide, parent, false);
+                }
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_LIST_ALBUM:
-                itemView = LayoutInflater.from(parent.getContext()).
-                        inflate(R.layout.card_grid_item, parent, false);
-                return new SimpleItemViewHolder(itemView);
+                if(albums.size() > 0){
+                    itemView = LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.card_grid_item, parent, false);
+                }else{
+                    itemView = LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.search_row_hide, parent, false);
+                }
+                        return new SimpleItemViewHolder(itemView);
 
         }
         return null;
@@ -156,58 +186,64 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
     @Override
     public void onBindViewHolder(final SearchListAdapter.SimpleItemViewHolder holder, final int position) {
         if (whatView(position) == ITEM_VIEW_TYPE_HEADER_ARTISTS) {
-            setHeaderBg(holder);
-            holder.headerText.setText(R.string.artists);
-            if(searchRes.getArtistCount() > 4){
-                holder.headerCount.setText(searchRes.getArtistCount() - 4 +" more" );
-            }else{
-                holder.headerCount.setVisibility(View.GONE);
-            }
-            holder.headerCount.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(context, SearchDetailListActivity.class);
-                    i.putExtra("list_type", SearchResult.ARTISTS);
-                    i.putExtra("query", searchRes.getQuery());
-                    context.startActivity(i);
+            if(artists.size() > 0) {
+                setHeaderBg(holder);
+                holder.headerText.setText(R.string.artists);
+                if (searchRes.getArtistCount() > 4) {
+                    holder.headerCount.setText(searchRes.getArtistCount() - 4 + " more");
+                } else {
+                    holder.headerCount.setVisibility(View.GONE);
                 }
-            });
+                holder.headerCount.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(context, SearchDetailListActivity.class);
+                        i.putExtra("list_type", SearchResult.ARTISTS);
+                        i.putExtra("query", searchRes.getQuery());
+                        context.startActivity(i);
+                    }
+                });
+            }
             return;
         } else if (whatView(position) == ITEM_VIEW_TYPE_HEADER_ALBUMS) {
-            setHeaderBg(holder);
-            holder.headerText.setText(R.string.albums);
-            if(searchRes.getArtistCount() > 4){
-                holder.headerCount.setText(searchRes.getAlbumCount() - 4 +" more" );
-            }else{
-                holder.headerCount.setVisibility(View.GONE);
-            }
-            holder.headerCount.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(context, SearchDetailListActivity.class);
-                    i.putExtra("list_type", SearchResult.ALBUMS);
-                    i.putExtra("query", searchRes.getQuery());
-                    context.startActivity(i);
+            if(albums.size() > 0) {
+                setHeaderBg(holder);
+                holder.headerText.setText(R.string.albums);
+                if (searchRes.getArtistCount() > 4) {
+                    holder.headerCount.setText(searchRes.getAlbumCount() - 4 + " more");
+                } else {
+                    holder.headerCount.setVisibility(View.GONE);
                 }
-            });
+                holder.headerCount.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(context, SearchDetailListActivity.class);
+                        i.putExtra("list_type", SearchResult.ALBUMS);
+                        i.putExtra("query", searchRes.getQuery());
+                        context.startActivity(i);
+                    }
+                });
+            }
             return;
         } else if (whatView(position) == ITEM_VIEW_TYPE_HEADER_SONGS) {
-            setHeaderBg(holder);
-            holder.headerText.setText(R.string.songs);
-            if(searchRes.getArtistCount() > 4){
-                holder.headerCount.setText(searchRes.getSongCount() - 4 +" more" );
-            }else{
-                holder.headerCount.setVisibility(View.GONE);
-            }
-            holder.headerCount.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(context, SearchDetailListActivity.class);
-                    i.putExtra("list_type", SearchResult.SONGS);
-                    i.putExtra("query", searchRes.getQuery());
-                    context.startActivity(i);
+            if(songs.size() > 0) {
+                setHeaderBg(holder);
+                holder.headerText.setText(R.string.songs);
+                if (searchRes.getArtistCount() > 4) {
+                    holder.headerCount.setText(searchRes.getSongCount() - 4 + " more");
+                } else {
+                    holder.headerCount.setVisibility(View.GONE);
                 }
-            });
+                holder.headerCount.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(context, SearchDetailListActivity.class);
+                        i.putExtra("list_type", SearchResult.SONGS);
+                        i.putExtra("query", searchRes.getQuery());
+                        context.startActivity(i);
+                    }
+                });
+            }
             return;
         } else if (whatView(position) == ITEM_VIEW_TYPE_LIST_ARTIST) {
             if (artists.size() == 0)

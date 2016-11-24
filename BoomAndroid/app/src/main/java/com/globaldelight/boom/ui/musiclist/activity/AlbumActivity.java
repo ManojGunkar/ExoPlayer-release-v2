@@ -13,6 +13,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,17 +25,20 @@ import android.widget.LinearLayout;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.adapter.AlbumItemsListAdapter;
+import com.globaldelight.boom.ui.musiclist.adapter.FavouriteListAdapter;
 import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.LinkedList;
 
 public class AlbumActivity extends AppCompatActivity {
     Toolbar toolbar;
@@ -113,15 +117,32 @@ public class AlbumActivity extends AppCompatActivity {
     }
 
     private void addSongList() {
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        //ItemType.ALBUM, ItemType.ARTIST && ItemType.GENRE
-        if(collection.getItemType() == ItemType.ALBUM && collection.getMediaElement().isEmpty()) {
-            collection.setMediaElement(MediaController.getInstance(this).getMediaCollectionItemDetails(collection));
-        }else if((collection.getItemType() == ItemType.ARTIST || collection.getItemType() == ItemType.GENRE) &&
-                ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
-            ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(this).getMediaCollectionItemDetails(collection));
-        }
-        rv.setAdapter(new AlbumItemsListAdapter(this, collection, listDetail, permissionChecker));
+        new Thread(new Runnable() {
+            public void run() {
+                //ItemType.ALBUM, ItemType.ARTIST && ItemType.GENRE
+                if(collection.getItemType() == ItemType.ALBUM && collection.getMediaElement().isEmpty()) {
+                    collection.setMediaElement(MediaController.getInstance(AlbumActivity.this).getMediaCollectionItemDetails(collection));
+                }else if((collection.getItemType() == ItemType.ARTIST || collection.getItemType() == ItemType.GENRE) &&
+                        ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
+                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(AlbumActivity.this).getMediaCollectionItemDetails(collection));
+                }
+                rv.setLayoutManager(new LinearLayoutManager(AlbumActivity.this));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        rv.setAdapter(new AlbumItemsListAdapter(AlbumActivity.this, collection, listDetail, permissionChecker));
+                    }
+                });
+//                if (favList.size() < 1) {
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            listIsEmpty();
+//                        }
+//                    });
+//                }
+            }
+        }).start();
     }
 
     @Override
