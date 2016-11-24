@@ -103,8 +103,8 @@
     <string name="removed_from_favorite">Playing Song removed from favorite.</string>
     <!-- Boom Playlist-->
     <string name="boom_playlist_title">Boom Playlist</string>
-    <string name="playlist_created">PlayList Created...!</string>
-    <string name="playlist_deleted">PlayList Deleted...!</string>
+    <string name="playlist_created">PlayList Created.</string>
+    <string name="playlist_deleted">PlayList Deleted.</string>
     <string name="txt_undo">UNDO</string>
 
 </resources>
