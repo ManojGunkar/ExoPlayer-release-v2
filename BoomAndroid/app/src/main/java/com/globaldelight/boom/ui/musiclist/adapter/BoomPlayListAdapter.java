@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.PopupMenu;
@@ -228,11 +227,11 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     private void renameDialog(final int position) {
         final EditText edittext = new EditText(context);
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        alert.setTitle("Rename");
+        alert.setTitle(context.getResources().getString(R.string.dialog_txt_rename));
 
         alert.setView(edittext);
 
-        alert.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton(context.getResources().getString(R.string.dialog_txt_done), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if (edittext.getText().toString().matches("")) {
                     renameDialog(position);
@@ -245,7 +244,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
             }
         });
 
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton(context.getResources().getString(R.string.dialog_txt_cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
             }
         });

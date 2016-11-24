@@ -2,7 +2,6 @@ package com.globaldelight.boom.ui.musiclist.activity;
 
 import android.annotation.TargetApi;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -16,38 +15,35 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.adapter.AlbumItemsListAdapter;
+import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.PermissionChecker;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.R;
 import com.globaldelight.boom.utils.Utils;
-import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
 public class AlbumActivity extends AppCompatActivity {
     Toolbar toolbar;
+    IMediaItemCollection collection, currentItem;
     private RecyclerView rv;
     private ImageView albumArt;
     private PermissionChecker permissionChecker;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private AppBarLayout appbarlayout;
-    IMediaItemCollection collection, currentItem;
     private ListDetail listDetail;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -190,7 +186,7 @@ public class AlbumActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            Log.d("Query : ", query);
+            Logger.LOGD("Query : ", query);
         }
     }
 

@@ -2,7 +2,6 @@ package com.globaldelight.boom.ui.musiclist.activity;
 
 import android.annotation.TargetApi;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,18 +9,16 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.globaldelight.boom.handler.search.SearchResult;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.handler.search.Search;
+import com.globaldelight.boom.handler.search.SearchResult;
 import com.globaldelight.boom.ui.musiclist.adapter.SearchDetailListAdapter;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
+import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 
 /**
@@ -131,7 +128,7 @@ public class SearchDetailListActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            Log.d("Query : ", query);
+            Logger.LOGD("Query : ", query);
         }
     }
 
