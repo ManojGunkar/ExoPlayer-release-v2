@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="@dimen/twenty_four_pt"
     android:foreground="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:layout_margin="6dp"
     android:orientation="vertical">
     <FrameLayout
         android:id="@+id/card_grid_img_panel"
@@ -68,19 +68,19 @@
         android:id="@+id/card_grid_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#10141d"
-        android:weightSum="1"
+        android:background="@color/card_grid_item_title_background"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:padding="@dimen/fourty_two_pt">
+        android:padding="@dimen/fourty_two_pt"
+        android:weightSum="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".5"
-            android:weightSum="1"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="1">
 
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/card_grid_title"
@@ -94,16 +94,16 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="right"
-                android:layout_weight=".2">
+                android:layout_weight=".2"
+                android:gravity="right">
                 <ImageView
                     android:id="@+id/card_grid_menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/unbounded_ripple"
                     android:backgroundTint="#434343"
-                    android:src="@drawable/ic_more_button_playlists"
                     android:padding="5dp"
+                    android:src="@drawable/ic_more_button_playlists"
                     android:theme="@style/Theme.AppCompat.Light"/>
             </LinearLayout>
 
@@ -115,7 +115,7 @@
             android:layout_height="0dp"
             android:layout_weight=".5"
             android:singleLine="true"
-            android:textColor="#8d8f91"
+            android:textColor="@color/card_grid_sub_title"
             android:textSize="@dimen/fifty_four_px" />
 
     </LinearLayout>

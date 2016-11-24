@@ -49,8 +49,6 @@ import java.util.Calendar;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import static com.flurry.sdk.li.i;
-
 /**
  * Created by Rahul Agarwal on 30-09-16.
  */
@@ -333,7 +331,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         setContentView(R.layout.activity_boom_player);
 
-        Log.d("Screen Density : ", ""+ getResources().getDisplayMetrics().density);
         initViews();
 
         IntentFilter intentFilter = new IntentFilter();
@@ -517,7 +514,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             if (isCurrentTrackFav) {
                 if(isUser){
                     MediaController.getInstance(this).removeItemToList(false, App.getPlayerEventHandler().getPlayingItem().getItemId());
-                    Snackbar.make(mPlayerRootView, "Playing Song removed from favorite.", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(mPlayerRootView, getResources().getString(R.string.removed_from_favorite), Snackbar.LENGTH_LONG).show();
                     mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_normal));
                 }else {
                     mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_selected));
@@ -525,7 +522,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             } else {
                 if(isUser){
                     MediaController.getInstance(this).addSongsToList(false, App.getPlayerEventHandler().getPlayingItem());
-                    Snackbar.make(mPlayerRootView, "Playing Song added as favorite.", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(mPlayerRootView, getResources().getString(R.string.added_to_favorite), Snackbar.LENGTH_LONG).show();
                     mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_selected));
                 }else{
                     mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_normal));

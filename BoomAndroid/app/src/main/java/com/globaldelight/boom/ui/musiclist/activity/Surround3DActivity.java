@@ -194,13 +194,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         mEffectPowerBtn.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
         if(audioEffectPreferenceHandler.isAudioEffectOn()) {
-            mEffectSwitchTxt.setText("on");
+            mEffectSwitchTxt.setText(getResources().getString(R.string.status_on));
             /*mEffectPowerBtn.setChecked(true);*/
             mEffectTxt.setTextColor(Color.WHITE);
             mEffectSwitchTxt.setTextColor(Color.WHITE);
             MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_EFFECTS_TURNED_ON);
         }else{
-            mEffectSwitchTxt.setText("off");
+            mEffectSwitchTxt.setText(getResources().getString(R.string.status_off));
             /*mEffectPowerBtn.setChecked(false);*/
             mEffectTxt.setTextColor(Color.WHITE);
             mEffectSwitchTxt.setTextColor(Color.WHITE);
@@ -214,13 +214,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     public void update3DSurround(){
         if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()){
             m3DSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_surround, null));
-            m3DSwitchTxt.setText("ON");
+            m3DSwitchTxt.setText(getResources().getString(R.string.status_on_caps));
             m3DTxt.setTextColor(Color.WHITE);
             m3DSwitchTxt.setTextColor(Color.WHITE);
             MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_3D_TURNED_ON);
         }else{
             m3DSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_surround_off, null));
-            m3DSwitchTxt.setText("OFF");
+            m3DSwitchTxt.setText(getResources().getString(R.string.status_off_caps));
             m3DTxt.setTextColor(Color.WHITE);
             m3DSwitchTxt.setTextColor(Color.WHITE);
             mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_speakers_off, null));
@@ -246,13 +246,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_speakers, null));
             }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround && !isWoofer && !isTweeter) {
                 // All Speakers are off
-                mSpeakerInfo.setText("All speakers are Off");
+                mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_all_off));
                 mSpeakerInfo.setVisibility(View.VISIBLE);
                 mSpeakerInfo.setTextColor(Color.WHITE);// active color
                 mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_speakers, null));
             }else {
                 // Some Speakers are off
-                mSpeakerInfo.setText("Some speakers are Off");
+                mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_some_off));
                 mSpeakerInfo.setVisibility(View.VISIBLE);
                 mSpeakerInfo.setTextColor(Color.WHITE);// active color
                 mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_speakers, null));
@@ -262,12 +262,12 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 mSpeakerInfo.setVisibility(View.GONE);// All Speakers are on
             }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround && !isWoofer && !isTweeter) {
                 // All Speakers are off
-                mSpeakerInfo.setText("All speakers are Off");
+                mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_all_off));
                 mSpeakerInfo.setVisibility(View.VISIBLE);
                 mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
             }else {
                 // Some Speakers are off
-                mSpeakerInfo.setText("Some speakers are Off");
+                mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_some_off));
                 mSpeakerInfo.setVisibility(View.VISIBLE);
                 mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
             }
@@ -338,14 +338,14 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     public void updateIntensity(){
         if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.isIntensityOn()){
             mIntensitySwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.intensity, null));
-            mIntensitySwitchTxt.setText("ON");
+            mIntensitySwitchTxt.setText(getResources().getString(R.string.status_on_caps));
             mIntensitySwitchTxt.setTextColor(Color.WHITE);
             mIntensityTxt.setTextColor(Color.WHITE);
             EnableSeek(true);
             MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_INTENSITY_TURNED_ON);
         }else{
             mIntensitySwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.intensity_off, null));
-            mIntensitySwitchTxt.setText("OFF");
+            mIntensitySwitchTxt.setText(getResources().getString(R.string.status_off_caps));
             mIntensitySwitchTxt.setTextColor(Color.WHITE);
             mIntensityTxt.setTextColor(Color.WHITE);
             EnableSeek(false);
@@ -371,13 +371,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     public void updateEqualizer(){
         if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.isEqualizerOn()){
             mEqualizerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.equalizer, null));
-            mEqualizerSwitchTxt.setText("ON");
+            mEqualizerSwitchTxt.setText(getResources().getString(R.string.status_on_caps));
             mEqualizerSwitchTxt.setTextColor(Color.WHITE);
             mEqualizerTxt.setTextColor(Color.WHITE);
             MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_EQ_TURNED_ON);
         }else{
             mEqualizerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.equalizer_off, null));
-            mEqualizerSwitchTxt.setText("OFF");
+            mEqualizerSwitchTxt.setText(getResources().getString(R.string.status_off_caps));
             mEqualizerSwitchTxt.setTextColor(Color.WHITE);
             mEqualizerTxt.setTextColor(Color.WHITE);
             MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_EQ_TURNED_OFF);

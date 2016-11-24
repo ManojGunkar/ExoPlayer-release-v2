@@ -36,18 +36,30 @@ import java.util.ArrayList;
  * Created by Rahul Agarwal on 31-08-2016.
  */
 public class BoomPlaylistActivity extends BoomMasterActivity {
+    FloatingActionButton addBoomPlaylist;
     private RecyclerView recyclerView;
     private BoomPlayListAdapter boomPlayListAdapter;
     private PermissionChecker permissionChecker;
     private View emptyView;
-    FloatingActionButton addBoomPlaylist;
+    private BroadcastReceiver updateList = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case PlayerService.ACTION_UPDATE_BOOM_PLAYLIST:
+                    if (boomPlayListAdapter != null) {
+                        boomPlayListAdapter.updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                    }
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_boom_playlist);
 
-        setToolbarTitle("Boom Playlist");
+        setToolbarTitle(getResources().getString(R.string.boom_playlist_title));
         init();
         addBoomPlaylist = (FloatingActionButton)findViewById(R.id.add_boom_playlist);
 
@@ -58,21 +70,6 @@ public class BoomPlaylistActivity extends BoomMasterActivity {
             }
         });
     }
-
-    private BroadcastReceiver updateList = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
-                case PlayerService.ACTION_UPDATE_BOOM_PLAYLIST:
-                        if(boomPlayListAdapter != null){
-                            boomPlayListAdapter.updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
-                        }
-                    break;
-            }
-        }
-    };
-
-
 
     private void init() {
         recyclerView = (RecyclerView) findViewById(R.id.playlistContainer);
@@ -176,7 +173,7 @@ public class BoomPlaylistActivity extends BoomMasterActivity {
                             MediaController.getInstance(BoomPlaylistActivity.this).createBoomPlaylist(input.toString());
                             listNoMoreEmpty();
                             boomPlayListAdapter.updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(BoomPlaylistActivity.this).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
-                            Snackbar.make(recyclerView, "PlayList Created...!", Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(recyclerView, getResources().getString(R.string.playlist_created), Snackbar.LENGTH_LONG).show();
                         }
                     }
                 }).show();

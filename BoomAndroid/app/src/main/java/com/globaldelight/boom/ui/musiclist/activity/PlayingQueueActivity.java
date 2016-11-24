@@ -97,7 +97,7 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
         toolImage = (ImageView) findViewById(R.id.toolImg_queue);
         toolTxt = (TextView) findViewById(R.id.toolTitle_queue);
         toolImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_album_white_24dp, null));
-        toolTxt.setText("Playing Queue");
+        toolTxt.setText(getResources().getString(R.string.title_playingque));
         toolTxt.setTextSize(18);
         try {
             setSupportActionBar(toolbar);

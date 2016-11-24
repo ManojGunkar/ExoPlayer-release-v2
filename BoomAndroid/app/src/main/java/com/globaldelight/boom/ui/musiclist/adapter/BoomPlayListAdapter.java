@@ -12,7 +12,6 @@ import android.support.v4.util.Pair;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,28 +22,25 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
-import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.ui.musiclist.activity.AlbumActivity;
-import com.globaldelight.boom.ui.musiclist.activity.BoomPlaylistActivity;
-import com.globaldelight.boom.ui.musiclist.activity.SongsDetailListActivity;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
+import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.ui.musiclist.activity.BoomPlaylistActivity;
+import com.globaldelight.boom.ui.musiclist.activity.SongsDetailListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
+
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
@@ -216,6 +212,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                             case R.id.popup_playlist_delete:
                                 MediaController.getInstance(context).deleteBoomPlaylist(items.get(position).getItemId());
                                 updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                                Snackbar.make(recyclerView, context.getResources().getString(R.string.playlist_deleted), Snackbar.LENGTH_LONG).show();
                                 Toast.makeText(context, "PlayList Deleted.", Toast.LENGTH_SHORT).show();
                                 break;
                         }

@@ -4,7 +4,7 @@
     android:id="@+id/three_d_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#020308"
+    android:background="@color/colorBackground"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -38,7 +38,7 @@
                 android:id="@+id/effect_switch_panel"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="#020b17"
+                android:background="@color/effect_powerpanel"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:weightSum="1">
@@ -197,8 +197,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentTop="true"
-                        android:layout_marginEnd="@dimen/effect_speaker_right_front_margin_end"
-                        android:layout_marginTop="@dimen/effect_speaker_right_front_margin_top"
+                        android:layout_marginEnd="@dimen/three_hundred_fourty_px"
+                        android:layout_marginTop="@dimen/eighty_pt"
                         android:src="@drawable/off_right_front" />
                     <!--android:src="@drawable/on_right_front"-->
                     <ImageView
@@ -207,7 +207,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_alignTop="@+id/speaker_right_front"
-                        android:layout_marginStart="@dimen/effect_speaker_left_front_margin_start"
+                        android:layout_marginStart="@dimen/three_hundred_twenty_px"
                         android:src="@drawable/off_left_front" />
                     <!--android:src="@drawable/on_left_front"-->
                     <ImageView
@@ -216,8 +216,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignStart="@+id/speaker_left_tweeter"
                         android:layout_below="@+id/speaker_left_tweeter"
-                        android:layout_marginStart="@dimen/effect_speaker_left_surround_margin_start"
-                        android:layout_marginTop="@dimen/effect_speaker_left_surround_margin_top"
+                        android:layout_marginStart="@dimen/four_pt"
+                        android:layout_marginTop="@dimen/one_hundred_twelve_pt"
                         android:src="@drawable/off_left_surround" />
                     <!--android:src="@drawable/on_left_surround"-->
                     <ImageView
@@ -234,8 +234,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_below="@+id/speaker_left_front"
-                        android:layout_marginStart="@dimen/effect_speaker_left_tweeter_margin_start"
-                        android:layout_marginTop="@dimen/effect_speaker_left_tweeter_margin_top"
+                        android:layout_marginStart="@dimen/one_thirty_two_pt"
+                        android:layout_marginTop="@dimen/two_hundred_px"
                         android:src="@drawable/off_lefttweeter" />
                     <!--android:src="@drawable/on_lefttweeter"-->
                     <ImageView
@@ -244,7 +244,7 @@
                         android:layout_height="wrap_content"
                         android:layout_above="@+id/speaker_left_surround"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="@dimen/effect_speaker_right_tweeter_margin_end"
+                        android:layout_marginEnd="@dimen/one_hundred__eight_pt"
                         android:src="@drawable/off_righttweeter" />
                     <!--android:src="@drawable/on_righttweeter"-->
                     <ImageView
@@ -263,7 +263,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/speaker_left_surround"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="@dimen/effect_speaker_sub_woofer_margin_top"
+                        android:layout_marginTop="@dimen/ninety_two_pt"
                         android:src="@drawable/off_subwoofer" />
                     <!--android:src="@drawable/on_right_surround"-->
                 </RelativeLayout>
@@ -288,7 +288,7 @@
                         android:id="@+id/fullbass_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/fullbass_txt_margin_left"
+                        android:layout_marginLeft="@dimen/fifty_six_pt"
                         android:maxLines="1"
                         android:text="@string/full_bass"
                         android:textColor="@color/white"
@@ -363,14 +363,14 @@
                     <TextView
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
-                        android:layout_marginBottom="@dimen/effect_intensity_indicator_text_margin_bottom"
-                        android:layout_marginTop="@dimen/effect_intensity_indicator_text_margin_top"
+                        android:layout_marginBottom="@dimen/twelve_pt"
+                        android:layout_marginTop="@dimen/twelve_pt"
                         android:background="@color/progress_gray" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/effect_intensity_indicator_regular_text_wrapper_margin_left"
+                        android:layout_marginLeft="@dimen/twenty_pt"
                         android:gravity="center_vertical"
                         android:orientation="vertical">
 
@@ -418,7 +418,7 @@
                 android:layout_marginLeft="@dimen/one_twenty_pt"
                 android:layout_marginRight="@dimen/one_twenty_pt"
                 android:layout_marginTop="@dimen/one_fifty_four_pt"
-                android:background="#222327" />
+                android:background="@color/line_view" />
 
 
             <RelativeLayout
@@ -477,14 +477,14 @@
                     <TextView
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
-                        android:layout_marginBottom="@dimen/effect_intensity_indicator_text_margin_bottom"
-                        android:layout_marginTop="@dimen/effect_intensity_indicator_text_margin_top"
+                        android:layout_marginBottom="@dimen/twelve_pt"
+                        android:layout_marginTop="@dimen/twelve_pt"
                         android:background="@color/progress_gray" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/effect_intensity_indicator_regular_text_wrapper_margin_left"
+                        android:layout_marginLeft="@dimen/twenty_pt"
                         android:gravity="center_vertical"
                         android:orientation="vertical">
 
@@ -514,9 +514,9 @@
                     android:id="@+id/eq_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginLeft="5dp"
                     android:layout_below="@+id/equalizer_switch_btn"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
                     android:layout_marginTop="@dimen/one_thirty_two_pt"
                     android:overScrollMode="never" />
 

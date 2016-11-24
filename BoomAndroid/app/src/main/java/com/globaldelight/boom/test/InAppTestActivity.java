@@ -1,19 +1,22 @@
 package com.globaldelight.boom.test;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.test.util.IabHelper;
 import com.globaldelight.boom.test.util.IabResult;
+import com.globaldelight.boom.test.util.Inventory;
 import com.globaldelight.boom.test.util.Purchase;
 
 public class InAppTestActivity extends AppCompatActivity {
     public static final String TAG = "In-APP";
-    static final String SKU_PREMIUM = "android.test.purchased";
+    static final String SKU_BOOM_3D_SURROUND = "android.test.purchased";
     // (arbitrary) request code for the purchase flow
     static final int RC_REQUEST = 10001;
     IabHelper mHelper;
@@ -26,20 +29,24 @@ public class InAppTestActivity extends AppCompatActivity {
             if (mHelper == null) return;
 
             if (result.isFailure()) {
-                //    complain("Error purchasing: " + result);
+                complain("Error purchasing: " + result);
                 //  setWaitScreen(false);
                 return;
             }
-           /* if (!verifyDeveloperPayload(purchase)) {
+            if (!verifyDeveloperPayload(purchase)) {
                 complain("Error purchasing. Authenticity verification failed.");
-                setWaitScreen(false);
+                if (!verifyDeveloperPayload(purchase)) {
+                    complain("Error purchasing. Authenticity verification failed.");
+                    // setWaitScreen(false);
+                    return;
+                }
                 return;
-            }*/
+            }
 
             Log.d(TAG, "Purchase successful.");
 
 
-            if (purchase.getSku().equals(SKU_PREMIUM)) {
+            if (purchase.getSku().equals(SKU_BOOM_3D_SURROUND)) {
                 // bought the premium upgrade!
                 Log.d(TAG, "Purchase is premium upgrade. Congratulating user.");
                 /*alert("Thank you for upgrading to premium!");
@@ -50,15 +57,61 @@ public class InAppTestActivity extends AppCompatActivity {
 
         }
     };
+    // Listener that's called when we finish querying the items and subscriptions we own
+    IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+            Log.d(TAG, "Query inventory finished.");
+
+            // Have we been disposed of in the meantime? If so, quit.
+            if (mHelper == null) return;
+
+            // Is it a failure?
+            if (result.isFailure()) {
+                Log.d(TAG, "Query inventory was fail." + result);
+                complain("Failed to query inventory: " + result);
+                return;
+            }
+
+            Log.d(TAG, "Query inventory was successful.");
+
+            /*
+             * Check for items we own. Notice that for each purchase, we check
+             * the developer payload to see if it's correct! See
+             * verifyDeveloperPayload().
+             */
+
+            // Check for 3d delivery -- if we own 3d, we should fill up the 3d effect immediately
+            Purchase effect3dPurchase = inventory.getPurchase(SKU_BOOM_3D_SURROUND);
+            if (effect3dPurchase != null && verifyDeveloperPayload(effect3dPurchase)) {
+                Log.d(TAG, "We have 3d. Updating it.");
+                userAlreadyPurchased();
+
+                //In Boom No need for consume it
+               /* try {
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_BOOM_3D_SURROUND), mConsumeFinishedListener);
+                } catch (IabHelper.IabAsyncInProgressException e) {
+                    complain("Error consuming gas. Another async operation in progress.");
+                }*/
+                return;
+            }
+
+
+            //setWaitScreen(false);
+            Log.d(TAG, "Initial inventory query finished; enabling main UI.");
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_in_app_test);
-        String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgiRZhXAbnXPjPhiuR3u6JsojGI8zmLk9YRma6j1Hc3uCXytO344tIcgHjwyNVDzMJ+U1ounor+A7ON6Uu7alb6+uuVqYgp68aA7GXg8OwHvqYJO0qzogQnPv3eyuDYtYq4EmMuc0PefCXrCdLQyUAS9bGCCianhyBknQVD8JPJZDT2mzjK73XgKT5BeWrmq1QEfWggaqXGXW+3g0DrWtC+u4BwljYrrcl3bX/KammReI/LIFKQIPb11nOrTsgG0ik2IrxaOOo0VTrDHn3Phk8Xg27/8Y7P4bAtSvQyF5U0u+vDoT6L6nKfZ4jEEwOk7XhasWL6pl7+oPzOR9NDCYEwIDAQAB";
         // compute your public key and store it in base64EncodedPublicKey
+        String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgiRZhXAbnXPjPhiuR3u6JsojGI8zmLk9YRma6j1Hc3uCXytO344tIcgHjwyNVDzMJ+U1ounor+A7ON6Uu7alb6+uuVqYgp68aA7GXg8OwHvqYJO0qzogQnPv3eyuDYtYq4EmMuc0PefCXrCdLQyUAS9bGCCianhyBknQVD8JPJZDT2mzjK73XgKT5BeWrmq1QEfWggaqXGXW+3g0DrWtC+u4BwljYrrcl3bX/KammReI/LIFKQIPb11nOrTsgG0ik2IrxaOOo0VTrDHn3Phk8Xg27/8Y7P4bAtSvQyF5U0u+vDoT6L6nKfZ4jEEwOk7XhasWL6pl7+oPzOR9NDCYEwIDAQAB";
+        // Create the helper, passing it our context and the public key to verify signatures with
         mHelper = new IabHelper(this, base64EncodedPublicKey);
-        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+        // enable debug logging (for a production application, you should set this to false).
+        mHelper.enableDebugLogging(true);
+       /* mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
                 if (!result.isSuccess()) {
                     // Oh no, there was a problem.
@@ -66,9 +119,86 @@ public class InAppTestActivity extends AppCompatActivity {
                 }
                 // Hooray, IAB is fully set up!
             }
+        });*/
+        // Start setup. This is asynchronous and the specified listener
+        // will be called once setup completes.
+        Log.d(TAG, "Starting setup.");
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            public void onIabSetupFinished(IabResult result) {
+                Log.d(TAG, "Setup finished.");
+
+                if (!result.isSuccess()) {
+                    // Oh noes, there was a problem.
+                    complain("Problem setting up in-app billing: " + result);
+                    return;
+                }
+
+                // Have we been disposed of in the meantime? If so, quit.
+                if (mHelper == null) return;
+
+
+                // IAB is fully set up. Now, let's get an inventory of stuff we own.
+                Log.d(TAG, "Setup successful. Querying inventory.");
+//                try {
+//                    mHelper.queryInventoryAsync(mGotInventoryListener);
+//                } catch (IabHelper.IabAsyncInProgressException e) {
+//                    complain("Error querying inventory. Another async operation in progress.");
+//                }
+            }
         });
+
     }
 
+    // Enables or disables the "please wait" screen.
+    void setWaitScreen(boolean set) {
+        //  findViewById(R.id.screen_main).setVisibility(set ? View.GONE : View.VISIBLE);
+        //  findViewById(R.id.screen_wait).setVisibility(set ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * Verifies the developer payload of a purchase.
+     */
+    boolean verifyDeveloperPayload(Purchase p) {
+        String payload = p.getDeveloperPayload();
+
+        /*
+         * TODO: verify that the developer payload of the purchase is correct. It will be
+         * the same one that you sent when initiating the purchase.
+         *
+         * WARNING: Locally generating a random string when starting a purchase and
+         * verifying it here might seem like a good approach, but this will fail in the
+         * case where the user purchases an item on one device and then uses your app on
+         * a different device, because on the other device you will not have access to the
+         * random string you originally generated.
+         *
+         * So a good developer payload has these characteristics:
+         *
+         * 1. If two different users purchase an item, the payload is different between them,
+         *    so that one user's purchase can't be replayed to another user.
+         *
+         * 2. The payload must be such that you can verify it even when the app wasn't the
+         *    one who initiated the purchase flow (so that items purchased by the user on
+         *    one device work on other devices owned by the user).
+         *
+         * Using your own server to store and verify developer payloads across app
+         * installations is recommended.
+         */
+
+        return true;
+    }
+
+    void complain(String message) {
+        Log.e(TAG, "**** TrivialDrive Error: " + message);
+        alert("Error: " + message);
+    }
+
+    void alert(String message) {
+        AlertDialog.Builder bld = new AlertDialog.Builder(this);
+        bld.setMessage(message);
+        bld.setNeutralButton("OK", null);
+        Log.d(TAG, "Showing alert dialog: " + message);
+        bld.create().show();
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -90,12 +220,13 @@ public class InAppTestActivity extends AppCompatActivity {
         String payload = "";
 
         try {
-            mHelper.launchPurchaseFlow(this, SKU_PREMIUM, RC_REQUEST,
+            mHelper.launchPurchaseFlow(this, SKU_BOOM_3D_SURROUND, RC_REQUEST,
                     mPurchaseFinishedListener, payload);
         } catch (IabHelper.IabAsyncInProgressException e) {
             //  complain("Error launching purchase flow. Another async operation in progress.");
             // setWaitScreen(false);
         }
+
 
     }
 
@@ -139,5 +270,9 @@ public class InAppTestActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "onActivityResult handled by IABUtil.");
         }
+    }
+
+    public void userAlreadyPurchased() {
+        Toast.makeText(this, "User already owned", Toast.LENGTH_SHORT).show();
     }
 }

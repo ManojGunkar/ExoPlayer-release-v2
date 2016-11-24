@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="56dp">
+    android:layout_height="@dimen/two_hundred_twenty_four_pt">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/viewcontent"
@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:text="test"
+                android:text=""
                 android:textColor="@color/white"
                 android:textSize="@dimen/play_queue_row_txt"
                 android:typeface="normal" />
@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:text="test"
+                android:text=""
                 android:textColor="@color/play_que_decs_txt"
                 android:textSize="@dimen/play_queue_row_desc_txt"
                 android:typeface="normal" />
@@ -67,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|center_vertical"
-        android:text="UNDO"
+        android:text="@string/txt_undo"
         android:textAllCaps="true"
         android:textColor="@color/swipe_delete_undo_btn" />
 

@@ -22,10 +22,21 @@
     <color name="play_que_header_bg">#061019</color>
     <color name="play_que_decs_txt">#59595C</color>
     <color name="swipe_delete_undo_btn">#fff084</color>
-    <!--<color name="drag_item_bg">#020308</color>-->
-
     <color name="transparent">#80FFFFFF</color>
-
-
+    <color name="black_color">#000000</color>
+    <!--boomplayer-->
+    <color name="player_title_txt_color">#c3cc20</color>
+    <!--cardgrid-->
+    <color name="card_grid_item_title_background">#10141d</color>
+    <color name="card_grid_item_title_background_tint">#434343</color>
+    <color name="card_grid_sub_title">#8d8f91</color>
+    <color name="card_grid_artist">#59595C</color>
+    <color name="card_grid_item_forground_tint">#434343</color>
+    <color name="card_grid_item_bottom_line">#313232</color>
+    <!--
+    3D activity
+    -->
+    <color name="line_view">#222327</color>
+    <color name="effect_powerpanel">#020b17</color>
 </resources><!--
 <color name="colorAccent">#FF4081</color>-->
