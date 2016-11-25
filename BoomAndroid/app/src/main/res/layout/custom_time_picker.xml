@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/appBackground"
     android:orientation="vertical">
 
     <com.globaldelight.boom.ui.widgets.RegularTextView
@@ -32,26 +32,32 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <com.globaldelight.boom.ui.widgets.RegularButton
             android:id="@+id/tmcancel"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="@string/timer_cancel" />
+            android:text="@string/timer_cancel"
+            android:textColor="@color/white" />
 
-        <Button
+        <com.globaldelight.boom.ui.widgets.RegularButton
             android:id="@+id/tmstart"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="56dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.4"
-            android:text="@string/timer_start" />
+            android:text="@string/timer_start"
+            android:textColor="@color/white" />
 
-        <Button
+        <com.globaldelight.boom.ui.widgets.RegularButton
             android:id="@+id/tmreset"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
-            android:text="@string/timer_reset" />
+            android:text="@string/timer_reset"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </LinearLayout>

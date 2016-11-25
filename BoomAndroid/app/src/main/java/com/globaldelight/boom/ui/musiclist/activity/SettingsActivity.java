@@ -22,7 +22,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.NumberPicker;
@@ -39,6 +38,7 @@ import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.purchase.InAppPurchaseActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.HeadSetListAdapter;
+import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.HeadSetType;
 import com.globaldelight.boom.utils.PlayerSettings;
@@ -66,13 +66,14 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     protected View view;
     Resources system;
     RadioButton rbNone, rbNext, rbPlay, rbArtist, rbAlbum;
+    AlertDialog alertDialog;
     private RadioGroup radioButtonSortGroup;
     private RadioGroup radioButtonShakeGroup;
     private Switch crossfadeSwich;
     private TimePicker timePicker;
-    private Button btnTimerStart;
-    private Button btnTimerCancel;
-    private Button btnTimerReset;
+    // private Button btnTimerStart;
+    //  private Button btnTimerCancel;
+    //  private Button btnTimerReset;
     private RegularTextView txtTimer;
     private RegularTextView txtStopTime;
     private CountDownTimer mCountDownTimer;
@@ -92,6 +93,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private HeadSetListAdapter headSetAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private AudioEffect audioEffectPreferenceHandler;
+    private Typeface font;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,7 +127,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         });
 
         //section timer
-        timePicker = (TimePicker) findViewById(R.id.timePicker);
+       /* timePicker = (TimePicker) findViewById(R.id.timePicker);
         timePicker.setIs24HourView(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -133,13 +136,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         } else {
             timePicker.setCurrentHour(0);
             timePicker.setCurrentMinute(0);
-        }
+        }*/
 
-        btnTimerStart = (Button) findViewById(R.id.btn_timer_start);
+      /*  btnTimerStart = (Button) findViewById(R.id.btn_timer_start);
         btnTimerReset = (Button) findViewById(R.id.btn_timer_reset);
-        btnTimerCancel = (Button) findViewById(R.id.btn_timer_cancel);
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/TitilliumWeb-Regular.ttf");
-        btnTimerStart.setTypeface(font);
+        btnTimerCancel = (Button) findViewById(R.id.btn_timer_cancel);*/
+        font = Typeface.createFromAsset(getAssets(), "fonts/TitilliumWeb-Regular.ttf");
+       /* btnTimerStart.setTypeface(font);
         btnTimerReset.setTypeface(font);
         btnTimerCancel.setTypeface(font);
 
@@ -150,12 +153,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         btnTimerCancel.setTransformationMethod(null);
         btnTimerStart.setOnClickListener(this);
         btnTimerReset.setOnClickListener(this);
-        btnTimerCancel.setOnClickListener(this);
+        btnTimerCancel.setOnClickListener(this);*/
         txtTimer = (RegularTextView) findViewById(R.id.txtTimer);
 
         txtStopTime = (RegularTextView) findViewById(R.id.txtStopTime);
         txtDescTimer = (RegularTextView) findViewById(R.id.description_timer);
-
+        txtDescTimer.setOnClickListener(this);
         txtSeekText = (RegularTextView) findViewById(R.id.seek_text);
         findViewById(R.id.mainContainer).setOnTouchListener(new OnScrollTouchListenerControl(this, this));
         slideseekbar.setOnSeekBarChangeListener(this);
@@ -292,6 +295,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         SimpleDateFormat sdftime = new SimpleDateFormat("hh:mm:ss aa");//yyyy:MM:dd:HH:mm
         String endtime = sdftime.format(calendar.getTime());
         txtDescTimer.setText(getResources().getString(R.string.sleep_timer_description_active) + " " + endtime);
+        txtDescTimer.setOnClickListener(this);
         //String dateString = sdf.format(new Date(System.currentTimeMillis()));
         sleepTime = endDate.getTime() - date.getTime();
         alarmMgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
@@ -427,11 +431,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void setUiTimerEditMode() {
-        timePicker.setVisibility(View.VISIBLE);
+        // timePicker.setVisibility(View.VISIBLE);
         txtTimer.setVisibility(View.GONE);
-        btnTimerCancel.setVisibility(View.INVISIBLE);
-        btnTimerReset.setVisibility(View.INVISIBLE);
-        btnTimerStart.setVisibility(View.VISIBLE);
+        //  btnTimerCancel.setVisibility(View.INVISIBLE);
+        //  btnTimerReset.setVisibility(View.INVISIBLE);
+        //  btnTimerStart.setVisibility(View.VISIBLE);
         txtDescTimer.setText(getResources().getString(R.string.sleep_timer_description));
         // txtStopTime.setVisibility(View.GONE);
         txtStopTime.setVisibility(View.VISIBLE);
@@ -440,11 +444,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void setUiTimerMode() {
-        timePicker.setVisibility(View.GONE);
+        // timePicker.setVisibility(View.GONE);
         txtTimer.setVisibility(View.VISIBLE);
-        btnTimerCancel.setVisibility(View.VISIBLE);
-        btnTimerReset.setVisibility(View.VISIBLE);
-        btnTimerStart.setVisibility(View.INVISIBLE);
+        // btnTimerCancel.setVisibility(View.VISIBLE);
+        // btnTimerReset.setVisibility(View.VISIBLE);
+        // btnTimerStart.setVisibility(View.INVISIBLE);
         txtStopTime.setVisibility(View.GONE);
 
     }
@@ -453,7 +457,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-
+            case R.id.description_timer:
+                //setTimer();
+                customTimepicker();
+                break;
             case R.id.btn_timer_start:
                 setTimer();
                 // customTimepicker();
@@ -621,13 +628,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         int minute_numberpicker_id = system.getIdentifier("minute", "id", "android");
         int ampm_numberpicker_id = system.getIdentifier("amPm", "id", "android");
 
-        NumberPicker hour_numberpicker = (NumberPicker) timePicker.findViewById(hour_numberpicker_id);
-        NumberPicker minute_numberpicker = (NumberPicker) timePicker.findViewById(minute_numberpicker_id);
-        NumberPicker ampm_numberpicker = (NumberPicker) timePicker.findViewById(ampm_numberpicker_id);
+        //  NumberPicker hour_numberpicker = (NumberPicker) timePicker.findViewById(hour_numberpicker_id);
+        //  NumberPicker minute_numberpicker = (NumberPicker) timePicker.findViewById(minute_numberpicker_id);
+        //  NumberPicker ampm_numberpicker = (NumberPicker) timePicker.findViewById(ampm_numberpicker_id);
 
-        set_numberpicker_text_colour(hour_numberpicker);
-        set_numberpicker_text_colour(minute_numberpicker);
-        set_numberpicker_text_colour(ampm_numberpicker);
+        //   set_numberpicker_text_colour(hour_numberpicker);
+        //  set_numberpicker_text_colour(minute_numberpicker);
+        // set_numberpicker_text_colour(ampm_numberpicker);
     }
 
     private void set_numberpicker_text_colour(NumberPicker number_picker) {
@@ -643,6 +650,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
                 ((Paint) wheelpaint_field.get(number_picker)).setColor(color);
                 ((EditText) child).setTextColor(color);
+                ((EditText) child).setTypeface(font);
                 //((EditText)child).setTextSize(20f);
                 number_picker.invalidate();
                 break;
@@ -719,17 +727,17 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void customTimepicker() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 // ...Irrelevant code for customizing the buttons and title
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.custom_time_picker, null);
         dialogBuilder.setView(dialogView);
-        TimePicker timePicker;
+        // TimePicker timePicker;
         // editText = (EditText) dialogView.findViewById(R.id.label_field);
         timePicker = (TimePicker) dialogView.findViewById(R.id.timePickerdialog);
-        Button timerStart = (Button) dialogView.findViewById(R.id.tmstart);
-        Button timerReset = (Button) dialogView.findViewById(R.id.tmreset);
-        final Button timerCancel = (Button) dialogView.findViewById(R.id.tmcancel);
+        RegularButton timerStart = (RegularButton) dialogView.findViewById(R.id.tmstart);
+        RegularButton timerReset = (RegularButton) dialogView.findViewById(R.id.tmreset);
+        final RegularButton timerCancel = (RegularButton) dialogView.findViewById(R.id.tmcancel);
         timerStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -739,7 +747,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         timerReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                alertDialog.dismiss();
+                setTimer();
             }
         });
         timerCancel.setOnClickListener(new View.OnClickListener() {
@@ -771,7 +780,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         set_numberpicker_text_colour(minute_numberpicker);
         set_numberpicker_text_colour(ampm_numberpicker);
         //editText.setText("test label");
-        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog = dialogBuilder.create();
         alertDialog.show();
     }
 }

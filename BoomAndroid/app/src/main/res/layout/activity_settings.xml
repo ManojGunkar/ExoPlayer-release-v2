@@ -437,17 +437,17 @@
                     android:textSize="@dimen/settings_item_description_size"
                     android:textStyle="normal" />
 
-                <TimePicker
-                    android:id="@+id/timePicker"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:numbersBackgroundColor="#57e326"
-                    android:numbersSelectorColor="#675543"
-                    android:numbersTextColor="#995394"
-                    android:textColorPrimary="#359875"
-                    android:textColorSecondary="#897530"
-                    android:textSize="@dimen/settings_item_title_size"
-                    android:timePickerMode="spinner" />
+                <!--  <TimePicker
+                      android:id="@+id/timePicker"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:numbersBackgroundColor="#57e326"
+                      android:numbersSelectorColor="#675543"
+                      android:numbersTextColor="#995394"
+                      android:textColorPrimary="#359875"
+                      android:textColorSecondary="#897530"
+                      android:textSize="@dimen/settings_item_title_size"
+                      android:timePickerMode="spinner" />-->
 
 
                 <LinearLayout
