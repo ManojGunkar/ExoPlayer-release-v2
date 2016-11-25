@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,11 +20,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
@@ -38,6 +42,7 @@ import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class AlbumActivity extends AppCompatActivity {
@@ -49,6 +54,7 @@ public class AlbumActivity extends AppCompatActivity {
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private AppBarLayout appbarlayout;
     private ListDetail listDetail;
+    FloatingActionButton mPlayAlbum;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -78,6 +84,8 @@ public class AlbumActivity extends AppCompatActivity {
         permissionChecker = new PermissionChecker(this, this, findViewById(R.id.base_view_album));
         rv = (RecyclerView) findViewById(R.id.rv_album_activity);
         albumArt = (ImageView) findViewById(R.id.activity_album_art);
+        mPlayAlbum = (FloatingActionButton)findViewById(R.id.play_album);
+
         int width = Utils.getWindowWidth(this);
         int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
         int height = Utils.getWindowHeight(this) - panelSize * 4;
@@ -101,6 +109,19 @@ public class AlbumActivity extends AppCompatActivity {
         }
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mPlayAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                    if (collection.getItemType() == ItemType.ALBUM) {
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0);
+                    } else {
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
+                    }
+                }
+            }
+        });
 
         addSongList();
         setForAnimation();
@@ -126,10 +147,10 @@ public class AlbumActivity extends AppCompatActivity {
                         ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
                     ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(AlbumActivity.this).getMediaCollectionItemDetails(collection));
                 }
-                rv.setLayoutManager(new LinearLayoutManager(AlbumActivity.this));
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        rv.setLayoutManager(new LinearLayoutManager(AlbumActivity.this));
                         rv.setAdapter(new AlbumItemsListAdapter(AlbumActivity.this, collection, listDetail, permissionChecker));
                     }
                 });

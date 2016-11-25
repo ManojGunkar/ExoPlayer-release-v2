@@ -137,7 +137,8 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
                                 items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
                                 ((IMediaItemCollection)items.get(position).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
 
-                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(((IMediaItemCollection)items.get(position).getMediaElement().get(items.get(position).getCurrentIndex())));
+                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(items.get(position).getMediaElement().get(items.get(position).getCurrentIndex()));
+                                items.get(position).getMediaElement().clear();
                                 break;
                             case R.id.popup_album_add_playlist:
                                 Utils util = new Utils(context);
@@ -146,6 +147,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
 
                                 util.addToPlaylist(activity, ((IMediaItemCollection)items.get(position).getMediaElement().get(items.get(position).getCurrentIndex())).getMediaElement(), null);
                                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                items.get(position).getMediaElement().clear();
                                 break;
                         }
                         return false;

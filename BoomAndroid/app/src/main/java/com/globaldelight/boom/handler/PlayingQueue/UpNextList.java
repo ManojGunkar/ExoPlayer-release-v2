@@ -180,6 +180,7 @@ public class UpNextList {
             setItemListAsPrevious(itemList.subList(0, position));
         }
         setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
+        mAutoNextList.clear();
         if(itemList.size() > position+1){
             setItemListAsUpNextFrom(itemList.subList(position+1, itemList.size()));
         }
@@ -192,6 +193,7 @@ public class UpNextList {
             setItemListAsPrevious(itemList.subList(0, position));
         }
         setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
+        mAutoNextList.clear();
         if(itemList.size() > position+1){
             setItemListAsUpNextFrom(itemList.subList(position+1, itemList.size()));
         }
@@ -205,6 +207,7 @@ public class UpNextList {
             setItemListAsPrevious(collection.getMediaElement().subList(0, position));
         }
         setItemAsPlayingItem(collection.getMediaElement().get(position), QueueType.Auto_UpNext);
+        mAutoNextList.clear();
         if(collection.getMediaElement().size() > position+1){
             setItemListAsUpNextFrom(collection.getMediaElement().subList(position+1, collection.getMediaElement().size()));
         }
@@ -403,7 +406,6 @@ public class UpNextList {
     }
 
     private void setItemListAsUpNextFrom(List<? extends IMediaItemBase> itemList) {
-        mAutoNextList.clear();
         mAutoNextList.addAll(itemList);
     }
 

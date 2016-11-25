@@ -110,12 +110,10 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
 
                 if (App.getPlayingQueueHandler().getUpNextList() != null) {
                     if (item.getItemType() == ItemType.ALBUM) {
-
                         App.getPlayingQueueHandler().getUpNextList().addToPlay(item, position);
-                } else {
+                    } else {
                         App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), position);
-                }
-
+                    }
                 }
             }
         });

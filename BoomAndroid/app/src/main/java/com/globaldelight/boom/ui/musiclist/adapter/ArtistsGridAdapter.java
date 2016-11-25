@@ -131,7 +131,8 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
                                     itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
                                     ((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
 
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(((IMediaItemCollection)itemList.get(position).getMediaElement().get(itemList.get(position).getCurrentIndex())));
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(itemList.get(position).getMediaElement().get(itemList.get(position).getCurrentIndex()));
+                                    itemList.get(position).getMediaElement().clear();
                                 }
                                 break;
                             case R.id.popup_album_add_playlist:
@@ -141,6 +142,7 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
 
                                 util.addToPlaylist(activity, ((IMediaItemCollection)itemList.get(position).getMediaElement().get(itemList.get(position).getCurrentIndex())).getMediaElement(), null);
                                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                itemList.get(position).getMediaElement().clear();
                                 break;
                         }
                         return false;

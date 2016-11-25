@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,7 +29,9 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
@@ -44,6 +47,9 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import static com.globaldelight.boom.data.MediaLibrary.ItemType.BOOM_PLAYLIST;
+import static com.globaldelight.boom.data.MediaLibrary.ItemType.PLAYLIST;
 
 /**
  * Created by Rahul Agarwal on 8/1/2016.
@@ -61,6 +67,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
     private IMediaItemCollection collection;
     private ListDetail listDetail;
     private ItemTouchHelper mItemTouchHelper;
+    private FloatingActionButton mPlaySongDetailList;
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,6 +95,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         permissionChecker = new PermissionChecker(this, this, findViewById(R.id.song_detail_list_base_view));
         rv = (RecyclerView) findViewById(R.id.rv_song_detail_list);
         albumArt = (ImageView) findViewById(R.id.song_detail_list_default_img);
+        mPlaySongDetailList = (FloatingActionButton) findViewById(R.id.play_song_detail_list);
 
         int width = Utils.getWindowWidth(this);
         int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
@@ -112,6 +120,17 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         }
         if (this.getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mPlaySongDetailList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), 0);
+                }else{
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
+                }
+            }
+        });
 
         setSongList();
         setForAnimation();

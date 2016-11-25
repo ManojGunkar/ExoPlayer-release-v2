@@ -314,8 +314,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mSubTitleTxt.setVisibility(View.GONE);
             mTrackSeek.setVisibility(View.INVISIBLE);
             mPlayPauseBtn.setVisibility(View.INVISIBLE);
-            ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, BitmapFactory.decodeResource(getBaseContext().getResources(),
-                    R.drawable.no_song_selected));
+            mAlbumArt.setImageDrawable(getBaseContext().getResources().getDrawable(R.drawable.no_song_selected));
+//            ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, BitmapFactory.decodeResource(getBaseContext().getResources(),
+//                    R.drawable.no_song_selected));
             mRemainsTime.setVisibility(View.INVISIBLE);
             mPlayedTime.setVisibility(View.INVISIBLE);
             mFavourite.setVisibility(View.INVISIBLE);
@@ -578,7 +579,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
-        if(fromUser && App.getPlayerEventHandler().isPlaying()) {
+        if(fromUser/* && App.getPlayerEventHandler().isPlaying()*/) {
             isUser = true;
             mTrackSeek.setProgress(progress);
         }
@@ -591,17 +592,17 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onStopTrackingTouch(CircularSeekBar circularSeekBar) {
-        if(App.getPlayerEventHandler().isPlaying()) {
-            Intent intent = new Intent(PlayerService.ACTION_SEEK_SONG);
-            intent.putExtra("seek", circularSeekBar.getProgress());
-            sendBroadcast(intent);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    isUser = false;
-                }
-            }, 300);
-        }
+//        if(App.getPlayerEventHandler().isPlaying()){
+        Intent intent = new Intent(PlayerService.ACTION_SEEK_SONG);
+        intent.putExtra("seek", circularSeekBar.getProgress());
+        sendBroadcast(intent);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                isUser = false;
+            }
+        }, 300);
+//        }
     }
 
     public Bitmap blur(Context context, Bitmap image) {
