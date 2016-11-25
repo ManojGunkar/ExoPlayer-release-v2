@@ -215,4 +215,5 @@ public class Utils {
     private Spanned getString(@StringRes int string) {
         return Html.fromHtml(context.getResources().getString(string));
     }
+
 }

@@ -5,8 +5,6 @@ import android.provider.Settings;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
-import org.json.JSONObject;
-
 /**
  * Created by nidhin on 17/11/16.
  */
@@ -37,15 +35,15 @@ public class MixPanelAnalyticHelper {
         getInstance(context).track(eventName);
     }
 
-    public static void track(String eventName, JSONObject properties) {
+   /* public static void track(Context context,String eventName, JSONObject properties) {
+        MixpanelAPI.getInstance().
+
+    }*/
+
+    /*public static void trackWithStatus(String eventName, boolean status) {
 
 
-    }
-
-    public static void trackWithStatus(String eventName, boolean status) {
-
-
-    }
+    }*/
 
 
 }

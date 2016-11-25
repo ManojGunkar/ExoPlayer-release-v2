@@ -9,9 +9,9 @@
     android:background="@android:color/black"
     tools:context="com.globaldelight.boom.purchase.InAppPurchaseActivity">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <!-- <ScrollView
+         android:layout_width="match_parent"
+         android:layout_height="match_parent">-->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,7 +22,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight=".8"
                 android:orientation="vertical">
 
                 <ImageView
@@ -71,8 +70,10 @@
                     android:layout_width="@dimen/one_thousand_twenty_eight"
                     android:layout_height="@dimen/two_hundred_eight"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="@dimen/one_hundred_eighty_six_pt"
                     android:layout_marginTop="@dimen/two_hundred_sixty_four"
                     android:background="@drawable/purchase_button"
+                    android:gravity="center|center_vertical"
                     android:text="@string/purchase_buton_text"
                     android:textColor="@color/white"
                     android:textSize="@dimen/purchase_item_button_size"
@@ -83,15 +84,13 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/two_hundred_fourty_eight"
                 android:layout_gravity="bottom"
-                android:layout_marginTop="@dimen/two_hundred_fourty_eight"
-                android:layout_weight="0.2"
                 android:orientation="vertical">
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="2px"
+                    android:layout_height="1px"
                     android:background="@color/line_view"
                     android:visibility="visible" />
 
@@ -99,15 +98,18 @@
                     android:id="@+id/restore"
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="bottom"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center"
                     android:gravity="center"
                     android:text="@string/purchase_restore_txt"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/purchase_restore_button_txt_size" />
             </LinearLayout>
 
 
         </LinearLayout>
-    </ScrollView>
+    <!--
+        </ScrollView>
+    -->
 
 </RelativeLayout>

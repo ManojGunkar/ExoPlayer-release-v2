@@ -12,11 +12,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -454,6 +456,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
             case R.id.btn_timer_start:
                 setTimer();
+                // customTimepicker();
                 break;
             case R.id.btn_timer_cancel:
                 resetTimer();
@@ -713,5 +716,62 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     public void openStore(View v) {
         Intent intent = new Intent(SettingsActivity.this, InAppPurchaseActivity.class);
         startActivity(intent);
+    }
+
+    public void customTimepicker() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+// ...Irrelevant code for customizing the buttons and title
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.custom_time_picker, null);
+        dialogBuilder.setView(dialogView);
+        TimePicker timePicker;
+        // editText = (EditText) dialogView.findViewById(R.id.label_field);
+        timePicker = (TimePicker) dialogView.findViewById(R.id.timePickerdialog);
+        Button timerStart = (Button) dialogView.findViewById(R.id.tmstart);
+        Button timerReset = (Button) dialogView.findViewById(R.id.tmreset);
+        final Button timerCancel = (Button) dialogView.findViewById(R.id.tmcancel);
+        timerStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        timerReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        timerCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        timePicker.setIs24HourView(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            timePicker.setHour(0);
+            timePicker.setMinute(0);
+        } else {
+            timePicker.setCurrentHour(0);
+            timePicker.setCurrentMinute(0);
+        }
+        system = Resources.getSystem();
+        int hour_numberpicker_id = system.getIdentifier("hour", "id", "android");
+        int minute_numberpicker_id = system.getIdentifier("minute", "id", "android");
+        int ampm_numberpicker_id = system.getIdentifier("amPm", "id", "android");
+
+        NumberPicker hour_numberpicker = (NumberPicker) timePicker.findViewById(hour_numberpicker_id);
+        NumberPicker minute_numberpicker = (NumberPicker) timePicker.findViewById(minute_numberpicker_id);
+        NumberPicker ampm_numberpicker = (NumberPicker) timePicker.findViewById(ampm_numberpicker_id);
+
+        set_numberpicker_text_colour(hour_numberpicker);
+        set_numberpicker_text_colour(minute_numberpicker);
+        set_numberpicker_text_colour(ampm_numberpicker);
+        //editText.setText("test label");
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
     }
 }

@@ -19,7 +19,7 @@
     <dimen name="purchase_item_title_size">24sp</dimen>
     <dimen name="purchase_item_desc_size">16sp</dimen>
     <dimen name="purchase_item_button_size">26sp</dimen>
-
+    <dimen name="purchase_restore_button_txt_size">20sp</dimen>
     <dimen name="two_fourty_eight_px">62dp</dimen>
     <!--3d surround-->
     <dimen name="eight_pt">2dp</dimen>
