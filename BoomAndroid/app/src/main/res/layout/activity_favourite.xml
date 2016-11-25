@@ -32,9 +32,23 @@
         android:layout_gravity="center_horizontal|top"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-    <View
+    <LinearLayout
         android:id="@+id/fav_empty_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:gravity="center"
+        android:orientation="vertical" >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_favourites_placeholder"/>
+        <com.globaldelight.boom.ui.widgets.RegularTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#787878"
+            android:textSize="@dimen/eighty_eighty_pt"
+            android:text="@string/fav_placeholder_txt"
+            android:layout_marginTop="@dimen/ninety_six_pt"/>
+        </LinearLayout>
 </LinearLayout>

@@ -375,6 +375,14 @@ public class UpNextList {
             mAutoNextList.add(PlayItemIndex, item.getUpNextItem());
     }
 
+    public void addItemToUpNextFrom(IMediaItemBase item){
+        mAutoNextList.add(item);
+    }
+
+    public void addItemListToUpNextFrom(List<? extends IMediaItemBase> itemList){
+        mAutoNextList.addAll(itemList);
+    }
+
     public boolean isPrevious(){
         return ghostList != null && ghostList.size() > 0 ? true : false;
     }

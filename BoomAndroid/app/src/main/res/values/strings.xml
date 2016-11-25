@@ -120,5 +120,10 @@
     <string name="purchase_item_desc2">Intensity control with a single purchase!</string>
     <string name="purchase_buton_text">Buy Now @ $ 3.99 </string>
     <string name="purchase_restore_txt">Restore Purchases</string>
-
+<!-- Favorite-->
+    <string name="fav_placeholder_txt">You\'ve not liked \n any songs yet.</string>
+<!--Boom PlayList-->
+    <string name="boom_playlist_placeholder_txt">You\'ve not created \n any Playlist yet.</string>
+    <!--PlayList-->
+    <string name="playlist_placeholder_txt">You\'ve not created \n any Playlist yet.</string>
 </resources>

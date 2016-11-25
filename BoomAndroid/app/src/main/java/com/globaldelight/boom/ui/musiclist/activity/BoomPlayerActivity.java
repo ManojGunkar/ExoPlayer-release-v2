@@ -228,16 +228,20 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                         public void run() {
                             if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
                                 Logger.LOGD("ImageLoad", "Always call --");
-//                                File file = new File(item.getItemArtUrl());
-                                Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
-                                bitmap = Bitmap.createScaledBitmap(bitmap, (int) getResources().getDimension(R.dimen.home_album_art_size),
-                                        (int) getResources().getDimension(R.dimen.home_album_art_size), false);
-//                                bitmap.setHeight((int) getResources().getDimension(R.dimen.home_album_art_size));
-//                                bitmap.setWidth((int) getResources().getDimension(R.dimen.home_album_art_size));
-                                ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, bitmap);
-                                Bitmap blurredBitmap = blur(BoomPlayerActivity.this, bitmap);
-                                mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
-
+                                try {
+                                    Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
+                                    bitmap = Bitmap.createScaledBitmap(bitmap, (int) getResources().getDimension(R.dimen.home_album_art_size),
+                                            (int) getResources().getDimension(R.dimen.home_album_art_size), false);
+                                    ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, bitmap);
+                                    Bitmap blurredBitmap = blur(BoomPlayerActivity.this, bitmap);
+                                    mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
+                                }catch (NullPointerException e){
+                                    ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, BitmapFactory.decodeResource(getBaseContext().getResources(),
+                                            R.drawable.default_album_art_home));
+                                    Bitmap blurredBitmap = blur(BoomPlayerActivity.this, BitmapFactory.decodeResource(getBaseContext().getResources(),
+                                            R.drawable.default_album_art_home));
+                                    mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
+                                }
 //                                Picasso.with(BoomPlayerActivity.this).load(file).resize((int) getResources().getDimension(R.dimen.home_album_art_size), (int) getResources().getDimension(R.dimen.home_album_art_size))
 //                                        .centerCrop().priority(Picasso.Priority.HIGH).memoryPolicy(MemoryPolicy.NO_CACHE).into(new Target() {
 //                                    @Override
@@ -514,7 +518,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             if (isCurrentTrackFav) {
                 if(isUser){
                     MediaController.getInstance(this).removeItemToList(false, App.getPlayerEventHandler().getPlayingItem().getItemId());
-                    Snackbar.make(mPlayerRootView, getResources().getString(R.string.removed_from_favorite), Snackbar.LENGTH_LONG).show();
+                    Toast.makeText(this, getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                     mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_normal));
                 }else {
                     mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_selected));
@@ -522,7 +526,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             } else {
                 if(isUser){
                     MediaController.getInstance(this).addSongsToList(false, App.getPlayerEventHandler().getPlayingItem());
-                    Snackbar.make(mPlayerRootView, getResources().getString(R.string.added_to_favorite), Snackbar.LENGTH_LONG).show();
+                    Toast.makeText(this, getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                     mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_selected));
                 }else{
                     mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_normal));

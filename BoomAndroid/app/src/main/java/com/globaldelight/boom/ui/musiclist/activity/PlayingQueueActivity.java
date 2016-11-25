@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.globaldelight.boom.App;
@@ -45,6 +46,7 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
     Toolbar toolbar;
     ImageView toolImage;
     TextView toolTxt;
+    private LinearLayout mQueueContainer, mLibProgress;
     private PlayingQueueListAdapter playingQueueListAdapter;
     private RecyclerView recyclerView;
     private PermissionChecker permissionChecker;
@@ -87,8 +89,11 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
     }
 
     private void initView() {
+        mQueueContainer = (LinearLayout)findViewById(R.id.queue_container);
+        mLibProgress = (LinearLayout)findViewById(R.id.queue_progress);
         recyclerView = (RecyclerView) findViewById(R.id.playing_queue_Container);
         emptyView = findViewById(R.id.playing_queue_empty_view);
+        mQueueContainer.setVisibility(View.GONE);
         checkPermissions();
     }
 
@@ -143,7 +148,7 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
                         gridLayoutManager.scrollToPosition(playingQueueListAdapter.getPlayingHeaderPosition());
                         recyclerView.setHasFixedSize(true);
                         setUpItemTouchHelper();
-                        //setUpAnimationDecoratorHelper();
+                        mQueueContainer.setVisibility(View.VISIBLE);
                     }
                 });
             }

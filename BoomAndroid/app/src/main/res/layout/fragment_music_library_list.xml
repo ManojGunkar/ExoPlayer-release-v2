@@ -25,8 +25,27 @@
             android:id="@+id/album_empty_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone" />
+            android:orientation="vertical" >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_playlists_placeholder"/>
+            <com.globaldelight.boom.ui.widgets.RegularTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#787878"
+                android:text="@string/playlist_placeholder_txt"
+                android:textSize="@dimen/eighty_eighty_pt"
+                android:layout_marginTop="@dimen/ninety_six_pt"/>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/empty_list_all"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
     </LinearLayout>
 </FrameLayout>

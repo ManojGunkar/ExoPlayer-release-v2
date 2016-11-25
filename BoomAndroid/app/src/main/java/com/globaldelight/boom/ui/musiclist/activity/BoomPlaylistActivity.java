@@ -5,15 +5,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
@@ -24,6 +30,7 @@ import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.adapter.BoomPlayListAdapter;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
@@ -35,12 +42,16 @@ import java.util.ArrayList;
 /**
  * Created by Rahul Agarwal on 31-08-2016.
  */
-public class BoomPlaylistActivity extends BoomMasterActivity {
-    FloatingActionButton addBoomPlaylist;
+public class BoomPlaylistActivity extends AppCompatActivity {
+    private Toolbar toolbar;
+    private RegularTextView mToolbarTitle;
+    private FloatingActionButton addBoomPlaylist;
     private RecyclerView recyclerView;
     private BoomPlayListAdapter boomPlayListAdapter;
     private PermissionChecker permissionChecker;
-    private View emptyView;
+    private LinearLayout emptyView;
+
+
     private BroadcastReceiver updateList = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -56,11 +67,23 @@ public class BoomPlaylistActivity extends BoomMasterActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.slide_in_right, R.anim.stay_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_boom_playlist);
-
-        setToolbarTitle(getResources().getString(R.string.boom_playlist_title));
         init();
+    }
+
+    private void init() {
+        toolbar = (Toolbar)findViewById(R.id.boom_playlist_list_toolbar);
+        try {
+            setSupportActionBar(toolbar);
+        }catch (IllegalStateException e){}
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        recyclerView = (RecyclerView) findViewById(R.id.playlistContainer);
+        emptyView = (LinearLayout) findViewById(R.id.playlist_empty_view);
         addBoomPlaylist = (FloatingActionButton)findViewById(R.id.add_boom_playlist);
 
         addBoomPlaylist.setOnClickListener(new View.OnClickListener() {
@@ -69,11 +92,7 @@ public class BoomPlaylistActivity extends BoomMasterActivity {
                 newPlaylistDialog();
             }
         });
-    }
 
-    private void init() {
-        recyclerView = (RecyclerView) findViewById(R.id.playlistContainer);
-        emptyView = findViewById(R.id.playlist_empty_view);
         checkPermissions();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PlayerService.ACTION_UPDATE_BOOM_PLAYLIST);
@@ -154,15 +173,6 @@ public class BoomPlaylistActivity extends BoomMasterActivity {
         permissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    public void onBackPress() {
-        boomPlayListAdapter.onBackPressed();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
     private void newPlaylistDialog() {
         new MaterialDialog.Builder(this)
                 .title(R.string.new_playlist)
@@ -173,7 +183,7 @@ public class BoomPlaylistActivity extends BoomMasterActivity {
                             MediaController.getInstance(BoomPlaylistActivity.this).createBoomPlaylist(input.toString());
                             listNoMoreEmpty();
                             boomPlayListAdapter.updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(BoomPlaylistActivity.this).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
-                            Snackbar.make(recyclerView, getResources().getString(R.string.playlist_created), Snackbar.LENGTH_LONG).show();
+                            Toast.makeText(BoomPlaylistActivity.this, getResources().getString(R.string.playlist_created), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).show();
@@ -190,5 +200,22 @@ public class BoomPlaylistActivity extends BoomMasterActivity {
         super.onDestroy();
         unregisterReceiver(updateList);
         Logger.LOGD("BoomPlaylistActivity", "Destroy");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                overridePendingTransition(R.anim.stay_out, R.anim.slide_out_right);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.stay_out, R.anim.slide_out_right);
     }
 }

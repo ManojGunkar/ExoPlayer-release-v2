@@ -43,7 +43,8 @@ public class MusicLibraryListFragment extends Fragment {
     private DefaultPlayListAdapter defaultPlayListAdapter;
     private GenreGridAdapter genreGridAdapter;
     private PermissionChecker permissionChecker;
-    private View emptyView;
+    private View emptyViewList;
+    private LinearLayout emptyPlayList;
     private int page;
     private int title;
 
@@ -110,7 +111,7 @@ public class MusicLibraryListFragment extends Fragment {
                         songListAdapter = new SongListAdapter(context, MusicLibraryListFragment.this.getActivity(), songList, permissionChecker);
                         recyclerView.setAdapter(songListAdapter);
                         if (songList.size() < 1) {
-                            listIsEmpty();
+                            listIsEmpty(false);
                         }
                         mLibContainer.setVisibility(View.VISIBLE);
                     }
@@ -144,7 +145,7 @@ public class MusicLibraryListFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            listIsEmpty();
+                            listIsEmpty(false);
                         }
                     });
                 }
@@ -177,7 +178,7 @@ public class MusicLibraryListFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            listIsEmpty();
+                            listIsEmpty(false);
                         }
                     });
                 }
@@ -209,7 +210,8 @@ public class MusicLibraryListFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            listIsEmpty();
+
+                            listIsEmpty(true);
                         }
                     });
                 }
@@ -242,7 +244,7 @@ public class MusicLibraryListFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            listIsEmpty();
+                            listIsEmpty(false);
                         }
                     });
                 }
@@ -250,10 +252,16 @@ public class MusicLibraryListFragment extends Fragment {
         }).start();
     }
 
-    public void listIsEmpty() {
+    public void listIsEmpty(boolean isPlayList) {
         mLibContainer.setVisibility(View.VISIBLE);
         mLibProgress.setVisibility(View.GONE);
-        emptyView.setVisibility(View.VISIBLE);
+        if(isPlayList){
+            emptyPlayList.setVisibility(View.VISIBLE);
+            emptyViewList.setVisibility(View.GONE);
+        }else{
+            emptyPlayList.setVisibility(View.GONE);
+            emptyViewList.setVisibility(View.VISIBLE);
+        }
         recyclerView.setVisibility(View.GONE);
     }
 
@@ -261,7 +269,8 @@ public class MusicLibraryListFragment extends Fragment {
         mLibContainer = (LinearLayout)mainView.findViewById(R.id.lib_container);
         mLibProgress = (LinearLayout)mainView.findViewById(R.id.lib_progress);
         recyclerView = (RecyclerView) mainView.findViewById(R.id.albumsListContainer);
-        emptyView = mainView.findViewById(R.id.album_empty_view);
+        emptyViewList = mainView.findViewById(R.id.empty_list_all);
+        emptyPlayList = (LinearLayout) mainView.findViewById(R.id.album_empty_view) ;
         mLibContainer.setVisibility(View.GONE);
         fetchMusicList();
     }

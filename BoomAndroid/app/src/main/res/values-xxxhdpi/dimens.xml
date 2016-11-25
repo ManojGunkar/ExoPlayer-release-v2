@@ -48,6 +48,7 @@
 
     <dimen name="one_thirty_two_pt">33dp</dimen>
     <dimen name="ninety_two_pt">23dp</dimen>
+    <dimen name="ninety_six_pt">24dp</dimen>
     <dimen name="two_fifty_two_pt">63dp</dimen>
     <dimen name="one_twelve_pt">28dp</dimen>
 

@@ -201,6 +201,7 @@ public class BoomMasterActivity extends AppCompatActivity implements NavigationV
             case R.id.navigation_close:
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_LIBRARY_CLOSE_BUTTON_TAPPED);
                 finish();
+                overridePendingTransition(R.anim.stay_out, R.anim.slide_out_left);
                 break;
         }
         return true;

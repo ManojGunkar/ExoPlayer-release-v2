@@ -275,10 +275,9 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     public void updateNewList(ArrayList<? extends MediaItemCollection> newList) {
         items = newList;
         notifyDataSetChanged();
-    }
-
-    public void onBackPressed() {
-
+        if(items.size() == 0){
+            ((BoomPlaylistActivity)context).listIsEmpty();
+        }
     }
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {

@@ -37,7 +37,6 @@ import java.util.LinkedList;
 
 public class FavouriteListActivity extends AppCompatActivity {
     private Toolbar toolbar;
-    private RegularTextView mToolbarTitle;
     private RecyclerView recyclerView;
     private FavouriteListAdapter adapter;
     private PermissionChecker permissionChecker;
@@ -45,7 +44,7 @@ public class FavouriteListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        overridePendingTransition(R.anim.push_up_in, R.anim.stay_out);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.stay_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite);
 
@@ -54,9 +53,6 @@ public class FavouriteListActivity extends AppCompatActivity {
 
     private void initView() {
         toolbar = (Toolbar)findViewById(R.id.favourite_list_toolbar);
-
-        mToolbarTitle = (RegularTextView) findViewById(R.id.favourite_list_toolbar_title);
-        mToolbarTitle.setTextColor(Color.WHITE);
         try {
             setSupportActionBar(toolbar);
         }catch (IllegalStateException e){}
@@ -84,8 +80,6 @@ public class FavouriteListActivity extends AppCompatActivity {
                         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                         gridLayoutManager.scrollToPosition(0);
                         recyclerView.setLayoutManager(gridLayoutManager);
-//                        Comparator cmp = Collections.reverseOrder();
-//                        Collections.sort(favList, cmp);
                         adapter = new FavouriteListAdapter(FavouriteListActivity.this, recyclerView, favList, permissionChecker);
                         recyclerView.setAdapter(adapter);
                         recyclerView.setHasFixedSize(true);
@@ -139,9 +133,16 @@ public class FavouriteListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                super.onBackPressed();
+                finish();
+                overridePendingTransition(R.anim.stay_out, R.anim.slide_out_right);
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.stay_out, R.anim.slide_out_right);
     }
 }
