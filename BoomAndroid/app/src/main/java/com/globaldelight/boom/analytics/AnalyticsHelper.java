@@ -1,9 +1,11 @@
 package com.globaldelight.boom.analytics;
 
+import android.app.Application;
 import android.content.Context;
 
 import com.flurry.android.FlurryAgent;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.purchase.PurchaseUtil;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
@@ -121,6 +123,11 @@ public class AnalyticsHelper {
     public static final String PARAM_DATE = "date";
     public static final String EVENT_PURCHASE_FAILED = "purchase_failed";
     public static final String EVENT_PURCHASE_CANCELLED = "purchase_cancelled";
+    public static final String EVENT_PURCHASE_RESTORED = "purchase_restored";
+    public static final String EVENT_PURCHASE_SUCCESS = "purchase_success";
+    public static final String PARAM_PURCHASED_ITEM = "purchased_item";
+    public static final String PARAM_REMAINING_DAYS = "remiaining_days";
+    public static final String EVENT_EFFECT_PACK_PURCHASE = "effect_pack_purchase";
 
     public static void logCommonEventWithStatus(Context ctx, String eventName, boolean status) {
         //flurry
@@ -203,17 +210,69 @@ public class AnalyticsHelper {
         mixpanel.getPeople().set(properties);
     }
 
-    public static void purchaseCancelled() {
+    public static void purchaseFailed(Context context) {
+        JSONObject properties = new JSONObject();
+        try {
+            properties.put(PARAM_REMAINING_DAYS, PurchaseUtil.getRemainingDays(context));
+            MixPanelAnalyticHelper.getInstance(context).track(EVENT_PURCHASE_FAILED, properties);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        FlurryAnalyticHelper.logEvent(EVENT_PURCHASE_FAILED);
+    }
+
+    public static void trackPurchaseCancelled(Context context) {
+
+        JSONObject properties = new JSONObject();
+        try {
+            properties.put(PARAM_REMAINING_DAYS, PurchaseUtil.getRemainingDays(context));
+            MixPanelAnalyticHelper.getInstance(context).track(EVENT_PURCHASE_CANCELLED, properties);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        FlurryAnalyticHelper.logEvent(EVENT_PURCHASE_CANCELLED);
+    }
+
+    public static void purchaseSuccess(Application application, Map map, boolean isRestore, String purchasedItem) {
+        JSONObject properties = new JSONObject();
+        if (isRestore) {
+            properties = new JSONObject();
+            try {
+                properties.put(PARAM_PURCHASED_ITEM, purchasedItem);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            MixPanelAnalyticHelper.getInstance(application).track(EVENT_PURCHASE_RESTORED, properties);
+            FlurryAnalyticHelper.logEvent(EVENT_PURCHASE_RESTORED);
+            AppsFlyerAnalyticHelper.trackEvent(application, EVENT_PURCHASE_RESTORED, map
+            );
+        } else {
+            properties = new JSONObject();
+            try {
+                properties.put(PARAM_PURCHASED_ITEM, purchasedItem);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            MixPanelAnalyticHelper.getInstance(application).track(EVENT_PURCHASE_SUCCESS, properties);
+            JSONObject props = new JSONObject();
+            try {
+                props.put(EVENT_EFFECT_PACK_PURCHASE, true);
+                MixPanelAnalyticHelper.getInstance(application).registerSuperProperties(props);
+                MixPanelAnalyticHelper.getInstance(application).getPeople().set(props);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            FlurryAnalyticHelper.logEvent(EVENT_PURCHASE_SUCCESS);
+            AppsFlyerAnalyticHelper.trackEvent(application, EVENT_PURCHASE_SUCCESS, map);
+
+        }
+
 
     }
 
-    public static void purchaseSuccess() {
-
-    }
-
-    public static void purchaseFailed() {
-
-    }
 
     public void logCommonEvent(Context context, String event) {
        FlurryAgent.logEvent(event);
@@ -226,3 +285,486 @@ public class AnalyticsHelper {
         //properties.put(PARAM_DATE, headPhoneType);
     }
 }
+
+/*
+
+import UIKit
+
+@objc class BMAnalyticsHandler: NSObject {
+
+
+        let flurryAnalyticsHandler:BMFlurryAnalyticsHandler = BMFlurryAnalyticsHandler()
+
+static let sharedInstance = BMAnalyticsHandler()
+
+
+        var productionBuild:Bool = false
+
+
+        var appsFlyerHandler = DZAppsFlyerAnalyticsHandler()
+
+
+        var mixpanelHandler = BMMixPanelHandler()
+
+
+@objc func surveyAlertShown() {
+        flurryAnalyticsHandler.trackEvent(eventName: "Survey Alert Shown", withInfo: nil)
+        mixpanelHandler.trackEvent("Survey Alert Shown")
+        }
+
+
+@objc func optedForSurvey(){
+        flurryAnalyticsHandler.trackEvent(eventName: "Opted For Survey From Alert", withInfo: nil)
+        mixpanelHandler.trackEvent("Opted For Survey From Alert")
+        }
+
+
+@objc func surveyIgnored(){
+        flurryAnalyticsHandler.trackEvent(eventName: "Survey ignored from alert", withInfo: nil)
+        mixpanelHandler.trackEvent("Survey ignored from alert")
+        }
+
+
+@objc func surveyCaptured(){
+        flurryAnalyticsHandler.trackEvent(eventName: "Survey Captured Successfuly", withInfo: nil)
+        mixpanelHandler.trackEvent("Survey Captured Successfuly")
+        }
+
+
+        func musicSourceAnalytics(info:Dictionary<String,AnyObject>){
+
+
+        mixpanelHandler.trackEvents(withInfo: [kEventName:"Song Music Source",kProperties:info])
+        flurryAnalyticsHandler.trackEvent(eventName: "Song Music Source", withInfo: info)
+
+
+        }
+
+
+        func playSongFromWidget(){
+        flurryAnalyticsHandler.trackEvent(eventName: "song play from widget", withInfo: nil)
+
+        }
+
+
+        func openLibraryFromSlide(){
+        flurryAnalyticsHandler.trackEvent(eventName: "open Library From Slide", withInfo: nil)
+        }
+
+
+        func openQueueFromSlide(){
+        flurryAnalyticsHandler.trackEvent(eventName: "open Queue From Slide", withInfo: nil)
+
+        }
+
+
+        func openEffectsFromSlide(){
+        flurryAnalyticsHandler.trackEvent(eventName: "open Effects From Slide", withInfo: nil)
+        }
+
+
+        func queueFrom3D(){
+        flurryAnalyticsHandler.trackEvent(eventName: "Open Queue from 3D Touch", withInfo: nil)
+
+        }
+
+
+        func libraryFrom3D(){
+        flurryAnalyticsHandler.trackEvent(eventName: "Open Library from 3D Touch", withInfo: nil)
+
+        }
+
+
+        func didTapOnMoreOptionButton(){
+        flurryAnalyticsHandler.trackEvent(eventName: "Did Tap On More Option Button", withInfo: nil)
+
+        }
+
+
+
+
+        func pushNotificationVideoPlayed(){
+        mixpanelHandler.incrementPeopleProperty("Push Notification Video Played", byValue: 1)
+        flurryAnalyticsHandler.trackEvent(eventName: "Push Notification Video Played", withInfo: nil)
+        }
+
+
+        func pushNotificationImageLoaded(){
+        mixpanelHandler.incrementPeopleProperty("Push Notification Image Loaded", byValue: 1)
+        flurryAnalyticsHandler.trackEvent(eventName: "Push Notification Image Loaded", withInfo: nil)
+
+        }
+
+
+        func pushNotificationImageDoneButtonTapped(){
+        mixpanelHandler.incrementPeopleProperty("Push Notification Image Done Button Tapped", byValue: 1)
+        flurryAnalyticsHandler.trackEvent(eventName: "Push Notification Image Done Button Tapped", withInfo: nil)
+
+        }
+
+
+        func pushNotificationImageCancelButtonTapped(){
+        mixpanelHandler.incrementPeopleProperty("Push Notification Image Cancel Button Tapped", byValue: 1)
+        flurryAnalyticsHandler.trackEvent(eventName: "Push Notification Image Cancel Button Tapped", withInfo: nil)
+
+        }
+
+
+        func pushNotificationVideoDoneButtonTapped(){
+        mixpanelHandler.incrementPeopleProperty("Push Notification Video Done Button Tapped", byValue: 1)
+        flurryAnalyticsHandler.trackEvent(eventName: "Push Notification Video Done Button Tapped", withInfo: nil)
+
+        }
+
+
+        func pushNotificationVideoCancelButtonTapped(){
+        mixpanelHandler.incrementPeopleProperty("Push Notification Video Cancel Button Tapped", byValue: 1)
+        flurryAnalyticsHandler.trackEvent(eventName: "Push Notification Video Cancel Button Tapped", withInfo: nil)
+
+        }
+
+
+
+
+        func trackEvent(_ inEvent:String, withInfo inInfo:Dictionary<String,AnyObject>?) -> Void {
+
+
+        let properties:Dictionary<String,AnyObject> = [kEventAction:inEvent as AnyObject]
+
+
+        flurryAnalyticsHandler.trackEventWithInfo(properties)
+
+
+//        mixpanelHandler.trackEventsWithInfo([kEventName:inEvent])
+
+        }
+
+
+        func trackAirDropAnalytics(){
+        mixpanelHandler.incrementPeopleProperty("Import Files With Boom", byValue: 1)
+        mixpanelHandler.trackEvents(withInfo: [kEventName:"Import Files With Boom"])
+        }
+
+
+        func trackFirstLaunch() {
+
+
+        var firstLaunchDate = UserDefaults.standard.object(forKey: kApplicationFirstLaunchDate)
+
+
+        if firstLaunchDate == nil {
+
+
+        firstLaunchDate = Date()
+
+
+        appsFlyerHandler.appFirstLaunch()
+        mixpanelHandler.trackAppFirstLaunch()
+        UserDefaults.standard.set(firstLaunchDate, forKey: kApplicationFirstLaunchDate)
+        }
+        }
+
+
+        func startLaunchTracking(){
+        appsFlyerHandler.trackAppLaunch()
+        trackFirstLaunch()
+        appsFlyerHandler.appOpenTrack()
+        mixpanelHandler.trackApplicationLaunchDate()
+        startFacebookLaunchTracking()
+        }
+
+
+        func  startTracking() -> Void {
+
+
+        NotificationCenter.default.addObserver(self, selector: #selector(bm_appExpired), name: NSNotification.Name.tempPassEnded, object: nil)
+
+
+        flurryAnalyticsHandler.productionBuild = productionBuild
+        appsFlyerHandler.startTracking()
+        flurryAnalyticsHandler.startTracking()
+        mixpanelHandler.startTracking()
+
+
+        }
+
+
+        func bm_appExpired(_ inNotification:Notification){
+
+
+        BMAnalyticsHandler.sharedInstance.trackEvent("Trial Expired", withInfo: nil)
+        mixpanelHandler.setPeopleProperty([kEventName:"Trial Expired"])
+        mixpanelHandler.trackEvents(withInfo: [kEventName:"Trial Expired"])
+
+
+        }
+
+
+
+
+        //MARK:- Push notification
+
+
+        func registerForRemoteNotificationsWithDeviceToken(_ deviceToken:Data){
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kPushNotificationTokenReceived])
+        mixpanelHandler.registerForMixpanelRemoteNotifications(withDeviceToken: deviceToken)
+        appsFlyerHandler.registerPushNotificationToken(deviceToken)
+        }
+        func trackPushNotificationWithInfo(_ info:Dictionary<String,AnyObject>){
+
+
+        var eventName = "PushNotificationReceived";
+        if(info["campaign"] != nil){
+
+
+        eventName =  eventName + "_" + (info["campaign"] as! String);
+
+        }
+        trackEvent(eventName, withInfo:nil)
+        mixpanelHandler.trackPushNotification(withInfo: info)
+        }
+
+
+        //MARK:- Tutorial
+
+
+        func  trackTutorialLaunch(){
+        trackEvent(kStartedOnBoarding, withInfo:nil)
+        bm_trackTutorialLaunch()
+        }
+
+
+        func  trackTutorialClose(_ isFirstAttempt:Bool){
+        trackEvent(kEndedOnBoarding, withInfo:nil)
+        bm_trackTutorialClose(isFirstAttempt)
+        }
+
+
+        func bm_trackTutorialLaunch(){
+
+
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kStartedOnBoarding])
+
+
+        }
+
+
+        func  bm_trackTutorialClose(_ isFirstAttempt:Bool){
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kEndedOnBoarding])
+        mixpanelHandler.setSuperProperties([kOnboardingCompletedDate:Date(),
+        kOnboardingCompletedOnFirstAttempt:isFirstAttempt])
+        mixpanelHandler.setPeopleProperty([kOnboardingCompletedDate:Date(),
+        kOnboardingCompletedOnFirstAttempt:isFirstAttempt])
+
+
+
+
+        }
+
+
+
+
+
+
+        //MARK:- Store
+
+
+        func trackInAppPurchaseWithInfoWithApsFlyer(_ inInfo:Dictionary<String,AnyObject>) -> Void {
+
+
+        appsFlyerHandler.trackInAppPurchase(withInfo: inInfo)
+
+
+        }
+
+
+        func trackStoreOpen(_ ScreenName:String){
+
+
+        let remainingDays = BMGateKeeper.shared().passHandler().passRemainingDays()
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kStoreOpened,kProperties:[kOpenedFrom:ScreenName,kRemaingDays:remainingDays]])
+        mixpanelHandler.setPeopleProperty([kTappedOnStoreOnDay:remainingDays])
+
+        }
+
+
+        func trackTapOnBuy(){
+
+
+        let remainingDays = BMGateKeeper.shared().passHandler().passRemainingDays()
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kTappedOnBuy,kProperties:[kRemaingDays:remainingDays]])
+        tapOnBuyButton()
+
+        }
+
+
+        func trackTapOnRestore(){
+        let remainingDays = BMGateKeeper.shared().passHandler().passRemainingDays()
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kTappedOnRestore,kProperties:[kRemaingDays:remainingDays]])
+
+        }
+
+
+        func createdNewPlaylist() {
+        mixpanelHandler.trackEvent(kCreatedNewPlaylist)
+        }
+
+
+        func trackPurchaseCompleted(_ info:NSDictionary,isRestore:Bool){
+
+
+        let purchasedItemList = info[kPurchasedProductsList];
+        if(isRestore){
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kRestoreCompleted,kProperties:[kPurchasedProductsList:purchasedItemList!] as NSDictionary])
+        flurryAnalyticsHandler.trackEventWithInfo([kEventAction:(kRestoreCompleted as String) as AnyObject])
+        appsFlyerHandler.trackEvent(withInfo: [kEventAction:(kRestoreCompleted as String) as AnyObject])
+
+
+        }else{
+
+
+        purchaseSuccessful()
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kPurchaseCompleted,kProperties:[kPurchasedProductsList:purchasedItemList!] as NSDictionary])
+        mixpanelHandler.setPeopleProperty([kPurchasedProductsList:purchasedItemList!])
+        mixpanelHandler.setSuperProperties([kEffectspackPurchased:true])
+        mixpanelHandler.setPeopleProperty([kEffectspackPurchased:true])
+        flurryAnalyticsHandler.trackEventWithInfo([kEventAction:(kPurchaseCompleted as String) as AnyObject])
+        appsFlyerHandler.trackEvent(withInfo: [kEventAction:(kPurchaseCompleted as String) as AnyObject])
+
+        }
+        }
+
+
+        func trackPurchaseFailed(){
+        let remainingDays = BMGateKeeper.shared().passHandler().passRemainingDays()
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kPurchaseFailed,kProperties:[kRemaingDays:remainingDays]])
+        flurryAnalyticsHandler.trackEventWithInfo([kEventAction:(kPurchaseFailed as String) as AnyObject]);
+
+        }
+
+
+        func trackPurchaseCancelled(){
+        let remainingDays = BMGateKeeper.shared().passHandler().passRemainingDays()
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kPurchaseCancelled,kProperties:[kRemaingDays:remainingDays]])
+        flurryAnalyticsHandler.trackEventWithInfo([kEventAction:(kPurchaseCancelled as String) as AnyObject] );
+
+        }
+
+
+        //MARK:- Effects Screen
+        func trackEffectsState(_ state:Bool){
+
+
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kEffectStateChanged,kProperties:[kState:state]])
+
+        }
+        func track3DState(_ state:Bool){
+
+
+        mixpanelHandler.trackEvents(withInfo: [kEventName:k3DStateChanged,kProperties:[kState:state]])
+
+        }
+        func trackEQState(_ state:Bool){
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kEQStateChanged,kProperties:[kState:state]])
+
+        }
+        func trackIntensityState(_ state:Bool){
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kIntensityStateChanged,kProperties:[kState:state]])
+
+        }
+
+
+        //MARK:Songs
+
+
+        func updatePlaybackSessionDuration(_ duration:Float32){
+
+
+        mixpanelHandler.incrementPeopleProperty(kMusicSessionDuration,byValue:duration as NSNumber!)
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kMusicSessionDuration,kProperties:[kMusicSessionDuration:duration]])
+
+        }
+
+
+        func songSelectionChanged(_ songsInfo:NSDictionary)  {
+
+
+        let properties  = songsInfo;
+
+
+        mixpanelHandler.incrementPeopleProperty(kSongCount, byValue: 1)
+
+
+        let audioState:BMAudioSystemState = BMDefaults.shared().audioSystemState()
+        if(audioState == BMAudioSystemState.on && BMDefaults.shared().effectStateforEffect(BMAudioEffectType.effect3D) == 1){
+        mixpanelHandler.incrementPeopleProperty(kEffectsWith3D, byValue: 1)
+        properties.setValue(true, forKey: kEffectsWith3D)
+        }
+        else if(audioState == BMAudioSystemState.on){
+        mixpanelHandler.incrementPeopleProperty(kEffectsWith2D, byValue: 1)
+        properties.setValue(true, forKey: kEffectsWith2D)
+
+        }
+
+
+        if(audioState == BMAudioSystemState.on && BMDefaults.shared().effectStateforEffect(BMAudioEffectType.effectFidelity) == 1){
+        mixpanelHandler.incrementPeopleProperty(kEffectsWithIntensity, byValue: 1)
+        properties.setValue(true, forKey: kEffectsWithIntensity)
+
+        }
+
+
+        if(audioState == BMAudioSystemState.on && BMDefaults.shared().effectStateforEffect(BMAudioEffectType.effectEqualizer) == 1){
+        mixpanelHandler.incrementPeopleProperty(kEffectsWithEQ, byValue: 1)
+        properties.setValue(true, forKey: kEffectsWithEQ)
+
+        }
+        if(songsInfo[kTrendingArtist] != nil){
+        let artistName = songsInfo[kTrendingArtist]
+        mixpanelHandler.setPeopleProperty([kArtistName:artistName!])
+        }
+
+
+        if(songsInfo[kTrendingGenre] != nil){
+        let genre = songsInfo[kTrendingGenre]
+        mixpanelHandler.setPeopleProperty([kGenre:genre!])
+        }
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kTrackSelectionChanged,kProperties:properties])
+
+        }
+        func emailIdReceived(_ email:String){
+        mixpanelHandler.createAlias(withUserId: email)
+
+
+        }
+        //MARK:Headphone Types
+        func trackHeadPhonetypeUsed(_ headPhone:String){
+
+
+        mixpanelHandler.trackEvents(withInfo: [kEventName:kHeadphoneTypeChanged,kProperties:[kHeadphoneType:headPhone]])
+        mixpanelHandler.setSuperProperties([kHeadphoneType:headPhone])
+        mixpanelHandler.setPeopleProperty([kHeadphoneType:headPhone])
+
+
+        }
+
+
+        func silentNotificationReceived() {
+
+
+        let kEventName = "Silent Notification Received"
+        let properties:Dictionary<String,AnyObject> = [kEventAction:kEventName as AnyObject]
+
+
+        mixpanelHandler.trackEvent(kEventName)
+        flurryAnalyticsHandler.trackEventWithInfo(properties)
+        }
+
+
+        }
+
+
+
+
+
+*/

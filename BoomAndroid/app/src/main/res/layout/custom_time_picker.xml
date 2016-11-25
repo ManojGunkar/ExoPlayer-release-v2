@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <com.globaldelight.boom.ui.widgets.RegularTextView
+        android:id="@+id/textView5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Set Sleep Timer"
+        android:textColor="@color/white"
+        android:textSize="15sp" />
+
+    <TimePicker
+        android:id="@+id/timePickerdialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numbersBackgroundColor="#57e326"
+        android:numbersSelectorColor="#675543"
+        android:numbersTextColor="#995394"
+        android:textColorPrimary="#359875"
+        android:textColorSecondary="#897530"
+        android:textSize="@dimen/settings_item_title_size"
+        android:timePickerMode="spinner" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/tmcancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="@string/timer_cancel" />
+
+        <Button
+            android:id="@+id/tmstart"
+            android:layout_width="56dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:text="@string/timer_start" />
+
+        <Button
+            android:id="@+id/tmreset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="@string/timer_reset" />
+    </LinearLayout>
+
+</LinearLayout>

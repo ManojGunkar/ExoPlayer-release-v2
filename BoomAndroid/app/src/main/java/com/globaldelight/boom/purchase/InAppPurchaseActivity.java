@@ -1,20 +1,27 @@
 package com.globaldelight.boom.purchase;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.appsflyer.AFInAppEventParameterName;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.AppsFlyerAnalyticHelper;
 import com.globaldelight.boom.purchase.util.IabHelper;
 import com.globaldelight.boom.purchase.util.IabResult;
 import com.globaldelight.boom.purchase.util.Inventory;
 import com.globaldelight.boom.purchase.util.Purchase;
 import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boomplayer.AudioEffect;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class InAppPurchaseActivity extends AppCompatActivity {
     public static final String TAG = "In-APP";
@@ -24,6 +31,7 @@ public class InAppPurchaseActivity extends AppCompatActivity {
     IabHelper mHelper;
     RegularButton buyButton;
     RegularButton restoreButton;
+    ProgressDialog progress;
     private AudioEffect audioEffectPreferenceHandler;
     // Callback for when a purchase is finished
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
@@ -34,11 +42,9 @@ public class InAppPurchaseActivity extends AppCompatActivity {
 */
 
             if (result.getResponse() == IabHelper.IABHELPER_USER_CANCELLED) {
-                AnalyticsHelper.purchaseCancelled();
+                AnalyticsHelper.trackPurchaseCancelled(InAppPurchaseActivity.this);
 
             }
-
-
 
 
             // if we were disposed of in the meantime, quit.
@@ -47,6 +53,8 @@ public class InAppPurchaseActivity extends AppCompatActivity {
             if (result.isFailure()) {
                 complain("Error purchasing: " + result);
                 //  setWaitScreen(false);
+                //  AnalyticsHelper.
+                AnalyticsHelper.purchaseFailed(InAppPurchaseActivity.this);
                 return;
             }
             if (!verifyDeveloperPayload(purchase)) {
@@ -71,7 +79,7 @@ public class InAppPurchaseActivity extends AppCompatActivity {
                 builder.setMessage("Thank you for purchasing Boom Magical Effects Pack");
                 builder.setPositiveButton("OK", null);
                 builder.show();
-                onSuccessPurchase();
+                onSuccessPurchase(purchase);
             }
 
         }
@@ -80,7 +88,8 @@ public class InAppPurchaseActivity extends AppCompatActivity {
     IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
             Log.d(TAG, "Query inventory finished.");
-
+            if (progress != null && progress.isShowing())
+                progress.dismiss();
             // Have we been disposed of in the meantime? If so, quit.
             if (mHelper == null) return;
 
@@ -124,6 +133,10 @@ public class InAppPurchaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_in_app);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
         buyButton = (RegularButton) findViewById(R.id.buyButton);
         restoreButton = (RegularButton) findViewById(R.id.restore);
         audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
@@ -136,6 +149,11 @@ public class InAppPurchaseActivity extends AppCompatActivity {
         restoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ProgressDialog progress = new ProgressDialog(InAppPurchaseActivity.this);
+                //progress.setTitle("Requestin");
+                progress.setMessage("Wait while loading...");
+                //progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                progress.show();
                 try {
                     mHelper.queryInventoryAsync(mGotInventoryListener);
                 } catch (IabHelper.IabAsyncInProgressException e) {
@@ -149,15 +167,6 @@ public class InAppPurchaseActivity extends AppCompatActivity {
         mHelper = new IabHelper(this, base64EncodedPublicKey);
         // enable debug logging (for a production application, you should set this to false).
         mHelper.enableDebugLogging(true);
-       /* mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-            public void onIabSetupFinished(IabResult result) {
-                if (!result.isSuccess()) {
-                    // Oh no, there was a problem.
-                    Log.d(TAG, "Problem setting up In-app Billing: " + result);
-                }
-                // Hooray, IAB is fully set up!
-            }
-        });*/
         // Start setup. This is asynchronous and the specified listener
         // will be called once setup completes.
         Log.d(TAG, "Starting setup.");
@@ -185,7 +194,7 @@ public class InAppPurchaseActivity extends AppCompatActivity {
             }
         });
         buyButton.setTransformationMethod(null);
-
+        restoreButton.setTransformationMethod(null);
     }
 
     // Enables or disables the "please wait" screen.
@@ -228,7 +237,7 @@ public class InAppPurchaseActivity extends AppCompatActivity {
 
     void complain(String message) {
         Log.e(TAG, "**** TrivialDrive Error: " + message);
-        // alert("Error: " + message);
+        alert("Error: " + message);
     }
 
     void alert(String message) {
@@ -238,6 +247,7 @@ public class InAppPurchaseActivity extends AppCompatActivity {
         Log.d(TAG, "Showing alert dialog: " + message);
         bld.create().show();
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -321,17 +331,36 @@ public class InAppPurchaseActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", null);
         builder.show();
         audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.PAID_USER);
+        Map<String, Object> eventValue = new HashMap<>();
+        eventValue.put(AFInAppEventParameterName.REVENUE, 3.99);
+        eventValue.put(AFInAppEventParameterName.CONTENT_TYPE, SKU_BOOM_3D_SURROUND);
+        //eventValue.put(AFInAppEventParameterName.CONTENT_ID, purchase.getOrderId());
+        eventValue.put(AFInAppEventParameterName.CURRENCY, "USD");
+        AppsFlyerAnalyticHelper.startTracking(this.getApplication());
+        AnalyticsHelper.purchaseSuccess(this.getApplication(), eventValue, true, SKU_BOOM_3D_SURROUND);
         finish();
     }
 
-    public void onSuccessPurchase() {
-        AlertDialog.Builder builder =
-                new AlertDialog.Builder(InAppPurchaseActivity.this, R.style.AppCompatAlertDialogStyle);
-        builder.setTitle("Congratulations");
-        builder.setMessage("Thank you for purchasing Boom Magical Effects Pack");
-        builder.setPositiveButton("OK", null);
-        builder.show();
-        audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.PAID_USER);
-        finish();
+    public void onSuccessPurchase(Purchase purchase) {
+        try {
+            AlertDialog.Builder builder =
+                    new AlertDialog.Builder(InAppPurchaseActivity.this, R.style.AppCompatAlertDialogStyle);
+            builder.setTitle("Congratulations");
+            builder.setMessage("Thank you for purchasing Boom Magical Effects Pack");
+            builder.setPositiveButton("OK", null);
+            builder.show();
+            audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.PAID_USER);
+            Map<String, Object> eventValue = new HashMap<>();
+            eventValue.put(AFInAppEventParameterName.REVENUE, 3.99);
+
+            eventValue.put(AFInAppEventParameterName.CONTENT_TYPE, purchase.getItemType());
+            eventValue.put(AFInAppEventParameterName.CONTENT_ID, purchase.getOrderId());
+            eventValue.put(AFInAppEventParameterName.CURRENCY, "USD");
+            AppsFlyerAnalyticHelper.startTracking(this.getApplication());
+            AnalyticsHelper.purchaseSuccess(this.getApplication(), eventValue, false, SKU_BOOM_3D_SURROUND);
+            finish();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 }
