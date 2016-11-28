@@ -9,7 +9,7 @@ namespace gdpl {
     using namespace android;
     class RingBuffer : public AudioBufferProvider {
     public:
-        RingBuffer(int sizeBytes);
+        RingBuffer(int sizeBytes, uint32_t channels, uint32_t bytesPerChannel);
 
         ~RingBuffer();
 
@@ -42,6 +42,9 @@ namespace gdpl {
         int             _writeBytesAvail;
 
         uint8_t*        _tempBuffer;
+
+        const uint32_t  kChannelCount;
+        const uint32_t  kBytesPerChannel;
     };
 };
 

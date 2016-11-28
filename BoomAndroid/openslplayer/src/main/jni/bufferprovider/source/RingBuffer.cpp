@@ -6,10 +6,9 @@
 
 namespace gdpl {
 
-    static const int kBytesPerFrame =  sizeof(int16_t) * 2; // assume 2 channels - stereo
 
-
-    RingBuffer::RingBuffer(int sizeBytes): _size(sizeBytes)
+    RingBuffer::RingBuffer(int sizeBytes, uint32_t channels, uint32_t bytesPerChannel)
+            : _size(sizeBytes), kChannelCount(channels), kBytesPerChannel(bytesPerChannel)
     {
         _data = (uint8_t*)calloc(_size, sizeof(uint8_t));
         _readPtr = 0;
@@ -134,6 +133,8 @@ namespace gdpl {
 
 
     status_t RingBuffer::getNextBuffer(Buffer* buffer) {
+
+        const uint32_t kBytesPerFrame =  kBytesPerChannel * kChannelCount;
 
         //ALOGD("getNextBuffer", "Requested Frames = %d", buffer->frameCount);
         AutoLock lock(&_mutex);
