@@ -3,15 +3,12 @@ package com.globaldelight.boom.ui.musiclist.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -24,7 +21,6 @@ import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
-import com.globaldelight.boom.ui.widgets.IconizedMenu;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
@@ -146,9 +142,9 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                                 break;
                             case R.id.popup_song_add_fav :
                                 if(MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())){
-                                    MediaController.getInstance(context).removeItemToList(false, item.getMediaElement().get(position).getItemId());
+                                    MediaController.getInstance(context).removeItemToFavoriteList(false, item.getMediaElement().get(position).getItemId());
                                 }else{
-                                    MediaController.getInstance(context).addSongsToList(false, item.getMediaElement().get(position));
+                                    MediaController.getInstance(context).addSongsToFavoriteList(false, item.getMediaElement().get(position));
                                 }
                                 break;
                         }

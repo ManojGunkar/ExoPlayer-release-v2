@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaHandler;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.handler.PlayingQueue.QueueType;
+import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -62,7 +64,7 @@ public class MediaLibraryHandler implements IMediaLibrary{
     @Override
     public void requestMediaSearch(MediaType mediaType, String query) {
         if(mediaType == MediaType.DEVICE_MEDIA_LIB){
-            DeviceMediaHandler.getInstance(context).QueryMediaSearchResult(query);
+//            DeviceMediaHandler.getInstance(context).QueryMediaSearchResult(query);
         }
     }
 
@@ -82,23 +84,47 @@ public class MediaLibraryHandler implements IMediaLibrary{
         DeviceMediaHandler.getInstance(context).renameBoomPlaylist(input, itemId);
     }
 
-    public LinkedList<? extends IMediaItemBase> getHistoryFavList(boolean ishistory) {
-        return DeviceMediaHandler.getInstance(context).getHistoryFavList(ishistory);
+    public LinkedList<? extends IMediaItemBase> getFavoriteItemList() {
+        return DeviceMediaHandler.getInstance(context).getFavItemList();
     }
 
-    public void clearList(boolean ishistory) {
-        DeviceMediaHandler.getInstance(context).cliearList(ishistory);
+    public void clearFavoriteList() {
+        DeviceMediaHandler.getInstance(context).clearFavList();
     }
 
-    public void addSongsToList(boolean ishistory, IMediaItemBase itemBase) {
-        DeviceMediaHandler.getInstance(context).addSongsToList(ishistory, itemBase);
+    public void addSongsToFavoriteList(IMediaItemBase itemBase) {
+        DeviceMediaHandler.getInstance(context).addSongsToFavList(itemBase);
     }
 
-    public void removeItemToList(boolean ishistory, long itemId) {
-        DeviceMediaHandler.getInstance(context).removeItemToList(ishistory, itemId);
+    public void removeItemToFavoriteList(long itemId) {
+        DeviceMediaHandler.getInstance(context).removeItemToFavList(itemId);
     }
 
     public boolean isFavouriteItems(long itemId) {
         return DeviceMediaHandler.getInstance(context).isFavouriteItems(itemId);
+    }
+
+    public void addUpNextItem(IMediaItemBase song, QueueType queueType) {
+        DeviceMediaHandler.getInstance(context).addUpNextItem(song, queueType);
+    }
+
+    public void addUpNextItem(IMediaItemBase song, int position, QueueType queueType) {
+        DeviceMediaHandler.getInstance(context).addUpNextItem(song, position, queueType);
+    }
+
+    public void addItemListUpNext(ArrayList<? extends IMediaItemBase> itemList, QueueType queueType) {
+        DeviceMediaHandler.getInstance(context).addItemListUpNext(itemList, queueType);
+    }
+
+    public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
+        return DeviceMediaHandler.getInstance(context).getUpNextItemList(queueType);
+    }
+
+    public void removeItemFromUpNext(long songId, QueueType queueType) {
+        DeviceMediaHandler.getInstance(context).removeItemFromUpNext(songId, queueType);
+    }
+
+    public void clearUpNextList(QueueType queueType) {
+        DeviceMediaHandler.getInstance(context).clearUpNextList(queueType);
     }
 }

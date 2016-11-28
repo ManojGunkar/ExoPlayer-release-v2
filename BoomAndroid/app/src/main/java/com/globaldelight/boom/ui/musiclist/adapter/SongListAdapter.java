@@ -5,25 +5,20 @@ import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -35,7 +30,6 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.activity.DeviceMusicActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
-import com.globaldelight.boom.ui.widgets.IconizedMenu;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
@@ -134,9 +128,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                                 break;
                             case R.id.popup_song_add_fav :
                                 if(MediaController.getInstance(context).isFavouriteItems(itemList.get(position).getItemId())){
-                                    MediaController.getInstance(context).removeItemToList(false, itemList.get(position).getItemId());
+                                    MediaController.getInstance(context).removeItemToFavoriteList(false, itemList.get(position).getItemId());
                                 }else{
-                                    MediaController.getInstance(context).addSongsToList(false, itemList.get(position));
+                                    MediaController.getInstance(context).addSongsToFavoriteList(false, itemList.get(position));
                                 }
                                 break;
                         }

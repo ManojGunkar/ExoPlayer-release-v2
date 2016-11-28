@@ -18,9 +18,9 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
+import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
 import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
-import com.globaldelight.boom.ui.widgets.RoundedTransformation;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
@@ -30,9 +30,6 @@ import java.util.LinkedList;
 
 import static android.view.LayoutInflater.from;
 import static com.globaldelight.boom.utils.Utils.dpToPx;
-import static com.globaldelight.boom.utils.Utils.getUriToResource;
-import static com.squareup.picasso.MemoryPolicy.NO_CACHE;
-import static com.squareup.picasso.Picasso.with;
 
 public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueListAdapter.SimpleItemViewHolder> {
     public static final int ITEM_VIEW_TYPE_HEADER_HISTORY = 0;
@@ -49,7 +46,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     public ListPosition itemDelete;
     OnStartDragListener mOnStartDragListener;
     private LinkedList<IMediaItemBase> mHistoryList;
-    private LinkedList<UpNextList.UpNextItem> mPlaying;
+    private LinkedList<UpNextItem> mPlaying;
     private LinkedList<IMediaItemBase> mUpnextManualList;
     private LinkedList<IMediaItemBase> mUpnextAutoList;
     private int headerHistoryPos, headerPlayingPos, headerManualPos,
@@ -63,7 +60,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     }
 
 
-    private void init(LinkedList<IMediaItemBase> history, LinkedList<UpNextList.UpNextItem> playing, LinkedList<IMediaItemBase> upnext, LinkedList<IMediaItemBase> upnextAuto) {
+    private void init(LinkedList<IMediaItemBase> history, LinkedList<UpNextItem> playing, LinkedList<IMediaItemBase> upnext, LinkedList<IMediaItemBase> upnextAuto) {
         this.mHistoryList = history;
         this.mPlaying = playing;
         this.mUpnextManualList = upnext;

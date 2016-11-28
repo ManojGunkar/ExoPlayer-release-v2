@@ -7,6 +7,8 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.handler.PlayingQueue.QueueType;
+import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,7 +16,6 @@ import java.util.LinkedList;
 import static com.globaldelight.boom.data.MediaLibrary.ItemType.ALBUM;
 import static com.globaldelight.boom.data.MediaLibrary.ItemType.ARTIST;
 import static com.globaldelight.boom.data.MediaLibrary.ItemType.BOOM_PLAYLIST;
-import static com.globaldelight.boom.data.MediaLibrary.ItemType.FAVOURITE;
 import static com.globaldelight.boom.data.MediaLibrary.ItemType.GENRE;
 import static com.globaldelight.boom.data.MediaLibrary.ItemType.PLAYLIST;
 
@@ -167,10 +168,6 @@ public class DeviceMediaHandler {
         return null;
     }
 
-    public void QueryMediaSearchResult(String query) {
-//        DeviceMediaQuery.getSearchResult(query);
-    }
-
     public void createBoomPlaylist(String input) {
         App.getBoomPlayListHelper().createPlaylist(input);
     }
@@ -187,23 +184,60 @@ public class DeviceMediaHandler {
         App.getBoomPlayListHelper().renamePlaylist(input, itemId);
     }
 
-    public LinkedList<? extends IMediaItemBase> getHistoryFavList(boolean ishistory) {
-        return App.getHistoryFavDBHelper().getSongList(ishistory);
+    public LinkedList<? extends IMediaItemBase> getFavItemList() {
+        return App.getFavoriteDBHelper().getSongList();
     }
 
-    public void cliearList(boolean ishistory) {
-        App.getHistoryFavDBHelper().clearList(ishistory);
+    public void clearFavList() {
+        App.getFavoriteDBHelper().clearList();
     }
 
-    public void addSongsToList(boolean ishistory, IMediaItemBase itemBase) {
-        App.getHistoryFavDBHelper().addSong(ishistory, itemBase);
+    public void addSongsToFavList(IMediaItemBase itemBase) {
+        App.getFavoriteDBHelper().addSong(itemBase);
     }
 
-    public void removeItemToList(boolean ishistory, long itemId) {
-        App.getHistoryFavDBHelper().removeSong(ishistory, itemId);
+    public void removeItemToFavList(long itemId) {
+        App.getFavoriteDBHelper().removeSong(itemId);
     }
 
     public boolean isFavouriteItems(long itemId) {
-        return App.getHistoryFavDBHelper().isFavouriteItems(itemId);
+        return App.getFavoriteDBHelper().isFavouriteItems(itemId);
     }
+
+    public void addUpNextItem(IMediaItemBase song, QueueType queueType) {
+        if(queueType == QueueType.Playing){
+            App.getUPNEXTDBHelper().addPlayingItem(song, queueType);
+        }else {
+            App.getUPNEXTDBHelper().addSong(song, queueType);
+        }
+    }
+
+    public void addUpNextItem(IMediaItemBase song, int position, QueueType queueType) {
+        App.getUPNEXTDBHelper().addSong(song, position, queueType);
+    }
+
+    public void addItemListUpNext(ArrayList<? extends IMediaItemBase> itemList, QueueType queueType) {
+        App.getUPNEXTDBHelper().addSongs(itemList, queueType);
+    }
+
+    public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
+        return App.getUPNEXTDBHelper().getSongList(queueType);
+    }
+
+    public void removeItemFromUpNext(long songId, QueueType queueType) {
+        App.getUPNEXTDBHelper().removeSong(songId, queueType);
+    }
+
+    public void clearUpNextList(QueueType queueType) {
+        if(queueType == QueueType.Playing){
+            App.getUPNEXTDBHelper().removePlayingItem();
+        }else {
+            App.getUPNEXTDBHelper().clearList(queueType);
+        }
+    }
+
+    public UpNextItem getPlayingItem(){
+        return App.getUPNEXTDBHelper().getPlayingItem();
+    }
+
 }

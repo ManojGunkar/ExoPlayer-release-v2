@@ -9,8 +9,11 @@ import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
+import com.globaldelight.boom.handler.PlayingQueue.QueueType;
+import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 
 /**
@@ -72,27 +75,47 @@ public class MediaController implements IMediaController{
         MediaLibraryHandler.getInstance(context).renameBoomPlaylist(input, itemId);
     }
 
-    public LinkedList<? extends IMediaItemBase> getHistoryItemsForQueue() {
-        return MediaLibraryHandler.getInstance(context).getHistoryFavList(true);
-    }
-
     public LinkedList<? extends IMediaItemBase> getFavouriteListItems() {
-        return MediaLibraryHandler.getInstance(context).getHistoryFavList(false);
+        return MediaLibraryHandler.getInstance(context).getFavoriteItemList();
     }
 
     public boolean isFavouriteItems(long itemId) {
         return MediaLibraryHandler.getInstance(context).isFavouriteItems(itemId);
     }
 
-    public void clearList(boolean ishistory) {
-        MediaLibraryHandler.getInstance(context).clearList(ishistory);
+    public void clearFavoriteList() {
+        MediaLibraryHandler.getInstance(context).clearFavoriteList();
     }
 
-    public void addSongsToList(boolean ishistory, IMediaItemBase itemBase) {
-        MediaLibraryHandler.getInstance(context).addSongsToList(ishistory, itemBase);
+    public void addSongsToFavoriteList(IMediaItemBase itemBase) {
+        MediaLibraryHandler.getInstance(context).addSongsToFavoriteList(itemBase);
     }
 
-    public void removeItemToList(boolean ishistory, long itemId) {
-        MediaLibraryHandler.getInstance(context).removeItemToList(ishistory, itemId);
+    public void removeItemToFavoriteList(long itemId) {
+        MediaLibraryHandler.getInstance(context).removeItemToFavoriteList(itemId);
+    }
+
+    public void addUpNextItem(IMediaItemBase song, QueueType queueType) {
+        MediaLibraryHandler.getInstance(context).addUpNextItem(song, queueType);
+    }
+
+    public void addUpNextItem(IMediaItemBase song, int position, QueueType queueType) {
+        MediaLibraryHandler.getInstance(context).addUpNextItem(song, position, queueType);
+    }
+
+    public void addItemListToUpNext(ArrayList<? extends IMediaItemBase> itemList, QueueType queueType) {
+        MediaLibraryHandler.getInstance(context).addItemListUpNext(itemList, queueType);
+    }
+
+    public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
+        return MediaLibraryHandler.getInstance(context).getUpNextItemList(queueType);
+    }
+
+    public void removeItemFromUpNext(long songId, QueueType queueType){
+        MediaLibraryHandler.getInstance(context).removeItemFromUpNext(songId, queueType);
+    }
+
+    public void clearUpNextList(QueueType queueType){
+        MediaLibraryHandler.getInstance(context).clearUpNextList(queueType);
     }
 }

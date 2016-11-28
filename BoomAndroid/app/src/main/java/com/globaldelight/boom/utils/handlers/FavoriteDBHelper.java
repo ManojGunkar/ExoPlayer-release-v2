@@ -17,11 +17,10 @@ import java.util.LinkedList;
 /**
  * Created by Rahul Kumar Agrawal on 7/5/2016.
  */
-public class HistoryFavDBHelper extends SQLiteOpenHelper {
+public class FavoriteDBHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "PlaylistDB";
     private static final String TABLE_FAVORITE = "favorite";
-    private static final String TABLE_HISTORY = "history";
     private Context context;
 
     private static final String ITEM_KEY_ID = "db_item_id";
@@ -45,44 +44,31 @@ public class HistoryFavDBHelper extends SQLiteOpenHelper {
 //    for favorite use only
 //    private static final String ISFAVORITE = "is_favorite";
 
-    public HistoryFavDBHelper(Context context) {
+    public FavoriteDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_HISTORY_SONG_TABLE = "CREATE TABLE "+TABLE_HISTORY+" (" +
-                "song_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "ItemId INTEGER," + "ItemTitle TEXT," + "ItemDisplayName TEXT,"+
-                "ItemUrl TEXT," + "ItemAlbumId INTEGER," +
-                "ItemAlbum TEXT," + "ItemArtistId INTEGER," +
-                "ItemArtist TEXT," + "Duration TEXT," +
-                "DateAdded TEXT," + "ItemArtUrl TEXT," +
-                "mediaType INTEGER," + "song_playlist_id INTEGER)";
-
         String CREATE_FAVORITE_SONG_TABLE = "CREATE TABLE "+TABLE_FAVORITE+" (" +
-                "song_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "ItemId INTEGER," + "ItemTitle TEXT," + "ItemDisplayName TEXT,"+
-                "ItemUrl TEXT," + "ItemAlbumId INTEGER," +
-                "ItemAlbum TEXT," + "ItemArtistId INTEGER," +
-                "ItemArtist TEXT," + "Duration TEXT," +
-                "DateAdded TEXT," + "ItemArtUrl TEXT," +
-                "mediaType INTEGER," + "song_playlist_id INTEGER)";
-        db.execSQL(CREATE_HISTORY_SONG_TABLE);
+                SONG_KEY_ID+" INTEGER PRIMARY KEY AUTOINCREMENT," +
+                SONG_KEY_REAL_ID+" INTEGER," + TITLE+" TEXT," + DISPLAY_NAME+" TEXT,"+
+                DATA_PATH+" TEXT," + ALBUM_ID+" INTEGER," +
+                ALBUM+" TEXT," + ARTIST_ID+" INTEGER," +
+                ARTIST+" TEXT," + DURATION+" TEXT," +
+                DATE_ADDED+" TEXT," + ALBUM_ART+" TEXT," +
+                MEDIA_TYPE+" INTEGER," + "song_playlist_id INTEGER)";
         db.execSQL(CREATE_FAVORITE_SONG_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS "+ TABLE_HISTORY);
         db.execSQL("DROP TABLE IF EXISTS "+ TABLE_FAVORITE);
         this.onCreate(db);
     }
 
-    public void addSong(boolean isHistory, IMediaItemBase song) {
-
-        removeSong(isHistory, song.getItemId());
+    public void addSong(IMediaItemBase song) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -100,15 +86,11 @@ public class HistoryFavDBHelper extends SQLiteOpenHelper {
         values.put(ALBUM_ART, ((IMediaItem)song).getItemArtUrl());
         values.put(MEDIA_TYPE, ((IMediaItem)song).getMediaType().ordinal());
 
-        if(isHistory) {
-            db.insert(TABLE_HISTORY, null, values);
-        }else{
-            db.insert(TABLE_FAVORITE, null, values);
-        }
+        db.insert(TABLE_FAVORITE, null, values);
         db.close();
     }
 
-    public void addSongs(boolean isHistory, LinkedList<? extends IMediaItemBase> songs) {
+    public void addSongs(LinkedList<? extends IMediaItemBase> songs) {
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
             ContentValues values = new ContentValues();
@@ -127,46 +109,29 @@ public class HistoryFavDBHelper extends SQLiteOpenHelper {
             values.put(ALBUM_ART, ((IMediaItem)songs.get(i)).getItemArtUrl());
             values.put(MEDIA_TYPE, ((IMediaItem)songs.get(i)).getMediaType().ordinal());
 
-            if(isHistory) {
-                db.insert(TABLE_HISTORY, null, values);
-            }else{
-                db.insert(TABLE_FAVORITE, null, values);
-            }
+            db.insert(TABLE_FAVORITE, null, values);
         }
         db.close();
     }
 
-    public void removeSong(boolean isHistory, long songId) {
+    public void removeSong(long songId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        if(isHistory) {
-            db.execSQL("DELETE FROM " + TABLE_HISTORY + " WHERE " +
-                    SONG_KEY_REAL_ID + "='" + songId + "'");
-        }else{
-            db.execSQL("DELETE FROM " + TABLE_FAVORITE + " WHERE " +
-                    SONG_KEY_REAL_ID + "='" + songId + "'");
-        }
+        db.execSQL("DELETE FROM " + TABLE_FAVORITE + " WHERE " +
+                SONG_KEY_REAL_ID + "='" + songId + "'");
         db.close();
     }
 
-    public void clearList(boolean isHistory){
+    public void clearList(){
         SQLiteDatabase db = this.getWritableDatabase();
-        if(isHistory) {
-            db.execSQL("DELETE FROM " + TABLE_HISTORY);
-        }else{
-            db.execSQL("DELETE FROM " + TABLE_FAVORITE);
-        }
+        db.execSQL("DELETE FROM " + TABLE_FAVORITE);
         db.close();
     }
 
-    public LinkedList<? extends IMediaItemBase> getSongList(boolean isHistory) {
+    public LinkedList<? extends IMediaItemBase> getSongList() {
         SQLiteDatabase db = this.getWritableDatabase();
         LinkedList<MediaItem> songList = new LinkedList<>();
-        String query;
-        if(isHistory){
-            query = "SELECT  * FROM " + TABLE_HISTORY;
-        }else{
-            query = "SELECT  * FROM " + TABLE_FAVORITE + " ORDER BY "+SONG_KEY_ID + " DESC";
-        }
+        String query = "SELECT  * FROM " + TABLE_FAVORITE + " ORDER BY "+SONG_KEY_ID + " DESC";
+
         Cursor cursor = db.rawQuery(query, null);
 
         try {

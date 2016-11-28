@@ -16,9 +16,10 @@ import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.handler.PlayingQueue.PlayingQueueHandler;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.PlayerSettings;
-import com.globaldelight.boom.utils.handlers.HistoryFavDBHelper;
+import com.globaldelight.boom.utils.handlers.FavoriteDBHelper;
 import com.globaldelight.boom.utils.handlers.PlaylistDBHelper;
 import com.globaldelight.boom.utils.handlers.Preferences;
+import com.globaldelight.boom.utils.handlers.UpNextDBHelper;
 import com.globaldelight.boom.utils.handlers.UserPreferenceHandler;
 import io.fabric.sdk.android.Fabric;
 
@@ -31,7 +32,8 @@ public class App extends Application implements SensorEventListener {
 
     private static PlaylistDBHelper boomPlayListhelper;
 
-    private static HistoryFavDBHelper historyFavDBHelper;
+    private static FavoriteDBHelper favoriteDBHelper;
+    private static UpNextDBHelper upNextDBHelper;
     private static PlayerService service;
 
     private static UserPreferenceHandler userPreferenceHandler;
@@ -61,12 +63,16 @@ public class App extends Application implements SensorEventListener {
         return boomPlayListhelper;
     }
 
-    public static HistoryFavDBHelper getHistoryFavDBHelper() {
-        return historyFavDBHelper;
+    public static FavoriteDBHelper getFavoriteDBHelper() {
+        return favoriteDBHelper;
     }
 
     public static UserPreferenceHandler getUserPreferenceHandler() {
         return userPreferenceHandler;
+    }
+
+    public static UpNextDBHelper getUPNEXTDBHelper() {
+        return upNextDBHelper;
     }
 
     @Override
@@ -80,7 +86,9 @@ public class App extends Application implements SensorEventListener {
 
         boomPlayListhelper = new PlaylistDBHelper(application);
 
-        historyFavDBHelper = new HistoryFavDBHelper(application);
+        favoriteDBHelper = new FavoriteDBHelper(application);
+
+        upNextDBHelper = new UpNextDBHelper(application);
 
         playingQueueHandler.getUpNextList();
 
