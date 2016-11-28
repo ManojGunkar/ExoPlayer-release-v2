@@ -15,7 +15,6 @@ import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -40,6 +39,7 @@ import com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.ui.widgets.TooltipWindow;
 import com.globaldelight.boom.utils.Logger;
+import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boomplayer.AudioEffect;
 
@@ -66,7 +66,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private static final String TAG = "BoomPlayerActivity";
     public static boolean isPlayerResume = true;
     private static boolean isUser = false;
-    public ImageView mShuffleBtn, mRepeatBtn, mNextBtn, mPrevBtn, mAddToPlayList, mFavourite, mPlayerMore;
+    public ImageView mShuffleBtn, mRepeatBtn, mNextBtn, mPrevBtn, mAddToPlayList, mFavourite, mPlayerSetting;
     FrameLayout mPlayerBackground;
     LinearLayout mPlayerRootView;
     AudioEffect audioEffectPreferenceHandler;
@@ -217,7 +217,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                         return null;
                     } else {
                         return img = BitmapFactory.decodeResource(getBaseContext().getResources(),
-                                R.drawable.default_album_art_home);
+                                R.drawable.ic_default_art_player);
                     }
                 }
 
@@ -236,10 +236,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                                     Bitmap blurredBitmap = blur(BoomPlayerActivity.this, bitmap);
                                     mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
                                 }catch (NullPointerException e){
-                                    ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, BitmapFactory.decodeResource(getBaseContext().getResources(),
-                                            R.drawable.default_album_art_home));
-                                    Bitmap blurredBitmap = blur(BoomPlayerActivity.this, BitmapFactory.decodeResource(getBaseContext().getResources(),
-                                            R.drawable.default_album_art_home));
+                                    Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
+                                            R.drawable.ic_default_art_player);
+                                    ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, albumArt);
+                                    Bitmap blurredBitmap = blur(BoomPlayerActivity.this, albumArt);
                                     mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
                                 }
 //                                Picasso.with(BoomPlayerActivity.this).load(file).resize((int) getResources().getDimension(R.dimen.home_album_art_size), (int) getResources().getDimension(R.dimen.home_album_art_size))
@@ -271,10 +271,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             }.execute();
         } else {
             if(item != null) {
-                ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, BitmapFactory.decodeResource(getBaseContext().getResources(),
-                        R.drawable.default_album_art_home));
-                Bitmap blurredBitmap = blur(BoomPlayerActivity.this, BitmapFactory.decodeResource(getBaseContext().getResources(),
-                        R.drawable.default_album_art_home));
+                Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
+                        R.drawable.ic_default_art_player);
+                ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, albumArt);
+                Bitmap blurredBitmap = blur(BoomPlayerActivity.this, albumArt);
                 mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
             }
         }
@@ -289,6 +289,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mPlayedTime.setVisibility(View.VISIBLE);
             mNextBtn.setVisibility(View.VISIBLE);
             mPrevBtn.setVisibility(View.VISIBLE);
+            mTitleTxt.setSelected(true);
             mSubTitleTxt.setSelected(true);
             mFavourite.setVisibility(View.VISIBLE);
 
@@ -396,7 +397,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
         mAddToPlayList = (ImageView) findViewById(R.id.player_add_to_playlist);
         mFavourite = (ImageView)findViewById(R.id.player_fav_btn);
-        mPlayerMore = (ImageView)findViewById(R.id.player_more_btn);
+        mPlayerSetting = (ImageView)findViewById(R.id.player_setting_btn);
 
         mPlayedTime = (RegularTextView) findViewById(R.id.played_time);
         mRemainsTime = (RegularTextView) findViewById(R.id.remains_time);
@@ -418,7 +419,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
         mAddToPlayList.setOnClickListener(this);
         mFavourite.setOnClickListener(this);
-        mPlayerMore.setOnClickListener(this);
+        mPlayerSetting.setOnClickListener(this);
 
         mAudioEffectBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -501,7 +502,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             case R.id.player_fav_btn:
                 updateFavoriteTrack(true);
                 break;
-            case R.id.player_more_btn:
+            case R.id.player_setting_btn:
                 startSettingActivity();
             default:
 

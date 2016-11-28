@@ -183,13 +183,13 @@ public class AlbumActivity extends AppCompatActivity {
             try {
                 if (imagePath == null) {
                     Utils utils = new Utils(this);
-                    albumArt.setImageBitmap(utils.getBitmapOfVector(this, R.drawable.default_art_header,
+                    albumArt.setImageBitmap(utils.getBitmapOfVector(this, R.drawable.ic_default_album_header,
                             width, height));
                     return;
                 }
                 Picasso.with(AlbumActivity.this)
                         .load(new File(imagePath)).resize(width, height)
-                        .error(getResources().getDrawable(R.drawable.default_art_header, null)).noFade()
+                        .error(getResources().getDrawable(R.drawable.ic_default_album_header, null)).noFade()
                         .into(albumArt);
             } catch (NullPointerException e) {
                 e.printStackTrace();

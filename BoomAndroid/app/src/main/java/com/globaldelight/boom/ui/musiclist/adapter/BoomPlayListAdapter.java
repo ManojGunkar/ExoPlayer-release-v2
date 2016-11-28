@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -19,6 +18,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
@@ -100,7 +100,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
         TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(width, height);
         holder.imgPanel.setLayoutParams(layoutParams);
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (height/2.5));
         holder.gridBottomBg.setLayoutParams(params);
 
         return new Size(width, height);
@@ -162,7 +162,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     }
 
     private void setDefaultImage(ImageView img, int width, int height){
-        img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art_home, width, height));
+        img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, width, height));
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {
@@ -178,9 +178,9 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                         i.putExtra("mediaItemCollection", (MediaItemCollection)items.get(position));
                         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                                 (Activity) context,
-                                new Pair<View, String>(holder.gridBottomBg, "transition:imgholder")
+                                new Pair<View, String>(holder.imgPanel, "transition:imgholder")
                         );
-                        context.startActivity(i/*, options.toBundle()*/);
+                        context.startActivity(i, options.toBundle());
                     }
                 }, 100);
             }

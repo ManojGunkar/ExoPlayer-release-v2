@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -24,6 +23,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -319,26 +319,20 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
 
     private void setArtistImg(final SearchDetailListAdapter.SimpleItemViewHolder holder, final String path, final int size) {
         if (isPathValid(path))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.default_album_art_home, null))
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null))
                     .centerCrop().resize(size, size)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else {
-            holder.defaultImg.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art_home, size, size));
+            holder.defaultImg.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, size, size));
         }
     }
 
     private void setSongArt(String path, SearchDetailListAdapter.SimpleItemViewHolder holder) {
         if (path != null && !path.equals("null"))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.default_album_art, null)).resize(dpToPx(90),
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null)).resize(dpToPx(90),
                     dpToPx(90)).centerCrop().into(holder.img);
         else{
-            setDefaultArt(holder, dpToPx(90));
+            holder.img.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_default_list));
         }
-    }
-
-    private void setDefaultArt(SearchDetailListAdapter.SimpleItemViewHolder holder, int size) {
-
-        holder.img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art,
-                size, size));
     }
 
     private boolean fileExist(String albumArtPath) {

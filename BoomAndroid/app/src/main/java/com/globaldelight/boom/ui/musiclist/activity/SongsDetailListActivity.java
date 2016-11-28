@@ -298,7 +298,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
     private void setDefaultImage(Size size){
         FrameLayout.LayoutParams param = new FrameLayout.LayoutParams(size.width, size.height);
         albumArt.setLayoutParams(param);
-        albumArt.setImageDrawable(getResources().getDrawable(R.drawable.default_art_header));
+        albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_grid));
     }
 
     private void setForAnimation() {

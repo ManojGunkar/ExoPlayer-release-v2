@@ -8,6 +8,7 @@
     <item
         android:id="@+id/popup_album_add_playlist"
         android:icon="@drawable/ic_menu_selected"
+
         android:title="Add to Boom Playlist"
         android:showAsAction="ifRoom" />
 </menu>

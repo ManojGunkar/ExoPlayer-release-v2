@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -20,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.globaldelight.boom.App;
@@ -27,9 +27,12 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.ui.musiclist.activity.BoomPlaylistActivity;
 import com.globaldelight.boom.ui.musiclist.activity.FavouriteListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.IconizedMenu;
@@ -87,7 +90,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
 
     private void setAlbumArt(String path, FavouriteListAdapter.SimpleItemViewHolder holder) {
         if (path != null && !path.equals("null"))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.default_album_art, null)).resize(dpToPx(90),
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null)).resize(dpToPx(90),
                     dpToPx(90)).centerCrop().into(holder.img);
         else{
             setDefaultArt(holder, dpToPx(90));
@@ -96,7 +99,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
 
     private void setDefaultArt(FavouriteListAdapter.SimpleItemViewHolder holder, int size) {
 
-        holder.img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art,
+        holder.img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_list,
                 size, size));
     }
 
@@ -133,7 +136,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
                             case R.id.popup_song_add_fav :
                                 MediaController.getInstance(context).removeItemToList(false, itemList.get(position).getItemId());
                                 itemList = MediaController.getInstance(context).getFavouriteListItems();
-                                notifyDataSetChanged();
+                                updateFavoriteList(MediaController.getInstance(context).getFavouriteListItems());
                                 break;
                         }
                         return false;
@@ -143,6 +146,14 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
                 pm.show();
             }
         });
+    }
+
+    private void updateFavoriteList(LinkedList<? extends IMediaItemBase> newList) {
+        itemList = newList;
+        notifyDataSetChanged();
+        if(itemList.size() == 0){
+            ((FavouriteListActivity)context).listIsEmpty();
+        }
     }
 
     public void animate(final FavouriteListAdapter.SimpleItemViewHolder holder) {

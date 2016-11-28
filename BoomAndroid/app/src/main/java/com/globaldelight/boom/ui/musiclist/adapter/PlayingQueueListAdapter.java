@@ -73,63 +73,11 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
     public void updateHeaderPosition() {
 
-
-
-        /*if(mHistoryList.size() > 0){
-            headerHistoryPos = 0;
-        }
-
-        if (mHistoryList.size() > 0 && mPlaying.size() > 0){
-            headerPlayingPos = mHistoryList.size() + 1;
-        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0){
-            headerPlayingPos = 0;
-        }
-
-        if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0){
-            headerManualPos = mHistoryList.size() + mPlaying.size() + 2;
-        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0){
-            headerManualPos = mPlaying.size() + 1;
-        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0) {
-            headerManualPos = mHistoryList.size() + 1;
-        }else if(mHistoryList.size() == 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0){
-            headerManualPos = 0;
-        }
-
-        if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
-            headerAutoPos = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + 3;
-        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
-            headerAutoPos = mPlaying.size() + mUpnextManualList.size() + 2;
-        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
-            headerAutoPos = mHistoryList.size() + mUpnextManualList.size() + 2;
-        }else if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-            headerAutoPos = mHistoryList.size() + mPlaying.size() + 2;
-        }else if(mHistoryList.size() == 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
-            headerAutoPos = mUpnextManualList.size() + 1;
-        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-            headerAutoPos = mHistoryList.size() + 1;
-        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-            headerAutoPos = mPlaying.size() + 1;
-        }else if(mHistoryList.size() == 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-            headerAutoPos = 0;
-        }
-
-        if(mHistoryList.size() == 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
-            headerHistoryPos = 0;
-            headerPlayingPos = 1;
-            headerManualPos = 2;
-            headerAutoPos = 3;
-        }*/
-        if((mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0) ||
-                mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + mUpnextAutoList.size() == 0)
-            headerHistoryPos = 0;
+        headerHistoryPos = 0;
         headerPlayingPos = mHistoryList.size() + 1;
         headerManualPos = mHistoryList.size() + mPlaying.size() + 2;
         headerAutoPos = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + 3;
         this.totalSize = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + mUpnextAutoList.size() + 4;
-        /*this.totalSize = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + mUpnextAutoList.size() +
-                (mHistoryList.size() > 0 ? 1 : 0) + (mPlaying.size() > 0 ? 1 : 0) + (mUpnextManualList.size() > 0 ? 1 : 0) +
-                (mUpnextAutoList.size() > 0 ? 1 : 0);*/
-
     }
 
     public int whatView(int position) {
@@ -160,97 +108,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
     private int getPosition(int position) {
 
-        /*if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
-
-        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
-
-        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() == 0){
-
-        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-
-        }
-
-        else if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
-
-        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() == 0){
-
-        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-
-        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() == 0){
-
-        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-
-        }else if(mHistoryList.size() == 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
-
-        }
-
-        else if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() == 0){
-
-        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
-
-        }else if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-
-        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() > 0){
-
-        }
-
-        else if(mHistoryList.size() > 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-
-        }
-
-        else if(mHistoryList.size() == 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-
-        }*/
-
-
-        /*if(mHistoryList.size() > 0 && mPlaying.size() > 0){
-
-
-
-            if (position > headerHistoryPos && position < headerPlayingPos) {
-                position = position - 1;
-            }else if(position > headerPlayingPos && position < headerManualPos && mUpnextManualList.size() > 0){
-                position = position - 1;
-            }else if(position > headerPlayingPos && position < headerAutoPos && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-                position = position - 1;
-            }else if(position > headerPlayingPos && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
-                position = position - 1;
-            }else if(position > headerPlayingPos && position < headerManualPos && mUpnextManualList.size() > 0){
-                position = position - mHistoryList.size() - 2;
-            }else if(position > headerPlayingPos && position < headerAutoPos && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-                position = position - mHistoryList.size() - 2;
-            }else if(position > headerPlayingPos && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
-                position = position - mHistoryList.size() - 2;
-            }
-
-        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() > 0){
-            if (position > headerHistoryPos && position < headerManualPos) {
-                position = position - 1;
-            }else if(position > headerPlayingPos && position < headerAutoPos && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-                position = position - 1;
-            }else if(position > headerPlayingPos && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
-                position = position - 1;
-            }
-        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-            if (position > headerHistoryPos && position < headerAutoPos) {
-                position = position - 1;
-            }
-        }else if(mHistoryList.size() > 0 && mPlaying.size() == 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
-            if (position > headerHistoryPos)
-                position = position - 1;
-        }*/
-//        if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() == 0){
-//            if (position > headerPlayingPos)
-//                position = position - 1;
-//        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() > 0 && mUpnextAutoList.size() == 0){
-//            if (position > headerPlayingPos && position < headerManualPos) {
-//                position = position - 1;
-//            }
-//        }else if(mHistoryList.size() == 0 && mPlaying.size() > 0 && mUpnextManualList.size() == 0 && mUpnextAutoList.size() > 0){
-//            if (position > headerPlayingPos && position < headerAutoPos) {
-//                position = position - 1;
-//            }
-//        }
         if (position > headerHistoryPos && position < headerPlayingPos) {
             position = position - 1;
         } else if (position > headerPlayingPos && position < headerManualPos) {
@@ -519,7 +376,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     private void setArt(SimpleItemViewHolder holder, String path, int what) {
         int size = dpToPx(context, (int) context.getResources().getDimension(R.dimen.one_hundred_eighty_six_pt));
         if (path != null && !path.equals("null"))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.default_album_art, null)).resize(size,
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null)).resize(size,
                     size).centerCrop().into(holder.img);
         else{
             setDefaultArt(holder, size);
@@ -528,7 +385,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
     private void setDefaultArt(SimpleItemViewHolder holder, int size) {
 
-        holder.img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art,
+        holder.img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_list,
                 size, size));
     }
 

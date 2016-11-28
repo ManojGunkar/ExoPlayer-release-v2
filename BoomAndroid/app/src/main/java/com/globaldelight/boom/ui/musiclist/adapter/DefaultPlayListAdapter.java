@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.Pair;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -18,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -95,6 +95,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
     }
 
     private Size setSize(SimpleItemViewHolder holder) {
+
         Utils utils = new Utils(context);
         int width = (utils.getWindowWidth(context)
                 - utils.dpToPx(context, 15)) / 2;
@@ -102,7 +103,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
         TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(width, height);
         holder.imgPanel.setLayoutParams(layoutParams);
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (height/2.5));
         holder.gridBottomBg.setLayoutParams(params);
 
         return new Size(width, height);
@@ -162,7 +163,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
     }
 
     private void setDefaultImage(ImageView img, int width, int height){
-        img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art_home, width, height));
+        img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, width, height));
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {
@@ -180,7 +181,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
                                 (Activity) context,
                                 new Pair<View, String>(holder.imgPanel, "transition:imgholder")
                         );
-                        context.startActivity(i/*, options.toBundle()*/);
+                        context.startActivity(i, options.toBundle());
                     }
                 }, 100);
             }

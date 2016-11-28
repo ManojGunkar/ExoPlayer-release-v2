@@ -8,7 +8,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.Pair;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -19,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,10 +88,10 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
     private void setArtistImg(final SimpleItemViewHolder holder, final int position, final int size) {
         String path = itemList.get(position).getItemArtUrl();
         if (isPathValid(path))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.default_album_art_home, null))
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null))
                     .centerCrop().resize(size, size)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else {
-            holder.defaultImg.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art_home, size, size));
+            holder.defaultImg.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, size, size));
         }
     }
 

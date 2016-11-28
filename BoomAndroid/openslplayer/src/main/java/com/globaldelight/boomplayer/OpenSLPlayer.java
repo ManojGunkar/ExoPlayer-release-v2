@@ -154,7 +154,8 @@ public class OpenSLPlayer implements Runnable {
 
     public void seek(long pos) {
         seekTo(pos);
-        extractor.seekTo(pos, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
+        if(extractor != null)
+            extractor.seekTo(pos, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
     }
 
     public void seek(int percent) {

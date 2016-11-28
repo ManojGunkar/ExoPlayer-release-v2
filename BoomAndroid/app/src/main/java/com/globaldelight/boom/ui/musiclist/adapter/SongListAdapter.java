@@ -11,7 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.globaldelight.boom.App;
@@ -88,7 +89,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
 
     private void setAlbumArt(String path, SimpleItemViewHolder holder) {
         if (path != null && !path.equals("null"))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.default_album_art, null)).resize(dpToPx(90),
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null)).resize(dpToPx(90),
                     dpToPx(90)).centerCrop().into(holder.img);
         else{
             setDefaultArt(holder, dpToPx(90));
@@ -97,7 +98,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
 
     private void setDefaultArt(SimpleItemViewHolder holder, int size) {
 
-        holder.img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art,
+        holder.img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_list,
                 size, size));
     }
 
@@ -148,7 +149,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                     pm.inflate(R.menu.song_add_fav);
                 }
                 pm.show();
-                notifyDataSetChanged();
             }
         });
     }
