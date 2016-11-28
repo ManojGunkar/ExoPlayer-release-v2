@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -74,8 +75,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     // private Button btnTimerStart;
     //  private Button btnTimerCancel;
     //  private Button btnTimerReset;
-    private RegularTextView txtTimer;
-    private RegularTextView txtStopTime;
+    private RegularTextView txtTimer, titleSupport, titleAbout, titleShare;
+    // private RegularTextView txtStopTime;
     private CountDownTimer mCountDownTimer;
     private long sleepTime;
     private SeekBar slideseekbar;
@@ -155,8 +156,14 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         btnTimerReset.setOnClickListener(this);
         btnTimerCancel.setOnClickListener(this);*/
         txtTimer = (RegularTextView) findViewById(R.id.txtTimer);
+        titleAbout = (RegularTextView) findViewById(R.id.title_about);
+        titleSupport = (RegularTextView) findViewById(R.id.title_support);
+        titleShare = (RegularTextView) findViewById(R.id.title_share);
+        titleSupport.setOnClickListener(this);
+        titleShare.setOnClickListener(this);
+        titleAbout.setOnClickListener(this);
 
-        txtStopTime = (RegularTextView) findViewById(R.id.txtStopTime);
+        //txtStopTime = (RegularTextView) findViewById(R.id.txtStopTime);
         txtDescTimer = (RegularTextView) findViewById(R.id.description_timer);
         txtDescTimer.setOnClickListener(this);
         txtSeekText = (RegularTextView) findViewById(R.id.seek_text);
@@ -437,9 +444,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         //  btnTimerReset.setVisibility(View.INVISIBLE);
         //  btnTimerStart.setVisibility(View.VISIBLE);
         txtDescTimer.setText(getResources().getString(R.string.sleep_timer_description));
-        // txtStopTime.setVisibility(View.GONE);
-        txtStopTime.setVisibility(View.VISIBLE);
-        txtStopTime.setText("Hour : Minute");
+        /// txtStopTime.setVisibility(View.GONE);
+        //txtStopTime.setVisibility(View.VISIBLE);
+        //txtStopTime.setText("Hour : Minute");
         //txtStopTime.setTextSize(25f);
     }
 
@@ -449,7 +456,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         // btnTimerCancel.setVisibility(View.VISIBLE);
         // btnTimerReset.setVisibility(View.VISIBLE);
         // btnTimerStart.setVisibility(View.INVISIBLE);
-        txtStopTime.setVisibility(View.GONE);
+        // txtStopTime.setVisibility(View.GONE);
 
     }
 
@@ -459,19 +466,56 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.description_timer:
                 //setTimer();
-                customTimepicker();
+                boolean sleepTimerEnabled = Preferences.readBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
+                if (sleepTimerEnabled) {
+                    customTimepicker(true);
+                    try {
+                        cancelTimer();
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    customTimepicker(false);
+                }
                 break;
-            case R.id.btn_timer_start:
-                setTimer();
+            case R.id.txtTimer:
+                customTimepicker(true);
+                try {
+                    cancelTimer();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+                break;
                 // customTimepicker();
+            //  break;
+            //case R.id.btn_timer_cancel:
+            //    resetTimer();
+            //   cancelTimer();
+            //  break;
+            case R.id.title_about:
                 break;
-            case R.id.btn_timer_cancel:
-                resetTimer();
-                cancelTimer();
+            case R.id.title_share:
+                try {
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("text/plain");
+                    i.putExtra(Intent.EXTRA_SUBJECT, "BOOM");
+                    String sAux = "\nLet me recommend you this application\n\n";
+                    sAux = sAux + "https://play.google.com/store/apps/details?id=com.player.boom \n\n";
+                    i.putExtra(Intent.EXTRA_TEXT, sAux);
+                    startActivity(Intent.createChooser(i, "choose one"));
+                } catch (Exception e) {
+                    //e.toString();
+                }
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ABOUT_SHARE_BUTTON_TAPPED);
                 break;
-            case R.id.btn_timer_reset:
-                resetTimer();
-                txtTimer.setText("00:00");
+            case R.id.title_support:
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                        "mailto", "boomandroid@globaldelight.com", null));
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "I Need Some Help With Boom for iOS");
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "Hello Team,");
+                startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ABOUT_CONTACT_US_BUTTON_TAPPED);
                 break;
         }
     }
@@ -726,7 +770,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         startActivity(intent);
     }
 
-    public void customTimepicker() {
+    public void customTimepicker(boolean running) {
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 // ...Irrelevant code for customizing the buttons and title
         LayoutInflater inflater = this.getLayoutInflater();
@@ -736,25 +780,39 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         // editText = (EditText) dialogView.findViewById(R.id.label_field);
         timePicker = (TimePicker) dialogView.findViewById(R.id.timePickerdialog);
         RegularButton timerStart = (RegularButton) dialogView.findViewById(R.id.tmstart);
-        RegularButton timerReset = (RegularButton) dialogView.findViewById(R.id.tmreset);
+        RegularButton timerReset = (RegularButton) dialogView.findViewById(R.id.tmreset);//close
         final RegularButton timerCancel = (RegularButton) dialogView.findViewById(R.id.tmcancel);
+        timerStart.setTransformationMethod(null);
+        timerReset.setTransformationMethod(null);
+        timerCancel.setTransformationMethod(null);
+        if (running) {
+            timerStart.setVisibility(View.GONE);
+            timerCancel.setVisibility(View.VISIBLE);
+        } else {
+            timerStart.setVisibility(View.VISIBLE);
+            timerCancel.setVisibility(View.GONE);
+        }
+
+
         timerStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                setTimer();
+                alertDialog.dismiss();
             }
         });
         timerReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
-                setTimer();
+                //setTimer();
             }
         });
         timerCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                resetTimer();
+                alertDialog.dismiss();
             }
         });
 

@@ -10,8 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="Set Sleep Timer"
+        android:text="Hour     Minute"
         android:textColor="@color/white"
         android:textSize="15sp" />
 
@@ -31,6 +32,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+        <com.globaldelight.boom.ui.widgets.RegularButton
+            android:id="@+id/tmreset"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="@string/timer_reset"
+            android:textColor="@color/white" />
 
         <com.globaldelight.boom.ui.widgets.RegularButton
             android:id="@+id/tmcancel"
@@ -50,14 +59,7 @@
             android:text="@string/timer_start"
             android:textColor="@color/white" />
 
-        <com.globaldelight.boom.ui.widgets.RegularButton
-            android:id="@+id/tmreset"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3"
-            android:text="@string/timer_reset"
-            android:textColor="@color/white" />
+
     </LinearLayout>
 
 </LinearLayout>

@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class InAppPurchaseActivity extends AppCompatActivity {
     public static final String TAG = "In-APP";
-    static final String SKU_BOOM_3D_SURROUND = "android.test.purchased";
+    static final String SKU_BOOM_3D_SURROUND = "com.globaldelight.boom_magicalsurroundsound1";
     // (arbitrary) request code for the purchase flow
     static final int RC_REQUEST = 10001;
     IabHelper mHelper;
