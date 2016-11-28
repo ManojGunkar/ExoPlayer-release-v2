@@ -46,7 +46,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     public ListPosition itemDelete;
     OnStartDragListener mOnStartDragListener;
     private LinkedList<IMediaItemBase> mHistoryList;
-    private LinkedList<UpNextItem> mPlaying;
+    private UpNextItem mPlaying;
     private LinkedList<IMediaItemBase> mUpnextManualList;
     private LinkedList<IMediaItemBase> mUpnextAutoList;
     private int headerHistoryPos, headerPlayingPos, headerManualPos,
@@ -55,12 +55,12 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
     public PlayingQueueListAdapter(Context context, UpNextList playingQueue, OnStartDragListener dragListener) {
         this.context = context;
-        init(playingQueue.getHistoryList(), playingQueue.getPlayingList(), playingQueue.getManualUpNextList(), playingQueue.getAutoUpNextList());
+        init(playingQueue.getUpNextItemList(QueueType.History), playingQueue.getPlayingUpNextItem(), playingQueue.getUpNextItemList(QueueType.Manual_UpNext), playingQueue.getUpNextItemList(QueueType.Auto_UpNext));
         this.mOnStartDragListener = dragListener;
     }
 
 
-    private void init(LinkedList<IMediaItemBase> history, LinkedList<UpNextItem> playing, LinkedList<IMediaItemBase> upnext, LinkedList<IMediaItemBase> upnextAuto) {
+    private void init(LinkedList<IMediaItemBase> history, UpNextItem playing, LinkedList<IMediaItemBase> upnext, LinkedList<IMediaItemBase> upnextAuto) {
         this.mHistoryList = history;
         this.mPlaying = playing;
         this.mUpnextManualList = upnext;
@@ -72,9 +72,9 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
         headerHistoryPos = 0;
         headerPlayingPos = mHistoryList.size() + 1;
-        headerManualPos = mHistoryList.size() + mPlaying.size() + 2;
-        headerAutoPos = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + 3;
-        this.totalSize = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + mUpnextAutoList.size() + 4;
+        headerManualPos = mHistoryList.size() + (mPlaying != null ? 1 : 0 ) + 2;
+        headerAutoPos = mHistoryList.size() + (mPlaying != null ? 1 : 0 ) + mUpnextManualList.size() + 3;
+        this.totalSize = mHistoryList.size() + (mPlaying != null ? 1 : 0 ) + mUpnextManualList.size() + mUpnextAutoList.size() + 4;
     }
 
     public int whatView(int position) {
@@ -99,7 +99,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     }
 
     public void updateList(UpNextList playingQueue) {
-        init(playingQueue.getHistoryList(), playingQueue.getPlayingList(), playingQueue.getManualUpNextList(), playingQueue.getAutoUpNextList());
+        init(playingQueue.getUpNextItemList(QueueType.History), playingQueue.getPlayingUpNextItem(), playingQueue.getUpNextItemList(QueueType.Manual_UpNext), playingQueue.getUpNextItemList(QueueType.Auto_UpNext));
         notifyDataSetChanged();
     }
 
@@ -110,9 +110,9 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         } else if (position > headerPlayingPos && position < headerManualPos) {
             position = position - mHistoryList.size() - 2;
         } else if (position > headerManualPos && position < headerAutoPos) {
-            position = position - mHistoryList.size() - mPlaying.size() - 3;
+            position = position - mHistoryList.size() - (mPlaying != null ? 1 : 0 ) - 3;
         } else if (position > headerAutoPos)
-            position = position - mHistoryList.size() - mPlaying.size() - mUpnextManualList.size() - 4;
+            position = position - mHistoryList.size() - (mPlaying != null ? 1 : 0 ) - mUpnextManualList.size() - 4;
 
         return position == -1 ? 0 : position;
     }
@@ -127,10 +127,10 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
             position = position - mHistoryList.size() - 2;
             listType = ITEM_VIEW_TYPE_LIST_PLAYING;
         } else if (position > headerManualPos && position < headerAutoPos) {
-            position = position - mHistoryList.size() - mPlaying.size() - 3;
+            position = position - mHistoryList.size() - (mPlaying != null ? 1 : 0 ) - 3;
             listType = ITEM_VIEW_TYPE_LIST_MANUAL;
         } else if (position > headerAutoPos) {
-            position = position - mHistoryList.size() - mPlaying.size() - mUpnextManualList.size() - 4;
+            position = position - mHistoryList.size() - (mPlaying != null ? 1 : 0 ) - mUpnextManualList.size() - 4;
             listType = ITEM_VIEW_TYPE_LIST_AUTO;
         }
         return new ListPosition(listType, position == -1 ? 0 : position);
@@ -258,9 +258,9 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                 break;
             case ITEM_VIEW_TYPE_LIST_PLAYING:
                 itemPosition = getPosition(position);
-                setArt(holder, mPlaying.get(itemPosition).getUpNextItem().getItemArtUrl(), whatView(position));
-                holder.name.setText(mPlaying.get(itemPosition).getUpNextItem().getItemTitle());
-                holder.artistName.setText(((IMediaItem) mPlaying.get(itemPosition).getUpNextItem()).getItemArtist());
+                setArt(holder, mPlaying.getUpNextItem().getItemArtUrl(), whatView(position));
+                holder.name.setText(mPlaying.getUpNextItem().getItemTitle());
+                holder.artistName.setText(mPlaying.getUpNextItem().getItemArtist());
                 holder.mainView.setElevation(dpToPx(context, 2));
                 holder.imgHandle.setVisibility(View.INVISIBLE);
                 setOnItemClick(holder, QueueType.Playing, itemPosition);
@@ -403,8 +403,8 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
                 switch (queueType) {
                     case History:
-                        if (App.getPlayingQueueHandler().getUpNextList().getHistoryList().size() > 0) {
-                            App.getPlayingQueueHandler().getUpNextList().clearHistory();
+                        if (App.getPlayingQueueHandler().getUpNextList().getUpNextItemList(QueueType.History).size() > 0) {
+                            App.getPlayingQueueHandler().getUpNextList().clearUpNextList(QueueType.History);
                             updateList(App.getPlayingQueueHandler().getUpNextList());
                         }
                         break;
@@ -414,8 +414,8 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                             swipeDeletehandler.removeMessages(0);
                             itemDelete = null;
                         }
-                        if (App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0) {
-                            App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().clear();
+                        if (App.getPlayingQueueHandler().getUpNextList().getUpNextItemList(QueueType.Manual_UpNext).size() > 0) {
+                            App.getPlayingQueueHandler().getUpNextList().clearUpNextList(QueueType.Manual_UpNext);
                             updateList(App.getPlayingQueueHandler().getUpNextList());
                         }
 
@@ -427,8 +427,8 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                             itemDelete = null;
                         }
 
-                        if (App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
-                            App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().clear();
+                        if (App.getPlayingQueueHandler().getUpNextList().getUpNextItemList(QueueType.Auto_UpNext).size() > 0) {
+                            App.getPlayingQueueHandler().getUpNextList().clearUpNextList(QueueType.Auto_UpNext);
                             updateList(App.getPlayingQueueHandler().getUpNextList());
                         }
                         break;

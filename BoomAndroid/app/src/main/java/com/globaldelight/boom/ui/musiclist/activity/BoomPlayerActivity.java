@@ -549,8 +549,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         super.onResume();
         isPlayerResume = true;
         updateEffectIcon();
-        updateTrackToPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingList().size() > 0 ?
-                (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingList().get(0).getUpNextItem() :
+        updateTrackToPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingUpNextItem() != null ?
+                (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
                 null, App.getPlayerEventHandler().isPlaying());
     }
 

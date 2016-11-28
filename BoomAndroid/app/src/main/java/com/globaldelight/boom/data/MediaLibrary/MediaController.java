@@ -118,4 +118,12 @@ public class MediaController implements IMediaController{
     public void clearUpNextList(QueueType queueType){
         MediaLibraryHandler.getInstance(context).clearUpNextList(queueType);
     }
+
+    public UpNextItem getPlayingItem(){
+        return MediaLibraryHandler.getInstance(context).getPlayingItem();
+    }
+
+    public void addItemAsPlaying(IMediaItemBase song, QueueType queueType){
+        MediaLibraryHandler.getInstance(context).addItemAsPlaying(song, queueType);
+    }
 }

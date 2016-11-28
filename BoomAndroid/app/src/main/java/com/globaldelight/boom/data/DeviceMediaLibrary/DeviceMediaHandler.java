@@ -205,11 +205,7 @@ public class DeviceMediaHandler {
     }
 
     public void addUpNextItem(IMediaItemBase song, QueueType queueType) {
-        if(queueType == QueueType.Playing){
-            App.getUPNEXTDBHelper().addPlayingItem(song, queueType);
-        }else {
-            App.getUPNEXTDBHelper().addSong(song, queueType);
-        }
+        App.getUPNEXTDBHelper().addSong(song, queueType);
     }
 
     public void addUpNextItem(IMediaItemBase song, int position, QueueType queueType) {
@@ -240,4 +236,7 @@ public class DeviceMediaHandler {
         return App.getUPNEXTDBHelper().getPlayingItem();
     }
 
+    public void addItemAsPlaying(IMediaItemBase song, QueueType queueType){
+        App.getUPNEXTDBHelper().addPlayingItem(song, queueType);
+    }
 }

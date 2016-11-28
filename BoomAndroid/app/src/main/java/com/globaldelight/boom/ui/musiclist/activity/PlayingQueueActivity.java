@@ -174,7 +174,8 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                super.onBackPressed();
+                finish();
+                overridePendingTransition(R.anim.stay_out, R.anim.slide_out_right);
                 break;
         }
         return super.onOptionsItemSelected(item);

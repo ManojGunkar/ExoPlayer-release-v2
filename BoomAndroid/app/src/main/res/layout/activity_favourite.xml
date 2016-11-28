@@ -47,6 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#787878"
+            android:gravity="center"
             android:textSize="@dimen/eighty_eighty_pt"
             android:text="@string/fav_placeholder_txt"
             android:layout_marginTop="@dimen/ninety_six_pt"/>

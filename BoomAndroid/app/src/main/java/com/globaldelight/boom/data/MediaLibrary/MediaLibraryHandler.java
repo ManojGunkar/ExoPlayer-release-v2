@@ -127,4 +127,12 @@ public class MediaLibraryHandler implements IMediaLibrary{
     public void clearUpNextList(QueueType queueType) {
         DeviceMediaHandler.getInstance(context).clearUpNextList(queueType);
     }
+
+    public UpNextItem getPlayingItem(){
+        return DeviceMediaHandler.getInstance(context).getPlayingItem();
+    }
+
+    public void addItemAsPlaying(IMediaItemBase song, QueueType queueType){
+        DeviceMediaHandler.getInstance(context).addItemAsPlaying(song, queueType);
+    }
 }

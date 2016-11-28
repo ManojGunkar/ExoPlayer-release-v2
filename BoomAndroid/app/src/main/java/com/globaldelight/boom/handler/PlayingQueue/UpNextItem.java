@@ -14,6 +14,10 @@ public class UpNextItem{
     private MediaItem item;
     private QueueType type;
 
+    public UpNextItem(UpNextItem item){
+        this.item = item.getUpNextItem();
+        this.type = item.getUpNextItemType();
+    }
     public UpNextItem(MediaItem item, QueueType type){
         this.item = item;
         this.type = type;
