@@ -68,13 +68,13 @@ namespace gdpl {
     public:
         bool isPlay = false;
 
-        PlaybackThread(int32_t sampleRate, uint32_t nativeSampleRate, uint32_t frameCount) {
+        PlaybackThread(int32_t sampleRate, uint32_t nativeSampleRate, uint32_t frameCount, uint32_t channels) {
             _frameCount = frameCount;
             mBuffer = (int16_t *)calloc(_frameCount * CHANNEL_COUNT, sizeof(int16_t));
             mOutputBuffer = (float*)calloc(_frameCount * CHANNEL_COUNT, sizeof(float));
             mResampleBuffer = (int32_t*)calloc(_frameCount * CHANNEL_COUNT, sizeof(int32_t));
 
-            audioResampler = AudioResampler::create(16, CHANNEL_COUNT, nativeSampleRate, AudioResampler::HIGH_QUALITY);
+            audioResampler = AudioResampler::create(16, channels, nativeSampleRate, AudioResampler::HIGH_QUALITY);
             audioResampler->setSampleRate(sampleRate);
             audioResampler->setVolume(UNITY_GAIN, UNITY_GAIN);
 
@@ -181,8 +181,8 @@ namespace gdpl {
         RinseEngine();
 
 
-        ringBuffer = new RingBuffer(bufferSize);
-        mThread = new PlaybackThread(samplerate, OpenSLPlayer::getEngineSampleRate(), gFrameCount);
+        ringBuffer = new RingBuffer(bufferSize, channel, sizeof(uint16_t));
+        mThread = new PlaybackThread(samplerate, OpenSLPlayer::getEngineSampleRate(), gFrameCount, channel);
 
         openSLPlayer = new gdpl::OpenSLPlayer(mThread);
         openSLPlayer->setup();
