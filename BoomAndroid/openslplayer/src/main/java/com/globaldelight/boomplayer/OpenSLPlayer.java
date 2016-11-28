@@ -36,6 +36,7 @@ public class OpenSLPlayer implements Runnable {
     private static Thread playerThread;
     Handler handler = new Handler();
     private static boolean isFinish = false;
+    private static int mPauseSeek = -1;
 
     String mime = null;
     int sampleRate = 0, channels = 0, bitrate = 0;
@@ -114,6 +115,11 @@ public class OpenSLPlayer implements Runnable {
             setPlayingAudioPlayer(true);
             state.set(PlayerStates.PLAYING);
             syncNotify();
+
+            if(mPauseSeek >= 0){
+                seek(mPauseSeek * duration / 100);
+                mPauseSeek = -1;
+            }
         }
     }
 
@@ -148,12 +154,16 @@ public class OpenSLPlayer implements Runnable {
 
     public void seek(long pos) {
         seekTo(pos);
-        extractor.seekTo(pos, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
+        if(extractor != null)
+            extractor.seekTo(pos, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
     }
 
     public void seek(int percent) {
-        long pos = percent * duration / 100;
-        seek(pos);
+        if(!isPause()) {
+            seek(percent * duration / 100);
+        }else{
+            mPauseSeek = percent;
+        }
     }
 
     /**
@@ -178,8 +188,6 @@ public class OpenSLPlayer implements Runnable {
             }catch (InterruptedException e){
 
             }
-
-
         // extractor gets information about the stream
         extractor = new MediaExtractor();
         // try to set the source, this might fail

@@ -180,6 +180,7 @@ public class UpNextList {
             setItemListAsPrevious(itemList.subList(0, position));
         }
         setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
+        mAutoNextList.clear();
         if(itemList.size() > position+1){
             setItemListAsUpNextFrom(itemList.subList(position+1, itemList.size()));
         }
@@ -192,6 +193,7 @@ public class UpNextList {
             setItemListAsPrevious(itemList.subList(0, position));
         }
         setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
+        mAutoNextList.clear();
         if(itemList.size() > position+1){
             setItemListAsUpNextFrom(itemList.subList(position+1, itemList.size()));
         }
@@ -205,6 +207,7 @@ public class UpNextList {
             setItemListAsPrevious(collection.getMediaElement().subList(0, position));
         }
         setItemAsPlayingItem(collection.getMediaElement().get(position), QueueType.Auto_UpNext);
+        mAutoNextList.clear();
         if(collection.getMediaElement().size() > position+1){
             setItemListAsUpNextFrom(collection.getMediaElement().subList(position+1, collection.getMediaElement().size()));
         }
@@ -214,9 +217,8 @@ public class UpNextList {
     public void addToPlay(QueueType queueType, int position){
         switch (queueType){
             case History:
-                UpNextItem item = new UpNextItem(mHistoryList.remove(position), queueType);
                 managePlayedItem(true);
-                mCurrentList.add(item);
+                mCurrentList.add(new UpNextItem(mHistoryList.get(position), queueType));
                 PlayingItemChanged();
                 break;
             case Playing:
@@ -231,7 +233,7 @@ public class UpNextList {
                 managePlayedItem(true);
                 PlayItemIndex = position;
                 /* Shuffle will not effect on random selection*/
-                if(mRepeat == REPEAT.none/* && mShuffle == SHUFFLE.none*/){
+                if(mRepeat != REPEAT.all/* && mShuffle == SHUFFLE.none*/){
                     for(int i =0; i< PlayItemIndex ; PlayItemIndex--){
                         ghostList.add(mAutoNextList.remove(i));
                     }
@@ -363,6 +365,7 @@ public class UpNextList {
             if(isRemove){
                 addItemToHistory(mCurrentList.get(0).getUpNextItem());
                 addItemToUpNextFrom(mCurrentList.remove(0));
+                mCurrentList.clear();
             }else {
                 addItemToHistory(mCurrentList.get(0).getUpNextItem());
                 addItemToUpNextFrom(mCurrentList.get(0));
@@ -371,8 +374,10 @@ public class UpNextList {
     }
 
     private void addItemToUpNextFrom(UpNextItem item) {
-        if(item.getUpNextItemType() == QueueType.Auto_UpNext)
+        if(item.getUpNextItemType() == QueueType.Auto_UpNext) {
             mAutoNextList.add(PlayItemIndex, item.getUpNextItem());
+            ghostList.add(item.getUpNextItem());
+        }
     }
 
     public void addItemToUpNextFrom(IMediaItemBase item){
@@ -403,7 +408,6 @@ public class UpNextList {
     }
 
     private void setItemListAsUpNextFrom(List<? extends IMediaItemBase> itemList) {
-        mAutoNextList.clear();
         mAutoNextList.addAll(itemList);
     }
 

@@ -8,7 +8,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.Pair;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -19,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -98,10 +98,10 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
     private void setArtistImg(final SimpleItemViewHolder holder, final int position, final int size) {
         String path = items.get(position).getItemArtUrl();
         if (isPathValid(path))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.default_album_art_home, null))
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null))
                     .centerCrop().resize(size, size)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else
-            holder.defaultImg.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art_home, size, size));
+            holder.defaultImg.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, size, size));
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {
@@ -137,7 +137,8 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
                                 items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
                                 ((IMediaItemCollection)items.get(position).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
 
-                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(((IMediaItemCollection)items.get(position).getMediaElement().get(items.get(position).getCurrentIndex())));
+                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(items.get(position).getMediaElement().get(items.get(position).getCurrentIndex()));
+                                items.get(position).getMediaElement().clear();
                                 break;
                             case R.id.popup_album_add_playlist:
                                 Utils util = new Utils(context);
@@ -146,6 +147,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
 
                                 util.addToPlaylist(activity, ((IMediaItemCollection)items.get(position).getMediaElement().get(items.get(position).getCurrentIndex())).getMediaElement(), null);
                                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                items.get(position).getMediaElement().clear();
                                 break;
                         }
                         return false;

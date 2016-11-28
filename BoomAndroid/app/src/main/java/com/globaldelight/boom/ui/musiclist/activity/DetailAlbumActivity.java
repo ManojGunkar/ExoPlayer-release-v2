@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -21,7 +22,9 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -34,6 +37,7 @@ import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class DetailAlbumActivity extends AppCompatActivity {
     Toolbar toolbar;
@@ -44,6 +48,7 @@ public class DetailAlbumActivity extends AppCompatActivity {
     private AppBarLayout appbarlayout;
     private IMediaItemCollection collection;
     private ListDetail listDetail;
+    private FloatingActionButton mPlayArtistGenreBtn;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -67,7 +72,7 @@ public class DetailAlbumActivity extends AppCompatActivity {
         permissionChecker = new PermissionChecker(this, this, findViewById(R.id.base_view_artist_album));
         recyclerView = (RecyclerView) findViewById(R.id.rv_artist_album_activity);
         albumArt = (ImageView) findViewById(R.id.activity_artist_album_art);
-
+        mPlayArtistGenreBtn = (FloatingActionButton)findViewById(R.id.play_artist_album);
         int width = Utils.getWindowWidth(this);
         int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
         int height = Utils.getWindowHeight(this) - panelSize * 4;
@@ -97,6 +102,14 @@ public class DetailAlbumActivity extends AppCompatActivity {
         }
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mPlayArtistGenreBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(DetailAlbumActivity.this).getMediaCollectionItemDetails(collection));
+                App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement(), 0);
+            }
+        });
 
         addSongList();
     }
@@ -168,18 +181,14 @@ public class DetailAlbumActivity extends AppCompatActivity {
             try {
                 if (isPathValid(collection.getItemArtUrl())) {
                     Picasso.with(DetailAlbumActivity.this).load(new File(collection.getItemArtUrl())).resize(width, height)
-                            .error(getResources().getDrawable(R.drawable.default_art_header)).noFade().into(albumArt);
+                            .error(getResources().getDrawable(R.drawable.ic_default_album_header)).noFade().into(albumArt);
                     return;
                 }else {
-                    Utils utils = new Utils(this);
-                    albumArt.setImageBitmap(utils.getBitmapOfVector(this, R.drawable.default_art_header,
-                            width, height));
+                    albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_header));
                 }
             } catch (NullPointerException e) {
                 e.printStackTrace();
-                Utils utils = new Utils(this);
-                albumArt.setImageBitmap(utils.getBitmapOfVector(this, R.drawable.default_art_header,
-                        width, height));
+                albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_header));
             }
     }
 

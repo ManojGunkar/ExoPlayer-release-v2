@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -17,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -227,14 +227,14 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     private void setArtistImg(final SimpleItemViewHolder holder, final int position, final Size size, final String path) {
 
         if (isPathValid(path))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.default_album_art_home, null)).noFade()
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null)).noFade()
                     .centerCrop().resize(size.width, size.height)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else
             setDefaultImage(holder.defaultImg, size.width, size.height);
     }
 
     private void setDefaultImage(ImageView img, int width, int height){
-        img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.default_album_art_home, width, height));
+        img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, width, height));
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position, final int itemView) {

@@ -135,7 +135,7 @@
             android:name=".ui.musiclist.activity.SearchDetailListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Effect">
+            android:theme="@style/AppTheme.List">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -148,7 +148,7 @@
             android:name=".ui.musiclist.activity.FavouriteListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Effect">
+            android:theme="@style/AppTheme.List">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
