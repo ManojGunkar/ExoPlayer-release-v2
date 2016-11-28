@@ -207,15 +207,15 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                             case R.id.popup_song_add_fav :
                                 if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                                     if(MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())){
-                                        MediaController.getInstance(activity).removeItemToFavoriteList(false, collection.getMediaElement().get(position).getItemId());
+                                        MediaController.getInstance(activity).removeItemToFavoriteList(collection.getMediaElement().get(position).getItemId());
                                     }else{
-                                        MediaController.getInstance(activity).addSongsToFavoriteList(false, collection.getMediaElement().get(position));
+                                        MediaController.getInstance(activity).addSongsToFavoriteList(collection.getMediaElement().get(position));
                                     }
                                 }else{
                                     if(MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())){
-                                        MediaController.getInstance(activity).removeItemToFavoriteList(false, ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position).getItemId());
+                                        MediaController.getInstance(activity).removeItemToFavoriteList(((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position).getItemId());
                                     }else{
-                                        MediaController.getInstance(activity).addSongsToFavoriteList(false, ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
+                                        MediaController.getInstance(activity).addSongsToFavoriteList(((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
                                     }
                                 }
                                 break;

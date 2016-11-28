@@ -142,9 +142,9 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                                 break;
                             case R.id.popup_song_add_fav :
                                 if(MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())){
-                                    MediaController.getInstance(context).removeItemToFavoriteList(false, item.getMediaElement().get(position).getItemId());
+                                    MediaController.getInstance(context).removeItemToFavoriteList(item.getMediaElement().get(position).getItemId());
                                 }else{
-                                    MediaController.getInstance(context).addSongsToFavoriteList(false, item.getMediaElement().get(position));
+                                    MediaController.getInstance(context).addSongsToFavoriteList(item.getMediaElement().get(position));
                                 }
                                 break;
                         }

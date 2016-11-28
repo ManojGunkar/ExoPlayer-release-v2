@@ -126,7 +126,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
                                 util.addToPlaylist((FavouriteListActivity)context, list, null);
                                 break;
                             case R.id.popup_song_add_fav :
-                                MediaController.getInstance(context).removeItemToFavoriteList(false, itemList.get(position).getItemId());
+                                MediaController.getInstance(context).removeItemToFavoriteList(itemList.get(position).getItemId());
                                 itemList = MediaController.getInstance(context).getFavouriteListItems();
                                 updateFavoriteList(MediaController.getInstance(context).getFavouriteListItems());
                                 break;

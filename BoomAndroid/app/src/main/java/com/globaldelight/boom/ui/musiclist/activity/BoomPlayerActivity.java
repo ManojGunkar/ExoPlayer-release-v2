@@ -518,7 +518,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             boolean isCurrentTrackFav = MediaController.getInstance(this).isFavouriteItems(App.getPlayerEventHandler().getPlayingItem().getItemId());
             if (isCurrentTrackFav) {
                 if(isUser){
-                    MediaController.getInstance(this).removeItemToFavoriteList(false, App.getPlayerEventHandler().getPlayingItem().getItemId());
+                    MediaController.getInstance(this).removeItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem().getItemId());
                     Toast.makeText(this, getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                     mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_normal));
                 }else {
@@ -526,7 +526,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 }
             } else {
                 if(isUser){
-                    MediaController.getInstance(this).addSongsToFavoriteList(false, App.getPlayerEventHandler().getPlayingItem());
+                    MediaController.getInstance(this).addSongsToFavoriteList(App.getPlayerEventHandler().getPlayingItem());
                     Toast.makeText(this, getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                     mFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_favourites_selected));
                 }else{

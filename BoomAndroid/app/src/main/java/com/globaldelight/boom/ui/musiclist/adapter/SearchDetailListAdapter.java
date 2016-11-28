@@ -116,9 +116,9 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                                     break;
                                 case R.id.popup_song_add_fav :
                                     if(MediaController.getInstance(context).isFavouriteItems(resultItemList.get(position).getItemId())){
-                                        MediaController.getInstance(context).removeItemToFavoriteList(false, resultItemList.get(position).getItemId());
+                                        MediaController.getInstance(context).removeItemToFavoriteList(resultItemList.get(position).getItemId());
                                     }else{
-                                        MediaController.getInstance(context).addSongsToFavoriteList(false, resultItemList.get(position));
+                                        MediaController.getInstance(context).addSongsToFavoriteList(resultItemList.get(position));
                                     }
                                     break;
                             }
