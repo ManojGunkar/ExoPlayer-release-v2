@@ -183,5 +183,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:background">@color/colorPrimary</item>
+        <item name="android:colorAccent">@color/white</item>
+
+
     </style>
+
 </resources>

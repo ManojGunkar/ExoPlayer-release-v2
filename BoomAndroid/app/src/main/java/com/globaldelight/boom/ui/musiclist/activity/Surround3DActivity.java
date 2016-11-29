@@ -100,9 +100,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    public void checkUserPurchase() {
 
-    }
 
     public void initViews(){
         musicReceiver = new MusicReceiver(this);
@@ -403,6 +401,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 App.getPlayerEventHandler().set3DAudioEnable(false);
                 collapse();
             } else {
+                //TODO
                 int purchaseType = audioEffectPreferenceHandler.getUserPurchaseType();
                 switch (AudioEffect.purchase.fromOrdinal(purchaseType)) {
                     case NORMAL_USER:

@@ -19,6 +19,7 @@ public class Preferences {
     public static final String APP_NEW_LAUNCH = "APP_NEW_LAUNCH";
     public static final String APP_LAST_OPEN = "APP_LAST_OPEN";
     public static final String INSTALL_DATE = "APP_INSTALL_DATE";
+    public static final String EXTENDED_DATE = "EXTENDED_DATE";
     public static final String PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE = "PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE";
     public static final String PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE = "PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE";
     public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
