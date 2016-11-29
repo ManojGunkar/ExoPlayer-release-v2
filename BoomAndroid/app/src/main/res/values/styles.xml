@@ -27,7 +27,7 @@
         <item name="searchViewStyle">@style/ToolbarTheme</item>
         <item name="android:textColorHint">@color/progress_gray</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:itemBackground">#171921</item>
+        <item name="android:itemBackground">@color/dialog_background</item>
     </style>
 
     <style name="AppTheme.Album" parent="AppTheme">
@@ -38,7 +38,7 @@
         <item name="android:navigationBarColor">@android:color/black</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:itemBackground">#171921</item>
+        <item name="android:itemBackground">@color/dialog_background</item>
     </style>
 
     <style name="WidgetTheme">
@@ -139,7 +139,7 @@
         <item name="searchViewStyle">@style/AppTheme.ToolbarTheme</item>
         <item name="android:textColorHint">@android:color/white</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:itemBackground">#171921</item>
+        <item name="android:itemBackground">@color/dialog_background</item>
     </style>
 
 

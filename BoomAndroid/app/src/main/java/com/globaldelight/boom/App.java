@@ -134,7 +134,7 @@ public class App extends Application implements SensorEventListener {
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        Log.i("Sensor", "mAccel" + mAccel);
+//        Log.i("Sensor", "mAccel" + mAccel);
 
     }
 
@@ -143,20 +143,34 @@ public class App extends Application implements SensorEventListener {
         intent.setAction(PlayerSettings.ACTION_SHAKE_EVENT);
 
         String selectedShakeOption = Preferences.readString(this, Preferences.SHAKE_GESTURE_PREF, PlayerSettings.ShakeGesture.SHAKE_GESTURE_NONE.toString());
-        //PlayerSettings.ShakeGesture selGesture = PlayerSettings.ShakeGesture.toShakeGesture(selectedShakeOption);
-        /*switch (selGesture) {
+        PlayerSettings.ShakeGesture selGesture = PlayerSettings.ShakeGesture.toShakeGesture(selectedShakeOption);
+        switch (selGesture) {
             case SHAKE_GESTURE_NONE:
 
                 break;
             case SHAKE_GESTURE_NEXT:
-
+                if(null != service){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    getPlayerEventHandler().playNextSong(true);
+                }
                 break;
             case SHAKE_GESTURE_PLAY:
-
+                if(null != service){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    getPlayerEventHandler().onPlayingItemClicked();
+                }
                 break;
 
 
-        }*/
+        }
         intent.putExtra(PlayerSettings.SHAKE_EVENT_ACTION_TYPE, selectedShakeOption);
         sendBroadcast(intent);
 

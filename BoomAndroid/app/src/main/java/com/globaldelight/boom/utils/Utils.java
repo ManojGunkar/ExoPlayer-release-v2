@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -36,6 +37,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.adapter.AddToPlaylistDialogListAdapter;
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 
@@ -146,7 +148,7 @@ public class Utils {
                 .titleColor(Color.parseColor("#ffffff"))
                 .positiveColor(context.getResources().getColor(R.color.colorPrimary))
                 .widgetColor(Color.parseColor("#ffffff"))
-                .contentColor(Color.parseColor("#454649"))
+                .contentColor(Color.parseColor("#ffffff"))
                 .customView(rv, false)
                 .positiveText(R.string.new_playlist)
                 .negativeText(R.string.close)
@@ -170,12 +172,11 @@ public class Utils {
     private void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
         new MaterialDialog.Builder(context)
                 .title(R.string.new_playlist)
-                .title(R.string.new_playlist)
                 .backgroundColor(Color.parseColor("#171921"))
                 .titleColor(Color.parseColor("#ffffff"))
                 .positiveColor(context.getResources().getColor(R.color.colorPrimary))
                 .widgetColor(Color.parseColor("#ffffff"))
-                .contentColor(Color.parseColor("#454649"))
+                .contentColor(Color.parseColor("#ffffff"))
                 .input(null, null, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
@@ -183,6 +184,7 @@ public class Utils {
 
                             MediaController.getInstance(context).createBoomPlaylist(input.toString());
                             addToPlaylist(activity, song, fromPlaylist);
+                            context.sendBroadcast(new Intent(PlayerService.ACTION_UPDATE_BOOM_PLAYLIST));
                             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
                             MixPanelAnalyticHelper.getInstance(context).getPeople().set(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST, input.toString());
                         }

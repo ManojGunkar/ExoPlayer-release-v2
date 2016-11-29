@@ -70,7 +70,7 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
                                 break;
                             case R.id.popup_playlist_delete:
                                 MediaController.getInstance(context).deleteBoomPlaylist(((MediaItemCollection) playList.get(position)).getItemId());
-                                updateNewList(MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                                updateList(MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
                                 break;
                         }
                         return false;
@@ -91,11 +91,6 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
                 context.sendBroadcast(new Intent(PlayerService.ACTION_UPDATE_BOOM_PLAYLIST));
             }
         });
-    }
-
-    public void updateNewList(ArrayList<? extends IMediaItemBase> newList) {
-        playList = newList;
-        notifyDataSetChanged();
     }
 
     public void playPlaylist(final int position) {
@@ -123,7 +118,7 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
                 } else {
                     MediaController.getInstance(context).renameBoomPlaylist(edittext.getText().toString(),
                             playList.get(position).getItemId());
-                    updateNewList(MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                    updateList(MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
                     notifyDataSetChanged();
                 }
             }

@@ -14,5 +14,7 @@
     <color name="normal">#ffcccccc</color>
     <color name="black_shade">#222327</color>
 
+    <color name="dialog_background">#171921</color>
+
 
 </resources>

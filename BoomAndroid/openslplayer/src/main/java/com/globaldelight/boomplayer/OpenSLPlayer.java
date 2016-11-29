@@ -278,7 +278,11 @@ public class OpenSLPlayer implements Runnable {
         // configure OpenSLPlayer
         createAudioPlayer(256*1024, sampleRate, channels);
 
-        extractor.selectTrack(0);
+        if(null != extractor) {
+            extractor.selectTrack(0);
+        }else{
+            return;
+        }
 
         // start decoding
         final long kTimeOutUs = 1000;
