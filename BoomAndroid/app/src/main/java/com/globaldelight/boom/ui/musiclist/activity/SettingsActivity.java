@@ -75,7 +75,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     // private Button btnTimerStart;
     //  private Button btnTimerCancel;
     //  private Button btnTimerReset;
-    private RegularTextView txtTimer, titleSupport, titleAbout, titleShare;
+    private RegularTextView titleSupport, titleAbout, titleShare;
+    //private RegularTextView txtTimer;
     // private RegularTextView txtStopTime;
     private CountDownTimer mCountDownTimer;
     private long sleepTime;
@@ -155,7 +156,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         btnTimerStart.setOnClickListener(this);
         btnTimerReset.setOnClickListener(this);
         btnTimerCancel.setOnClickListener(this);*/
-        txtTimer = (RegularTextView) findViewById(R.id.txtTimer);
+        //txtTimer = (RegularTextView) findViewById(R.id.txtTimer);
         titleAbout = (RegularTextView) findViewById(R.id.title_about);
         titleSupport = (RegularTextView) findViewById(R.id.title_support);
         titleShare = (RegularTextView) findViewById(R.id.title_share);
@@ -319,13 +320,17 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
-                txtTimer.setText(hms);
-
-
+                // txtTimer.setText(hms);
+                txtDescTimer.setText(hms + " remaining.");
+                
             }
 
             public void onFinish() {
-                txtTimer.setText("00:00:00");
+                //txtTimer.setText("00:00:00");
+                txtDescTimer.setText("00:00:00" + " remaining.");
+                Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
+
+
             }
 
         }.start();
@@ -353,7 +358,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void cancelTimer() {
-        String TimerTime = txtTimer.getText().toString();
+        // String TimerTime = txtTimer.getText().toString();
+        String TimerTime = txtDescTimer.getText().toString().substring(0, 7);
+        Toast.makeText(this, TimerTime, Toast.LENGTH_SHORT).show();
         DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         try {
             Date dt = formatter.parse(TimerTime);
@@ -426,10 +433,15 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
                             TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
                             TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
-                    txtTimer.setText(hms);
+                    // txtTimer.setText(hms);
+                    txtDescTimer.setText(hms + " remaining.");
                 }
                 public void onFinish() {
-                    txtTimer.setText("00:00:00");
+                    //txtTimer.setText("00:00:00");
+                    txtDescTimer.setText("00:00:00" + " remaining.");
+                    Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
+
+
                 }
             }.start();
         } else {
@@ -439,7 +451,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     public void setUiTimerEditMode() {
         // timePicker.setVisibility(View.VISIBLE);
-        txtTimer.setVisibility(View.GONE);
+        //txtTimer.setVisibility(View.GONE);
         //  btnTimerCancel.setVisibility(View.INVISIBLE);
         //  btnTimerReset.setVisibility(View.INVISIBLE);
         //  btnTimerStart.setVisibility(View.VISIBLE);
@@ -452,7 +464,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     public void setUiTimerMode() {
         // timePicker.setVisibility(View.GONE);
-        txtTimer.setVisibility(View.VISIBLE);
+        //  txtTimer.setVisibility(View.VISIBLE);
         // btnTimerCancel.setVisibility(View.VISIBLE);
         // btnTimerReset.setVisibility(View.VISIBLE);
         // btnTimerStart.setVisibility(View.INVISIBLE);
@@ -479,14 +491,14 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     customTimepicker(false);
                 }
                 break;
-            case R.id.txtTimer:
+            /*case R.id.txtTimer:
                 customTimepicker(true);
                 try {
                     cancelTimer();
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
-                break;
+                break;*/
                 // customTimepicker();
             //  break;
             //case R.id.btn_timer_cancel:
@@ -494,6 +506,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             //   cancelTimer();
             //  break;
             case R.id.title_about:
+                Intent abIntent = new Intent(SettingsActivity.this, AboutActivity.class);
+                startActivity(abIntent);
                 break;
             case R.id.title_share:
                 try {
@@ -501,7 +515,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     i.setType("text/plain");
                     i.putExtra(Intent.EXTRA_SUBJECT, "BOOM");
                     String sAux = "\nLet me recommend you this application\n\n";
-                    sAux = sAux + "https://play.google.com/store/apps/details?id=com.player.boom \n\n";
+                    sAux = sAux + "https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n";
                     i.putExtra(Intent.EXTRA_TEXT, sAux);
                     startActivity(Intent.createChooser(i, "choose one"));
                 } catch (Exception e) {
@@ -512,7 +526,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             case R.id.title_support:
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                         "mailto", "boomandroid@globaldelight.com", null));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "I Need Some Help With Boom for iOS");
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "I Need Some Help With Boom for Android");
                 emailIntent.putExtra(Intent.EXTRA_TEXT, "Hello Team,");
                 startActivity(Intent.createChooser(emailIntent, "Send email..."));
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ABOUT_CONTACT_US_BUTTON_TAPPED);

@@ -22,7 +22,6 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -70,10 +69,13 @@ public class SplashActivity extends AppCompatActivity {
 
             //get current date
             currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+
             //new Launch of app.Use for tutorial
             if (!Preferences.readBoolean(this, Preferences.APP_NEW_LAUNCH, false)) {
                 Preferences.writeString(this, Preferences.INSTALL_DATE, currentDate);
+                audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.FIVE_DAY_OFFER);
             }
+
             Preferences.writeBoolean(SplashActivity.this, Preferences.APP_NEW_LAUNCH, true);
 
 
@@ -151,25 +153,5 @@ public class SplashActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void validateTrialPeriod() {
 
-        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
-        String installDate = Preferences.readString(this, Preferences.INSTALL_DATE, currentDate);
-
-
-        try {
-            Date date1 = myFormat.parse(installDate);
-            Date date2 = myFormat.parse(currentDate);
-            long diff = date2.getTime() - date1.getTime();
-            System.out.println("Days: " + TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS));
-
-            int purchaseType = audioEffectPreferenceHandler.getUserPurchaseType();
-
-            if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 5 && purchaseType == AudioEffect.purchase.FIVE_DAY_OFFER.ordinal()) {
-                audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.NORMAL_USER);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-    }
 }

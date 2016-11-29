@@ -96,7 +96,12 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         if (mAppNewLaunch && !audioEffectPreferenceHandler.isAudioEffectOn()) {
             tipWindow = new TooltipWindow(Surround3DActivity.this, TooltipWindow.DRAW_BOTTOM, getResources().getString(R.string.tutorial_boom_effect_poweron));
             tipWindow.showToolTip(findViewById(R.id.effect_power_switch), TooltipWindow.DRAW_ARROW_TOP_RIGHT);
+
         }
+    }
+
+    public void checkUserPurchase() {
+
     }
 
     public void initViews(){
@@ -202,6 +207,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             mEffectTxt.setTextColor(Color.WHITE);
             mEffectSwitchTxt.setTextColor(Color.WHITE);
             MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_EFFECTS_TURNED_ON);
+            Preferences.writeBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE, false);
         }else{
             mEffectSwitchTxt.setText(getResources().getString(R.string.status_off));
             /*mEffectPowerBtn.setChecked(false);*/

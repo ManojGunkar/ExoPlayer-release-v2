@@ -1,20 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/appBackground"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#171921"
     android:orientation="vertical">
 
-    <com.globaldelight.boom.ui.widgets.RegularTextView
-        android:id="@+id/textView5"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+
+        android:orientation="horizontal">
+    <com.globaldelight.boom.ui.widgets.RegularTextView
+        android:id="@+id/textView5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:text="Hour     Minute"
-        android:textColor="@color/white"
+        android:layout_weight="0.5"
+        android:gravity="right"
+        android:paddingRight="23dp"
+        android:text="Hour"
+        android:textColor="@color/white_shade"
+
         android:textSize="15sp" />
+
+        <com.globaldelight.boom.ui.widgets.RegularTextView
+            android:id="@+id/textView6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:gravity="left"
+            android:paddingLeft="18dp"
+            android:text="Minute"
+            android:textColor="@color/white_shade"
+            android:textSize="15sp" />
+
+
+    </LinearLayout>
+
 
     <TimePicker
         android:id="@+id/timePickerdialog"
@@ -25,9 +49,14 @@
         android:numbersTextColor="#995394"
         android:textColorPrimary="#359875"
         android:textColorSecondary="#897530"
+
         android:textSize="@dimen/settings_item_title_size"
         android:timePickerMode="spinner" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#222327" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,7 +64,7 @@
         <com.globaldelight.boom.ui.widgets.RegularButton
             android:id="@+id/tmreset"
             style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
             android:text="@string/timer_reset"
@@ -44,7 +73,7 @@
         <com.globaldelight.boom.ui.widgets.RegularButton
             android:id="@+id/tmcancel"
             style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
             android:text="@string/timer_cancel"
@@ -53,7 +82,7 @@
         <com.globaldelight.boom.ui.widgets.RegularButton
             android:id="@+id/tmstart"
             style="?android:attr/borderlessButtonStyle"
-            android:layout_width="56dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.4"
             android:text="@string/timer_start"

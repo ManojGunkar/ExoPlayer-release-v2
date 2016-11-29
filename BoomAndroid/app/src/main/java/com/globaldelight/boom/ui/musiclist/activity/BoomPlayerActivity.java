@@ -33,6 +33,7 @@ import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.purchase.api.BoomServerRequest;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.widgets.CircularSeekBar;
 import com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView;
@@ -74,7 +75,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private CircularCoverView mAlbumArt;
     private CircularSeekBar mTrackSeek;
     private ImageView mPlayPauseBtn, mLibraryBtn, mAudioEffectBtn, mUpNextQueue;
-    private TooltipWindow tipWindow;
+    private TooltipWindow tipWindowLibrary, tipWindowEffect;
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -346,17 +347,31 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         registerReceiver(mPlayerBroadcastReceiver, intentFilter);
+        new BoomServerRequest().getAccessToken(this);
+
     }
 
     public void showCoachMark() {
-        if (App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null && audioEffectPreferenceHandler.isAudioEffectOn()) {
+    /*    if (App.getPlayingQueueHandler().getUpNextList().getPlayingItem() == null && Preferences.readBoolean(this,Preferences.PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE,true)){
+            tipWindowLibrary = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP, getResources().getString(R.string.tutorial_select_song));
+            tipWindowLibrary.showToolTip(findViewById(R.id.library_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
+            Preferences.writeBoolean(this,Preferences.PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE,false);
+
+        }
+        if (App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null && !audioEffectPreferenceHandler.isAudioEffectOn() && Preferences.readBoolean(this,Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE,true)) {
+            tipWindowEffect = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP, getResources().getString(R.string.tutorial_boom_effect));
+            tipWindowEffect.showToolTip(findViewById(R.id.audio_effect_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
+        }*/
+
+       /* if (App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null && audioEffectPreferenceHandler.isAudioEffectOn()) {
             if (tipWindow != null) {
                 tipWindow.dismissTooltip();
             }
         } else {
             tipWindow = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP, getResources().getString(R.string.tutorial_boom_effect));
             tipWindow.showToolTip(findViewById(R.id.audio_effect_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
-        }
+        }*/
+
     }
 
     @Override
@@ -558,8 +573,11 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     protected void onPause() {
         super.onPause();
         isPlayerResume = false;
-        if (tipWindow != null) {
-            tipWindow.dismissTooltip();
+        if (tipWindowLibrary != null) {
+            tipWindowLibrary.dismissTooltip();
+        }
+        if (tipWindowEffect != null) {
+            tipWindowEffect.dismissTooltip();
         }
     }
 
