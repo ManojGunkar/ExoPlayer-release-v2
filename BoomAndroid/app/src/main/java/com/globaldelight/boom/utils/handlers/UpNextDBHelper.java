@@ -171,9 +171,9 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
     public void addSong(IMediaItemBase song, int position, QueueType queueType) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.execSQL("UPDATE "+TABLE_UPNEXT+" SET "+ SONG_KEY_ID + "='" + (SONG_KEY_ID + 1) + "' WHERE " + SONG_KEY_ID + ">='"+ position + "'");
-
-        db.close();
+//        db.execSQL("UPDATE "+TABLE_UPNEXT+" SET "+ SONG_KEY_ID + "='" + SONG_KEY_ID +"'+1 WHERE " + SONG_KEY_ID + ">='"+ position + "'");
+//
+//        db.close();
 
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();

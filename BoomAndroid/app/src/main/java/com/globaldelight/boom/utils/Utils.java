@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -138,11 +139,14 @@ public class Utils {
         RecyclerView rv = (RecyclerView) activity.getLayoutInflater()
                 .inflate(R.layout.addtoplaylist, null);
         rv.setLayoutManager(new LinearLayoutManager(context));
-        rv.addItemDecoration(new SimpleDividerItemDecoration(context, 1));
-
         rv.setAdapter(adapter);
         MaterialDialog dialog = new MaterialDialog.Builder(context)
                 .title(R.string.add_to_playlist)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#454649"))
                 .customView(rv, false)
                 .positiveText(R.string.new_playlist)
                 .negativeText(R.string.close)
@@ -166,6 +170,12 @@ public class Utils {
     private void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
         new MaterialDialog.Builder(context)
                 .title(R.string.new_playlist)
+                .title(R.string.new_playlist)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#454649"))
                 .input(null, null, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {

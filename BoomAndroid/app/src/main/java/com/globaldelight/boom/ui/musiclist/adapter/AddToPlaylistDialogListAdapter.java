@@ -3,6 +3,7 @@ package com.globaldelight.boom.ui.musiclist.adapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -20,6 +21,7 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 
 import java.util.ArrayList;
 import static android.app.AlertDialog.Builder;
@@ -51,7 +53,7 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
 
     @Override
     public void onBindViewHolder(final SimpleItemViewHolder holder, final int position) {
-        holder.mainView.setBackgroundColor(0xffffffff);
+        holder.mainView.setBackgroundColor(Color.parseColor("#171921"));
         holder.name.setText(playList.get(position).getItemTitle());
         holder.count.setText(context.getResources().getString(R.string.songs)
                 + " " + ((MediaItemCollection) playList.get(position)).getItemCount());
@@ -152,14 +154,14 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public View mainView, menu;
-        public TextView name, count;
+        public RegularTextView name, count;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            name = (TextView) itemView.findViewById(R.id.playlist_dialog_name);
+            name = (RegularTextView) itemView.findViewById(R.id.playlist_dialog_name);
             menu = itemView.findViewById(R.id.playlist_dialog_menu);
-            count = (TextView) itemView.findViewById(R.id.playlist_dialog_song_count);
+            count = (RegularTextView) itemView.findViewById(R.id.playlist_dialog_song_count);
         }
     }
 

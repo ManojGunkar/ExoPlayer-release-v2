@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
@@ -23,6 +24,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
@@ -201,7 +203,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                                 }
                                 break;
                             case R.id.popup_playlist_rename:
-                                renameDialog(position);
+                                renameDialog(position, items.get(position).getItemTitle());
                                 break;
                             case R.id.popup_add_playlist :
                                 ((MediaItemCollection)items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
@@ -224,34 +226,31 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
 
     }
 
-    private void renameDialog(final int position) {
-        final EditText edittext = new EditText(context);
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        alert.setTitle(context.getResources().getString(R.string.dialog_txt_rename));
-
-        alert.setView(edittext);
-
-        alert.setPositiveButton(context.getResources().getString(R.string.dialog_txt_done), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                if (edittext.getText().toString().matches("")) {
-                    renameDialog(position);
-                } else {
-                    MediaController.getInstance(context).renameBoomPlaylist(edittext.getText().toString(),
-                            items.get(position).getItemId());
-                    updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
-                    notifyDataSetChanged();
-                }
-            }
-        });
-
-        alert.setNegativeButton(context.getResources().getString(R.string.dialog_txt_cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-            }
-        });
-
-        alert.show();
+    private void renameDialog(final int position, String itemTitle) {
+        new MaterialDialog.Builder(context)
+                .title(R.string.dialog_txt_rename)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#454649"))
+                .cancelable(true)
+                .positiveText(context.getResources().getString(R.string.dialog_txt_done))
+                .negativeText(context.getResources().getString(R.string.dialog_txt_cancel))
+                .input(context.getResources().getString(R.string.new_playlist), itemTitle, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        if (input.toString().matches("")) {
+                            renameDialog(position, items.get(position).getItemTitle());
+                        } else {
+                            MediaController.getInstance(context).renameBoomPlaylist(input.toString(),
+                                    items.get(position).getItemId());
+                            updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                            notifyDataSetChanged();
+                        }
+                    }
+                }).show();
     }
-
 
     private boolean fileExist(String albumArtPath) {
         File imgFile = new File(albumArtPath);
