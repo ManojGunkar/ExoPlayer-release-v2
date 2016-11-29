@@ -72,6 +72,7 @@
     <dimen name="six_hundred_seventy_eight_pt">170dp</dimen>
     <dimen name="six_hundred_pt">150dp</dimen>
     <dimen name="one_hundred__eight_pt">27dp</dimen>
+    <dimen name="one_hundred_eighty_pt">43dp</dimen>
     <dimen name="one_hundred_thirty_six_pt">34dp</dimen>
     <dimen name="one_hundred_eighty_two_pt">46dp</dimen>
     <dimen name="eight_hundred_ninety_two_pt">223dp</dimen>
@@ -79,12 +80,15 @@
     <dimen name="fifty_six_pt">14dp</dimen>
     <dimen name="twenty_eight_pt">7dp</dimen>
     <dimen name="one_hundred_sixty_two_pt">41dp</dimen>
+
+    <dimen name="noti_small_art_size">50dp</dimen>
     <dimen name="one_hundred_twelve_pt">28dp</dimen>
     <dimen name="two_hundred_twenty_pt">55dp</dimen>
     <dimen name="seventy_two_pt">18dp</dimen>
     <dimen name="one_hundred_eighty_six_pt">47dp</dimen>
 
     <dimen name="two_hundred_sixteen_pt">56dp</dimen>
+    <dimen name="mini_player_height">51dp</dimen>
 
     <dimen name="fifty_six_pt_txt">14dp</dimen>
     <dimen name="seventy_two_pt_txt">18sp</dimen>
