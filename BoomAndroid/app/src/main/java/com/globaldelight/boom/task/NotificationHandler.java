@@ -219,10 +219,10 @@ public class NotificationHandler {
     private void setDefaultImageView() {
         Utils utils = new Utils(context);
         notificationCompat.bigContentView.setImageViewBitmap(R.id.noti_album_art,
-                utils.getBitmapOfVector(context, R.drawable.default_album_art,
+                utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid,
                         utils.dpToPx(context, 100), utils.dpToPx(context, 100)));
         notificationCompat.contentView.setImageViewBitmap(R.id.noti_album_art,
-                utils.getBitmapOfVector(context, R.drawable.default_album_art,
+                utils.getBitmapOfVector(context, R.drawable.ic_default_list,
                         utils.dpToPx(context, 50), utils.dpToPx(context, 50)));
 //        notificationManager.notify(NOTIFICATION_ID, notificationCompat);
     }

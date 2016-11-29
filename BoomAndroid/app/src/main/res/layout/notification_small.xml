@@ -2,21 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@color/dialog_background"
     android:orientation="horizontal"
-    android:id="@+id/notification_small_player"
-    android:padding="10dp">
+    android:gravity="center_vertical"
+    android:padding="@dimen/thirty_two_px">
 
     <ImageView
         android:id="@+id/noti_album_art"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/noti_small_art_size"
+        android:layout_height="@dimen/noti_small_art_size"
         android:layout_weight="0" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="@dimen/thirty_two_px"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:textColor="@color/white"
-            android:textSize="17sp" />
+            android:textSize="@dimen/sixty_eight_pt" />
 
         <TextView
             android:id="@+id/noti_artist"
@@ -34,8 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:singleLine="true"
-            android:textColor="@color/default_blue_light"
-            android:textSize="15sp" />
+            android:textColor="@color/white"
+            android:textSize="@dimen/sixty_pt" />
     </LinearLayout>
 
     <LinearLayout
@@ -45,26 +45,26 @@
 
         <ImageView
             android:id="@+id/noti_prev_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/thirty_two_px"
             android:background="@drawable/unbounded_ripple"
-            android:src="@drawable/ic_boom_previous" />
+            android:src="@drawable/ic_boom_previous"/>
 
         <ImageView
             android:id="@+id/noti_play_button"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/ic_player_pause"
-            android:background="@drawable/unbounded_ripple"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/thirty_two_px"
+            android:background="@drawable/unbounded_ripple"
+            android:src="@drawable/ic_player_play"/>
 
         <ImageView
             android:id="@+id/noti_next_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/thirty_two_px"
             android:background="@drawable/unbounded_ripple"
-            android:src="@drawable/ic_boom_next" />
+            android:src="@drawable/ic_boom_next"/>
     </LinearLayout>
 </LinearLayout>

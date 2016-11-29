@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@color/dialog_background"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/mini_player_height">
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/track_progress" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:weightSum="100"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal|center_vertical"
+            android:layout_weight="16.7">
+            <ImageView
+                android:layout_width="@dimen/one_hundred_eighty_pt"
+                android:layout_height="@dimen/one_hundred_eighty_pt"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_default_list"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="69"
+            android:orientation="vertical"
+            android:gravity="center">
+            <com.globaldelight.boom.ui.widgets.RegularTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="normal"
+                android:text="AAAAAAAAAAAAA"
+                android:textColor="@color/yellow"/>
+            <com.globaldelight.boom.ui.widgets.RegularTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:text="vhjbbjnknk"
+                android:textStyle="normal"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="14.3">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_player_play"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

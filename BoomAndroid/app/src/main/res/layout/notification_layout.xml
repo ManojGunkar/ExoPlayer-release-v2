@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/dialog_background"
     android:id="@+id/notification_large_player"
     android:orientation="horizontal">
 
@@ -16,7 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/noti_big_height"
         android:layout_weight="1"
-        android:background="@color/colorPrimary"
         android:orientation="vertical">
 
         <LinearLayout
@@ -25,7 +25,7 @@
             android:layout_gravity="top"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="@dimen/thirty_two_px">
 
             <TextView
                 android:id="@+id/noti_name"
@@ -34,15 +34,15 @@
                 android:layout_marginBottom="5dp"
                 android:singleLine="true"
                 android:textColor="@color/white"
-                android:textSize="18sp" />
+                android:textSize="@dimen/seventy_two_px" />
 
             <TextView
                 android:id="@+id/noti_artist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:textColor="@color/default_blue_light"
-                android:textSize="14sp" />
+                android:textColor="@color/white"
+                android:textSize="@dimen/sixty_pt" />
 
         </LinearLayout>
 
@@ -53,33 +53,30 @@
             android:layout_weight="0"
             android:gravity="center"
             android:orientation="horizontal"
-            android:paddingBottom="10dp">
+            android:paddingBottom="@dimen/thirty_two_px">
 
             <ImageView
                 android:id="@+id/noti_prev_button"
-                android:layout_width="@dimen/noti_button_height"
-                android:layout_height="@dimen/noti_button_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/unbounded_ripple"
-                android:padding="5dp"
                 android:src="@drawable/ic_boom_previous" />
 
             <ImageView
                 android:id="@+id/noti_play_button"
-                android:layout_width="@dimen/noti_button_height"
-                android:layout_height="@dimen/noti_button_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/unbounded_ripple"
-                android:src="@drawable/ic_player_pause"
-                android:padding="5dp"/>
+                android:src="@drawable/ic_player_pause"/>
 
             <ImageView
                 android:id="@+id/noti_next_button"
-                android:layout_width="@dimen/noti_button_height"
-                android:layout_height="@dimen/noti_button_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/unbounded_ripple"
-                android:padding="5dp"
                 android:src="@drawable/ic_boom_next" />
         </LinearLayout>
 
