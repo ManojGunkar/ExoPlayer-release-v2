@@ -43,7 +43,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!isExpire("NOV-30-2016")) {
+        if(!isExpire("DEC-31-2016")) {
             startService(new Intent(this, PlayerService.class));
             new Handler().postDelayed(new Runnable() {
 
