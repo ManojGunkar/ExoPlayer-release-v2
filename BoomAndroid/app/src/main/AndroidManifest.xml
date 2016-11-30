@@ -52,10 +52,15 @@
         <activity
             android:name=".ui.musiclist.activity.BoomPlayerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Player" />
+            android:theme="@style/AppTheme.Player" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            </activity>
         <activity
             android:name=".ui.musiclist.activity.DeviceMusicActivity"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Main">
             <intent-filter>
@@ -94,7 +99,7 @@
         </activity>
         <activity
             android:name=".ui.musiclist.activity.AlbumActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Album">
             <intent-filter>
@@ -107,7 +112,7 @@
         </activity>
         <activity
             android:name=".ui.musiclist.activity.DetailAlbumActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Album">
             <intent-filter>
@@ -120,7 +125,7 @@
         </activity>
         <activity
             android:name=".ui.musiclist.activity.SongsDetailListActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Album">
             <intent-filter>
@@ -133,7 +138,7 @@
         </activity>
         <activity
             android:name=".ui.musiclist.activity.SearchDetailListActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.List">
             <intent-filter>
@@ -146,7 +151,7 @@
         </activity>
         <activity
             android:name=".ui.musiclist.activity.FavouriteListActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.List">
             <intent-filter>

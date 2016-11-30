@@ -25,46 +25,64 @@
             android:textStyle="normal" />
     </android.support.v7.widget.Toolbar>
 
-    <android.support.design.widget.CoordinatorLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/playlistContainer"
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal|top"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            android:layout_above="@+id/boom_playlist_mini_player"
+            android:layout_alignParentTop="true">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/playlistContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal|top"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+            <LinearLayout
+                android:id="@+id/playlist_empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_boomplaylist_placeholder"/>
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#787878"
+                    android:gravity="center"
+                    android:textSize="@dimen/eighty_eighty_pt"
+                    android:text="@string/boom_playlist_placeholder_txt"
+                    android:layout_marginTop="@dimen/ninety_six_pt"/>
+            </LinearLayout>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/add_boom_playlist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/sixty_four_pt"
+                android:src="@drawable/ic_floating_playlist_addtracks"
+                app:layout_anchor="@+id/playlistContainer"
+                app:layout_anchorGravity="bottom|end"
+                app:layout_behavior="com.globaldelight.boom.ui.musiclist.FloatingScrollBehavior"/>
+        </android.support.design.widget.CoordinatorLayout>
 
         <LinearLayout
-            android:id="@+id/playlist_empty_view"
+            android:id="@+id/boom_playlist_mini_player"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/mini_player_height"
+            android:elevation="12dp"
             android:visibility="gone"
-            android:gravity="center"
-            android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_boomplaylist_placeholder"/>
-            <com.globaldelight.boom.ui.widgets.RegularTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#787878"
-                android:gravity="center"
-                android:textSize="@dimen/eighty_eighty_pt"
-                android:text="@string/boom_playlist_placeholder_txt"
-                android:layout_marginTop="@dimen/ninety_six_pt"/>
+            android:layout_alignParentBottom="true">
+            <include
+                layout="@layout/mini_player"/>
         </LinearLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/add_boom_playlist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/sixty_four_pt"
-            android:src="@drawable/ic_floating_playlist_addtracks"
-            app:layout_anchor="@+id/playlistContainer"
-            app:layout_anchorGravity="bottom|end"
-            app:layout_behavior="com.globaldelight.boom.ui.musiclist.FloatingScrollBehavior"/>
-        </android.support.design.widget.CoordinatorLayout>
+    </RelativeLayout>
 </LinearLayout>

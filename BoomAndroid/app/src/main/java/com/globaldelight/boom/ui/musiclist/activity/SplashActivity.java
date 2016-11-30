@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
@@ -44,7 +45,10 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!isExpire("NOV-30-2016")) {
+        if(null != App.getService()){
+            startPlayer();
+        }else
+        if(!isExpire("DEC-30-2016")) {
             startService(new Intent(this, PlayerService.class));
             new Handler().postDelayed(new Runnable() {
 
@@ -57,9 +61,7 @@ public class SplashActivity extends AppCompatActivity {
                 public void run() {
                     // This method will be executed once the timer is over
                     // Start your app main activity
-                    Intent i = new Intent(SplashActivity.this, BoomPlayerActivity.class);
-                    startActivity(i);
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    startPlayer();
                     // close this activity
                     finish();
                 }
@@ -110,6 +112,13 @@ public class SplashActivity extends AppCompatActivity {
             Toast.makeText(this, "App Expired...!", Toast.LENGTH_LONG).show();
             finish();
         }
+    }
+
+    private void startPlayer(){
+        Intent i = new Intent(SplashActivity.this, BoomPlayerActivity.class);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        finish();
     }
 
     private boolean isExpire(String date){
