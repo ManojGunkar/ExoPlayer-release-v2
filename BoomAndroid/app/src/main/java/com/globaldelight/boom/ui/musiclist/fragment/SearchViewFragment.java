@@ -33,14 +33,14 @@ public class SearchViewFragment extends Fragment {
         mainView = view;
         context = view.getContext();
         activity = (BoomMasterActivity) getActivity();
+        recyclerView = (RecyclerView) mainView.findViewById(R.id.search_view_results);
+        emptyView = mainView.findViewById(R.id.search_empty_view);
         return view;
     }
 
     private void setRecyclerView(String query) {
         Search searchRes = new Search();
         searchRes.getSearchResult(context, query, true);
-        recyclerView = (RecyclerView) mainView.findViewById(R.id.search_view_results);
-        emptyView = mainView.findViewById(R.id.search_empty_view);
         final GridLayoutManager manager = new GridLayoutManager(context, 2);
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -57,12 +57,16 @@ public class SearchViewFragment extends Fragment {
         adapter = new SearchListAdapter(context, getActivity(), searchRes, recyclerView);
         recyclerView.addItemDecoration(new SearchListSpacesItemDecoration(2, adapter));
         recyclerView.setAdapter(adapter);
-        recyclerView.setVisibility(View.VISIBLE);
-        emptyView.setVisibility(View.GONE);
     }
 
 
     public void updateSearchResult(String query) {
         setRecyclerView(query);
+        showEmpty(false);
+    }
+
+    public void showEmpty(boolean isEmpty) {
+        recyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        emptyView.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
     }
 }

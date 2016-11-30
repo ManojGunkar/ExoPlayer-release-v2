@@ -280,7 +280,11 @@ public class DetailAlbumActivity extends AppCompatActivity {
             updateMiniPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
                     (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
                     null, App.getPlayerEventHandler().isPlaying());
-            expand();
+            if(!isExpended) {
+                expand();
+            }else{
+                mMiniPlayer.setVisibility(View.VISIBLE);
+            }
         }else{
             collapse();
         }

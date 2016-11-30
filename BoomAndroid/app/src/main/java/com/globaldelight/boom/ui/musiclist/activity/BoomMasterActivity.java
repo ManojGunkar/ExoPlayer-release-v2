@@ -130,7 +130,7 @@ public class BoomMasterActivity extends AppCompatActivity implements NavigationV
             public boolean onMenuItemActionExpand(MenuItem item) {
                 activityContainer.setVisibility(View.GONE);
                 ft.show(mSearchResult);
-                fetchAndUpdateSearchResult(null);
+                ((SearchViewFragment)mSearchResult).showEmpty(true);
                 return true;
             }
 
