@@ -224,6 +224,7 @@ public class AudioEffect {
     public enum purchase {
         NORMAL_USER,
         FIVE_DAY_OFFER,
+        EXTENDED_FIVE_DAY_OFFER,
         PAID_USER;
 
 

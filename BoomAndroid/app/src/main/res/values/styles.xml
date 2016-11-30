@@ -16,6 +16,14 @@
         <item name="android:windowBackground">@drawable/ic_splash</item>
     </style>
 
+    <style name="AppTheme.About" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:statusBarColor">#00132f</item>
+        <!--<item name="android:windowBackground">@drawable/ic_splash</item>-->
+    </style>
+
     <style name="AppTheme.Main" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -175,5 +183,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:background">@color/colorPrimary</item>
+        <item name="android:colorAccent">@color/white</item>
+
+
     </style>
+
 </resources>

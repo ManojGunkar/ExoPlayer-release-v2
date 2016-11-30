@@ -92,8 +92,10 @@
     <string name="copyright">\u00a9 2016,Global Delight Technologies Pvt Ltd. All rights reserved.</string>
 
     <!-- Tutorial-->
-    <string name="tutorial_boom_effect"> Tap here to experience \n the songList with Boom!</string>
+    <string name="tutorial_boom_effect"> Tap here to experience \n the song with Boom!</string>
     <string name="tutorial_boom_effect_poweron">Tap to turn Effects ON/OFF</string>
+    <string name="tutorial_select_song">Select a song \n to play.</string>
+
     <!-- playing queue-->
     <string name="title_playingque">Up Next</string>
     <!-- Menu-->
@@ -126,11 +128,17 @@
     <string name="purchase_item_desc2">Intensity control with a single purchase!</string>
     <string name="purchase_buton_text">Buy Now @ $ 3.99 </string>
     <string name="purchase_restore_txt">Restore Purchases</string>
-<!-- Favorite-->
+    <!-- Favorite-->
     <string name="fav_placeholder_txt">You\'ve not liked \n any Songs yet.</string>
-<!--Boom PlayList-->
+    <!--Boom PlayList-->
     <string name="boom_playlist_placeholder_txt">You\'ve not created \n any Playlist yet.</string>
     <!--PlayList-->
     <string name="playlist_placeholder_txt">There are no Playlists \n in music library.</string>
+
+    <!--purchase-->
+    <string name="title_fiveday_offer_expired">Limited Period Use</string>
+    <string name="desc_fiveday_offer_expired">Hey, your five days free usage has expired. But you can extend it by few more days.</string>
+    <string name="btn_txt_buynow">Buy Now</string>
+    <string name="btn_txt_extend">Extend</string>
 
 </resources>

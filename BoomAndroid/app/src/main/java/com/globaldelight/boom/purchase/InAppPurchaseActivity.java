@@ -332,13 +332,13 @@ public class InAppPurchaseActivity extends AppCompatActivity {
         builder.show();
         audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.PAID_USER);
         Map<String, Object> eventValue = new HashMap<>();
-        eventValue.put(AFInAppEventParameterName.REVENUE, 3.99);
+        //eventValue.put(AFInAppEventParameterName.REVENUE, 3.99);
         eventValue.put(AFInAppEventParameterName.CONTENT_TYPE, SKU_BOOM_3D_SURROUND);
         //eventValue.put(AFInAppEventParameterName.CONTENT_ID, purchase.getOrderId());
-        eventValue.put(AFInAppEventParameterName.CURRENCY, "USD");
+        // eventValue.put(AFInAppEventParameterName.CURRENCY, "USD");
         AppsFlyerAnalyticHelper.startTracking(this.getApplication());
         AnalyticsHelper.purchaseSuccess(this.getApplication(), eventValue, true, SKU_BOOM_3D_SURROUND);
-        finish();
+        // finish();
     }
 
     public void onSuccessPurchase(Purchase purchase) {
@@ -351,14 +351,14 @@ public class InAppPurchaseActivity extends AppCompatActivity {
             builder.show();
             audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.PAID_USER);
             Map<String, Object> eventValue = new HashMap<>();
-            eventValue.put(AFInAppEventParameterName.REVENUE, 3.99);
+            //eventValue.put(AFInAppEventParameterName.REVENUE, 3.99);
 
             eventValue.put(AFInAppEventParameterName.CONTENT_TYPE, purchase.getItemType());
             eventValue.put(AFInAppEventParameterName.CONTENT_ID, purchase.getOrderId());
-            eventValue.put(AFInAppEventParameterName.CURRENCY, "USD");
+            //eventValue.put(AFInAppEventParameterName.CURRENCY, "USD");
             AppsFlyerAnalyticHelper.startTracking(this.getApplication());
             AnalyticsHelper.purchaseSuccess(this.getApplication(), eventValue, false, SKU_BOOM_3D_SURROUND);
-            finish();
+            // finish();
         } catch (NullPointerException e) {
             e.printStackTrace();
         }

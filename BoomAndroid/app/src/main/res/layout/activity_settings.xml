@@ -401,7 +401,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
-                    android:layout_marginTop="@dimen/ninety_two_pt"
+                    android:layout_marginTop="@dimen/sixty_four_pt"
                     android:inputType="textMultiLine"
                     android:paddingLeft="@dimen/sixty_eight_pt"
                     android:paddingRight="@dimen/sixty_eight_pt"
@@ -410,19 +410,19 @@
                     android:textSize="@dimen/settings_item_description_size"
                     android:textStyle="normal" />
 
-                <com.globaldelight.boom.ui.widgets.RegularTextView
-                    android:id="@+id/txtTimer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/eighty_pt"
-                    android:layout_marginTop="@dimen/ninety_two_pt"
-                    android:gravity="center_horizontal"
-                    android:text="00:00:00"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/settings_timer_txt_size"
-                    android:textStyle="normal"
+                <!--  <com.globaldelight.boom.ui.widgets.RegularTextView
+                      android:id="@+id/txtTimer"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_margin="@dimen/eighty_pt"
+                      android:layout_marginTop="@dimen/ninety_two_pt"
+                      android:gravity="center_horizontal"
+                      android:text="00:00:00"
+                      android:textColor="@color/white"
+                      android:textSize="@dimen/settings_timer_txt_size"
+                      android:textStyle="normal"
 
-                    android:visibility="gone" />
+                      android:visibility="gone" />-->
 
                 <!-- <com.globaldelight.boom.ui.widgets.RegularTextView
                      android:id="@+id/txtStopTime"

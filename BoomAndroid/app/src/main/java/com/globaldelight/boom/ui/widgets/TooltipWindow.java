@@ -22,8 +22,11 @@ public class TooltipWindow {
     public static final int DRAW_RIGHT = 2;
     public static final int DRAW_TOP = 3;
     public static final int DRAW_BOTTOM = 4;
-    public static final int DRAW_ARROW_TOP_RIGHT = 2;
-    public static final int DRAW_ARROW_DEFAULT_CENTER = 1;
+
+    /* Arrow position  */
+    public static final int DRAW_ARROW_TOP_RIGHT = 5;
+    public static final int DRAW_ARROW_DEFAULT_CENTER = 6;
+    public static final int DRAW_ARROW_BOTTOM_LEFT = 7;
     private static final int MSG_DISMISS_TOOLTIP = 100;
     View contentView;
     CoachMarkTextView mInfoText;
@@ -84,13 +87,23 @@ public class TooltipWindow {
 
     public void showToolTip(View anchor, int arroPosition) {
         int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, ctx.getResources().getDisplayMetrics());
-        // int width=(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, ctx.getResources().getDisplayMetrics());
-        // Logger.LOGD(height+"dddddddddddddddd");
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(height, height);
+
         switch (arroPosition) {
             case DRAW_ARROW_TOP_RIGHT:
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(height, height);
                 layoutParams.gravity = Gravity.RIGHT;
                 layoutParams.setMargins(0, 0, 10, 0);
+
+                mImageArrow.setLayoutParams(layoutParams);
+                break;
+           /* case DRAW_ARROW_BOTTOM_LEFT:
+                layoutParams.gravity = Gravity.CENTER;
+               layoutParams.setMargins(0,0,0,20);
+                mImageArrow.setLayoutParams(layoutParams);
+                break;*/
+            case DRAW_ARROW_DEFAULT_CENTER:
+                layoutParams.gravity = Gravity.CENTER;
+                layoutParams.setMargins(0, 0, 0, height / 2);//minus arrow height 25 dp
 
                 mImageArrow.setLayoutParams(layoutParams);
                 break;
@@ -140,7 +153,10 @@ public class TooltipWindow {
                 break;
             case DRAW_TOP:
                 position_x = anchor_rect.centerX() - (contentViewWidth - contentViewWidth / 2);
-                position_y = anchor_rect.top - (anchor_rect.height());
+                position_y = anchor_rect.top - contentViewHeight;
+                // position_y = anchor_rect.top - (anchor_rect.height());
+                //  Toast.makeText(ctx,anchor_rect.top+"***"+position_y,Toast.LENGTH_SHORT).show();
+
                 break;
             case DRAW_LEFT:
                 break;
