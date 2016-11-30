@@ -16,45 +16,52 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:weightSum="100"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="100">
         <LinearLayout
+            android:id="@+id/mini_touch_panel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal|center_vertical"
-            android:layout_weight="16.7">
-            <ImageView
-                android:id="@+id/mini_player_album_art"
-                android:layout_width="@dimen/one_hundred_eighty_pt"
-                android:layout_height="@dimen/one_hundred_eighty_pt"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_default_list"/>
-        </LinearLayout>
+            android:layout_weight="85.7"
+            android:weightSum="100"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:layout_weight="19.49">
+                <ImageView
+                    android:id="@+id/mini_player_album_art"
+                    android:layout_width="@dimen/one_hundred_eighty_pt"
+                    android:layout_height="@dimen/one_hundred_eighty_pt"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_default_list"/>
+            </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="69"
-            android:orientation="vertical"
-            android:gravity="center">
-            <com.globaldelight.boom.ui.widgets.RegularTextView
-                android:id="@+id/mini_player_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:textStyle="normal"
-                android:textColor="@color/yellow"/>
-            <com.globaldelight.boom.ui.widgets.RegularTextView
-                android:id="@+id/mini_player_sub_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:gravity="top"
-                android:textStyle="normal"
-                android:textColor="@color/white"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="80.51"
+                android:orientation="vertical"
+                android:gravity="center">
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/mini_player_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textStyle="normal"
+                    android:textColor="@color/yellow"/>
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/mini_player_sub_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:gravity="top"
+                    android:textStyle="normal"
+                    android:textColor="@color/white"/>
+            </LinearLayout>
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"

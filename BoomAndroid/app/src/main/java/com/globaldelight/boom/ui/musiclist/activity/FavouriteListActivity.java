@@ -67,7 +67,7 @@ public class FavouriteListActivity extends AppCompatActivity {
     private FavouriteListAdapter adapter;
     private PermissionChecker permissionChecker;
     private View emptyView;
-    private LinearLayout mMiniPlayer;
+    private LinearLayout mMiniPlayer, mStartPlayer;
     private ProgressBar mTrackProgress;
     private RegularTextView mTitle, mSubTitle;
     private ImageView mPlayerArt, mPlayPause;
@@ -282,13 +282,14 @@ public class FavouriteListActivity extends AppCompatActivity {
 
     private void initMiniPlayer(){
         mMiniPlayer = (LinearLayout) findViewById(R.id.favourite_mini_player);
+        mStartPlayer = (LinearLayout) findViewById(R.id.mini_touch_panel);
         mTrackProgress = (ProgressBar) findViewById(R.id.mini_player_track_progress);
         mTitle = (RegularTextView) findViewById(R.id.mini_player_title);
         mSubTitle = (RegularTextView) findViewById(R.id.mini_player_sub_title);
         mPlayerArt = (ImageView) findViewById(R.id.mini_player_album_art);
         mPlayPause = (ImageView) findViewById(R.id.mini_player_play_pause);
 
-        mPlayerArt.setOnClickListener(new View.OnClickListener() {
+        mStartPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FavouriteListActivity.this, BoomPlayerActivity.class);

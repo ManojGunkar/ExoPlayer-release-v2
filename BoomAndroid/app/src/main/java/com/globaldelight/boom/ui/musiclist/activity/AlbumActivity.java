@@ -72,7 +72,7 @@ public class AlbumActivity extends AppCompatActivity {
     private AppBarLayout appbarlayout;
     private ListDetail listDetail;
     FloatingActionButton mPlayAlbum;
-    private LinearLayout mMiniPlayer;
+    private LinearLayout mMiniPlayer, mStartPlayer;
     private ProgressBar mTrackProgress;
     private RegularTextView mTitle, mSubTitle;
     private ImageView mPlayerArt, mPlayPause;
@@ -109,6 +109,7 @@ public class AlbumActivity extends AppCompatActivity {
         mPlayAlbum = (FloatingActionButton)findViewById(R.id.play_album);
 
         mMiniPlayer = (LinearLayout) findViewById(R.id.album_mini_player);
+        mStartPlayer = (LinearLayout) findViewById(R.id.mini_touch_panel);
         mTrackProgress = (ProgressBar) findViewById(R.id.mini_player_track_progress);
         mTitle = (RegularTextView) findViewById(R.id.mini_player_title);
         mSubTitle = (RegularTextView) findViewById(R.id.mini_player_sub_title);
@@ -152,7 +153,7 @@ public class AlbumActivity extends AppCompatActivity {
             }
         });
 
-        mPlayerArt.setOnClickListener(new View.OnClickListener() {
+        mStartPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AlbumActivity.this, BoomPlayerActivity.class);
