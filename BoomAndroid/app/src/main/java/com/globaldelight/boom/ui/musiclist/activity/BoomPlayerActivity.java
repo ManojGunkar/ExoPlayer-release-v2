@@ -266,6 +266,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mTitleTxt.setSelected(true);
             mSubTitleTxt.setSelected(true);
             mFavourite.setVisibility(View.VISIBLE);
+            mAddToPlayList.setVisibility(View.VISIBLE);
 
             updateAlbumArt(item);
 
@@ -294,6 +295,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mRemainsTime.setVisibility(View.INVISIBLE);
             mPlayedTime.setVisibility(View.INVISIBLE);
             mFavourite.setVisibility(View.INVISIBLE);
+            mAddToPlayList.setVisibility(View.INVISIBLE);
         }
         updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
         updateShuffle();

@@ -42,12 +42,14 @@
                 android:id="@+id/mini_player_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:textStyle="normal"
                 android:textColor="@color/yellow"/>
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/mini_player_sub_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:gravity="top"
                 android:textStyle="normal"
                 android:textColor="@color/white"/>
