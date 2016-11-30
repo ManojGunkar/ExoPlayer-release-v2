@@ -20,8 +20,6 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -81,7 +79,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private CircularCoverView mAlbumArt;
     private CircularSeekBar mTrackSeek;
     private ImageView mPlayPauseBtn, mLibraryBtn, mAudioEffectBtn, mUpNextQueue;
-    private TooltipWindow tipWindowLibrary, tipWindowEffect;
+    private TooltipWindow tipWindowLibrary, tipWindowEffect, tipWindowHold;
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -328,24 +326,20 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     public void showCoachMark() {
         if (App.getPlayingQueueHandler().getUpNextList().getPlayingItem() == null && Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE, true)) {
-            tipWindowLibrary = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP, getResources().getString(R.string.tutorial_select_song));
-            tipWindowLibrary.showToolTip(findViewById(R.id.library_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
+            tipWindowLibrary = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP_RIGHT, getResources().getString(R.string.tutorial_select_song));
+            tipWindowLibrary.showToolTip(findViewById(R.id.library_btn), TooltipWindow.DRAW_ARROW_BOTTOM_LEFT);
             Preferences.writeBoolean(this,Preferences.PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE,false);
 
         }
         if (App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null && !audioEffectPreferenceHandler.isAudioEffectOn() && Preferences.readBoolean(this,Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE,true)) {
-            tipWindowEffect = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP, getResources().getString(R.string.tutorial_boom_effect));
+            tipWindowEffect = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP_CENTER, getResources().getString(R.string.tutorial_boom_effect));
             tipWindowEffect.showToolTip(findViewById(R.id.audio_effect_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
         }
-
-       /* if (App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null && audioEffectPreferenceHandler.isAudioEffectOn()) {
-            if (tipWindow != null) {
-                tipWindow.dismissTooltip();
-            }
-        } else {
-            tipWindow = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP, getResources().getString(R.string.tutorial_boom_effect));
-            tipWindow.showToolTip(findViewById(R.id.audio_effect_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
-        }*/
+        if (!Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE, true) && Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_TAPANDHOLD_COACHMARK_ENABLE, true)) {
+            tipWindowHold = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP_CENTER, getResources().getString(R.string.tutorial_effect_tap_hold));
+            tipWindowHold.showToolTip(findViewById(R.id.audio_effect_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
+            Preferences.writeBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_TAPANDHOLD_COACHMARK_ENABLE, false);
+        }
 
     }
 
@@ -559,6 +553,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }
         if (tipWindowEffect != null) {
             tipWindowEffect.dismissTooltip();
+        }
+        if (tipWindowHold != null) {
+            tipWindowHold.dismissTooltip();
         }
     }
 

@@ -48,7 +48,7 @@ import java.util.List;
  */
 
 public class Surround3DActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, MusicReceiver.updateMusic, EqualizerViewAdapter.onEqualizerUpdate {
-    TooltipWindow tipWindow;
+    TooltipWindow tipWindow, tipSpeakerWidow;
     private RegularTextView mToolbarTitle, mEffectTxt, mEffectSwitchTxt, m3DTxt, m3DSwitchTxt, mSpeakerInfo, mFullbassTxt,
             mIntensityTxt, mIntensitySwitchTxt, mEqualizerTxt, mEqualizerSwitchTxt;
     private LinearLayout mIntensityIndicator, mEqualizerIndicator, mFullBassPanel;
@@ -76,6 +76,11 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         initViews();
         setupToolbar();
         fillEqualizer();
+//TODO
+        /**
+         * Master control for managing efrfects based on purchase
+         */
+        //  audioEffectPreferenceHandler.setMasterEffectControl(false);
 
         onPowerSwitchUpdate();
         update3DSurround();
@@ -100,6 +105,14 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    public void showSpeakerCoachMark() {
+        if (Preferences.readBoolean(Surround3DActivity.this, Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE, true)) {
+
+            tipSpeakerWidow = new TooltipWindow(Surround3DActivity.this, TooltipWindow.DRAW_BOTTOM, getResources().getString(R.string.tutorial_select_speaker));
+            tipSpeakerWidow.showToolTip(findViewById(R.id.speaker_switch_btn), TooltipWindow.DRAW_ARROW_TOP_RIGHT);
+            //Preferences.writeBoolean(this,Preferences.EFFECT_SCREEN_TAP_SPEAKER_ENABLE,false);
+        }
+    }
 
 
     public void initViews(){
@@ -183,6 +196,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if((!audioEffectPreferenceHandler.isAudioEffectOn() && isChecked) ||
                         (audioEffectPreferenceHandler.isAudioEffectOn() && !isChecked)){
+                    showSpeakerCoachMark();
                     audioEffectPreferenceHandler.setEnableAudioEffect(isChecked);
                     if(App.getPlayerEventHandler().getPlayingItem() != null)
                         App.getPlayerEventHandler().updateEffect();
@@ -196,6 +210,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void onPowerSwitchUpdate(){
+
 
         mEffectPowerBtn.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
@@ -402,7 +417,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 collapse();
             } else {
                 //TODO
-                int purchaseType = audioEffectPreferenceHandler.getUserPurchaseType();
+               /* int purchaseType = audioEffectPreferenceHandler.getUserPurchaseType();
                 switch (AudioEffect.purchase.fromOrdinal(purchaseType)) {
                     case NORMAL_USER:
                         break;
@@ -414,7 +429,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                         audioEffectPreferenceHandler.setEnable3DSurround(true);
                         App.getPlayerEventHandler().set3DAudioEnable(true);
                         break;
-                }
+                }*/
 
 
             }
@@ -790,6 +805,9 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         unregisterReceiver(musicReceiver);
         if (tipWindow != null && tipWindow.isTooltipShown()) {
             tipWindow.dismissTooltip();
+        }
+        if (tipSpeakerWidow != null && tipSpeakerWidow.isTooltipShown()) {
+            tipSpeakerWidow.dismissTooltip();
         }
     }
 
