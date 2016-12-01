@@ -23,12 +23,14 @@ import android.widget.TextView;
 
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumActivity;
 import com.globaldelight.boom.ui.musiclist.activity.DetailAlbumActivity;
@@ -104,6 +106,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
             }else{
                 holder.headerDetail.setVisibility(View.GONE);
             }
+            setOnMenuClickListener(holder, position);
         }else if(!isHeader(position)) {
             int pos = position - 1;
             Size size = setSize(holder);
@@ -237,6 +240,53 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
         img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, width, height));
     }
 
+    private void setOnMenuClickListener(SimpleItemViewHolder holder, int position) {
+        holder.mMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View anchorView) {
+                PopupMenu pm = new PopupMenu(context, anchorView);
+                pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.album_header_add_play_next:
+                                ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                if(((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().size() > 0)
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement());
+                                break;
+                            case R.id.album_header_add_to_upnext :
+                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                    if(((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().size() > 0)
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(0));
+                                }
+                                break;
+                            case R.id.album_header_add_to_playlist:
+                                Utils util = new Utils(context);
+                                ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                if(((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().size() > 0)
+                                    util.addToPlaylist((DetailAlbumActivity)context,((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement(), null);
+                                break;
+                            case R.id.album_header_shuffle :
+                                if (App.getPlayingQueueHandler().getUpNextList() != null) {
+//                                    if(!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused()){
+                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                    if(((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().size() > 0)
+                                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement(), 0);
+//                                    }
+                                    context.sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
+                                }
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                pm.inflate(R.menu.album_header_menu);
+                pm.show();
+            }
+        });
+    }
+
     private void setOnClicks(final SimpleItemViewHolder holder, final int position, final int itemView) {
 
         holder.mainView.setOnClickListener(new View.OnClickListener() {
@@ -281,7 +331,8 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                                         ((IMediaItemCollection)collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
                                     }
                                 }
-                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(position));
+                                if(((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement().size() > 0)
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(position));
                                 break;
                             case R.id.popup_album_add_playlist:
                                 Utils util = new Utils(context);
@@ -294,7 +345,8 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                                         App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(position));
                                     }
                                 }
-                                util.addToPlaylist(activity, ((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement(), null);
+                                if(((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement().size() > 0)
+                                    util.addToPlaylist(activity, ((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement(), null);
                                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                 break;
                         }
@@ -371,6 +423,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
             headerTitle = (RegularTextView) itemView.findViewById(R.id.header_title);
             headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
             headerDetail = (CoachMarkTextView) itemView.findViewById(R.id.header_detail);
+            mMore = (ImageView) itemView.findViewById(R.id.recycler_header_menu);
         }
 
     }

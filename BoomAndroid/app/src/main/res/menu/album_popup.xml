@@ -3,12 +3,11 @@
     <item
         android:id="@+id/popup_album_add_queue"
         android:icon="@drawable/ic_menu_selected"
-        android:title="Add to Up Next"
+        android:title="@string/menu_add_upnext"
         android:showAsAction="ifRoom" />
     <item
         android:id="@+id/popup_album_add_playlist"
         android:icon="@drawable/ic_menu_selected"
-
-        android:title="Add to Boom Playlist"
+        android:title="@string/menu_add_boom_playlist"
         android:showAsAction="ifRoom" />
 </menu>

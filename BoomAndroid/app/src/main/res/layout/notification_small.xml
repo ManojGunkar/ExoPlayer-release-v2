@@ -47,7 +47,7 @@
             android:id="@+id/noti_prev_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/thirty_two_px"
+            android:layout_marginLeft="4dp"
             android:background="@drawable/unbounded_ripple"
             android:src="@drawable/ic_previous_notification"/>
 
@@ -55,7 +55,7 @@
             android:id="@+id/noti_play_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/thirty_two_px"
+            android:layout_marginLeft="@dimen/sixty_pt"
             android:background="@drawable/unbounded_ripple"
             android:src="@drawable/ic_play_notification"/>
 
@@ -63,7 +63,7 @@
             android:id="@+id/noti_next_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/thirty_two_px"
+            android:layout_marginLeft="@dimen/sixty_pt"
             android:background="@drawable/unbounded_ripple"
             android:src="@drawable/ic_next_notification"/>
     </LinearLayout>

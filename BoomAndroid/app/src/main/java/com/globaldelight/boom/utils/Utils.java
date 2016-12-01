@@ -146,12 +146,13 @@ public class Utils {
                 .title(R.string.add_to_playlist)
                 .backgroundColor(Color.parseColor("#171921"))
                 .titleColor(Color.parseColor("#ffffff"))
-                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .positiveColor(Color.parseColor("#81cbc4"))
+                .negativeColor(Color.parseColor("#81cbc4"))
                 .widgetColor(Color.parseColor("#ffffff"))
                 .contentColor(Color.parseColor("#ffffff"))
                 .customView(rv, false)
                 .positiveText(R.string.new_playlist)
-                .negativeText(R.string.close)
+                .negativeText(R.string.dialog_txt_cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
@@ -169,19 +170,19 @@ public class Utils {
         adapter.setDialog(dialog);
     }
 
-    private void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
+    public void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
         new MaterialDialog.Builder(context)
                 .title(R.string.new_playlist)
                 .backgroundColor(Color.parseColor("#171921"))
                 .titleColor(Color.parseColor("#ffffff"))
-                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .positiveColor(Color.parseColor("#81cbc4"))
+                .negativeColor(Color.parseColor("#81cbc4"))
                 .widgetColor(Color.parseColor("#ffffff"))
                 .contentColor(Color.parseColor("#ffffff"))
                 .input(null, null, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
                         if (!input.toString().matches("")) {
-
                             MediaController.getInstance(context).createBoomPlaylist(input.toString());
                             addToPlaylist(activity, song, fromPlaylist);
                             context.sendBroadcast(new Intent(PlayerService.ACTION_UPDATE_BOOM_PLAYLIST));

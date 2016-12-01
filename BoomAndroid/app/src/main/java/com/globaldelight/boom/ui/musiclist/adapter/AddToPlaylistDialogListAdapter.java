@@ -4,19 +4,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
@@ -24,8 +20,6 @@ import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 
 import java.util.ArrayList;
-import static android.app.AlertDialog.Builder;
-import static android.support.v7.widget.PopupMenu.OnMenuItemClickListener;
 import static android.view.LayoutInflater.from;
 import static android.view.View.OnClickListener;
 import static android.widget.Toast.LENGTH_SHORT;
@@ -57,29 +51,6 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
         holder.name.setText(playList.get(position).getItemTitle());
         holder.count.setText(context.getResources().getString(R.string.songs)
                 + " " + ((MediaItemCollection) playList.get(position)).getItemCount());
-        holder.menu.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PopupMenu pm = new PopupMenu(context, view);
-                pm.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.popup_playlist_rename:
-                                renameDialog(position);
-                                break;
-                            case R.id.popup_playlist_delete:
-                                MediaController.getInstance(context).deleteBoomPlaylist(((MediaItemCollection) playList.get(position)).getItemId());
-                                updateList(MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
-                                break;
-                        }
-                        return false;
-                    }
-                });
-                pm.inflate(R.menu.popup_playlist);
-                pm.show();
-            }
-        });
         holder.mainView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,45 +64,6 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
         });
     }
 
-    public void playPlaylist(final int position) {
-        if (((IMediaItemCollection) playList.get(position)).getItemCount() != 0)
-            new Thread(new Runnable() {
-                public void run() {
-
-//                    App.getPlayingQueueHandler().setPlayListAndPlay(playList.get(position), true);
-
-                }
-            }).start();
-    }
-
-    private void renameDialog(final int position) {
-        final EditText edittext = new EditText(context);
-        Builder alert = new Builder(context);
-        alert.setTitle("Rename");
-
-        alert.setView(edittext);
-
-        alert.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                if (edittext.getText().toString().matches("")) {
-                    renameDialog(position);
-                } else {
-                    MediaController.getInstance(context).renameBoomPlaylist(edittext.getText().toString(),
-                            playList.get(position).getItemId());
-                    updateList(MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
-                    notifyDataSetChanged();
-                }
-            }
-        });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-            }
-        });
-
-        alert.show();
-    }
-
     public void setDialog(MaterialDialog dialog) {
         this.dialog = dialog;
     }
@@ -141,22 +73,16 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
         return playList.size();
     }
 
-    public void updateList(ArrayList<? extends IMediaItemBase> allPlaylist) {
-        this.playList = allPlaylist;
-        notifyDataSetChanged();
-    }
-
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public View mainView, menu;
-        public RegularTextView name, count;
+        public View mainView;
+        public TextView name, count;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            name = (RegularTextView) itemView.findViewById(R.id.playlist_dialog_name);
-            menu = itemView.findViewById(R.id.playlist_dialog_menu);
-            count = (RegularTextView) itemView.findViewById(R.id.playlist_dialog_song_count);
+            name = (TextView) itemView.findViewById(R.id.playlist_dialog_name);
+            count = (TextView) itemView.findViewById(R.id.playlist_dialog_song_count);
         }
     }
 
