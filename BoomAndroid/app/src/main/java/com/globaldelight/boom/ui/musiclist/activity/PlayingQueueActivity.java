@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.globaldelight.boom.App;
@@ -44,6 +45,7 @@ import java.util.Collections;
 public class PlayingQueueActivity extends AppCompatActivity implements OnStartDragListener {
     public static final String ACTION_UPDATE_QUEUE = "ACTION_UPDATE_QUEUE";
     Toolbar toolbar;
+    private ProgressBar mQueueLoad;
     ImageView toolImage;
     TextView toolTxt;
     private LinearLayout mQueueContainer, mLibProgress;
@@ -94,6 +96,9 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
         recyclerView = (RecyclerView) findViewById(R.id.playing_queue_Container);
         emptyView = findViewById(R.id.playing_queue_empty_view);
         mQueueContainer.setVisibility(View.GONE);
+        mQueueLoad = (ProgressBar) findViewById(R.id.queue_load);
+        mQueueLoad.setVisibility(View.VISIBLE);
+        mQueueLoad.setEnabled(true);
         checkPermissions();
     }
 
@@ -149,6 +154,8 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
                         recyclerView.setHasFixedSize(true);
                         setUpItemTouchHelper();
                         mQueueContainer.setVisibility(View.VISIBLE);
+                        mQueueLoad.setVisibility(View.GONE);
+                        mQueueLoad.setEnabled(false);
                     }
                 });
             }

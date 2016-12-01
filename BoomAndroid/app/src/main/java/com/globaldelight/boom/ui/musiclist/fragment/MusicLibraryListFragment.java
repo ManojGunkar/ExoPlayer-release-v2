@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -45,6 +46,7 @@ public class MusicLibraryListFragment extends Fragment {
     private PermissionChecker permissionChecker;
     private View emptyViewList;
     private LinearLayout emptyPlayList;
+    private ProgressBar mLibLoad;
     private int page;
     private int title;
 
@@ -114,6 +116,8 @@ public class MusicLibraryListFragment extends Fragment {
                             listIsEmpty(false);
                         }
                         mLibContainer.setVisibility(View.VISIBLE);
+                        mLibLoad.setVisibility(View.GONE);
+                        mLibLoad.setEnabled(false);
                     }
                 });
             }
@@ -139,6 +143,8 @@ public class MusicLibraryListFragment extends Fragment {
                         recyclerView.setAdapter(albumsGridAdapter);
                         recyclerView.setHasFixedSize(true);
                         mLibContainer.setVisibility(View.VISIBLE);
+                        mLibLoad.setVisibility(View.GONE);
+                        mLibLoad.setEnabled(false);
                     }
                 });
                 if (albumList.size() < 1) {
@@ -172,6 +178,8 @@ public class MusicLibraryListFragment extends Fragment {
                         recyclerView.setAdapter(artistsGridAdapter);
                         recyclerView.setHasFixedSize(true);
                         mLibContainer.setVisibility(View.VISIBLE);
+                        mLibLoad.setVisibility(View.GONE);
+                        mLibLoad.setEnabled(false);
                     }
                 });
                 if (artistList.size() < 1) {
@@ -204,6 +212,8 @@ public class MusicLibraryListFragment extends Fragment {
                         recyclerView.setAdapter(defaultPlayListAdapter);
                         recyclerView.setHasFixedSize(true);
                         mLibContainer.setVisibility(View.VISIBLE);
+                        mLibLoad.setVisibility(View.GONE);
+                        mLibLoad.setEnabled(false);
                     }
                 });
                 if (playList.size() < 1) {
@@ -238,6 +248,8 @@ public class MusicLibraryListFragment extends Fragment {
                         recyclerView.setAdapter(genreGridAdapter);
                         recyclerView.setHasFixedSize(true);
                         mLibContainer.setVisibility(View.VISIBLE);
+                        mLibLoad.setVisibility(View.GONE);
+                        mLibLoad.setEnabled(false);
                     }
                 });
                 if (genreList.size() < 1) {
@@ -263,6 +275,8 @@ public class MusicLibraryListFragment extends Fragment {
             emptyViewList.setVisibility(View.VISIBLE);
         }
         recyclerView.setVisibility(View.GONE);
+        mLibLoad.setVisibility(View.GONE);
+        mLibLoad.setEnabled(false);
     }
 
     private void initViews() {
@@ -272,6 +286,9 @@ public class MusicLibraryListFragment extends Fragment {
         emptyViewList = mainView.findViewById(R.id.empty_list_all);
         emptyPlayList = (LinearLayout) mainView.findViewById(R.id.album_empty_view) ;
         mLibContainer.setVisibility(View.GONE);
+        mLibLoad = (ProgressBar)mainView.findViewById(R.id.lib_load);
+        mLibLoad.setVisibility(View.VISIBLE);
+        mLibLoad.setEnabled(true);
         fetchMusicList();
     }
 

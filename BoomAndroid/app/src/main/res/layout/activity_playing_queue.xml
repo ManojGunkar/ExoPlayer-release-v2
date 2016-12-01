@@ -8,6 +8,7 @@
         android:id="@+id/queue_progress"
         style="@style/GenericProgressBackground">
         <ProgressBar
+            android:id="@+id/queue_load"
             style="@style/GenericProgressIndicator"/>
     </LinearLayout>
 

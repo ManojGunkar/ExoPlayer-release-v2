@@ -3,50 +3,38 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingBottom="15dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingTop="15dp">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_weight="1"
+        android:layout_margin="@dimen/eighty_two_pt"
+        android:gravity="center_vertical"
         android:orientation="vertical">
 
-        <com.globaldelight.boom.ui.widgets.RegularTextView
+        <TextView
             android:id="@+id/playlist_dialog_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:textStyle="normal"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="@dimen/sixty_four_pt" />
 
-        <com.globaldelight.boom.ui.widgets.RegularTextView
+        <TextView
             android:id="@+id/playlist_dialog_song_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="normal"
             android:singleLine="true"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="@dimen/sixty_four_pt" />
     </LinearLayout>
 
 
-    <ImageView
-        android:id="@+id/playlist_dialog_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
         android:layout_weight="0"
-        android:visibility="gone"
-        android:background="@drawable/unbounded_ripple"
-        android:foregroundTint="#434343"
-        android:padding="5dp"
-        android:src="@drawable/over_flow_menu"
-        android:theme="@style/Theme.AppCompat.Light" />
+        android:background="#090a0d" />
 </LinearLayout>

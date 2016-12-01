@@ -210,7 +210,8 @@ public class BoomPlaylistActivity extends AppCompatActivity {
                 .title(R.string.new_playlist)
                 .backgroundColor(Color.parseColor("#171921"))
                 .titleColor(Color.parseColor("#ffffff"))
-                .positiveColor(getResources().getColor(R.color.colorPrimary))
+                .positiveColor(Color.parseColor("#81cbc4"))
+                .negativeColor(Color.parseColor("#81cbc4"))
                 .widgetColor(Color.parseColor("#ffffff"))
                 /*.contentColor(Color.parseColor("#454649"))*/
                 .input(getResources().getString(R.string.new_playlist), null, new MaterialDialog.InputCallback() {

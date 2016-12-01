@@ -7,7 +7,8 @@
         android:id="@+id/lib_progress"
         style="@style/GenericProgressBackground">
         <ProgressBar
-            style="@style/GenericProgressIndicator"/>
+            style="@style/GenericProgressIndicator"
+            android:id="@+id/lib_load"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/lib_container"
