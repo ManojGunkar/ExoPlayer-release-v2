@@ -99,19 +99,24 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void showCoachMark() {
-        boolean mAppNewLaunch = Preferences.readBoolean(Surround3DActivity.this, Preferences.APP_FRESH_LAUNCH, true);
-        if (mAppNewLaunch && !audioEffectPreferenceHandler.isAudioEffectOn()) {
+        //  boolean mAppNewLaunch = Preferences.readBoolean(Surround3DActivity.this, Preferences.APP_FRESH_LAUNCH, true);
+        if (Preferences.readBoolean(Surround3DActivity.this, Preferences.EFFECT_SCREEN_TAP_EFFECT_ENABLE, true) && !audioEffectPreferenceHandler.isAudioEffectOn()) {
             tipWindow = new TooltipWindow(Surround3DActivity.this, TooltipWindow.DRAW_BOTTOM, getResources().getString(R.string.tutorial_boom_effect_poweron));
+            tipWindow.setAutoDismissBahaviour(true);
             tipWindow.showToolTip(findViewById(R.id.effect_power_switch), TooltipWindow.DRAW_ARROW_TOP_RIGHT);
 
         }
     }
 
     public void showSpeakerCoachMark() {
+        Preferences.writeBoolean(Surround3DActivity.this, Preferences.EFFECT_SCREEN_TAP_EFFECT_ENABLE, false);
+
         if (Preferences.readBoolean(Surround3DActivity.this, Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE, true)) {
 
             tipSpeakerWidow = new TooltipWindow(Surround3DActivity.this, TooltipWindow.DRAW_BOTTOM, getResources().getString(R.string.tutorial_select_speaker));
+            tipSpeakerWidow.setAutoDismissBahaviour(true);
             tipSpeakerWidow.showToolTip(findViewById(R.id.speaker_switch_btn), TooltipWindow.DRAW_ARROW_TOP_RIGHT);
+
             //Preferences.writeBoolean(this,Preferences.EFFECT_SCREEN_TAP_SPEAKER_ENABLE,false);
         }
     }
@@ -198,6 +203,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if((!audioEffectPreferenceHandler.isAudioEffectOn() && isChecked) ||
                         (audioEffectPreferenceHandler.isAudioEffectOn() && !isChecked)){
+
+
                     showSpeakerCoachMark();
                     audioEffectPreferenceHandler.setEnableAudioEffect(isChecked);
                     if(App.getPlayerEventHandler().getPlayingItem() != null)

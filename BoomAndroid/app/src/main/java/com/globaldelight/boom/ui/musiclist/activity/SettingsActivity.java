@@ -513,9 +513,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 try {
                     Intent i = new Intent(Intent.ACTION_SEND);
                     i.setType("text/plain");
-                    i.putExtra(Intent.EXTRA_SUBJECT, "BOOM");
-                    String sAux = "\nLet me recommend you this application\n\n";
-                    sAux = sAux + "https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n";
+                    i.putExtra(Intent.EXTRA_SUBJECT, mContext.getResources().getString(R.string.title_share));
+                    String sAux = mContext.getResources().getString(R.string.desc_share);
+                    sAux = sAux + mContext.getResources().getString(R.string.playstore_link);
                     i.putExtra(Intent.EXTRA_TEXT, sAux);
                     startActivity(Intent.createChooser(i, "choose one"));
                 } catch (Exception e) {
@@ -525,9 +525,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.title_support:
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto", "boomandroid@globaldelight.com", null));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "I Need Some Help With Boom for Android");
-                emailIntent.putExtra(Intent.EXTRA_TEXT, "Hello Team,");
+                        "mailto", mContext.getResources().getString(R.string.mailto), null));
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, mContext.getResources().getString(R.string.title_support));
+                emailIntent.putExtra(Intent.EXTRA_TEXT, mContext.getResources().getString(R.string.desc_support));
                 startActivity(Intent.createChooser(emailIntent, "Send email..."));
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ABOUT_CONTACT_US_BUTTON_TAPPED);
                 break;

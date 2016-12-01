@@ -6,51 +6,31 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.view.View;
-import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.ui.widgets.RegularButton;
 
-public class AboutActivity extends AppCompatActivity implements View.OnClickListener {
+public class AboutActivity extends AppCompatActivity {
     Context mContext;
-    TextView lblAboutTitle, lblABoutDesc, lblRateApp, lblShareApp, lblContactUs;
+    RegularButton rateButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_aboutt);
+        setContentView(R.layout.activity_about);
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         mContext = this;
-        lblAboutTitle = (TextView) findViewById(R.id.lbl_title_about);
-        lblABoutDesc = (TextView) findViewById(R.id.lbl_desc_about);
-        lblRateApp = (TextView) findViewById(R.id.rate_app);
-        lblShareApp = (TextView) findViewById(R.id.share_app);
-        lblContactUs = (TextView) findViewById(R.id.contact_us);
-        lblRateApp.setOnClickListener(this);
-        lblShareApp.setOnClickListener(this);
-        lblContactUs.setOnClickListener(this);
-
-        String title = getResources().getString(R.string.title_about);
-        Spannable wordtoSpan = new SpannableString(title);
-
-        wordtoSpan.setSpan(new ForegroundColorSpan(ContextCompat.getColor(mContext, R.color.white_active)), 0, title.length() - 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        lblAboutTitle.setText(wordtoSpan);
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.rate_app:
+        rateButton = (RegularButton) findViewById(R.id.btn_rate_app);
+        rateButton.setTransformationMethod(null);
+        rateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 Uri uri = Uri.parse("market://details?id=" + mContext.getPackageName());
                 Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
                 // To count with Play market backstack, After pressing back button,
@@ -65,32 +45,9 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
                             Uri.parse("http://play.google.com/store/apps/details?id=" + mContext.getPackageName())));
                 }
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ABOUT_RATE_BUTTON_TAPPED);
-                break;
-            case R.id.share_app:
-                try {
-                    Intent i = new Intent(Intent.ACTION_SEND);
-                    i.setType("text/plain");
-                    i.putExtra(Intent.EXTRA_SUBJECT, "BOOM");
-                    String sAux = "\nLet me recommend you this application\n\n";
-                    sAux = sAux + "https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n";
-                    i.putExtra(Intent.EXTRA_TEXT, sAux);
-                    startActivity(Intent.createChooser(i, "choose one"));
-                } catch (Exception e) {
-                    //e.toString();
-                }
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ABOUT_SHARE_BUTTON_TAPPED);
+            }
+        });
 
-                break;
-            case R.id.contact_us:
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto", "boomandroid@globaldelight.com", null));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "I Need Some Help With Boom for iOS");
-                emailIntent.putExtra(Intent.EXTRA_TEXT, "Hello Team,");
-                startActivity(Intent.createChooser(emailIntent, "Send email..."));
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ABOUT_CONTACT_US_BUTTON_TAPPED);
-
-                break;
-
-        }
     }
+
 }

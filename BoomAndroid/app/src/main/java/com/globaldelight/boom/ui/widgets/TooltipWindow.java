@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.utils.handlers.Preferences;
 
 public class TooltipWindow {
 
@@ -54,7 +55,7 @@ public class TooltipWindow {
     private int position = 4;
 
 
-    public TooltipWindow(Context ctx, int position, String text) {
+    public TooltipWindow(final Context ctx, int position, String text) {
         this.ctx = ctx;
         this.position = position;
         tipWindow = new PopupWindow(ctx);
@@ -92,6 +93,8 @@ public class TooltipWindow {
                 @Override
                 public void onClick(View v) {
                     dismissTooltip();
+                    Preferences.writeBoolean(ctx, Preferences.PLAYER_SCREEN_HEADSET_ENABLE, false);
+
                 }
             });
 
@@ -129,13 +132,13 @@ public class TooltipWindow {
         }
         tipWindow.setHeight(LayoutParams.WRAP_CONTENT);
         tipWindow.setWidth(LayoutParams.WRAP_CONTENT);
-        if (position == DRAW_ABOVE_WITH_CLOSE) {
+        /*if (position == DRAW_ABOVE_WITH_CLOSE ) {
             tipWindow.setOutsideTouchable(false);
             tipWindow.setTouchable(true);
         } else {
             tipWindow.setOutsideTouchable(true);
             tipWindow.setTouchable(false);
-        }
+        }*/
 
         tipWindow.setFocusable(false);
         tipWindow.setBackgroundDrawable(new BitmapDrawable());
@@ -156,13 +159,18 @@ public class TooltipWindow {
 
 
         int position_x = 0, position_y = 0;
+        WindowManager wm = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        int width = display.getWidth();
         switch (position) {
             case DRAW_BOTTOM:
                 position_x = anchor_rect.centerX() - (contentViewWidth - contentViewHeight / 2);
                 position_y = anchor_rect.bottom - (anchor_rect.height() / 2) - 10;
                 break;
             case DRAW_TOP_CENTER:
-                position_x = anchor_rect.centerX() - (contentViewWidth - contentViewWidth / 2);
+                // deprecated
+                position_x = ((width - contentViewWidth) / 2) - 5;
+                // position_x = anchor_rect.centerX() - (contentViewWidth - contentViewWidth / 2)-10;
                 position_y = anchor_rect.top - contentViewHeight;
 
                 break;
@@ -176,9 +184,9 @@ public class TooltipWindow {
             case DRAW_RIGHT:
                 break;
             case DRAW_ABOVE_WITH_CLOSE:
-                WindowManager wm = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
-                Display display = wm.getDefaultDisplay();
-                int width = display.getWidth();  // deprecated
+                // WindowManager wm = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
+                // Display display = wm.getDefaultDisplay();
+                // int width = display.getWidth();  // deprecated
                 position_x = (width - contentViewWidth) / 2;
                 position_y = anchor_rect.top;
                 break;
@@ -203,5 +211,16 @@ public class TooltipWindow {
         float val = dp * ctx.getResources().getDisplayMetrics().density;
         return (int) val;
     }
+
+    public void setAutoDismissBahaviour(boolean autodismiss) {
+        if (autodismiss) {
+            tipWindow.setOutsideTouchable(true);
+            tipWindow.setTouchable(false);
+        } else {
+            tipWindow.setOutsideTouchable(false);
+            tipWindow.setTouchable(true);
+        }
+    }
+
 
 }

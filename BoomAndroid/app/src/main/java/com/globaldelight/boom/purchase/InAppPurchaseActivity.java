@@ -1,14 +1,15 @@
 package com.globaldelight.boom.purchase;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.appsflyer.AFInAppEventParameterName;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
@@ -18,6 +19,7 @@ import com.globaldelight.boom.purchase.util.IabResult;
 import com.globaldelight.boom.purchase.util.Inventory;
 import com.globaldelight.boom.purchase.util.Purchase;
 import com.globaldelight.boom.ui.widgets.RegularButton;
+import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boomplayer.AudioEffect;
 
 import java.util.HashMap;
@@ -31,29 +33,19 @@ public class InAppPurchaseActivity extends AppCompatActivity {
     IabHelper mHelper;
     RegularButton buyButton;
     RegularButton restoreButton;
-    ProgressDialog progress;
+    MaterialDialog progress;
+    Context context;
     private AudioEffect audioEffectPreferenceHandler;
     // Callback for when a purchase is finished
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-            Log.d(TAG, "Purchase is finished: " + result.getResponse() + ", purchase: " + purchase);
-/*
-          Purchase data: {"packageName":"com.globaldelight.boom","orderId":"transactionId.android.test.purchased","productId":"android.test.purchased","developerPayload":"","purchaseTime":0,"purchaseState":0,"purchaseToken":"inapp:com.globaldelight.boom:android.test.purchased"}
-*/
-
+            Logger.LOGD(TAG, "Purchase is finished: " + result.getResponse());
             if (result.getResponse() == IabHelper.IABHELPER_USER_CANCELLED) {
                 AnalyticsHelper.trackPurchaseCancelled(InAppPurchaseActivity.this);
-
             }
-
-
-            // if we were disposed of in the meantime, quit.
             if (mHelper == null) return;
-
             if (result.isFailure()) {
                 complain("Error purchasing: " + result);
-                //  setWaitScreen(false);
-                //  AnalyticsHelper.
                 AnalyticsHelper.purchaseFailed(InAppPurchaseActivity.this);
                 return;
             }
@@ -61,71 +53,38 @@ public class InAppPurchaseActivity extends AppCompatActivity {
                 complain("Error purchasing. Authenticity verification failed.");
                 if (!verifyDeveloperPayload(purchase)) {
                     complain("Error purchasing. Authenticity verification failed.");
-                    // setWaitScreen(false);
                     return;
                 }
                 return;
             }
-
-            Log.d(TAG, "Purchase successful.");
-
-
+            Logger.LOGD(TAG, "Purchase successful.");
             if (purchase.getSku().equals(SKU_BOOM_3D_SURROUND)) {
-                // bought the premium upgrade!
-                Log.d(TAG, "Purchase is premium upgrade. Congratulating user.");
-                AlertDialog.Builder builder =
-                        new AlertDialog.Builder(InAppPurchaseActivity.this, R.style.AppCompatAlertDialogStyle);
-                builder.setTitle("Congratulations");
-                builder.setMessage("Thank you for purchasing Boom Magical Effects Pack");
-                builder.setPositiveButton("OK", null);
-                builder.show();
                 onSuccessPurchase(purchase);
             }
-
         }
     };
-    // Listener that's called when we finish querying the items and subscriptions we own
+
     IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-            Log.d(TAG, "Query inventory finished.");
+            Logger.LOGD(TAG, "Query inventory finished.");
             if (progress != null && progress.isShowing())
                 progress.dismiss();
-            // Have we been disposed of in the meantime? If so, quit.
             if (mHelper == null) return;
-
-            // Is it a failure?
             if (result.isFailure()) {
-                Log.d(TAG, "Query inventory was fail." + result);
+                Logger.LOGD(TAG, "Query inventory was fail." + result);
                 complain("Failed to query inventory: " + result);
                 return;
             }
-
-            Log.d(TAG, "Query inventory was successful.");
-
-            /*
-             * Check for items we own. Notice that for each purchase, we check
-             * the developer payload to see if it's correct! See
-             * verifyDeveloperPayload().
-             */
+            Logger.LOGD(TAG, "Query inventory was successful.");
 
             // Check for 3d delivery -- if we own 3d, we should fill up the 3d effect immediately
             Purchase effect3dPurchase = inventory.getPurchase(SKU_BOOM_3D_SURROUND);
             if (effect3dPurchase != null && verifyDeveloperPayload(effect3dPurchase)) {
-                Log.d(TAG, "We have 3d. Updating it.");
+                Logger.LOGD(TAG, "We have 3d. Updating it.");
                 userAlreadyPurchased();
-
-                //In Boom No need for consume it
-               /* try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_BOOM_3D_SURROUND), mConsumeFinishedListener);
-                } catch (IabHelper.IabAsyncInProgressException e) {
-                    complain("Error consuming gas. Another async operation in progress.");
-                }*/
                 return;
             }
-
-
-            //setWaitScreen(false);
-            Log.d(TAG, "Initial inventory query finished; enabling main UI.");
+            Logger.LOGD(TAG, "Initial inventory query finished; enabling main UI.");
         }
     };
 
@@ -137,6 +96,7 @@ public class InAppPurchaseActivity extends AppCompatActivity {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
+        context = this;
         buyButton = (RegularButton) findViewById(R.id.buyButton);
         restoreButton = (RegularButton) findViewById(R.id.restore);
         audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
@@ -149,11 +109,16 @@ public class InAppPurchaseActivity extends AppCompatActivity {
         restoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProgressDialog progress = new ProgressDialog(InAppPurchaseActivity.this);
-                //progress.setTitle("Requestin");
-                progress.setMessage("Wait while loading...");
-                //progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
-                progress.show();
+                progress = new MaterialDialog.Builder(InAppPurchaseActivity.this)
+                        //.title(R.string.txt_progress_restore)
+                        .content(R.string.txt_progress_restore)
+                        .backgroundColor(Color.parseColor("#171921"))
+                        .titleColor(Color.parseColor("#ffffff"))
+                        //.positiveColor(contextgetResources().getColor(R.color.colorPrimary))
+                        .widgetColor(Color.parseColor("#ffffff"))
+                        .contentColor(Color.parseColor("#ffffff"))
+                        .progress(true, 0)
+                        .show();
                 try {
                     mHelper.queryInventoryAsync(mGotInventoryListener);
                 } catch (IabHelper.IabAsyncInProgressException e) {
@@ -169,10 +134,10 @@ public class InAppPurchaseActivity extends AppCompatActivity {
         mHelper.enableDebugLogging(true);
         // Start setup. This is asynchronous and the specified listener
         // will be called once setup completes.
-        Log.d(TAG, "Starting setup.");
+        Logger.LOGD(TAG, "Starting setup.");
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
-                Log.d(TAG, "Setup finished.");
+                Logger.LOGD(TAG, "Setup finished.");
 
                 if (!result.isSuccess()) {
                     // Oh noes, there was a problem.
@@ -185,12 +150,12 @@ public class InAppPurchaseActivity extends AppCompatActivity {
 
 
                 // IAB is fully set up. Now, let's get an inventory of stuff we own.
-                Log.d(TAG, "Setup successful. Querying inventory.");
-//                try {
-//                    mHelper.queryInventoryAsync(mGotInventoryListener);
-//                } catch (IabHelper.IabAsyncInProgressException e) {
-//                    complain("Error querying inventory. Another async operation in progress.");
-//                }
+                Logger.LOGD(TAG, "Setup successful. Querying inventory.");
+                try {
+                    mHelper.queryInventoryAsync(mGotInventoryListener);
+                } catch (IabHelper.IabAsyncInProgressException e) {
+                    complain("Error querying inventory. Another async operation in progress.");
+                }
             }
         });
         buyButton.setTransformationMethod(null);
@@ -236,16 +201,28 @@ public class InAppPurchaseActivity extends AppCompatActivity {
     }
 
     void complain(String message) {
-        Log.e(TAG, "**** TrivialDrive Error: " + message);
+        Logger.LOGD(TAG, "**** TrivialDrive Error: " + message);
         alert("Error: " + message);
     }
 
     void alert(String message) {
-        AlertDialog.Builder bld = new AlertDialog.Builder(this);
-        bld.setMessage(message);
-        bld.setNeutralButton("OK", null);
-        Log.d(TAG, "Showing alert dialog: " + message);
-        bld.create().show();
+        new MaterialDialog.Builder(context)
+                // .title(R.string.title_congratulate)
+                .content(message)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#ffffff"))
+                .typeface("TitilliumWeb-Regular.ttf", "TitilliumWeb-Regular.ttf")
+                .positiveText(R.string.btn_txt_ok)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        materialDialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -261,7 +238,7 @@ public class InAppPurchaseActivity extends AppCompatActivity {
 
     public void newPurchase() {
 
-        Log.d(TAG, "Launching purchase flow for gas.");
+        Logger.LOGD(TAG, "Launching purchase flow for 3d.");
 
         /* TODO: for security, generate your payload here for verification. See the comments on
          *        verifyDeveloperPayload() for more info. Since this is a SAMPLE, we just use
@@ -272,8 +249,7 @@ public class InAppPurchaseActivity extends AppCompatActivity {
             mHelper.launchPurchaseFlow(this, SKU_BOOM_3D_SURROUND, RC_REQUEST,
                     mPurchaseFinishedListener, payload);
         } catch (IabHelper.IabAsyncInProgressException e) {
-            //  complain("Error launching purchase flow. Another async operation in progress.");
-            // setWaitScreen(false);
+            complain("Error launching purchase flow. Another async operation in progress.");
         }
 
 
@@ -285,7 +261,7 @@ public class InAppPurchaseActivity extends AppCompatActivity {
 
     /* IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
          public void onConsumeFinished(Purchase purchase, IabResult result) {
-             Log.d(TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
+             Logger.LOGD(TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
 
              // if we were disposed of in the meantime, quit.
              if (mHelper == null) return;
@@ -296,71 +272,93 @@ public class InAppPurchaseActivity extends AppCompatActivity {
              if (result.isSuccess()) {
                  // successfully consumed, so we apply the effects of the item in our
                  // game world's logic, which in our case means filling the gas tank a bit
-                 Log.d(TAG, "Consumption successful. Provisioning.");
+                 Logger.LOGD(TAG, "Consumption successful. Provisioning.");
 
              }
              else {
 
              }
 
-             Log.d(TAG, "End consumption flow.");
+             Logger.LOGD(TAG, "End consumption flow.");
          }
      };*/
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
-
-        // Pass on the activity result to the helper for handling
+        Logger.LOGD(TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data);
         if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
-            // not handled, so handle it ourselves (here's where you'd
-            // perform any handling of activity results not related to in-app
-            // billing...
             super.onActivityResult(requestCode, resultCode, data);
         } else {
-            Log.d(TAG, "onActivityResult handled by IABUtil.");
+            Logger.LOGD(TAG, "onActivityResult handled by IABUtil.");
         }
     }
 
     public void userAlreadyPurchased() {
-
-
-        AlertDialog.Builder builder =
-                new AlertDialog.Builder(InAppPurchaseActivity.this, R.style.AppCompatAlertDialogStyle);
-        builder.setTitle("Congratulations");
-        builder.setMessage("You had already purchased Boom Magical Effects Pack.Thank you for purchasing.");
-        builder.setPositiveButton("OK", null);
-        builder.show();
+        showRestoreCongratulateDialog();
         audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.PAID_USER);
         Map<String, Object> eventValue = new HashMap<>();
-        //eventValue.put(AFInAppEventParameterName.REVENUE, 3.99);
         eventValue.put(AFInAppEventParameterName.CONTENT_TYPE, SKU_BOOM_3D_SURROUND);
-        //eventValue.put(AFInAppEventParameterName.CONTENT_ID, purchase.getOrderId());
-        // eventValue.put(AFInAppEventParameterName.CURRENCY, "USD");
         AppsFlyerAnalyticHelper.startTracking(this.getApplication());
         AnalyticsHelper.purchaseSuccess(this.getApplication(), eventValue, true, SKU_BOOM_3D_SURROUND);
-        // finish();
     }
 
     public void onSuccessPurchase(Purchase purchase) {
         try {
-            AlertDialog.Builder builder =
-                    new AlertDialog.Builder(InAppPurchaseActivity.this, R.style.AppCompatAlertDialogStyle);
-            builder.setTitle("Congratulations");
-            builder.setMessage("Thank you for purchasing Boom Magical Effects Pack");
-            builder.setPositiveButton("OK", null);
-            builder.show();
+            showCongratulateDialog();
             audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.PAID_USER);
             Map<String, Object> eventValue = new HashMap<>();
-            //eventValue.put(AFInAppEventParameterName.REVENUE, 3.99);
-
             eventValue.put(AFInAppEventParameterName.CONTENT_TYPE, purchase.getItemType());
             eventValue.put(AFInAppEventParameterName.CONTENT_ID, purchase.getOrderId());
-            //eventValue.put(AFInAppEventParameterName.CURRENCY, "USD");
             AppsFlyerAnalyticHelper.startTracking(this.getApplication());
             AnalyticsHelper.purchaseSuccess(this.getApplication(), eventValue, false, SKU_BOOM_3D_SURROUND);
-            // finish();
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
+
+    public void showRestoreCongratulateDialog() {
+
+        new MaterialDialog.Builder(context)
+                .title(R.string.title_congratulate_restoreduser)
+                .content(R.string.desc_congratulate_restoreduser)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#ffffff"))
+                .positiveText(R.string.btn_txt_ok)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        materialDialog.dismiss();
+                        finish();
+                    }
+                })
+                .show();
+
+    }
+
+    public void showCongratulateDialog() {
+        new MaterialDialog.Builder(context)
+                .title(R.string.title_congratulate_paiduser)
+                .content(R.string.desc_congratulate_paiduser)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#ffffff"))
+                .positiveText(R.string.btn_txt_ok)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        materialDialog.dismiss();
+                        finish();
+                    }
+                })
+                .show();
+
+    }
+
 }

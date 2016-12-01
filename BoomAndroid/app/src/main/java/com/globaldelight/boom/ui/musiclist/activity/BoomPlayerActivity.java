@@ -32,7 +32,6 @@ import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.purchase.PurchaseUtil;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.widgets.CircularSeekBar;
 import com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView;
@@ -325,30 +324,42 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void showCoachMark() {
+       /* if(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null){
+            Preferences.writeBoolean(this,Preferences.PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE,false);
+        }*/
+
         if (App.getPlayingQueueHandler().getUpNextList().getPlayingItem() == null && Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE, true)) {
             tipWindowLibrary = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP_RIGHT, getResources().getString(R.string.tutorial_select_song));
             tipWindowLibrary.showToolTip(findViewById(R.id.library_btn), TooltipWindow.DRAW_ARROW_BOTTOM_LEFT);
-            Preferences.writeBoolean(this,Preferences.PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE,false);
+            //Preferences.writeBoolean(this,Preferences.PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE,false);
+            tipWindowLibrary.setAutoDismissBahaviour(false);
 
+        } else {
+            Preferences.writeBoolean(this, Preferences.PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE, false);
         }
         if (App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null && !audioEffectPreferenceHandler.isAudioEffectOn() && Preferences.readBoolean(this,Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE,true)) {
             tipWindowEffect = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP_CENTER, getResources().getString(R.string.tutorial_boom_effect));
+            tipWindowEffect.setAutoDismissBahaviour(true);
+
             tipWindowEffect.showToolTip(findViewById(R.id.audio_effect_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
         }
         if (!Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE, true) && Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_TAPANDHOLD_COACHMARK_ENABLE, true)) {
             tipWindowHold = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP_CENTER, getResources().getString(R.string.tutorial_effect_tap_hold));
             tipWindowHold.showToolTip(findViewById(R.id.audio_effect_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
             Preferences.writeBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_TAPANDHOLD_COACHMARK_ENABLE, false);
+            tipWindowHold.setAutoDismissBahaviour(true);
+
         }
 
-        if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true)) {
+        if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true) && Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_HEADSET_ENABLE, true)) {
             tipWindowHeadset = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_ABOVE_WITH_CLOSE, getResources().getString(R.string.tutorial_use_headphones));
             tipWindowHeadset.showToolTip(findViewById(R.id.player_title_txt), 0);
+            tipWindowHeadset.setAutoDismissBahaviour(false);
         }
     }
 
     public void showPurchaseOption() {
-        PurchaseUtil.checkUserPurchase(this);
+        //  PurchaseUtil.checkUserPurchase(this);
 
 
     }

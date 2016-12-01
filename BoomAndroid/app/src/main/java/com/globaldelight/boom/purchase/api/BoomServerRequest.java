@@ -1,6 +1,5 @@
 package com.globaldelight.boom.purchase.api;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -45,7 +44,7 @@ public class BoomServerRequest {
     Context context;
     AlertDialog ad;
     AudioEffect audioEffectPreferenceHandler;
-    ProgressDialog pd;
+    MaterialDialog pd;
     String emailid = "";
 
     public BoomServerRequest(Context context) {
@@ -72,6 +71,7 @@ public class BoomServerRequest {
                 .backgroundColor(Color.parseColor("#171921"))
                 .titleColor(Color.parseColor("#ffffff"))
                 .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .widgetColor(Color.parseColor("#ffffff"))
                 .contentColor(Color.parseColor("#ffffff"))
                 .positiveText(R.string.btn_txt_buynow)
@@ -107,6 +107,7 @@ public class BoomServerRequest {
                 .positiveColor(context.getResources().getColor(R.color.colorPrimary))
                 .widgetColor(Color.parseColor("#ffffff"))
                 .contentColor(Color.parseColor("#ffffff"))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .positiveText(R.string.btn_txt_sendcode)
                 //.negativeText(R.string.btn_txt_extend)
 
@@ -138,6 +139,7 @@ public class BoomServerRequest {
                 .backgroundColor(Color.parseColor("#171921"))
                 .titleColor(Color.parseColor("#ffffff"))
                 .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .widgetColor(Color.parseColor("#ffffff"))
                 .contentColor(Color.parseColor("#ffffff"))
                 .positiveText(R.string.btn_txt_resend_code)
@@ -168,6 +170,7 @@ public class BoomServerRequest {
                 .backgroundColor(Color.parseColor("#171921"))
                 .titleColor(Color.parseColor("#ffffff"))
                 .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .widgetColor(Color.parseColor("#ffffff"))
                 .contentColor(Color.parseColor("#ffffff"))
                 .positiveText(R.string.btn_txt_ok)
@@ -182,9 +185,18 @@ public class BoomServerRequest {
     }
 
     public String sendExtendCode(final String email) {
-        pd = new ProgressDialog(context);
-        // pd.setMessage("loading");
-        pd.show();
+
+        pd = new MaterialDialog.Builder(context)
+                // .title(R.string.txt_progress)
+                .content(R.string.txt_progress_email)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#ffffff"))
+                .progress(true, 0)
+                .show();
         final String URL = BASE_URL + "appauthentication/";
         String deviceid = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
@@ -272,6 +284,7 @@ public class BoomServerRequest {
                 .backgroundColor(Color.parseColor("#171921"))
                 .titleColor(Color.parseColor("#ffffff"))
                 .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .widgetColor(Color.parseColor("#ffffff"))
                 .contentColor(Color.parseColor("#ffffff"))
                 .positiveText(R.string.btn_txt_verify)

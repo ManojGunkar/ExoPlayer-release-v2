@@ -4,9 +4,10 @@
     <dimen name="album_grid_text_panel_height">51dp</dimen>
     <dimen name="grid_item_title_size">19sp</dimen>
     <dimen name="grid_item_desc_size">16sp</dimen>
-
-
+    <dimen name="rate_btn_size">20sp</dimen>
+    <dimen name="about_copyright_txt_size">11sp</dimen>
     <dimen name="toolbar_titile">21sp</dimen>//80
+    <dimen name="about_title">29sp</dimen>
     <dimen name="effect_switch_txt">20sp</dimen>//72
     <dimen name="sixty_pt_txt">15sp</dimen>//52
     <dimen name="fullbass_txt">16sp</dimen>//62
@@ -132,5 +133,10 @@
     <dimen name="two_hundred_fourty_eight">62dp</dimen>
     <dimen name="one_thousand_twenty_eight">257dp</dimen>
     <dimen name="two_hundred_eight">52dp</dimen>
+    <dimen name="two_hundred_twelve">53dp</dimen>
+
+
+    //80
+    <dimen name="speaker_info">15sp</dimen>//52
 
 </resources>

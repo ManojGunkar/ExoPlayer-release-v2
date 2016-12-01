@@ -5,7 +5,7 @@
     <color name="album_grid_name_default">#000000</color>
     <color name="album_grid_artist_default">#9a9a9a</color>
     <color name="white">#ffffff</color>
-
+    <color name="glowyellow">#f2ff00</color>
     <color name="progress_gray">#FFD8D8D8</color>
     <color name="progress_gray_dark">#FF383838</color>
     <color name="default_blue_light">#ff33b5e5</color>
@@ -15,6 +15,6 @@
     <color name="black_shade">#222327</color>
 
     <color name="dialog_background">#171921</color>
-
+    <color name="rate_btn_blue">#02d3f0</color>
 
 </resources>
