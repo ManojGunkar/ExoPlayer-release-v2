@@ -79,7 +79,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private CircularCoverView mAlbumArt;
     private CircularSeekBar mTrackSeek;
     private ImageView mPlayPauseBtn, mLibraryBtn, mAudioEffectBtn, mUpNextQueue;
-    private TooltipWindow tipWindowLibrary, tipWindowEffect, tipWindowHold;
+    private TooltipWindow tipWindowLibrary, tipWindowEffect, tipWindowHold, tipWindowHeadset;
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -341,6 +341,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             Preferences.writeBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_TAPANDHOLD_COACHMARK_ENABLE, false);
         }
 
+        if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true)) {
+            tipWindowHeadset = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_ABOVE_WITH_CLOSE, getResources().getString(R.string.tutorial_use_headphones));
+            tipWindowHeadset.showToolTip(findViewById(R.id.player_title_txt), 0);
+        }
     }
 
     public void showPurchaseOption() {
@@ -350,7 +354,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     }
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
+        super.onBackPressed();
+        Preferences.writeBoolean(BoomPlayerActivity.this, Preferences.APP_FRESH_LAUNCH, false);
     }
 
     @Override
@@ -556,6 +561,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }
         if (tipWindowHold != null) {
             tipWindowHold.dismissTooltip();
+        }
+        if (tipWindowHeadset != null) {
+            tipWindowHeadset.dismissTooltip();
         }
     }
 

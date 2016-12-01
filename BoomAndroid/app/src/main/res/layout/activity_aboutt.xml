@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_about"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    tools:context=".ui.musiclist.activity.AboutActivity">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="23dp"
+        app:srcCompat="@drawable/boom_android_store" />
+
+    <TextView
+        android:id="@+id/lbl_title_about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/imageView2"
+        android:layout_marginTop="32dp"
+        android:gravity="center_horizontal"
+        android:text="@string/title_about"
+        android:textColor="@color/white_shade"
+        android:textSize="20sp" />
+
+
+    <TextView
+        android:id="@+id/lbl_desc_about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/lbl_title_about"
+        android:gravity="center_horizontal"
+        android:inputType="textMultiLine"
+        android:text="@string/description_about"
+        android:textColor="@color/white_shade"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/rate_app"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/lbl_desc_about"
+        android:layout_marginTop="46dp"
+        android:gravity="center_horizontal"
+        android:text="@string/rate_app"
+        android:textColor="@color/yellow"
+
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/share_app"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/rate_app"
+        android:layout_marginTop="24dp"
+        android:gravity="center_horizontal"
+        android:text="@string/share_app"
+        android:textColor="@color/blue_holo"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/contact_us"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/share_app"
+        android:layout_marginTop="19dp"
+        android:gravity="center_horizontal"
+        android:text="@string/contact_us"
+        android:textColor="@color/white_shade"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/lbl_about_technoloy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/contact_us"
+        android:layout_marginTop="23dp"
+        android:gravity="center_horizontal"
+        android:text="@string/about_technology"
+        android:textColor="@color/white_shade"
+        android:textSize="8dp" />
+
+    <View
+        android:id="@+id/viewline"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_alignEnd="@+id/lbl_about_technoloy"
+        android:layout_alignStart="@+id/lbl_about_technoloy"
+        android:layout_below="@+id/lbl_about_technoloy"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="5dp"
+        android:background="#c0c0c0"
+        android:backgroundTint="@color/white_shade"
+        android:gravity="center_horizontal"
+
+        />
+
+    <TextView
+        android:id="@+id/lbl_copyright"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/viewline"
+        android:layout_marginTop="5dp"
+        android:gravity="center_horizontal"
+        android:text="@string/copyright"
+        android:textColor="@color/white_shade"
+        android:textSize="8dp" />
+</RelativeLayout>

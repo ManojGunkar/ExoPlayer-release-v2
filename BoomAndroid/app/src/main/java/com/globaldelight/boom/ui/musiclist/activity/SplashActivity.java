@@ -75,30 +75,25 @@ public class SplashActivity extends AppCompatActivity {
 
             //get current date
             currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-
+            mixpanel = MixPanelAnalyticHelper.getInstance(this);
             //new Launch of app.Use for tutorial
-            if (!Preferences.readBoolean(this, Preferences.APP_NEW_LAUNCH, false)) {
+            if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true)) {
                 Preferences.writeString(this, Preferences.INSTALL_DATE, currentDate);
                 audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.FIVE_DAY_OFFER);
+                //register first app open once as super property
+                propsFirst = new JSONObject();
+                try {
+                    propsFirst.put(AnalyticsHelper.EVENT_FIRST_VISIT, currentDate);
+                    mixpanel.registerSuperPropertiesOnce(propsFirst);//super property
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
             }
-
-            Preferences.writeBoolean(SplashActivity.this, Preferences.APP_NEW_LAUNCH, true);
-
 
             //get last opened date
             String lastOpen = Preferences.readString(this, Preferences.APP_LAST_OPEN, currentDate);
-            mixpanel = MixPanelAnalyticHelper.getInstance(this);
-
-
-            //register first app open once as super property
-            propsFirst = new JSONObject();
-            try {
-                propsFirst.put(AnalyticsHelper.EVENT_FIRST_VISIT, currentDate);
-                mixpanel.registerSuperPropertiesOnce(propsFirst);//super property
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
             propsLast = new JSONObject();
 
 

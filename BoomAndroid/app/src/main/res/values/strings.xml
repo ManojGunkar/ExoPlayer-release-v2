@@ -97,6 +97,7 @@
     <string name="tutorial_select_song">Choose a song from \n library to play.</string>
     <string name="tutorial_effect_tap_hold">Tap and hold to turn \n Effects On/Off</string>
     <string name="tutorial_select_speaker">Tap to modify Speakers</string>
+    <string name="tutorial_use_headphones">Use Headphones for the \n best experience</string>
     <!-- playing queue-->
     <string name="title_playingque">Up Next</string>
     <!-- Menu-->

@@ -7,9 +7,11 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -23,7 +25,7 @@ public class TooltipWindow {
     public static final int DRAW_TOP_CENTER = 3;
     public static final int DRAW_BOTTOM = 4;
     public static final int DRAW_TOP_RIGHT = 11;
-
+    public static final int DRAW_ABOVE_WITH_CLOSE = 12;
 
     /* Arrow position  */
     public static final int DRAW_ARROW_TOP_RIGHT = 5;
@@ -75,12 +77,27 @@ public class TooltipWindow {
             case DRAW_RIGHT:
                 layout = R.layout.tooltip_right_layout;
                 break;
+            case DRAW_ABOVE_WITH_CLOSE:
+                layout = R.layout.tooltip_layout;
+                break;
         }
         contentView = inflater.inflate(layout, null);
         mInfoText = (CoachMarkTextView) contentView.findViewById(R.id.tooltip_text);
         Typeface typeFace = Typeface.createFromAsset(ctx.getAssets(), "fonts/TitilliumWeb-Light.ttf");
         mInfoText.setTypeface(typeFace);
         mImageArrow = (ImageView) contentView.findViewById(R.id.tooltip_nav_up);
+        if (position == DRAW_ABOVE_WITH_CLOSE) {
+            ImageView close = (ImageView) contentView.findViewById(R.id.close_button);
+            close.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismissTooltip();
+                }
+            });
+
+        }
+
+
         mInfoText.setText(text);
 
     }
@@ -112,9 +129,14 @@ public class TooltipWindow {
         }
         tipWindow.setHeight(LayoutParams.WRAP_CONTENT);
         tipWindow.setWidth(LayoutParams.WRAP_CONTENT);
+        if (position == DRAW_ABOVE_WITH_CLOSE) {
+            tipWindow.setOutsideTouchable(false);
+            tipWindow.setTouchable(true);
+        } else {
+            tipWindow.setOutsideTouchable(true);
+            tipWindow.setTouchable(false);
+        }
 
-        tipWindow.setOutsideTouchable(true);
-        tipWindow.setTouchable(false);
         tipWindow.setFocusable(false);
         tipWindow.setBackgroundDrawable(new BitmapDrawable());
 
@@ -152,6 +174,13 @@ public class TooltipWindow {
             case DRAW_LEFT:
                 break;
             case DRAW_RIGHT:
+                break;
+            case DRAW_ABOVE_WITH_CLOSE:
+                WindowManager wm = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
+                Display display = wm.getDefaultDisplay();
+                int width = display.getWidth();  // deprecated
+                position_x = (width - contentViewWidth) / 2;
+                position_y = anchor_rect.top;
                 break;
         }
         tipWindow.showAtLocation(anchor, Gravity.NO_GRAVITY, position_x,
