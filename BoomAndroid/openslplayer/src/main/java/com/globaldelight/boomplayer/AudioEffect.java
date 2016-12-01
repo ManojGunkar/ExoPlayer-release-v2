@@ -43,7 +43,7 @@ public class AudioEffect {
     private static String INTENSITY_POSITION = "intensity_position";
     private static String SELECTED_EQUALIZER_POSITION = "selected_equalizer_position";
 
-    private static String SPEAKER_POWER = "speaker_power";
+    private static String ALL_SPEAKER_POWER = "all_speaker_power";
 
     private static String FULL_BASS = "full_bass";
     private static String EFFECT_MASTER_PURCHASE_CONTROL = "effect_paid_master_control";
@@ -202,6 +202,15 @@ public class AudioEffect {
     public void setEnableTweeter(boolean enable) {
         editor.putBoolean(SPEAKER_TWEETER, enable);
         editor.commit();
+    }
+
+    public void setOnAllSpeaker(boolean enable) {
+        editor.putBoolean(ALL_SPEAKER_POWER, enable);
+        editor.commit();
+    }
+
+    public boolean isAllSpeakerOn(){
+        return shp.getBoolean(ALL_SPEAKER_POWER, DEFAULT_POWER);
     }
 
     public void setEnableHeadsetPlugged(boolean enable){

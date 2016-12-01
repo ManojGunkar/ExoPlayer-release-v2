@@ -106,7 +106,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/one_ten_pt">
 
-
                     <ImageView
                         android:id="@+id/three_d_switch_btn"
                         android:layout_width="wrap_content"
@@ -114,7 +113,6 @@
                         android:layout_alignParentStart="true"
                         android:layout_marginStart="@dimen/one_fifty_two_pt"
                         android:src="@drawable/three_d_surround_off" />
-
 
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:id="@+id/three_d_txt"
@@ -149,10 +147,9 @@
                         android:id="@+id/speaker_switch_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="@dimen/one_fifty_six_pt"
-                        android:src="@drawable/three_d_speakers_off" />
+                        android:src="@drawable/ic_three_d_speakers_inactive" />
 
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:id="@+id/speaker_info"
@@ -160,7 +157,6 @@
                         android:layout_height="wrap_content"
                         android:layout_alignStart="@+id/three_d_txt"
                         android:layout_below="@+id/three_d_txt"
-
                         android:layout_marginTop="@dimen/fourty_four_pt"
                         android:maxLines="1"
                         android:text="@string/speaker_status_some_off"
@@ -168,114 +164,12 @@
                         android:textSize="@dimen/sixty_pt_txt" />
 
                 </RelativeLayout>
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/collapsable_layout"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/one_thousand_four_hundred_pt"
-                android:gravity="center_vertical"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="gone" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:animateLayoutChanges="true"
-                    android:paddingBottom="@dimen/fourty_pt">
-
-                    <ImageView
-                        android:id="@+id/speaker_right_front"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginEnd="@dimen/three_hundred_fourty_px"
-                        android:layout_marginTop="@dimen/eighty_pt"
-                        android:src="@drawable/off_right_front" />
-                    <!--android:src="@drawable/on_right_front"-->
-                    <ImageView
-                        android:id="@+id/speaker_left_front"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignTop="@+id/speaker_right_front"
-                        android:layout_marginStart="@dimen/three_hundred_twenty_px"
-                        android:src="@drawable/off_left_front" />
-                    <!--android:src="@drawable/on_left_front"-->
-                    <ImageView
-                        android:id="@+id/speaker_left_surround"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignStart="@+id/speaker_left_tweeter"
-                        android:layout_below="@+id/speaker_left_tweeter"
-                        android:layout_marginStart="@dimen/four_pt"
-                        android:layout_marginTop="@dimen/one_hundred_twelve_pt"
-                        android:src="@drawable/off_left_surround" />
-                    <!--android:src="@drawable/on_left_surround"-->
-                    <ImageView
-                        android:id="@+id/speaker_right_surround"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignEnd="@+id/speaker_right_tweeter"
-                        android:layout_alignTop="@+id/speaker_left_surround"
-                        android:src="@drawable/off_right_surround" />
-                    <!--android:src="@drawable/on_right_surround"-->
-                    <ImageView
-                        android:id="@+id/speaker_left_tweeter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_below="@+id/speaker_left_front"
-                        android:layout_marginStart="@dimen/one_thirty_two_pt"
-                        android:layout_marginTop="@dimen/two_hundred_px"
-                        android:src="@drawable/off_lefttweeter" />
-                    <!--android:src="@drawable/on_lefttweeter"-->
-                    <ImageView
-                        android:id="@+id/speaker_right_tweeter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_above="@+id/speaker_left_surround"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="@dimen/one_hundred__eight_pt"
-                        android:src="@drawable/off_righttweeter" />
-                    <!--android:src="@drawable/on_righttweeter"-->
-                    <ImageView
-                        android:id="@+id/speaker_center_man"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/speaker_right_front"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="39dp"
-                        android:clickable="false"
-                        android:src="@drawable/man_off" />
-                    <!--android:src="@drawable/man_plugged"-->
-                    <ImageView
-                        android:id="@+id/speaker_sub_woofer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/speaker_left_surround"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="@dimen/ninety_two_pt"
-                        android:src="@drawable/off_subwoofer" />
-                    <!--android:src="@drawable/on_right_surround"-->
-                </RelativeLayout>
-
-
                 <LinearLayout
                     android:id="@+id/full_bass_panel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center_vertical"
-
+                    android:layout_marginTop="@dimen/fourty_four_pt"
+                    android:layout_marginStart="95dp"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -297,6 +191,122 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/collapsable_layout"
+                android:layout_marginTop="@dimen/eighty_eighty_pt"
+                android:layout_width="@dimen/one_one_three_four_pt"
+                android:layout_height="@dimen/one_one_nine_four_pt"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/four_px"
+                    android:layout_marginLeft="@dimen/twenty_two_pt"
+                    android:layout_marginRight="@dimen/twenty_two_pt"
+                    android:layout_marginBottom="@dimen/one_hundred_eighty_six_pt"
+                    android:background="@drawable/ic_speaker_backgrounf">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center">
+                        <ImageView
+                            android:id="@+id/speaker_center_man_bg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:src="@drawable/ic_bg_gradient_active"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center">
+                        <ImageView
+                            android:id="@+id/speaker_center_man"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:src="@drawable/ic_man_active"/>
+                    </LinearLayout>
+
+                </FrameLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:animateLayoutChanges="true">
+
+                    <ImageView
+                        android:id="@+id/speaker_sub_woofer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_woofer_active"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true" />
+
+                    <ImageView
+                        android:id="@+id/speaker_right_surround"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_speakers_r_surround_active"
+                        android:layout_marginBottom="78dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true" />
+
+                    <ImageView
+                        android:id="@+id/speaker_left_surround"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_speakers_l_surround_active"
+                        android:layout_alignTop="@+id/speaker_right_surround"
+                        android:layout_alignParentStart="true" />
+
+                    <ImageView
+                        android:id="@+id/speaker_right_tweeter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_tweeter_r_active"
+                        android:layout_marginBottom="30dp"
+                        android:layout_marginRight="6dp"
+                        android:layout_above="@+id/speaker_left_surround"
+                        android:layout_alignParentEnd="true" />
+
+                    <ImageView
+                        android:id="@+id/speaker_right_front"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_speakers_r_front_active"
+                        android:layout_marginBottom="58dp"
+                        android:layout_marginRight="43dp"
+                        android:layout_above="@+id/speaker_right_tweeter"
+                        android:layout_alignParentEnd="true" />
+
+                    <ImageView
+                        android:id="@+id/speaker_left_front"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_speakers_l_front_active"
+                        android:layout_marginBottom="58dp"
+                        android:layout_marginLeft="43dp"
+                        android:layout_above="@+id/speaker_left_tweeter"
+                        android:layout_alignParentStart="true" />
+
+                    <ImageView
+                        android:id="@+id/speaker_left_tweeter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_tweeter_l_active"
+                        android:layout_marginBottom="30dp"
+                        android:layout_marginLeft="6dp"
+                        android:layout_above="@+id/speaker_left_surround"
+                        android:layout_alignParentStart="true" />
+                </RelativeLayout>
+
+            </FrameLayout>
 
             <View
                 android:layout_width="match_parent"
