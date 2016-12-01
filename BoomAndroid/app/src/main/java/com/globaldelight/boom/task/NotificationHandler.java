@@ -122,14 +122,14 @@ public class NotificationHandler {
             Log.d("Playing : ", ""+playing);
             if (playing) {
                 notificationCompat.bigContentView
-                        .setImageViewResource(R.id.noti_play_button, R.drawable.ic_player_pause);
+                        .setImageViewResource(R.id.noti_play_button, R.drawable.ic_pause_notification);
                 notificationCompat.contentView
-                        .setImageViewResource(R.id.noti_play_button, R.drawable.ic_player_pause);
+                        .setImageViewResource(R.id.noti_play_button, R.drawable.ic_pause_notification);
             }else {
                 notificationCompat.bigContentView
-                        .setImageViewResource(R.id.noti_play_button, R.drawable.ic_player_play);
+                        .setImageViewResource(R.id.noti_play_button, R.drawable.ic_play_notification);
                 notificationCompat.contentView
-                        .setImageViewResource(R.id.noti_play_button, R.drawable.ic_player_play);
+                        .setImageViewResource(R.id.noti_play_button, R.drawable.ic_play_notification);
             }
 
             if(App.getPlayerEventHandler().isNext()){

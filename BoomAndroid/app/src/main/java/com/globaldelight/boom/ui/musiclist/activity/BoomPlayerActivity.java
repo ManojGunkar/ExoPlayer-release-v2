@@ -20,8 +20,6 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,6 +30,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.purchase.PurchaseUtil;
 import com.globaldelight.boom.task.PlayerService;
@@ -40,15 +39,25 @@ import com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.ui.widgets.TooltipWindow;
 import com.globaldelight.boom.utils.Logger;
+import com.globaldelight.boom.utils.PlayerUtils;
+import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boomplayer.AudioEffect;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_REPEAT;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_SHUFFLE;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
 
 /**
  * Created by Rahul Agarwal on 30-09-16.
@@ -56,12 +65,6 @@ import java.util.concurrent.TimeUnit;
 
 public class BoomPlayerActivity extends AppCompatActivity implements View.OnClickListener, CircularSeekBar.OnCircularSeekBarChangeListener {
 
-    public static final String ACTION_RECEIVE_SONG = "ACTION_RECEIVE_SONG";
-    public static final String ACTION_ITEM_CLICKED = "ACTION_ITEM_CLICKED";
-    public static final String ACTION_TRACK_STOPPED = "ACTION_TRACK_STOPPED";
-    public static final String ACTION_UPDATE_TRACK_SEEK = "ACTION_UPDATE_TRACK_SEEK";
-    public static final String ACTION_UPDATE_SHUFFLE = "ACTION_UPDATE_SHUFFLE";
-    public static final String ACTION_UPDATE_REPEAT = "ACTION_UPDATE_REPEAT";
     private static final float BITMAP_SCALE = 0.4f;
     private static final float BLUR_RADIUS = 25.0f;
     private static final String TAG = "BoomPlayerActivity";
@@ -76,7 +79,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private CircularCoverView mAlbumArt;
     private CircularSeekBar mTrackSeek;
     private ImageView mPlayPauseBtn, mLibraryBtn, mAudioEffectBtn, mUpNextQueue;
-    private TooltipWindow tipWindowLibrary, tipWindowEffect;
+    private TooltipWindow tipWindowLibrary, tipWindowEffect, tipWindowHold;
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -127,39 +130,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }
     };
 
-    public static void ImageViewAnimatedChange(Context context, final ImageView v, final Bitmap new_image) {
-        final Animation anim_out = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
-        final Animation anim_in = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
-        anim_out.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                v.setImageBitmap(new_image);
-                anim_in.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                    }
-                });
-                v.startAnimation(anim_in);
-            }
-        });
-        v.startAnimation(anim_out);
-    }
 
     private void updateShuffle(){
         switch (App.getUserPreferenceHandler().getShuffle()){
@@ -201,7 +172,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void updateAlbumArt(final MediaItem item){
-        if (isPathValid(item.getItemArtUrl())) {
+        if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
             new Action() {
                 private Bitmap img;
 
@@ -233,13 +204,13 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                                     Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
                                     bitmap = Bitmap.createScaledBitmap(bitmap, (int) getResources().getDimension(R.dimen.home_album_art_size),
                                             (int) getResources().getDimension(R.dimen.home_album_art_size), false);
-                                    ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, bitmap);
+                                    PlayerUtils.ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, bitmap);
                                     Bitmap blurredBitmap = blur(BoomPlayerActivity.this, bitmap);
                                     mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
                                 }catch (NullPointerException e){
                                     Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
                                             R.drawable.ic_default_art_player);
-                                    ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, albumArt);
+                                    PlayerUtils.ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, albumArt);
                                     Bitmap blurredBitmap = blur(BoomPlayerActivity.this, albumArt);
                                     mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
                                 }
@@ -274,7 +245,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             if(item != null) {
                 Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
                         R.drawable.ic_default_art_player);
-                ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, albumArt);
+                PlayerUtils.ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, albumArt);
                 Bitmap blurredBitmap = blur(BoomPlayerActivity.this, albumArt);
                 mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
             }
@@ -293,6 +264,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mTitleTxt.setSelected(true);
             mSubTitleTxt.setSelected(true);
             mFavourite.setVisibility(View.VISIBLE);
+            mAddToPlayList.setVisibility(View.VISIBLE);
 
             updateAlbumArt(item);
 
@@ -307,7 +279,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 mPlayPauseBtn.setVisibility(View.VISIBLE);
                 mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_player_play, null));
             }
-            updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
         }else{
             param = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             param.gravity = Gravity.CENTER;
@@ -322,6 +293,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mRemainsTime.setVisibility(View.INVISIBLE);
             mPlayedTime.setVisibility(View.INVISIBLE);
             mFavourite.setVisibility(View.INVISIBLE);
+            mAddToPlayList.setVisibility(View.INVISIBLE);
         }
         updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
         updateShuffle();
@@ -335,7 +307,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
         super.onCreate(savedInstanceState);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+//        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         setContentView(R.layout.activity_boom_player);
 
         initViews();
@@ -354,24 +326,20 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     public void showCoachMark() {
         if (App.getPlayingQueueHandler().getUpNextList().getPlayingItem() == null && Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE, true)) {
-            tipWindowLibrary = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP, getResources().getString(R.string.tutorial_select_song));
-            tipWindowLibrary.showToolTip(findViewById(R.id.library_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
+            tipWindowLibrary = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP_RIGHT, getResources().getString(R.string.tutorial_select_song));
+            tipWindowLibrary.showToolTip(findViewById(R.id.library_btn), TooltipWindow.DRAW_ARROW_BOTTOM_LEFT);
             Preferences.writeBoolean(this,Preferences.PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE,false);
 
         }
         if (App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null && !audioEffectPreferenceHandler.isAudioEffectOn() && Preferences.readBoolean(this,Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE,true)) {
-            tipWindowEffect = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP, getResources().getString(R.string.tutorial_boom_effect));
+            tipWindowEffect = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP_CENTER, getResources().getString(R.string.tutorial_boom_effect));
             tipWindowEffect.showToolTip(findViewById(R.id.audio_effect_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
         }
-
-       /* if (App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null && audioEffectPreferenceHandler.isAudioEffectOn()) {
-            if (tipWindow != null) {
-                tipWindow.dismissTooltip();
-            }
-        } else {
-            tipWindow = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP, getResources().getString(R.string.tutorial_boom_effect));
-            tipWindow.showToolTip(findViewById(R.id.audio_effect_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
-        }*/
+        if (!Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE, true) && Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_TAPANDHOLD_COACHMARK_ENABLE, true)) {
+            tipWindowHold = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP_CENTER, getResources().getString(R.string.tutorial_effect_tap_hold));
+            tipWindowHold.showToolTip(findViewById(R.id.audio_effect_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
+            Preferences.writeBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_TAPANDHOLD_COACHMARK_ENABLE, false);
+        }
 
     }
 
@@ -380,6 +348,11 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
 
     }
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+    }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -463,15 +436,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         updateEffectIcon();
     }
 
-    public boolean isPathValid(String path) {
-        return path != null && fileExist(path);
-    }
-
-    private boolean fileExist(String albumArtPath) {
-        File imgFile = new File(albumArtPath);
-        return imgFile.exists();
-    }
-
     private void startEffectActivity(){
         Intent queueIntent = new Intent(BoomPlayerActivity.this, Surround3DActivity.class);
         startActivity(queueIntent);
@@ -484,7 +448,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     private void startLibraryActivity() {
         Intent listIntent = new Intent(BoomPlayerActivity.this, DeviceMusicActivity.class);
+        listIntent.setAction("visible");
         startActivity(listIntent);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
     }
 
 
@@ -531,7 +497,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void addToPlayList() {
-
+        Utils util = new Utils(this);
+        ArrayList list = new ArrayList<IMediaItemBase>();
+        list.add(App.getPlayerEventHandler().getPlayingItem());
+        util.addToPlaylist(BoomPlayerActivity.this, list, null);
     }
 
     private void updateFavoriteTrack(boolean isUser) {
@@ -584,6 +553,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }
         if (tipWindowEffect != null) {
             tipWindowEffect.dismissTooltip();
+        }
+        if (tipWindowHold != null) {
+            tipWindowHold.dismissTooltip();
         }
     }
 

@@ -1,9 +1,10 @@
 package com.globaldelight.boom.purchase;
 
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
-import com.globaldelight.boom.R;
+import com.globaldelight.boom.purchase.api.BoomServerRequest;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boomplayer.AudioEffect;
 
@@ -17,6 +18,8 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class PurchaseUtil {
+    public static final int INITIAL_OFFER_DAYS = 5;
+    public static final int EXTEND_OFFER_DAYS = 5;
 
     public static int getRemainingDays(Context context) {
         SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -32,8 +35,8 @@ public class PurchaseUtil {
 
             long remain_days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
             int remainingdays = 0;
-            if (remain_days <= 5) {
-                remainingdays = 5 - (int) remain_days;
+            if (remain_days <= INITIAL_OFFER_DAYS) {
+                remainingdays = INITIAL_OFFER_DAYS - (int) remain_days;
             }
             return remainingdays;
 
@@ -59,8 +62,8 @@ public class PurchaseUtil {
 
             long remain_days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
             int remainingdays = 0;
-            if (remain_days <= 5) {
-                remainingdays = 5 - (int) remain_days;
+            if (remain_days <= EXTEND_OFFER_DAYS) {
+                remainingdays = EXTEND_OFFER_DAYS - (int) remain_days;
             }
             return remainingdays;
 
@@ -72,67 +75,56 @@ public class PurchaseUtil {
         return 0;
     }
 
-    /* public void validateTrialPeriod(Context ctx) {
-         AudioEffect audioEffectPreferenceHandler;
-         audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(ctx);
-         SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
-         String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-         String installDate = Preferences.readString(ctx, Preferences.INSTALL_DATE, currentDate);
-         try {
-             Date date1 = myFormat.parse(installDate);
-             Date date2 = myFormat.parse(currentDate);
-             long diff = date2.getTime() - date1.getTime();
-             System.out.println("Days: " + TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS));
-
-             int purchaseType = audioEffectPreferenceHandler.getUserPurchaseType();
-
-             if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) > 5 && purchaseType == AudioEffect.purchase.FIVE_DAY_OFFER.ordinal()) {
-                 audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.NORMAL_USER);
-             }
-         } catch (ParseException e) {
-             e.printStackTrace();
-         }
-     }*/
-    public static boolean checkUserPurchase(Context context) {
+    public static boolean checkUserPurchase(final Context context) {
         AudioEffect audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(context);
         int purchaseType = audioEffectPreferenceHandler.getUserPurchaseType();
-        AlertDialog.Builder builder =
-                new AlertDialog.Builder(context, R.style.AppCompatAlertDialogStyle);
-        builder.setTitle(context.getResources().getString(R.string.title_fiveday_offer_expired));
-        builder.setMessage(context.getResources().getString(R.string.desc_fiveday_offer_expired));
-        builder.setPositiveButton(context.getResources().getString(R.string.btn_txt_buynow), null);
-        builder.setNegativeButton(context.getResources().getString(R.string.btn_txt_extend), null);
-        builder.show();
-
 
         switch (AudioEffect.purchase.fromOrdinal(purchaseType)) {
             case PAID_USER:
+                audioEffectPreferenceHandler.setMasterEffectControl(true);
                 return true;
             case FIVE_DAY_OFFER:
                 if (getRemainingDays(context) > 0) {
+                    audioEffectPreferenceHandler.setMasterEffectControl(true);
+                    audioEffectPreferenceHandler.setMasterEffectControl(true);
+
                     return true;
                 } else {
-                    audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.NORMAL_USER);
-
-
+                    audioEffectPreferenceHandler.setMasterEffectControl(false);
+                    if (isNetworkAvailable(context)) {
+                        new BoomServerRequest(context).showExtendInitialDialog();
+                    }
                     return false;
                 }
 
 
             case EXTENDED_FIVE_DAY_OFFER:
                 if (getExtendedDays(context) > 0) {
+                    audioEffectPreferenceHandler.setMasterEffectControl(true);
+
                     return true;
                 } else {
                     audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.NORMAL_USER);
+                    audioEffectPreferenceHandler.setMasterEffectControl(false);
+
                     return false;
                 }
 
 
             case NORMAL_USER:
+                audioEffectPreferenceHandler.setMasterEffectControl(false);
+
                 return false;
 
         }
         return false;
     }
+
 }

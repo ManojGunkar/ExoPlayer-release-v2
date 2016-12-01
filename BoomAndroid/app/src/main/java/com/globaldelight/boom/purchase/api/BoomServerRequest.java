@@ -1,22 +1,36 @@
 package com.globaldelight.boom.purchase.api;
 
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.Build;
+import android.content.Intent;
+import android.graphics.Color;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.globaldelight.boom.R;
+import com.globaldelight.boom.purchase.InAppPurchaseActivity;
 import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.handlers.Preferences;
+import com.globaldelight.boomplayer.AudioEffect;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * Created by nidhin on 29/11/16.
@@ -27,80 +41,170 @@ public class BoomServerRequest {
     private final static String APP_TYPE = "android";
     private final static String APP_ID = "com.globaldelight.boom";
     private final static String BASE_URL = "http://devboom.globaldelight.net/";
-    //private final static String DEVICE_ID="android";
+    String accessToken;
+    Context context;
+    AlertDialog ad;
+    AudioEffect audioEffectPreferenceHandler;
+    ProgressDialog pd;
+    String emailid = "";
 
+    public BoomServerRequest(Context context) {
 
-    public static String getAccessToken(final Context context) {
-        String accessToken = Preferences.getPreferences(context).getString(Preferences.ACCESS_TOKEN, "");
-        if (accessToken.equals("")) {
+        this.context = context;
+        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(context);
 
-            final String URL = BASE_URL + "appauthentication/";
-            String deviceid = Settings.Secure.getString(context.getContentResolver(),
-                    Settings.Secure.ANDROID_ID);
-            // Post params to be sent to the server
-            HashMap<String, String> params = new HashMap<String, String>();
-            params.put("secretkey", SECRET_KEY);
-            params.put("apptype", APP_TYPE);
-            params.put("appid", APP_ID);
-            params.put("deviceid", deviceid);
-
-            JsonObjectRequest req = new JsonObjectRequest(URL, new JSONObject(params),
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            String appaccesstoken = "";
-                            try {
-                                appaccesstoken = response.getString("appaccesstoken");
-                                Preferences.writeString(context, Preferences.ACCESS_TOKEN, appaccesstoken);
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-
-                            Logger.LOGD("Response:%n %s", response.toString());
-
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyLog.e("Error: ", error.getMessage());
-                }
-            });
-
-            // add the request object to the queue to be executed
-            //   ApplicationController.getInstance().addToRequestQueue(req);
-            RequestQueue queue = Volley.newRequestQueue(context);
-            queue.add(req);
-        }
-
-        return accessToken;
     }
 
-    public static void register(final Context ctx) {
-        String model = android.os.Build.MODEL;
-        String build = Build.PRODUCT;
-        String osVersion = System.getProperty("os.version");
-        // String myDeviceModel = android.os.Build.MODEL;
+    public final static boolean isValidEmail(CharSequence target) {
+        return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+
+    public static int gen() {
+        Random r = new Random(System.currentTimeMillis());
+        return 1000 + r.nextInt(10000);
+    }
+
+    public void showExtendInitialDialog() {
+
+        new MaterialDialog.Builder(context)
+                .title(R.string.title_fiveday_offer_expired)
+                .content(R.string.desc_fiveday_offer_expired)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#ffffff"))
+                .positiveText(R.string.btn_txt_buynow)
+                .negativeText(R.string.btn_txt_extend)
+
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        Intent intent = new Intent(context, InAppPurchaseActivity.class);
+                        context.startActivity(intent);
+
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        materialDialog.dismiss();
+                        showExtendInputMailDialog();
+                    }
+                })
+
+                .show();
+    }
+
+    public void showExtendInputMailDialog() {
 
 
-        final String URL = BASE_URL + "register/";
-        String deviceid = Settings.Secure.getString(ctx.getContentResolver(),
+        new MaterialDialog.Builder(context)
+                .title(R.string.title_extend_with_email)
+                .content(R.string.desc_extend_with_email)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#ffffff"))
+                .positiveText(R.string.btn_txt_sendcode)
+                //.negativeText(R.string.btn_txt_extend)
+
+                .input(null, null, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        if (!input.toString().matches("") && isValidEmail(input.toString())) {
+                            Logger.LOGD(input.toString());
+                            emailid = input.toString();
+                            if (!emailid.toString().matches("") && isValidEmail(emailid)) {
+                                sendExtendCode(emailid);
+
+                            }
+                        } else {
+                            Toast.makeText(context, context.getResources().getString(R.string.txt_invalid_email), Toast.LENGTH_SHORT).show();
+                            showExtendInputMailDialog();
+                        }
+                    }
+                })
+
+
+                .show();
+    }
+
+    public void showConfirmMailDialog() {
+
+        new MaterialDialog.Builder(context)
+                .title(R.string.confirm_email)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#ffffff"))
+                .positiveText(R.string.btn_txt_resend_code)
+                .input(null, null, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        if (!input.toString().matches("")) {
+
+                            sendExtendCode(input.toString());
+
+                        }
+                    }
+                })
+
+
+                .show();
+    }
+
+    public void showCongratulateDialog() {
+        audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.EXTENDED_FIVE_DAY_OFFER);
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        String currentDate = myFormat.format(new Date());
+        Preferences.writeString(context, Preferences.EXTENDED_DATE, currentDate);
+        new MaterialDialog.Builder(context)
+                .title(R.string.title_congratulate)
+                .content(R.string.desc_congratulate)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#ffffff"))
+                .positiveText(R.string.btn_txt_ok)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        materialDialog.dismiss();
+                    }
+                })
+                .show();
+
+    }
+
+    public String sendExtendCode(final String email) {
+        pd = new ProgressDialog(context);
+        // pd.setMessage("loading");
+        pd.show();
+        final String URL = BASE_URL + "appauthentication/";
+        String deviceid = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         // Post params to be sent to the server
         HashMap<String, String> params = new HashMap<String, String>();
-        params.put("model", model);
-        params.put("OSVersion", osVersion);
-        params.put("build", build);
+        params.put("secretkey", SECRET_KEY);
+        params.put("apptype", APP_TYPE);
+        params.put("appid", APP_ID);
         params.put("deviceid", deviceid);
-        params.put("appaccesstoken", getAccessToken(ctx));
 
         JsonObjectRequest req = new JsonObjectRequest(URL, new JSONObject(params),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
-                        Logger.LOGD("Response:%n %s", response.toString());
+                        try {
+                            accessToken = response.getString("appaccesstoken");
+                            extendWithUserMail(email);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
                     }
                 }, new Response.ErrorListener() {
@@ -110,57 +214,44 @@ public class BoomServerRequest {
             }
         });
 
-        // add the request object to the queue to be executed
-        //   ApplicationController.getInstance().addToRequestQueue(req);
-        RequestQueue queue = Volley.newRequestQueue(ctx);
+        RequestQueue queue = Volley.newRequestQueue(context);
         queue.add(req);
 
+        return accessToken;
     }
 
-        /* "_id":ObjectId("583d1e76d6a8a7f30c5b7846"),
-              "deviceid":"272CCD55-921C-4C81-9EC6-8C676738D18E”, < Sent from app>
-          "created_at":"1480401135",
-              "appaccesstoken":"de45cda219d5874bd25ce994b6fdb26e9968f8a447f4814d25a779e245b1e740”,
-          "language":"en”, < Sent from app>
-          "country":"IN",< Sent from app>
-              "updated_at":"1480402058",
-              "arn":"arn:aws:sns:us-east-1:724555098295:endpoint/APNS_SANDBOX/iBoom_Dev/c7ba0799-0c7b-3b22-b819-1936d6ef77d5”, < Sent from app - push notification id>
-          "version":"1.1.1”, < Sent from app>
-          "devicetoken":"67fc025f854e9736fe220439800154174dd2a608bb99c5f5577d986c6ab1db4b”,
-          "build":"1.1.1003”, < Sent from app>
-          "model":"iPhone 6s Plus”, < Sent from app>
-          "OSVersion":"10.1.1”, < Sent from app>
-          "timeZoneOffset”:19800 < Sent from app>*/
-
-    public static void saveUserMail(final Context ctx) {
-        final String URL = BASE_URL + "saveuseremail/";
-        String deviceid = Settings.Secure.getString(ctx.getContentResolver(),
+    public void extendWithUserMail(final String email) {
+        final String URL = BASE_URL + "extendwithemail/";
+        String deviceid = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-
-        // Post params to be sent to the server
+        final String token = gen() + "";
         HashMap<String, String> params = new HashMap<String, String>();
-        params.put("model", SECRET_KEY);
-
-        // params.put("OSVersion", osVersion);
-        /// params.put("build", build);
-        // params.put("deviceid", deviceid);
-
-        JsonObjectRequest req = new JsonObjectRequest(URL, new JSONObject(params),
+        params.put("appaccesstoken", accessToken);
+        params.put("deviceid", deviceid);
+        params.put("emailid", email);
+        params.put("token", token);
+        JSONObject js = new JSONObject(params);
+        JsonObjectRequest req = new JsonObjectRequest(URL, js,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        String appaccesstoken = "";
+                        if (pd != null) {
+                            pd.dismiss();
+                        }
+
                         try {
-                            appaccesstoken = response.getString("appaccesstoken");
-                            Preferences.writeString(ctx, Preferences.ACCESS_TOKEN, appaccesstoken);
+                            int status = response.getInt("status");
+                            int reason = response.getInt("reason");
+                            if (status == 0 && reason == 1021) {
+                                showAlertForVerify(token, email);
+                            }
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
 
-                        Logger.LOGD("Response:%n %s", response.toString());
-
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -169,9 +260,46 @@ public class BoomServerRequest {
             }
         });
 
-        // add the request object to the queue to be executed
-        //   ApplicationController.getInstance().addToRequestQueue(req);
-        RequestQueue queue = Volley.newRequestQueue(ctx);
+        RequestQueue queue = Volley.newRequestQueue(context);
         queue.add(req);
     }
+
+    public void showAlertForVerify(final String code, final String email) {
+
+        new MaterialDialog.Builder(context)
+                .title(R.string.title_verify_email)
+                .content(R.string.desc_verify_email)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#ffffff"))
+                .positiveText(R.string.btn_txt_verify)
+                .negativeText(R.string.btn_txt_resend)
+                .input(null, null, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        if (!input.toString().matches("")) {
+
+                            if (code.equals(input.toString())) {
+                                showCongratulateDialog();
+                            } else {
+                                Toast.makeText(context, context.getResources().getString(R.string.txt_invalid_code), Toast.LENGTH_SHORT).show();
+                                showAlertForVerify(code, email);
+                            }
+
+                        }
+                    }
+                })
+
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        showConfirmMailDialog();
+                    }
+                })
+
+                .show();
+    }
+
 }

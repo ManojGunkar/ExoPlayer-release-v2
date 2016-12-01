@@ -18,9 +18,7 @@ import com.globaldelight.boom.ui.musiclist.activity.PlayingQueueActivity;
 
 import java.io.IOException;
 
-/**
- * Created by architjn on 11/12/15.
- */
+
 public class PlayerService extends Service {
 
 //    public static final String ACTION_PLAY_SINGLE = "ACTION_PLAY_SINGLE";
@@ -128,16 +126,16 @@ public class PlayerService extends Service {
                 trackSeekUpdate(false, intent);
                 break;
             case ACTION_PLAY_STOP:
-                sendBroadcast(new Intent(BoomPlayerActivity.ACTION_TRACK_STOPPED));
+                sendBroadcast(new Intent(PlayerEvents.ACTION_TRACK_STOPPED));
                 updateNotificationPlayer(null, false);
                 break;
             case ACTION_SHUFFLE_SONG:
                 musicPlayerHandler.resetShuffle();
-                sendBroadcast(new Intent(BoomPlayerActivity.ACTION_UPDATE_SHUFFLE));
+                sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_SHUFFLE));
                 break;
             case ACTION_REPEAT_SONG :
                 musicPlayerHandler.resetRepeat();
-                sendBroadcast(new Intent(BoomPlayerActivity.ACTION_UPDATE_REPEAT));
+                sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_REPEAT));
                 break;
             case ACTION_NEXT_SONG :
                 musicPlayerHandler.playNextSong(true);
@@ -194,7 +192,7 @@ public class PlayerService extends Service {
 
     private synchronized void trackSeekUpdate(boolean isUser, Intent intent){
         if(isUser){
-            Intent seek = new Intent(BoomPlayerActivity.ACTION_UPDATE_TRACK_SEEK);
+            Intent seek = new Intent(PlayerEvents.ACTION_UPDATE_TRACK_SEEK);
             seek.putExtra("percent", intent.getIntExtra("percent", 0));
             seek.putExtra("currentms", intent.getLongExtra("currentms", 0));
             seek.putExtra("totalms", intent.getLongExtra("totalms", 0));
@@ -206,7 +204,7 @@ public class PlayerService extends Service {
 
     private void updatePlayPause(boolean play_pause) {
         Intent i = new Intent();
-        i.setAction(BoomPlayerActivity.ACTION_ITEM_CLICKED);
+        i.setAction(PlayerEvents.ACTION_ITEM_CLICKED);
         i.putExtra("play_pause", play_pause);
         sendBroadcast(i);
 
@@ -221,7 +219,7 @@ public class PlayerService extends Service {
 
     public void updatePlayer() {
         Intent i = new Intent();
-        i.setAction(BoomPlayerActivity.ACTION_RECEIVE_SONG);
+        i.setAction(PlayerEvents.ACTION_RECEIVE_SONG);
         i.putExtra("playing_song", (MediaItem)musicPlayerHandler.getPlayingItem());
         i.putExtra("playing", true);
         i.putExtra("is_previous", musicPlayerHandler.isPrevious());

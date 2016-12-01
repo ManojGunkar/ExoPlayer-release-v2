@@ -46,6 +46,7 @@ public class AudioEffect {
     private static String SPEAKER_POWER = "speaker_power";
 
     private static String FULL_BASS = "full_bass";
+    private static String EFFECT_MASTER_PURCHASE_CONTROL = "effect_paid_master_control";
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
 
@@ -96,6 +97,14 @@ public class AudioEffect {
         editor.commit();
     }
 
+    public boolean isMasterEffectControlEnabled() {
+        return shp.getBoolean(EFFECT_MASTER_PURCHASE_CONTROL, false);
+    }
+
+    public void setMasterEffectControl(boolean enableMasterControl) {
+        editor.putBoolean(EFFECT_MASTER_PURCHASE_CONTROL, enableMasterControl);
+        editor.commit();
+    }
     public boolean isFullBassOn(){
         return shp.getBoolean(FULL_BASS, DEFAULT_POWER);
     }

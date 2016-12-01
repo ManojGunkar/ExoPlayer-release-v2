@@ -20,8 +20,10 @@ public class TooltipWindow {
 
     public static final int DRAW_LEFT = 1;
     public static final int DRAW_RIGHT = 2;
-    public static final int DRAW_TOP = 3;
+    public static final int DRAW_TOP_CENTER = 3;
     public static final int DRAW_BOTTOM = 4;
+    public static final int DRAW_TOP_RIGHT = 11;
+
 
     /* Arrow position  */
     public static final int DRAW_ARROW_TOP_RIGHT = 5;
@@ -47,7 +49,6 @@ public class TooltipWindow {
         ;
     };
     private LayoutInflater inflater;
-    //private ImageView tip;
     private int position = 4;
 
 
@@ -63,10 +64,11 @@ public class TooltipWindow {
             case DRAW_BOTTOM:
                 layout = R.layout.tooltip_bottom_layout;
                 break;
-
-            case DRAW_TOP:
+            case DRAW_TOP_RIGHT:
+            case DRAW_TOP_CENTER:
                 layout = R.layout.tooltip_top_layout;
                 break;
+
             case DRAW_LEFT:
                 layout = R.layout.tooltip_left_layout;
                 break;
@@ -74,14 +76,12 @@ public class TooltipWindow {
                 layout = R.layout.tooltip_right_layout;
                 break;
         }
-        //contentView = inflater.inflate(R.layout.tooltip_layout, null);
         contentView = inflater.inflate(layout, null);
         mInfoText = (CoachMarkTextView) contentView.findViewById(R.id.tooltip_text);
         Typeface typeFace = Typeface.createFromAsset(ctx.getAssets(), "fonts/TitilliumWeb-Light.ttf");
         mInfoText.setTypeface(typeFace);
         mImageArrow = (ImageView) contentView.findViewById(R.id.tooltip_nav_up);
         mInfoText.setText(text);
-        //  mlayout =(LinearLayout) contentView.findViewById(R.id.tooltip_container);
 
     }
 
@@ -96,11 +96,11 @@ public class TooltipWindow {
 
                 mImageArrow.setLayoutParams(layoutParams);
                 break;
-           /* case DRAW_ARROW_BOTTOM_LEFT:
-                layoutParams.gravity = Gravity.CENTER;
-               layoutParams.setMargins(0,0,0,20);
+            case DRAW_ARROW_BOTTOM_LEFT:
+                layoutParams.gravity = Gravity.LEFT;
+                layoutParams.setMargins(15, 0, 0, 0);
                 mImageArrow.setLayoutParams(layoutParams);
-                break;*/
+                break;
             case DRAW_ARROW_DEFAULT_CENTER:
                 layoutParams.gravity = Gravity.CENTER;
                 layoutParams.setMargins(0, 0, 0, height / 2);//minus arrow height 25 dp
@@ -112,8 +112,6 @@ public class TooltipWindow {
         }
         tipWindow.setHeight(LayoutParams.WRAP_CONTENT);
         tipWindow.setWidth(LayoutParams.WRAP_CONTENT);
-        // tipWindow.setHeight(200);
-        // tipWindow.setWidth(200);
 
         tipWindow.setOutsideTouchable(true);
         tipWindow.setTouchable(false);
@@ -123,39 +121,32 @@ public class TooltipWindow {
         tipWindow.setContentView(contentView);
 
         int screen_pos[] = new int[2];
-// Get location of anchor view on screen
         anchor.getLocationOnScreen(screen_pos);
 
-// Get rect for anchor view
         Rect anchor_rect = new Rect(screen_pos[0], screen_pos[1], screen_pos[0]
                 + anchor.getWidth(), screen_pos[1] + anchor.getHeight());
 
-// Call view measure to calculate how big your view should be.
         contentView.measure(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
 
         int contentViewHeight = contentView.getMeasuredHeight();
         int contentViewWidth = contentView.getMeasuredWidth();
 
-// In this case , i dont need much calculation for x and y position of
-// tooltip
-// For cases if anchor is near screen border, you need to take care of
-// direction as well
-// to show left, right, above or below of anchor view
+
         int position_x = 0, position_y = 0;
-        // int position_x = anchor_rect.centerX() - (contentViewWidth - contentViewHeight / 2);
-        //int position_y = anchor_rect.bottom - (anchor_rect.height());
         switch (position) {
             case DRAW_BOTTOM:
                 position_x = anchor_rect.centerX() - (contentViewWidth - contentViewHeight / 2);
-//               position_y = anchor_rect.bottom;
                 position_y = anchor_rect.bottom - (anchor_rect.height() / 2) - 10;
                 break;
-            case DRAW_TOP:
+            case DRAW_TOP_CENTER:
                 position_x = anchor_rect.centerX() - (contentViewWidth - contentViewWidth / 2);
                 position_y = anchor_rect.top - contentViewHeight;
-                // position_y = anchor_rect.top - (anchor_rect.height());
-                //  Toast.makeText(ctx,anchor_rect.top+"***"+position_y,Toast.LENGTH_SHORT).show();
+
+                break;
+            case DRAW_TOP_RIGHT:
+                position_x = anchor_rect.left;
+                position_y = anchor_rect.top - (contentViewHeight + getArrowHeight());
 
                 break;
             case DRAW_LEFT:
@@ -165,21 +156,6 @@ public class TooltipWindow {
         }
         tipWindow.showAtLocation(anchor, Gravity.NO_GRAVITY, position_x,
                 position_y);
-      /*  anchor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismissTooltip();
-            }
-        });
-*/
-// send message to handler to dismiss tipWindow after X milliseconds
-//handler.sendEmptyMessageDelayed(MSG_DISMISS_TOOLTIP, 4000);
-      /* anchor.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
-            }
-        });*/
     }
 
     public boolean isTooltipShown() {
@@ -191,6 +167,12 @@ public class TooltipWindow {
     public void dismissTooltip() {
         if (tipWindow != null && tipWindow.isShowing())
             tipWindow.dismiss();
+    }
+
+    public int getArrowHeight() {
+        float dp = 25;
+        float val = dp * ctx.getResources().getDisplayMetrics().density;
+        return (int) val;
     }
 
 }

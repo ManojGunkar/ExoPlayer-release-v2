@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/favourite_list_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/appBackground"
-    android:orientation="vertical">
+    android:background="@color/appBackground">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/favourite_list_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
         app:theme="@style/ToolbarSearchTheme">
 
         <com.globaldelight.boom.ui.widgets.RegularTextView
@@ -29,6 +29,8 @@
         android:id="@+id/rv_favourite_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/favourite_list_toolbar"
+        android:layout_above="@+id/favourite_mini_player"
         android:layout_gravity="center_horizontal|top"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
@@ -38,6 +40,8 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         android:gravity="center"
+        android:layout_below="@+id/favourite_list_toolbar"
+        android:layout_above="@+id/favourite_mini_player"
         android:orientation="vertical" >
         <ImageView
             android:layout_width="wrap_content"
@@ -52,4 +56,16 @@
             android:text="@string/fav_placeholder_txt"
             android:layout_marginTop="@dimen/ninety_six_pt"/>
         </LinearLayout>
-</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/favourite_mini_player"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mini_player_height"
+        android:elevation="12dp"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true">
+        <include
+            layout="@layout/mini_player"/>
+    </LinearLayout>
+
+</RelativeLayout>

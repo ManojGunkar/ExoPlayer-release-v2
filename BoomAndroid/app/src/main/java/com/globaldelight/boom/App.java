@@ -47,6 +47,10 @@ public class App extends Application implements SensorEventListener {
         App.service = service;
     }
 
+    public static PlayerService getService(){
+        return App.service;
+    }
+
     public static PlayerEventHandler getPlayerEventHandler() {
         return PlayerEventHandler.getPlayerEventInstance(application, service);
     }

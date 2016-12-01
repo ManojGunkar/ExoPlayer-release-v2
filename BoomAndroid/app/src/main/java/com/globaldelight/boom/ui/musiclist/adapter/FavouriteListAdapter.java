@@ -228,9 +228,6 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
                     .getColor(context, R.color.appBackground));
             selectedSongId = -1;
             selectedHolder = null;
-        } else {
-            if (context != null && itemList.get(0).getItemType() == ItemType.SONGS)
-                ((FavouriteListActivity) context).killActivity();
         }
     }
 
