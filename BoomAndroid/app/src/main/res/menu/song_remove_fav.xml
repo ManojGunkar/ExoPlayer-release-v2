@@ -3,16 +3,16 @@
     <item
         android:id="@+id/popup_song_add_queue"
         android:icon="@drawable/ic_menu_selected"
-        android:title="Add to Up Next"
+        android:title="@string/menu_add_upnext"
         android:showAsAction="ifRoom" />
     <item
         android:id="@+id/popup_song_add_playlist"
         android:icon="@drawable/ic_menu_selected"
-        android:title="Add to Boom Playlist"
+        android:title="@string/menu_add_boom_playlist"
         android:showAsAction="ifRoom" />
     <item
         android:id="@+id/popup_song_add_fav"
         android:icon="@drawable/ic_menu_selected"
-        android:title="Remove from Boom Favourites"
+        android:title="@string/menu_remove_boom_fav"
         android:showAsAction="ifRoom" />
 </menu>

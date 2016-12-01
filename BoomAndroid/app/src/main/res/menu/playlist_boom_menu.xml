@@ -2,20 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/popup_add_queue"
-        android:title="Add to Up Next"
+        android:title="@string/menu_add_upnext"
         android:showAsAction="ifRoom" />
     <item
         android:id="@+id/popup_add_playlist"
-        android:title="Add to Boom Playlist"
+        android:title="@string/menu_add_boom_playlist"
         android:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/popup_playlist_rename"
-        android:title="Rename"
+        android:title="@string/rename"
         android:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/popup_playlist_delete"
-        android:title="Delete"
+        android:title="@string/delete"
         android:showAsAction="ifRoom" />
 </menu>

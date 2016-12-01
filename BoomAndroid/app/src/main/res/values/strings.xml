@@ -141,4 +141,14 @@
     <string name="btn_txt_buynow">Buy Now</string>
     <string name="btn_txt_extend">Extend</string>
 
+    <!--Menus-->
+    <string name="menu_play_next">Play Next</string>
+    <string name="menu_shuffle">Shuffle</string>
+    <string name="menu_add_upnext">Add to Up Next</string>
+    <string name="menu_add_boom_playlist">Add to Boom Playlist</string>
+    <string name="menu_add_boom_fav">Add to Boom Favourites</string>
+    <string name="menu_remove_boom_fav">Remove from Boom Favourites</string>
+
+
+
 </resources>

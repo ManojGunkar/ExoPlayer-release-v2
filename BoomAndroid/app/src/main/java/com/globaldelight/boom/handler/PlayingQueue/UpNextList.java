@@ -398,7 +398,7 @@ public class UpNextList {
         mAutoNextList.add(item);
     }
 
-    public void addItemListToUpNextFrom(List<? extends IMediaItemBase> itemList) {
+    public void addItemListToUpNextFrom(ArrayList<? extends IMediaItemBase> itemList) {
         mAutoNextList.addAll(itemList);
     }
 
