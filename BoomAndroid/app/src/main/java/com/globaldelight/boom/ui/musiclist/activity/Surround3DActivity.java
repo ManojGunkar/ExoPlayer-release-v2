@@ -21,6 +21,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.AbsListView;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -57,7 +58,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     private ImageView mSpeakerLeftFront, mSpeakerRightFront, mTweeterLeft, mTweeterRight,
             mSpeakerLeftSurround, mSpeakerRightSurround, mSpeakerSubWoofer, mCenterMan;
     private Toolbar toolbar;
-    private LinearLayout collapsablelayout, mEffectSwitchPanel;
+    private LinearLayout mEffectSwitchPanel;
+    private FrameLayout collapsablelayout;
     private NegativeSeekBar mIntensitySeek;
     private RecyclerView recyclerView;
     private ScrollEnableLayoutManager layoutManager;
@@ -162,7 +164,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         mCenterMan = (ImageView)findViewById(R.id.speaker_center_man);//onclick
 
         mFullBassRd = (ImageView) findViewById(R.id.full_bass_radio);
-        collapsablelayout = (LinearLayout) findViewById(R.id.collapsable_layout);
+        collapsablelayout = (FrameLayout) findViewById(R.id.collapsable_layout);
         mIntensitySeek = (NegativeSeekBar) findViewById(R.id.intensity_seek);//onSeekChange
         recyclerView = (RecyclerView)findViewById(R.id.eq_recycler) ;
 
@@ -245,7 +247,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             m3DSwitchTxt.setText(getResources().getString(R.string.status_off_caps));
             m3DTxt.setTextColor(Color.WHITE);
             m3DSwitchTxt.setTextColor(Color.WHITE);
-            mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_speakers_off, null));
+            mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_inactive, null));
             MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_3D_TURNED_OFF);
         }
         updateSpeakerInfo();
@@ -263,39 +265,69 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         boolean isTweeter = audioEffectPreferenceHandler.isTweeterOn();
 
         if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()) {
-            if(isLeftFront && isRightFront && isLeftSurround && isRightSurround && isWoofer && isTweeter){
+            if(isLeftFront && isRightFront && isLeftSurround && isRightSurround){
                 mSpeakerInfo.setVisibility(View.GONE);// All Speakers are on
-                mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_speakers, null));
-            }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround && !isWoofer && !isTweeter) {
+                mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
+                updateTweeterAndWoofer(true);
+            }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround) {
                 // All Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_all_off));
                 mSpeakerInfo.setVisibility(View.VISIBLE);
                 mSpeakerInfo.setTextColor(Color.WHITE);// active color
-                mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_speakers, null));
+                mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
+                updateTweeterAndWoofer(false);
             }else {
                 // Some Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_some_off));
                 mSpeakerInfo.setVisibility(View.VISIBLE);
                 mSpeakerInfo.setTextColor(Color.WHITE);// active color
-                mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_speakers, null));
+                mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
+                updateTweeterAndWoofer(true);
             }
         }else{
             if(isLeftFront && isRightFront && isLeftSurround && isRightSurround && isWoofer && isTweeter){
                 mSpeakerInfo.setVisibility(View.GONE);// All Speakers are on
+                updateTweeterAndWoofer(true);
             }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround && !isWoofer && !isTweeter) {
                 // All Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_all_off));
                 mSpeakerInfo.setVisibility(View.VISIBLE);
                 mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
+                updateTweeterAndWoofer(false);
             }else {
                 // Some Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_some_off));
                 mSpeakerInfo.setVisibility(View.VISIBLE);
                 mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
+                updateTweeterAndWoofer(true);
             }
-            mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_speakers_off, null));
+            mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_inactive, null));
         }
     }
+
+    private void updateTweeterAndWoofer(boolean isEnable){
+        if(isEnable){
+            audioEffectPreferenceHandler.setOnAllSpeaker(true);
+            if(!audioEffectPreferenceHandler.isTweeterOn()){
+                mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_l_inactive, null));
+                mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_r_disabled, null));
+            }else {
+                mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_l_active, null));
+                mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_r_active, null));
+            }
+            if(!audioEffectPreferenceHandler.isWooferOn()){
+                mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.ic_woofer_inactive, null));
+            }else {
+                mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.ic_woofer_active, null));
+            }
+        }else{
+            audioEffectPreferenceHandler.setOnAllSpeaker(false);
+            mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_l_disabled, null));
+            mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_r_disabled, null));
+            mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.ic_woofer_disabled, null));
+        }
+    }
+
 
     public void updateFullBass(){
         if(audioEffectPreferenceHandler.is3DSurroundOn() && audioEffectPreferenceHandler.isAudioEffectOn()){
@@ -319,41 +351,30 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void updateSpeakers(){
         if(!audioEffectPreferenceHandler.isLeftFrontSpeakerOn()){
-            mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.off_left_front, null));
+            mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_front_inactive, null));
         }else {
-            mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.on_left_front, null));
+            mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_front_active, null));
         }
         if(!audioEffectPreferenceHandler.isRightFrontSpeakerOn()){
-            mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.off_right_front, null));
+            mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_front_inactive, null));
         }else {
-            mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.on_right_front, null));
-        }
-        if(!audioEffectPreferenceHandler.isTweeterOn()){
-            mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.off_lefttweeter, null));
-            mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.off_righttweeter, null));
-        }else {
-            mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.on_lefttweeter, null));
-            mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.on_righttweeter, null));
+            mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_front_active, null));
         }
         if(!audioEffectPreferenceHandler.isLeftSurroundSpeakerOn()){
-            mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_left_surround, null));
+            mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_surround_inactive, null));
         }else {
-            mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_left_surround, null));
+            mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_surround_active, null));
         }
         if(!audioEffectPreferenceHandler.isRightSurroundSpeakerOn()){
-            mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_right_surround, null));
+            mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_surround_inactive, null));
         }else {
-            mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_right_surround, null));
+            mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_surround_active, null));
         }
-        if(!audioEffectPreferenceHandler.isWooferOn()){
-            mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.off_subwoofer, null));
-        }else {
-            mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.on_subwoofer, null));
-        }
+        updateTweeterAndWoofer(audioEffectPreferenceHandler.isAllSpeakerOn());
         if(MusicReceiver.isPlugged){
-            mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.man_plugged, null));
+            mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.ic_man_active, null));
         }else{
-            mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.man_normal, null));
+            mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.ic_man_active, null));
         }
     }
 
@@ -536,12 +557,12 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.speaker_left_front:
                 if (audioEffectPreferenceHandler.isLeftFrontSpeakerOn()) {
-                    mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.off_left_front, null));
+                    mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_front_inactive, null));
                     audioEffectPreferenceHandler.setEnableLeftFrontSpeaker(false);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontLeft, false);
                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_LEFT_SPEAKER_OFF);
                 } else {
-                    mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.on_left_front, null));
+                    mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_front_active, null));
                     audioEffectPreferenceHandler.setEnableLeftFrontSpeaker(true);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontLeft, true);
                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_LEFT_SPEAKER_ON);
@@ -552,13 +573,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.speaker_right_front:
                 if (audioEffectPreferenceHandler.isRightFrontSpeakerOn()) {
-                    mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.off_right_front, null));
+                    mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_front_inactive, null));
                     audioEffectPreferenceHandler.setEnableRightFrontSpeaker(false);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontRight, false);
                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_RIGHT_SPEAKER_OFF);
 
                 } else {
-                    mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.on_right_front, null));
+                    mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_front_active, null));
                     audioEffectPreferenceHandler.setEnableRightFrontSpeaker(true);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontRight, true);
                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_RIGHT_SPEAKER_ON);
@@ -568,32 +589,34 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.speaker_left_tweeter:
             case R.id.speaker_right_tweeter:
-                if (audioEffectPreferenceHandler.isTweeterOn()) {
-                    mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.off_lefttweeter, null));
-                    mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.off_righttweeter, null));
-                    audioEffectPreferenceHandler.setEnableTweeter(false);
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Tweeter, false);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_TWEETER_OFF);
+                if(audioEffectPreferenceHandler.isAllSpeakerOn()) {
+                    if (audioEffectPreferenceHandler.isTweeterOn()) {
+                        mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_l_disabled, null));
+                        mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_r_disabled, null));
+                        audioEffectPreferenceHandler.setEnableTweeter(false);
+                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Tweeter, false);
+                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_TWEETER_OFF);
 
-                } else {
-                    mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.on_lefttweeter, null));
-                    mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.on_righttweeter, null));
-                    audioEffectPreferenceHandler.setEnableTweeter(true);
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Tweeter, true);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_TWEETER_ON);
+                    } else {
+                        mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_l_active, null));
+                        mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_r_active, null));
+                        audioEffectPreferenceHandler.setEnableTweeter(true);
+                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Tweeter, true);
+                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_TWEETER_ON);
 
+                    }
+                    updateSpeakerInfo();
                 }
-                updateSpeakerInfo();
                 break;
             case R.id.speaker_left_surround:
                 if (audioEffectPreferenceHandler.isLeftSurroundSpeakerOn()) {
-                    mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_left_surround, null));
+                    mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_surround_inactive, null));
                     audioEffectPreferenceHandler.setEnableLeftSurroundSpeaker(false);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearLeft, false);
                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_LEFT_SPEAKER_OFF);
 
                 } else {
-                    mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_left_surround, null));
+                    mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_surround_active, null));
                     audioEffectPreferenceHandler.setEnableLeftSurroundSpeaker(true);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearLeft, true);
                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_LEFT_SPEAKER_ON);
@@ -603,13 +626,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.speaker_right_surround:
                 if (audioEffectPreferenceHandler.isRightSurroundSpeakerOn()) {
-                    mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.off_right_surround, null));
+                    mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_surround_inactive, null));
                     audioEffectPreferenceHandler.setEnableRightSurroundSpeaker(false);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearRight, false);
                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_RIGHT_SPEAKER_OFF);
 
                 } else {
-                    mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.on_right_surround, null));
+                    mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_surround_active, null));
                     audioEffectPreferenceHandler.setEnableRightSurroundSpeaker(true);
                     App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearRight, true);
                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_RIGHT_SPEAKER_ON);
@@ -618,20 +641,22 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 updateSpeakerInfo();
                 break;
             case R.id.speaker_sub_woofer:
-                if (audioEffectPreferenceHandler.isWooferOn()) {
-                    mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.off_subwoofer, null));
-                    audioEffectPreferenceHandler.setEnableWoofer(false);
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, false);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SUBWOOFER_OFF);
+                if(audioEffectPreferenceHandler.isAllSpeakerOn()) {
+                    if (audioEffectPreferenceHandler.isWooferOn()) {
+                        mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.ic_woofer_inactive, null));
+                        audioEffectPreferenceHandler.setEnableWoofer(false);
+                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, false);
+                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SUBWOOFER_OFF);
 
-                } else {
-                    mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.on_subwoofer, null));
-                    audioEffectPreferenceHandler.setEnableWoofer(true);
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, true);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SUBWOOFER_ON);
+                    } else {
+                        mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.ic_woofer_active, null));
+                        audioEffectPreferenceHandler.setEnableWoofer(true);
+                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, true);
+                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SUBWOOFER_ON);
 
+                    }
+                    updateSpeakerInfo();
                 }
-                updateSpeakerInfo();
                 break;
         }
     }
@@ -732,6 +757,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void expand() {
+        //when speaker panel is open
+        mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speaker_active_on, null));
         collapsablelayout.setVisibility(View.VISIBLE);
 
         final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -830,14 +857,14 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onHeadsetUnplugged() {
-        mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.man_normal, null));
-        audioEffectPreferenceHandler.setEnableHeadsetPlugged(false);
+//        mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.man_normal, null));
+//        audioEffectPreferenceHandler.setEnableHeadsetPlugged(false);
     }
 
     @Override
     public void onHeadsetPlugged() {
-        mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.man_plugged, null));
-        audioEffectPreferenceHandler.setEnableHeadsetPlugged(true);
+//        mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.man_plugged, null));
+//        audioEffectPreferenceHandler.setEnableHeadsetPlugged(true);
     }
 
     @Override

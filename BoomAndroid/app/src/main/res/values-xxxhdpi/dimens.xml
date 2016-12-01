@@ -29,8 +29,10 @@
     <dimen name="one_twenty_pt">30dp</dimen>
     <dimen name="fourty_pt">8dp</dimen>
     <dimen name="twenty_pt">5dp</dimen>
+    <dimen name="twenty_two_pt">5.5dp</dimen>
     <dimen name="fourty_px">10dp</dimen>
-    <dimen name="one_thousand_four_hundred_pt">350dp</dimen>
+    <dimen name="one_one_nine_four_pt">321dp</dimen>
+    <dimen name="one_one_three_four_pt">284dp</dimen>
     <dimen name="sixty_pt">15dp</dimen>
     <dimen name="two_hundred_twenty_four_pt">56dp</dimen>
     <dimen name="one_ten_pt">28dp</dimen>
