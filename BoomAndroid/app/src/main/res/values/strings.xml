@@ -94,8 +94,9 @@
     <!-- Tutorial-->
     <string name="tutorial_boom_effect"> Tap here to experience \n the song with Boom!</string>
     <string name="tutorial_boom_effect_poweron">Tap to turn Effects ON/OFF</string>
-    <string name="tutorial_select_song">Select a song \n to play.</string>
-
+    <string name="tutorial_select_song">Choose a song from \n library to play.</string>
+    <string name="tutorial_effect_tap_hold">Tap and hold to turn \n Effects On/Off</string>
+    <string name="tutorial_select_speaker">Tap to modify Speakers</string>
     <!-- playing queue-->
     <string name="title_playingque">Up Next</string>
     <!-- Menu-->
@@ -140,6 +141,25 @@
     <string name="desc_fiveday_offer_expired">Hey, your five days free usage has expired. But you can extend it by few more days.</string>
     <string name="btn_txt_buynow">Buy Now</string>
     <string name="btn_txt_extend">Extend</string>
+    <string name="btn_txt_sendcode">Send Code</string>
+    <string name="title_extend_with_email">Extend With Verification</string>
+    <string name="desc_extend_with_email">We will send a code to your email adress to extend the free use period. Please enter the email adress to recieve a verification code. </string>
+    <string name="hint_txt_email">Enter email id</string>
+    <string name="title_verify_email">Enter Verification Code  </string>
+    <string name="desc_verify_email">A verification code sent to your email adress. Please check your email and enter the code below.  </string>
+    <string name="hint_verify_email">Enter code</string>
+    <string name="btn_txt_verify">Verify</string>
+    <string name="btn_txt_resend">Resend</string>
+    <string name="btn_txt_ok">Ok</string>
+    <string name="txt_invalid_code">Please enter valid verification code</string>
+
+    <string name="btn_txt_resend_code">Resend Code</string>
+    <string name="confirm_email">Confirm email id</string>
+    <string name="title_congratulate">Congratulations!</string>
+    <string name="desc_congratulate">Now enjoy all the Boom Effects for five more days and continue to enjoy limited Boom Effects thereafter. </string>
+
+    <string name="txt_invalid_email">Please enter valid email id.</string>
+
 
     <!--Menus-->
     <string name="menu_play_next">Play Next</string>

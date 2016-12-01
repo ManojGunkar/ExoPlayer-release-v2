@@ -1,0 +1,169 @@
+<resources>
+    <string name="app_name">Boom</string>
+    <string name="all_songs">すべての歌</string>
+    <string name="songs">歌</string>
+    <string name="songList">歌</string>
+    <string name="albums">アルバム</string>
+    <string name="album">アルバム</string>
+    <string name="artists">アーティスト</string>
+    <string name="playlists">プレイリスト</string>
+    <string name="genres">ジャンル</string>
+    <string name="add_to_playlist">プレイリストに追加</string>
+    <string name="new_playlist">New Playlist</string>
+    <string name="close">Close</string>
+
+    <string name="History">History</string>
+    <string name="Playing">Playing</string>
+    <string name="up_next_auto">次の曲</string>
+    <string name="up_next_manual">アップネクスト</string>
+
+    <string name="added_to_playlist">プレイリストに追加されました</string>
+    <string name="rename">Rename</string>
+    <string name="delete">削除する</string>
+    <string name="search_hint">検索</string>
+    <string name="storage_permission">SD Card Read/Write Permission</string>
+    <string name="ok">オーケー</string>
+    <string name="pref_status_trans">Fully Transparent Statusbar</string>
+    <string name="pref_nav_trans">Fully Transparent Navigationbar</string>
+    <string name="pref_draw_over">Shade over album art</string>
+
+
+    <!--3d surround-->
+    <string name="title_effects">効果</string>
+    <string name="switch_on">ON</string>
+    <string name="switch_off">オフ</string>
+    <string name="title_3d_surround">3D サラウンド</string>
+    <string name="title_intensity">明るさ</string>
+    <string name="title_equalizer">イコライザー</string>
+    <string name="speaker_status_some_off">一部のスピーカーがオフになっています</string>
+    <string name="speaker_status_all_off">All speakers are Off</string>
+    <string name="full_bass">フルバス</string>
+    <string name="req_of_3d">3D needs</string>
+    <string name="req_intensity">intensity ON</string>
+    <string name="req_equlaizer">equalizer ON</string>
+    <string name="status_on">on</string>
+    <string name="status_off">off</string>
+    <string name="status_on_caps">ON</string>
+    <string name="status_off_caps">オフ</string>
+
+
+    <!--Setting-->
+    <string name="title_settings">設定</string>
+    <string name="title_headphone_type">Select Headphone type</string>
+    <string name="on_ear">オンイヤー</string>
+    <string name="in_ear">インイヤー</string>
+    <string name="in_canal">インカナル</string>
+    <string name="over_ear">オーバーイヤー</string>
+
+    <string name="timer_start">スタート タイマー</string>
+    <string name="timer_cancel">キャンセル タイマー</string>
+    <string name="timer_reset">Close</string>
+
+    <string name="title_sort_albums">Sort Albums</string>
+    <string name="sort_by_artist">アーティストごと</string>
+    <string name="sort_by_title">By Title Albums</string>
+
+    <string name="title_shake">Set Shake Gesture</string>
+    <string name="description_shake">デバイスを振ったときに行うアクションを選んでください。</string>
+    <string name="shake_action_none">なし</string>
+    <string name="shake_action_next">次の歌を再生する</string>
+    <string name="shake_action_playorpause">Play or Pause the songList</string>
+
+    <string name="title_crossfade">Set Crossfade</string>
+    <string name="description_crossfade">トラック間のクロスフェードデュレーションを選択する。</string>
+    <string name="description_note_crossfade">(ライブストリーミングには適用されません。)</string>
+
+    <string name="title_sleep_timer">Sleep Timer</string>
+    <string name="sleep_timer_description">設定時間になったら自動的に音楽を止めるスリープタイマーをセットする。</string>
+    <string name="sleep_timer_description_active">スリープタイマーがオンになっています \n で音楽の再生が止まります</string>
+    <string name="invalid_timer_entry">Enter valid sleep interval.</string>
+    <string name="settings_menu_about">詳細</string>
+    <string name="settings_menu_share">共有する</string>
+    <string name="settings_menu_support">サポート</string>
+
+
+    <!-- about-->
+    <string name="title_about">Boom for Android v1.1</string>
+    <string name="description_about">Global Delight が作った心地よいサラウンドサウンド</string>
+    <string name="rate_app">Rate on Play Store</string>
+    <string name="share_app">共有する</string>
+    <string name="contact_us">問い合わせ先</string>
+    <string name="about_technology">ヘッドフォンの臨場感あふれるオーディオ技術は特許出願中です</string>
+    <string name="copyright">\u00a9 2016, Global Delight Technologies Pvt. Ltd. 無断複写・転載を禁じます。
+    </string>
+
+    <!-- Tutorial-->
+    <string name="tutorial_boom_effect">ここをタップして Boom で \n 曲をお楽しみください！</string>
+    <string name="tutorial_boom_effect_poweron">タップして効果をオン/オフにします</string>
+    <string name="tutorial_select_song">再生する歌 \n を選択する</string>
+
+    <!-- playing queue-->
+    <string name="title_playingque">アップネクスト</string>
+    <!-- Menu-->
+    <string name="playque_menu_remove">取り消す</string>
+    <string name="playlist_menu_addtoqueue">Add To Queue</string>
+    <string name="playlist_menu_delete_list">Delete Playlist</string>
+    <string name="search_fragment">検索</string>
+    <string name="cant_play_song">Song can\'t played...!</string>
+    <string name="title_favourite_list">Favourite</string>
+    <string name="song">歌</string>
+
+    <!-- Player-->
+    <string name="added_to_favorite">Playing Song added as favorite.</string>
+    <string name="removed_from_favorite">Playing Song removed from favorite.</string>
+    <string name="no_song">No Song Selected.</string>
+    <!-- Boom Playlist-->
+    <string name="boom_playlist_title">Boom プレイリスト</string>
+    <string name="playlist_created">PlayList Created.</string>
+    <string name="playlist_deleted">PlayList Deleted.</string>
+    <string name="txt_undo">UNDO</string>
+    <string name="dialog_txt_cancel">キャンセル</string>
+    <string name="dialog_txt_rename">Rename</string>
+    <string name="dialog_txt_done">終了</string>
+    <!-- library-->
+    <string name="title_library">音楽ライブラリー</string>
+
+    <!--inapp-->
+    <string name="purchase_item_title">マジカルエフェクトパック</string>
+    <string name="purchase_item_desc1">回のご購入で 3D サラウンドとすべての EQ</string>
+    <string name="purchase_item_desc2">完全な明るさ調整がご利用できます！</string>
+    <string name="purchase_buton_text">今すぐ @ で購入する $ 3.99</string>
+    <string name="purchase_restore_txt">Restore Purchases</string>
+    <!-- Favorite-->
+    <string name="fav_placeholder_txt">You\'ve not liked \n any Songs yet.</string>
+    <!--Boom PlayList-->
+    <string name="boom_playlist_placeholder_txt">You\'ve not created \n any Playlist yet.</string>
+    <!--PlayList-->
+    <string name="playlist_placeholder_txt">There are no Playlists \n in music library.</string>
+
+    <!--purchase-->
+    <string name="title_fiveday_offer_expired">限られた期間での利用</string>
+    <string name="desc_fiveday_offer_expired">Hey, your five days free usage has expired. But you
+        can extend it by few more days.
+    </string>
+    <string name="btn_txt_buynow">今すぐ購入する</string>
+    <string name="btn_txt_extend">延長する</string>
+    <string name="btn_txt_sendcode">コードを送ります</string>
+    <string name="title_extend_with_email">確認して延長する</string>
+    <string name="desc_extend_with_email">We will send a code to your email adress to extend the
+        free use period. Please enter the email adress to recieve a verification code.
+    </string>
+    <string name="hint_txt_email">電子メールIDを入力してください</string>
+    <string name="title_verify_email">確認コードを入力する。</string>
+    <string name="desc_verify_email">A verification code sent to your email adress. Please check
+        your email and enter the code below.
+    </string>
+    <string name="hint_verify_email">コー​​ドを入力する</string>
+    <string name="btn_txt_verify">確認する</string>
+    <string name="btn_txt_resend">Resend</string>
+    <string name="btn_txt_ok">Ok</string>
+    <string name="txt_invalid_code">Please enter valid verification code</string>
+    <string name="btn_txt_resend_code">コードを再送信する</string>
+    <string name="confirm_email">メール ID を確定する</string>
+    <string name="title_congratulate">おめでとうございます！</string>
+    <string name="desc_congratulate">Now enjoy all the Boom Effects for five more days and continue
+        to enjoy limited Boom Effects thereafter.
+    </string>
+
+
+</resources>
