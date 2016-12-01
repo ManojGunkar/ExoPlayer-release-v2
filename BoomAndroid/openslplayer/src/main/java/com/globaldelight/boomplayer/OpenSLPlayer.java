@@ -292,6 +292,7 @@ public class OpenSLPlayer implements Runnable {
         int noOutputCounter = 0;
         int noOutputCounterLimit = 10;
 
+        presentationTimeUs = 0;
         state.set(PlayerStates.PLAYING);
         updatePlayerEffect();
         while (!sawOutputEOS && noOutputCounter < noOutputCounterLimit && !stop) {
@@ -323,14 +324,18 @@ public class OpenSLPlayer implements Runnable {
                         sawInputEOS = true;
                         sampleSize = 0;
                     } else {
-                        presentationTimeUs = extractor.getSampleTime();
-                        final int percent = (duration == 0) ? 0 : (int) (100 * presentationTimeUs / duration);
-                        if (events != null) handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                events.onPlayUpdate(percent, presentationTimeUs / 1000, duration / 1000);
-                            }
-                        });
+
+                        long curTime = extractor.getSampleTime();
+                        if (events != null && (curTime - presentationTimeUs) > 500000 ) {
+                            presentationTimeUs = curTime;
+                            final int percent = (duration == 0) ? 0 : (int) (100 * presentationTimeUs / duration);
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    events.onPlayUpdate(percent, presentationTimeUs / 1000, duration / 1000);
+                                }
+                            });
+                        }
                     }
                     try {
                         codec.queueInputBuffer(inputBufIndex, 0, sampleSize, presentationTimeUs, sawInputEOS ? MediaCodec.BUFFER_FLAG_END_OF_STREAM : 0);
@@ -357,14 +362,10 @@ public class OpenSLPlayer implements Runnable {
                 int outputBufIndex = res;
                 ByteBuffer buf = codecOutputBuffers[outputBufIndex];
 
-                final byte[] chunk = new byte[info.size];
-                buf.get(chunk);
-                buf.clear();
-
-                if (chunk.length > 0) {
+                if (info.size > 0) {
                     int i = 0;
-                    while (i != chunk.length && !stop && state.get() == PlayerStates.PLAYING) {
-                        i += write(chunk, i, chunk.length);
+                    while (i != info.size && !stop && state.get() == PlayerStates.PLAYING) {
+                        i += write(buf, i, info.size);
                     }
                 }
                 try {
@@ -484,7 +485,7 @@ public class OpenSLPlayer implements Runnable {
 
     public native boolean createAudioPlayer(int size, int sampleRate, int channels);
 
-    public native int write(byte[] sData, int offset, int frameCount);
+    public native int write(ByteBuffer buf, int offset, int frameCount);
 
     public static native void setPlayingAudioPlayer(boolean isPlaying);
 

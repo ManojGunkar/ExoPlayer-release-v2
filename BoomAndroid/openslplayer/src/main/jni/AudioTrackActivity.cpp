@@ -197,9 +197,12 @@ namespace gdpl {
      * Signature: (BII)V
      */
     extern "C" jint Java_com_globaldelight_boomplayer_OpenSLPlayer_write(JNIEnv *env, jobject instance,
-                                                          jbyteArray sData_, jint offset,
+                                                          jobject buffer, jint offset,
                                                           jint frameCount) {
-        jbyte *sData = env->GetByteArrayElements(sData_, NULL);
+        //jbyte *sData = env->GetByteArrayElements(sData_, NULL);
+
+
+        jbyte *sData = (jbyte *)env->GetDirectBufferAddress(buffer);
 
         int written = 0;
         //ALOGD("Enter into Write Method");
@@ -211,8 +214,7 @@ namespace gdpl {
             openSLPlayer->startReading();
         }
 
-
-        env->ReleaseByteArrayElements(sData_, sData, 0);
+        //env->ReleaseByteArrayElements(sData_, sData, 0);
         //ALOGD("Exit from Write Method");
         return written;
     }

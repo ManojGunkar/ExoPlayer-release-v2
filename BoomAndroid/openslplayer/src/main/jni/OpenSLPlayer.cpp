@@ -11,7 +11,7 @@
 namespace gdpl
 {
 
-    static const int BUFFER_COUNT = 2;
+    static const int BUFFER_COUNT = 4;
 
     static SLObjectItf engineObject = NULL;
     static SLObjectItf outputMixObject = NULL;

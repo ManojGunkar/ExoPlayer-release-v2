@@ -48,7 +48,7 @@ namespace gdpl {
  * Method:    write
  * Signature: (Z)V
  */
-    jint Java_com_globaldelight_boomplayer_OpenSLPlayer_write(JNIEnv *, jobject, jbyteArray, jint,
+    jint Java_com_globaldelight_boomplayer_OpenSLPlayer_write(JNIEnv *, jobject, jobject, jint,
                                                           jint);
 
 
