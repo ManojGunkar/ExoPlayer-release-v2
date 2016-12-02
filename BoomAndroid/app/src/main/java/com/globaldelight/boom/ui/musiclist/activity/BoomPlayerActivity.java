@@ -434,6 +434,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             @Override
             public boolean onLongClick(View v) {
                 audioEffectPreferenceHandler.setEnableAudioEffect(!audioEffectPreferenceHandler.isAudioEffectOn());
+                if (App.getPlayerEventHandler().getPlayingItem() != null && (App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused()))
+                    App.getPlayerEventHandler().updateEffect();
+
                 updateEffectIcon();
                 return true;
             }

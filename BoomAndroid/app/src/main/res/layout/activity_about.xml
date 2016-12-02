@@ -76,7 +76,7 @@
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/one_hundred_eighty_six_pt"
+        android:layout_marginTop="@dimen/one_hundred_fourty_eight_pt"
         android:text="@string/rate_app"
         android:textColor="@color/rate_btn_blue"
         android:textSize="@dimen/rate_btn_size" />
@@ -86,7 +86,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/one_hundred_twelve_pt"
+        android:layout_marginTop="@dimen/one_hundred_fourty_eight_pt"
         android:gravity="center"
         android:text="@string/about_technology"
         android:textColor="@color/about_company_color"
