@@ -213,6 +213,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                             case R.id.popup_playlist_delete:
                                 MediaController.getInstance(context).deleteBoomPlaylist(items.get(position).getItemId());
                                 updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                                notifyItemRemoved(position);
                                 Toast.makeText(context, context.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
                                 break;
                         }
@@ -273,10 +274,10 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
 
     public void updateNewList(ArrayList<? extends MediaItemCollection> newList) {
         items = newList;
-        notifyDataSetChanged();
         if(items.size() == 0){
             ((BoomPlaylistActivity)context).listIsEmpty();
         }
+        notifyDataSetChanged();
     }
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {

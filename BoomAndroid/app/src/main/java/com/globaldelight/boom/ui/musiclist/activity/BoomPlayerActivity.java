@@ -32,6 +32,7 @@ import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.manager.MusicReceiver;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.widgets.CircularSeekBar;
 import com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView;
@@ -62,7 +63,7 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
  * Created by Rahul Agarwal on 30-09-16.
  */
 
-public class BoomPlayerActivity extends AppCompatActivity implements View.OnClickListener, CircularSeekBar.OnCircularSeekBarChangeListener {
+public class BoomPlayerActivity extends AppCompatActivity implements View.OnClickListener, CircularSeekBar.OnCircularSeekBarChangeListener, MusicReceiver.updateMusic {
 
     private static final float BITMAP_SCALE = 0.4f;
     private static final float BLUR_RADIUS = 25.0f;
@@ -640,6 +641,16 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         tmpOut.copyTo(outputBitmap);
 
         return outputBitmap;
+    }
+
+    @Override
+    public void onHeadsetUnplugged() {
+
+    }
+
+    @Override
+    public void onHeadsetPlugged() {
+
     }
 
     class TrackTimerTask extends TimerTask {

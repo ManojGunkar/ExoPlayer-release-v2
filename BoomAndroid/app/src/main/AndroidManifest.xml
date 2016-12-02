@@ -88,7 +88,7 @@
             android:name=".ui.musiclist.activity.BoomPlaylistActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Main">
+            android:theme="@style/AppTheme.List">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>

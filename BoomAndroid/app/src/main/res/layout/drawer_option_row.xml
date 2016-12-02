@@ -1,9 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="layout_width">
+    android:layout_height="match_parent">
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:src="@drawable/drawer_image"/>
+    <LinearLayout
+        android:id="@+id/drawer_lib_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fifty_six_pt"
+        android:layout_marginBottom="@dimen/fifty_six_pt"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sixteen_pt"
+            android:layout_marginRight="@dimen/thirty_two_px"
+            android:src="@drawable/ic_drawer_library"/>
+
+        <com.globaldelight.boom.ui.widgets.RegularTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sixty_four_pt"
+            android:textStyle="bold"
+            android:text="@string/title_library"
+            android:textColor="#ffffff"
+            android:singleLine="true"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/drawer_playlist_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fifty_six_pt"
+        android:layout_marginBottom="@dimen/fifty_six_pt"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sixteen_pt"
+            android:layout_marginRight="@dimen/thirty_two_px"
+            android:src="@drawable/ic_drawer_boom_playlist"/>
+
+        <com.globaldelight.boom.ui.widgets.RegularTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sixty_four_pt"
+            android:textStyle="normal"
+            android:text="@string/boom_playlist_title"
+            android:textColor="#ffffff"
+            android:singleLine="true"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/drawer_fav_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fifty_six_pt"
+        android:layout_marginBottom="@dimen/fifty_six_pt"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sixteen_pt"
+            android:layout_marginRight="@dimen/thirty_two_px"
+            android:src="@drawable/ic_drawer_icons_favourites"/>
+
+        <com.globaldelight.boom.ui.widgets.RegularTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sixty_four_pt"
+            android:textStyle="normal"
+            android:text="@string/title_favourite_list"
+            android:textColor="#ffffff"
+            android:singleLine="true"/>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#1a1a1a"/>
+    <LinearLayout
+        android:id="@+id/drawer_close_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fifty_six_pt"
+        android:layout_marginBottom="@dimen/fifty_six_pt"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+       <com.globaldelight.boom.ui.widgets.RegularTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sixteen_pt"
+            android:textSize="@dimen/sixty_four_pt"
+           android:text="@string/close_lib"
+            android:textStyle="normal"
+            android:textColor="#ffffff"
+            android:singleLine="true"/>
+    </LinearLayout>
 </LinearLayout>

@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -33,15 +34,17 @@ import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
 /**
  * Created by Rahul Agarwal on 31-08-2016.
  */
-public class BoomMasterActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class BoomMasterActivity extends AppCompatActivity/* implements NavigationView.OnNavigationItemSelectedListener*/{
     DrawerLayout drawerLayout;
-    private ListView mDrawerMenuList;
+    private LinearLayout mLibPanel, mListPanel, mFavPanel, mClosePanel;
     FrameLayout activityContainer;
     Fragment mSearchResult;
     Toolbar toolbar;
     ImageView toolImage;
     TextView toolTxt;
     SearchView searchView;
+    MenuItem searchItem;
+    private static boolean isSearchEnable = true;
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         drawerLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.activity_master, null);
@@ -50,6 +53,48 @@ public class BoomMasterActivity extends AppCompatActivity implements NavigationV
         super.setContentView(drawerLayout);
 
         mSearchResult = getSupportFragmentManager().findFragmentById(R.id.search_content);
+
+        mLibPanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_lib_option);
+        mListPanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_playlist_option);
+        mFavPanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_fav_option);
+        mClosePanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_close_option);
+
+        mLibPanel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BoomMasterActivity.this, DeviceMusicActivity.class);
+                startActivity(intent);
+                drawerLayout.closeDrawer(Gravity.LEFT);
+            }
+        });
+        mListPanel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BoomMasterActivity.this, BoomPlaylistActivity.class);
+                startActivity(intent);
+                drawerLayout.closeDrawer(Gravity.LEFT);
+            }
+        });
+        mFavPanel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BoomMasterActivity.this, FavouriteListActivity.class);
+                startActivity(intent);
+                drawerLayout.closeDrawer(Gravity.LEFT);
+            }
+        });
+        mClosePanel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_LIBRARY_CLOSE_BUTTON_TAPPED);
+                try {
+                    finish();
+                    finish();
+                    finish();
+                }catch (Exception e){}
+                overridePendingTransition(R.anim.stay_out, R.anim.slide_out_left);
+            }
+        });
 
         setupToolbar();
         setupDrawer();
@@ -79,7 +124,7 @@ public class BoomMasterActivity extends AppCompatActivity implements NavigationV
         drawerToggle.syncState();
 
         assert navigationView != null;
-        navigationView.setNavigationItemSelectedListener(this);
+//        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -112,38 +157,48 @@ public class BoomMasterActivity extends AppCompatActivity implements NavigationV
         toolTxt.setText(title);
     }
 
+    public void setEnableSearchMenu(boolean enable){
+        if(null != searchItem) {
+            searchItem.setVisible(enable);
+        }else{
+            isSearchEnable = enable;
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.search_menu, menu);
+        if (isSearchEnable){
+            MenuInflater menuInflater = getMenuInflater();
+            menuInflater.inflate(R.menu.search_menu, menu);
 
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) searchItem.getActionView();
-        searchView.setQueryHint(getResources().getString(R.string.search_hint));
+            searchItem = menu.findItem(R.id.action_search);
+            searchView = (SearchView) searchItem.getActionView();
+            searchView.setQueryHint(getResources().getString(R.string.search_hint));
 
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        registerSearchListeners();
+            registerSearchListeners();
 
-        MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                activityContainer.setVisibility(View.GONE);
-                ft.show(mSearchResult);
-                ((SearchViewFragment)mSearchResult).showEmpty(true);
-                return true;
-            }
+            MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                activityContainer.setVisibility(View.VISIBLE);
-                ft.hide(mSearchResult);
-                return true;
-            }
-        });
+                @Override
+                public boolean onMenuItemActionExpand(MenuItem item) {
+                    activityContainer.setVisibility(View.GONE);
+                    ft.show(mSearchResult);
+                    ((SearchViewFragment) mSearchResult).showEmpty(true);
+                    return true;
+                }
 
+                @Override
+                public boolean onMenuItemActionCollapse(MenuItem item) {
+                    activityContainer.setVisibility(View.VISIBLE);
+                    ft.hide(mSearchResult);
+                    return true;
+                }
+            });
+        }
         return true;
     }
 
@@ -178,35 +233,34 @@ public class BoomMasterActivity extends AppCompatActivity implements NavigationV
         searchView.clearFocus();
     }
 
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        Intent intent;
-        switch (item.getItemId()) {
-            case R.id.navigation_music:
-                intent = new Intent(BoomMasterActivity.this, DeviceMusicActivity.class);
-                startActivity(intent);
-                drawerLayout.closeDrawer(Gravity.LEFT);
-                break;
-            case R.id.navigation_spotify:
+//    @Override
+//    public boolean onNavigationItemSelected(MenuItem item) {
+//        Intent intent;
+//        switch (item.getItemId()) {
+//            case R.id.navigation_music:
+//
+//                break;
+//            case R.id.navigation_spotify:
+//
+//                drawerLayout.closeDrawer(Gravity.LEFT);
+//                break;
+//            case R.id.navigation_boom_palylist:
+//                intent = new Intent(BoomMasterActivity.this, BoomPlaylistActivity.class);
+//                startActivity(intent);
+//                drawerLayout.closeDrawer(Gravity.LEFT);
+//                break;
+//            case R.id.navigation_boom_favourites:
+//                intent = new Intent(BoomMasterActivity.this, FavouriteListActivity.class);
+//                startActivity(intent);
+//                drawerLayout.closeDrawer(Gravity.LEFT);
+//                break;
+//            case R.id.navigation_close:
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_LIBRARY_CLOSE_BUTTON_TAPPED);
+//                finish();
+//                overridePendingTransition(R.anim.stay_out, R.anim.slide_out_left);
+//                break;
+//        }
+//        return true;
+//    }
 
-                drawerLayout.closeDrawer(Gravity.LEFT);
-                break;
-            case R.id.navigation_boom_palylist:
-                intent = new Intent(BoomMasterActivity.this, BoomPlaylistActivity.class);
-                startActivity(intent);
-                drawerLayout.closeDrawer(Gravity.LEFT);
-                break;
-            case R.id.navigation_boom_favourites:
-                intent = new Intent(BoomMasterActivity.this, FavouriteListActivity.class);
-                startActivity(intent);
-                drawerLayout.closeDrawer(Gravity.LEFT);
-                break;
-            case R.id.navigation_close:
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_LIBRARY_CLOSE_BUTTON_TAPPED);
-                finish();
-                overridePendingTransition(R.anim.stay_out, R.anim.slide_out_left);
-                break;
-        }
-        return true;
-    }
 }

@@ -271,39 +271,39 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
         if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()) {
             if(isLeftFront && isRightFront && isLeftSurround && isRightSurround){
-                mSpeakerInfo.setVisibility(View.GONE);// All Speakers are on
+//                mSpeakerInfo.setVisibility(View.GONE);// All Speakers are on
                 mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
                 updateTweeterAndWoofer(true);
             }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround) {
                 // All Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_all_off));
-                mSpeakerInfo.setVisibility(View.VISIBLE);
-                mSpeakerInfo.setTextColor(Color.WHITE);// active color
+//                mSpeakerInfo.setVisibility(View.VISIBLE);
+//                mSpeakerInfo.setTextColor(Color.WHITE);// active color
                 mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
                 updateTweeterAndWoofer(false);
             }else {
                 // Some Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_some_off));
-                mSpeakerInfo.setVisibility(View.VISIBLE);
-                mSpeakerInfo.setTextColor(Color.WHITE);// active color
+//                mSpeakerInfo.setVisibility(View.VISIBLE);
+//                mSpeakerInfo.setTextColor(Color.WHITE);// active color
                 mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
                 updateTweeterAndWoofer(true);
             }
         }else{
             if(isLeftFront && isRightFront && isLeftSurround && isRightSurround && isWoofer && isTweeter){
-                mSpeakerInfo.setVisibility(View.GONE);// All Speakers are on
+//                mSpeakerInfo.setVisibility(View.GONE);// All Speakers are on
                 updateTweeterAndWoofer(true);
             }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround && !isWoofer && !isTweeter) {
                 // All Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_all_off));
-                mSpeakerInfo.setVisibility(View.VISIBLE);
-                mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
+//                mSpeakerInfo.setVisibility(View.VISIBLE);
+//                mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
                 updateTweeterAndWoofer(false);
             }else {
                 // Some Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_some_off));
-                mSpeakerInfo.setVisibility(View.VISIBLE);
-                mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
+//                mSpeakerInfo.setVisibility(View.VISIBLE);
+//                mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
                 updateTweeterAndWoofer(true);
             }
             mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_inactive, null));
@@ -437,11 +437,11 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void switch3DSurround(boolean isPowerOn){
         if(isPowerOn) {
-            if (audioEffectPreferenceHandler.is3DSurroundOn()) {
-                audioEffectPreferenceHandler.setEnable3DSurround(false);
-                App.getPlayerEventHandler().set3DAudioEnable(false);
+            audioEffectPreferenceHandler.setEnable3DSurround(!audioEffectPreferenceHandler.is3DSurroundOn());
+            App.getPlayerEventHandler().set3DAudioEnable(!audioEffectPreferenceHandler.is3DSurroundOn());
+            if(isExpended)
                 collapse();
-            } else {
+
                 //TODO
                /* int purchaseType = audioEffectPreferenceHandler.getUserPurchaseType();
                 switch (AudioEffect.purchase.fromOrdinal(purchaseType)) {
@@ -456,9 +456,6 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                         App.getPlayerEventHandler().set3DAudioEnable(true);
                         break;
                 }*/
-
-
-            }
             update3DSurround();
             if(!audioEffectPreferenceHandler.isIntensityOn()){
                 switchIntensity(isPowerOn);
@@ -761,6 +758,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     private void expand() {
         isExpended = true;
+        mSpeakerInfo.setVisibility(View.VISIBLE);
         //when speaker panel is open
         mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speaker_active_on, null));
         collapsablelayout.setVisibility(View.VISIBLE);
@@ -777,6 +775,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     private void collapse() {
         mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
+        mSpeakerInfo.setVisibility(View.GONE);
         isExpended = false;
         int finalHeight = collapsablelayout.getHeight();
 

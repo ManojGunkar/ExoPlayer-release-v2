@@ -409,7 +409,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if(intent.getAction().equals("visible")){
+        if(null != intent.getAction() && intent.getAction().equals("visible")){
             overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
         }
     }
