@@ -134,9 +134,6 @@
     <dimen name="one_thousand_twenty_eight">257dp</dimen>
     <dimen name="two_hundred_eight">52dp</dimen>
     <dimen name="two_hundred_twelve">53dp</dimen>
-
-
-    //80
     <dimen name="speaker_info">15sp</dimen>//52
-
+    <dimen name="three_hundred_seventy_px">92dp</dimen>
 </resources>

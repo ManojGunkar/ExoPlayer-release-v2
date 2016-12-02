@@ -203,9 +203,6 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if((!audioEffectPreferenceHandler.isAudioEffectOn() && isChecked) ||
                         (audioEffectPreferenceHandler.isAudioEffectOn() && !isChecked)){
-
-
-                    showSpeakerCoachMark();
                     audioEffectPreferenceHandler.setEnableAudioEffect(isChecked);
                     if(App.getPlayerEventHandler().getPlayingItem() != null)
                         App.getPlayerEventHandler().updateEffect();
@@ -213,6 +210,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     update3DSurround();
                     updateIntensity();
                     updateEqualizer();
+                    showSpeakerCoachMark();
                 }
             }
         });

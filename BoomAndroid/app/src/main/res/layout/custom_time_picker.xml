@@ -56,11 +56,13 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="#222327" />
+        android:background="#222327"
+        android:visibility="gone" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
         <com.globaldelight.boom.ui.widgets.RegularButton
             android:id="@+id/tmreset"
             style="?android:attr/borderlessButtonStyle"
