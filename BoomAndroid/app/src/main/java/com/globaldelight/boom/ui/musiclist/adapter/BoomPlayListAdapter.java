@@ -53,14 +53,14 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     private static final String TAG = "AlbumListAdapter-TAG";
     ArrayList<? extends IMediaItemBase> items;
     private PermissionChecker permissionChecker;
-    private Context context;
+    private Activity context;
     private  RecyclerView recyclerView;
 
-    public BoomPlayListAdapter(Context context, RecyclerView recyclerView,
+    public BoomPlayListAdapter(Activity context, RecyclerView recyclerView,
                                   ArrayList<? extends IMediaItemBase> items, PermissionChecker permissionChecker) {
         this.context = context;
         this.recyclerView = recyclerView;
-        this.items = (ArrayList<MediaItemCollection>) items;
+        this.items = items;
         this.permissionChecker = permissionChecker;
     }
 
@@ -273,10 +273,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     }
 
     public void updateNewList(ArrayList<? extends MediaItemCollection> newList) {
-        items = newList;
-        if(items.size() == 0){
-            ((BoomPlaylistActivity)context).listIsEmpty();
-        }
+        ((BoomPlaylistActivity)context).resetAdp();
         notifyDataSetChanged();
     }
 

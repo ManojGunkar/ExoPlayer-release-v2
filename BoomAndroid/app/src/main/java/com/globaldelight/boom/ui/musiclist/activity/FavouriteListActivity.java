@@ -75,7 +75,7 @@ public class FavouriteListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        overridePendingTransition(R.anim.slide_in_right, R.anim.stay_out);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite);
 
@@ -172,7 +172,7 @@ public class FavouriteListActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                overridePendingTransition(R.anim.stay_out, R.anim.slide_out_right);
+                overridePendingTransition(R.anim.stay_out, R.anim.slide_out_left);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -181,7 +181,7 @@ public class FavouriteListActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         finish();
-        overridePendingTransition(R.anim.stay_out, R.anim.slide_out_right);
+        overridePendingTransition(R.anim.stay_out, R.anim.slide_out_left);
     }
 
     private BroadcastReceiver mPlayerEventBroadcastReceiver = new BroadcastReceiver() {

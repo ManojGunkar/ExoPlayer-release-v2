@@ -11,12 +11,12 @@
     <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="@dimen/mini_player_progress_height"
         android:id="@+id/mini_player_track_progress" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/two_hundred_px"
         android:orientation="horizontal"
         android:weightSum="100">
         <LinearLayout

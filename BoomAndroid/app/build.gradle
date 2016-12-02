@@ -22,31 +22,10 @@ android {
         versionName "1.1"
         multiDexEnabled true
     }
-
-    signingConfigs {
-        debug {
-            storeFile file("debug.keystore")
-        }
-
-        release {
-            storeFile file("keystore")
-            storePassword "BoomAndroid"
-            keyAlias "Boom"
-            keyPassword "BoomAndroid"
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig signingConfigs.release
-            proguardFile getDefaultProguardFile('proguard-android-optimize.txt')
-        }
-    }
-
-    productFlavors {
-        defaultFlavor {
-            proguardFile 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }

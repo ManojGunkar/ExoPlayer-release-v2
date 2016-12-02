@@ -271,39 +271,33 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
         if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()) {
             if(isLeftFront && isRightFront && isLeftSurround && isRightSurround){
-//                mSpeakerInfo.setVisibility(View.GONE);// All Speakers are on
                 mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
                 updateTweeterAndWoofer(true);
             }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround) {
                 // All Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_all_off));
-//                mSpeakerInfo.setVisibility(View.VISIBLE);
-//                mSpeakerInfo.setTextColor(Color.WHITE);// active color
+                mSpeakerInfo.setTextColor(Color.WHITE);// active color
                 mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
                 updateTweeterAndWoofer(false);
-            }else {
+            }else if (!isLeftFront || !isRightFront || !isLeftSurround || !isRightSurround) {
                 // Some Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_some_off));
-//                mSpeakerInfo.setVisibility(View.VISIBLE);
-//                mSpeakerInfo.setTextColor(Color.WHITE);// active color
+                mSpeakerInfo.setTextColor(Color.WHITE);// active color
                 mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
                 updateTweeterAndWoofer(true);
             }
         }else{
             if(isLeftFront && isRightFront && isLeftSurround && isRightSurround && isWoofer && isTweeter){
-//                mSpeakerInfo.setVisibility(View.GONE);// All Speakers are on
                 updateTweeterAndWoofer(true);
             }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround && !isWoofer && !isTweeter) {
                 // All Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_all_off));
-//                mSpeakerInfo.setVisibility(View.VISIBLE);
-//                mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
+                mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
                 updateTweeterAndWoofer(false);
-            }else {
+            }else if (!isLeftFront || !isRightFront || !isLeftSurround || !isRightSurround) {
                 // Some Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_some_off));
-//                mSpeakerInfo.setVisibility(View.VISIBLE);
-//                mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
+                mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
                 updateTweeterAndWoofer(true);
             }
             mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_inactive, null));
