@@ -436,12 +436,12 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             if(audioEffectPreferenceHandler.is3DSurroundOn()){
                 audioEffectPreferenceHandler.setEnable3DSurround(false);
                 App.getPlayerEventHandler().set3DAudioEnable(false);
+                collapse();
             }else{
                 audioEffectPreferenceHandler.setEnable3DSurround(true);
                 App.getPlayerEventHandler().set3DAudioEnable(true);
-                collapse();
             }
-// In app code will be in else 
+// In app code will be in else
                 //TODO
                /* int purchaseType = audioEffectPreferenceHandler.getUserPurchaseType();
                 switch (AudioEffect.purchase.fromOrdinal(purchaseType)) {
