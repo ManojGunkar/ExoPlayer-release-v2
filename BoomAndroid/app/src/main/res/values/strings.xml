@@ -83,13 +83,16 @@
 
 
     <!-- about-->
-    <string name="title_about">Boom for Android v1.1</string>
-    <string name="description_about">Delightful Surround Sound Engineered by Global Delight</string>
+    <string name="header_about">About</string>
+
+    <string name="title_about">Boom</string>
+    <string name="version">v1.0</string>
+    <string name="description_about">Delightful Surround Sound Engineered by \n Global Delight</string>
     <string name="rate_app">Rate on Play Store</string>
     <string name="share_app">Share</string>
     <string name="contact_us">Contact Us</string>
-    <string name="about_technology">The Technology of immersive surround audio on headphones is patent pending</string>
-    <string name="copyright">\u00a9 2016,Global Delight Technologies Pvt Ltd. All rights reserved.</string>
+    <string name="about_technology">The Technology of immersive surround audio on \n headphones is patent pending</string>
+    <string name="copyright">\u00a9 2016,Global Delight Technologies Pvt Ltd. \n All rights reserved.</string>
 
     <!-- Tutorial-->
     <string name="tutorial_boom_effect"> Tap here to experience \n the song with Boom!</string>
@@ -97,6 +100,7 @@
     <string name="tutorial_select_song">Choose a song from \n library to play.</string>
     <string name="tutorial_effect_tap_hold">Tap and hold to turn \n Effects On/Off</string>
     <string name="tutorial_select_speaker">Tap to modify Speakers</string>
+    <string name="tutorial_use_headphones">Use Headphones for the \n best experience</string>
     <!-- playing queue-->
     <string name="title_playingque">Up Next</string>
     <!-- Menu-->
@@ -156,10 +160,20 @@
     <string name="btn_txt_resend_code">Resend Code</string>
     <string name="confirm_email">Confirm email id</string>
     <string name="title_congratulate">Congratulations!</string>
+    <string name="title_congratulate_paiduser">Congratulations!-PAID </string>
+    <string name="title_congratulate_restoreduser">Congratulations!-Restored</string>
     <string name="desc_congratulate">Now enjoy all the Boom Effects for five more days and continue to enjoy limited Boom Effects thereafter. </string>
-
+    <string name="desc_congratulate_paiduser">Now enjoy all the Boom Effects for five more days and continue to enjoy limited Boom Effects thereafter. </string>
+    <string name="desc_congratulate_restoreduser">Now enjoy all the Boom Effects for five more days and continue to enjoy limited Boom Effects thereafter. </string>
+    <string name="title_share">Boom</string>
+    <string name="desc_share">\nLet me recommend you this application\n\n</string>
+    <string name="playstore_link">https://play.google.com/store/apps/details?id=com.globaldelight.boom  \n\n</string>
+    <string name="mailto">boomandroid@globaldelight.com</string>
+    <string name="title_support">I Need Some Help With Boom for Android</string>
+    <string name="desc_support">Hello Team,</string>
     <string name="txt_invalid_email">Please enter valid email id.</string>
-
+    <string name="txt_progress_email">Sending email</string>
+    <string name="txt_progress_restore">Restoring  your purchase.</string>
 
     <!--Menus-->
     <string name="menu_play_next">Play Next</string>

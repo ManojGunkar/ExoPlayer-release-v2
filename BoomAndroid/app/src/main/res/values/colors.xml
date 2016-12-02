@@ -46,5 +46,7 @@
        store
        -->
     <color name="purchase_desc_color">#8d8d8d</color>
+    <!--<color name="about_company_color">#1b221b</color>-->
+    <color name="about_company_color">#787979</color>
 </resources><!--
 <color name="colorAccent">#FF4081</color>-->
