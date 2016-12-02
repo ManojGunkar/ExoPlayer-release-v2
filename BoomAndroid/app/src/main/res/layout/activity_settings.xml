@@ -384,7 +384,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/one_ten_pt"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <com.globaldelight.boom.ui.widgets.RegularTextView
                     android:id="@+id/title_sleep_timer"
@@ -412,91 +413,7 @@
                     android:textSize="@dimen/settings_item_description_size"
                     android:textStyle="normal" />
 
-                <!--  <com.globaldelight.boom.ui.widgets.RegularTextView
-                      android:id="@+id/txtTimer"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:layout_margin="@dimen/eighty_pt"
-                      android:layout_marginTop="@dimen/ninety_two_pt"
-                      android:gravity="center_horizontal"
-                      android:text="00:00:00"
-                      android:textColor="@color/white"
-                      android:textSize="@dimen/settings_timer_txt_size"
-                      android:textStyle="normal"
 
-                      android:visibility="gone" />-->
-
-                <!-- <com.globaldelight.boom.ui.widgets.RegularTextView
-                     android:id="@+id/txtStopTime"
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content"
-                     android:layout_gravity="center"
-                     android:layout_marginTop="@dimen/ninety_two_pt"
-                     android:gravity="center"
-                     android:inputType="textMultiLine"
-                     android:text=""
-                     android:textColor="@color/white_shade"
-                     android:textSize="@dimen/settings_item_description_size"
-                     android:textStyle="normal" />-->
-
-                <!--  <TimePicker
-                      android:id="@+id/timePicker"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:numbersBackgroundColor="#57e326"
-                      android:numbersSelectorColor="#675543"
-                      android:numbersTextColor="#995394"
-                      android:textColorPrimary="#359875"
-                      android:textColorSecondary="#897530"
-                      android:textSize="@dimen/settings_item_title_size"
-                      android:timePickerMode="spinner" />-->
-
-
-                <!-- <LinearLayout
-                     android:layout_width="wrap_content"
-                     android:layout_height="match_parent"
-                     android:layout_gravity="center"
-
-                     android:orientation="horizontal">
-
-                     <Button
-                         android:id="@+id/btn_timer_cancel"
-                         android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
-                         android:layout_weight="1"
-                         android:background="@drawable/round_button_cancel"
-                         android:text="@string/timer_cancel"
-                         android:textColor="@color/white"
-                         android:textSize="@dimen/settings_item_description_size"
-                         android:visibility="gone" />
-
-                     <Button
-                         android:id="@+id/btn_timer_start"
-                         android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
-                         android:layout_gravity="center"
-                         android:layout_marginBottom="10dp"
-                         android:layout_marginTop="10dp"
-                         android:layout_weight="1"
-                         android:background="@drawable/round_button_start"
-                         android:text="@string/timer_start"
-                         android:textColor="@color/white"
-
-                         android:textSize="@dimen/settings_item_description_size" />
-
-                     <Button
-                         android:id="@+id/btn_timer_reset"
-                         android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
-                         android:layout_weight="1"
-
-                         android:background="@drawable/round_button_reset"
-                         android:text="@string/timer_reset"
-                         android:textColor="@color/white"
-                         android:textSize="@dimen/settings_item_description_size"
-                         android:visibility="gone" />
-
-                 </LinearLayout>-->
             </LinearLayout>
 
             <View
@@ -504,7 +421,7 @@
                 android:layout_height="1px"
                 android:layout_marginTop="@dimen/one_ten_pt"
                 android:background="#222327"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/title_about"
