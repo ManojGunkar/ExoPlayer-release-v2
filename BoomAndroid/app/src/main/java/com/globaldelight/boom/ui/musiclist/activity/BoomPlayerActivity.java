@@ -678,9 +678,13 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onHeadsetPlugged() {
+
         if (tipWindowHeadset != null) {
             tipWindowHeadset.dismissTooltip();
+            Preferences.writeBoolean(this, Preferences.PLAYER_SCREEN_HEADSET_ENABLE, false);
+
         }
+
     }
 
     class TrackTimerTask extends TimerTask {
