@@ -75,6 +75,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     LinearLayout mPlayerRootView;
     AudioEffect audioEffectPreferenceHandler;
     FrameLayout.LayoutParams param;
+    MusicReceiver musicReceiver;
     private RegularTextView mTitleTxt, mSubTitleTxt, mPlayedTime, mRemainsTime;
     private CircularCoverView mAlbumArt;
     private CircularSeekBar mTrackSeek;
@@ -326,7 +327,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         registerReceiver(mPlayerBroadcastReceiver, intentFilter);
         // new BoomServerRequest().getAccessToken(this);
         showPurchaseOption();
-
+        musicReceiver = new MusicReceiver(this);
     }
 
     public void showCoachMark() {
@@ -349,15 +350,15 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
             tipWindowEffect.showToolTip(findViewById(R.id.audio_effect_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
         }
-        if (!Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE, true) && Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_TAPANDHOLD_COACHMARK_ENABLE, true)) {
+        if (App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null && !Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE, true) && Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_TAPANDHOLD_COACHMARK_ENABLE, true)) {
             tipWindowHold = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_TOP_CENTER, getResources().getString(R.string.tutorial_effect_tap_hold));
             tipWindowHold.showToolTip(findViewById(R.id.audio_effect_btn), TooltipWindow.DRAW_ARROW_DEFAULT_CENTER);
             Preferences.writeBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_TAPANDHOLD_COACHMARK_ENABLE, false);
             tipWindowHold.setAutoDismissBahaviour(true);
 
         }
-
-        if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true) && Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_HEADSET_ENABLE, true)) {
+        //AudioManager am1 = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true) && Preferences.readBoolean(this, Preferences.PLAYER_SCREEN_HEADSET_ENABLE, true) && !MusicReceiver.isPlugged) {
             tipWindowHeadset = new TooltipWindow(BoomPlayerActivity.this, TooltipWindow.DRAW_ABOVE_WITH_CLOSE, getResources().getString(R.string.tutorial_use_headphones));
             tipWindowHeadset.showToolTip(findViewById(R.id.player_title_txt), 0);
             tipWindowHeadset.setAutoDismissBahaviour(false);
@@ -371,7 +372,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     }
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        //super.onBackPressed();
+        moveTaskToBack(true);
         Preferences.writeBoolean(BoomPlayerActivity.this, Preferences.APP_FRESH_LAUNCH, false);
     }
 
@@ -444,6 +446,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     App.getPlayerEventHandler().updateEffect();
 
                 updateEffectIcon();
+                if (tipWindowHold != null) {
+                    tipWindowHold.dismissTooltip();
+                }
+
                 return true;
             }
         });
@@ -569,6 +575,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 null, App.getPlayerEventHandler().isPlaying());
 
         updateUpNextButton();
+        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        registerReceiver(musicReceiver, filter);
     }
 
     private void updateUpNextButton() {
@@ -580,6 +588,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }else{
             mUpNextQueue.setVisibility(View.INVISIBLE);
         }
+
     }
 
     @Override
@@ -598,6 +607,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         if (tipWindowHeadset != null) {
             tipWindowHeadset.dismissTooltip();
         }
+        unregisterReceiver(musicReceiver);
     }
 
     @Override
@@ -668,7 +678,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onHeadsetPlugged() {
-
+        if (tipWindowHeadset != null) {
+            tipWindowHeadset.dismissTooltip();
+        }
     }
 
     class TrackTimerTask extends TimerTask {

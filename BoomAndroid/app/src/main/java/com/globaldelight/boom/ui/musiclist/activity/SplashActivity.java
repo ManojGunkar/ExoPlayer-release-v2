@@ -45,12 +45,12 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
-        super.onCreate(savedInstanceState);
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
+        super.onCreate(savedInstanceState);
+
         if(!isExpire("DEC-30-2016")) {
             startService(new Intent(this, PlayerService.class));
             new Handler().postDelayed(new Runnable() {
@@ -66,7 +66,7 @@ public class SplashActivity extends AppCompatActivity {
                     // Start your app main activity
                     startPlayer();
                     // close this activity
-                    finish();
+                    //finish();
                 }
             }, SPLASH_TIME_OUT);
             audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);

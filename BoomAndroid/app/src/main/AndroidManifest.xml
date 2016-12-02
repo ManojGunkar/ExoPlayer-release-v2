@@ -24,7 +24,6 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- In-app billing -->
     <uses-permission android:name="com.android.vending.BILLING" />
-
     <application
         android:name=".App"
         android:allowBackup="true"

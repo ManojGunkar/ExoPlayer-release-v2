@@ -93,7 +93,7 @@
     <string name="share_app">Share</string>
     <string name="contact_us">Contact Us</string>
     <string name="about_technology">The Technology of immersive surround audio on \n headphones is patent pending</string>
-    <string name="copyright">\u00a9 2016,Global Delight Technologies Pvt Ltd. \n All rights reserved.</string>
+    <string name="copyright">\u00a9 2016 , Global Delight Technologies Pvt Ltd. \n All rights reserved.</string>
 
     <!-- Tutorial-->
     <string name="tutorial_boom_effect"> Tap here to experience \n the song with Boom!</string>

@@ -14,7 +14,11 @@
         android:layout_height="wrap_content"
         android:layout_weight="9"
         android:gravity="center"
-        android:padding="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="0dp"
+        android:paddingTop="10dp"
+
         android:text="@string/tutorial_use_headphones"
         android:textColor="@android:color/white"
         android:textSize="@dimen/tooltip_txt"
@@ -27,7 +31,9 @@
         android:layout_gravity="top"
         android:layout_marginRight="5dp"
         android:layout_weight="1"
-        android:padding="10dp"
+        android:paddingBottom="10dp"
+        android:paddingRight="5dp"
+        android:paddingTop="10dp"
         app:srcCompat="@drawable/ic_close_dark" />
 
 

@@ -109,9 +109,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void showSpeakerCoachMark() {
-        Preferences.writeBoolean(Surround3DActivity.this, Preferences.EFFECT_SCREEN_TAP_EFFECT_ENABLE, false);
 
-        if (Preferences.readBoolean(Surround3DActivity.this, Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE, true)) {
+        if (Preferences.readBoolean(Surround3DActivity.this, Preferences.EFFECT_SCREEN_TAP_EFFECT_ENABLE, true)) {
 
             tipSpeakerWidow = new TooltipWindow(Surround3DActivity.this, TooltipWindow.DRAW_BOTTOM, getResources().getString(R.string.tutorial_select_speaker));
             tipSpeakerWidow.setAutoDismissBahaviour(true);
@@ -119,6 +118,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
             //Preferences.writeBoolean(this,Preferences.EFFECT_SCREEN_TAP_SPEAKER_ENABLE,false);
         }
+        Preferences.writeBoolean(Surround3DActivity.this, Preferences.EFFECT_SCREEN_TAP_EFFECT_ENABLE, false);
+
     }
 
 

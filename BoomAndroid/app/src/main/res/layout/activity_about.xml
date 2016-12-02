@@ -94,7 +94,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="2px"
+        android:layout_height="1px"
         android:layout_marginBottom="@dimen/fourty_eight_pt"
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"
@@ -106,6 +106,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
         android:gravity="center"
         android:text="@string/copyright"
         android:textColor="@color/about_company_color"
