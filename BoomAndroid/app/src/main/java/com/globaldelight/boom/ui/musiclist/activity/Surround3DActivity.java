@@ -520,6 +520,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         boolean isPowerOn = audioEffectPreferenceHandler.isAudioEffectOn();
+        boolean is3DOn = audioEffectPreferenceHandler.is3DSurroundOn();
         switch (v.getId()){
            /* case R.id.effect_switch_panel:
                 if(isPowerOn){
@@ -547,7 +548,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 switchSuperPass(isPowerOn);
                 break;
             case R.id.speaker_switch_btn:
-                if(isPowerOn && audioEffectPreferenceHandler.is3DSurroundOn()) {
+                if(isPowerOn && is3DOn) {
                     if(isExpended){
                         collapse();
                     }else{
@@ -556,39 +557,44 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
             case R.id.speaker_left_front:
-                if (audioEffectPreferenceHandler.isLeftFrontSpeakerOn()) {
-                    mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_front_inactive, null));
-                    audioEffectPreferenceHandler.setEnableLeftFrontSpeaker(false);
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontLeft, false);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_LEFT_SPEAKER_OFF);
-                } else {
-                    mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_front_active, null));
-                    audioEffectPreferenceHandler.setEnableLeftFrontSpeaker(true);
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontLeft, true);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_LEFT_SPEAKER_ON);
+                if(isPowerOn && is3DOn) {
+                    if (audioEffectPreferenceHandler.isLeftFrontSpeakerOn()) {
+                        mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_front_inactive, null));
+                        audioEffectPreferenceHandler.setEnableLeftFrontSpeaker(false);
+                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontLeft, false);
+                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_LEFT_SPEAKER_OFF);
+                    } else {
+                        mSpeakerLeftFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_front_active, null));
+                        audioEffectPreferenceHandler.setEnableLeftFrontSpeaker(true);
+                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontLeft, true);
+                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_LEFT_SPEAKER_ON);
 
+                    }
+                    updateSpeakerInfo();
                 }
-                updateSpeakerInfo();
 
                 break;
             case R.id.speaker_right_front:
-                if (audioEffectPreferenceHandler.isRightFrontSpeakerOn()) {
-                    mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_front_inactive, null));
-                    audioEffectPreferenceHandler.setEnableRightFrontSpeaker(false);
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontRight, false);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_RIGHT_SPEAKER_OFF);
+                if(isPowerOn && is3DOn) {
+                    if (audioEffectPreferenceHandler.isRightFrontSpeakerOn()) {
+                        mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_front_inactive, null));
+                        audioEffectPreferenceHandler.setEnableRightFrontSpeaker(false);
+                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontRight, false);
+                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_RIGHT_SPEAKER_OFF);
 
-                } else {
-                    mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_front_active, null));
-                    audioEffectPreferenceHandler.setEnableRightFrontSpeaker(true);
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontRight, true);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_RIGHT_SPEAKER_ON);
+                    } else {
+                        mSpeakerRightFront.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_front_active, null));
+                        audioEffectPreferenceHandler.setEnableRightFrontSpeaker(true);
+                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.FrontRight, true);
+                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FRONT_RIGHT_SPEAKER_ON);
 
+                    }
+                    updateSpeakerInfo();
                 }
-                updateSpeakerInfo();
                 break;
             case R.id.speaker_left_tweeter:
             case R.id.speaker_right_tweeter:
+                if(isPowerOn && is3DOn) {
                 if(audioEffectPreferenceHandler.isAllSpeakerOn()) {
                     if (audioEffectPreferenceHandler.isTweeterOn()) {
                         mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_l_disabled, null));
@@ -607,55 +613,62 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     }
                     updateSpeakerInfo();
                 }
+                }
                 break;
             case R.id.speaker_left_surround:
-                if (audioEffectPreferenceHandler.isLeftSurroundSpeakerOn()) {
-                    mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_surround_inactive, null));
-                    audioEffectPreferenceHandler.setEnableLeftSurroundSpeaker(false);
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearLeft, false);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_LEFT_SPEAKER_OFF);
-
-                } else {
-                    mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_surround_active, null));
-                    audioEffectPreferenceHandler.setEnableLeftSurroundSpeaker(true);
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearLeft, true);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_LEFT_SPEAKER_ON);
-
-                }
-                updateSpeakerInfo();
-                break;
-            case R.id.speaker_right_surround:
-                if (audioEffectPreferenceHandler.isRightSurroundSpeakerOn()) {
-                    mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_surround_inactive, null));
-                    audioEffectPreferenceHandler.setEnableRightSurroundSpeaker(false);
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearRight, false);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_RIGHT_SPEAKER_OFF);
-
-                } else {
-                    mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_surround_active, null));
-                    audioEffectPreferenceHandler.setEnableRightSurroundSpeaker(true);
-                    App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearRight, true);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_RIGHT_SPEAKER_ON);
-
-                }
-                updateSpeakerInfo();
-                break;
-            case R.id.speaker_sub_woofer:
-                if(audioEffectPreferenceHandler.isAllSpeakerOn()) {
-                    if (audioEffectPreferenceHandler.isWooferOn()) {
-                        mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.ic_woofer_inactive, null));
-                        audioEffectPreferenceHandler.setEnableWoofer(false);
-                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, false);
-                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SUBWOOFER_OFF);
+                if(isPowerOn && is3DOn) {
+                    if (audioEffectPreferenceHandler.isLeftSurroundSpeakerOn()) {
+                        mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_surround_inactive, null));
+                        audioEffectPreferenceHandler.setEnableLeftSurroundSpeaker(false);
+                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearLeft, false);
+                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_LEFT_SPEAKER_OFF);
 
                     } else {
-                        mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.ic_woofer_active, null));
-                        audioEffectPreferenceHandler.setEnableWoofer(true);
-                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, true);
-                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SUBWOOFER_ON);
+                        mSpeakerLeftSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_l_surround_active, null));
+                        audioEffectPreferenceHandler.setEnableLeftSurroundSpeaker(true);
+                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearLeft, true);
+                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_LEFT_SPEAKER_ON);
 
                     }
                     updateSpeakerInfo();
+                }
+                break;
+            case R.id.speaker_right_surround:
+                if(isPowerOn && is3DOn) {
+                    if (audioEffectPreferenceHandler.isRightSurroundSpeakerOn()) {
+                        mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_surround_inactive, null));
+                        audioEffectPreferenceHandler.setEnableRightSurroundSpeaker(false);
+                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearRight, false);
+                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_RIGHT_SPEAKER_OFF);
+
+                    } else {
+                        mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_surround_active, null));
+                        audioEffectPreferenceHandler.setEnableRightSurroundSpeaker(true);
+                        App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.RearRight, true);
+                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REAR_RIGHT_SPEAKER_ON);
+
+                    }
+                    updateSpeakerInfo();
+                }
+                break;
+            case R.id.speaker_sub_woofer:
+                if(isPowerOn && is3DOn) {
+                    if(audioEffectPreferenceHandler.isAllSpeakerOn()) {
+                        if (audioEffectPreferenceHandler.isWooferOn()) {
+                            mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.ic_woofer_inactive, null));
+                            audioEffectPreferenceHandler.setEnableWoofer(false);
+                            App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, false);
+                            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SUBWOOFER_OFF);
+
+                        } else {
+                            mSpeakerSubWoofer.setImageDrawable(getResources().getDrawable(R.drawable.ic_woofer_active, null));
+                            audioEffectPreferenceHandler.setEnableWoofer(true);
+                            App.getPlayerEventHandler().setSpeakerEnable(AudioEffect.Speaker.Woofer, true);
+                            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SUBWOOFER_ON);
+
+                        }
+                        updateSpeakerInfo();
+                    }
                 }
                 break;
         }
