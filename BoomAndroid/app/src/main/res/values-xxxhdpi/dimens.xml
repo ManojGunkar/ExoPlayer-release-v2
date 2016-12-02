@@ -93,6 +93,7 @@
 
     <dimen name="two_hundred_sixteen_pt">56dp</dimen>
     <dimen name="mini_player_height">58dp</dimen>
+    <dimen name="mini_player_content_height">50dp</dimen>
     <dimen name="mini_player_progress_height">8dp</dimen>
 
     <dimen name="fifty_six_pt_txt">14dp</dimen>
