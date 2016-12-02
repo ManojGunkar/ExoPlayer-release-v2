@@ -193,19 +193,34 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                                 break;
                             case R.id.popup_song_add_playlist:
                                 Utils util = new Utils(context);
+                                ArrayList list = new ArrayList();
                                 if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
-                                    util.addToPlaylist((AlbumActivity)context, (ArrayList<? extends IMediaItemBase>) item.getMediaElement().get(position), null);
+                                    list.add(item.getMediaElement().get(position));
+                                    util.addToPlaylist((AlbumActivity)context, list , null);
                                 }else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
-                                    util.addToPlaylist((AlbumActivity)context, (ArrayList<? extends IMediaItemBase>) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position), null);
+                                    list.add(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                    util.addToPlaylist((AlbumActivity)context, list, null);
                                 }
 
                                 break;
                             case R.id.popup_song_add_fav :
-                                if(MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())){
-                                    MediaController.getInstance(context).removeItemToFavoriteList(item.getMediaElement().get(position).getItemId());
-                                }else{
-                                    MediaController.getInstance(context).addSongsToFavoriteList(item.getMediaElement().get(position));
+                                if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
+                                    if(MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())){
+                                        MediaController.getInstance(context).removeItemToFavoriteList(item.getMediaElement().get(position).getItemId());
+                                    }else{
+                                        MediaController.getInstance(context).addSongsToFavoriteList(item.getMediaElement().get(position));
+                                    }
+                                }else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
+                                    if(MediaController.getInstance(context).isFavouriteItems(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position).getItemId())){
+                                        MediaController.getInstance(context).removeItemToFavoriteList(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position).getItemId());
+                                    }else{
+                                        MediaController.getInstance(context).addSongsToFavoriteList(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                    }
                                 }
+
+
+
+
                                 break;
                         }
                         return false;

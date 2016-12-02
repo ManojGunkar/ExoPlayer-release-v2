@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
@@ -34,6 +35,7 @@ import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
  */
 public class BoomMasterActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     DrawerLayout drawerLayout;
+    private ListView mDrawerMenuList;
     FrameLayout activityContainer;
     Fragment mSearchResult;
     Toolbar toolbar;

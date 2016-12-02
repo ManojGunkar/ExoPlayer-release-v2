@@ -548,10 +548,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 if(isPowerOn && audioEffectPreferenceHandler.is3DSurroundOn()) {
                     if(isExpended){
                         collapse();
-                        isExpended = false;
                     }else{
                         expand();
-                        isExpended = true;
                     }
                 }
                 break;
@@ -757,6 +755,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void expand() {
+        isExpended = true;
         //when speaker panel is open
         mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speaker_active_on, null));
         collapsablelayout.setVisibility(View.VISIBLE);
@@ -772,6 +771,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void collapse() {
+        mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
+        isExpended = false;
         int finalHeight = collapsablelayout.getHeight();
 
         ValueAnimator mAnimator = slideAnimator(finalHeight, 0);
