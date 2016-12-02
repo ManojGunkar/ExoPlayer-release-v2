@@ -254,6 +254,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     private void updateTrackToPlayer(final MediaItem item, boolean playing) {
         if(item != null){
+            mRepeatBtn.setVisibility(View.VISIBLE);
+            mShuffleBtn.setVisibility(View.VISIBLE);
             mTitleTxt.setVisibility(View.VISIBLE);
             mSubTitleTxt.setVisibility(View.VISIBLE);
             mTrackSeek.setVisibility(View.VISIBLE);
@@ -283,6 +285,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             param = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             param.gravity = Gravity.CENTER;
             mAlbumArt.setLayoutParams(param);
+            mRepeatBtn.setVisibility(View.INVISIBLE);
+            mShuffleBtn.setVisibility(View.INVISIBLE);
             mTitleTxt.setVisibility(View.GONE);
             mSubTitleTxt.setVisibility(View.GONE);
             mTrackSeek.setVisibility(View.INVISIBLE);
@@ -322,6 +326,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         registerReceiver(mPlayerBroadcastReceiver, intentFilter);
         // new BoomServerRequest().getAccessToken(this);
         showPurchaseOption();
+
     }
 
     public void showCoachMark() {
@@ -562,6 +567,19 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         updateTrackToPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
                 (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
                 null, App.getPlayerEventHandler().isPlaying());
+
+        updateUpNextButton();
+    }
+
+    private void updateUpNextButton() {
+        if(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0 ||
+                App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0 ||
+                null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem() ||
+                App.getPlayingQueueHandler().getUpNextList().getHistoryList().size() > 0){
+            mUpNextQueue.setVisibility(View.VISIBLE);
+        }else{
+            mUpNextQueue.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override

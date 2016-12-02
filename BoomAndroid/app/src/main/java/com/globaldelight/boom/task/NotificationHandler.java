@@ -52,13 +52,13 @@ public class NotificationHandler {
         if (removable)
             return new Notification.Builder(context)
                     .setOngoing(false)
-                    .setSmallIcon(R.drawable.ic_audiotrack_white_24dp)
+                    .setSmallIcon(R.drawable.ic_boom_status_bar_icon)
                     .setContentIntent(contentIntent)
                     .setDeleteIntent(deletePendingIntent);
         else
             return new Notification.Builder(context)
                     .setOngoing(true)
-                    .setSmallIcon(R.drawable.ic_audiotrack_white_24dp)
+                    .setSmallIcon(R.drawable.ic_boom_status_bar_icon)
                     .setContentIntent(contentIntent)
                     .setDeleteIntent(deletePendingIntent);
     }

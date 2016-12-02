@@ -9,7 +9,7 @@
         android:src="@drawable/drawer_image"/>
     <LinearLayout
         android:id="@+id/drawer_lib_option"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fifty_six_pt"
         android:layout_marginBottom="@dimen/fifty_six_pt"
@@ -33,7 +33,7 @@
     </LinearLayout>
     <LinearLayout
         android:id="@+id/drawer_playlist_option"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fifty_six_pt"
         android:layout_marginBottom="@dimen/fifty_six_pt"
@@ -57,7 +57,7 @@
     </LinearLayout>
     <LinearLayout
         android:id="@+id/drawer_fav_option"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fifty_six_pt"
         android:layout_marginBottom="@dimen/fifty_six_pt"
@@ -94,7 +94,7 @@
        <com.globaldelight.boom.ui.widgets.RegularTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/sixteen_pt"
+            android:layout_marginLeft="@dimen/thirty_two_px"
             android:textSize="@dimen/sixty_four_pt"
            android:text="@string/close_lib"
             android:textStyle="normal"
