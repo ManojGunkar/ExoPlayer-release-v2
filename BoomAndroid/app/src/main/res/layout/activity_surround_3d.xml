@@ -389,7 +389,7 @@
                             android:layout_height="wrap_content"
                             android:maxLines="1"
                             android:text="@string/req_of_3d"
-                            android:textColor="#c3cc20"
+                            android:textColor="@color/boom_yellow"
                             android:textSize="@dimen/sixty_pt_txt"
                             android:textStyle="normal" />
 
@@ -399,7 +399,7 @@
                             android:layout_marginTop="@dimen/twenty_four_pt"
                             android:maxLines="1"
                             android:text="@string/req_intensity"
-                            android:textColor="#c3cc20"
+                            android:textColor="@color/boom_yellow"
                             android:textSize="@dimen/sixty_pt_txt"
                             android:textStyle="normal" />
                     </LinearLayout>
@@ -503,7 +503,7 @@
                             android:layout_height="wrap_content"
                             android:maxLines="1"
                             android:text="@string/req_of_3d"
-                            android:textColor="#c3cc20"
+                            android:textColor="@color/boom_yellow"
                             android:textSize="@dimen/sixty_pt_txt"
                             android:textStyle="normal" />
 
@@ -513,7 +513,7 @@
                             android:layout_marginTop="@dimen/twenty_four_pt"
                             android:maxLines="1"
                             android:text="@string/req_equlaizer"
-                            android:textColor="#c3cc20"
+                            android:textColor="@color/boom_yellow"
                             android:textSize="@dimen/sixty_pt_txt"
                             android:textStyle="normal" />
                     </LinearLayout>

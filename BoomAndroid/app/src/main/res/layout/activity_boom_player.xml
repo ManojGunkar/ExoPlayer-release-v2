@@ -59,7 +59,7 @@
                         android:marqueeRepeatLimit="1"
                         android:scrollHorizontally="true"
                         android:singleLine="true"
-                        android:textColor="@color/player_title_txt_color"
+                        android:textColor="@color/boom_yellow"
                         android:textSize="@dimen/toolbar_titile"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -95,7 +95,7 @@
                         android:id="@+id/played_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
+                        android:textColor="@color/boom_sub_title"
                         android:textSize="@dimen/sixty_eight_pt1"/>
                 </LinearLayout>
 
@@ -116,7 +116,7 @@
                         android:marqueeRepeatLimit="marquee_forever"
                         android:scrollHorizontally="true"
                         android:singleLine="true"
-                        android:textColor="@color/white"
+                        android:textColor="@color/boom_sub_title"
                         android:textSize="@dimen/sixty_eight_pt"
                         android:textStyle="normal" />
                 </LinearLayout>
@@ -130,7 +130,7 @@
                         android:id="@+id/remains_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
+                        android:textColor="@color/boom_sub_title"
                         android:textSize="@dimen/sixty_eight_pt"/>
                 </LinearLayout>
 

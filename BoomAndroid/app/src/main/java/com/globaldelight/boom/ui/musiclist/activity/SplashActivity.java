@@ -51,7 +51,7 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         super.onCreate(savedInstanceState);
 
-        if(!isExpire("DEC-30-2016")) {
+        if(!isExpire("DEC-15-2016")) {
             startService(new Intent(this, PlayerService.class));
             new Handler().postDelayed(new Runnable() {
 

@@ -85,7 +85,7 @@
         android:background="#1a1a1a"/>
     <LinearLayout
         android:id="@+id/drawer_close_option"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fifty_six_pt"
         android:layout_marginBottom="@dimen/fifty_six_pt"

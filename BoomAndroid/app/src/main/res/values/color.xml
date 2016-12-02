@@ -17,4 +17,10 @@
     <color name="dialog_background">#171921</color>
     <color name="rate_btn_blue">#02d3f0</color>
 
+    <color name="boom_yellow">#bfaa17</color>
+
+    <color name="boom_sub_title">#8d8b8c</color>
+
+
+
 </resources>

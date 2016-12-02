@@ -137,6 +137,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         m3DSwitchTxt = (RegularTextView) findViewById(R.id.three_d_switch_txt);
         m3DSwitchTxt.setTextColor(Color.WHITE);
         mSpeakerInfo = (RegularTextView) findViewById(R.id.speaker_info);
+        mSpeakerInfo.setVisibility(View.GONE);
         mSpeakerInfo.setTextColor(Color.WHITE);
         mFullbassTxt = (RegularTextView) findViewById(R.id.fullbass_txt);
         mFullbassTxt.setTextColor(Color.WHITE);
@@ -267,11 +268,10 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         boolean isRightFront = audioEffectPreferenceHandler.isRightFrontSpeakerOn();
         boolean isLeftSurround = audioEffectPreferenceHandler.isLeftSurroundSpeakerOn();
         boolean isRightSurround = audioEffectPreferenceHandler.isRightSurroundSpeakerOn();
-        boolean isWoofer = audioEffectPreferenceHandler.isWooferOn();
-        boolean isTweeter = audioEffectPreferenceHandler.isTweeterOn();
 
         if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()) {
             if(isLeftFront && isRightFront && isLeftSurround && isRightSurround){
+                mSpeakerInfo.setVisibility(View.GONE);
                 mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
                 updateTweeterAndWoofer(true);
             }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround) {
@@ -288,9 +288,10 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 updateTweeterAndWoofer(true);
             }
         }else{
-            if(isLeftFront && isRightFront && isLeftSurround && isRightSurround && isWoofer && isTweeter){
+            if(isLeftFront && isRightFront && isLeftSurround && isRightSurround){
+                mSpeakerInfo.setVisibility(View.GONE);
                 updateTweeterAndWoofer(true);
-            }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround && !isWoofer && !isTweeter) {
+            }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround) {
                 // All Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_all_off));
                 mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
@@ -432,10 +433,14 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void switch3DSurround(boolean isPowerOn){
         if(isPowerOn) {
-            audioEffectPreferenceHandler.setEnable3DSurround(!audioEffectPreferenceHandler.is3DSurroundOn());
-            App.getPlayerEventHandler().set3DAudioEnable(!audioEffectPreferenceHandler.is3DSurroundOn());
-            if(isExpended)
+            if(audioEffectPreferenceHandler.is3DSurroundOn()){
+                audioEffectPreferenceHandler.setEnable3DSurround(false);
+                App.getPlayerEventHandler().set3DAudioEnable(false);
+            }else{
+                audioEffectPreferenceHandler.setEnable3DSurround(true);
+                App.getPlayerEventHandler().set3DAudioEnable(true);
                 collapse();
+            }
 
                 //TODO
                /* int purchaseType = audioEffectPreferenceHandler.getUserPurchaseType();
@@ -753,7 +758,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     private void expand() {
         isExpended = true;
-        mSpeakerInfo.setVisibility(View.VISIBLE);
+        mSpeakerInfo.setVisibility(View.GONE);
         //when speaker panel is open
         mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speaker_active_on, null));
         collapsablelayout.setVisibility(View.VISIBLE);
@@ -769,8 +774,16 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void collapse() {
+        boolean isLeftFront = audioEffectPreferenceHandler.isLeftFrontSpeakerOn();
+        boolean isRightFront = audioEffectPreferenceHandler.isRightFrontSpeakerOn();
+        boolean isLeftSurround = audioEffectPreferenceHandler.isLeftSurroundSpeakerOn();
+        boolean isRightSurround = audioEffectPreferenceHandler.isRightSurroundSpeakerOn();
         mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
-        mSpeakerInfo.setVisibility(View.GONE);
+        if(isLeftFront && isRightFront && isLeftSurround && isRightSurround) {
+            mSpeakerInfo.setVisibility(View.GONE);
+        }else {
+            mSpeakerInfo.setVisibility(View.VISIBLE);
+        }
         isExpended = false;
         int finalHeight = collapsablelayout.getHeight();
 
