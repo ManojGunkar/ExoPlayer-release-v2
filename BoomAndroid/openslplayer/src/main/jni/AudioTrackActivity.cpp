@@ -260,7 +260,7 @@ namespace gdpl {
             ringBuffer->UnblockWrite();
         }
 
-        while (ringBuffer->GetReadAvail()) {
+        while ( ringBuffer->GetReadAvail() && openSLPlayer->isReading() ) {
             //ALOGE("Not Stopped...!");
             if (!enable)
                 break;

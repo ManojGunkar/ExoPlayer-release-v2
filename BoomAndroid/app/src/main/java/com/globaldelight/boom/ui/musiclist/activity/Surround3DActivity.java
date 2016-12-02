@@ -441,7 +441,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 App.getPlayerEventHandler().set3DAudioEnable(true);
                 collapse();
             }
-
+// In app code will be in else 
                 //TODO
                /* int purchaseType = audioEffectPreferenceHandler.getUserPurchaseType();
                 switch (AudioEffect.purchase.fromOrdinal(purchaseType)) {
