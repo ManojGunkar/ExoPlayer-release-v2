@@ -91,7 +91,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     private MediaSession.Callback mediaSessionCallback = new MediaSession.Callback(){
         @Override
         public void onPlay() {
-            mPlayer.play();
+            setSessionState(PlaybackState.STATE_PLAYING);
 
             Intent intent = new Intent();
             intent.setAction(PlayerService.ACTION_PLAYING_ITEM_CLICKED);
@@ -101,7 +101,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
 
         @Override
         public void onPause() {
-            mPlayer.pause();
+            setSessionState(PlaybackState.STATE_PAUSED);
 
             Intent intent = new Intent();
             intent.setAction(PlayerService.ACTION_PLAYING_ITEM_CLICKED);
