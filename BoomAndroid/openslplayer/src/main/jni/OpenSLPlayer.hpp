@@ -24,6 +24,8 @@ namespace gdpl {
         virtual void getNextBuffer(Buffer* buffer) = 0;
     };
 
+    class FIFOBuffer;
+
     class OpenSLPlayer {
     public:
 
@@ -56,7 +58,7 @@ namespace gdpl {
         }
 
 
-        static SLresult setupEngine(uint32_t sampleRate);
+        static SLresult setupEngine(uint32_t sampleRate, uint32_t frameCount);
 
         static SLresult tearDownEngine();
 
@@ -76,6 +78,8 @@ namespace gdpl {
         bool     _isReading;
         IDataSource* _dataSource;
         pthread_mutex_t _mutex;
+
+        FIFOBuffer* _fifo;
     };
 }
 

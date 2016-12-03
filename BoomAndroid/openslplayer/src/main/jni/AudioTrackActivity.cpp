@@ -146,7 +146,11 @@ namespace gdpl {
 //        LOGD("Computed frame count is %d", gFrameCount);
 //        OpenSLPlayer::setupEngine(sampleRate);
         gFrameCount = DEFAULT_FRAME_COUNT;
-        OpenSLPlayer::setupEngine(sampleRate);
+        uint32_t frameCount = inFrameCount;
+        if ( DEFAULT_FRAME_COUNT > inFrameCount ) {
+            frameCount = inFrameCount * (DEFAULT_FRAME_COUNT/inFrameCount);
+        }
+        OpenSLPlayer::setupEngine(sampleRate, frameCount);
         engine = new AudioEngine(sampleRate, gFrameCount);
         engine->SetHeadPhoneType(eOnEar);
     }
