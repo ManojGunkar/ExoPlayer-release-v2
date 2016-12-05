@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources></resources>
+
+    <!--
+    res/values-sw600dp/dimens.xml      (600x1024)
+    res/values-sw720dp/dimens.xml      (800x1280)
+    res/values-xlarge-xhdpi/dimens.xml (2560x1600 - Nexus 10")
+    res/values-large-xhdpi/dimens.xml  (1200x1920 - Nexus 7"(latest))-->
