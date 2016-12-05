@@ -119,11 +119,14 @@ public class OpenSLPlayer implements Runnable {
             setPlayingAudioPlayer(true);
             state.set(PlayerStates.PLAYING);
             syncNotify();
+            pauseSeek();
+        }
+    }
 
-            if(mPauseSeek >= 0){
-                seek(mPauseSeek * duration / 100);
-                mPauseSeek = -1;
-            }
+    private synchronized void pauseSeek(){
+        if(mPauseSeek >= 0){
+            seek(mPauseSeek * duration / 100);
+            mPauseSeek = -1;
         }
     }
 

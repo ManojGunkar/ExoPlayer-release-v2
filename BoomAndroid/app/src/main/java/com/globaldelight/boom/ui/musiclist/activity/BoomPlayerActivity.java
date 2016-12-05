@@ -259,7 +259,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void updateTrackToPlayer(final MediaItem item, boolean playing, boolean isLastPlayedSong) {
-        if(item != null && !isLastPlayedSong){
+        if(null != item && !isLastPlayedSong){
             mRepeatBtn.setVisibility(View.VISIBLE);
             mShuffleBtn.setVisibility(View.VISIBLE);
             mTitleTxt.setVisibility(View.VISIBLE);
@@ -304,7 +304,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mPlayedTime.setVisibility(View.INVISIBLE);
             mFavourite.setVisibility(View.INVISIBLE);
             mAddToPlayList.setVisibility(View.INVISIBLE);
-        }else if(isLastPlayedSong){
+        }else if(isLastPlayedSong && null != item){
             mTrackSeek.setProgress(0);
             mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_player_play, null));
             mRemainsTime.setText("-"+mPlayedTime.getText());
@@ -581,9 +581,12 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         super.onResume();
         isPlayerResume = true;
         updateEffectIcon();
-        updateTrackToPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
-                (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
-                null, App.getPlayerEventHandler().isPlaying(), false);
+
+        if (null != App.getPlayerEventHandler().getPlayingItem()) {
+            updateTrackToPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
+                    (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
+                    null, App.getPlayerEventHandler().isPlaying(), /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));
+        }
 
         updateUpNextButton();
         IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
