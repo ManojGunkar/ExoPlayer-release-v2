@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="eq_names">
+        <item>AUTO</item>
+        <item>BASSBOOST</item>
+        <item>ACOUSTIC</item>
+        <item>60\'s</item>
+        <item>CLASSICAL</item>
+        <item>DUBSTEP</item>
+        <item>ELECTRONIC</item>
+        <item>FLAT</item>
+        <item>HIPHOP</item>
+        <item>HOUSE</item>
+        <item>JAZZ</item>
+        <item>LOUD</item>
+        <item>MUSIC</item>
+        <item>PARTY</item>
+        <item>POP</item>
+        <item>REGGAE</item>
+        <item>ROCK</item>
+        <item>SOFT</item>
+        <item>TREBLE</item>
+        <item>VOCALS</item>
+        <item>R &amp; B</item>
+        <item>METAL</item>
+    </string-array>
+</resources>

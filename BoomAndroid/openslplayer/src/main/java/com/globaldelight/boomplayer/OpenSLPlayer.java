@@ -9,8 +9,12 @@ import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
+import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.util.Log;
+
+import com.example.openslplayer.R;
+
 import java.nio.ByteBuffer;
 
 
@@ -188,6 +192,16 @@ public class OpenSLPlayer implements Runnable {
             }catch (InterruptedException e){
 
             }
+        try {
+            MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
+            metadataRetriever.setDataSource(this.sourcePath);
+            setGenreType(metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE));
+        }catch (IllegalArgumentException e){
+            setGenreType(null);
+        }catch (SecurityException e1){
+            setGenreType(null);
+        }
+
         // extractor gets information about the stream
         extractor = new MediaExtractor();
         // try to set the source, this might fail
@@ -459,6 +473,20 @@ public class OpenSLPlayer implements Runnable {
         }
     }
 
+    private void setGenreType(String genreType) {
+        if(AudioEffect.getAudioEffectInstance(mContext).getSelectedEqualizerPosition() == 0) {
+            if (null != genreType) {
+                for (int i = 0; i <= mContext.getResources().getStringArray(R.array.eq_names).length - 1; i++) {
+                    if (genreType.toUpperCase().contains(mContext.getResources().getStringArray(R.array.eq_names)[i])) {
+                        AudioEffect.getAudioEffectInstance(mContext).setAutoEqualizerPosition(i);
+                        return;
+                    }
+                }
+            }
+        }
+        AudioEffect.getAudioEffectInstance(mContext).setAutoEqualizerPosition(12);
+    }
+
     public void SupportedCodec() {
         String results = "";
         int numCodecs = MediaCodecList.getCodecCount();
@@ -595,6 +623,9 @@ public class OpenSLPlayer implements Runnable {
     }
 
     public synchronized void setEqualizerGain(int equalizerId) {
+        if(equalizerId == 0){
+            equalizerId = AudioEffect.getAudioEffectInstance(mContext).getAutoEqualizerValue();
+        }
         try {
             if(EqualizerGain.getEqualizerSize() <= 0){
                 EqualizerGain.setEqGain();

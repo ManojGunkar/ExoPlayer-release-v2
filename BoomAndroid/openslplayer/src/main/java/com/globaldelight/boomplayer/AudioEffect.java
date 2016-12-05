@@ -23,6 +23,7 @@ public class AudioEffect {
     private static int SPEAKER_COUNT = 6;
 
     private static int EQUALIZER_POSITION = 0;
+    private static int AUTO_EQUALIZER_POSITION = 12;
     private static String USER_PURCHASE_TYPE = "user_purchase_type";
     private static String HEAD_PHONE_TYPE = "audio_head_phone_type";
 
@@ -30,6 +31,7 @@ public class AudioEffect {
     private static String THREE_D_SURROUND_POWER = "3d_surround_power";
     private static String INTENSITY_POWER = "intensity_power";
     private static String EQUALIZER_POWER = "equalizer_power";
+    private static String AUTO_EQUALIZER = "auto_equalizer";
 
     private static String SPEAKER_LEFT_FRONT = "speaker_left_front";
     private static String SPEAKER_RIGHT_FRONT = "speaker_right_front";
@@ -47,6 +49,7 @@ public class AudioEffect {
 
     private static String FULL_BASS = "full_bass";
     private static String EFFECT_MASTER_PURCHASE_CONTROL = "effect_paid_master_control";
+
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
 
@@ -149,6 +152,16 @@ public class AudioEffect {
         editor.putInt(SELECTED_EQUALIZER_POSITION, position);
         editor.commit();
     }
+
+    public void setAutoEqualizerPosition(int position){
+        editor.putInt(AUTO_EQUALIZER, position);
+        editor.commit();
+    }
+
+    public int getAutoEqualizerValue(){
+        return shp.getInt(AUTO_EQUALIZER, AUTO_EQUALIZER_POSITION);
+    }
+
 
     public boolean isLeftFrontSpeakerOn(){
         return shp.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER);
