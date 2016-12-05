@@ -34,7 +34,7 @@ public class PlayerService extends Service {
     public static final String ACTION_PREV_SONG = "ACTION_PREV_SONG";
     public static final String ACTION_PLAY_PAUSE_SONG = "ACTION_PLAY_PAUSE_SONG";
     public static final String ACTION_ADD_QUEUE = "ACTION_ADD_QUEUE";
-
+    public static final String ACTION_LAST_PLAYED_SONG = "ACTION_LAST_PLAYED_SONG";
 
     public static final String ACTION_PLAY_STOP = "ACTION_PLAY_STOP";
     public static final String ACTION_TRACK_POSITION_UPDATE = "ACTION_TRACK_POSITION_UPDATE";
@@ -86,6 +86,7 @@ public class PlayerService extends Service {
         filter.addAction(ACTION_TRACK_POSITION_UPDATE);
         filter.addAction(ACTION_UPNEXT_UPDATE);
         filter.addAction(ACTION_PLAYING_ITEM_CLICKED);
+        filter.addAction(ACTION_LAST_PLAYED_SONG);
         registerReceiver(playerServiceBroadcastReceiver, filter);
         notificationHandler = new NotificationHandler(context, this);
         return START_NOT_STICKY;
@@ -96,7 +97,7 @@ public class PlayerService extends Service {
         switch (intent.getAction()) {
             case ACTION_GET_SONG:
                 try {
-                    updatePlayer();
+                    updatePlayer(false);
                 } catch (ArrayIndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }
@@ -106,15 +107,12 @@ public class PlayerService extends Service {
                 updatePlayPause(intent.getBooleanExtra("play_pause", false));
                 break;
             case ACTION_PLAY_PAUSE_SONG:
-                PlayerEventHandler.PlayState state = musicPlayerHandler.PlayPause();
-                /*if(state.play==PlayerEventHandler.PlayState.play)
-                {
-                    MixPanelAnalyticHelper.getInstance(context).timeEvent(AnalyticsHelper.EVENT_UPDATE_PLAYBACK_SESSION);
-                }else{
-                    MixPanelAnalyticHelper.getInstance(context).track(AnalyticsHelper.EVENT_UPDATE_PLAYBACK_SESSION);
-                }*/
-
-                updatePlayPause(state == PlayerEventHandler.PlayState.play ? true : false);
+                if(!musicPlayerHandler.isPaused() && !musicPlayerHandler.isPlaying()){
+                    musicPlayerHandler.onPlayingItemChanged();
+                }else {
+                    PlayerEventHandler.PlayState state = musicPlayerHandler.PlayPause();
+                    updatePlayPause(state == PlayerEventHandler.PlayState.play ? true : false);
+                }
                 break;
             case ACTION_UPNEXT_UPDATE:
                 updatePlayingQueue();
@@ -127,7 +125,7 @@ public class PlayerService extends Service {
                 break;
             case ACTION_PLAY_STOP:
                 sendBroadcast(new Intent(PlayerEvents.ACTION_TRACK_STOPPED));
-                updateNotificationPlayer(null, false);
+                updateNotificationPlayer(null, false, false);
                 break;
             case ACTION_SHUFFLE_SONG:
                 musicPlayerHandler.resetShuffle();
@@ -142,6 +140,9 @@ public class PlayerService extends Service {
                 break;
             case ACTION_PREV_SONG:
                 musicPlayerHandler.playPrevSong();
+                break;
+            case ACTION_LAST_PLAYED_SONG:
+                updatePlayerToLastPlayedSong();
                 break;
             /*case ACTION_PLAY_SINGLE:
                 musicPlayerHandler.playSingleSong(intent.getLongExtra("songId", 0));
@@ -190,6 +191,10 @@ public class PlayerService extends Service {
         }
     }
 
+    private void updatePlayerToLastPlayedSong() {
+        updatePlayer(true);
+    }
+
     private synchronized void trackSeekUpdate(boolean isUser, Intent intent){
         if(isUser){
             Intent seek = new Intent(PlayerEvents.ACTION_UPDATE_TRACK_SEEK);
@@ -208,7 +213,7 @@ public class PlayerService extends Service {
         i.putExtra("play_pause", play_pause);
         sendBroadcast(i);
 
-        updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), play_pause);
+        updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), play_pause, false);
     }
 
     private void updatePlayingQueue() {
@@ -217,32 +222,48 @@ public class PlayerService extends Service {
         sendBroadcast(i);
     }
 
-    public void updatePlayer() {
-        Intent i = new Intent();
-        i.setAction(PlayerEvents.ACTION_RECEIVE_SONG);
-        i.putExtra("playing_song", (MediaItem)musicPlayerHandler.getPlayingItem());
-        i.putExtra("playing", true);
-        i.putExtra("is_previous", musicPlayerHandler.isPrevious());
-        i.putExtra("is_next", musicPlayerHandler.isNext());
+    public void updatePlayer(boolean isLastPlayedSong) {
+        if(!isLastPlayedSong) {
+            Intent i = new Intent();
+            i.setAction(PlayerEvents.ACTION_RECEIVE_SONG);
+            i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
+            i.putExtra("playing", true);
+            i.putExtra("is_previous", musicPlayerHandler.isPrevious());
+            i.putExtra("is_next", musicPlayerHandler.isNext());
 
-        sendBroadcast(i);
-        updateNotificationPlayer((MediaItem)musicPlayerHandler.getPlayingItem(), true);
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            sendBroadcast(i);
+            updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), true, false);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), true, false);
+        }else{
+            Intent i = new Intent();
+            i.setAction(PlayerEvents.ACTION_LAST_PLAYED_SONG);
+            i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
+            i.putExtra("last_played_song", true);
+            i.putExtra("is_previous", musicPlayerHandler.isPrevious());
+            i.putExtra("is_next", musicPlayerHandler.isNext());
+            sendBroadcast(i);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), false, true);
         }
-        updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), true);
     }
 
-    private void updateNotificationPlayer(MediaItem playingItem, boolean playing) {
+    private void updateNotificationPlayer(MediaItem playingItem, boolean playing, boolean isLastPlayed) {
         if(!playing){
             stopForeground(false);
             notificationHandler.setNotificationPlayer(true);
         }else{
             notificationHandler.setNotificationPlayer(false);
         }
-        notificationHandler.changeNotificationDetails(playingItem, playing);
+        notificationHandler.changeNotificationDetails(playingItem, playing, isLastPlayed);
     }
 
     @Nullable

@@ -158,6 +158,7 @@ public class OpenSLPlayer implements Runnable {
 
     public void seek(long pos) {
         seekTo(pos);
+        Log.d("Track Seek", "Clear Ring Buffer");
         if(extractor != null)
             extractor.seekTo(pos, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
     }

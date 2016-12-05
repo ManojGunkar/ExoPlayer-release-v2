@@ -53,6 +53,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_REPEAT;
@@ -93,6 +94,7 @@ public class DetailAlbumActivity extends AppCompatActivity {
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_RECEIVE_SONG);
+        intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
         intentFilter.addAction(ACTION_ITEM_CLICKED);
         intentFilter.addAction(ACTION_TRACK_STOPPED);
         intentFilter.addAction(ACTION_UPDATE_TRACK_SEEK);
@@ -156,8 +158,14 @@ public class DetailAlbumActivity extends AppCompatActivity {
             switch (intent.getAction()){
                 case ACTION_RECEIVE_SONG :
                     MediaItem item = intent.getParcelableExtra("playing_song");
-                    updateMiniPlayer(item, intent.getBooleanExtra("playing", false));
-                    if(!isExpended)
+                    updateMiniPlayer(item, intent.getBooleanExtra("playing", false), false);
+                    if(mMiniPlayer.getVisibility() != View.VISIBLE)
+                        expand();
+                    break;
+                case ACTION_LAST_PLAYED_SONG:
+                    item = intent.getParcelableExtra("playing_song");
+                    updateMiniPlayer(item, false, intent.getBooleanExtra("last_played_song", true));
+                    if(mMiniPlayer.getVisibility() != View.VISIBLE)
                         expand();
                     break;
                 case ACTION_ITEM_CLICKED :
@@ -177,7 +185,7 @@ public class DetailAlbumActivity extends AppCompatActivity {
         }
     };
 
-    private void updateMiniPlayer(MediaItem item, boolean playing) {
+    private void updateMiniPlayer(MediaItem item, boolean playing, boolean isLastPlayedSong) {
         if(item != null) {
             updateAlbumArt(item);
             mTitle.setText(item.getItemTitle());
@@ -188,6 +196,9 @@ public class DetailAlbumActivity extends AppCompatActivity {
             } else {
                 mPlayPause.setVisibility(View.VISIBLE);
                 mPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_mini_player, null));
+            }
+            if(isLastPlayedSong){
+                mTrackProgress.setProgress(0);
             }
         }
     }
@@ -277,17 +288,14 @@ public class DetailAlbumActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused()){
+        if (null != App.getPlayerEventHandler().getPlayingItem()) {
             updateMiniPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
-                    (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
-                    null, App.getPlayerEventHandler().isPlaying());
-            if(!isExpended) {
-                expand();
-            }else{
-                mMiniPlayer.setVisibility(View.VISIBLE);
-            }
-        }else{
-            collapse();
+                            (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
+                            null, App.getPlayerEventHandler().isPlaying(),
+                       /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));
+            mMiniPlayer.setVisibility(View.VISIBLE);
+        } else {
+            mMiniPlayer.setVisibility(View.GONE);
         }
     }
 

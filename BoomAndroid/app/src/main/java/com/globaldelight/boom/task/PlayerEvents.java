@@ -12,4 +12,5 @@ public class PlayerEvents {
     public static final String ACTION_UPDATE_TRACK_SEEK = "ACTION_UPDATE_TRACK_SEEK";
     public static final String ACTION_UPDATE_SHUFFLE = "ACTION_UPDATE_SHUFFLE";
     public static final String ACTION_UPDATE_REPEAT = "ACTION_UPDATE_REPEAT";
+    public static final String ACTION_LAST_PLAYED_SONG = "ACTION_LAST_PLAYED_TRACK";
 }

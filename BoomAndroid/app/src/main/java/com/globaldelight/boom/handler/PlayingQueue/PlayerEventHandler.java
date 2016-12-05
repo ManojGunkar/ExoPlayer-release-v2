@@ -179,13 +179,17 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     }
 
     public void playNextSong(boolean isUser) {
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(isNext()) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            PLAYER_DIRECTION = NEXT;
+            App.getPlayingQueueHandler().getUpNextList().setNextPlayingItem(isUser);
+        }else{
+            context.sendBroadcast(new Intent(PlayerService.ACTION_LAST_PLAYED_SONG));
         }
-        PLAYER_DIRECTION = NEXT;
-        App.getPlayingQueueHandler().getUpNextList().setNextPlayingItem(isUser);
     }
 
     public void playPrevSong() {

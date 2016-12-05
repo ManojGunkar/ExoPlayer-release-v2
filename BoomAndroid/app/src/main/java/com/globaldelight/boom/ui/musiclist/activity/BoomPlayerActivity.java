@@ -53,6 +53,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_REPEAT;
@@ -84,17 +85,21 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
+            MediaItem item;
             switch (intent.getAction()){
                 case ACTION_RECEIVE_SONG :
-                    MediaItem item = intent.getParcelableExtra("playing_song");
+                    item = intent.getParcelableExtra("playing_song");
                     if(item != null){
-                        updateTrackToPlayer(item, intent.getBooleanExtra("playing", false));
+                        updateTrackToPlayer(item, intent.getBooleanExtra("playing", false), false);
                     }
 //                    boolean prev_enable = intent.getBooleanExtra("is_previous", false);
 //                    boolean next_enable = intent.getBooleanExtra("is_next", false);
 //                    updatePreviousNext(prev_enable, next_enable);
 
+                    break;
+                case ACTION_LAST_PLAYED_SONG:
+                    item = intent.getParcelableExtra("playing_song");
+                    updateTrackToPlayer(item, false, intent.getBooleanExtra("last_played_song", true));
                     break;
                 case ACTION_ITEM_CLICKED :
                     if(intent.getBooleanExtra("play_pause", false) == false){
@@ -104,7 +109,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     }
                     break;
                 case ACTION_TRACK_STOPPED :
-                    updateTrackToPlayer(null, false);
+                    updateTrackToPlayer(null, false, false);
                     break;
                 case ACTION_UPDATE_TRACK_SEEK :
                     if(!isUser)
@@ -253,8 +258,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void updateTrackToPlayer(final MediaItem item, boolean playing) {
-        if(item != null){
+    private void updateTrackToPlayer(final MediaItem item, boolean playing, boolean isLastPlayedSong) {
+        if(item != null && !isLastPlayedSong){
             mRepeatBtn.setVisibility(View.VISIBLE);
             mShuffleBtn.setVisibility(View.VISIBLE);
             mTitleTxt.setVisibility(View.VISIBLE);
@@ -282,7 +287,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 mPlayPauseBtn.setVisibility(View.VISIBLE);
                 mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_player_play, null));
             }
-        }else{
+        }else if(!isLastPlayedSong){
             param = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             param.gravity = Gravity.CENTER;
             mAlbumArt.setLayoutParams(param);
@@ -299,6 +304,11 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mPlayedTime.setVisibility(View.INVISIBLE);
             mFavourite.setVisibility(View.INVISIBLE);
             mAddToPlayList.setVisibility(View.INVISIBLE);
+        }else if(isLastPlayedSong){
+            mTrackSeek.setProgress(0);
+            mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_player_play, null));
+            mRemainsTime.setText("-"+mPlayedTime.getText());
+            mPlayedTime.setText("00:00");
         }
         updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
         updateShuffle();
@@ -319,6 +329,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_RECEIVE_SONG);
+        intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
         intentFilter.addAction(ACTION_ITEM_CLICKED);
         intentFilter.addAction(ACTION_TRACK_STOPPED);
         intentFilter.addAction(ACTION_UPDATE_TRACK_SEEK);
@@ -572,7 +583,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         updateEffectIcon();
         updateTrackToPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
                 (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
-                null, App.getPlayerEventHandler().isPlaying());
+                null, App.getPlayerEventHandler().isPlaying(), false);
 
         updateUpNextButton();
         IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
