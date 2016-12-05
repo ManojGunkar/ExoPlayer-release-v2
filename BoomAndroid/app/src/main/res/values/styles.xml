@@ -12,7 +12,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:statusBarColor">#000000</item>
+        <item name="android:statusBarColor">@color/black_color</item>
         <item name="android:windowBackground">@drawable/ic_splash</item>
     </style>
 
