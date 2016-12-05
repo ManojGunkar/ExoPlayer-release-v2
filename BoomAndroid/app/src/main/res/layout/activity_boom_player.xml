@@ -151,8 +151,7 @@
                     android:id="@+id/album_art"
                     android:layout_width="@dimen/home_album_art_size"
                     android:layout_height="@dimen/home_album_art_size"
-                    android:layout_gravity="center"
-                    android:src="@drawable/no_song_selected" />
+                    android:layout_gravity="center"/>
 
                 <com.globaldelight.boom.ui.widgets.CircularSeekBar
                     android:id="@+id/track_seek"

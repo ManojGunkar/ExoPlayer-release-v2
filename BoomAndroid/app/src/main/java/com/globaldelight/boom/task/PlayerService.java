@@ -177,8 +177,10 @@ public class PlayerService extends Service {
             case ACTION_NOTI_CLICK:
                 final Intent i = new Intent();
                     i.setClass(context, BoomPlayerActivity.class);
+                if(!App.getPlayerEventHandler().isPlayerResume) {
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
+                }
                 break;/*
             case ACTION_NOTI_REMOVE:
                 notificationHandler.setNotificationActive(false);

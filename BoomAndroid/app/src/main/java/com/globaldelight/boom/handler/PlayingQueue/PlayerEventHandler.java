@@ -27,6 +27,7 @@ import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.Pla
  */
 
 public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocusChangeListener {
+    public static boolean isPlayerResume = false;
     private static IMediaItemBase playingItem;
     private static OpenSLPlayer mPlayer;
     private static PlayerEventHandler handler;
