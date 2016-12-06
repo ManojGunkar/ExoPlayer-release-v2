@@ -87,14 +87,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private int MIN_PROGRESS = 3;
     private int progress;
     private RegularTextView txtSeekText;
-    private RegularTextView txtDescTimer;
+    private RegularTextView txtDescTimer, txtTitleTimer;
     private Toolbar toolbar;
     private RecyclerView mRecyclerView;
     private HeadSetListAdapter headSetAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private AudioEffect audioEffectPreferenceHandler;
     private Typeface font;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(R.anim.push_up_in, R.anim.stay_out);
@@ -135,7 +134,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         titleSupport.setOnClickListener(this);
         titleShare.setOnClickListener(this);
         titleAbout.setOnClickListener(this);
-
+        txtTitleTimer = (RegularTextView) findViewById(R.id.title_sleep_timer);
+        txtTitleTimer.setOnClickListener(this);
         txtDescTimer = (RegularTextView) findViewById(R.id.description_timer);
         txtDescTimer.setOnClickListener(this);
         txtSeekText = (RegularTextView) findViewById(R.id.seek_text);
@@ -303,7 +303,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         }.start();
 
-        setUiTimerMode();
 
     }
 
@@ -328,7 +327,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     public void cancelTimer() {
         // String TimerTime = txtTimer.getText().toString();
         String TimerTime = txtDescTimer.getText().toString().substring(0, 7);
-        Toast.makeText(this, TimerTime, Toast.LENGTH_SHORT).show();
         DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         try {
             Date dt = formatter.parse(TimerTime);
@@ -390,8 +388,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         sleepTime = endDateTime.getTime() - runningDateTime.getTime();
         if (sleepTime > 0) {
 
-            setUiTimerMode();
-            // txtStopTime.setText("Music will stop playing at " + strEndDateTime);
+
             txtDescTimer.setText(getResources().getString(R.string.sleep_timer_description_active) + " " + endtime);
             mCountDownTimer = new CountDownTimer(sleepTime, 1000) {
 
@@ -418,32 +415,16 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void setUiTimerEditMode() {
-        // timePicker.setVisibility(View.VISIBLE);
-        //txtTimer.setVisibility(View.GONE);
-        //  btnTimerCancel.setVisibility(View.INVISIBLE);
-        //  btnTimerReset.setVisibility(View.INVISIBLE);
-        //  btnTimerStart.setVisibility(View.VISIBLE);
         txtDescTimer.setText(getResources().getString(R.string.sleep_timer_description));
-        /// txtStopTime.setVisibility(View.GONE);
-        //txtStopTime.setVisibility(View.VISIBLE);
-        //txtStopTime.setText("Hour : Minute");
-        //txtStopTime.setTextSize(25f);
     }
 
-    public void setUiTimerMode() {
-        // timePicker.setVisibility(View.GONE);
-        //  txtTimer.setVisibility(View.VISIBLE);
-        // btnTimerCancel.setVisibility(View.VISIBLE);
-        // btnTimerReset.setVisibility(View.VISIBLE);
-        // btnTimerStart.setVisibility(View.INVISIBLE);
-        // txtStopTime.setVisibility(View.GONE);
 
-    }
 
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.title_sleep_timer:
             case R.id.description_timer:
                 //setTimer();
                 boolean sleepTimerEnabled = Preferences.readBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);

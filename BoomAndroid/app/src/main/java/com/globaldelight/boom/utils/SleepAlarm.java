@@ -7,6 +7,7 @@ import android.os.PowerManager;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.task.PlayerService;
+import com.globaldelight.boom.utils.handlers.Preferences;
 
 public class SleepAlarm extends BroadcastReceiver {
 
@@ -16,6 +17,7 @@ public class SleepAlarm extends BroadcastReceiver {
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
         wl.acquire();
         sendMessagePlayerStop(context);
+        Preferences.writeBoolean(context, Preferences.SLEEP_TIMER_ENABLED, false);
         // Put here YOUR code.
 //        Logger.LOGD("alarm", "fired");
 
