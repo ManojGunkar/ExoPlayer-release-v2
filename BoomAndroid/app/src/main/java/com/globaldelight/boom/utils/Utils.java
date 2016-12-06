@@ -179,7 +179,8 @@ public class Utils {
                 .negativeColor(Color.parseColor("#81cbc4"))
                 .widgetColor(Color.parseColor("#ffffff"))
                 .contentColor(Color.parseColor("#ffffff"))
-                .input(null, null, new MaterialDialog.InputCallback() {
+
+                .input(context.getResources().getString(R.string.new_playlist), null, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
                         if (!input.toString().matches("")) {

@@ -82,6 +82,12 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
                 (albumCount<=1 ? context.getResources().getString(R.string.album) : context.getResources().getString(R.string.albums)) +" "+albumCount);
         int size = setSize(holder);
         setArtistImg(holder, position, size);
+
+        if(App.getUserPreferenceHandler().isLibFromHome()) {
+            holder.grid_menu.setVisibility(View.VISIBLE);
+        }else{
+            holder.grid_menu.setVisibility(View.INVISIBLE);
+        }
         setOnClicks(holder, position);
     }
 

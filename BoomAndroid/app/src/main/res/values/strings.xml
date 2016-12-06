@@ -181,6 +181,7 @@
     <string name="menu_shuffle">Shuffle</string>
     <string name="menu_add_upnext">Add to Up Next</string>
     <string name="menu_add_boom_playlist">Add to Boom Playlist</string>
+    <string name="menu_add_songs">Add Songs</string>
     <string name="menu_add_boom_fav">Add to Boom Favourites</string>
     <string name="menu_remove_boom_fav">Remove from Boom Favourites</string>
 

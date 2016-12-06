@@ -91,6 +91,11 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
         int itemcount = items.get(position).getItemCount();
         holder.subTitle.setText((itemcount > 1 ? context.getResources().getString(R.string.songs):  context.getResources().getString(R.string.song))+" "+ itemcount);
 
+        if(App.getUserPreferenceHandler().isLibFromHome()){
+            holder.grid_menu.setVisibility(View.VISIBLE);
+        }else{
+            holder.grid_menu.setVisibility(View.INVISIBLE);
+        }
         setOnClicks(holder, position);
     }
 

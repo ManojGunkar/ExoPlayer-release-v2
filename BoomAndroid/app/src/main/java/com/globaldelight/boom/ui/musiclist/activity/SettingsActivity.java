@@ -97,6 +97,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.push_up_in, R.anim.stay_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         mContext = this;
@@ -575,10 +576,17 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                super.onBackPressed();
+                finish();
+                overridePendingTransition(R.anim.stay_out, R.anim.push_up_out);
                 break;
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.stay_out, R.anim.push_up_out);
     }
 
     public void loadStoredSettings() {

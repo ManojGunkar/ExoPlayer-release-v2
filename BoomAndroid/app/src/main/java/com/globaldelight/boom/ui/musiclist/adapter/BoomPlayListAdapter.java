@@ -34,6 +34,7 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.ui.musiclist.activity.BoomPlaylistActivity;
+import com.globaldelight.boom.ui.musiclist.activity.DeviceMusicActivity;
 import com.globaldelight.boom.ui.musiclist.activity.SongsDetailListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
@@ -91,6 +92,11 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
         int itemcount = ((IMediaItemCollection)items.get(position)).getItemCount();
         holder.subTitle.setText((itemcount > 1 ? context.getResources().getString(R.string.songs):  context.getResources().getString(R.string.song))+" "+ itemcount);
 
+        if(App.getUserPreferenceHandler().isLibFromHome()){
+            holder.grid_menu.setVisibility(View.VISIBLE);
+        }else{
+            holder.grid_menu.setVisibility(View.INVISIBLE);
+        }
         setOnClicks(holder, position);
     }
 
@@ -216,6 +222,12 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                                 notifyItemRemoved(position);
                                 Toast.makeText(context, context.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
                                 break;
+                            case R.id.popup_add_song:
+                                App.getUserPreferenceHandler().setBoomPlayListId(items.get(position).getItemId());
+                                App.getUserPreferenceHandler().setLibraryStartFromHome(false);
+                                Intent i = new Intent(context, DeviceMusicActivity.class);
+                                context.startActivity(i);
+                                break;
                         }
                         return false;
                     }
@@ -232,7 +244,8 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                 .title(R.string.dialog_txt_rename)
                 .backgroundColor(Color.parseColor("#171921"))
                 .titleColor(Color.parseColor("#ffffff"))
-                .positiveColor(context.getResources().getColor(R.color.colorPrimary))
+                .positiveColor(Color.parseColor("#81cbc4"))
+                .negativeColor(Color.parseColor("#81cbc4"))
                 .widgetColor(Color.parseColor("#ffffff"))
                 .contentColor(Color.parseColor("#ffffff"))
                 .cancelable(true)

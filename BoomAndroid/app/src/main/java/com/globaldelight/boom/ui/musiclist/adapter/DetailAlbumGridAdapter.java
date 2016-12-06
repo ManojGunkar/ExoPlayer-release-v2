@@ -106,10 +106,23 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
             }else{
                 holder.headerDetail.setVisibility(View.GONE);
             }
+
+            if(App.getUserPreferenceHandler().isLibFromHome()) {
+                holder.mMore.setVisibility(View.VISIBLE);
+            }else{
+                holder.mMore.setVisibility(View.INVISIBLE);
+            }
             setOnMenuClickListener(holder, position);
         }else if(!isHeader(position)) {
             int pos = position - 1;
             Size size = setSize(holder);
+
+            if(App.getUserPreferenceHandler().isLibFromHome()) {
+                holder.grid_menu.setVisibility(View.VISIBLE);
+            }else{
+                holder.grid_menu.setVisibility(View.INVISIBLE);
+            }
+
             switch (holder.getItemViewType()) {
 
                 case ITEM_VIEW_ALBUM:

@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 
@@ -77,7 +79,23 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
                     .getColor(context, R.color.appBackground));
         selectedSongId = -1;
         selectedHolder = null;
-        setOnClicks(holder, position);
+
+        if(App.getUserPreferenceHandler().isLibFromHome()){
+            holder.menu.setVisibility(View.VISIBLE);
+            holder.songChk.setVisibility(View.GONE);
+            setOnClicks(holder, position);
+        }else{
+            holder.menu.setVisibility(View.GONE);
+            holder.songChk.setVisibility(View.VISIBLE);
+            holder.songChk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                        App.getUserPreferenceHandler().addItemToPlayList((MediaItem)  itemList.get(position));
+                    }
+                }
+            });
+        }
     }
 
     private void setAlbumArt(String path, FavouriteListAdapter.SimpleItemViewHolder holder) {
@@ -111,31 +129,31 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
         holder.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-                PopupMenu pm = new PopupMenu(context, anchorView);
-                pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.popup_song_add_queue :
-                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) itemList.get(position));
-                                break;
-                            case R.id.popup_song_add_playlist:
-                                Utils util = new Utils(context);
-                                ArrayList list = new ArrayList<IMediaItemBase>();
-                                list.add(itemList.get(position));
-                                util.addToPlaylist((FavouriteListActivity)context, list, null);
-                                break;
-                            case R.id.popup_song_add_fav :
-                                MediaController.getInstance(context).removeItemToFavoriteList(itemList.get(position).getItemId());
-                                itemList = MediaController.getInstance(context).getFavouriteListItems();
-                                updateFavoriteList(MediaController.getInstance(context).getFavouriteListItems());
-                                break;
+                    PopupMenu pm = new PopupMenu(context, anchorView);
+                    pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.popup_song_add_queue :
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) itemList.get(position));
+                                    break;
+                                case R.id.popup_song_add_playlist:
+                                    Utils util = new Utils(context);
+                                    ArrayList list = new ArrayList<IMediaItemBase>();
+                                    list.add(itemList.get(position));
+                                    util.addToPlaylist((FavouriteListActivity)context, list, null);
+                                    break;
+                                case R.id.popup_song_add_fav :
+                                    MediaController.getInstance(context).removeItemToFavoriteList(itemList.get(position).getItemId());
+                                    itemList = MediaController.getInstance(context).getFavouriteListItems();
+                                    updateFavoriteList(MediaController.getInstance(context).getFavouriteListItems());
+                                    break;
+                            }
+                            return false;
                         }
-                        return false;
-                    }
-                });
-                pm.inflate(R.menu.song_remove_fav);
-                pm.show();
+                    });
+                    pm.inflate(R.menu.song_remove_fav);
+                    pm.show();
             }
         });
     }
@@ -235,16 +253,18 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
 
         public RegularTextView name;
         public CoachMarkTextView artistName;
-        public View mainView, menu;
-        public ImageView img;
+        public View mainView;
+        public ImageView img, menu;
+        public CheckBox songChk;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
             name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
-            menu = itemView.findViewById(R.id.song_item_menu);
+            menu = (ImageView) itemView.findViewById(R.id.song_item_menu);
             artistName = (CoachMarkTextView) itemView.findViewById(R.id.song_item_artist);
+            songChk = (CheckBox) itemView.findViewById(R.id.song_chk);
         }
     }
 

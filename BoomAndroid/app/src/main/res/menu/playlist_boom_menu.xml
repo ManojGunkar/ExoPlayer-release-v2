@@ -10,6 +10,12 @@
         android:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/popup_add_song"
+        android:title="@string/menu_add_songs"
+        android:visible="false"
+        android:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/popup_playlist_rename"
         android:title="@string/rename"
         android:showAsAction="ifRoom" />

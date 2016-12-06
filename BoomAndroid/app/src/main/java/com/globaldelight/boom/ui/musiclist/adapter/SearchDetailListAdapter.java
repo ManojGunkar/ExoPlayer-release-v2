@@ -20,6 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -88,15 +90,32 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             holder.artistName.setText(((MediaItem)resultItemList.get(position)).getItemArtist());
             holder.mainView.setElevation(0);
             setSongArt(resultItemList.get(position).getItemArtUrl(), holder);
-            holder.mainView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    animate(holder);
-                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) resultItemList, position);
+
+            if(App.getUserPreferenceHandler().isLibFromHome()){
+                holder.menu.setVisibility(View.VISIBLE);
+                holder.songChk.setVisibility(View.GONE);
+                holder.mainView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        animate(holder);
+                        if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) resultItemList, position);
+                        }
                     }
-                }
-            });
+                });
+            }else{
+                holder.menu.setVisibility(View.GONE);
+                holder.songChk.setVisibility(View.VISIBLE);
+                holder.songChk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                            App.getUserPreferenceHandler().addItemToPlayList((MediaItem)  resultItemList.get(position));
+                        }
+                    }
+                });
+            }
+
             holder.menu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View anchorView) {
@@ -139,6 +158,13 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             holder.subTitle.setText(((MediaItemCollection) resultItemList.get(position)).getItemSubTitle());
             int size = setSize(holder);
             setArtistImg(holder, ((MediaItemCollection) resultItemList.get(position)).getItemArtUrl(), size);
+
+            if(App.getUserPreferenceHandler().isLibFromHome()){
+                holder.grid_menu.setVisibility(View.VISIBLE);
+            }else{
+                holder.grid_menu.setVisibility(View.INVISIBLE);
+            }
+
             holder.mainView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -198,6 +224,12 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                     (albumCount<=1 ? context.getResources().getString(R.string.album) : context.getResources().getString(R.string.albums)) +" "+albumCount);
             int size = setSize(holder);
             setArtistImg(holder, ((MediaItemCollection) resultItemList.get(position)).getItemArtUrl(), size);
+
+            if(App.getUserPreferenceHandler().isLibFromHome()){
+                holder.grid_menu.setVisibility(View.VISIBLE);
+            }else{
+                holder.grid_menu.setVisibility(View.INVISIBLE);
+            }
 
             holder.mainView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -373,8 +405,8 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
         //For Song Lists
         public RegularTextView name;
         public CoachMarkTextView artistName;
-        public View menu;
-        public ImageView img;
+        public ImageView img, menu;
+        public CheckBox songChk;
 
         //        For Album grid
         public RegularTextView title;
@@ -394,8 +426,9 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
 
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
             name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
-            menu = itemView.findViewById(R.id.song_item_menu);
+            menu = (ImageView) itemView.findViewById(R.id.song_item_menu);
             artistName = (CoachMarkTextView) itemView.findViewById(R.id.song_item_artist);
+            songChk = (CheckBox) itemView.findViewById(R.id.song_chk);
 
             title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
             subTitle = (CoachMarkTextView) itemView.findViewById(R.id.card_grid_sub_title);

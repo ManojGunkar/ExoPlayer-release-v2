@@ -490,6 +490,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void startLibraryActivity() {
+        App.getUserPreferenceHandler().setLibraryStartFromHome(true);
+
         Intent listIntent = new Intent(BoomPlayerActivity.this, DeviceMusicActivity.class);
         listIntent.setAction("visible");
         startActivity(listIntent);

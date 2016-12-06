@@ -79,6 +79,12 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
         holder.subTitle.setText(itemList.get(position).getItemSubTitle());
         int size = setSize(holder);
         setArtistImg(holder, position, size);
+
+        if(App.getUserPreferenceHandler().isLibFromHome()) {
+            holder.grid_menu.setVisibility(View.VISIBLE);
+        }else{
+            holder.grid_menu.setVisibility(View.INVISIBLE);
+        }
         setOnClicks(holder, position);
     }
 

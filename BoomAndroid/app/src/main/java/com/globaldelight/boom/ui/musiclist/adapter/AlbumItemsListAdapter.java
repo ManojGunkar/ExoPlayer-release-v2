@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -81,6 +83,11 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                 holder.headerDetail.setVisibility(View.GONE);
             }
 
+            if(App.getUserPreferenceHandler().isLibFromHome()){
+                holder.mMore.setVisibility(View.VISIBLE);
+            }else{
+                holder.mMore.setVisibility(View.INVISIBLE);
+            }
             setOnMenuClickListener(holder, position);
         }else if(position >= 1) {
             String title;
@@ -99,8 +106,32 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
             holder.name.setText(title);
             holder.count.setText(String.valueOf(pos + 1));
             holder.duration.setText(duration);
-            setOnClickListeners(holder, pos);
+
+            if(App.getUserPreferenceHandler().isLibFromHome()){
+                holder.menu.setVisibility(View.VISIBLE);
+                holder.songChk.setVisibility(View.GONE);
+                setOnClickListeners(holder, pos);
+            }else{
+                holder.menu.setVisibility(View.GONE);
+                holder.songChk.setVisibility(View.VISIBLE);
+                setOnCheckedChanged(holder, pos);
+            }
         }
+    }
+
+    private void setOnCheckedChanged(SimpleItemViewHolder holder, final int pos) {
+        holder.songChk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                    if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
+                        App.getUserPreferenceHandler().addItemToPlayList((MediaItem)item.getMediaElement().get(pos));
+                    } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
+                        App.getUserPreferenceHandler().addItemToPlayList((MediaItem) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(pos));
+                    }
+                }
+            }
+        });
     }
 
     private void setOnMenuClickListener(SimpleItemViewHolder holder, int position) {
@@ -159,7 +190,7 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
         });
     }
 
-    private void setOnClickListeners(SimpleItemViewHolder holder, final int position) {
+    private void setOnClickListeners(final SimpleItemViewHolder holder, final int position) {
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -173,65 +204,63 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                 }
             }
         });
+
         holder.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-
-                PopupMenu pm = new PopupMenu(context, anchorView);
-                pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.popup_song_add_queue :
-                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                    PopupMenu pm = new PopupMenu(context, anchorView);
+                    pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            switch (menuItem.getItemId()) {
+                                case R.id.popup_song_add_queue:
+                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                        if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
+                                            App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) item.getMediaElement().get(position));
+                                        } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
+                                            App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                        }
+                                    }
+                                    break;
+                                case R.id.popup_song_add_playlist:
+                                    Utils util = new Utils(context);
+                                    ArrayList list = new ArrayList();
                                     if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) item.getMediaElement().get(position));
-                                    }else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                        list.add(item.getMediaElement().get(position));
+                                        util.addToPlaylist((AlbumActivity) context, list, null);
+                                    } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
+                                        list.add(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                        util.addToPlaylist((AlbumActivity) context, list, null);
                                     }
-                                }
-                                break;
-                            case R.id.popup_song_add_playlist:
-                                Utils util = new Utils(context);
-                                ArrayList list = new ArrayList();
-                                if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
-                                    list.add(item.getMediaElement().get(position));
-                                    util.addToPlaylist((AlbumActivity)context, list , null);
-                                }else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
-                                    list.add(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
-                                    util.addToPlaylist((AlbumActivity)context, list, null);
-                                }
 
-                                break;
-                            case R.id.popup_song_add_fav :
-                                if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
-                                    if(MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())){
-                                        MediaController.getInstance(context).removeItemToFavoriteList(item.getMediaElement().get(position).getItemId());
-                                    }else{
-                                        MediaController.getInstance(context).addSongsToFavoriteList(item.getMediaElement().get(position));
+                                    break;
+                                case R.id.popup_song_add_fav:
+                                    if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
+                                        if (MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())) {
+                                            MediaController.getInstance(context).removeItemToFavoriteList(item.getMediaElement().get(position).getItemId());
+                                        } else {
+                                            MediaController.getInstance(context).addSongsToFavoriteList(item.getMediaElement().get(position));
+                                        }
+                                    } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
+                                        if (MediaController.getInstance(context).isFavouriteItems(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position).getItemId())) {
+                                            MediaController.getInstance(context).removeItemToFavoriteList(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position).getItemId());
+                                        } else {
+                                            MediaController.getInstance(context).addSongsToFavoriteList(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                        }
                                     }
-                                }else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
-                                    if(MediaController.getInstance(context).isFavouriteItems(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position).getItemId())){
-                                        MediaController.getInstance(context).removeItemToFavoriteList(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position).getItemId());
-                                    }else{
-                                        MediaController.getInstance(context).addSongsToFavoriteList(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
-                                    }
-                                }
 
 
-
-
-                                break;
+                                    break;
+                            }
+                            return false;
                         }
-                        return false;
+                    });
+                    if (MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())) {
+                        pm.inflate(R.menu.song_remove_fav);
+                    } else {
+                        pm.inflate(R.menu.song_add_fav);
                     }
-                });
-                if(MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())){
-                    pm.inflate(R.menu.song_remove_fav);
-                }else{
-                    pm.inflate(R.menu.song_add_fav);
-                }
-                pm.show();
+                    pm.show();
             }
         });
     }
@@ -257,7 +286,9 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public TextView name, count, duration;
-        public View mainView, menu;
+        public View mainView;
+        public ImageView menu;
+        public CheckBox songChk;
 
         public RegularTextView headerTitle, headerSubTitle;
         public CoachMarkTextView headerDetail;
@@ -269,7 +300,8 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
             name = (TextView) itemView.findViewById(R.id.album_item_name);
             duration = (TextView) itemView.findViewById(R.id.album_item_duration);
             count = (TextView) itemView.findViewById(R.id.album_item_count);
-            menu = itemView.findViewById(R.id.album_item_menu);
+            menu = (ImageView) itemView.findViewById(R.id.album_item_menu);
+            songChk = (CheckBox) itemView.findViewById(R.id.song_chk);
 
             headerTitle = (RegularTextView) itemView.findViewById(R.id.header_title);
             headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);

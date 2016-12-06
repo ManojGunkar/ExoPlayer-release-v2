@@ -24,6 +24,7 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Switch;
 
@@ -67,6 +68,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     private MusicReceiver musicReceiver;
     private AudioEffect audioEffectPreferenceHandler;
     private boolean isExpended = false;
+    private ScrollView mPanelScroll;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -128,6 +130,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         toolbar = (Toolbar)findViewById(R.id.effect_toolbar);
         mToolbarTitle = (RegularTextView) findViewById(R.id.toolbr_title);
         mToolbarTitle.setTextColor(Color.WHITE);
+
+        mPanelScroll = (ScrollView) findViewById(R.id.effect_panel_scroll);
         mEffectTxt = (RegularTextView) findViewById(R.id.effect_txt);
         mEffectTxt.setTextColor(Color.WHITE);
         mEffectSwitchTxt = (RegularTextView) findViewById(R.id.effect_switch_txt);
@@ -216,6 +220,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         });
+
+        mPanelScroll.setScrollY(0);
     }
 
     public void onPowerSwitchUpdate(){
@@ -715,7 +721,6 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 finish();
                 overridePendingTransition(R.anim.stay_out, R.anim.push_up_out);
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_EFFECTS_BACK_BUTTON_TAPPED);
-
                 break;
         }
         return super.onOptionsItemSelected(item);

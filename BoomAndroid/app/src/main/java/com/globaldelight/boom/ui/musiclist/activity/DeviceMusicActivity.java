@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -282,9 +283,27 @@ public class DeviceMusicActivity extends BoomMasterActivity{
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                clearBoomListPreference();
+                finish();
+                overridePendingTransition(R.anim.stay_out, R.anim.slide_out_left);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onBackPressed() {
+        clearBoomListPreference();
         finish();
         overridePendingTransition(R.anim.stay_out, R.anim.slide_out_left);
+    }
+
+    private void clearBoomListPreference(){
+        App.getUserPreferenceHandler().setLibraryStartFromHome(true);
+        App.getUserPreferenceHandler().clearItemList();
     }
 
     @Override

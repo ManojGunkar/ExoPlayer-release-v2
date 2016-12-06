@@ -65,6 +65,16 @@
                 android:paddingTop="10dp"
                 android:src="@drawable/over_flow_menu"
                 android:theme="@style/Theme.AppCompat.Light" />
+
+            <CheckBox
+                android:id="@+id/song_chk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:foregroundTint="#434343"
+                android:backgroundTint="#434343"
+                android:checked="false"
+                android:elevation="12dp"
+                android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>
     <View

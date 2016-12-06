@@ -3,11 +3,15 @@ package com.globaldelight.boom.utils.handlers;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
+
+import java.util.ArrayList;
 
 
 public class UserPreferenceHandler {
 
+    private static final String LIBRARY_FROM = "com.boom.player.library";
     private static final String PREF_NAME = "com.boom";
     private static final String REPEAT_ALL = "repeat_all";
     private static final String REPEAT_ONE = "repeat_one";
@@ -18,9 +22,13 @@ public class UserPreferenceHandler {
     private static final String ALBUM_SORTED = "album_sorted";
     public static final int ALBUM_SORTED_BY_ARTIST = 0;
     public static final int ALBUM_SORTED_BY_TITLE = 1;
+    private static final boolean LIB_FROM_HOME = true;
 
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
+
+    private static ArrayList<MediaItem> list = new ArrayList<>();
+    private static long boomPlayListId;
 
     public UserPreferenceHandler(Context context) {
         shp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -102,5 +110,36 @@ public class UserPreferenceHandler {
 
     public int getSortedByAlbum() {
         return shp.getInt(ALBUM_SORTED, ALBUM_SORTED_BY_TITLE);
+    }
+
+    /*Boom PlayList*/
+
+    public void setLibraryStartFromHome(boolean isFromHome) {
+        shp.edit().putBoolean(LIBRARY_FROM, isFromHome ? LIB_FROM_HOME : !LIB_FROM_HOME).apply();
+    }
+
+    public boolean isLibFromHome(){
+        return shp.getBoolean(LIBRARY_FROM, LIB_FROM_HOME);
+    }
+
+    public void addItemToPlayList(MediaItem item) {
+        list.remove(item);
+        list.add(item);
+    }
+
+    public ArrayList<MediaItem> getItemList(){
+        return list;
+    }
+
+    public void clearItemList(){
+        list.clear();
+    }
+
+    public void setBoomPlayListId(long boomPlayListId) {
+        this.boomPlayListId = boomPlayListId;
+    }
+
+    public long getBoomPlayListId(){
+        return this.boomPlayListId;
     }
 }

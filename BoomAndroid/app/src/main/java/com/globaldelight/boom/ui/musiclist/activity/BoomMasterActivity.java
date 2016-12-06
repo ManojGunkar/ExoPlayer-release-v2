@@ -26,9 +26,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
 
 /**
@@ -44,7 +47,6 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
     TextView toolTxt;
     SearchView searchView;
     MenuItem searchItem;
-    private static boolean isSearchEnable = true;
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         drawerLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.activity_master, null);
@@ -87,11 +89,7 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
             @Override
             public void onClick(View v) {
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_LIBRARY_CLOSE_BUTTON_TAPPED);
-                try {
-                    finish();
-                    finish();
-                    finish();
-                }catch (Exception e){}
+                finish();
                 overridePendingTransition(R.anim.stay_out, R.anim.slide_out_left);
             }
         });
@@ -103,26 +101,32 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
     private void setupDrawer() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigationView);
 
-        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
-                toolbar, 0, 0) {
+        if(App.getUserPreferenceHandler().isLibFromHome()){
+            navigationView.setVisibility(View.VISIBLE);
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+                    toolbar, 0, 0) {
 
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                invalidateOptionsMenu();
-                syncState();
-            }
+                @Override
+                public void onDrawerClosed(View drawerView) {
+                    super.onDrawerClosed(drawerView);
+                    invalidateOptionsMenu();
+                    syncState();
+                }
 
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu();
-                syncState();
-            }
-        };
-        drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
-
+                @Override
+                public void onDrawerOpened(View drawerView) {
+                    super.onDrawerOpened(drawerView);
+                    invalidateOptionsMenu();
+                    syncState();
+                }
+            };
+            drawerLayout.addDrawerListener(drawerToggle);
+            drawerToggle.syncState();
+        }else{
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            navigationView.setVisibility(View.GONE);
+        }
         assert navigationView != null;
 //        navigationView.setNavigationItemSelectedListener(this);
     }
@@ -157,17 +161,9 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
         toolTxt.setText(title);
     }
 
-    public void setEnableSearchMenu(boolean enable){
-        if(null != searchItem) {
-            searchItem.setVisible(enable);
-        }else{
-            isSearchEnable = enable;
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (isSearchEnable){
+        if (App.getUserPreferenceHandler().isLibFromHome()){
             MenuInflater menuInflater = getMenuInflater();
             menuInflater.inflate(R.menu.search_menu, menu);
 
@@ -198,8 +194,22 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
                     return true;
                 }
             });
+        }else{
+            MenuInflater menuInflater = getMenuInflater();
+            menuInflater.inflate(R.menu.done_menu, menu);
         }
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_done){
+            MediaController.getInstance(this).addSongToBoomPlayList(App.getUserPreferenceHandler().getBoomPlayListId(), App.getUserPreferenceHandler().getItemList());
+            App.getUserPreferenceHandler().setLibraryStartFromHome(true);
+            App.getUserPreferenceHandler().clearItemList();
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void setIconified(boolean enable){
