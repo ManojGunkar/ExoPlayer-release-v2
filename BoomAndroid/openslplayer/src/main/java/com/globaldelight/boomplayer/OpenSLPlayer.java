@@ -333,8 +333,12 @@ public class OpenSLPlayer implements Runnable {
                 }
                 if (inputBufIndex >= 0) {
                     ByteBuffer dstBuf = null;
-                    if(null != codecInputBuffers[inputBufIndex]){
-                        dstBuf = codecInputBuffers[inputBufIndex];
+                    try {
+                        if (null != codecInputBuffers) {
+                            dstBuf = codecInputBuffers[inputBufIndex];
+                        }
+                    }catch (ArrayIndexOutOfBoundsException e){
+
                     }
                     int sampleSize = extractor.readSampleData(dstBuf, 0);
                     if (sampleSize < 0) {
@@ -387,7 +391,8 @@ public class OpenSLPlayer implements Runnable {
                     }
                 }
                 try {
-                    codec.releaseOutputBuffer(outputBufIndex, false);
+                    if(null != codec)
+                        codec.releaseOutputBuffer(outputBufIndex, false);
                 } catch (IllegalStateException e) {
                     e.printStackTrace();
                 }
