@@ -19,53 +19,6 @@ namespace gdpl
     static uint32_t    engineSampleRate;
     static uint32_t    sFrameCount;
 
-    class FIFOBuffer {
-    public:
-        FIFOBuffer(size_t size, size_t count): _bufferSize(size), _totalSize(size * count) {
-            _buffer = (uint8_t*)malloc(_totalSize);
-            _readIndex = 0;
-            _writeIndex = 0;
-        }
-
-        ~FIFOBuffer() {
-            free(_buffer);
-        }
-
-        void append(void* buffer, size_t size) {
-            uint8_t* src = (uint8_t*)buffer;
-            if ( _writeIndex + size >= _totalSize ) {
-                int bytesToWrite = _totalSize - _writeIndex;
-                memcpy(_buffer + _writeIndex, src, bytesToWrite);
-                src = src + bytesToWrite;
-                size = size - bytesToWrite;
-                _writeIndex = 0;
-            }
-
-            memcpy(_buffer + _writeIndex, src, size);
-            _writeIndex += size;
-        }
-
-        size_t filledSize() const {
-            if ( _readIndex > _writeIndex ) {
-                return _totalSize - _readIndex + _writeIndex;
-            }
-
-            return _writeIndex - _readIndex;
-        }
-
-        const uint8_t* getNextBuffer()  {
-            uint8_t* out = _buffer + _readIndex;
-            _readIndex = (_readIndex + _bufferSize) % _totalSize;
-            return out;
-        }
-
-    private:
-        uint8_t*        _buffer;
-        const size_t    _totalSize;
-        const size_t    _bufferSize;
-        size_t          _readIndex;
-        size_t          _writeIndex;
-    };
 
 
     OpenSLPlayer::OpenSLPlayer(IDataSource* dataSource)
@@ -75,13 +28,10 @@ namespace gdpl
         pthread_mutexattr_init(&attr);
         pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
         pthread_mutex_init(&_mutex, &attr);
-
-        _fifo = new FIFOBuffer(sFrameCount * 2 * sizeof(float), BUFFER_COUNT+1);
     }
 
     OpenSLPlayer::~OpenSLPlayer()
     {
-        delete _fifo;
         pthread_mutex_destroy(&_mutex);
     }
 
@@ -113,11 +63,11 @@ namespace gdpl
 
         // create audio player
         // NOTE: SL_IID_BASSBOOST is requested only to disable Fast Audio Path. It is not used anywhere
-        const SLInterfaceID ids[] = { SL_IID_ANDROIDSIMPLEBUFFERQUEUE, SL_IID_VOLUME, SL_IID_BASSBOOST };
-        const SLboolean req[] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
+        const SLInterfaceID ids[] = { SL_IID_ANDROIDSIMPLEBUFFERQUEUE, SL_IID_BASSBOOST };
+        const SLboolean req[] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
 
         SLresult result = (*engineEngine)->CreateAudioPlayer(engineEngine, &bqPlayerObject, &audioSrc,
-                                                             &audioSnk, 3, ids, req);
+                                                             &audioSnk, 1, ids, req);
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
@@ -142,9 +92,9 @@ namespace gdpl
         (void) result;
 
         // get the volume interface
-        result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_VOLUME, &bqPlayerVolume);
-        assert(SL_RESULT_SUCCESS == result);
-        (void) result;
+//        result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_VOLUME, &bqPlayerVolume);
+//        assert(SL_RESULT_SUCCESS == result);
+//        (void) result;
 //        /* Before we start set volume to -3dB (-300mB) and enable equalizer */
 //        result = (*bqPlayerVolume)->SetVolumeLevel(bqPlayerVolume, -300);
 //        assert(SL_RESULT_SUCCESS == result);
@@ -296,19 +246,13 @@ namespace gdpl
             return;
         }
 
-        const uint32_t bufferSize = sFrameCount * 2 * sizeof(float);
-
-        if ( _fifo->filledSize() < bufferSize ) {
-            IDataSource::Buffer buffer;
-            _dataSource->getNextBuffer(&buffer);
-            if ( buffer.size > 0 && buffer.data != nullptr ) {
-                _fifo->append(buffer.data, buffer.size);
-            }
-        }
-
         bool success = true;
-        if ( _fifo->filledSize() >= bufferSize ) {
-            SLresult result = (*_bufferQueue)->Enqueue(_bufferQueue, _fifo->getNextBuffer(), bufferSize);
+
+        IDataSource::Buffer buffer;
+        buffer.size = sFrameCount * 2 * sizeof(float);
+        _dataSource->getNextBuffer(&buffer);
+        if ( buffer.size > 0 && buffer.data != nullptr ) {
+            SLresult result = (*_bufferQueue)->Enqueue(_bufferQueue, buffer.data, buffer.size);
             if ( SL_RESULT_SUCCESS != result ) {
                 LOGE("OpenSLPlayer: Failed to enqueue buffer (%d)", result);
                 success = false;
@@ -323,5 +267,4 @@ namespace gdpl
         //    stopReading();
         }
     }
-
 }

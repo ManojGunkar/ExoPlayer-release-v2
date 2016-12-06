@@ -10,6 +10,9 @@
 #include "audioFx/AudioEngine.h"
 #include "Utilities/AutoLock.hpp"
 #include "Utilities/Utility.h"
+#include "bufferprovider/include/FIFOBuffer.hpp"
+#include "bufferprovider/include/FifoBufferProvider.h"
+
 
 #include "OpenSLPlayer.hpp"
 
@@ -31,12 +34,10 @@ namespace gdpl {
 
     static int gFrameCount = 0;
     static PlaybackThread *mThread;
-    static RingBuffer *ringBuffer;
     static pthread_mutex_t engineLock;
 
     gdpl::OpenSLPlayer *openSLPlayer;
 
-//    static OpenSLEqualizer *openSLEqualizer;
     static AudioEngine *engine = nullptr;
     inline static AudioEngine *GetEngine() {
         return engine;
@@ -65,19 +66,37 @@ namespace gdpl {
 
 
     class PlaybackThread : public gdpl::IDataSource {
+
+        static const int kBufferCount = 10;
+        static const int kBytesPerFrame = 2048 * 2 * sizeof(float);
     public:
         bool isPlay = false;
 
-        PlaybackThread(int32_t sampleRate, uint32_t nativeSampleRate, uint32_t frameCount, uint32_t channels) {
-            _frameCount = frameCount;
+        PlaybackThread(int32_t sampleRate, uint32_t nativeSampleRate, uint32_t frameCount, uint32_t channels) :
+                kNativeSampleRate(nativeSampleRate),
+                kInputSampleRate(sampleRate),
+                kInputChannels(channels),
+                _frameCount(frameCount)
+        {
+
             mBuffer = (int16_t *)calloc(_frameCount * CHANNEL_COUNT, sizeof(int16_t));
             mOutputBuffer = (float*)calloc(_frameCount * CHANNEL_COUNT, sizeof(float));
             mResampleBuffer = (int32_t*)calloc(_frameCount * CHANNEL_COUNT, sizeof(int32_t));
+            mTempBuffers[0] = (float*)calloc(_frameCount * CHANNEL_COUNT, sizeof(float));
+            mTempBuffers[1] = (float*)calloc(_frameCount * CHANNEL_COUNT, sizeof(float));
+            mIndex = 0;
+
 
             audioResampler = AudioResampler::create(16, channels, nativeSampleRate, AudioResampler::HIGH_QUALITY);
             audioResampler->setSampleRate(sampleRate);
             audioResampler->setVolume(UNITY_GAIN, UNITY_GAIN);
 
+            size_t inFrameCount = (_frameCount * kInputSampleRate) / kNativeSampleRate;
+
+
+            mFifo = new FIFOBuffer(inFrameCount*channels*sizeof(int16_t), 6);
+            mProvider = new FifoBufferProvider(mFifo, channels, sizeof(uint16_t));
+            ringBuffer = new RingBuffer(kBytesPerFrame*10, channels, sizeof(uint16_t));
 
             pthread_mutex_init(&lock, NULL);
         }
@@ -86,28 +105,69 @@ namespace gdpl {
         ~PlaybackThread() {
             isPlay = false;
             release();
+
+            delete ringBuffer;
+            delete mFifo;
+            delete mProvider;
             pthread_mutex_destroy(&lock);
             //ALOGD("~PlaybackThread");
         }
 
+        size_t Write(uint8_t* data, size_t size) {
+            const size_t inFrameCount = (_frameCount * kInputSampleRate) / kNativeSampleRate;
+            const size_t minBufferSize = (inFrameCount * kInputChannels * sizeof(int16_t));
+            mFifo->append(data, size);
+            while ( mFifo->filledSize() >= minBufferSize * 2 ) {
+                memset(mResampleBuffer, 0, _frameCount * CHANNEL_COUNT * sizeof(int32_t));
+                audioResampler->resample(mResampleBuffer, _frameCount, mProvider);
+                ditherAndClamp((int32_t *) mBuffer, mResampleBuffer, _frameCount);
+                GetEngine()->ProcessAudio(mBuffer, mOutputBuffer, _frameCount * CHANNEL_COUNT);
+
+                int bytesToWrite = _frameCount * CHANNEL_COUNT * sizeof(float);
+                int offset = 0;
+                while ( bytesToWrite > offset ) {
+                    offset += ringBuffer->Write((uint8_t*)mOutputBuffer, offset, bytesToWrite);
+                }
+            }
+
+            return size;
+
+        }
+
+
+        void Flush() {
+            mFifo->reset();
+            ringBuffer->Empty();
+        }
+
+        void Unblock()
+        {
+            ringBuffer->UnblockWrite();
+        }
+
+
+        void Finish(bool wait)
+        {
+            ringBuffer->UnblockWrite();
+            if ( wait ) {
+                while (ringBuffer->GetReadAvail());
+            }
+        }
+
+        bool isReady() {
+            return (ringBuffer->GetReadAvail() > (kBytesPerFrame*8) );
+        }
+
+
         void getNextBuffer(IDataSource::Buffer *buffer) {
             assert(buffer != nullptr);
 
-            AutoLock guard(&lock);
-            AutoLock guard2(&engineLock);
-
-            if (ringBuffer->GetReadAvail() > 0) {
-                memset(mResampleBuffer, 0, _frameCount * CHANNEL_COUNT * sizeof(int32_t));
-                audioResampler->resample(mResampleBuffer, _frameCount, ringBuffer);
-                ditherAndClamp((int32_t *) mBuffer, mResampleBuffer, _frameCount);
-                GetEngine()->ProcessAudio(mBuffer, mOutputBuffer, _frameCount * CHANNEL_COUNT);
-                //memcpy_to_float_from_i16(mOutputBuffer, mBuffer, _frameCount * CHANNEL_COUNT);
-
-                // enqueue another buffer
-                buffer->data = mOutputBuffer;
-                buffer->size = _frameCount * CHANNEL_COUNT * sizeof(float);
+            buffer->data = mTempBuffers[mIndex];
+            mIndex = (mIndex + 1) % 2;
+            if (ringBuffer->GetReadAvail() >= buffer->size ) {
+                ringBuffer->Read((uint8_t*)buffer->data, buffer->size);
             } else {
-                //ALOGD("Enqueue : Ring Buffer Empty");
+                ALOGD("Enqueue : Ring Buffer Empty");
                 buffer->data = nullptr;
                 buffer->size = 0;
             }
@@ -126,10 +186,20 @@ namespace gdpl {
         int32_t *mResampleBuffer;
         int16_t *mBuffer;
         float   *mOutputBuffer;
+        float   *mTempBuffers[2];
+        int mIndex;
+
         pthread_mutex_t lock;
         AudioResampler *audioResampler;
         uint32_t _frameCount;
 
+        FIFOBuffer *mFifo;
+        FifoBufferProvider* mProvider;
+        RingBuffer *ringBuffer;
+
+        const uint32_t kNativeSampleRate;
+        const uint32_t kInputSampleRate;
+        const uint32_t kInputChannels;
     };
 
 /*
@@ -142,9 +212,6 @@ namespace gdpl {
         globalJavaAssetManager = env->NewGlobalRef(assetManager);
         InitAssetManager(AAssetManager_fromJava(env, globalJavaAssetManager));
 
-//        gFrameCount = pow(2, round(log2((double)inFrameCount))); // round off the frame count to nearest power of 2
-//        LOGD("Computed frame count is %d", gFrameCount);
-//        OpenSLPlayer::setupEngine(sampleRate);
         gFrameCount = DEFAULT_FRAME_COUNT;
         uint32_t frameCount = inFrameCount;
         if ( DEFAULT_FRAME_COUNT > inFrameCount ) {
@@ -152,6 +219,7 @@ namespace gdpl {
         }
         OpenSLPlayer::setupEngine(sampleRate, frameCount);
         engine = new AudioEngine(sampleRate, gFrameCount);
+        //engine->SetHighQuality(false);
         engine->SetHeadPhoneType(eOnEar);
     }
 
@@ -184,8 +252,6 @@ namespace gdpl {
         GetEngine()->ResetEngine();
         RinseEngine();
 
-
-        ringBuffer = new RingBuffer(bufferSize, channel, sizeof(uint16_t));
         mThread = new PlaybackThread(samplerate, OpenSLPlayer::getEngineSampleRate(), gFrameCount, channel);
 
         openSLPlayer = new gdpl::OpenSLPlayer(mThread);
@@ -209,12 +275,13 @@ namespace gdpl {
         jbyte *sData = (jbyte *)env->GetDirectBufferAddress(buffer);
 
         int written = 0;
+
         //ALOGD("Enter into Write Method");
         if (openSLPlayer->getState() == SL_PLAYSTATE_PLAYING) {
-            written = ringBuffer->Write((uint8_t*)sData, offset, frameCount);
+            written = mThread->Write((uint8_t*)sData, frameCount);
         }
 
-        if (!openSLPlayer->isReading() && ringBuffer->GetWriteAvail() <= frameCount) {
+        if ( !openSLPlayer->isReading() && mThread->isReady() ) {
             openSLPlayer->startReading();
         }
 
@@ -233,11 +300,9 @@ namespace gdpl {
         SLresult result;
         // set the player's state to playing
         if (!enable) {
+            openSLPlayer->stopReading();
             openSLPlayer->pause();
-
-            if (ringBuffer != nullptr) {
-                ringBuffer->UnblockWrite();
-            }
+            mThread->Flush();
         } else {
             openSLPlayer->resume();
         }
@@ -252,24 +317,12 @@ namespace gdpl {
     extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_seekTo(JNIEnv *env, jclass type,
                                                            jlong position) {
         // TODO
-        if (ringBuffer != NULL) {
-            ringBuffer->Empty();
-        }
-
+        mThread->Flush();
         openSLPlayer->stopReading();
     }
 
     void stopPlayer(jboolean enable) {
-        if (ringBuffer != nullptr) {
-            ringBuffer->UnblockWrite();
-        }
-
-        while ( ringBuffer->GetReadAvail() && openSLPlayer->isReading() ) {
-            //ALOGE("Not Stopped...!");
-            if (!enable)
-                break;
-
-        }
+        mThread->Finish(enable && openSLPlayer->isReading());
         openSLPlayer->stop();
     }
 
@@ -287,9 +340,6 @@ namespace gdpl {
 //        destroy buffers
         delete mThread;
         mThread = NULL;
-        delete ringBuffer;
-        ringBuffer = NULL;
-
         return enable;
     }
 

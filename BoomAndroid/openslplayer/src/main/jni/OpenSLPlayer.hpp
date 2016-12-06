@@ -78,8 +78,6 @@ namespace gdpl {
         bool     _isReading;
         IDataSource* _dataSource;
         pthread_mutex_t _mutex;
-
-        FIFOBuffer* _fifo;
     };
 }
 

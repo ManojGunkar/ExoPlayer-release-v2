@@ -85,7 +85,7 @@ namespace gdpl {
     int RingBuffer::Write(uint8_t *dataPtr, int offset, int numBytes) {
         gdpl::AutoLock lock(&_mutex);
 
-        if (dataPtr == 0 || (numBytes - offset) <= 0 || _writeBytesAvail < numBytes) {
+        if (dataPtr == 0 || (numBytes - offset) <= 0 || _writeBytesAvail < (numBytes - offset)) {
             pthread_cond_wait(&_writeCond, &_mutex);
         }
 
@@ -113,7 +113,6 @@ namespace gdpl {
         _writePtr = (_writePtr + numBytes) % _size;
         _writeBytesAvail -= numBytes;
 
-        //pthread_cond_signal(&_cond);
         return numBytes;
     }
 
