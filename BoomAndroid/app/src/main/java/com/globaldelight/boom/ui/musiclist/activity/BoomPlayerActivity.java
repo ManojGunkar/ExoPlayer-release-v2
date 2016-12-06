@@ -53,6 +53,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_REPEAT;
@@ -68,7 +69,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private static final float BITMAP_SCALE = 0.4f;
     private static final float BLUR_RADIUS = 25.0f;
     private static final String TAG = "BoomPlayerActivity";
-    public static boolean isPlayerResume = true;
+    private static long mItemId=-1;
     private static boolean isUser = false;
     public ImageView mShuffleBtn, mRepeatBtn, mNextBtn, mPrevBtn, mAddToPlayList, mFavourite, mPlayerSetting;
     FrameLayout mPlayerBackground;
@@ -84,17 +85,21 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
+            MediaItem item;
             switch (intent.getAction()){
                 case ACTION_RECEIVE_SONG :
-                    MediaItem item = intent.getParcelableExtra("playing_song");
+                    item = intent.getParcelableExtra("playing_song");
                     if(item != null){
-                        updateTrackToPlayer(item, intent.getBooleanExtra("playing", false));
+                        updateTrackToPlayer(item, intent.getBooleanExtra("playing", false), false);
                     }
 //                    boolean prev_enable = intent.getBooleanExtra("is_previous", false);
 //                    boolean next_enable = intent.getBooleanExtra("is_next", false);
 //                    updatePreviousNext(prev_enable, next_enable);
 
+                    break;
+                case ACTION_LAST_PLAYED_SONG:
+                    item = intent.getParcelableExtra("playing_song");
+                    updateTrackToPlayer(item, false, intent.getBooleanExtra("last_played_song", true));
                     break;
                 case ACTION_ITEM_CLICKED :
                     if(intent.getBooleanExtra("play_pause", false) == false){
@@ -104,7 +109,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     }
                     break;
                 case ACTION_TRACK_STOPPED :
-                    updateTrackToPlayer(null, false);
+                    updateTrackToPlayer(null, false, false);
                     break;
                 case ACTION_UPDATE_TRACK_SEEK :
                     if(!isUser)
@@ -199,45 +204,29 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
-                                Logger.LOGD("ImageLoad", "Always call --");
                                 try {
                                     Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
                                     bitmap = Bitmap.createScaledBitmap(bitmap, (int) getResources().getDimension(R.dimen.home_album_art_size),
                                             (int) getResources().getDimension(R.dimen.home_album_art_size), false);
-                                    PlayerUtils.ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, bitmap);
                                     Bitmap blurredBitmap = blur(BoomPlayerActivity.this, bitmap);
+                                    if ( mItemId == -1 || mItemId != item.getItemId() ) {
+                                        PlayerUtils.ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, bitmap);
+                                        mItemId = item.getItemId();
+                                    }else{
+                                        mAlbumArt.setImageBitmap(bitmap);
+                                    }
                                     mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
                                 }catch (NullPointerException e){
                                     Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
                                             R.drawable.ic_default_art_player);
-                                    PlayerUtils.ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, albumArt);
+                                    if ( mItemId == -1 || mItemId != item.getItemId() ) {
+                                        PlayerUtils.ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, albumArt);
+                                    }else{
+                                        mAlbumArt.setImageBitmap(albumArt);
+                                    }
                                     Bitmap blurredBitmap = blur(BoomPlayerActivity.this, albumArt);
                                     mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
                                 }
-//                                Picasso.with(BoomPlayerActivity.this).load(file).resize((int) getResources().getDimension(R.dimen.home_album_art_size), (int) getResources().getDimension(R.dimen.home_album_art_size))
-//                                        .centerCrop().priority(Picasso.Priority.HIGH).memoryPolicy(MemoryPolicy.NO_CACHE).into(new Target() {
-//                                    @Override
-//                                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-//                                        Log.d("ImageLoad", "Always");
-//                                        ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, bitmap);
-//                                        Bitmap blurredBitmap = blur(BoomPlayerActivity.this, bitmap);
-//                                        mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
-//                                    }
-//
-//                                    @Override
-//                                    public void onBitmapFailed(Drawable errorDrawable) {
-//                                        ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, (Bitmap) result);
-//                                        Bitmap blurredBitmap = blur(BoomPlayerActivity.this, (Bitmap) result);
-//                                        mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
-//                                    }
-//
-//                                    @Override
-//                                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-//
-//                                    }
-//                                });
-                            }
                         }
                     });
                 }
@@ -246,15 +235,20 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             if(item != null) {
                 Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
                         R.drawable.ic_default_art_player);
-                PlayerUtils.ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, albumArt);
+                if ( mItemId == -1 || mItemId != item.getItemId() ) {
+                    PlayerUtils.ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, albumArt);
+                    mItemId = item.getItemId();
+                }else {
+                    mAlbumArt.setImageBitmap(albumArt);
+                }
                 Bitmap blurredBitmap = blur(BoomPlayerActivity.this, albumArt);
                 mPlayerBackground.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
             }
         }
     }
 
-    private void updateTrackToPlayer(final MediaItem item, boolean playing) {
-        if(item != null){
+    private void updateTrackToPlayer(final MediaItem item, boolean playing, boolean isLastPlayedSong) {
+        if(null != item){
             mRepeatBtn.setVisibility(View.VISIBLE);
             mShuffleBtn.setVisibility(View.VISIBLE);
             mTitleTxt.setVisibility(View.VISIBLE);
@@ -275,14 +269,31 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
             mTitleTxt.setText(item.getItemTitle());
             mSubTitleTxt.setText(item.getItemArtist());
-            if (playing) {
-                mPlayPauseBtn.setVisibility(View.VISIBLE);
-                mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_player_pause, null));
-            } else {
-                mPlayPauseBtn.setVisibility(View.VISIBLE);
+
+            if(isLastPlayedSong ){
+                mTrackSeek.setProgress(0);
                 mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_player_play, null));
+
+                long totalMillis = item.getDurationLong();
+                long currentMillis = 0;
+                mPlayedTime.setText(String.format("%02d:%02d",
+                        TimeUnit.MILLISECONDS.toMinutes(currentMillis),
+                        TimeUnit.MILLISECONDS.toSeconds(currentMillis ) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentMillis))));
+                mRemainsTime.setText("-"+String.format("%02d:%02d",
+                        TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis),
+                        TimeUnit.MILLISECONDS.toSeconds(totalMillis - currentMillis) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis))));
+            }else {
+                if (playing) {
+                    mPlayPauseBtn.setVisibility(View.VISIBLE);
+                    mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_player_pause, null));
+                } else {
+                    mPlayPauseBtn.setVisibility(View.VISIBLE);
+                    mPlayPauseBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_player_play, null));
+                }
             }
-        }else{
+        }else if(!isLastPlayedSong){
             param = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             param.gravity = Gravity.CENTER;
             mAlbumArt.setLayoutParams(param);
@@ -319,6 +330,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_RECEIVE_SONG);
+        intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
         intentFilter.addAction(ACTION_ITEM_CLICKED);
         intentFilter.addAction(ACTION_TRACK_STOPPED);
         intentFilter.addAction(ACTION_UPDATE_TRACK_SEEK);
@@ -568,11 +580,14 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onResume() {
         super.onResume();
-        isPlayerResume = true;
+        App.getPlayerEventHandler().isPlayerResume = true;
         updateEffectIcon();
-        updateTrackToPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
-                (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
-                null, App.getPlayerEventHandler().isPlaying());
+
+        if (null != App.getPlayerEventHandler().getPlayingItem()) {
+            updateTrackToPlayer((MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isPlaying(), /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));
+        }else{
+            updateTrackToPlayer( null , App.getPlayerEventHandler().isPlaying(), /*if last played item is set as playing item*/ false);
+        }
 
         updateUpNextButton();
         IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
@@ -594,7 +609,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onPause() {
         super.onPause();
-        isPlayerResume = false;
+        App.getPlayerEventHandler().isPlayerResume = false;
         if (tipWindowLibrary != null) {
             tipWindowLibrary.dismissTooltip();
         }

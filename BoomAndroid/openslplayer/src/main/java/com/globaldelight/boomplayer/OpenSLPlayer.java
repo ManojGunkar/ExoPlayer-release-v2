@@ -9,8 +9,12 @@ import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
+import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.util.Log;
+
+import com.example.openslplayer.R;
+
 import java.nio.ByteBuffer;
 
 
@@ -115,11 +119,14 @@ public class OpenSLPlayer implements Runnable {
             setPlayingAudioPlayer(true);
             state.set(PlayerStates.PLAYING);
             syncNotify();
+            pauseSeek();
+        }
+    }
 
-            if(mPauseSeek >= 0){
-                seek(mPauseSeek * duration / 100);
-                mPauseSeek = -1;
-            }
+    private synchronized void pauseSeek(){
+        if(mPauseSeek >= 0){
+            seek(mPauseSeek * duration / 100);
+            mPauseSeek = -1;
         }
     }
 
@@ -154,6 +161,7 @@ public class OpenSLPlayer implements Runnable {
 
     public void seek(long pos) {
         seekTo(pos);
+        Log.d("Track Seek", "Clear Ring Buffer");
         if(extractor != null)
             extractor.seekTo(pos, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
     }
@@ -188,6 +196,16 @@ public class OpenSLPlayer implements Runnable {
             }catch (InterruptedException e){
 
             }
+        try {
+            MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
+            metadataRetriever.setDataSource(this.sourcePath);
+            setGenreType(metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE));
+        }catch (IllegalArgumentException e){
+            setGenreType(null);
+        }catch (SecurityException e1){
+            setGenreType(null);
+        }
+
         // extractor gets information about the stream
         extractor = new MediaExtractor();
         // try to set the source, this might fail
@@ -315,8 +333,12 @@ public class OpenSLPlayer implements Runnable {
                 }
                 if (inputBufIndex >= 0) {
                     ByteBuffer dstBuf = null;
-                    if(null != codecInputBuffers[inputBufIndex]){
-                        dstBuf = codecInputBuffers[inputBufIndex];
+                    try {
+                        if (null != codecInputBuffers) {
+                            dstBuf = codecInputBuffers[inputBufIndex];
+                        }
+                    }catch (ArrayIndexOutOfBoundsException e){
+
                     }
                     int sampleSize = extractor.readSampleData(dstBuf, 0);
                     if (sampleSize < 0) {
@@ -369,7 +391,8 @@ public class OpenSLPlayer implements Runnable {
                     }
                 }
                 try {
-                    codec.releaseOutputBuffer(outputBufIndex, false);
+                    if(null != codec)
+                        codec.releaseOutputBuffer(outputBufIndex, false);
                 } catch (IllegalStateException e) {
                     e.printStackTrace();
                 }
@@ -457,6 +480,20 @@ public class OpenSLPlayer implements Runnable {
                 });
             }
         }
+    }
+
+    private void setGenreType(String genreType) {
+        if(AudioEffect.getAudioEffectInstance(mContext).getSelectedEqualizerPosition() == 0) {
+            if (null != genreType) {
+                for (int i = 0; i <= mContext.getResources().getStringArray(R.array.eq_names).length - 1; i++) {
+                    if (genreType.toUpperCase().contains(mContext.getResources().getStringArray(R.array.eq_names)[i])) {
+                        AudioEffect.getAudioEffectInstance(mContext).setAutoEqualizerPosition(i);
+                        return;
+                    }
+                }
+            }
+        }
+        AudioEffect.getAudioEffectInstance(mContext).setAutoEqualizerPosition(12);
     }
 
     public void SupportedCodec() {
@@ -595,6 +632,9 @@ public class OpenSLPlayer implements Runnable {
     }
 
     public synchronized void setEqualizerGain(int equalizerId) {
+        if(equalizerId == 0){
+            equalizerId = AudioEffect.getAudioEffectInstance(mContext).getAutoEqualizerValue();
+        }
         try {
             if(EqualizerGain.getEqualizerSize() <= 0){
                 EqualizerGain.setEqGain();

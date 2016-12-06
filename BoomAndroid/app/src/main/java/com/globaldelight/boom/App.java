@@ -7,6 +7,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -142,7 +143,7 @@ public class App extends Application implements SensorEventListener {
 
     }
 
-    public void sendMessageShakeEvent() {
+    public synchronized void sendMessageShakeEvent() {
         Intent intent = new Intent();
         intent.setAction(PlayerSettings.ACTION_SHAKE_EVENT);
 
@@ -153,30 +154,25 @@ public class App extends Application implements SensorEventListener {
 
                 break;
             case SHAKE_GESTURE_NEXT:
-                if(null != service){
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(null != service) {
+                            sendBroadcast(new Intent(PlayerService.ACTION_NEXT_SONG));
+                        }
                     }
-                    getPlayerEventHandler().playNextSong(true);
-                }
+                }, 1000);
                 break;
             case SHAKE_GESTURE_PLAY:
-                if(null != service){
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(null != service) {
+                            sendBroadcast(new Intent(PlayerService.ACTION_PLAY_PAUSE_SONG));
+                        }
                     }
-                    getPlayerEventHandler().onPlayingItemClicked();
-                }
+                }, 1000);
                 break;
-
-
         }
-        intent.putExtra(PlayerSettings.SHAKE_EVENT_ACTION_TYPE, selectedShakeOption);
-        sendBroadcast(intent);
-
     }
 }

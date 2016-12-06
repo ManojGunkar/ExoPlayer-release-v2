@@ -81,8 +81,8 @@ public class NotificationHandler {
         notificationActive = true;
     }
 
-    public void changeNotificationDetails(MediaItem item, boolean playing) {
-        if(item == null){
+    public void changeNotificationDetails(MediaItem item, boolean playing, boolean isLastPlayed) {
+        if(item == null && !isLastPlayed){
             notificationCompat.bigContentView.setViewVisibility(R.id.noti_name, GONE);
             notificationCompat.bigContentView.setViewVisibility(R.id.noti_artist, GONE);
 
@@ -92,16 +92,21 @@ public class NotificationHandler {
             notificationCompat.bigContentView.setViewVisibility(R.id.noti_play_button, GONE);
             notificationCompat.contentView.setViewVisibility(R.id.noti_play_button, GONE);
 
-            notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, GONE);
+            /*notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, GONE);
             notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, GONE);
 
             notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, GONE);
-            notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, GONE);
+            notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, GONE);*/
 
             setNoTrackImageView();
             notificationManager.notify(NOTIFICATION_ID, notificationCompat);
             return;
-        }else if(Build.VERSION.SDK_INT >= 16){
+        }else if (isLastPlayed){
+            notificationCompat.bigContentView
+                    .setImageViewResource(R.id.noti_play_button, R.drawable.ic_play_notification);
+            notificationCompat.contentView
+                    .setImageViewResource(R.id.noti_play_button, R.drawable.ic_play_notification);
+        }else if(Build.VERSION.SDK_INT >= 16 && !isLastPlayed){
             notificationCompat.bigContentView.setViewVisibility(R.id.noti_name, VISIBLE);
             notificationCompat.bigContentView.setViewVisibility(R.id.noti_artist, VISIBLE);
             notificationCompat.bigContentView.setTextViewText(R.id.noti_name, item.getItemTitle());
@@ -132,28 +137,12 @@ public class NotificationHandler {
                         .setImageViewResource(R.id.noti_play_button, R.drawable.ic_play_notification);
             }
 
-            if(App.getPlayerEventHandler().isNext()){
-                notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
-                notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
-            }else{
-                notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, INVISIBLE);
-                notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, INVISIBLE);
-            }
-
-
             Intent nextClick = new Intent();
             nextClick.setAction(PlayerService.ACTION_NEXT_SONG);
             PendingIntent nextClickIntent = PendingIntent.getBroadcast(context, 10102, nextClick, 0);
             notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
             notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
 
-            if(App.getPlayerEventHandler().isPrevious()){
-                notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
-                notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
-            }else{
-                notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, INVISIBLE);
-                notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, INVISIBLE);
-            }
             Intent prevClick = new Intent();
             prevClick.setAction(PlayerService.ACTION_PREV_SONG);
             PendingIntent prevClickIntent = PendingIntent.getBroadcast(context, 10103, prevClick, 0);
@@ -193,6 +182,22 @@ public class NotificationHandler {
             }
 
         }
+        if(App.getPlayerEventHandler().isNext()){
+            notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
+            notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
+        }else{
+            notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, INVISIBLE);
+            notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, INVISIBLE);
+        }
+
+        if(App.getPlayerEventHandler().isPrevious()){
+            notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
+            notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
+        }else{
+            notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, INVISIBLE);
+            notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, INVISIBLE);
+        }
+
         notificationManager.notify(NOTIFICATION_ID, notificationCompat);
     }
 

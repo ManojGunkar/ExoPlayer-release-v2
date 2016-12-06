@@ -378,14 +378,13 @@
                 android:layout_height="1px"
                 android:layout_marginTop="@dimen/one_ten_pt"
                 android:background="@color/black_shade"
-                android:visibility="gone" />
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/one_ten_pt"
-                android:orientation="vertical"
-                android:visibility="gone">
+                android:orientation="vertical">
 
                 <com.globaldelight.boom.ui.widgets.RegularTextView
                     android:id="@+id/title_sleep_timer"
@@ -420,8 +419,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_marginTop="@dimen/one_ten_pt"
-                android:background="#222327"
-                android:visibility="gone" />
+                android:background="#222327"/>
 
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/title_about"

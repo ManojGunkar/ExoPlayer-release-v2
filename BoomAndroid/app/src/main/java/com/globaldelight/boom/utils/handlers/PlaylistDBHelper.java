@@ -51,13 +51,13 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         String CREATE_PLAYLIST_SONG_TABLE = "CREATE TABLE playlistSongs (" +
-                "song_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "ItemId INTEGER," + "ItemTitle TEXT," + "ItemDisplayName TEXT,"+
-                "ItemUrl TEXT," + "ItemAlbumId INTEGER," +
-                "ItemAlbum TEXT," + "ItemArtistId INTEGER," +
-                "ItemArtist TEXT," + "Duration TEXT," +
-                "DateAdded TEXT," + "ItemArtUrl TEXT," +
-                "mediaType INTEGER," + "song_playlist_id INTEGER)";
+                SONG_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                SONG_KEY_REAL_ID + " INTEGER," + TITLE + " TEXT," + DISPLAY_NAME + " TEXT,"+
+                DATA_PATH + " TEXT," + ALBUM_ID + " INTEGER," +
+                ALBUM + " TEXT," + ARTIST_ID + " INTEGER," +
+                ARTIST + " TEXT," + DURATION + " TEXT," +
+                DATE_ADDED + " TEXT," + ALBUM_ART + " TEXT," +
+                MEDIA_TYPE + " INTEGER," + SONG_KEY_PLAYLIST_ID + " INTEGER)";
 
         String CREATE_PLAYLIST_TABLE = "CREATE TABLE playlist (" +
                 "playlist_id INTEGER PRIMARY KEY AUTOINCREMENT," +

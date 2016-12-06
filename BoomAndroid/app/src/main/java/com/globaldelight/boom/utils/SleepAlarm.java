@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 
+import com.globaldelight.boom.App;
+import com.globaldelight.boom.task.PlayerService;
+import com.globaldelight.boom.utils.handlers.Preferences;
+
 public class SleepAlarm extends BroadcastReceiver {
 
     @Override
@@ -12,24 +16,16 @@ public class SleepAlarm extends BroadcastReceiver {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
         wl.acquire();
-       /* try {
-           PlayerEventHandler.getPlayerEventInstance(context).stop();
-      } catch (NullPointerException e) {
-           e.printStackTrace();
-        }*/
         sendMessagePlayerStop(context);
+        Preferences.writeBoolean(context, Preferences.SLEEP_TIMER_ENABLED, false);
         // Put here YOUR code.
-        Logger.LOGD("alarm", "fired");
-        // Toast.makeText(context, "SleepAlarm !!!!!!!!!!", Toast.LENGTH_LONG).show(); // For example
+//        Logger.LOGD("alarm", "fired");
 
         wl.release();
     }
 
     public void sendMessagePlayerStop(Context mContext) {
-        Intent intent = new Intent();
-        intent.setAction(PlayerSettings.ACTION_STOP_PLAYER);
-        mContext.sendBroadcast(intent);
-
+        if(App.getPlayerEventHandler().isPlaying())
+            mContext.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_PAUSE_SONG));
     }
-
 }

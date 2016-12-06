@@ -192,43 +192,49 @@ public class UpNextList {
     /******************************************************************************************************************/
 
     public void addToPlay(LinkedList<MediaItem> itemList, int position) {
-        if (position > 0) {
-            setItemListAsPrevious(itemList.subList(0, position));
+        if(null != itemList && itemList.size() > 0) {
+            if (position > 0) {
+                setItemListAsPrevious(itemList.subList(0, position));
+            }
+            setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
+            mAutoNextList.clear();
+            if (itemList.size() > position + 1) {
+                setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
+            }
+            PlayingItemChanged();
         }
-        setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
-        mAutoNextList.clear();
-        if (itemList.size() > position + 1) {
-            setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
-        }
-        PlayingItemChanged();
     }
 
     //    itemList -> list of collection
 //    position -> Now Playing Item position in item list.
     public void addToPlay(ArrayList<MediaItem> itemList, int position) {
-        if (position > 0) {
-            setItemListAsPrevious(itemList.subList(0, position));
+        if(null != itemList && itemList.size() > 0) {
+            if (position > 0) {
+                setItemListAsPrevious(itemList.subList(0, position));
+            }
+            setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
+            mAutoNextList.clear();
+            if (itemList.size() > position + 1) {
+                setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
+            }
+            PlayingItemChanged();
         }
-        setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
-        mAutoNextList.clear();
-        if (itemList.size() > position + 1) {
-            setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
-        }
-        PlayingItemChanged();
     }
 
     //    selected Collection, Like Album, ic_artist.
 //    index of now Playing item of the collection
     public void addToPlay(IMediaItemCollection collection, int position) {
-        if (position > 0) {
-            setItemListAsPrevious(collection.getMediaElement().subList(0, position));
+        if(null != collection && collection.getMediaElement().size() > 0) {
+            if (position > 0) {
+                setItemListAsPrevious(collection.getMediaElement().subList(0, position));
+            }
+            setItemAsPlayingItem(collection.getMediaElement().get(position), QueueType.Auto_UpNext);
+            mAutoNextList.clear();
+            if (collection.getMediaElement().size() > position + 1) {
+                setItemListAsUpNextFrom(collection.getMediaElement().subList(position + 1, collection.getMediaElement().size()));
+            }
+            PlayingItemChanged();
         }
-        setItemAsPlayingItem(collection.getMediaElement().get(position), QueueType.Auto_UpNext);
-        mAutoNextList.clear();
-        if (collection.getMediaElement().size() > position + 1) {
-            setItemListAsUpNextFrom(collection.getMediaElement().subList(position + 1, collection.getMediaElement().size()));
-        }
-        PlayingItemChanged();
     }
 
     public void addToPlay(QueueType queueType, int position) {
@@ -268,13 +274,17 @@ public class UpNextList {
     }
 
     public void addItemListToUpNext(IMediaItemBase itemList) {
-        mUpNextList.addAll(((MediaItemCollection) itemList).getMediaElement());
-        QueueUpdated();
+        if(null != itemList && ((MediaItemCollection) itemList).getMediaElement().size() > 0) {
+            mUpNextList.addAll(((MediaItemCollection) itemList).getMediaElement());
+            QueueUpdated();
+        }
     }
 
     public void addItemListToUpNext(MediaItem item) {
-        mUpNextList.add(item);
-        QueueUpdated();
+        if(null != item) {
+            mUpNextList.add(item);
+            QueueUpdated();
+        }
     }
 
     public void setNextPlayingItem(boolean isUser) {
@@ -352,33 +362,35 @@ public class UpNextList {
     }
 
     public void setPreviousPlayingItem() {
-        if (mRepeat == REPEAT.all && mShuffle == SHUFFLE.none && mAutoNextList.size() > 0) {
-            if (mCurrentList.size() > 0)
-                addItemToHistory(mCurrentList.remove(0).getUpNextItem());
+        if(isPrevious()) {
+            if (mRepeat == REPEAT.all && mShuffle == SHUFFLE.none && mAutoNextList.size() > 0) {
+                if (mCurrentList.size() > 0)
+                    addItemToHistory(mCurrentList.remove(0).getUpNextItem());
 
-            if (PlayItemIndex == 0) {
-                PlayItemIndex = mAutoNextList.size() - 1;
-            } else {
-                PlayItemIndex--;
+                if (PlayItemIndex == 0) {
+                    PlayItemIndex = mAutoNextList.size() - 1;
+                } else {
+                    PlayItemIndex--;
+                }
+                mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
+                PlayingItemChanged();
+            } else if (((mRepeat == REPEAT.all && mShuffle == SHUFFLE.all) || mRepeat != REPEAT.all) && mAutoNextList.size() != -1) {
+                int prevSize = ghostList.size();
+                MediaItem playingItem = null;
+                if (prevSize > 0) {
+                    playingItem = (MediaItem) ghostList.remove(prevSize - 1);
+                }
+                managePreviousItem(true);
+                if (null != playingItem) {
+                    mCurrentList.add(new UpNextItem(playingItem, QueueType.Auto_UpNext));
+                }
+                PlayingItemChanged();
             }
-            mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
-            PlayingItemChanged();
-        } else if (((mRepeat == REPEAT.all && mShuffle == SHUFFLE.all) || mRepeat != REPEAT.all) && mAutoNextList.size() != -1) {
-            int prevSize = ghostList.size();
-            MediaItem playingItem = null;
-            if (prevSize > 0) {
-                playingItem = (MediaItem) ghostList.remove(prevSize - 1);
-            }
-            managePreviousItem(true);
-            if (null != playingItem) {
-                mCurrentList.add(new UpNextItem(playingItem, QueueType.Auto_UpNext));
-            }
-            PlayingItemChanged();
         }
     }
 
     private void managePreviousItem(boolean isRemove) {
-        if (mCurrentList.size() > 0) {
+        if (null != mCurrentList && mCurrentList.size() > 0) {
             if (isRemove) {
                 addItemToHistory(mCurrentList.get(0).getUpNextItem());
                 addItemToUpNextFrom(mCurrentList.remove(0));
@@ -390,16 +402,18 @@ public class UpNextList {
     }
 
     private void addItemToUpNextFrom(UpNextItem item) {
-        if (item.getUpNextItemType() == QueueType.Auto_UpNext)
+        if (null != item && item.getUpNextItemType() == QueueType.Auto_UpNext)
             mAutoNextList.add(PlayItemIndex, item.getUpNextItem());
     }
 
     public void addItemToUpNextFrom(IMediaItemBase item) {
-        mAutoNextList.add(item);
+        if(null != item)
+            mAutoNextList.add(item);
     }
 
     public void addItemListToUpNextFrom(ArrayList<? extends IMediaItemBase> itemList) {
-        mAutoNextList.addAll(itemList);
+        if(null != itemList && itemList.size() > 0)
+            mAutoNextList.addAll(itemList);
     }
 
     public boolean isPrevious() {
@@ -407,26 +421,30 @@ public class UpNextList {
     }
 
     public boolean isNext() {
-        return mUpNextList != null && (mUpNextList.size() > 0 || mAutoNextList.size() > 0) ? true : false;
+        return (mUpNextList != null && mUpNextList.size() > 0) || (null != mAutoNextList && mAutoNextList.size() > 0) ? true : false;
     }
 
     private void setItemAsPlayingItem(IMediaItemBase item, QueueType queueType) {
         if (mCurrentList.size() == 1)
             addItemToHistory(mCurrentList.remove(0).getUpNextItem());
-        mCurrentList.add(new UpNextItem(item, queueType));
+
+        if(null != item)
+            mCurrentList.add(new UpNextItem(item, queueType));
     }
 
     private void setItemListAsPrevious(List<? extends IMediaItemBase> itemList) {
         ghostList.clear();
-        ghostList.addAll(itemList);
+        if(null != itemList && itemList.size() > 0)
+            ghostList.addAll(itemList);
     }
 
     private void setItemListAsUpNextFrom(List<? extends IMediaItemBase> itemList) {
-        mAutoNextList.addAll(itemList);
+        if(null != itemList && itemList.size() > 0)
+            mAutoNextList.addAll(itemList);
     }
 
     public void managePlayedItem(boolean isRemove) {
-        if (mCurrentList.size() > 0) {
+        if (null != mCurrentList && mCurrentList.size() > 0) {
             if (isRemove) {
                 addItemToHistory(mCurrentList.get(0).getUpNextItem());
                 addItemAsPrevious(mCurrentList.remove(0));
@@ -439,7 +457,7 @@ public class UpNextList {
     }
 
     private void addItemAsPrevious(UpNextItem item) {
-        if (item.getUpNextItemType() == QueueType.Auto_UpNext) {
+        if (null != item && item.getUpNextItemType() == QueueType.Auto_UpNext) {
             if (ghostList.contains(item.getUpNextItem())) {
                 ghostList.remove(item.getUpNextItem());
             }
@@ -448,9 +466,11 @@ public class UpNextList {
     }
 
     private void addItemToHistory(IMediaItemBase item) {
-        MediaController.getInstance(context).addUpNextItem(item, QueueType.History);
-        invalidateHistory();
-        QueueUpdated();
+        if(null != item) {
+            MediaController.getInstance(context).addUpNextItem(item, QueueType.History);
+            invalidateHistory();
+            QueueUpdated();
+        }
     }
 
     private void invalidateHistory() {

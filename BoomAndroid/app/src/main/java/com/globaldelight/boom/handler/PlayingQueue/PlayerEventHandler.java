@@ -27,6 +27,7 @@ import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.Pla
  */
 
 public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocusChangeListener {
+    public static boolean isPlayerResume = false;
     private static IMediaItemBase playingItem;
     private static OpenSLPlayer mPlayer;
     private static PlayerEventHandler handler;
@@ -179,13 +180,17 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     }
 
     public void playNextSong(boolean isUser) {
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(isNext()) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            PLAYER_DIRECTION = NEXT;
+            App.getPlayingQueueHandler().getUpNextList().setNextPlayingItem(isUser);
+        }else{
+            context.sendBroadcast(new Intent(PlayerService.ACTION_LAST_PLAYED_SONG));
         }
-        PLAYER_DIRECTION = NEXT;
-        App.getPlayingQueueHandler().getUpNextList().setNextPlayingItem(isUser);
     }
 
     public void playPrevSong() {
