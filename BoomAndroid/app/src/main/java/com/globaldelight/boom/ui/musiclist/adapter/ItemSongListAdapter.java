@@ -35,9 +35,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
-import com.globaldelight.boom.ui.musiclist.activity.DetailAlbumActivity;
 import com.globaldelight.boom.ui.musiclist.activity.DeviceMusicActivity;
-import com.globaldelight.boom.ui.musiclist.activity.SongsDetailListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.OnStartDragListener;
@@ -80,7 +78,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         View itemView = null;
         if (viewType == TYPE_ITEM && collection.getItemType() == BOOM_PLAYLIST) {
             itemView = LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.boomplaylist_card_song_item, parent, false);
+                    inflate(R.layout.card_boomplaylist_song_item, parent, false);
         } else if (viewType == TYPE_ITEM && collection.getItemType() != BOOM_PLAYLIST) {
             itemView = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.card_song_item, parent, false);
@@ -173,15 +171,27 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     }
 
     private void setOnCheckedChanged(SimpleItemViewHolder holder, final int pos) {
-        holder.songChk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
+            if(App.getUserPreferenceHandler().getItemIDList().contains(collection.getMediaElement().get(pos).getItemId())){
+                holder.songChk.setChecked(true);
+            }else {
+                holder.songChk.setChecked(false);
+            }
+        }else{
+            if(App.getUserPreferenceHandler().getItemIDList().contains(((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(pos).getItemId())){
+                holder.songChk.setChecked(true);
+            }else {
+                holder.songChk.setChecked(false);
+            }
+        }
+        holder.songChk.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                    if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
-                        App.getUserPreferenceHandler().addItemToPlayList((MediaItem) collection.getMediaElement().get(pos));
-                    }else{
-                        App.getUserPreferenceHandler().addItemToPlayList((MediaItem) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(pos));
-                    }
+            public void onClick(View v) {
+                if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
+                    App.getUserPreferenceHandler().addItemToPlayList((MediaItem) collection.getMediaElement().get(pos));
+                }else{
+                    App.getUserPreferenceHandler().addItemToPlayList((MediaItem) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(pos));
                 }
             }
         });

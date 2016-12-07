@@ -75,6 +75,8 @@
                 android:layout_height="wrap_content"
                 android:foregroundTint="#434343"
                 android:backgroundTint="#434343"
+                android:elevation="12dp"
+                android:theme="@style/MyCheckBox"
                 android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>

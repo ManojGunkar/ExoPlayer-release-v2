@@ -28,6 +28,7 @@ public class UserPreferenceHandler {
     private final SharedPreferences.Editor editor;
 
     private static ArrayList<MediaItem> list = new ArrayList<>();
+    private static ArrayList<Long> idList = new ArrayList<>();
     private static long boomPlayListId;
 
     public UserPreferenceHandler(Context context) {
@@ -123,16 +124,26 @@ public class UserPreferenceHandler {
     }
 
     public void addItemToPlayList(MediaItem item) {
-        list.remove(item);
-        list.add(item);
+        if(idList.contains(item.getItemId())){
+            list.remove(idList.indexOf(item.getItemId()));
+            idList.remove(item.getItemId());
+        }else {
+            idList.add(item.getItemId());
+            list.add(item);
+        }
     }
 
     public ArrayList<MediaItem> getItemList(){
         return list;
     }
 
+    public ArrayList<Long> getItemIDList(){
+        return idList;
+    }
+
     public void clearItemList(){
         list.clear();
+        idList.clear();
     }
 
     public void setBoomPlayListId(long boomPlayListId) {

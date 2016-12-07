@@ -184,7 +184,7 @@
     <string name="menu_add_songs">Add Songs</string>
     <string name="menu_add_boom_fav">Add to Boom Favourites</string>
     <string name="menu_remove_boom_fav">Remove from Boom Favourites</string>
-
+    <string name="unknown_artist">unknown artist</string>
 
 
 </resources>

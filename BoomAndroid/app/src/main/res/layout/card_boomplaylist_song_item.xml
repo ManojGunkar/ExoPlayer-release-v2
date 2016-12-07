@@ -77,13 +77,16 @@
                 android:foregroundTint="#434343"
                 android:padding="5dp"
                 android:src="@drawable/over_flow_menu"
-                android:theme="@style/Theme.AppCompat.Light" />
+                android:theme="@style/MyCheckBox" />
 
             <CheckBox
                 android:id="@+id/song_chk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:foregroundTint="#434343"
+                android:backgroundTint="#434343"
+                android:elevation="12dp"
+                android:theme="@style/MyCheckBox"
                 android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>

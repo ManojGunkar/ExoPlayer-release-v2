@@ -17,7 +17,6 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -55,7 +54,7 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
         View itemView;
         if(viewType == TYPE_ITEM) {
             itemView = LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.album_list_item, parent, false);
+                    inflate(R.layout.card_album_list, parent, false);
         }else{
             itemView = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.recycler_view_header, parent, false);
@@ -120,15 +119,26 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
     }
 
     private void setOnCheckedChanged(SimpleItemViewHolder holder, final int pos) {
-        holder.songChk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
+            if(App.getUserPreferenceHandler().getItemIDList().contains(item.getMediaElement().get(pos).getItemId())){
+                holder.songChk.setChecked(true);
+            }else {
+                holder.songChk.setChecked(false);
+            }
+        } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
+            if(App.getUserPreferenceHandler().getItemIDList().contains(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(pos).getItemId())){
+                holder.songChk.setChecked(true);
+            }else {
+                holder.songChk.setChecked(false);
+            }
+        }
+        holder.songChk.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                    if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
-                        App.getUserPreferenceHandler().addItemToPlayList((MediaItem)item.getMediaElement().get(pos));
-                    } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
-                        App.getUserPreferenceHandler().addItemToPlayList((MediaItem) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(pos));
-                    }
+            public void onClick(View v) {
+                if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
+                    App.getUserPreferenceHandler().addItemToPlayList((MediaItem)item.getMediaElement().get(pos));
+                } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
+                    App.getUserPreferenceHandler().addItemToPlayList((MediaItem) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(pos));
                 }
             }
         });

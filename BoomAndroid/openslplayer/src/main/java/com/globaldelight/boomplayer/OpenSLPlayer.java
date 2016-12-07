@@ -228,7 +228,7 @@ public class OpenSLPlayer implements Runnable {
         MediaFormat format = null;
         try {
             format = extractor.getTrackFormat(0);
-            if(format != null) {
+            if(null != format) {
                 mime = format.getString(MediaFormat.KEY_MIME);
                 sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
                 channels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT);

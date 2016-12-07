@@ -44,7 +44,7 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
     Fragment mSearchResult;
     Toolbar toolbar;
     ImageView toolImage;
-    TextView toolTxt;
+    TextView toolTxt, toolDoneBtn;
     SearchView searchView;
     MenuItem searchItem;
     @Override
@@ -142,7 +142,6 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
         toolTxt = (TextView) findViewById(R.id.toolTitle);
         setToolbarImage(R.drawable.ic_album_white_24dp);
         setToolbarTitle(getResources().getString(R.string.title_library));
-        toolTxt.setTextSize(18);
         try {
             setSupportActionBar(toolbar);
         }catch (IllegalStateException e){}
@@ -150,6 +149,25 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //            getSupportActionBar().setTitle("Music Library"/*getIntent().getStringExtra("name")*/);
         }
+
+        toolDoneBtn = (TextView) findViewById(R.id.toolDoneBtn);
+
+        if(App.getUserPreferenceHandler().isLibFromHome()){
+            toolDoneBtn.setVisibility(View.GONE);
+        }else{
+            toolDoneBtn.setVisibility(View.VISIBLE);
+        }
+
+        toolDoneBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MediaController.getInstance(BoomMasterActivity.this).addSongToBoomPlayList(App.getUserPreferenceHandler().getBoomPlayListId(), App.getUserPreferenceHandler().getItemList());
+                App.getUserPreferenceHandler().setLibraryStartFromHome(true);
+                App.getUserPreferenceHandler().clearItemList();
+                finish();
+            }
+        });
+
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -194,22 +212,8 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
                     return true;
                 }
             });
-        }else{
-            MenuInflater menuInflater = getMenuInflater();
-            menuInflater.inflate(R.menu.done_menu, menu);
         }
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_done){
-            MediaController.getInstance(this).addSongToBoomPlayList(App.getUserPreferenceHandler().getBoomPlayListId(), App.getUserPreferenceHandler().getItemList());
-            App.getUserPreferenceHandler().setLibraryStartFromHome(true);
-            App.getUserPreferenceHandler().clearItemList();
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     public void setIconified(boolean enable){

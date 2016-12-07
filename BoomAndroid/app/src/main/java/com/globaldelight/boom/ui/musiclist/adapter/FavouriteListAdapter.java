@@ -87,12 +87,15 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
         }else{
             holder.menu.setVisibility(View.GONE);
             holder.songChk.setVisibility(View.VISIBLE);
-            holder.songChk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            if(App.getUserPreferenceHandler().getItemIDList().contains(itemList.get(position).getItemId())){
+                holder.songChk.setChecked(true);
+            }else {
+                holder.songChk.setChecked(false);
+            }
+            holder.songChk.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                        App.getUserPreferenceHandler().addItemToPlayList((MediaItem)  itemList.get(position));
-                    }
+                public void onClick(View v) {
+                    App.getUserPreferenceHandler().addItemToPlayList((MediaItem)  itemList.get(position));
                 }
             });
         }
