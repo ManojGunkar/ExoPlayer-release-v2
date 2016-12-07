@@ -246,7 +246,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     }
 
     public IMediaItemBase getPlayingItem() {
-        return playingItem;
+        return App.getPlayingQueueHandler().getUpNextList().getPlayingItem()/*playingItem*/;
     }
 
     public void seek(int progress) {

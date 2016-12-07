@@ -21,9 +21,6 @@ import java.io.IOException;
 
 public class PlayerService extends Service {
 
-    public static final String ACTION_PLAYER_START = "ACTION_PLAYER_START";
-    public static final String ACTION_PLAYER_FINISH = "ACTION_PLAYER_FINISH";
-    public static final String ACTION_NOTI_START = "ACTION_NOTI_START";
     public static final String ACTION_NOTI_CLICK = "ACTION_NOTI_CLICK";
     public static final String ACTION_NOTI_REMOVE = "ACTION_NOTI_REMOVE";
 
@@ -46,8 +43,6 @@ public class PlayerService extends Service {
 
     public static final String ACTION_UPDATE_BOOM_PLAYLIST ="ACTION_UPDATE_BOOM_PLAYLIST";
 
-
-    private static boolean isPlayerFinish = false, isNotificationRemove = false;
     private PlayerEventHandler musicPlayerHandler;
     private Context context;
     private NotificationHandler notificationHandler;
@@ -73,7 +68,6 @@ public class PlayerService extends Service {
         App.getPlayingQueueHandler().getUpNextList().fetchUpNextItemsToDB();
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_PLAYER_FINISH);
         filter.addAction(ACTION_REPEAT_SONG);
         filter.addAction(ACTION_SHUFFLE_SONG);
         filter.addAction(ACTION_GET_SONG);
@@ -157,19 +151,20 @@ public class PlayerService extends Service {
                 break;
             case ACTION_NOTI_REMOVE:
                 notificationHandler.setNotificationActive(false);
-                isNotificationRemove = true;
-                if(isPlayerFinish && isNotificationRemove)
-                    stopSelf();
-                break;
-            case ACTION_PLAYER_FINISH:
-                isPlayerFinish = true;
-                if(isPlayerFinish && isNotificationRemove)
-                    stopSelf();
+                updateUpNextDB();
                 break;
             /*case ACTION_ADD_QUEUE:
                 musicPlayerHandler.addSongToQueue();
                 break;
                 */
+        }
+    }
+
+    private void updateUpNextDB() {
+        App.getPlayingQueueHandler().getUpNextList().addUpNextItemsToDB();
+        if (musicPlayerHandler.getPlayer() != null) {
+            musicPlayerHandler.stop();
+            musicPlayerHandler.release();
         }
     }
 
@@ -239,12 +234,13 @@ public class PlayerService extends Service {
     }
 
     private void updateNotificationPlayer(MediaItem playingItem, boolean playing, boolean isLastPlayed) {
+        notificationHandler.setNotificationPlayer(false);
         if(!playing){
             stopForeground(false);
             notificationHandler.setNotificationPlayer(true);
-        }else{
+        }/*else{
             notificationHandler.setNotificationPlayer(false);
-        }
+        }*/
         notificationHandler.changeNotificationDetails(playingItem, playing, isLastPlayed);
     }
 
@@ -257,8 +253,6 @@ public class PlayerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        App.getPlayingQueueHandler().getUpNextList().addUpNextItemsToDB();
-
         if (musicPlayerHandler.getPlayer() != null) {
             musicPlayerHandler.stop();
             musicPlayerHandler.release();

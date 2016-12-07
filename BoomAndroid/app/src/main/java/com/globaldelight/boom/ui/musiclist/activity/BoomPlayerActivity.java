@@ -16,6 +16,7 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -584,7 +585,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         super.onResume();
         App.getPlayerEventHandler().isPlayerResume = true;
         updateEffectIcon();
-
         if (null != App.getPlayerEventHandler().getPlayingItem()) {
             updateTrackToPlayer((MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isPlaying(), /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));
         }else{
@@ -630,8 +630,17 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        sendBroadcast(new Intent(PlayerService.ACTION_PLAYER_FINISH));
+        if(!App.getPlayerEventHandler().isPlaying())
+            updateUpNextDB();
         unregisterReceiver(mPlayerBroadcastReceiver);
+    }
+
+    private void updateUpNextDB() {
+        App.getPlayingQueueHandler().getUpNextList().addUpNextItemsToDB();
+        if (App.getPlayerEventHandler().getPlayer() != null) {
+            App.getPlayerEventHandler().stop();
+            App.getPlayerEventHandler().release();
+        }
     }
 
     private void updateEffectIcon() {

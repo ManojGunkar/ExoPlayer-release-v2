@@ -72,6 +72,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
     }
 
     public void addSongs(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
+        clearList(queueType);
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
             ContentValues values = new ContentValues();
