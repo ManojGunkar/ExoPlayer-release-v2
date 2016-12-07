@@ -65,10 +65,10 @@ namespace gdpl {
 
 
     class PlaybackThread : public gdpl::IDataSource {
-
         static const int kBufferCount = 10;
         static const int kBytesPerFrame = 2048 * 2 * sizeof(float);
         static const int kTempBufferCount = 4;
+
     public:
         bool isPlay = false;
 
@@ -103,14 +103,6 @@ namespace gdpl {
         ~PlaybackThread() {
             isPlay = false;
             release();
-
-            for ( int i = 0; i < kTempBufferCount; i++ ) {
-                free(mTempBuffers[i]);
-            }
-
-
-            delete mRingBuffer;
-            delete mInputBuffer;
             pthread_mutex_destroy(&lock);
             //ALOGD("~PlaybackThread");
         }
@@ -178,6 +170,12 @@ namespace gdpl {
             free(mBuffer);
             free(mOutputBuffer);
             free(mResampleBuffer);
+            for ( int i = 0; i < kTempBufferCount; i++ ) {
+                free(mTempBuffers[i]);
+            }
+
+            delete mRingBuffer;
+            delete mInputBuffer;
             delete audioResampler;
         }
 
@@ -185,15 +183,14 @@ namespace gdpl {
         int32_t *mResampleBuffer;
         int16_t *mBuffer;
         float   *mOutputBuffer;
-        float   *mTempBuffers[4];
-        int mIndex;
+        float   *mTempBuffers[kTempBufferCount];
+        int     mIndex;
 
         pthread_mutex_t lock;
         AudioResampler *audioResampler;
 
         RingBuffer* mRingBuffer;
         RingBuffer* mInputBuffer;
-
 
 
         const uint32_t kNativeSampleRate;
