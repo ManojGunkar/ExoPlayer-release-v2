@@ -15,7 +15,7 @@ namespace gdpl {
 
         int Read(uint8_t *dataPtr, int numBytes);
 
-        int Write(uint8_t *dataPtr, int numBytes, int i);
+        int Write(uint8_t *dataPtr, int numBytes, int i, bool blocking = true);
 
         bool Empty(void);
 

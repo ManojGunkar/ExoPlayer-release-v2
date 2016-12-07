@@ -17,7 +17,7 @@ namespace gdpl
     static SLObjectItf outputMixObject = NULL;
     static SLEngineItf engineEngine = NULL;
     static uint32_t    engineSampleRate;
-
+    static uint32_t    sFrameCount;
 
 
 
@@ -63,11 +63,11 @@ namespace gdpl
 
         // create audio player
         // NOTE: SL_IID_BASSBOOST is requested only to disable Fast Audio Path. It is not used anywhere
-        const SLInterfaceID ids[] = { SL_IID_ANDROIDSIMPLEBUFFERQUEUE, SL_IID_VOLUME, SL_IID_BASSBOOST };
-        const SLboolean req[] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
+        const SLInterfaceID ids[] = { SL_IID_ANDROIDSIMPLEBUFFERQUEUE, SL_IID_BASSBOOST };
+        const SLboolean req[] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
 
         SLresult result = (*engineEngine)->CreateAudioPlayer(engineEngine, &bqPlayerObject, &audioSrc,
-                                                             &audioSnk, 3, ids, req);
+                                                             &audioSnk, 1, ids, req);
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
@@ -92,9 +92,9 @@ namespace gdpl
         (void) result;
 
         // get the volume interface
-        result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_VOLUME, &bqPlayerVolume);
-        assert(SL_RESULT_SUCCESS == result);
-        (void) result;
+//        result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_VOLUME, &bqPlayerVolume);
+//        assert(SL_RESULT_SUCCESS == result);
+//        (void) result;
 //        /* Before we start set volume to -3dB (-300mB) and enable equalizer */
 //        result = (*bqPlayerVolume)->SetVolumeLevel(bqPlayerVolume, -300);
 //        assert(SL_RESULT_SUCCESS == result);
@@ -174,9 +174,10 @@ namespace gdpl
     }
 
 
-    SLresult OpenSLPlayer::setupEngine(uint32_t sampleRate) {
+    SLresult OpenSLPlayer::setupEngine(uint32_t sampleRate, uint32_t frameCount) {
 
         engineSampleRate = sampleRate;
+        sFrameCount = frameCount;
 
         SLresult result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
         assert(SL_RESULT_SUCCESS == result);
@@ -245,9 +246,11 @@ namespace gdpl
             return;
         }
 
-        IDataSource::Buffer buffer;
-        _dataSource->getNextBuffer(&buffer);
         bool success = true;
+
+        IDataSource::Buffer buffer;
+        buffer.size = sFrameCount * 2 * sizeof(float);
+        _dataSource->getNextBuffer(&buffer);
         if ( buffer.size > 0 && buffer.data != nullptr ) {
             SLresult result = (*_bufferQueue)->Enqueue(_bufferQueue, buffer.data, buffer.size);
             if ( SL_RESULT_SUCCESS != result ) {
@@ -264,5 +267,4 @@ namespace gdpl
         //    stopReading();
         }
     }
-
 }
