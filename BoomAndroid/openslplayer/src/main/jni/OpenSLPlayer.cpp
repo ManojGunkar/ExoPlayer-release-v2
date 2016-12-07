@@ -259,12 +259,19 @@ namespace gdpl
             }
         }
         else {
-            LOGE("OpenSLPlayer: No data to enqueue");
+            LOGE("OpenSLPlayer: No data to enqueue!");
             success = false;
         }
 
+        // if the enqueue is failed and there are no buffers to play restart enqueuing
         if ( !success ) {
-        //    stopReading();
+            SLAndroidSimpleBufferQueueState state;
+            (*_bufferQueue)->GetState(_bufferQueue, &state);
+            LOGE("OpenSLPlayer: buffer state [count=%d, index=%d]", state.count, state.index);
+            if ( state.count == 0 ) {
+                LOGE("OpenSLPlayer: Run out of buffers -- restarting!");
+                stopReading(); // signals the writer that callback has stopped reading
+            }
         }
     }
 }
