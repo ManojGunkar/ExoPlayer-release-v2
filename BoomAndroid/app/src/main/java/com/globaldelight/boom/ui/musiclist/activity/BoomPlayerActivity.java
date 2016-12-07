@@ -630,6 +630,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        sendBroadcast(new Intent(PlayerService.ACTION_PLAYER_FINISH));
         unregisterReceiver(mPlayerBroadcastReceiver);
     }
 

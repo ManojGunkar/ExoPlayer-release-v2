@@ -21,13 +21,16 @@ import java.io.IOException;
 
 public class PlayerService extends Service {
 
-//    public static final String ACTION_PLAY_SINGLE = "ACTION_PLAY_SINGLE";
+    public static final String ACTION_PLAYER_START = "ACTION_PLAYER_START";
+    public static final String ACTION_PLAYER_FINISH = "ACTION_PLAYER_FINISH";
+    public static final String ACTION_NOTI_START = "ACTION_NOTI_START";
+    public static final String ACTION_NOTI_CLICK = "ACTION_NOTI_CLICK";
+    public static final String ACTION_NOTI_REMOVE = "ACTION_NOTI_REMOVE";
+
     public static final String ACTION_REPEAT_SONG = "ACTION_REPEAT_SONG";
     public static final String ACTION_SHUFFLE_SONG = "ACTION_SHUFFLE_SONG";
 
     public static final String ACTION_GET_SONG = "ACTION_GET_SONG";
-    public static final String ACTION_NOTI_CLICK = "ACTION_NOTI_CLICK";
-    public static final String ACTION_NOTI_REMOVE = "ACTION_NOTI_REMOVE";
     public static final String ACTION_CHANGE_SONG = "ACTION_CHANGE_SONG";
     public static final String ACTION_SEEK_SONG = "ACTION_SEEK_SONG";
     public static final String ACTION_NEXT_SONG = "ACTION_NEXT_SONG";
@@ -44,6 +47,7 @@ public class PlayerService extends Service {
     public static final String ACTION_UPDATE_BOOM_PLAYLIST ="ACTION_UPDATE_BOOM_PLAYLIST";
 
 
+    private static boolean isPlayerFinish = false, isNotificationRemove = false;
     private PlayerEventHandler musicPlayerHandler;
     private Context context;
     private NotificationHandler notificationHandler;
@@ -65,8 +69,11 @@ public class PlayerService extends Service {
         App.setService(this);
         if (musicPlayerHandler == null)
             musicPlayerHandler = App.getPlayerEventHandler();
+
+        App.getPlayingQueueHandler().getUpNextList().fetchUpNextItemsToDB();
+
         IntentFilter filter = new IntentFilter();
-//        filter.addAction(ACTION_PLAY_SINGLE);
+        filter.addAction(ACTION_PLAYER_FINISH);
         filter.addAction(ACTION_REPEAT_SONG);
         filter.addAction(ACTION_SHUFFLE_SONG);
         filter.addAction(ACTION_GET_SONG);
@@ -78,10 +85,6 @@ public class PlayerService extends Service {
         filter.addAction(ACTION_NOTI_CLICK);
         filter.addAction(ACTION_NOTI_REMOVE);
         filter.addAction(ACTION_ADD_QUEUE);
-
-
-
-
         filter.addAction(ACTION_PLAY_STOP);
         filter.addAction(ACTION_TRACK_POSITION_UPDATE);
         filter.addAction(ACTION_UPNEXT_UPDATE);
@@ -144,36 +147,6 @@ public class PlayerService extends Service {
             case ACTION_LAST_PLAYED_SONG:
                 updatePlayerToLastPlayedSong();
                 break;
-            /*case ACTION_PLAY_SINGLE:
-                musicPlayerHandler.playSingleSong(intent.getLongExtra("songId", 0));
-                updatePlayer();
-                break;
-            case ACTION_REPEAT_SINGLE:
-                musicPlayerHandler.resetRepeat(PlayingQueue.REPEAT.one);
-                break;
-            case ACTION_REPEAT_ALL_SONGS:
-                musicPlayerHandler.resetRepeat(PlayingQueue.REPEAT.all);
-                break;
-            case ACTION_REPEAT_NONE:
-                musicPlayerHandler.resetRepeat(PlayingQueue.REPEAT.none);
-                break;
-            case ACTION_SHUFFLE_SONG:
-                musicPlayerHandler.resetShuffle(PlayingQueue.SHUFFLE.all);
-                break;
-            case ACTION_SHUFFLE_NONE:
-                musicPlayerHandler.resetShuffle(PlayingQueue.SHUFFLE.none);
-                break;
-
-            case ACTION_NEXT_SONG:
-                musicPlayerHandler.playNextSong();
-                break;
-            case ACTION_PREV_SONG:
-                musicPlayerHandler.playPrevSong();
-                updatePlayer();
-                break;
-            case ACTION_CHANGE_SONG:
-                musicPlayerHandler.playNextSong();
-                break;*/
             case ACTION_NOTI_CLICK:
                 final Intent i = new Intent();
                     i.setClass(context, BoomPlayerActivity.class);
@@ -181,12 +154,19 @@ public class PlayerService extends Service {
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                 }
-                break;/*
+                break;
             case ACTION_NOTI_REMOVE:
                 notificationHandler.setNotificationActive(false);
-                musicPlayerHandler.stopPlayer();
+                isNotificationRemove = true;
+                if(isPlayerFinish && isNotificationRemove)
+                    stopSelf();
                 break;
-            case ACTION_ADD_QUEUE:
+            case ACTION_PLAYER_FINISH:
+                isPlayerFinish = true;
+                if(isPlayerFinish && isNotificationRemove)
+                    stopSelf();
+                break;
+            /*case ACTION_ADD_QUEUE:
                 musicPlayerHandler.addSongToQueue();
                 break;
                 */
@@ -277,6 +257,8 @@ public class PlayerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        App.getPlayingQueueHandler().getUpNextList().addUpNextItemsToDB();
+
         if (musicPlayerHandler.getPlayer() != null) {
             musicPlayerHandler.stop();
             musicPlayerHandler.release();

@@ -208,35 +208,15 @@ public class DeviceMediaHandler {
         App.getUPNEXTDBHelper().addSong(song, queueType);
     }
 
-    public void addUpNextItem(IMediaItemBase song, int position, QueueType queueType) {
-        App.getUPNEXTDBHelper().addSong(song, position, queueType);
-    }
-
-    public void addItemListUpNext(ArrayList<? extends IMediaItemBase> itemList, QueueType queueType) {
-        App.getUPNEXTDBHelper().addSongs(itemList, queueType);
+    public void addUpNextItem(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
+        App.getUPNEXTDBHelper().addSongs(songs, queueType);
     }
 
     public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
         return App.getUPNEXTDBHelper().getSongList(queueType);
     }
 
-    public void removeItemFromUpNext(long songId, QueueType queueType) {
-        App.getUPNEXTDBHelper().removeSong(songId, queueType);
-    }
-
-    public void clearUpNextList(QueueType queueType) {
-        if(queueType == QueueType.Playing){
-            App.getUPNEXTDBHelper().removePlayingItem();
-        }else {
-            App.getUPNEXTDBHelper().clearList(queueType);
-        }
-    }
-
-    public UpNextItem getPlayingItem(){
-        return App.getUPNEXTDBHelper().getPlayingItem();
-    }
-
-    public void addItemAsPlaying(IMediaItemBase song, QueueType queueType){
-        App.getUPNEXTDBHelper().addPlayingItem(song, queueType);
+    public void clearUpNextList(QueueType queueType){
+        App.getUPNEXTDBHelper().clearList(queueType);
     }
 }

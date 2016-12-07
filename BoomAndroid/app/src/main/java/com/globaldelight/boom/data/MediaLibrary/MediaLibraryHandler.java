@@ -108,31 +108,15 @@ public class MediaLibraryHandler implements IMediaLibrary{
         DeviceMediaHandler.getInstance(context).addUpNextItem(song, queueType);
     }
 
-    public void addUpNextItem(IMediaItemBase song, int position, QueueType queueType) {
-        DeviceMediaHandler.getInstance(context).addUpNextItem(song, position, queueType);
-    }
-
-    public void addItemListUpNext(ArrayList<? extends IMediaItemBase> itemList, QueueType queueType) {
-        DeviceMediaHandler.getInstance(context).addItemListUpNext(itemList, queueType);
+    public void addUpNextItem(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
+        DeviceMediaHandler.getInstance(context).addUpNextItem(songs, queueType);
     }
 
     public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
         return DeviceMediaHandler.getInstance(context).getUpNextItemList(queueType);
     }
 
-    public void removeItemFromUpNext(long songId, QueueType queueType) {
-        DeviceMediaHandler.getInstance(context).removeItemFromUpNext(songId, queueType);
-    }
-
     public void clearUpNextList(QueueType queueType) {
         DeviceMediaHandler.getInstance(context).clearUpNextList(queueType);
-    }
-
-    public UpNextItem getPlayingItem(){
-        return DeviceMediaHandler.getInstance(context).getPlayingItem();
-    }
-
-    public void addItemAsPlaying(IMediaItemBase song, QueueType queueType){
-        DeviceMediaHandler.getInstance(context).addItemAsPlaying(song, queueType);
     }
 }

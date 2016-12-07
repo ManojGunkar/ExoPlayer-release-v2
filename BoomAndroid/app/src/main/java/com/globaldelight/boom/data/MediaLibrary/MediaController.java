@@ -99,31 +99,15 @@ public class MediaController implements IMediaController{
         MediaLibraryHandler.getInstance(context).addUpNextItem(song, queueType);
     }
 
-    public void addUpNextItem(IMediaItemBase song, int position, QueueType queueType) {
-        MediaLibraryHandler.getInstance(context).addUpNextItem(song, position, queueType);
-    }
-
-    public void addItemListToUpNext(ArrayList<? extends IMediaItemBase> itemList, QueueType queueType) {
-        MediaLibraryHandler.getInstance(context).addItemListUpNext(itemList, queueType);
+    public void addUpNextItem(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
+        MediaLibraryHandler.getInstance(context).addUpNextItem(songs, queueType);
     }
 
     public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
         return MediaLibraryHandler.getInstance(context).getUpNextItemList(queueType);
     }
 
-    public void removeItemFromUpNext(long songId, QueueType queueType){
-        MediaLibraryHandler.getInstance(context).removeItemFromUpNext(songId, queueType);
-    }
-
-    public void clearUpNextList(QueueType queueType){
+    public void clearUpNextList(QueueType queueType) {
         MediaLibraryHandler.getInstance(context).clearUpNextList(queueType);
-    }
-
-    public UpNextItem getPlayingItem(){
-        return MediaLibraryHandler.getInstance(context).getPlayingItem();
-    }
-
-    public void addItemAsPlaying(IMediaItemBase song, QueueType queueType){
-        MediaLibraryHandler.getInstance(context).addItemAsPlaying(song, queueType);
     }
 }
