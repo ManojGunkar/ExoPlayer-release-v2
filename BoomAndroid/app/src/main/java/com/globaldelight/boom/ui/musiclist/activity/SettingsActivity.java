@@ -297,6 +297,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             public void onFinish() {
                 txtDescTimer.setText("00:00:00" + " remaining.");
                 Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
+                txtDescTimer.setText(getResources().getString(R.string.sleep_timer_description));
 
 
             }
@@ -325,7 +326,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void cancelTimer() {
-        // String TimerTime = txtTimer.getText().toString();
         String TimerTime = txtDescTimer.getText().toString().substring(0, 7);
         DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         try {
@@ -405,7 +405,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     //txtTimer.setText("00:00:00");
                     txtDescTimer.setText("00:00:00" + " remaining.");
                     Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
-
+                    txtDescTimer.setText(getResources().getString(R.string.sleep_timer_description));
 
                 }
             }.start();
@@ -729,6 +729,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
 
     public void customMaterialTimepicker(boolean running) {
+
 
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .customView(R.layout.custom_time_picker, false)
