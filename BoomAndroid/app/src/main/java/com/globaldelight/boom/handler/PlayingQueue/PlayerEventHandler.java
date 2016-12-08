@@ -149,25 +149,31 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     }
 
     public boolean isPlaying(){
-        return mPlayer.isPlaying();
+        if(null != mPlayer)
+            return mPlayer.isPlaying();
+        return false;
     }
 
     public boolean isPaused(){
-        return mPlayer.isPause();
+        if(null != mPlayer)
+            return mPlayer.isPause();
+        return false;
     }
 
     public boolean isStopped() {
-        return mPlayer.isStopped();
+        if(null != mPlayer)
+            return mPlayer.isStopped();
+        return false;
     }
 
     @Override
     public synchronized void onPlayingItemChanged() {
 
-        if(isPlaying() || mPlayer.isPause()) {
+        if(isPlaying() || isPaused()) {
             setSessionState(PlaybackState.STATE_STOPPED);
         }
         playingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
-        if(null != playingItem) {
+        if(null != mPlayer && null != playingItem ) {
             if ( requestAudioFocus() ) {
                 mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
                 setSessionState(PlaybackState.STATE_PLAYING);
@@ -236,7 +242,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     }
 
     public void stop() {
-        if(!mPlayer.isStopped()){
+        if(!isStopped()){
             setSessionState(PlaybackState.STATE_STOPPED);
         }
     }
@@ -250,33 +256,39 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     }
 
     public void seek(int progress) {
-        mPlayer.seek(progress);
+        if(null != mPlayer)
+            mPlayer.seek(progress);
     }
 
 
     public void setEffectEnable(boolean enable) {
-        mPlayer.setEnableEffect(enable);
+        if(null != mPlayer)
+            mPlayer.setEnableEffect(enable);
     }
 
     public void set3DAudioEnable(boolean enable) {
-
-        mPlayer.setEnable3DAudio(enable);
+        if(null != mPlayer)
+            mPlayer.setEnable3DAudio(enable);
     }
 
     public void setIntensityValue(double value) {
-        mPlayer.setIntensityValue(value);
+        if(null != mPlayer)
+            mPlayer.setIntensityValue(value);
     }
 
     public void setEqualizerEnable(boolean enable) {
-        mPlayer.setEnableEqualizer(enable);
+        if(null != mPlayer)
+            mPlayer.setEnableEqualizer(enable);
     }
 
     public void setSuperBassEnable(boolean enable) {
-        mPlayer.setEnableSuperBass(enable);
+        if(null != mPlayer)
+            mPlayer.setEnableSuperBass(enable);
     }
 
     public void setEqualizerGain(int position) {
-        mPlayer.setEqualizerGain(position);
+        if(null != mPlayer)
+            mPlayer.setEqualizerGain(position);
     }
 
     public void setSpeakerEnable(AudioEffect.Speaker speaker, boolean enable) {
@@ -284,7 +296,8 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     }
 
     public void setHighQualityEnable(boolean highQualityEnable) {
-        mPlayer.setHighQualityEnable(highQualityEnable);
+        if(null != mPlayer)
+            mPlayer.setHighQualityEnable(highQualityEnable);
     }
 
     public void stopPlayer() {
@@ -292,11 +305,13 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     }
 
     public void updateEffect() {
-        mPlayer.updatePlayerEffect();
+        if(null != mPlayer)
+            mPlayer.updatePlayerEffect();
     }
 
     public void setHeadPhoneType(int headPhoneType) {
-        mPlayer.setHeadPhone(headPhoneType);
+        if(null != mPlayer)
+            mPlayer.setHeadPhone(headPhoneType);
     }
 
 
@@ -340,6 +355,8 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
 
     void setSessionState(int state)
     {
+        if(null == mPlayer)
+            return;
         PlaybackState pbState = new PlaybackState.Builder()
                 .setActions(PlaybackState.ACTION_PAUSE | PlaybackState.ACTION_PLAY | PlaybackState.ACTION_PLAY_PAUSE | PlaybackState.ACTION_SKIP_TO_NEXT | PlaybackState.ACTION_SKIP_TO_PREVIOUS | PlaybackState.ACTION_STOP)
                 .setState(state, 0, 1, 0)
@@ -379,6 +396,8 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
 
     @Override
     public void onAudioFocusChange(int focusChange) {
+        if(null == mPlayer)
+            return;
         Intent intent = new Intent();
         intent.setAction(PlayerService.ACTION_PLAYING_ITEM_CLICKED);
         if (focusChange == AUDIOFOCUS_LOSS_TRANSIENT) {

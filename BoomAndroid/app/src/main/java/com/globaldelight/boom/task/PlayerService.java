@@ -67,6 +67,8 @@ public class PlayerService extends Service {
 
         App.getPlayingQueueHandler().getUpNextList().fetchUpNextItemsToDB();
 
+        App.getPlayingQueueHandler().getUpNextList().updateRepeatShuffleOnAppStart();
+
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_REPEAT_SONG);
         filter.addAction(ACTION_SHUFFLE_SONG);

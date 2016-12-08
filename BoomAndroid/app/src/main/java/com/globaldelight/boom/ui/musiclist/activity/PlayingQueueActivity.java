@@ -69,14 +69,16 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_UPDATE_QUEUE);
-        registerReceiver(upnextBroadcastReceiver, filter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         unregisterReceiver(upnextBroadcastReceiver);
     }
 
@@ -88,6 +90,10 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
 
         initView();
         setupToolbar();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_UPDATE_QUEUE);
+        registerReceiver(upnextBroadcastReceiver, filter);
     }
 
     private void initView() {

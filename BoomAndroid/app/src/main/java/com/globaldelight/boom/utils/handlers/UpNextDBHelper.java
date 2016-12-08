@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Rahul Agarwal on 28-11-16.
@@ -29,6 +30,8 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
     private Context context;
     private static final String DATABASE_NAME = "UpNextDB";
     private static final String TABLE_UPNEXT = "history_table";
+
+    private static final int SHUFfLED_QUEUE = 100;
 
     private static final String ITEM_KEY_ID = "db_item_id";
     private static final String SONG_KEY_ID = "song_id";
@@ -69,6 +72,34 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS "+ TABLE_UPNEXT);
         this.onCreate(db);
+    }
+
+    public void insertUnShuffledList(List<? extends IMediaItemBase> songs, boolean isAppend) {
+        if(!isAppend)
+            clearList(SHUFfLED_QUEUE);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        for (int i = 0; i < songs.size(); i++) {
+            ContentValues values = new ContentValues();
+
+            values.putNull(SONG_KEY_ID);
+            values.put(SONG_KEY_REAL_ID, songs.get(i).getItemId());
+            values.put(TITLE, songs.get(i).getItemTitle());
+            values.put(DISPLAY_NAME, ((IMediaItem)songs.get(i)).getItemDisplayName());
+            values.put(DATA_PATH, ((IMediaItem)songs.get(i)).getItemUrl());
+            values.put(ALBUM_ID, ((IMediaItem)songs.get(i)).getItemAlbumId());
+            values.put(ALBUM, ((IMediaItem)songs.get(i)).getItemAlbum());
+            values.put(ARTIST_ID, ((IMediaItem)songs.get(i)).getItemArtistId());
+            values.put(ARTIST, ((IMediaItem)songs.get(i)).getItemArtist());
+            values.put(DURATION, ((IMediaItem)songs.get(i)).getDurationLong());
+            values.put(DATE_ADDED, ((IMediaItem)songs.get(i)).getDateAdded());
+            values.put(ALBUM_ART, ((IMediaItem)songs.get(i)).getItemArtUrl());
+            values.put(MEDIA_TYPE, ((IMediaItem)songs.get(i)).getMediaType().ordinal());
+            values.put(QUEUE_TYPE, SHUFfLED_QUEUE);
+
+            db.insert(TABLE_UPNEXT, null, values);
+        }
+        db.close();
     }
 
     public void addSongs(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
@@ -163,5 +194,39 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_UPNEXT + " WHERE " + QUEUE_TYPE + "='" + queueType.ordinal() + "'");
         db.close();
+    }
+
+    public void clearList(int queueType){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_UPNEXT + " WHERE " + QUEUE_TYPE + "='" + queueType + "'");
+        db.close();
+    }
+
+    public LinkedList<? extends IMediaItemBase> getUnShuffledList() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        LinkedList<MediaItem> songList = new LinkedList<>();
+        String query = "SELECT  * FROM " + TABLE_UPNEXT + " WHERE " +
+                QUEUE_TYPE + "='" + SHUFfLED_QUEUE + "'";
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String duration = cursor.getString(9);
+                    String dateAdded = cursor.getString(10);
+
+                    songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5),
+                            cursor.getString(6), cursor.getInt(7), cursor.getString(8), Long.parseLong(duration),
+                            Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(12))));
+                } while (cursor.moveToNext());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        db.close();
+        return songList;
     }
 }

@@ -12,6 +12,7 @@ import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import static com.globaldelight.boom.data.MediaLibrary.ItemType.ALBUM;
 import static com.globaldelight.boom.data.MediaLibrary.ItemType.ARTIST;
@@ -212,11 +213,19 @@ public class DeviceMediaHandler {
         App.getUPNEXTDBHelper().addSongs(songs, queueType);
     }
 
+    public void insertUnShuffledList(List<? extends IMediaItemBase> songs, boolean isAppend) {
+        App.getUPNEXTDBHelper().insertUnShuffledList(songs, isAppend);
+    }
+
     public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
         return App.getUPNEXTDBHelper().getSongList(queueType);
     }
 
     public void clearUpNextList(QueueType queueType){
         App.getUPNEXTDBHelper().clearList(queueType);
+    }
+
+    public LinkedList<? extends IMediaItemBase> getUnShuffledList() {
+        return App.getUPNEXTDBHelper().getUnShuffledList();
     }
 }

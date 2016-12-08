@@ -60,6 +60,14 @@ public class App extends Application implements SensorEventListener {
         return application;
     }
 
+    public static UserPreferenceHandler getUserPreferenceHandler() {
+        return userPreferenceHandler;
+    }
+
+    public static UpNextDBHelper getUPNEXTDBHelper() {
+        return upNextDBHelper;
+    }
+
     public static PlayingQueueHandler getPlayingQueueHandler() {
         return playingQueueHandler;
     }
@@ -72,13 +80,7 @@ public class App extends Application implements SensorEventListener {
         return favoriteDBHelper;
     }
 
-    public static UserPreferenceHandler getUserPreferenceHandler() {
-        return userPreferenceHandler;
-    }
 
-    public static UpNextDBHelper getUPNEXTDBHelper() {
-        return upNextDBHelper;
-    }
 
     @Override
     public void onCreate() {

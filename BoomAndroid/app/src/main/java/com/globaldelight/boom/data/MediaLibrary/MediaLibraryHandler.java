@@ -12,6 +12,7 @@ import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Rahul Agarwal on 8/5/2016.
@@ -112,11 +113,19 @@ public class MediaLibraryHandler implements IMediaLibrary{
         DeviceMediaHandler.getInstance(context).addUpNextItem(songs, queueType);
     }
 
+    public void insertUnShuffledList(List<? extends IMediaItemBase> songs, boolean isAppend) {
+        DeviceMediaHandler.getInstance(context).insertUnShuffledList(songs, isAppend);
+    }
+
     public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
         return DeviceMediaHandler.getInstance(context).getUpNextItemList(queueType);
     }
 
     public void clearUpNextList(QueueType queueType) {
         DeviceMediaHandler.getInstance(context).clearUpNextList(queueType);
+    }
+
+    public LinkedList<? extends IMediaItemBase> getUnShuffledList() {
+        return DeviceMediaHandler.getInstance(context).getUnShuffledList();
     }
 }

@@ -141,7 +141,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         m3DSwitchTxt = (RegularTextView) findViewById(R.id.three_d_switch_txt);
         m3DSwitchTxt.setTextColor(Color.WHITE);
         mSpeakerInfo = (RegularTextView) findViewById(R.id.speaker_info);
-        mSpeakerInfo.setVisibility(View.GONE);
+//        mSpeakerInfo.setVisibility(View.GONE);
         mSpeakerInfo.setTextColor(Color.WHITE);
         mFullbassTxt = (RegularTextView) findViewById(R.id.fullbass_txt);
         mFullbassTxt.setTextColor(Color.WHITE);
@@ -308,6 +308,14 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
                 updateTweeterAndWoofer(true);
             }
+            if(!isExpended && (mSpeakerInfo.getText().equals(getResources().getString(R.string.speaker_status_some_off)) ||
+            mSpeakerInfo.getText().equals(getResources().getString(R.string.speaker_status_all_off)))){
+                mSpeakerInfo.setVisibility(View.VISIBLE);
+            }else{
+                mSpeakerInfo.setVisibility(View.GONE);
+            }
+
+
             mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_inactive, null));
         }
     }
