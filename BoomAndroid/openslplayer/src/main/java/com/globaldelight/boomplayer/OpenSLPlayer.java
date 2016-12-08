@@ -110,7 +110,7 @@ public class OpenSLPlayer implements Runnable {
         sourceRawResId = resid;
     }
 
-    public void play() {
+    public synchronized void play() {
         if (state.get() == PlayerStates.STOPPED) {
             stop = false;
             playerThread = new Thread(this);
@@ -149,6 +149,11 @@ public class OpenSLPlayer implements Runnable {
     public void stopThread(){
         try {
             playerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        try{
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -187,8 +187,9 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
 
     public void playNextSong(boolean isUser) {
         if(isNext()) {
+            long sleepTime = 100;
             try {
-                Thread.sleep(50);
+                Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -200,8 +201,9 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     }
 
     public void playPrevSong() {
+        long sleepTime = 100;
         try {
-            Thread.sleep(50);
+            Thread.sleep(sleepTime);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

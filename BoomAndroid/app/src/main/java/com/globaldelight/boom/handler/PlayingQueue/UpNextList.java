@@ -130,6 +130,9 @@ public class UpNextList {
         if(mRepeat == REPEAT.all){
             mAutoNextList.clear();
             mAutoNextList.addAll(getUnShuffledList());
+            if(mShuffle == SHUFFLE.all && mAutoNextList.size() > 0){
+                Collections.shuffle(mAutoNextList, new Random(mAutoNextList.size()));
+            }
         }else{
             if(mAutoNextList.size() > 0)
             for (int i = 0; i <= PlayItemIndex; PlayItemIndex--) {
