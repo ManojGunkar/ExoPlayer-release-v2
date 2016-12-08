@@ -157,10 +157,15 @@ namespace gdpl {
             mIndex = (mIndex + 1) % kTempBufferCount;
             if (mRingBuffer->GetReadAvail() >= buffer->size ) {
                 mRingBuffer->Read((uint8_t*)buffer->data, buffer->size);
-            } else {
-                ALOGD("Enqueue : Ring Buffer Empty");
-                buffer->data = nullptr;
+            } else if ( mRingBuffer->GetReadAvail() > 0 ) {
+                // If there is not enough data. Read remaining data
+                buffer->size = mRingBuffer->GetReadAvail();
+                mRingBuffer->Read((uint8_t*)buffer->data, buffer->size);
+            }
+            else {
+                LOGE("No data to enqueue!");
                 buffer->size = 0;
+                buffer->data = NULL;
             }
         }
 
