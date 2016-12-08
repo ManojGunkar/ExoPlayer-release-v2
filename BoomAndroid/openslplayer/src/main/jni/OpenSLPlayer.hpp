@@ -57,8 +57,7 @@ namespace gdpl {
             return _isReading;
         }
 
-
-        static SLresult setupEngine(uint32_t sampleRate, uint32_t frameCount);
+        static SLresult setupEngine(uint32_t sampleRate, uint32_t frameCount, bool useFolat = true);
 
         static SLresult tearDownEngine();
 

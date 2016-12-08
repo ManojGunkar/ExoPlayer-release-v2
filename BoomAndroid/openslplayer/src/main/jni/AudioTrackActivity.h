@@ -24,7 +24,7 @@ namespace gdpl {
  * Signature: ()V
  */
     void Java_com_globaldelight_boomplayer_OpenSLPlayer_createEngine
-            (JNIEnv *, jclass, jobject, jint sampleRate, jint frameCount);
+            (JNIEnv *, jclass, jobject, jint sampleRate, jint frameCount, jboolean useFloatAudio);
 
     /*
     * Class:     com_globaldelight_boomplayer_OpenSLPlayer

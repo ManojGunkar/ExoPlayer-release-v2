@@ -10,6 +10,7 @@ import android.media.MediaCodecList;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
@@ -69,7 +70,15 @@ public class OpenSLPlayer implements Runnable {
         Log.e(LOG_TAG, "sampleRate:"+sampleRate);
         Log.e(LOG_TAG, "frameSize:"+frameCount);
 
-        createEngine(mContext.getAssets(), sampleRate, frameCount);
+        createEngine(mContext.getAssets(), sampleRate, frameCount, floatAudioSupported());
+    }
+
+    private boolean floatAudioSupported() {
+        if ( Build.BRAND.equalsIgnoreCase("vivo") ) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -521,7 +530,7 @@ public class OpenSLPlayer implements Runnable {
 
 
     /** Native methods, implemented in jni folder */
-    public native void createEngine(AssetManager assetManager, int sampleRate, int frameCount);
+    public native void createEngine(AssetManager assetManager, int sampleRate, int frameCount, boolean useFloat);
 
     public native void releaseEngine();
 

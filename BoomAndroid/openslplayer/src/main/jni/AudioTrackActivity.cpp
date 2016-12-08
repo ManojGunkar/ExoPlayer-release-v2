@@ -16,6 +16,8 @@
 
 #include "OpenSLPlayer.hpp"
 
+#define BYTES_PER_CHANNEL ((GetEngine()->GetOutputType() == SAMPLE_TYPE_SHORT)? sizeof(int16_t) : sizeof(float))
+
 
 
 namespace gdpl {
@@ -45,7 +47,7 @@ namespace gdpl {
 
     static void RinseEngine() {
         int16_t* inbuffer = (int16_t*)calloc(DEFAULT_FRAME_COUNT*CHANNEL_COUNT, sizeof(int16_t));
-        float* outbuffer = (float*)calloc(DEFAULT_FRAME_COUNT*CHANNEL_COUNT, sizeof(float));
+        float* outbuffer = (float*)calloc(DEFAULT_FRAME_COUNT*CHANNEL_COUNT, BYTES_PER_CHANNEL);
         for ( int i = 0; i < 4; i++ ) {
             GetEngine()->ProcessAudio(inbuffer, outbuffer, DEFAULT_FRAME_COUNT*CHANNEL_COUNT);
         }
@@ -66,7 +68,6 @@ namespace gdpl {
 
     class PlaybackThread : public gdpl::IDataSource {
         static const int kBufferCount = 10;
-        static const int kBytesPerFrame = 2048 * 2 * sizeof(float);
         static const int kTempBufferCount = 4;
 
     public:
@@ -76,14 +77,14 @@ namespace gdpl {
                 kNativeSampleRate(nativeSampleRate),
                 kInputSampleRate(sampleRate),
                 kInputChannels(channels),
-                kFrameCount(frameCount)
+                kFrameCount(frameCount),
+                kBytesPerFrame(kFrameCount * CHANNEL_COUNT * BYTES_PER_CHANNEL)
         {
-
             mBuffer = (int16_t *)calloc(kFrameCount * CHANNEL_COUNT, sizeof(int16_t));
-            mOutputBuffer = (float*)calloc(kFrameCount * CHANNEL_COUNT, sizeof(float));
+            mOutputBuffer = (float*)calloc(kFrameCount * CHANNEL_COUNT, BYTES_PER_CHANNEL);
             mResampleBuffer = (int32_t*)calloc(kFrameCount * CHANNEL_COUNT, sizeof(int32_t));
             for ( int i = 0; i < kTempBufferCount; i++ ) {
-                mTempBuffers[i] = (float*)calloc(kFrameCount * CHANNEL_COUNT, sizeof(float));
+                mTempBuffers[i] = (float*)calloc(kFrameCount * CHANNEL_COUNT, BYTES_PER_CHANNEL);
             }
             mIndex = 0;
 
@@ -94,7 +95,7 @@ namespace gdpl {
 
             size_t inFrameCount = (kFrameCount * kInputSampleRate) / kNativeSampleRate;
             mInputBuffer = new RingBuffer(inFrameCount * channels * sizeof(uint16_t) * 3, channels, sizeof(uint16_t));
-            mRingBuffer = new RingBuffer(kBytesPerFrame*10, 2, sizeof(float));
+            mRingBuffer = new RingBuffer(kBytesPerFrame*10, 2, BYTES_PER_CHANNEL);
 
             pthread_mutex_init(&lock, NULL);
         }
@@ -119,7 +120,7 @@ namespace gdpl {
                     ditherAndClamp((int32_t *) mBuffer, mResampleBuffer, kFrameCount);
                     GetEngine()->ProcessAudio(mBuffer, mOutputBuffer, kFrameCount * CHANNEL_COUNT);
 
-                    int bytesToWrite = kFrameCount * CHANNEL_COUNT * sizeof(float);
+                    int bytesToWrite = kBytesPerFrame;
                     int offset = 0;
                     while ( bytesToWrite > offset ) {
                         offset += mRingBuffer->Write((uint8_t*)mOutputBuffer, offset, bytesToWrite);
@@ -187,8 +188,8 @@ namespace gdpl {
     private:
         int32_t *mResampleBuffer;
         int16_t *mBuffer;
-        float   *mOutputBuffer;
-        float   *mTempBuffers[kTempBufferCount];
+        void   *mOutputBuffer;
+        void   *mTempBuffers[kTempBufferCount];
         int     mIndex;
 
         pthread_mutex_t lock;
@@ -202,6 +203,7 @@ namespace gdpl {
         const uint32_t kInputSampleRate;
         const uint32_t kInputChannels;
         const uint32_t kFrameCount;
+        const uint32_t kBytesPerFrame;
 
     };
 
@@ -211,7 +213,7 @@ namespace gdpl {
  * Signature: ()V
  */
     extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_createEngine(JNIEnv *env, jclass clazz,
-                                                                 jobject assetManager, jint sampleRate, jint inFrameCount) {
+                                                                 jobject assetManager, jint sampleRate, jint inFrameCount, jboolean useFloat) {
         globalJavaAssetManager = env->NewGlobalRef(assetManager);
         InitAssetManager(AAssetManager_fromJava(env, globalJavaAssetManager));
 
@@ -219,10 +221,13 @@ namespace gdpl {
         if ( DEFAULT_FRAME_COUNT > inFrameCount ) {
             frameCount = inFrameCount * (DEFAULT_FRAME_COUNT/inFrameCount);
         }
-        OpenSLPlayer::setupEngine(sampleRate, frameCount);
+        OpenSLPlayer::setupEngine(sampleRate, frameCount, useFloat);
         engine = new AudioEngine(sampleRate, DEFAULT_FRAME_COUNT);
         //engine->SetHighQuality(false);
         engine->SetHeadPhoneType(eOnEar);
+        if ( !useFloat ) {
+            engine->SetOutputType(SAMPLE_TYPE_SHORT);
+        }
     }
 
 /*
