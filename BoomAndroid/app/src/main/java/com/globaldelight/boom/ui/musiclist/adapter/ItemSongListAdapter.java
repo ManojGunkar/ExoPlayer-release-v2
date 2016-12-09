@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -84,7 +83,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                     inflate(R.layout.card_song_item, parent, false);
         }else{
             itemView = LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.recycler_view_header, parent, false);
+                    inflate(R.layout.card_header_recycler_view, parent, false);
         }
         return new SimpleItemViewHolder(itemView);
     }

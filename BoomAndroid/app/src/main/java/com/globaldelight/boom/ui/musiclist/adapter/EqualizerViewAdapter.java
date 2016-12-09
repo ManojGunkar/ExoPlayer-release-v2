@@ -58,7 +58,7 @@ public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdap
     @Override
     public SimpleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).
-                inflate(R.layout.colum_equalizer, parent, false);
+                inflate(R.layout.card_colum_equalizer, parent, false);
         return new EqualizerViewAdapter.SimpleItemViewHolder(itemView);
     }
 

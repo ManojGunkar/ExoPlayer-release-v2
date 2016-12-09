@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -57,7 +56,7 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                     inflate(R.layout.card_album_list, parent, false);
         }else{
             itemView = LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.recycler_view_header, parent, false);
+                    inflate(R.layout.card_header_recycler_view, parent, false);
         }
         return new SimpleItemViewHolder(itemView);
     }

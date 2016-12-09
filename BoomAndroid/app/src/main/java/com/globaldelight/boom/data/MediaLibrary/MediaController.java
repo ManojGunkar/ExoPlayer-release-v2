@@ -68,8 +68,8 @@ public class MediaController implements IMediaController{
         MediaLibraryHandler.getInstance(context).deleteBoomPlaylist(itemId);
     }
 
-    public void addSongToBoomPlayList(long itemId, ArrayList<? extends IMediaItemBase> iMediaItemBase) {
-        MediaLibraryHandler.getInstance(context).addSongToBoomPlayList(itemId, iMediaItemBase);
+    public void addSongToBoomPlayList(long itemId, ArrayList<? extends IMediaItemBase> iMediaItemBase, boolean isUpdate) {
+        MediaLibraryHandler.getInstance(context).addSongToBoomPlayList(itemId, iMediaItemBase, isUpdate);
     }
 
     public void renameBoomPlaylist(String input, long itemId) {

@@ -93,6 +93,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
     private ProgressBar mTrackProgress;
     private RegularTextView mTitle, mSubTitle;
     private ImageView mPlayerArt, mPlayPause;
+    private static boolean isMoved = false;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -375,6 +376,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                updateBoomPlayList();
                 super.onBackPressed();
                 break;
         }
@@ -391,7 +393,15 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
 
     @Override
     public void onBackPressed() {
+        updateBoomPlayList();
         super.onBackPressed();
+    }
+
+    private void updateBoomPlayList(){
+        if(collection.getItemType() == BOOM_PLAYLIST && isMoved && collection.getMediaElement().size() > 0){
+            MediaController.getInstance(SongsDetailListActivity.this).addSongToBoomPlayList(collection.getItemId(), collection.getMediaElement(), true);
+            isMoved= false;
+        }
     }
 
     @Override
@@ -404,19 +414,16 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN
                 , 0) {
 
-
-
-
-
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-
-
                 if (collection.getMediaElement().size() > 0 && target.getAdapterPosition() > 0) {
                     Collections.swap(collection.getMediaElement(), viewHolder.getAdapterPosition() - 1, target.getAdapterPosition() - 1);
                     itemSongListAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                    itemSongListAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                    itemSongListAdapter.notifyItemChanged(target.getAdapterPosition());
+                    isMoved = true;
                 }
-                return false;
+                return true;
             }
 
 
