@@ -16,6 +16,7 @@ namespace gdpl
     static SLObjectItf engineObject = NULL;
     static SLObjectItf outputMixObject = NULL;
     static SLEngineItf engineEngine = NULL;
+    static bool        sUseFloatAudio = true;
     static uint32_t    engineSampleRate;
     static uint32_t    sFrameCount;
 
@@ -42,19 +43,19 @@ namespace gdpl
         SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE,
                                                            BUFFER_COUNT};
 
-#if 1
         SLAndroidDataFormat_PCM_EX format_pcm = {SL_ANDROID_DATAFORMAT_PCM_EX, 2, engineSampleRate * 1000,
                                                  SL_PCMSAMPLEFORMAT_FIXED_32, SL_PCMSAMPLEFORMAT_FIXED_32,
                                                  SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
                                                  SL_BYTEORDER_LITTLEENDIAN,
                                                  SL_ANDROID_PCM_REPRESENTATION_FLOAT};
-#else
-        SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 2, SL_SAMPLINGRATE_44_1,
-                                                 SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
-                                                 SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
-                                                 SL_BYTEORDER_LITTLEENDIAN,
-                                                 };
-#endif
+        if ( !sUseFloatAudio ) {
+            format_pcm = {SL_ANDROID_DATAFORMAT_PCM_EX, 2, engineSampleRate * 1000,
+                          SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
+                          SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
+                          SL_BYTEORDER_LITTLEENDIAN,
+                          SL_ANDROID_PCM_REPRESENTATION_SIGNED_INT};
+        }
+
         SLDataSource audioSrc = {&loc_bufq, &format_pcm};
 
         // configure audio sink
@@ -174,10 +175,11 @@ namespace gdpl
     }
 
 
-    SLresult OpenSLPlayer::setupEngine(uint32_t sampleRate, uint32_t frameCount) {
+    SLresult OpenSLPlayer::setupEngine(uint32_t sampleRate, uint32_t frameCount, bool useFloat) {
 
         engineSampleRate = sampleRate;
         sFrameCount = frameCount;
+        sUseFloatAudio = useFloat;
 
         SLresult result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
         assert(SL_RESULT_SUCCESS == result);
@@ -249,7 +251,7 @@ namespace gdpl
         bool success = true;
 
         IDataSource::Buffer buffer;
-        buffer.size = sFrameCount * 2 * sizeof(float);
+        buffer.size = sFrameCount * 2 * (sUseFloatAudio? sizeof(float) : sizeof(short));
         _dataSource->getNextBuffer(&buffer);
         if ( buffer.size > 0 && buffer.data != nullptr ) {
             SLresult result = (*_bufferQueue)->Enqueue(_bufferQueue, buffer.data, buffer.size);
