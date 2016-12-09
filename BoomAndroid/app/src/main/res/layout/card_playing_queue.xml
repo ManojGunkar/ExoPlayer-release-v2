@@ -3,6 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/two_hundred_twenty_four_pt">
 
+    <TextView
+        android:id="@+id/delete_button"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:text="@string/delete"
+        android:textAllCaps="true"
+        android:visibility="gone"
+        android:textColor="@color/swipe_delete_undo_btn" />
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/viewcontent"
         android:layout_width="match_parent"
@@ -69,6 +79,7 @@
         android:layout_gravity="end|center_vertical"
         android:text="@string/txt_undo"
         android:textAllCaps="true"
+        android:visibility="gone"
         android:textColor="@color/swipe_delete_undo_btn" />
 
 

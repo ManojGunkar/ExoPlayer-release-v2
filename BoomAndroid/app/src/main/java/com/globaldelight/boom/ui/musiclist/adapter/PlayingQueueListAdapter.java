@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -249,7 +250,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                 item = getPositionObject(position);
 
                 if (itemDelete != null && itemDelete.getItemPosition() == item.getItemPosition() && item.getListType() == itemDelete.getListType()) {
-                    holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+                    holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.progress_gray_dark));
                     holder.layout.setVisibility(View.GONE);
                     holder.undoButton.setVisibility(View.INVISIBLE);
                     holder.undoButton.setOnClickListener(new View.OnClickListener() {
@@ -270,7 +271,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                             if (holder.undoButton.getVisibility() == View.INVISIBLE)
                                 holder.undoButton.setVisibility(View.VISIBLE);
                         }
-                    }, 500);
+                    }, 100);
 
                 } else {
                     try {
@@ -318,9 +319,10 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                 if (itemDelete != null && itemDelete.getItemPosition() == item.getItemPosition() && item.getListType() == itemDelete.getListType()) {
 
                     // we need to show the "undo" state of the row
-                    holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+                    holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.progress_gray_dark));
 
                     holder.layout.setVisibility(View.GONE);
+                    holder.deleteTxt.setVisibility(View.VISIBLE);
                     holder.undoButton.setVisibility(View.INVISIBLE);
                     holder.undoButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -338,14 +340,16 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                         @Override
                         public void run() {
                             if (holder.undoButton.getVisibility() == View.INVISIBLE)
+                                holder.deleteTxt.setVisibility(View.GONE);
                                 holder.undoButton.setVisibility(View.VISIBLE);
                         }
-                    }, 500);
+                    }, 100);
                 } else {
                     // we need to show the "normal" state
                     holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorBackground));
                     holder.layout.setVisibility(View.VISIBLE);
                     holder.undoButton.setVisibility(View.GONE);
+                    holder.deleteTxt.setVisibility(View.GONE);
                     holder.undoButton.setOnClickListener(null);
                     itemPosition = getPositionObject(position).getItemPosition();
                     setArt(holder, App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemArtUrl(), whatView(position));
@@ -526,17 +530,22 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         return false;
     }
 
-    public void removeSwipedItem(RecyclerView.ViewHolder viewholder) {
+    public void removeSwipedItem(final RecyclerView.ViewHolder viewholder) {
         if (itemDelete == null) {
             final ListPosition postionObject = getPositionObject(viewholder.getAdapterPosition());
             itemDelete = getPositionObject(viewholder.getAdapterPosition());
+//            notifyItemRemoved(viewholder.getAdapterPosition());
             notifyItemChanged(viewholder.getAdapterPosition());
             swipeDeletehandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     if (itemDelete != null) {
                         try {
-                            getListForType(postionObject.getListType()).remove(postionObject.getItemPosition());
+                            if(postionObject.getListType() == ITEM_VIEW_TYPE_LIST_MANUAL ){
+                                App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().remove(postionObject.getItemPosition());
+                            }else{
+                                App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().remove(postionObject.getItemPosition());
+                            }
                         } catch (ArrayIndexOutOfBoundsException e) {
                             e.printStackTrace();
                         }
@@ -569,6 +578,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
         public ImageView imgHandle;
         public Button undoButton;
+        public TextView deleteTxt;
         /*functions to implement swipe delete action-made for multi delete*/
         public LinearLayout layout;
 
@@ -579,11 +589,12 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
             buttonClrear = (RegularTextView) itemView.findViewById(R.id.btn_clear);
             layout = (LinearLayout) itemView.findViewById(R.id.viewcontent);
-            undoButton = (Button) itemView.findViewById(R.id.undo_button);
             img = (ImageView) itemView.findViewById(R.id.queue_item_img);
             imgHandle = (ImageView) itemView.findViewById(R.id.queue_item_handle);
             name = (RegularTextView) itemView.findViewById(R.id.queue_item_name);
             artistName = (RegularTextView) itemView.findViewById(R.id.queue_item_artist);
+            undoButton = (Button) itemView.findViewById(R.id.undo_button);
+            deleteTxt = (TextView) itemView.findViewById(R.id.delete_button);
         }
     }
 

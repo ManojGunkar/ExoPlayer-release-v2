@@ -242,7 +242,7 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
             boolean initiated;
 
             private void init() {
-                background = new ColorDrawable(getResources().getColor(R.color.colorPrimary));
+                background = new ColorDrawable(getResources().getColor(R.color.progress_gray_dark));
 
 
                 initiated = true;
@@ -285,6 +285,7 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 PlayingQueueListAdapter adapter = (PlayingQueueListAdapter) recyclerView.getAdapter();
                 adapter.removeSwipedItem(viewHolder);
+//                playingQueueListAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
             }
 
             @Override

@@ -193,6 +193,11 @@ public class UpNextList {
         }
     }
 
+    public void removeItem(QueueType listType, int itemPosition) {
+        if(getItemList(listType).size() > 0)
+            getItemList(listType).remove(itemPosition);
+    }
+
     public enum REPEAT {
         one,
         all,
