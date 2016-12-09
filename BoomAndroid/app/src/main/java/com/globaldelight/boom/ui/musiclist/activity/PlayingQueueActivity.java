@@ -330,5 +330,4 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         mItemTouchHelper.startDrag(viewHolder);
     }
-
 }
