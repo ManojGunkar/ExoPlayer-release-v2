@@ -55,12 +55,12 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
     public PlayingQueueListAdapter(Context context, UpNextList playingQueue, OnStartDragListener dragListener) {
         this.context = context;
-        init(playingQueue.getHistoryList(), playingQueue.getPlayingList(), playingQueue.getManualUpNextList(), playingQueue.getAutoUpNextList());
+        init(playingQueue.getHistoryList(), playingQueue.getPlayingList());
         this.mOnStartDragListener = dragListener;
     }
 
 
-    private void init(LinkedList<IMediaItemBase> history, LinkedList<UpNextList.UpNextItem> playing, LinkedList<IMediaItemBase> upnext, LinkedList<IMediaItemBase> upnextAuto) {
+    private void init(LinkedList<IMediaItemBase> history, LinkedList<UpNextList.UpNextItem> playing) {
         this.mHistoryList = history;
         this.mPlaying = playing;
         updateHeaderPosition();
@@ -97,7 +97,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     }
 
     public void updateList(UpNextList playingQueue) {
-        init(playingQueue.getHistoryList(), playingQueue.getPlayingList(), playingQueue.getManualUpNextList(), playingQueue.getAutoUpNextList());
+        init(playingQueue.getHistoryList(), playingQueue.getPlayingList());
         notifyDataSetChanged();
     }
 
@@ -139,40 +139,42 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         View itemView;
         switch (viewType) {
             case ITEM_VIEW_TYPE_HEADER_PLAYING:
-                if(mPlaying.size() > 0) {
-                    itemView = from(parent.getContext()).
-                            inflate(R.layout.card_header_playing_queue, parent, false);
-                }else{
-                    itemView = from(parent.getContext()).
-                            inflate(R.layout.card_row_hide, parent, false);
-                }
-                return new SimpleItemViewHolder(itemView);
+//                if(mPlaying.size() > 0) {
+//                    itemView = from(parent.getContext()).
+//                            inflate(R.layout.card_header_playing_queue, parent, false);
+//                }else{
+//                    itemView = from(parent.getContext()).
+//                            inflate(R.layout.card_row_hide, parent, false);
+//                }
+//                return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_HEADER_MANUAL:
-                if(App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0) {
-                    itemView = from(parent.getContext()).
-                            inflate(R.layout.card_header_playing_queue, parent, false);
-                }else{
-                    itemView = from(parent.getContext()).
-                            inflate(R.layout.card_row_hide, parent, false);
-                }
-                return new SimpleItemViewHolder(itemView);
+//                if(App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0) {
+//                    itemView = from(parent.getContext()).
+//                            inflate(R.layout.card_header_playing_queue, parent, false);
+//                }else{
+//                    itemView = from(parent.getContext()).
+//                            inflate(R.layout.card_row_hide, parent, false);
+//                }
+//                return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_HEADER_HISTORY:
-                if(mHistoryList.size() > 0) {
-                    itemView = from(parent.getContext()).
-                            inflate(R.layout.card_header_playing_queue, parent, false);
-                }else{
-                    itemView = from(parent.getContext()).
-                            inflate(R.layout.card_row_hide, parent, false);
-                }
-                return new SimpleItemViewHolder(itemView);
+//                if(mHistoryList.size() > 0) {
+//                    itemView = from(parent.getContext()).
+//                            inflate(R.layout.card_header_playing_queue, parent, false);
+//                }else{
+//                    itemView = from(parent.getContext()).
+//                            inflate(R.layout.card_row_hide, parent, false);
+//                }
+//                return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_HEADER_AUTO:
-                if(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
-                    itemView = from(parent.getContext()).
-                            inflate(R.layout.card_header_playing_queue, parent, false);
-                }else{
-                    itemView = from(parent.getContext()).
-                            inflate(R.layout.card_row_hide, parent, false);
-                }
+//                if(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
+//                    itemView = from(parent.getContext()).
+//                            inflate(R.layout.card_header_playing_queue, parent, false);
+//                }else{
+//                    itemView = from(parent.getContext()).
+//                            inflate(R.layout.card_row_hide, parent, false);
+//                }
+                itemView = from(parent.getContext()).
+                        inflate(R.layout.card_header_playing_queue, parent, false);
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_LIST_MANUAL:
 
@@ -200,7 +202,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         final ListPosition item;
         switch (whatView(position)) {
             case ITEM_VIEW_TYPE_HEADER_MANUAL:
-                if(App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0) {
+//                if(App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0) {
                     setHeaderBg(holder);
                     holder.headerText.setText(R.string.up_next_manual);
                     if (App.getPlayingQueueHandler().getUpNextList().getManualUpNextList() != null && App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0) {
@@ -209,17 +211,17 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     } else {
                         holder.buttonClrear.setVisibility(View.INVISIBLE);
                     }
-                }
+//                }
                 break;
             case ITEM_VIEW_TYPE_HEADER_PLAYING:
-                if(mPlaying.size() > 0) {
+//                if(mPlaying.size() > 0) {
                     setHeaderBg(holder);
                     holder.headerText.setText(R.string.Playing);
                     holder.buttonClrear.setVisibility(View.INVISIBLE);
-                }
+//                }
                 break;
             case ITEM_VIEW_TYPE_HEADER_HISTORY:
-                if(mHistoryList.size() > 0) {
+//                if(mHistoryList.size() > 0) {
                     setHeaderBg(holder);
                     holder.headerText.setText(R.string.History);
                     if (mHistoryList != null && mHistoryList.size() > 0) {
@@ -228,10 +230,10 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     } else {
                         holder.buttonClrear.setVisibility(View.INVISIBLE);
                     }
-                }
+//                }
                 break;
             case ITEM_VIEW_TYPE_HEADER_AUTO:
-                if(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
+//                if(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
                     setHeaderBg(holder);
                     holder.headerText.setText(R.string.up_next_auto);
                     if (App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList() != null && App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
@@ -240,7 +242,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     } else {
                         holder.buttonClrear.setVisibility(View.INVISIBLE);
                     }
-                }
+//                }
                 break;
             case ITEM_VIEW_TYPE_LIST_MANUAL:
 
@@ -438,6 +440,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     case History:
                         if (App.getPlayingQueueHandler().getUpNextList().getHistoryList().size() > 0) {
                             App.getPlayingQueueHandler().getUpNextList().clearUpNext(QueueType.History);
+                            holder.buttonClrear.setVisibility(View.INVISIBLE);
                             updateList(App.getPlayingQueueHandler().getUpNextList());
                         }
                         break;
@@ -449,6 +452,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                         }
                         if (App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0) {
                             App.getPlayingQueueHandler().getUpNextList().clearUpNext(QueueType.Manual_UpNext);
+                            holder.buttonClrear.setVisibility(View.INVISIBLE);
                             updateList(App.getPlayingQueueHandler().getUpNextList());
                         }
 
@@ -462,6 +466,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
                         if (App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
                             App.getPlayingQueueHandler().getUpNextList().clearUpNext(QueueType.Auto_UpNext);
+                            holder.buttonClrear.setVisibility(View.INVISIBLE);
                             updateList(App.getPlayingQueueHandler().getUpNextList());
                         }
                         break;
