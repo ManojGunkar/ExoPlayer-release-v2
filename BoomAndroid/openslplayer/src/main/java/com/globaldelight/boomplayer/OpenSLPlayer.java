@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.example.openslplayer.R;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 
@@ -152,11 +153,6 @@ public class OpenSLPlayer implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        try{
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     public void pause() {
@@ -195,12 +191,7 @@ public class OpenSLPlayer implements Runnable {
 
     @Override
     public void run() {
-            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
-            try{
-                Thread.sleep(100);
-            }catch (InterruptedException e){
-
-            }
+        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
         try {
             MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
             metadataRetriever.setDataSource(this.sourcePath);
@@ -222,9 +213,6 @@ public class OpenSLPlayer implements Runnable {
                 fd.close();
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            //Log.e(LOG_TAG, "exception:"+e.getMessage());
-
             if (events != null) handler.post(new Runnable() { @Override public void run() { events.onError();  } });
             return;
         }
@@ -241,32 +229,35 @@ public class OpenSLPlayer implements Runnable {
                 duration = format.getLong(MediaFormat.KEY_DURATION);
                 bitrate = format.getInteger(MediaFormat.KEY_BIT_RATE);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             Log.e(LOG_TAG, "Reading format parameters exception:"+e.getMessage());
             // don't exit, tolerate this error, we'll fail later if this is critical
         }
-        Log.d(LOG_TAG, "Track info: mime:" + mime + " sampleRate:" + sampleRate + " channels:" + channels + " bitrate:" + bitrate + " duration:" + duration);
 
         // check we have audio content we know
         if (format == null || !mime.startsWith("audio/")) {
             if (events != null) handler.post(new Runnable() { @Override public void run() { events.onError();  } });
             return;
         }
+
         // create the actual decoder, using the mime to select
         try {
             codec = MediaCodec.createDecoderByType(mime);
-        } catch (Exception e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+        }catch (IllegalArgumentException  e){
+            e.printStackTrace();
+        }catch (NullPointerException e){
             e.printStackTrace();
         }
+
         // check we have a valid codec instance
         if (codec == null) {
             if (events != null) handler.post(new Runnable() { @Override public void run() { events.onError();  } });
             return;
         }
 
-        //state.set(PlayerStates.PAUSED);
         if (events != null)
             handler.post(new Runnable() {
                 @Override public void run() {
@@ -277,17 +268,28 @@ public class OpenSLPlayer implements Runnable {
         try {
             codec.configure(format, null, null, 0);
             codec.start();
-        }catch (Exception e){
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+        } catch (MediaCodec.CodecException e){
+            e.printStackTrace();
+        } catch (IllegalStateException e){
+            e.printStackTrace();
+        }catch (MediaCodec.CryptoException e){
 
         }
+
         ByteBuffer[] codecInputBuffers  = null;
         ByteBuffer[] codecOutputBuffers = null;
 
         try{
+            //noinspection deprecation
             codecInputBuffers = codec.getInputBuffers();
+            //noinspection deprecation
             codecOutputBuffers = codec.getOutputBuffers();
-        }catch (IllegalStateException e){
-
+        } catch (MediaCodec.CodecException e){
+            e.printStackTrace();
+        } catch (IllegalStateException e){
+            e.printStackTrace();
         }
 
         if ( channels == 0 ) {
@@ -303,7 +305,10 @@ public class OpenSLPlayer implements Runnable {
 
         if(null != extractor) {
             extractor.selectTrack(0);
-        }else{
+        }
+
+        if (extractor == null) {
+            if (events != null) handler.post(new Runnable() { @Override public void run() { events.onError();  } });
             return;
         }
 
@@ -333,9 +338,12 @@ public class OpenSLPlayer implements Runnable {
                 int inputBufIndex = 0;
                 try{
                     inputBufIndex = codec.dequeueInputBuffer(kTimeOutUs);
-                }catch (IllegalStateException e){
-
+                } catch (MediaCodec.CodecException e){
+                    e.printStackTrace();
+                } catch (IllegalStateException e){
+                    e.printStackTrace();
                 }
+
                 if (inputBufIndex >= 0) {
                     ByteBuffer dstBuf = null;
                     try {
@@ -343,15 +351,17 @@ public class OpenSLPlayer implements Runnable {
                             dstBuf = codecInputBuffers[inputBufIndex];
                         }
                     }catch (ArrayIndexOutOfBoundsException e){
-
+                        e.printStackTrace();
                     }
-                    int sampleSize = extractor.readSampleData(dstBuf, 0);
+                    int sampleSize = 0;
+                    if(null != extractor)
+                        sampleSize = extractor.readSampleData(dstBuf, 0);
+
                     if (sampleSize < 0) {
                         //Log.d(LOG_TAG, "saw input EOS. Stopping playback");
                         sawInputEOS = true;
                         sampleSize = 0;
                     } else {
-
                         long curTime = extractor.getSampleTime();
                         if (events != null && Math.abs(curTime - presentationTimeUs) > 500000 ) {
                             presentationTimeUs = curTime;
@@ -366,13 +376,15 @@ public class OpenSLPlayer implements Runnable {
                     }
                     try {
                         codec.queueInputBuffer(inputBufIndex, 0, sampleSize, presentationTimeUs, sawInputEOS ? MediaCodec.BUFFER_FLAG_END_OF_STREAM : 0);
-                    }catch (IllegalStateException e){
-
+                    } catch (MediaCodec.CodecException e){
+                        e.printStackTrace();
+                    } catch (IllegalStateException e){
+                        e.printStackTrace();
+                    } catch (MediaCodec.CryptoException e){
+                        e.printStackTrace();
                     }
                     if (!sawInputEOS) extractor.advance();
 
-                } else {
-                    //Log.e(LOG_TAG, "inputBufIndex " +inputBufIndex);
                 }
             } // !sawInputEOS
 
@@ -380,16 +392,23 @@ public class OpenSLPlayer implements Runnable {
             int res = 0;
             try {
                 res = codec.dequeueOutputBuffer(info, kTimeOutUs);
-            } catch (IllegalStateException e) {
+            } catch (MediaCodec.CodecException  e) {
+                e.printStackTrace();
+            }catch (IllegalStateException e) {
                 e.printStackTrace();
             }
             if (res >= 0) {
                 if (info.size > 0) noOutputCounter = 0;
 
                 int outputBufIndex = res;
-                ByteBuffer buf = codecOutputBuffers[outputBufIndex];
+                ByteBuffer buf = null;
+                try {
+                    buf = codecOutputBuffers[outputBufIndex];
+                }catch (ArrayIndexOutOfBoundsException e){
+                    e.printStackTrace();
+                }
 
-                if (info.size > 0) {
+                if (info.size > 0 && null != buf) {
                     int i = 0;
                     while (i != info.size && !stop && state.get() == PlayerStates.PLAYING) {
                         i += write(buf, i, info.size);
@@ -398,6 +417,8 @@ public class OpenSLPlayer implements Runnable {
                 try {
                     if(null != codec)
                         codec.releaseOutputBuffer(outputBufIndex, false);
+                } catch (MediaCodec.CodecException e){
+                    e.printStackTrace();
                 } catch (IllegalStateException e) {
                     e.printStackTrace();
                 }
@@ -405,18 +426,21 @@ public class OpenSLPlayer implements Runnable {
 //                    Log.d(LOG_TAG, "saw output EOS.");
                     sawOutputEOS = true;
                 }
-            } else if (res == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
+            } else if (res == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED && null != codec) {
                 try {
+                    //noinspection deprecation
                     codecOutputBuffers = codec.getOutputBuffers();
                 }catch (IllegalStateException e){
-
+                    e.printStackTrace();
                 }
 //                Log.d(LOG_TAG, "output buffers have changed.");
             } else if (res == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                 MediaFormat oformat = null;
                 try {
                     oformat = codec.getOutputFormat();
-                }catch (IllegalStateException e){}
+                }catch (IllegalStateException e){
+                    e.printStackTrace();
+                }
 //                Log.d(LOG_TAG, "output format has changed to " + oformat);
             } else {
 //                Log.d(LOG_TAG, "dequeueOutputBuffer returned " + res);
@@ -429,7 +453,7 @@ public class OpenSLPlayer implements Runnable {
             try {
                 codec.stop();
             }catch (IllegalStateException e){
-
+                e.printStackTrace();
             }
             codec.release();
             codec = null;

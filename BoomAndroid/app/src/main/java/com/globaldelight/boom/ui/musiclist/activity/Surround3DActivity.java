@@ -278,6 +278,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()) {
             if(isLeftFront && isRightFront && isLeftSurround && isRightSurround){
                 mSpeakerInfo.setVisibility(View.GONE);
+                mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_all_on));
                 mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_active_off, null));
                 updateTweeterAndWoofer(true);
             }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround) {
@@ -296,6 +297,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         }else{
             if(isLeftFront && isRightFront && isLeftSurround && isRightSurround){
                 mSpeakerInfo.setVisibility(View.GONE);
+                mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_all_on));
                 updateTweeterAndWoofer(true);
             }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround) {
                 // All Speakers are off
@@ -308,15 +310,13 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                 mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
                 updateTweeterAndWoofer(true);
             }
-            if(!isExpended && (mSpeakerInfo.getText().equals(getResources().getString(R.string.speaker_status_some_off)) ||
-            mSpeakerInfo.getText().equals(getResources().getString(R.string.speaker_status_all_off)))){
-                mSpeakerInfo.setVisibility(View.VISIBLE);
-            }else{
-                mSpeakerInfo.setVisibility(View.GONE);
-            }
-
-
             mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_inactive, null));
+        }
+        if(!isExpended && audioEffectPreferenceHandler.is3DSurroundOn() && audioEffectPreferenceHandler.isAudioEffectOn() &&
+                (mSpeakerInfo.getText().equals(getResources().getString(R.string.speaker_status_some_off)) || mSpeakerInfo.getText().equals(getResources().getString(R.string.speaker_status_all_off)))){
+            mSpeakerInfo.setVisibility(View.VISIBLE);
+        }else{
+            mSpeakerInfo.setVisibility(View.GONE);
         }
     }
 

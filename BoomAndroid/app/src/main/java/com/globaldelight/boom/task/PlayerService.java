@@ -59,13 +59,18 @@ public class PlayerService extends Service {
     };
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public void onCreate() {
+        super.onCreate();
         context = this;
         App.setService(this);
-        if (musicPlayerHandler == null)
-            musicPlayerHandler = App.getPlayerEventHandler();
 
         App.getPlayingQueueHandler().getUpNextList().fetchUpNextItemsToDB();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (musicPlayerHandler == null)
+            musicPlayerHandler = App.getPlayerEventHandler();
 
         App.getPlayingQueueHandler().getUpNextList().updateRepeatShuffleOnAppStart();
 

@@ -630,7 +630,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(!App.getPlayerEventHandler().isPlaying())
+        if(!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused())
             updateUpNextDB();
         unregisterReceiver(mPlayerBroadcastReceiver);
     }

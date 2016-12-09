@@ -91,6 +91,16 @@ public class UpNextList {
         return getItemList(QueueType.Auto_UpNext);
     }
 
+    public void setUpdatedListItem(QueueType queueType, LinkedList<IMediaItemBase> list){
+        if(queueType == QueueType.Manual_UpNext){
+            mUpNextList.clear();
+            mUpNextList.addAll(list);
+        }else if(queueType == QueueType.Auto_UpNext){
+            mAutoNextList.clear();
+            mAutoNextList.addAll(list);
+        }
+    }
+
     /******************************************************************************************************************/
 
     public boolean resetShuffle() {
@@ -389,8 +399,7 @@ public class UpNextList {
                     for (int i = 0; i < PlayItemIndex; PlayItemIndex--) {
                         mGhostList.add(mAutoNextList.remove(i));
                     }
-                    if (PlayItemIndex < 0)
-                        PlayItemIndex = 0;
+                    PlayItemIndex = 0;
 //                selected item comes on top, so remove only top (0) item
                     mCurrentList.add(new UpNextItem(mAutoNextList.remove(0), queueType));
                 } else if (mRepeat == REPEAT.all/* && mShuffle == SHUFFLE.none*/) {

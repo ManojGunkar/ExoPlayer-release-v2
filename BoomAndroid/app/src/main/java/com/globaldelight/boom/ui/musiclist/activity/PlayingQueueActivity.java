@@ -21,14 +21,17 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.handler.PlayingQueue.QueueType;
 import com.globaldelight.boom.ui.musiclist.adapter.PlayingQueueListAdapter;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.PermissionChecker;
@@ -54,6 +57,7 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
     private PermissionChecker permissionChecker;
     private View emptyView;
     private ItemTouchHelper mItemTouchHelper;
+    private boolean isMove = false;
     private BroadcastReceiver upnextBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -257,15 +261,16 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
 
                 if (to.getListType() == start.getListType()) {
                     if (to.getListType() == PlayingQueueListAdapter.ITEM_VIEW_TYPE_LIST_MANUAL || to.getListType() == PlayingQueueListAdapter.ITEM_VIEW_TYPE_LIST_AUTO) {
-                        Collections.swap(playingQueueListAdapter.getListForType(to.getListType()), start.getItemPosition(), to.getItemPosition());
-                        playingQueueListAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                        Collections.swap(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList(), start.getItemPosition(), to.getItemPosition());
+//                        Collections.swap(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList(), start.getItemPosition(), to.getItemPosition());
+//                        Toast.makeText(PlayingQueueActivity.this, "Start : "+start.getItemPosition()+" end : "+to.getItemPosition(), Toast.LENGTH_SHORT).show();
+// playingQueueListAdapter.notifyDataSetChanged();
+                         playingQueueListAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                        isMove = true;
                     }
-
-
                 }
-                return false;
+                return true;
             }
-
 
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
@@ -325,4 +330,5 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         mItemTouchHelper.startDrag(viewHolder);
     }
+
 }

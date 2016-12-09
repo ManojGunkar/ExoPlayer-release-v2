@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -49,7 +50,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     private LinkedList<IMediaItemBase> mHistoryList;
     LinkedList<UpNextList.UpNextItem> mPlaying;
     private LinkedList<IMediaItemBase> mUpnextManualList;
-    private LinkedList<IMediaItemBase> mUpnextAutoList;
+//    private LinkedList<IMediaItemBase> mUpnextAutoList;
     private int headerHistoryPos, headerPlayingPos, headerManualPos,
             headerAutoPos, totalSize;
     private Context context;
@@ -65,7 +66,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         this.mHistoryList = history;
         this.mPlaying = playing;
         this.mUpnextManualList = upnext;
-        this.mUpnextAutoList = upnextAuto;
+//        this.mUpnextAutoList = upnextAuto;
         updateHeaderPosition();
     }
 
@@ -75,7 +76,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         headerPlayingPos = mHistoryList.size() + 1;
         headerManualPos = mHistoryList.size() + mPlaying.size() + 2;
         headerAutoPos = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + 3;
-        this.totalSize = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + mUpnextAutoList.size() + 4;
+        this.totalSize = mHistoryList.size() + mPlaying.size() + mUpnextManualList.size() + App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() + 4;
     }
 
     public int whatView(int position) {
@@ -204,7 +205,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
             case ITEM_VIEW_TYPE_HEADER_AUTO:
                 setHeaderBg(holder);
                 holder.headerText.setText(R.string.up_next_auto);
-                if (mUpnextAutoList != null && mUpnextAutoList.size() > 0) {
+                if (App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList() != null && App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
                     holder.buttonClrear.setVisibility(View.VISIBLE);
                     setOnClearBottonClick(holder, QueueType.Auto_UpNext, position);
                 } else {
@@ -315,9 +316,9 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     holder.undoButton.setVisibility(View.GONE);
                     holder.undoButton.setOnClickListener(null);
                     itemPosition = getPositionObject(position).getItemPosition();
-                    setArt(holder, mUpnextAutoList.get(itemPosition).getItemArtUrl(), whatView(position));
-                    holder.name.setText(mUpnextAutoList.get(itemPosition).getItemTitle());
-                    holder.artistName.setText(((IMediaItem) mUpnextAutoList.get(itemPosition)).getItemArtist());
+                    setArt(holder, App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemArtUrl(), whatView(position));
+                    holder.name.setText(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemTitle());
+                    holder.artistName.setText(((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition)).getItemArtist());
                     setOnItemClick(holder, QueueType.Auto_UpNext, itemPosition);
                     setDragHandle(holder);
                 }
@@ -346,6 +347,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                IMediaItemBase item;
                 switch (queueType) {
                     case History:
                         App.getPlayingQueueHandler().getUpNextList().addToPlay(QueueType.History, itemPosition);
@@ -354,9 +356,11 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                         App.getPlayingQueueHandler().getUpNextList().addToPlay(QueueType.Playing, itemPosition);
                         break;
                     case Manual_UpNext:
+                        item = mUpnextManualList.get(itemPosition);
                         App.getPlayingQueueHandler().getUpNextList().addToPlay(queueType, itemPosition);
                         break;
                     case Auto_UpNext:
+                        item = App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition);
                         App.getPlayingQueueHandler().getUpNextList().addToPlay(queueType, itemPosition);
                         break;
                     default:
@@ -475,7 +479,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
             case ITEM_VIEW_TYPE_LIST_MANUAL:
                 return mUpnextManualList;
             case ITEM_VIEW_TYPE_LIST_AUTO:
-                return mUpnextAutoList;
+                return App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList();
         }
         return null;
     }
