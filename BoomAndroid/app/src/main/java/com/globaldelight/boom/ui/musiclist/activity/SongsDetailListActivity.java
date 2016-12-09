@@ -289,9 +289,6 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         return Color.HSVToColor(hsv);
     }
 
-    private void setAlbumArtSize(int width, int height) {
-    }
-
     private void setSongsArtImage(final Size size, final ArrayList<String> Urls) {
 
         int count = Urls.size() > 4 ? 4 : Urls.size();
