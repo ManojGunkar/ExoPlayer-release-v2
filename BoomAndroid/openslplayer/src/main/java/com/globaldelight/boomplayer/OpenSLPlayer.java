@@ -68,8 +68,8 @@ public class OpenSLPlayer implements Runnable {
         int frameCount = Integer.parseInt(frameSizeStr);
         if ( frameCount == 0 ) frameCount = 1024; // if not available use 4k buffer - 1024*2*2
 
-        Log.e(LOG_TAG, "sampleRate:"+sampleRate);
-        Log.e(LOG_TAG, "frameSize:"+frameCount);
+        Log.d(LOG_TAG, "sampleRate:"+sampleRate);
+        Log.d(LOG_TAG, "frameSize:"+frameCount);
 
         createEngine(mContext.getAssets(), sampleRate, frameCount, floatAudioSupported());
     }

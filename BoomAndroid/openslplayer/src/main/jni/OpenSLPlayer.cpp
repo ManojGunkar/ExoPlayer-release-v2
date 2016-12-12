@@ -6,6 +6,8 @@
 #include <logger/log.h>
 #include "OpenSLPlayer.hpp"
 
+#define LOG_TAG "OpenSLPlayer"
+
 
 namespace gdpl
 {

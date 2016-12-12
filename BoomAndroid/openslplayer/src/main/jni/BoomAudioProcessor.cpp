@@ -9,6 +9,9 @@
 #include "Utilities/Utility.h"
 #include "BoomAudioProcessor.h"
 
+
+#define LOG_TAG "BoomAudioProcessor"
+
 using namespace gdpl;
 
 static const uint16_t UNITY_GAIN = 0x1000;
@@ -86,7 +89,12 @@ void gdpl::BoomAudioProcessor::getNextBuffer(AudioBufferProvider::Buffer *buffer
     buffer->raw = mTempBuffers[mIndex];
     mIndex = (mIndex + 1) % kTempBufferCount;
 
-    buffer->frameCount = mPlaybackBuffer->Read((uint8_t*)buffer->raw, buffer->frameCount);
+    size_t count = mPlaybackBuffer->Read((uint8_t*)buffer->raw, buffer->frameCount);
+    if ( count < buffer->frameCount ) {
+        LOGW("Reading less data [requested = %d read = %d]", buffer->frameCount, count);
+    }
+
+    buffer->frameCount = count;
     if ( buffer->frameCount == 0 ) {
         LOGE("No data to enqueue!");
         buffer->raw = NULL;
