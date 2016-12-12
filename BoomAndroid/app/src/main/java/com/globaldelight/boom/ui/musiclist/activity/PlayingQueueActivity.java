@@ -242,7 +242,7 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
             boolean initiated;
 
             private void init() {
-                background = new ColorDrawable(getResources().getColor(R.color.progress_gray_dark));
+                background = new ColorDrawable(getResources().getColor(R.color.upnext_delete_background));
 
 
                 initiated = true;

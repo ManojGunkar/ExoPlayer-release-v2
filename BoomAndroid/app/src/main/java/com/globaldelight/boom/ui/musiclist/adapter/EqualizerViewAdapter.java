@@ -33,11 +33,13 @@ public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdap
     AudioEffect audioEffectPreferenceHandler;
     private Activity context;
     private onEqualizerUpdate equalizerUpdateEvent = null;
+    private RecyclerView recyclerView;
     private Handler updateUIHandler = new Handler();
 
-    public EqualizerViewAdapter(Surround3DActivity surround3DActivity, List<String> eq_names, TypedArray eq_active_on,
+    public EqualizerViewAdapter(Surround3DActivity surround3DActivity, RecyclerView recyclerView, List<String> eq_names, TypedArray eq_active_on,
                                 TypedArray eq_active_off, TypedArray eq_inactive_on, TypedArray eq_inactive_off) {
         this.context = surround3DActivity;
+        this.recyclerView = recyclerView;
         this.eq_names = eq_names;
         this.eq_active_on = eq_active_on;
         this.eq_active_off = eq_active_off;
@@ -115,6 +117,7 @@ public class EqualizerViewAdapter extends RecyclerView.Adapter<EqualizerViewAdap
                         }
                     }
                     updateList();
+                    recyclerView.scrollToPosition(position);
                 }
             }
         });

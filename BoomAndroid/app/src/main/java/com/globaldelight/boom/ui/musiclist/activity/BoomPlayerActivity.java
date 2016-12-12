@@ -72,9 +72,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private static final String TAG = "BoomPlayerActivity";
     private static long mItemId=-1;
     private static boolean isUser = false;
-    public ImageView mShuffleBtn, mRepeatBtn, mNextBtn, mPrevBtn, mAddToPlayList, mFavourite, mPlayerSetting;
+    public ImageView mShuffleBtn, mRepeatBtn, mNextBtn, mPrevBtn, mAddToPlayList, mFavourite;
     FrameLayout mPlayerBackground;
-    LinearLayout mPlayerRootView;
+    LinearLayout mPlayerRootView, mPlayerSetting;
     AudioEffect audioEffectPreferenceHandler;
     FrameLayout.LayoutParams param;
     MusicReceiver musicReceiver;
@@ -427,7 +427,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
         mAddToPlayList = (ImageView) findViewById(R.id.player_add_to_playlist);
         mFavourite = (ImageView)findViewById(R.id.player_fav_btn);
-        mPlayerSetting = (ImageView)findViewById(R.id.player_setting_btn);
+        mPlayerSetting = (LinearLayout)findViewById(R.id.player_setting_panel);
 
         mPlayedTime = (RegularTextView) findViewById(R.id.played_time);
         mRemainsTime = (RegularTextView) findViewById(R.id.remains_time);
@@ -534,7 +534,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             case R.id.player_fav_btn:
                 updateFavoriteTrack(true);
                 break;
-            case R.id.player_setting_btn:
+            case R.id.player_setting_panel:
                 startSettingActivity();
             default:
 
@@ -584,6 +584,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     protected void onResume() {
         super.onResume();
         App.getPlayerEventHandler().isPlayerResume = true;
+        if(null == App.getService())
+            startService(new Intent(this, PlayerService.class));
+
+
         updateEffectIcon();
         if (null != App.getPlayerEventHandler().getPlayingItem()) {
             updateTrackToPlayer((MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isPlaying(), /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));

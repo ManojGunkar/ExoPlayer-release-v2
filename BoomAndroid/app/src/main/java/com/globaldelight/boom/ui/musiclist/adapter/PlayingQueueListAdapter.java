@@ -250,7 +250,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                 item = getPositionObject(position);
 
                 if (itemDelete != null && itemDelete.getItemPosition() == item.getItemPosition() && item.getListType() == itemDelete.getListType()) {
-                    holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.progress_gray_dark));
+                    holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.upnext_delete_background));
                     holder.layout.setVisibility(View.GONE);
                     holder.undoButton.setVisibility(View.INVISIBLE);
                     holder.undoButton.setOnClickListener(new View.OnClickListener() {
@@ -271,7 +271,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                             if (holder.undoButton.getVisibility() == View.INVISIBLE)
                                 holder.undoButton.setVisibility(View.VISIBLE);
                         }
-                    }, 100);
+                    }, 500);
 
                 } else {
                     try {
@@ -319,10 +319,9 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                 if (itemDelete != null && itemDelete.getItemPosition() == item.getItemPosition() && item.getListType() == itemDelete.getListType()) {
 
                     // we need to show the "undo" state of the row
-                    holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.progress_gray_dark));
+                    holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.upnext_delete_background));
 
                     holder.layout.setVisibility(View.GONE);
-                    holder.deleteTxt.setVisibility(View.VISIBLE);
                     holder.undoButton.setVisibility(View.INVISIBLE);
                     holder.undoButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -340,16 +339,14 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                         @Override
                         public void run() {
                             if (holder.undoButton.getVisibility() == View.INVISIBLE)
-                                holder.deleteTxt.setVisibility(View.GONE);
                                 holder.undoButton.setVisibility(View.VISIBLE);
                         }
-                    }, 100);
+                    }, 500);
                 } else {
                     // we need to show the "normal" state
                     holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorBackground));
                     holder.layout.setVisibility(View.VISIBLE);
                     holder.undoButton.setVisibility(View.GONE);
-                    holder.deleteTxt.setVisibility(View.GONE);
                     holder.undoButton.setOnClickListener(null);
                     itemPosition = getPositionObject(position).getItemPosition();
                     setArt(holder, App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemArtUrl(), whatView(position));
@@ -370,7 +367,8 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (MotionEventCompat.getActionMasked(event) ==
-                        MotionEvent.ACTION_DOWN || MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                        MotionEvent.ACTION_DOWN || MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_HOVER_ENTER
+                        || MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_SCROLL) {
                     mOnStartDragListener.onStartDrag(holder);
                 }
                 return false;
@@ -383,7 +381,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                IMediaItemBase item;
                 switch (queueType) {
                     case History:
                         App.getPlayingQueueHandler().getUpNextList().addToPlay(QueueType.History, itemPosition);
@@ -576,9 +573,8 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         public View mainView;
         public ImageView img;
 
-        public ImageView imgHandle;
+        public LinearLayout imgHandle;
         public Button undoButton;
-        public TextView deleteTxt;
         /*functions to implement swipe delete action-made for multi delete*/
         public LinearLayout layout;
 
@@ -590,11 +586,10 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
             buttonClrear = (RegularTextView) itemView.findViewById(R.id.btn_clear);
             layout = (LinearLayout) itemView.findViewById(R.id.viewcontent);
             img = (ImageView) itemView.findViewById(R.id.queue_item_img);
-            imgHandle = (ImageView) itemView.findViewById(R.id.queue_item_handle);
+            imgHandle = (LinearLayout) itemView.findViewById(R.id.queue_item_handle);
             name = (RegularTextView) itemView.findViewById(R.id.queue_item_name);
             artistName = (RegularTextView) itemView.findViewById(R.id.queue_item_artist);
             undoButton = (Button) itemView.findViewById(R.id.undo_button);
-            deleteTxt = (TextView) itemView.findViewById(R.id.delete_button);
         }
     }
 

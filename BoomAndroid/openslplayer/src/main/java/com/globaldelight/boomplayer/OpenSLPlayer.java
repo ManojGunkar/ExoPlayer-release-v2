@@ -332,130 +332,143 @@ public class OpenSLPlayer implements Runnable {
         presentationTimeUs = 0;
         state.set(PlayerStates.PLAYING);
         updatePlayerEffect();
-        while (!sawOutputEOS && noOutputCounter < noOutputCounterLimit && !stop) {
-
-            if(playerThread.isInterrupted()){
-                return;
-            }
-
-            // pause implementation
-            waitPlay();
-
-            noOutputCounter++;
-            // read a buffer before feeding it to the decoder
-            if (!sawInputEOS) {
-                int inputBufIndex = 0;
-                try{
-                    inputBufIndex = codec.dequeueInputBuffer(kTimeOutUs);
-                } catch (MediaCodec.CodecException e){
-                    e.printStackTrace();
-                } catch (IllegalStateException e){
-                    e.printStackTrace();
-                }
-
-                if (inputBufIndex >= 0) {
-                    ByteBuffer dstBuf = null;
-                    try {
-                        if (null != codecInputBuffers) {
-                            dstBuf = codecInputBuffers[inputBufIndex];
-                        }
-                    }catch (ArrayIndexOutOfBoundsException e){
-                        e.printStackTrace();
-                    }
-                    int sampleSize = 0;
-                    if(null != extractor)
-                        sampleSize = extractor.readSampleData(dstBuf, 0);
-
-                    if (sampleSize < 0) {
-                        //Log.d(LOG_TAG, "saw input EOS. Stopping playback");
-                        sawInputEOS = true;
-                        sampleSize = 0;
-                    } else {
-                        long curTime = extractor.getSampleTime();
-                        if (events != null && Math.abs(curTime - presentationTimeUs) > 500000 ) {
-                            presentationTimeUs = curTime;
-                            final int percent = (duration == 0) ? 0 : (int) (100 * presentationTimeUs / duration);
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    events.onPlayUpdate(percent, presentationTimeUs / 1000, duration / 1000);
-                                }
-                            });
-                        }
-                    }
-                    try {
-                        codec.queueInputBuffer(inputBufIndex, 0, sampleSize, presentationTimeUs, sawInputEOS ? MediaCodec.BUFFER_FLAG_END_OF_STREAM : 0);
-                    } catch (MediaCodec.CodecException e){
-                        e.printStackTrace();
-                    } catch (IllegalStateException e){
-                        e.printStackTrace();
-                    } catch (MediaCodec.CryptoException e){
-                        e.printStackTrace();
-                    }
-                    if (!sawInputEOS) extractor.advance();
-
-                }
-            } // !sawInputEOS
-
-            // decode to PCM and push it to the OpenSLPlayer player
-            int res = 0;
-            try {
-                res = codec.dequeueOutputBuffer(info, kTimeOutUs);
-            } catch (MediaCodec.CodecException  e) {
-                e.printStackTrace();
-            }catch (IllegalStateException e) {
-                e.printStackTrace();
-            }
-            if (res >= 0) {
-                if (info.size > 0) noOutputCounter = 0;
-
-                int outputBufIndex = res;
-                ByteBuffer buf = null;
+        try {
+            while (!sawOutputEOS && noOutputCounter < noOutputCounterLimit && !stop) {
                 try {
-                    buf = codecOutputBuffers[outputBufIndex];
-                }catch (ArrayIndexOutOfBoundsException e){
-                    e.printStackTrace();
+                    if (playerThread.isInterrupted()) {
+                        return;
+                    }
+                }catch (Exception e){
+                    return;
                 }
 
-                if (info.size > 0 && null != buf) {
-                    int i = 0;
-                    while (i != info.size && !stop && state.get() == PlayerStates.PLAYING) {
-                        i += write(buf, i, info.size);
+                // pause implementation
+                waitPlay();
+
+                noOutputCounter++;
+                // read a buffer before feeding it to the decoder
+                if (!sawInputEOS) {
+                    int inputBufIndex = 0;
+                    try {
+                        inputBufIndex = codec.dequeueInputBuffer(kTimeOutUs);
+                    } catch (MediaCodec.CodecException e) {
+                        e.printStackTrace();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
                     }
-                }
+
+                    if (inputBufIndex >= 0) {
+                        ByteBuffer dstBuf = null;
+                        try {
+                            if (null != codecInputBuffers) {
+                                dstBuf = codecInputBuffers[inputBufIndex];
+                            }
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                            e.printStackTrace();
+                        }
+                        int sampleSize = 0;
+                        if (null != extractor) {
+                            try {
+                                sampleSize = extractor.readSampleData(dstBuf, 0);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+//                                sampleSize = -1;
+                            }
+                        }
+                        if (sampleSize < 0) {
+                            //Log.d(LOG_TAG, "saw input EOS. Stopping playback");
+                            sawInputEOS = true;
+                            sampleSize = 0;
+                        } else {
+                            long curTime = extractor.getSampleTime();
+                            if (events != null && Math.abs(curTime - presentationTimeUs) > 500000) {
+                                presentationTimeUs = curTime;
+                                final int percent = (duration == 0) ? 0 : (int) (100 * presentationTimeUs / duration);
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        events.onPlayUpdate(percent, presentationTimeUs / 1000, duration / 1000);
+                                    }
+                                });
+                            }
+                        }
+                        try {
+                            codec.queueInputBuffer(inputBufIndex, 0, sampleSize, presentationTimeUs, sawInputEOS ? MediaCodec.BUFFER_FLAG_END_OF_STREAM : 0);
+                        } catch (MediaCodec.CodecException e) {
+                            e.printStackTrace();
+                        } catch (IllegalStateException e) {
+                            e.printStackTrace();
+                        } catch (MediaCodec.CryptoException e) {
+                            e.printStackTrace();
+                        }
+                        if (!sawInputEOS) extractor.advance();
+
+                    }
+                } // !sawInputEOS
+
+                // decode to PCM and push it to the OpenSLPlayer player
+                int res = 0;
                 try {
-                    if(null != codec)
-                        codec.releaseOutputBuffer(outputBufIndex, false);
-                } catch (MediaCodec.CodecException e){
+                    res = codec.dequeueOutputBuffer(info, kTimeOutUs);
+                } catch (MediaCodec.CodecException e) {
                     e.printStackTrace();
                 } catch (IllegalStateException e) {
                     e.printStackTrace();
                 }
-                if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
-//                    Log.d(LOG_TAG, "saw output EOS.");
-                    sawOutputEOS = true;
-                }
-            } else if (res == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED && null != codec) {
-                try {
-                    //noinspection deprecation
-                    codecOutputBuffers = codec.getOutputBuffers();
-                }catch (IllegalStateException e){
-                    e.printStackTrace();
-                }
-//                Log.d(LOG_TAG, "output buffers have changed.");
-            } else if (res == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                MediaFormat oformat = null;
-                try {
-                    oformat = codec.getOutputFormat();
-                }catch (IllegalStateException e){
-                    e.printStackTrace();
-                }
-//                Log.d(LOG_TAG, "output format has changed to " + oformat);
-            } else {
-//                Log.d(LOG_TAG, "dequeueOutputBuffer returned " + res);
-            }
-        }
+                if (res >= 0) {
+                    if (info.size > 0) noOutputCounter = 0;
 
+                    int outputBufIndex = res;
+                    ByteBuffer buf = null;
+                    try {
+                        if (null != codecOutputBuffers) {
+                            buf = codecOutputBuffers[outputBufIndex];
+                        }
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (info.size > 0 && null != buf) {
+                        int i = 0;
+                        while (i != info.size && !stop && state.get() == PlayerStates.PLAYING) {
+                            i += write(buf, i, info.size);
+                        }
+                    }
+                    try {
+                        if (null != codec)
+                            codec.releaseOutputBuffer(outputBufIndex, false);
+                    } catch (MediaCodec.CodecException e) {
+                        e.printStackTrace();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
+                    if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
+//                    Log.d(LOG_TAG, "saw output EOS.");
+                        sawOutputEOS = true;
+                    }
+                } else if (res == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED && null != codec) {
+                    try {
+                        //noinspection deprecation
+                        codecOutputBuffers = codec.getOutputBuffers();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
+//                Log.d(LOG_TAG, "output buffers have changed.");
+                } else if (res == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                    MediaFormat oformat = null;
+                    try {
+                        oformat = codec.getOutputFormat();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    }
+//                Log.d(LOG_TAG, "output format has changed to " + oformat);
+                } else {
+//                Log.d(LOG_TAG, "dequeueOutputBuffer returned " + res);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         //Log.d(LOG_TAG, "stopping...");
 
         if(codec != null) {
@@ -464,7 +477,8 @@ public class OpenSLPlayer implements Runnable {
             }catch (IllegalStateException e){
                 e.printStackTrace();
             }
-            codec.release();
+            if(codec != null)
+                codec.release();
             codec = null;
         }
 
