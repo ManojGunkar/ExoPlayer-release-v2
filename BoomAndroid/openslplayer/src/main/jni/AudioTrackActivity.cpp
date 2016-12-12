@@ -185,7 +185,9 @@ namespace gdpl {
     }
 
     void stopPlayer(jboolean wait) {
-        while ( wait && openSLPlayer->isReading() );
+        while ( wait && openSLPlayer->isReading() ) {
+            usleep(10000);
+        }
         openSLPlayer->stop();
     }
 
