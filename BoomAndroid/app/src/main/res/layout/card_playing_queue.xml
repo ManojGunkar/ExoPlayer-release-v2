@@ -11,14 +11,19 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
+        <LinearLayout
             android:id="@+id/queue_item_handle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/ninety_two_pt"
-            android:layout_weight="0"
-            android:scaleType="centerCrop"
-            android:src="@drawable/rearange" />
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/ninety_two_pt"
+            android:layout_weight="0">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/rearange" />
+        </LinearLayout>
+
 
         <ImageView
             android:id="@+id/queue_item_img"
@@ -69,7 +74,8 @@
         android:layout_gravity="end|center_vertical"
         android:text="@string/txt_undo"
         android:textAllCaps="true"
-        android:textColor="@color/swipe_delete_undo_btn" />
+        android:visibility="gone"
+        android:textColor="@color/white" />
 
 
 </FrameLayout>

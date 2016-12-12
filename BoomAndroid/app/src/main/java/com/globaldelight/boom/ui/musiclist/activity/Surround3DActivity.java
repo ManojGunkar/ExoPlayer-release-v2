@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -69,6 +70,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     private AudioEffect audioEffectPreferenceHandler;
     private boolean isExpended = false;
     private ScrollView mPanelScroll;
+    private double mOldIntensity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -222,6 +224,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         });
 
         mPanelScroll.setScrollY(0);
+        mOldIntensity = audioEffectPreferenceHandler.getIntensity()/(double)100;
     }
 
     public void onPowerSwitchUpdate(){
@@ -230,14 +233,14 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         mEffectPowerBtn.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
         if(audioEffectPreferenceHandler.isAudioEffectOn()) {
-            mEffectSwitchTxt.setText(getResources().getString(R.string.status_on));
+            mEffectSwitchTxt.setText(getResources().getString(R.string.switch_on));
             /*mEffectPowerBtn.setChecked(true);*/
             mEffectTxt.setTextColor(Color.WHITE);
             mEffectSwitchTxt.setTextColor(Color.WHITE);
             MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_EFFECTS_TURNED_ON);
             Preferences.writeBoolean(this, Preferences.PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE, false);
         }else{
-            mEffectSwitchTxt.setText(getResources().getString(R.string.status_off));
+            mEffectSwitchTxt.setText(getResources().getString(R.string.switch_off));
             /*mEffectPowerBtn.setChecked(false);*/
             mEffectTxt.setTextColor(Color.WHITE);
             mEffectSwitchTxt.setTextColor(Color.WHITE);
@@ -258,8 +261,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         }else{
             m3DSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_surround_off, null));
             m3DSwitchTxt.setText(getResources().getString(R.string.status_off_caps));
-            m3DTxt.setTextColor(Color.WHITE);
-            m3DSwitchTxt.setTextColor(Color.WHITE);
+            m3DTxt.setTextColor(getResources().getColor(R.color.progress_gray_dark));
+            m3DSwitchTxt.setTextColor(getResources().getColor(R.color.progress_gray_dark));
             mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_inactive, null));
             MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_3D_TURNED_OFF);
         }
@@ -302,12 +305,12 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             }else if (!isLeftFront && !isRightFront && !isLeftSurround && !isRightSurround) {
                 // All Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_all_off));
-                mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
+                mSpeakerInfo.setTextColor(getResources().getColor(R.color.progress_gray_dark));// inactive color
                 updateTweeterAndWoofer(false);
             }else if (!isLeftFront || !isRightFront || !isLeftSurround || !isRightSurround) {
                 // Some Speakers are off
                 mSpeakerInfo.setText(getResources().getString(R.string.speaker_status_some_off));
-                mSpeakerInfo.setTextColor(Color.WHITE);// inactive color
+                mSpeakerInfo.setTextColor(getResources().getColor(R.color.progress_gray_dark));// inactive color
                 updateTweeterAndWoofer(true);
             }
             mSpeakerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_three_d_speakers_inactive, null));
@@ -359,7 +362,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             }else{
                 mFullBassRd.setImageDrawable(getResources().getDrawable(R.drawable.full_bass_inactive_off, null));
             }
-            mFullbassTxt.setTextColor(Color.WHITE);
+            mFullbassTxt.setTextColor(getResources().getColor(R.color.progress_gray_dark));
             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_FULL_BASS_DISABLED);
         }
     }
@@ -404,8 +407,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         }else{
             mIntensitySwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.intensity_off, null));
             mIntensitySwitchTxt.setText(getResources().getString(R.string.status_off_caps));
-            mIntensitySwitchTxt.setTextColor(Color.WHITE);
-            mIntensityTxt.setTextColor(Color.WHITE);
+            mIntensitySwitchTxt.setTextColor(getResources().getColor(R.color.progress_gray_dark));
+            mIntensityTxt.setTextColor(getResources().getColor(R.color.progress_gray_dark));
             EnableSeek(false);
             MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_INTENSITY_TURNED_OFF);
         }
@@ -416,6 +419,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     private void EnableSeek(boolean isEnable){
         if(isEnable){
             mIntensitySeek.setOnTouchListener(null);
+            mIntensitySeek.setDisable(false);
         }else{
             mIntensitySeek.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -423,6 +427,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                     return true;
                 }
             });
+            mIntensitySeek.setDisable(true);
         }
     }
 
@@ -436,8 +441,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         }else{
             mEqualizerSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.equalizer_off, null));
             mEqualizerSwitchTxt.setText(getResources().getString(R.string.status_off_caps));
-            mEqualizerSwitchTxt.setTextColor(Color.WHITE);
-            mEqualizerTxt.setTextColor(Color.WHITE);
+            mEqualizerSwitchTxt.setTextColor(getResources().getColor(R.color.progress_gray_dark));
+            mEqualizerTxt.setTextColor(getResources().getColor(R.color.progress_gray_dark));
             MixPanelAnalyticHelper.track(this, AnalyticsHelper.EVENT_EQ_TURNED_OFF);
         }
         if(mEqualizerAdapter != null)
@@ -483,7 +488,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void switchIntensity(boolean isPowerOn){
-        if(audioEffectPreferenceHandler.is3DSurroundOn() &&
+        if(isPowerOn && audioEffectPreferenceHandler.is3DSurroundOn() &&
                 audioEffectPreferenceHandler.isIntensityOn()){
             onTextViewTurn(mIntensityIndicator);
             return;
@@ -501,7 +506,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void switchEqualizer(boolean isPowerOn){
-        if(audioEffectPreferenceHandler.is3DSurroundOn() &&
+        if(isPowerOn && audioEffectPreferenceHandler.is3DSurroundOn() &&
                 audioEffectPreferenceHandler.isEqualizerOn()){
             onTextViewTurn(mEqualizerIndicator);
             return;
@@ -772,7 +777,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
                                 }
                             }
                         });
-                        mEqualizerAdapter = new EqualizerViewAdapter(Surround3DActivity.this, eq_names, eq_active_on, eq_active_off, eq_inactive_on, eq_inactive_off);
+                        mEqualizerAdapter = new EqualizerViewAdapter(Surround3DActivity.this, recyclerView, eq_names, eq_active_on, eq_active_off, eq_inactive_on, eq_inactive_off);
                         recyclerView.setAdapter(mEqualizerAdapter);
                         if(mEqualizerAdapter != null)
                             mEqualizerAdapter.setEqualizerUpdateEvent(Surround3DActivity.this);
@@ -879,9 +884,15 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if(fromUser) {
+        if((progress/(double)100 - mOldIntensity >= .1 || mOldIntensity - progress/(double)100 >= .1) || progress == 100  || progress == 0){
+            mOldIntensity = progress/(double)100;
             audioEffectPreferenceHandler.setIntensity(progress);
+            App.getPlayerEventHandler().setIntensityValue(progress/(double)100);
+            Log.d("Intensity", ""+mOldIntensity);
         }
+//        if(fromUser) {
+//            audioEffectPreferenceHandler.setIntensity(progress);
+//        }
     }
 
     @Override
@@ -891,7 +902,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        App.getPlayerEventHandler().setIntensityValue(audioEffectPreferenceHandler.getIntensity()/(double)100);
+//        App.getPlayerEventHandler().setIntensityValue(audioEffectPreferenceHandler.getIntensity()/(double)100);
     }
 
     @Override

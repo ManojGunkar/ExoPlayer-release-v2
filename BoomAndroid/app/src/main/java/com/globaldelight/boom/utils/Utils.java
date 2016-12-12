@@ -150,6 +150,7 @@ public class Utils {
                 .negativeColor(Color.parseColor("#81cbc4"))
                 .widgetColor(Color.parseColor("#ffffff"))
                 .contentColor(Color.parseColor("#ffffff"))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .customView(rv, false)
                 .positiveText(R.string.new_playlist)
                 .negativeText(R.string.dialog_txt_cancel)
@@ -179,7 +180,7 @@ public class Utils {
                 .negativeColor(Color.parseColor("#81cbc4"))
                 .widgetColor(Color.parseColor("#ffffff"))
                 .contentColor(Color.parseColor("#ffffff"))
-
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .input(context.getResources().getString(R.string.new_playlist), null, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {

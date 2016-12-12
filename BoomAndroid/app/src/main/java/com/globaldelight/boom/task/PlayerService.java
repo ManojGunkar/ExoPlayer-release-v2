@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
@@ -42,7 +43,7 @@ public class PlayerService extends Service {
     public static final String ACTION_PLAYING_ITEM_CLICKED ="ACTION_PLAYING_ITEM_CLICKED";
 
     public static final String ACTION_UPDATE_BOOM_PLAYLIST ="ACTION_UPDATE_BOOM_PLAYLIST";
-
+    private static long mShiftingTime = 0;
     private PlayerEventHandler musicPlayerHandler;
     private Context context;
     private NotificationHandler notificationHandler;
@@ -140,10 +141,26 @@ public class PlayerService extends Service {
                 sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_REPEAT));
                 break;
             case ACTION_NEXT_SONG :
-                musicPlayerHandler.playNextSong(true);
+                if(System.currentTimeMillis() - mShiftingTime > 1000) {
+                    mShiftingTime = System.currentTimeMillis();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            musicPlayerHandler.playNextSong(true);
+                        }
+                    }, 500);
+                }
                 break;
             case ACTION_PREV_SONG:
-                musicPlayerHandler.playPrevSong();
+                if(System.currentTimeMillis() - mShiftingTime > 1000) {
+                    mShiftingTime = System.currentTimeMillis();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            musicPlayerHandler.playPrevSong();
+                        }
+                    }, 500);
+                }
                 break;
             case ACTION_LAST_PLAYED_SONG:
                 updatePlayerToLastPlayedSong();

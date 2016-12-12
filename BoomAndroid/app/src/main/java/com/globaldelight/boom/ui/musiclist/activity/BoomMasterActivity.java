@@ -161,7 +161,7 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
         toolDoneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MediaController.getInstance(BoomMasterActivity.this).addSongToBoomPlayList(App.getUserPreferenceHandler().getBoomPlayListId(), App.getUserPreferenceHandler().getItemList());
+                MediaController.getInstance(BoomMasterActivity.this).addSongToBoomPlayList(App.getUserPreferenceHandler().getBoomPlayListId(), App.getUserPreferenceHandler().getItemList(), false);
                 App.getUserPreferenceHandler().setLibraryStartFromHome(true);
                 App.getUserPreferenceHandler().clearItemList();
                 finish();

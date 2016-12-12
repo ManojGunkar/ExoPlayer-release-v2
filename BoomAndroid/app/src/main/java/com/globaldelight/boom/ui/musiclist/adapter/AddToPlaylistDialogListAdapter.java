@@ -1,7 +1,6 @@
 package com.globaldelight.boom.ui.musiclist.adapter;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +16,6 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
-import com.globaldelight.boom.ui.widgets.RegularTextView;
 
 import java.util.ArrayList;
 import static android.view.LayoutInflater.from;
@@ -41,7 +39,7 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
     @Override
     public SimpleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = from(parent.getContext()).
-                inflate(R.layout.playlist_dialog_item, parent, false);
+                inflate(R.layout.card_playlist_dialog, parent, false);
         return new SimpleItemViewHolder(itemView);
     }
 
@@ -54,7 +52,7 @@ public class AddToPlaylistDialogListAdapter extends RecyclerView.Adapter<AddToPl
         holder.mainView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                MediaController.getInstance(context).addSongToBoomPlayList(((MediaItemCollection) playList.get(position)).getItemId(), songList);
+                MediaController.getInstance(context).addSongToBoomPlayList(playList.get(position).getItemId(), songList, false);
                 playList = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB);
                 notifyDataSetChanged();
                 dialog.dismiss();

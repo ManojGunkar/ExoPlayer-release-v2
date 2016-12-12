@@ -35,7 +35,7 @@ public class HeadSetListAdapter extends RecyclerView
     public DataObjectHolder onCreateViewHolder(ViewGroup parent,
                                                int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.settings_headphone_item, parent, false);
+                .inflate(R.layout.card_settings_headphone, parent, false);
 
         DataObjectHolder dataObjectHolder = new DataObjectHolder(view);
         return dataObjectHolder;

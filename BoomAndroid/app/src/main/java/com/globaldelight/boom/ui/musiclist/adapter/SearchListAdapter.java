@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -129,28 +128,28 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             case ITEM_VIEW_TYPE_HEADER_ALBUMS:
                 if(albums.size() > 0) {
                     itemView = LayoutInflater.from(parent.getContext()).
-                            inflate(R.layout.search_header, parent, false);
+                            inflate(R.layout.card_header_search, parent, false);
                 }else{
                     itemView = LayoutInflater.from(parent.getContext()).
-                            inflate(R.layout.search_row_hide, parent, false);
+                            inflate(R.layout.card_row_hide, parent, false);
                 }
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_HEADER_SONGS:
                 if(songs.size() > 0) {
                 itemView = LayoutInflater.from(parent.getContext()).
-                        inflate(R.layout.search_header, parent, false);
+                        inflate(R.layout.card_header_search, parent, false);
                 }else{
                     itemView = LayoutInflater.from(parent.getContext()).
-                            inflate(R.layout.search_row_hide, parent, false);
+                            inflate(R.layout.card_row_hide, parent, false);
                 }
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_HEADER_ARTISTS:
                 if(artists.size() > 0){
                     itemView = LayoutInflater.from(parent.getContext()).
-                            inflate(R.layout.search_header, parent, false);
+                            inflate(R.layout.card_header_search, parent, false);
                 }else{
                     itemView = LayoutInflater.from(parent.getContext()).
-                            inflate(R.layout.search_row_hide, parent, false);
+                            inflate(R.layout.card_row_hide, parent, false);
                 }
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_LIST_SONG:
@@ -159,7 +158,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                             inflate(R.layout.card_song_item, parent, false);
                 }else{
                     itemView = LayoutInflater.from(parent.getContext()).
-                            inflate(R.layout.search_row_hide, parent, false);
+                            inflate(R.layout.card_row_hide, parent, false);
                 }
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_LIST_ARTIST:
@@ -168,7 +167,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                             inflate(R.layout.card_grid_item, parent, false);
                 }else{
                     itemView = LayoutInflater.from(parent.getContext()).
-                            inflate(R.layout.search_row_hide, parent, false);
+                            inflate(R.layout.card_row_hide, parent, false);
                 }
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_LIST_ALBUM:
@@ -177,7 +176,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                             inflate(R.layout.card_grid_item, parent, false);
                 }else{
                     itemView = LayoutInflater.from(parent.getContext()).
-                            inflate(R.layout.search_row_hide, parent, false);
+                            inflate(R.layout.card_row_hide, parent, false);
                 }
                         return new SimpleItemViewHolder(itemView);
 

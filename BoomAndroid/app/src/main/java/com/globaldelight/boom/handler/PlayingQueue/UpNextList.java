@@ -193,6 +193,11 @@ public class UpNextList {
         }
     }
 
+    public void removeItem(QueueType listType, int itemPosition) {
+        if(getItemList(listType).size() > 0)
+            getItemList(listType).remove(itemPosition);
+    }
+
     public enum REPEAT {
         one,
         all,
@@ -457,7 +462,7 @@ public class UpNextList {
             } else if (mAutoNextList.size() > 0 && (mAutoNextList.size() - 1) > PlayItemIndex) {
                 boolean isContain = false;
                 for(int i = 0; i< mAutoNextList.size() ; i++){
-                    if(mCurrentList.get(0).getUpNextItem().getItemId() == mAutoNextList.get(i).getItemId()){
+                    if(mCurrentList.size() > 0 && mCurrentList.get(0).getUpNextItem().getItemId() == mAutoNextList.get(i).getItemId()){
                         PlayItemIndex = i+1;
                         isContain = true;
                         break;

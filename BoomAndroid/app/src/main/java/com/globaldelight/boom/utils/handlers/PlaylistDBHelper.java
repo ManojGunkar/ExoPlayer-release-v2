@@ -136,7 +136,9 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addSongs(ArrayList<? extends IMediaItemBase> songs, long playlistId) {
+    public void addSongs(ArrayList<? extends IMediaItemBase> songs, long playlistId, boolean isUpdate) {
+        if(isUpdate)
+            clearList(playlistId);
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
             ContentValues values = new ContentValues();
@@ -252,6 +254,13 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         }
         db.close();
         return artList;
+    }
+
+    public void clearList(long playlistId){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_PLAYLIST_SONGS + " WHERE " +
+                SONG_KEY_PLAYLIST_ID + "='" + playlistId + "'");
+        db.close();
     }
 /***********************************************************************************************************************************/
 }
