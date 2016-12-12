@@ -9,19 +9,16 @@
 #include <pthread.h>
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
+#include <atomic>
+#include "bufferprovider/include/AudioBufferProvider.h"
 
-
+using namespace android;
 namespace gdpl {
 
 
     class IDataSource {
     public:
-        struct Buffer {
-            void* data;
-            size_t size;
-        };
-
-        virtual void getNextBuffer(Buffer* buffer) = 0;
+        virtual void getNextBuffer(AudioBufferProvider::Buffer* buffer) = 0;
     };
 
     class FIFOBuffer;
@@ -72,11 +69,9 @@ namespace gdpl {
         SLObjectItf bqPlayerObject;
         SLPlayItf bqPlayerPlay;
         SLAndroidSimpleBufferQueueItf _bufferQueue;
-        SLVolumeItf bqPlayerVolume;
         SLuint32 playState;
-        bool     _isReading;
-        IDataSource* _dataSource;
-        pthread_mutex_t _mutex;
+        std::atomic<bool>   _isReading;
+        IDataSource*        _dataSource;
     };
 }
 

@@ -1,50 +1,39 @@
 #include <pthread.h>
 #include "jni.h"
 #include "AudioBufferProvider.h"
+#include "audio_utils/fifo.h"
+
 
 #ifndef RINGBUFFER_H_
 #define RINGBUFFER_H_
 
 namespace gdpl {
     using namespace android;
+
     class RingBuffer : public AudioBufferProvider {
     public:
-        RingBuffer(int sizeBytes, uint32_t channels, uint32_t bytesPerChannel);
+        RingBuffer(size_t frameCount, uint32_t channels, uint32_t bytesPerChannel);
 
         ~RingBuffer();
 
-        int Read(uint8_t *dataPtr, int numBytes);
+        size_t Read(uint8_t *dataPtr, size_t numBytes);
 
-        int Write(uint8_t *dataPtr, int numBytes, int i, bool blocking = true);
+        size_t Write(uint8_t *dataPtr, size_t offset, size_t numBytes);
 
         bool Empty(void);
-
-        int GetSize();
-
-        void UnblockWrite();
-
-        int GetWriteAvail();
-
-        int GetReadAvail();
 
         virtual status_t getNextBuffer(Buffer* buffer);
 
         virtual void releaseBuffer(Buffer* buffer);
 
     private:
-        const size_t _size;
+        uint8_t*            _data;
+        uint8_t*            _tempBuffer;
+        audio_utils_fifo    _fifo;
 
-        pthread_mutex_t _mutex;
-        pthread_cond_t  _writeCond;
-        uint8_t*        _data;
-        int             _readPtr;
-        int             _writePtr;
-        int             _writeBytesAvail;
-
-        uint8_t*        _tempBuffer;
-
-        const uint32_t  kChannelCount;
-        const uint32_t  kBytesPerChannel;
+        const size_t  kFrameCount;
+        const int  kChannelCount;
+        const int  kBytesPerChannel;
     };
 };
 

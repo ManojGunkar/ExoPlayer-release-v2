@@ -4,7 +4,6 @@
 
 #include <assert.h>
 #include <logger/log.h>
-#include "Utilities/AutoLock.hpp"
 #include "OpenSLPlayer.hpp"
 
 
@@ -12,6 +11,7 @@ namespace gdpl
 {
 
     static const int BUFFER_COUNT = 4;
+    static const int CHANNEL_COUNT = 2;
 
     static SLObjectItf engineObject = NULL;
     static SLObjectItf outputMixObject = NULL;
@@ -23,19 +23,14 @@ namespace gdpl
 
 
     OpenSLPlayer::OpenSLPlayer(IDataSource* dataSource)
-    :_dataSource(dataSource), _isReading(false)
+    :_dataSource(dataSource),
+     _isReading(false)
     {
-        pthread_mutexattr_t attr;
-        pthread_mutexattr_init(&attr);
-        pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-        pthread_mutex_init(&_mutex, &attr);
     }
 
     OpenSLPlayer::~OpenSLPlayer()
     {
-        pthread_mutex_destroy(&_mutex);
     }
-
 
     SLresult OpenSLPlayer::setup()
     {
@@ -43,13 +38,13 @@ namespace gdpl
         SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE,
                                                            BUFFER_COUNT};
 
-        SLAndroidDataFormat_PCM_EX format_pcm = {SL_ANDROID_DATAFORMAT_PCM_EX, 2, engineSampleRate * 1000,
+        SLAndroidDataFormat_PCM_EX format_pcm = {SL_ANDROID_DATAFORMAT_PCM_EX, CHANNEL_COUNT, engineSampleRate * 1000,
                                                  SL_PCMSAMPLEFORMAT_FIXED_32, SL_PCMSAMPLEFORMAT_FIXED_32,
                                                  SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
                                                  SL_BYTEORDER_LITTLEENDIAN,
                                                  SL_ANDROID_PCM_REPRESENTATION_FLOAT};
         if ( !sUseFloatAudio ) {
-            format_pcm = {SL_ANDROID_DATAFORMAT_PCM_EX, 2, engineSampleRate * 1000,
+            format_pcm = {SL_ANDROID_DATAFORMAT_PCM_EX, CHANNEL_COUNT, engineSampleRate * 1000,
                           SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
                           SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
                           SL_BYTEORDER_LITTLEENDIAN,
@@ -146,6 +141,7 @@ namespace gdpl
     {
         SLresult result = (*bqPlayerPlay)->SetPlayState(bqPlayerPlay, SL_PLAYSTATE_PAUSED);
         if ( SL_RESULT_SUCCESS == result ) {
+            (*_bufferQueue)->Clear(_bufferQueue);
             playState = SL_PLAYSTATE_PAUSED;
         }
 
@@ -160,7 +156,6 @@ namespace gdpl
 
     void OpenSLPlayer::startReading()
     {
-        AutoLock lock(&_mutex);
         _isReading = true;
         (*_bufferQueue)->Clear(_bufferQueue);
         for ( int i = 0; i < BUFFER_COUNT; i++ ) {
@@ -170,7 +165,6 @@ namespace gdpl
 
     void OpenSLPlayer::stopReading()
     {
-        AutoLock lock(&_mutex);
         _isReading = false;
     }
 
@@ -234,7 +228,7 @@ namespace gdpl
 
 
 
-    void OpenSLPlayer::BufferQueueCallback(SLAndroidSimpleBufferQueueItf bq, void *context)
+    void OpenSLPlayer::BufferQueueCallback(SLAndroidSimpleBufferQueueItf bq __unused, void *context)
     {
         OpenSLPlayer* self = (OpenSLPlayer*)context;
         self->enqueue();
@@ -243,18 +237,14 @@ namespace gdpl
 
     void OpenSLPlayer::enqueue()
     {
-        AutoLock lock(&_mutex);
-        if (!_isReading) {
-            return;
-        }
+        const int bytesPerFrame = CHANNEL_COUNT * (sUseFloatAudio? sizeof(float) : sizeof(short));
+        AudioBufferProvider::Buffer buffer;
+        buffer.frameCount = sFrameCount;
+        _dataSource->getNextBuffer(&buffer);
 
         bool success = true;
-
-        IDataSource::Buffer buffer;
-        buffer.size = sFrameCount * 2 * (sUseFloatAudio? sizeof(float) : sizeof(short));
-        _dataSource->getNextBuffer(&buffer);
-        if ( buffer.size > 0 && buffer.data != nullptr ) {
-            SLresult result = (*_bufferQueue)->Enqueue(_bufferQueue, buffer.data, buffer.size);
+        if ( buffer.frameCount > 0 && buffer.raw != nullptr ) {
+            SLresult result = (*_bufferQueue)->Enqueue(_bufferQueue, buffer.raw, buffer.frameCount * bytesPerFrame);
             if ( SL_RESULT_SUCCESS != result ) {
                 LOGE("OpenSLPlayer: Failed to enqueue buffer (%d)", result);
                 success = false;

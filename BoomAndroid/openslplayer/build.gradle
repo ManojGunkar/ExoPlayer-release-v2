@@ -12,9 +12,9 @@ model {
         ndk {
             platformVersion = 23
             moduleName = 'AudioTrackActivity'
-            toolchain = 'gcc'
-            stl       = 'stlport_static'
-            CFlags.addAll(['-std=c99'])
+            toolchain = 'clang'
+            stl       = 'c++_shared'
+            CFlags.addAll(['-std=c11'])
             /*stl       = 'gnustl_shared'*/
             /*cppFlags.addAll(['-I' + "${ndkDir}/sources/android/cpufeatures",
                              '-I' + file('src/main/jni/ndk_helper')])*/
@@ -22,7 +22,7 @@ model {
                              '-std=c++11', '-Wall',/*'-fexceptions', '-frtti'*/
                              '-fno-exceptions', '-fno-rtti'])
             ldFlags.addAll(['-L' + file('src/main/jni/libs')])
-            ldLibs.addAll(['android','OpenSLES', 'log', 'AudioCore', 'ffts'])
+            ldLibs.addAll(['android','OpenSLES', 'log', 'atomic', 'AudioCore', 'ffts'])
             abiFilters.addAll(['armeabi-v7a'])
 
         }
