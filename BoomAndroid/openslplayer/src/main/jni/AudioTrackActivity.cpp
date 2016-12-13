@@ -138,7 +138,7 @@ namespace gdpl {
         int written = 0;
         //ALOGD("Enter into Write Method");
         if (openSLPlayer->getState() == SL_PLAYSTATE_PLAYING) {
-            written = mProcessor->Write((uint8_t*)sData, size);
+            written = mProcessor->Write((uint8_t*)sData + offset, size - offset);
         }
 
         if ( !openSLPlayer->isReading() && mProcessor->isReady() ) {

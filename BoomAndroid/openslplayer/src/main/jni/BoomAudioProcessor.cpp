@@ -62,8 +62,14 @@ gdpl::BoomAudioProcessor::~BoomAudioProcessor() {
 }
 
 size_t gdpl::BoomAudioProcessor::Write(uint8_t* data, size_t size) {
+    const size_t bytesPerFrame = kInputChannels * sizeof(int16_t);
+    size_t inFrameCount = (kFrameCount * kInputSampleRate) / kNativeSampleRate;
+    size_t count = size / bytesPerFrame;
+    if ( count > inFrameCount ) {
+        count = inFrameCount;
+    }
+
     size_t inputOffset = 0;
-    size_t count = size / (kInputChannels * sizeof(int16_t));
     while ( count > inputOffset ) {
         inputOffset += mInputBuffer->Write(data, inputOffset, count);
         if ( inputOffset < count ) { // if the buffer is full
@@ -72,7 +78,7 @@ size_t gdpl::BoomAudioProcessor::Write(uint8_t* data, size_t size) {
         }
     }
 
-    return size;
+    return (count * bytesPerFrame);
 }
 
 
@@ -115,7 +121,7 @@ void gdpl::BoomAudioProcessor::SendToPlayback(void* outBuffer, int frameCount)
     size_t offset = 0;
     while ( frameCount > offset ) {
         offset += mPlaybackBuffer->Write((uint8_t*)outBuffer, offset, (size_t)frameCount);
-        if ( offset < frameCount ) {
+        if ( offset < frameCount && mIsReady ) {
             const uint32_t timeToWait = (uint32_t)((frameCount * 1000000ULL)/(uint64_t)kNativeSampleRate);
             usleep(timeToWait/2);
         }
