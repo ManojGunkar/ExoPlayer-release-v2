@@ -85,6 +85,7 @@ size_t gdpl::BoomAudioProcessor::Write(uint8_t* data, size_t size) {
 void BoomAudioProcessor::Flush() {
     mInputBuffer->Empty();
     mPlaybackBuffer->Empty();
+    mAudioResampler->reset();
     mIsReady = false;
     mQueueCount = 0;
 }
