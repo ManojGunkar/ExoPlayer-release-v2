@@ -58,7 +58,13 @@ namespace gdpl {
 
         static SLresult tearDownEngine();
 
-        static uint32_t getEngineSampleRate();
+        static uint32_t getSampleRate() {
+            return _sampleRate;
+        }
+
+        static uint32_t getFrameCount()  {
+            return _frameCount;
+        }
 
     private:
 
@@ -72,6 +78,9 @@ namespace gdpl {
         SLuint32 playState;
         std::atomic<bool>   _isReading;
         IDataSource*        _dataSource;
+
+        static uint32_t    _sampleRate;
+        static uint32_t    _frameCount;
     };
 }
 

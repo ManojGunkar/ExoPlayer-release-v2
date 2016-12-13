@@ -26,7 +26,7 @@ gdpl::BoomAudioProcessor::BoomAudioProcessor(AudioEngine* engine, int32_t sample
         mAudioEngine(engine),
         kInputSampleRate(sampleRate),
         kInputChannels(channels),
-        kNativeSampleRate(OpenSLPlayer::getEngineSampleRate()),
+        kNativeSampleRate(OpenSLPlayer::getSampleRate()),
         kFrameCount((size_t)engine->GetSampleSize()),
         kBytesPerFrame(kFrameCount * CHANNEL_COUNT * BYTES_PER_CHANNEL)
 {
