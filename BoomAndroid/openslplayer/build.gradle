@@ -6,7 +6,7 @@ model {
         buildToolsVersion = "24.0.1"
 
         defaultConfig {
-            minSdkVersion.apiLevel    = 19
+            minSdkVersion.apiLevel    = 21
             targetSdkVersion.apiLevel = 23
         }
         ndk {
