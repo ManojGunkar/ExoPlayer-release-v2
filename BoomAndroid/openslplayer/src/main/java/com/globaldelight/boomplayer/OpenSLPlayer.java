@@ -310,7 +310,7 @@ public class OpenSLPlayer implements Runnable {
         }
 
         // configure OpenSLPlayer
-        createAudioPlayer(256*1024, sampleRate, channels);
+        createAudioPlayer(sampleRate, channels);
 
         if(null != extractor) {
             extractor.selectTrack(0);
@@ -572,7 +572,7 @@ public class OpenSLPlayer implements Runnable {
 
     public native void releaseEngine();
 
-    public native boolean createAudioPlayer(int size, int sampleRate, int channels);
+    public native boolean createAudioPlayer(int sampleRate, int channels);
 
     public native int write(ByteBuffer buf, int offset, int frameCount);
 

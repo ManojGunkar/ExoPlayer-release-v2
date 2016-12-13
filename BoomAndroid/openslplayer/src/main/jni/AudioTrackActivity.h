@@ -40,8 +40,7 @@ namespace gdpl {
  * Method:    createAudioPlayer
  * Signature: (III)Z
  */
-    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_createAudioPlayer(JNIEnv *, jclass ,
-                                                                          jint , jint, jint );
+    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_createAudioPlayer(JNIEnv *, jclass, jint, jint );
 
 /*
  * Class:     com_globaldelight_boomplayer_OpenSLPlayer

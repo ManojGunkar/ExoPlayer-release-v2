@@ -103,7 +103,6 @@ namespace gdpl {
  * Signature: (III)Z
  */
     extern "C" jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_createAudioPlayer(JNIEnv *env, jclass clazz,
-                                                                          jint bufferSize,
                                                                           jint samplerate,
                                                                           jint channel) {
         //ALOGD("createAudioPlayer start");
@@ -186,7 +185,7 @@ namespace gdpl {
 
     void stopPlayer(jboolean wait) {
         while ( wait && openSLPlayer->isReading() ) {
-            usleep(10000);
+            usleep(1000);
         }
         openSLPlayer->stop();
     }
