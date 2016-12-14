@@ -127,6 +127,9 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
+                                case R.id.popup_song_play_next :
+                                    App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(resultItemList.get(position));
+                                    break;
                                 case R.id.popup_song_add_queue :
                                     App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(((MediaItem)resultItemList.get(position)));
                                     break;
@@ -195,6 +198,12 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
+                                case R.id.album_header_add_play_next :
+                                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                                        ((MediaItemCollection)resultItemList.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) resultItemList.get(position)));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(resultItemList.get(position));
+                                    }
+                                    break;
                                 case R.id.popup_album_add_queue :
                                     if(App.getPlayingQueueHandler().getUpNextList()!=null){
                                         ((MediaItemCollection)resultItemList.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) resultItemList.get(position)));
@@ -261,6 +270,14 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
+                                case R.id.popup_album_play_next :
+                                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                                        ((MediaItemCollection)resultItemList.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((MediaItemCollection)resultItemList.get(position)));
+                                        ((MediaItemCollection)((MediaItemCollection)resultItemList.get(position)).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((MediaItemCollection)resultItemList.get(position)));
+
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(((IMediaItemCollection)((IMediaItemCollection)resultItemList.get(position)).getMediaElement().get(((IMediaItemCollection)resultItemList.get(position)).getCurrentIndex())));
+                                    }
+                                    break;
                                 case R.id.popup_album_add_queue :
                                     if(App.getPlayingQueueHandler().getUpNextList()!=null){
                                         ((MediaItemCollection)resultItemList.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((MediaItemCollection)resultItemList.get(position)));

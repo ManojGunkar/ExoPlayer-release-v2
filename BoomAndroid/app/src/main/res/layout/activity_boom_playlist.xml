@@ -71,7 +71,8 @@
                 android:src="@drawable/ic_floating_playlist_addtracks"
                 app:layout_anchor="@+id/playlistContainer"
                 app:layout_anchorGravity="bottom|end"
-                app:layout_behavior="com.globaldelight.boom.ui.musiclist.FloatingScrollBehavior"/>
+                />
+            <!--app:layout_behavior="com.globaldelight.boom.ui.musiclist.FloatingScrollBehavior"-->
         </android.support.design.widget.CoordinatorLayout>
 
         <LinearLayout

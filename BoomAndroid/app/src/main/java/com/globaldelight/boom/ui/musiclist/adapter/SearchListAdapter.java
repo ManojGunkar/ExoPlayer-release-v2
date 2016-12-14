@@ -292,12 +292,20 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
+                                case R.id.album_header_add_play_next :
+                                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                                        ((MediaItemCollection)artists.get(getPosition(position))).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((MediaItemCollection)artists.get(getPosition(position))));
+                                        ((MediaItemCollection)((MediaItemCollection)artists.get(getPosition(position))).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((MediaItemCollection)artists.get(getPosition(position))));
+
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(((IMediaItemCollection)artists.get(getPosition(position))).getMediaElement().get(((IMediaItemCollection)artists.get(getPosition(position))).getCurrentIndex()));
+                                    }
+                                    break;
                                 case R.id.popup_album_add_queue :
                                     if(App.getPlayingQueueHandler().getUpNextList()!=null){
                                         ((MediaItemCollection)artists.get(getPosition(position))).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((MediaItemCollection)artists.get(getPosition(position))));
                                         ((MediaItemCollection)((MediaItemCollection)artists.get(getPosition(position))).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((MediaItemCollection)artists.get(getPosition(position))));
 
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(((IMediaItemCollection)((IMediaItemCollection)artists.get(getPosition(position))).getMediaElement().get(((IMediaItemCollection)artists.get(getPosition(position))).getCurrentIndex())));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(((IMediaItemCollection)artists.get(getPosition(position))).getMediaElement().get(((IMediaItemCollection)artists.get(getPosition(position))).getCurrentIndex()));
                                     }
                                     break;
                                 case R.id.popup_album_add_playlist:
@@ -358,6 +366,12 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
+                                case R.id.popup_album_play_next :
+                                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                                        ((MediaItemCollection)albums.get(getPosition(position))).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) albums.get(getPosition(position))));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(albums.get(getPosition(position)));
+                                    }
+                                    break;
                                 case R.id.popup_album_add_queue :
                                     if(App.getPlayingQueueHandler().getUpNextList()!=null){
                                         ((MediaItemCollection)albums.get(getPosition(position))).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) albums.get(getPosition(position))));
@@ -424,6 +438,9 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
                                 switch (item.getItemId()) {
+                                    case R.id.popup_song_play_next :
+                                        App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(songs.get(getPosition(position)));
+                                        break;
                                     case R.id.popup_song_add_queue:
                                         App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(((MediaItem) songs.get(getPosition(position))));
                                         break;

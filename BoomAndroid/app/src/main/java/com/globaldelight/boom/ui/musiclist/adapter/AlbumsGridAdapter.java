@@ -127,6 +127,13 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
+                            case R.id.popup_album_play_next :
+                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                                    itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
+                                    if(itemList.get(position).getMediaElement().size() > 0)
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(itemList.get(position));
+                                }
+                                break;
                             case R.id.popup_album_add_queue :
                                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
                                     itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));

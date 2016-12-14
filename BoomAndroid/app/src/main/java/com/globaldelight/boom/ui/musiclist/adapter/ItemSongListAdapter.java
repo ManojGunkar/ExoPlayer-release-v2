@@ -64,10 +64,12 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     private Activity activity;
     private MediaItem currentItem;
     private ListDetail listDetail;
+    private ArrayList list = new ArrayList();
 
     public ItemSongListAdapter(Activity activity, IMediaItemCollection collection, ListDetail listDetail, PermissionChecker permissionChecker, OnStartDragListener dragListener) {
         this.activity = activity;
         this.collection = (MediaItemCollection) collection;
+        list.addAll(collection.getMediaElement());
         this.permissionChecker = permissionChecker;
         this.listDetail = listDetail;
         this.mOnStartDragListener = dragListener;
@@ -144,7 +146,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             }
         } else if (position >= 1 && collection.getItemType() == BOOM_PLAYLIST) {
             int pos = position - 1;
-            currentItem = (MediaItem) collection.getMediaElement().get(pos);
+            currentItem = (MediaItem) list.get(pos);
             holder.undoButton.setVisibility(View.INVISIBLE);
             holder.name.setText(currentItem.getItemTitle());
             holder.artistName.setText(currentItem.getItemArtist());
@@ -223,10 +225,10 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                             case R.id.album_header_add_play_next:
                                 if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                                     if(collection.getMediaElement().size() > 0)
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(collection.getMediaElement());
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(collection);
                                 }else{
                                     if(((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size() > 0)
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement());
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(collection.getMediaElement().get(collection.getCurrentIndex()));
                                 }
                                 break;
                             case R.id.album_header_add_to_upnext :
@@ -263,11 +265,23 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                                     activity.sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
                                 }
                                 break;
+                            case R.id.boom_header_add_songs:
+                                if(collection.getItemType() == BOOM_PLAYLIST) {
+                                    App.getUserPreferenceHandler().setBoomPlayListId(collection.getItemId());
+                                    App.getUserPreferenceHandler().setLibraryStartFromHome(false);
+                                    Intent i = new Intent(activity, DeviceMusicActivity.class);
+                                    activity.startActivity(i);
+                                }
+                                break;
                         }
                         return false;
                     }
                 });
-                pm.inflate(R.menu.album_header_menu);
+                if(collection.getItemType() == BOOM_PLAYLIST){
+                    pm.inflate(R.menu.playlist_boom_header_menu);
+                }else{
+                    pm.inflate(R.menu.album_header_menu);
+                }
                 pm.show();
             }
         });
@@ -295,6 +309,15 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
+                                case R.id.popup_song_play_next:
+                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                        if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
+                                            App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(collection.getMediaElement().get(position));
+                                        } else {
+                                            App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
+                                        }
+                                    }
+                                    break;
                                 case R.id.popup_song_add_queue:
                                     if (App.getPlayingQueueHandler().getUpNextList() != null) {
                                         if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
@@ -368,9 +391,15 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         });
 
     }
-    public void updateNewList(IMediaItemCollection collection) {
+    public void updateNewList(IMediaItemCollection collection, ListDetail listDetail, int startPosition) {
         this.collection = (MediaItemCollection) collection;
-        notifyDataSetChanged();
+        list.clear();
+        list.addAll(collection.getMediaElement());
+        this.listDetail = listDetail;
+//        notifyItemChanged(startPosition+1);
+
+//        notifyDataSetChanged();
+//        notifyItemRangeChanged(0, collection.getMediaElement().size());
     }
 
     public void animate(final SimpleItemViewHolder holder) {

@@ -200,6 +200,12 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
+                            case R.id.popup_album_play_next :
+                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                                    items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(items.get(position));
+                                }
+                                break;
                             case R.id.popup_album_add_queue :
                                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
                                     items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));

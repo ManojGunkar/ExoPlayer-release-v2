@@ -46,6 +46,7 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.adapter.ItemSongListAdapter;
@@ -113,6 +114,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         initMiniPlayer();
 
         IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(PlayerService.ACTION_UPDATE_BOOM_PLAYLIST_LIST);
         intentFilter.addAction(ACTION_RECEIVE_SONG);
         intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
         intentFilter.addAction(ACTION_ITEM_CLICKED);
@@ -146,11 +148,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         if (collapsingToolbarLayout != null)
             collapsingToolbarLayout.setTitle(" ");
 
-        StringBuilder itemCount = new StringBuilder();
-        itemCount.append(collection.getItemCount() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
-        itemCount.append(" ").append(collection.getItemCount());
-
-        listDetail = new ListDetail(collection.getItemTitle(), itemCount.toString(), null);
+        setDetail(collection.getItemTitle(), collection.getItemCount());
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_song_detail_list);
         try {
@@ -177,6 +175,13 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         setForAnimation();
     }
 
+    private void setDetail(String title, int count) {
+        StringBuilder itemCount = new StringBuilder();
+        itemCount.append(count > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
+        itemCount.append(" ").append(count);
+        listDetail = new ListDetail(title, itemCount.toString(), null);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -189,16 +194,11 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         } else {
             mMiniPlayer.setVisibility(View.GONE);
         }
-
-        if(itemSongListAdapter != null){
-            getCollectionData();
-            itemSongListAdapter.updateNewList(collection);
-        }
     }
 
     public void getCollectionData(){
         //              ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
-        if (collection.getItemType() == ItemType.BOOM_PLAYLIST && collection.getMediaElement().isEmpty()) {
+        if (collection.getItemType() == ItemType.BOOM_PLAYLIST /*&& collection.getMediaElement().isEmpty()*/) {
             collection.setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
         } else
         //ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
@@ -215,6 +215,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
             @Override
             public void run() {
                 getCollectionData();
+                setDetail(collection.getItemTitle(), collection.getMediaElement().size());
                 final LinearLayoutManager llm = new LinearLayoutManager(SongsDetailListActivity.this);
                 runOnUiThread(new Runnable() {
                     @Override
@@ -458,6 +459,17 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
+                case PlayerService.ACTION_UPDATE_BOOM_PLAYLIST_LIST:
+                    if (collection.getItemType() == ItemType.BOOM_PLAYLIST) {
+                        int oldCount = collection.getMediaElement().size();
+                        collection.getMediaElement().clear();
+                        collection.setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
+                        setDetail(collection.getItemTitle(), collection.getMediaElement().size());
+                        collection.setItemCount(collection.getMediaElement().size());
+                        itemSongListAdapter.updateNewList(collection, listDetail, oldCount);
+                        itemSongListAdapter.notifyDataSetChanged();
+                    }
+                    break;
                 case ACTION_RECEIVE_SONG :
                     MediaItem item = intent.getParcelableExtra("playing_song");
                     updateMiniPlayer(item, intent.getBooleanExtra("playing", false), false);

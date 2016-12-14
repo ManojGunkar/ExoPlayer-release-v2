@@ -262,7 +262,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                             case R.id.album_header_add_play_next:
                                 ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
                                 if(((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().size() > 0)
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement());
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(collection.getMediaElement().get(0));
                                 break;
                             case R.id.album_header_add_to_upnext :
                                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
@@ -333,6 +333,17 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
+                            case R.id.popup_album_play_next :
+                                if(itemView == ITEM_VIEW_SONG){
+                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                }else if (itemView == ITEM_VIEW_ALBUM) {
+                                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                                        ((IMediaItemCollection)collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                    }
+                                }
+                                if(((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement().size() > 0)
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(collection.getMediaElement().get(position));
+                                break;
                             case R.id.popup_album_add_queue :
                                 if(itemView == ITEM_VIEW_SONG){
                                     ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));

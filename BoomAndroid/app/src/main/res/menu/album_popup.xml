@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/popup_album_play_next"
+        android:icon="@drawable/ic_menu_selected"
+        android:title="@string/menu_play_next"
+        android:showAsAction="ifRoom" />
+    <item
         android:id="@+id/popup_album_add_queue"
         android:icon="@drawable/ic_menu_selected"
         android:title="@string/menu_add_upnext"

@@ -43,6 +43,7 @@ import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -53,6 +54,8 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
 
     private static final String TAG = "AlbumListAdapter-TAG";
     ArrayList<? extends IMediaItemBase> items;
+    public static final int ITEM_VIEW_TYPE_ITEM_LIST = 0;
+    public static final int ITEM_VIEW_TYPE_ITEM_LIST_FOOTER = 1;
     private PermissionChecker permissionChecker;
     private Activity context;
     private  RecyclerView recyclerView;
@@ -65,39 +68,62 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
         this.permissionChecker = permissionChecker;
     }
 
+    public int whatView(int position){
+        if(position < items.size()){
+            return ITEM_VIEW_TYPE_ITEM_LIST;
+        }else{
+            return ITEM_VIEW_TYPE_ITEM_LIST_FOOTER;
+        }
+    }
+
+
     @Override
     public BoomPlayListAdapter.SimpleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).
-                inflate(R.layout.card_grid_item, parent, false);
+        View itemView;
+        if(viewType == ITEM_VIEW_TYPE_ITEM_LIST){
+            itemView = LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.card_grid_item, parent, false);
+        }else {
+            itemView = LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.card_boom_playlist_footer, parent, false);
+        }
         return new SimpleItemViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(final BoomPlayListAdapter.SimpleItemViewHolder holder, final int position) {
+        if(position < items.size()) {
+            if (((IMediaItemCollection) items.get(position)).getArtUrlList().isEmpty())
+                ((IMediaItemCollection) items.get(position)).setArtUrlList(MediaController.getInstance(context).getArtUrlList((MediaItemCollection) items.get(position)));
+            Size size = setSize(holder);
+            if (((IMediaItemCollection) items.get(position)).getArtUrlList().size() >= 1) {
+                holder.artTable.setVisibility(View.VISIBLE);
+                setSongsArtImage(holder, position, size, ((IMediaItemCollection) items.get(position)).getArtUrlList());
+            } else if (((IMediaItemCollection) items.get(position)).getArtUrlList().size() == 0) {
+                holder.defaultImg.setVisibility(View.VISIBLE);
+                setDefaultImage(holder.defaultImg, size.width, size.height);
+            } else {
+                holder.mainView.setVisibility(View.GONE);
+            }
 
-        if(((IMediaItemCollection)items.get(position)).getArtUrlList().isEmpty())
-            ((IMediaItemCollection)items.get(position)).setArtUrlList(MediaController.getInstance(context).getArtUrlList((MediaItemCollection) items.get(position)));
-        Size size= setSize(holder);
-        if(((IMediaItemCollection)items.get(position)).getArtUrlList().size() >= 1){
-            holder.artTable.setVisibility(View.VISIBLE);
-            setSongsArtImage(holder, position, size, ((IMediaItemCollection)items.get(position)).getArtUrlList());
-        }else if(((IMediaItemCollection)items.get(position)).getArtUrlList().size() == 0){
-            holder.defaultImg.setVisibility(View.VISIBLE);
-            setDefaultImage(holder.defaultImg, size.width, size.height);
+            holder.title.setText(items.get(position).getItemTitle());
+            int itemcount = ((IMediaItemCollection) items.get(position)).getItemCount();
+            holder.subTitle.setText((itemcount > 1 ? context.getResources().getString(R.string.songs) : context.getResources().getString(R.string.song)) + " " + itemcount);
+
+            if (App.getUserPreferenceHandler().isLibFromHome()) {
+                holder.grid_menu.setVisibility(View.VISIBLE);
+            } else {
+                holder.grid_menu.setVisibility(View.INVISIBLE);
+            }
+            setOnClicks(holder, position);
         }else{
-            holder.mainView.setVisibility(View.GONE);
-        }
 
-        holder.title.setText(items.get(position).getItemTitle());
-        int itemcount = ((IMediaItemCollection)items.get(position)).getItemCount();
-        holder.subTitle.setText((itemcount > 1 ? context.getResources().getString(R.string.songs):  context.getResources().getString(R.string.song))+" "+ itemcount);
-
-        if(App.getUserPreferenceHandler().isLibFromHome()){
-            holder.grid_menu.setVisibility(View.VISIBLE);
-        }else{
-            holder.grid_menu.setVisibility(View.INVISIBLE);
         }
-        setOnClicks(holder, position);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return whatView(position);
     }
 
     private Size setSize(SimpleItemViewHolder holder) {
@@ -202,6 +228,12 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
+                            case R.id.popup_play_next :
+                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                                    ((MediaItemCollection)items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(items.get(position));
+                                }
+                                break;
                             case R.id.popup_add_queue :
                                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
                                     ((MediaItemCollection)items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
@@ -282,7 +314,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return items.size()+1;
     }
 
     public void updateNewList(ArrayList<? extends MediaItemCollection> newList) {

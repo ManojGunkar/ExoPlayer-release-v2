@@ -187,6 +187,7 @@ public class AlbumActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mPlayAlbum.setVisibility(View.VISIBLE);
         if (null != App.getPlayerEventHandler().getPlayingItem()) {
             updateMiniPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
                             (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
@@ -418,6 +419,12 @@ public class AlbumActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPlayAlbum.setVisibility(View.GONE);
     }
 
     private void expand() {

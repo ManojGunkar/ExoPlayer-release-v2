@@ -138,6 +138,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
+                                case R.id.popup_song_play_next :
+                                    App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(itemList.get(position));
+                                    break;
                                 case R.id.popup_song_add_queue:
                                     App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(itemList.get(position));
                                     break;

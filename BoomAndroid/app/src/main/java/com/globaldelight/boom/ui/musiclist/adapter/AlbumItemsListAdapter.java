@@ -154,9 +154,9 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                         switch (menuItem.getItemId()) {
                             case R.id.album_header_add_play_next:
                                 if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(item.getMediaElement());
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(item);
                                 } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement());
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(item.getMediaElement().get(item.getCurrentIndex()));
                                 }
                                 break;
                             case R.id.album_header_add_to_upnext :
@@ -222,6 +222,15 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                         @Override
                         public boolean onMenuItemClick(MenuItem menuItem) {
                             switch (menuItem.getItemId()) {
+                                case R.id.popup_song_play_next:
+                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                        if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
+                                            App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(item.getMediaElement().get(position));
+                                        } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
+                                            App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                        }
+                                    }
+                                    break;
                                 case R.id.popup_song_add_queue:
                                     if (App.getPlayingQueueHandler().getUpNextList() != null) {
                                         if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {

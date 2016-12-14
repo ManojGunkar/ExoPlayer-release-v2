@@ -89,9 +89,7 @@ public class DeviceMediaHandler {
                     return DeviceMediaQuery.getSongListOfGenre(context, collection.getItemId(), collection.getItemTitle());
                 }
             case BOOM_PLAYLIST:
-                if (((MediaItemCollection)collection).getMediaElement().isEmpty()) {
-                    return App.getBoomPlayListHelper().getPlaylistSongs(collection.getItemId());
-                }
+                return App.getBoomPlayListHelper().getPlaylistSongs(collection.getItemId());
             case FAVOURITE:
 
                 break;

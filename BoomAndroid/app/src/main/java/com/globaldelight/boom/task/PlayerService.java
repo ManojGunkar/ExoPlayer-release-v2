@@ -43,6 +43,7 @@ public class PlayerService extends Service {
     public static final String ACTION_PLAYING_ITEM_CLICKED ="ACTION_PLAYING_ITEM_CLICKED";
 
     public static final String ACTION_UPDATE_BOOM_PLAYLIST ="ACTION_UPDATE_BOOM_PLAYLIST";
+    public static final String ACTION_UPDATE_BOOM_PLAYLIST_LIST ="ACTION_UPDATE_BOOM_PLAYLIST_LIST";
     private static long mShiftingTime = 0;
     private PlayerEventHandler musicPlayerHandler;
     private Context context;

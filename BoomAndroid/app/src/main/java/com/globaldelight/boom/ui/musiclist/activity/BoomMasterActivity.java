@@ -32,6 +32,7 @@ import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
 
 /**
@@ -164,6 +165,7 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
                 MediaController.getInstance(BoomMasterActivity.this).addSongToBoomPlayList(App.getUserPreferenceHandler().getBoomPlayListId(), App.getUserPreferenceHandler().getItemList(), false);
                 App.getUserPreferenceHandler().setLibraryStartFromHome(true);
                 App.getUserPreferenceHandler().clearItemList();
+                sendBroadcast(new Intent(PlayerService.ACTION_UPDATE_BOOM_PLAYLIST_LIST));
                 finish();
             }
         });

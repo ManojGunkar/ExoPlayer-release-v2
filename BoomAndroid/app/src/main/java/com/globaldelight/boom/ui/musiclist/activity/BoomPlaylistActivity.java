@@ -36,8 +36,10 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.handler.search.Search;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.adapter.BoomPlayListAdapter;
+import com.globaldelight.boom.ui.musiclist.adapter.SearchListAdapter;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.PermissionChecker;
@@ -45,6 +47,8 @@ import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
+import com.globaldelight.boom.utils.decorations.BoomPlayListFooterItemDecoration;
+import com.globaldelight.boom.utils.decorations.SearchListSpacesItemDecoration;
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 
 import java.io.File;
@@ -144,6 +148,16 @@ public class BoomPlaylistActivity extends AppCompatActivity {
                 final ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(BoomPlaylistActivity.this).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getPlayList(context)*/;
                 final GridLayoutManager gridLayoutManager =
                         new GridLayoutManager(BoomPlaylistActivity.this, 2);
+                gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                    @Override
+                    public int getSpanSize(int position) {
+                        if (boomPlayListAdapter.whatView(position) == BoomPlayListAdapter.ITEM_VIEW_TYPE_ITEM_LIST) {
+                            return 1;
+                        } else {
+                            return 2;
+                        }
+                    }
+                });
                         runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -154,6 +168,7 @@ public class BoomPlaylistActivity extends AppCompatActivity {
                         recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(BoomPlaylistActivity.this, 0)));
                         boomPlayListAdapter = new BoomPlayListAdapter(BoomPlaylistActivity.this, recyclerView, playList, permissionChecker);
                         recyclerView.setAdapter(boomPlayListAdapter);
+                        recyclerView.addItemDecoration(new BoomPlayListFooterItemDecoration(2, boomPlayListAdapter));
                         recyclerView.setHasFixedSize(true);
                     }
                 });

@@ -538,13 +538,13 @@ public class UpNextList {
         }
     }
 
-    public void addItemListToUpNextFrom(ArrayList<? extends IMediaItemBase> itemList) {
-        if(null != itemList && itemList.size() > 0) {
-            insertUnShuffledList(itemList, true);
+    public void addItemListToUpNextFrom(IMediaItemBase itemList) {
+        if(null != itemList && ((MediaItemCollection) itemList).getMediaElement().size() > 0) {
+            insertUnShuffledList(((MediaItemCollection) itemList).getMediaElement(), true);
             if(mShuffle == SHUFFLE.all){
-                Collections.shuffle(itemList);
+                Collections.shuffle(((MediaItemCollection) itemList).getMediaElement());
             }
-            mAutoNextList.addAll(itemList);
+            mAutoNextList.addAll(((MediaItemCollection) itemList).getMediaElement());
             QueueUpdated();
         }
     }

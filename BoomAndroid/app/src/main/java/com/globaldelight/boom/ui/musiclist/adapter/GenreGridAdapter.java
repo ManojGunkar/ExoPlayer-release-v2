@@ -139,6 +139,13 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
+                            case R.id.popup_album_play_next :
+                                items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
+                                ((IMediaItemCollection)items.get(position).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
+
+                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(items.get(position).getMediaElement().get(items.get(position).getCurrentIndex()));
+                                items.get(position).getMediaElement().clear();
+                                break;
                             case R.id.popup_album_add_queue :
                                 items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
                                 ((IMediaItemCollection)items.get(position).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
