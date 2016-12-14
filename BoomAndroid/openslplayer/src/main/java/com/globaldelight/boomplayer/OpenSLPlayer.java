@@ -287,16 +287,8 @@ public class OpenSLPlayer implements Runnable {
 
         }
 
-        if ( channels == 0 ) {
-            channels = 2;
-        }
-
-        if ( sampleRate == 0 ) {
-            sampleRate = 44100;
-        }
-
-        // configure OpenSLPlayer
-        createAudioPlayer(sampleRate, channels);
+        MediaFormat outputFormat = codec.getOutputFormat();
+        createPlayer(outputFormat);
 
         if(null != extractor) {
             extractor.selectTrack(0);
@@ -312,6 +304,8 @@ public class OpenSLPlayer implements Runnable {
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
         boolean sawInputEOS = false;
         boolean sawOutputEOS = false;
+
+
 
         presentationTimeUs = 0;
         state.set(PlayerStates.PLAYING);
@@ -384,7 +378,12 @@ public class OpenSLPlayer implements Runnable {
                             sawOutputEOS = true;
                         }
                     } else if (outputBufIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                        MediaFormat oformat = codec.getOutputFormat();
+                        outputFormat = codec.getOutputFormat();
+                        Log.d(LOG_TAG,"Format changed" + outputFormat);
+
+                        // Restart player
+                        shutdown(false);
+                        createPlayer(outputFormat);
                     }
                 } catch (MediaCodec.CodecException e) {
                     e.printStackTrace();
@@ -480,6 +479,13 @@ public class OpenSLPlayer implements Runnable {
             results += (i+1) + ". " + name+ " " + typeList + "\n\n";
         }
         Log.d("Supported Formats : ", results);
+    }
+
+    private void createPlayer(MediaFormat format)
+    {
+        int sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
+        int channels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
+        createAudioPlayer(sampleRate, channels);
     }
 
 
