@@ -36,6 +36,7 @@
         <item name="android:textColorHint">@color/progress_gray</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:itemBackground">@color/dialog_background</item>
+        <item name="android:dropDownListViewStyle">@style/myDropDownListViewStyle</item>
     </style>
 
     <style name="AppTheme.Album" parent="AppTheme">
@@ -193,6 +194,10 @@
     <style name="MyCheckBox" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@color/card_grid_item_bottom_line</item>
         <item name="colorControlActivated">@color/colorPrimary</item>
+    </style>
+
+    <style name="myDropDownListViewStyle" parent="Widget.AppCompat.ListView.DropDown">
+        <item name="android:background">@color/dialog_background</item>
     </style>
 
 </resources>

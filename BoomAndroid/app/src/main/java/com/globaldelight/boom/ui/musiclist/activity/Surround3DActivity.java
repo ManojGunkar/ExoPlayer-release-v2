@@ -86,8 +86,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
         /**
          * Master control for managing efrfects based on purchase
          */
-        //  audioEffectPreferenceHandler.setMasterEffectControl(false);
-
+//          audioEffectPreferenceHandler.setMasterEffectControl(false);
         onPowerSwitchUpdate();
         update3DSurround();
         updateIntensity();
@@ -252,7 +251,8 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void update3DSurround(){
-        if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()){
+        if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn() &&
+                audioEffectPreferenceHandler.isMasterEffectControlEnabled()){
             m3DSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_surround, null));
             m3DSwitchTxt.setText(getResources().getString(R.string.status_on_caps));
             m3DTxt.setTextColor(Color.WHITE);
@@ -452,29 +452,15 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void switch3DSurround(boolean isPowerOn){
         if(isPowerOn) {
-            if(audioEffectPreferenceHandler.is3DSurroundOn()){
+            if(!audioEffectPreferenceHandler.is3DSurroundOn() &&
+                    audioEffectPreferenceHandler.isMasterEffectControlEnabled()){
+                audioEffectPreferenceHandler.setEnable3DSurround(true);
+                App.getPlayerEventHandler().set3DAudioEnable(true);
+            }else{
                 audioEffectPreferenceHandler.setEnable3DSurround(false);
                 App.getPlayerEventHandler().set3DAudioEnable(false);
                 collapse();
-            }else{
-                audioEffectPreferenceHandler.setEnable3DSurround(true);
-                App.getPlayerEventHandler().set3DAudioEnable(true);
             }
-// In app code will be in else
-                //TODO
-               /* int purchaseType = audioEffectPreferenceHandler.getUserPurchaseType();
-                switch (AudioEffect.purchase.fromOrdinal(purchaseType)) {
-                    case NORMAL_USER:
-                        break;
-                    case PAID_USER:
-                        audioEffectPreferenceHandler.setEnable3DSurround(true);
-                        App.getPlayerEventHandler().set3DAudioEnable(true);
-                        break;
-                    case FIVE_DAY_OFFER:
-                        audioEffectPreferenceHandler.setEnable3DSurround(true);
-                        App.getPlayerEventHandler().set3DAudioEnable(true);
-                        break;
-                }*/
             update3DSurround();
             if(!audioEffectPreferenceHandler.isIntensityOn()){
                 switchIntensity(isPowerOn);

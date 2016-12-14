@@ -475,8 +475,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_marginTop="@dimen/one_ten_pt"
-                android:background="#222327"
-                android:visibility="invisible" />
+                android:background="#222327" />
 
 
             <com.globaldelight.boom.ui.widgets.RegularButton
@@ -490,15 +489,14 @@
                 android:text="@string/purchase_buton_text"
                 android:textColor="@color/white"
                 android:textSize="@dimen/purchase_item_button_size"
-                android:typeface="normal"
-                android:visibility="gone" />
+                android:typeface="normal" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_marginTop="@dimen/one_ten_pt"
                 android:background="#222327"
-                android:visibility="gone" />
+                android:visibility="invisible" />
         </LinearLayout>
     </ScrollView>
 

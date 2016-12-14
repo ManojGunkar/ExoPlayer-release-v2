@@ -9,9 +9,9 @@
     android:background="@android:color/black"
     tools:context="com.globaldelight.boom.purchase.InAppPurchaseActivity">
 
-    <!-- <ScrollView
+  <ScrollView
          android:layout_width="match_parent"
-         android:layout_height="match_parent">-->
+         android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,7 +21,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <ImageView
@@ -108,8 +108,7 @@
 
 
         </LinearLayout>
-    <!--
+
         </ScrollView>
-    -->
 
 </RelativeLayout>

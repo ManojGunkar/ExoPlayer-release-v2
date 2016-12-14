@@ -201,8 +201,8 @@ public class InAppPurchaseActivity extends AppCompatActivity {
     }
 
     void complain(String message) {
-        Logger.LOGD(TAG, "**** TrivialDrive Error: " + message);
-        alert("Error: " + message);
+        //Logger.LOGD(TAG, "**** TrivialDrive Error: " + message);
+       // alert("Error: " + message);
     }
 
     void alert(String message) {

@@ -34,6 +34,7 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.manager.MusicReceiver;
+import com.globaldelight.boom.purchase.PurchaseUtil;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.widgets.CircularSeekBar;
 import com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView;
@@ -43,6 +44,7 @@ import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
+import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boomplayer.AudioEffect;
 
@@ -329,6 +331,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
         initViews();
 
+        MusicSearchHelper s = new MusicSearchHelper(this);
+        s.setSearchContent(this);
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_RECEIVE_SONG);
         intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
@@ -379,9 +384,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void showPurchaseOption() {
-        //  PurchaseUtil.checkUserPurchase(this);
-
-
+        PurchaseUtil.checkUserPurchase(this);
     }
     @Override
     public void onBackPressed() {

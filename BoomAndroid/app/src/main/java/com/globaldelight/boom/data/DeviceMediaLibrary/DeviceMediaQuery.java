@@ -22,6 +22,7 @@ import java.util.ArrayList;
  */
 public class DeviceMediaQuery {
 
+
     public static ArrayList<? extends IMediaItemBase> getSongList(Context context){
         ArrayList<MediaItem> songList = new ArrayList<>();
 
