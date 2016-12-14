@@ -16,6 +16,7 @@ using namespace gdpl;
 
 static const uint16_t UNITY_GAIN = 0x1000;
 static const int CHANNEL_COUNT = 2;
+static const int OUTPUT_QUEUE_SIZE = 6;
 
 #define MIN(A,B) (((A)<(B))? (A):(B))
 #define BYTES_PER_CHANNEL ((mAudioEngine->GetOutputType() == SAMPLE_TYPE_SHORT)? sizeof(int16_t) : sizeof(float))
@@ -45,7 +46,7 @@ gdpl::BoomAudioProcessor::BoomAudioProcessor(AudioEngine* engine, int32_t sample
 
     size_t inFrameCount = (kFrameCount * kInputSampleRate) / kNativeSampleRate;
     mInputBuffer = new RingBuffer(inFrameCount * 2, channels, sizeof(uint16_t));
-    mPlaybackBuffer = new RingBuffer(kFrameCount * (kTempBufferCount + 1), 2, BYTES_PER_CHANNEL);
+    mPlaybackBuffer = new RingBuffer(kFrameCount * OUTPUT_QUEUE_SIZE, 2, BYTES_PER_CHANNEL);
 }
 
 
@@ -121,17 +122,18 @@ void gdpl::BoomAudioProcessor::ProcessAudio(RingBuffer* buffer, void* output, in
 void gdpl::BoomAudioProcessor::SendToPlayback(void* outBuffer, int frameCount)
 {
     size_t offset = 0;
+    const uint32_t timeToWait = (uint32_t)((frameCount * 1000000ULL)/(uint64_t)(kNativeSampleRate*2));
+
     while ( frameCount > offset ) {
         offset += mPlaybackBuffer->Write((uint8_t*)outBuffer, offset, (size_t)frameCount);
         if ( offset < frameCount && mIsReady ) {
-            const uint32_t timeToWait = (uint32_t)((frameCount * 1000000ULL)/(uint64_t)kNativeSampleRate);
-            usleep(timeToWait/2);
+            usleep(timeToWait);
         }
     }
 
     if (!mIsReady) {
         mQueueCount++;
-        if ( mQueueCount > kTempBufferCount ) {
+        if ( mQueueCount >= OUTPUT_QUEUE_SIZE ) {
             mIsReady = true;
             mQueueCount = 0;
             LOGD("Ready for playback!");
