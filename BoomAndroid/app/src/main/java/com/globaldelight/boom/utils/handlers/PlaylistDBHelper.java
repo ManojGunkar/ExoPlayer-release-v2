@@ -204,7 +204,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
 
                     songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5),
                             cursor.getString(6), cursor.getInt(7), cursor.getString(8), Long.parseLong(duration),
-                            Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(12))));
+                            Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(12)), ItemType.BOOM_PLAYLIST, playlistId));
                 } while (cursor.moveToNext());
             }
         }catch (Exception e){

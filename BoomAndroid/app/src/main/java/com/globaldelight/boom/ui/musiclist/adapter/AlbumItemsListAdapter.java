@@ -91,15 +91,37 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
             String title;
             String duration;
             int pos = position -1;
+            MediaItem nowPlayingItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
             if (item.getItemType() == ItemType.ALBUM) {
                 title = item.getMediaElement().get(pos).getItemTitle();
                 duration = ((MediaItem) item.getMediaElement().get(pos)).getDuration();
+                if(null != nowPlayingItem && item.getMediaElement().get(pos).getItemId() == nowPlayingItem.getItemId()){
+                    holder.name.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+                    holder.count.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+                }else if(null != nowPlayingItem){
+                    holder.name.setTextColor(context.getResources().getColor(R.color.white));
+                    holder.count.setTextColor(context.getResources().getColor(R.color.white));
+                }
             } else if (item.getItemType() == ItemType.ARTIST || item.getItemType() == ItemType.GENRE) {
                 title = ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(pos).getItemTitle();
                 duration = ((MediaItem) ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(pos)).getDuration();
+                if(null != nowPlayingItem && ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(pos).getItemId() == nowPlayingItem.getItemId()){
+                    holder.name.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+                    holder.count.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+                }else if(null != nowPlayingItem){
+                    holder.name.setTextColor(context.getResources().getColor(R.color.white));
+                    holder.count.setTextColor(context.getResources().getColor(R.color.white));
+                }
             } else {
                 title = item.getMediaElement().get(item.getCurrentIndex()).getItemTitle();
                 duration = ((MediaItem) ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(pos)).getDuration();
+                if(null != nowPlayingItem && item.getMediaElement().get(item.getCurrentIndex()).getItemId() == nowPlayingItem.getItemId()){
+                    holder.name.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+                    holder.count.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+                }else if(null != nowPlayingItem){
+                    holder.name.setTextColor(context.getResources().getColor(R.color.white));
+                    holder.count.setTextColor(context.getResources().getColor(R.color.white));
+                }
             }
             holder.name.setText(title);
             holder.count.setText(String.valueOf(pos + 1));
@@ -210,6 +232,9 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                     } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
                         App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), position);
                     }
+                    holder.name.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+                    holder.count.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+                    notifyDataSetChanged();
                 }
             }
         });

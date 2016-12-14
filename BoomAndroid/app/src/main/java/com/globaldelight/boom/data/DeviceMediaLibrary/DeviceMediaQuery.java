@@ -69,7 +69,7 @@ public class DeviceMediaQuery {
                         songListCursor.getLong(Artist_ID_Column), songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
                         songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
                         getAlbumArtByAlbum(context, songListCursor.getString(Album_Name_Column)), ItemType.SONGS,
-                        MediaType.DEVICE_MEDIA_LIB));
+                        MediaType.DEVICE_MEDIA_LIB, ItemType.SONGS, 0));
             }while (songListCursor.moveToNext());
 
         }
@@ -211,7 +211,7 @@ public class DeviceMediaQuery {
                         songListCursor.getLong(Album_ID_Column), songListCursor.getString(Album_Name_Column), songListCursor.getLong(Artist_ID_Column),
                         songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
                         songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
-                        getAlbumArtByAlbum(context, songListCursor.getString(Album_Name_Column)), ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB));
+                        getAlbumArtByAlbum(context, songListCursor.getString(Album_Name_Column)), ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.ALBUM, itemId));
             }while (songListCursor.moveToNext());
         }
         if (songListCursor != null) {
@@ -395,7 +395,7 @@ public class DeviceMediaQuery {
                         songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
                         songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
                         getAlbumArtByAlbum(context, songListCursor.getString(Album_Name_Column)), ItemType.SONGS,
-                        MediaType.DEVICE_MEDIA_LIB));
+                        MediaType.DEVICE_MEDIA_LIB, ItemType.ARTIST, parentId));
             }while (songListCursor.moveToNext());
         }
         if (songListCursor != null) {
@@ -459,7 +459,7 @@ public class DeviceMediaQuery {
                         songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
                         songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
                         getAlbumArtByAlbum(context, songListCursor.getString(Album_Name_Column)), ItemType.SONGS,
-                        MediaType.DEVICE_MEDIA_LIB));
+                        MediaType.DEVICE_MEDIA_LIB, ItemType.ARTIST, itemId));
             }while (songListCursor.moveToNext());
         }
         if (songListCursor != null) {
@@ -610,7 +610,7 @@ public class DeviceMediaQuery {
                         songListCursor.getLong(Artist_ID_Column), songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
                         songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
                         getAlbumArtByAlbum(context, songListCursor.getString(Album_Name_Column)),
-                        ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB));
+                        ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.PLAYLIST, itemId));
             }while (songListCursor.moveToNext());
         }
         if (songListCursor != null) {
@@ -800,7 +800,7 @@ public class DeviceMediaQuery {
                         songListCursor.getLong(Artist_ID_Column), songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
                         songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
                         getAlbumArtByAlbum(context, songListCursor.getString(Album_Name_Column)),
-                        ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB));
+                        ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.GENRE, parentId));
             } while (songListCursor.moveToNext());
             if (songListCursor != null) {
                 songListCursor.close();
@@ -865,7 +865,7 @@ public class DeviceMediaQuery {
                         songListCursor.getLong(Artist_ID_Column), songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
                         songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
                         getAlbumArtByAlbum(context, songListCursor.getString(Album_Name_Column)),
-                        ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB));
+                        ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.GENRE, itemId));
             } while (songListCursor.moveToNext());
 
             // Close the cursor
@@ -925,7 +925,7 @@ public class DeviceMediaQuery {
                         songListCursor.getLong(Artist_ID_Column), songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
                         songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
                         getAlbumArtByAlbum(context, songListCursor.getString(Album_Name_Column)), ItemType.SONGS,
-                        MediaType.DEVICE_MEDIA_LIB));
+                        MediaType.DEVICE_MEDIA_LIB, ItemType.SONGS, 0));
 
                 if(isPartial && count == 3){
                     break;

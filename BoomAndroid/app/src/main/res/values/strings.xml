@@ -186,6 +186,7 @@
     <string name="menu_remove_boom_fav">Remove from Boom Favourites</string>
     <string name="unknown_artist">unknown artist</string>
     <string name="speaker_status_all_on">All Speakers are On</string>
+    <string name="search_settings">Search in Music Library</string>
 
 
 </resources>

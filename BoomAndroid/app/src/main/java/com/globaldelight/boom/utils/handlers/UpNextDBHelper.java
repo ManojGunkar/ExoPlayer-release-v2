@@ -12,12 +12,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
-import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,6 +42,8 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
     private static final String DATE_ADDED = "DateAdded";
     private static final String ALBUM_ART = "ItemArtUrl";
     private static final String MEDIA_TYPE = "mediaType";
+    private static final String PARENT_TYPE = "itemParentType";
+    private static final String PARENT_ID = "parentId";
     private static final String QUEUE_TYPE = "queue_type";
 
     public UpNextDBHelper(Context context) {
@@ -63,7 +60,8 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
                 ALBUM+" TEXT," + ARTIST_ID+" INTEGER," +
                 ARTIST+" TEXT," + DURATION+" TEXT," +
                 DATE_ADDED+" TEXT," + ALBUM_ART+" TEXT," +
-                MEDIA_TYPE+" INTEGER," + QUEUE_TYPE+" INTEGER)";
+                MEDIA_TYPE+" INTEGER," + PARENT_TYPE + " INTEGER," +
+                PARENT_ID+" INTEGER,"+ QUEUE_TYPE+" INTEGER)";
 
         db.execSQL(CREATE_HISTORY_TABLE);
     }
@@ -95,6 +93,8 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
             values.put(DATE_ADDED, ((IMediaItem)songs.get(i)).getDateAdded());
             values.put(ALBUM_ART, ((IMediaItem)songs.get(i)).getItemArtUrl());
             values.put(MEDIA_TYPE, ((IMediaItem)songs.get(i)).getMediaType().ordinal());
+            values.put(PARENT_TYPE, ((IMediaItem)songs.get(i)).getParentType().ordinal());
+            values.put(PARENT_ID, ((IMediaItem)songs.get(i)).getParentId());
             values.put(QUEUE_TYPE, SHUFfLED_QUEUE);
 
             db.insert(TABLE_UPNEXT, null, values);
@@ -121,6 +121,8 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
             values.put(DATE_ADDED, ((IMediaItem)songs.get(i)).getDateAdded());
             values.put(ALBUM_ART, ((IMediaItem)songs.get(i)).getItemArtUrl());
             values.put(MEDIA_TYPE, ((IMediaItem)songs.get(i)).getMediaType().ordinal());
+            values.put(PARENT_TYPE, ((IMediaItem)songs.get(i)).getParentType().ordinal());
+            values.put(PARENT_ID, ((IMediaItem)songs.get(i)).getParentId());
             values.put(QUEUE_TYPE, queueType.ordinal());
 
             db.insert(TABLE_UPNEXT, null, values);
@@ -149,6 +151,8 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         values.put(DATE_ADDED, ((IMediaItem)song).getDateAdded());
         values.put(ALBUM_ART, ((IMediaItem)song).getItemArtUrl());
         values.put(MEDIA_TYPE, ((IMediaItem)song).getMediaType().ordinal());
+        values.put(PARENT_TYPE, ((IMediaItem)song).getParentType().ordinal());
+        values.put(PARENT_ID, ((IMediaItem)song).getParentId());
         values.put(QUEUE_TYPE, queueType.ordinal());
 
         db.insert(TABLE_UPNEXT, null, values);
@@ -171,7 +175,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
 
                     songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5),
                             cursor.getString(6), cursor.getInt(7), cursor.getString(8), Long.parseLong(duration),
-                            Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(12))));
+                            Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(12)), ItemType.fromOrdinal(cursor.getInt(13)), cursor.getInt(14)));
                 } while (cursor.moveToNext());
             }
         }catch (Exception e){
@@ -218,7 +222,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
 
                     songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5),
                             cursor.getString(6), cursor.getInt(7), cursor.getString(8), Long.parseLong(duration),
-                            Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(12))));
+                            Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(12)), ItemType.fromOrdinal(cursor.getInt(13)), cursor.getInt(14)));
                 } while (cursor.moveToNext());
             }
         }catch (Exception e){

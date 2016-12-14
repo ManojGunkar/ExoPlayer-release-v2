@@ -72,7 +72,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
     @Override
     public void onBindViewHolder(final SongListAdapter.SimpleItemViewHolder holder, final int position) {
         holder.name.setText(itemList.get(position).getItemTitle());
+        holder.name.setTextColor(context.getResources().getColor(R.color.white));
         holder.artistName.setText(itemList.get(position).getItemArtist());
+//        holder.artistName.setTextColor(context.getResources().getColor(R.color.card_grid_artist));
         holder.mainView.setElevation(0);
         setAlbumArt(itemList.get(position).getItemArtUrl(), holder);
         if (selectedHolder != null)
@@ -100,6 +102,15 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                 }
             });
         }
+
+        MediaItem nowPlayingItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        if(null != nowPlayingItem /*&& nowPlayingItem.getParentType() == ItemType.SONGS*/ /*&& (App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused())*/){
+            if(itemList.get(position).getItemId() == nowPlayingItem.getItemId()){
+                holder.name.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+            }else{
+                holder.name.setTextColor(context.getResources().getColor(R.color.white));
+            }
+        }
     }
 
     private void setAlbumArt(String path, SimpleItemViewHolder holder) {
@@ -124,7 +135,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                 animate(holder);
                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
                     App.getPlayingQueueHandler().getUpNextList().addToPlay(itemList, position);
-
+                    notifyDataSetChanged();
                 }
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_SONG_SECTION);
             }

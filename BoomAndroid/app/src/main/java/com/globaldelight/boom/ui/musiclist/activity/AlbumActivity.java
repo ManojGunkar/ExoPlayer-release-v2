@@ -77,6 +77,7 @@ public class AlbumActivity extends AppCompatActivity {
     private ProgressBar mTrackProgress;
     private RegularTextView mTitle, mSubTitle;
     private ImageView mPlayerArt, mPlayPause;
+    private AlbumItemsListAdapter albumItemsListAdapter;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -149,6 +150,7 @@ public class AlbumActivity extends AppCompatActivity {
                     } else {
                         App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
                     }
+                    albumItemsListAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -335,7 +337,8 @@ public class AlbumActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         rv.setLayoutManager(new LinearLayoutManager(AlbumActivity.this));
-                        rv.setAdapter(new AlbumItemsListAdapter(AlbumActivity.this, collection, listDetail, permissionChecker));
+                        albumItemsListAdapter = new AlbumItemsListAdapter(AlbumActivity.this, collection, listDetail, permissionChecker);
+                        rv.setAdapter(albumItemsListAdapter);
                     }
                 });
 //                if (favList.size() < 1) {

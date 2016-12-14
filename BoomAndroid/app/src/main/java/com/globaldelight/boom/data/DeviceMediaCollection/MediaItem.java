@@ -25,10 +25,12 @@ public class MediaItem implements IMediaItem, Parcelable {
     private String ItemArtUrl;
     private ItemType itemType;
     private MediaType mediaType;
+    private ItemType parentType;
+    private long parentId;
 
 
     public MediaItem(long ItemId, String ItemTitle, String ItemDisplayName, String ItemUrl, long ItemAlbumId, String ItemAlbum, long ItemArtistId,
-                     String ItemArtist, long Duration, long DateAdded, String ItemArtUrl, ItemType itemType, MediaType mediaType){
+                     String ItemArtist, long Duration, long DateAdded, String ItemArtUrl, ItemType itemType, MediaType mediaType, ItemType parentType, long parentId){
         this.ItemId = ItemId;
         this.ItemTitle = ItemTitle;
         this.ItemDisplayName = ItemDisplayName;
@@ -42,6 +44,8 @@ public class MediaItem implements IMediaItem, Parcelable {
         this.ItemArtUrl = ItemArtUrl;
         this.itemType = itemType;
         this.mediaType = mediaType;
+        this.parentType = parentType;
+        this.parentId = parentId;
     }
 
     protected MediaItem(Parcel in) {
@@ -58,6 +62,8 @@ public class MediaItem implements IMediaItem, Parcelable {
         ItemArtUrl = in.readString();
         itemType = ItemType.valueOf(in.readString());
         mediaType = MediaType.valueOf(in.readString());
+        parentType = ItemType.valueOf(in.readString());
+        parentId = in.readLong();
     }
 
     public static final Creator<MediaItem> CREATOR = new Creator<MediaItem>() {
@@ -117,8 +123,29 @@ public class MediaItem implements IMediaItem, Parcelable {
         return ItemArtUrl;
     }
 
+    @Override
     public ItemType getItemType() {
         return itemType;
+    }
+
+    @Override
+    public long getParentId() {
+        return parentId;
+    }
+
+    @Override
+    public void setParentId(long parentId) {
+        this.parentId = parentId;
+    }
+
+    @Override
+    public void setParentItemType(ItemType parentType) {
+        this.parentType = parentType;
+    }
+
+    @Override
+    public ItemType getParentType(){
+        return parentType;
     }
 
     public MediaType getMediaType() {
@@ -188,5 +215,7 @@ public class MediaItem implements IMediaItem, Parcelable {
         dest.writeString(ItemArtUrl);
         dest.writeString(itemType.name());
         dest.writeString(mediaType.name());
+        dest.writeString(parentType.name());
+        dest.writeLong(parentId);
     }
 }

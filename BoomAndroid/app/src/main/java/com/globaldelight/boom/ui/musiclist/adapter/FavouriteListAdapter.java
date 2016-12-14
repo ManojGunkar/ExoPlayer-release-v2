@@ -99,6 +99,15 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
                 }
             });
         }
+
+        MediaItem nowPlayingItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        if(null != nowPlayingItem /*&& nowPlayingItem.getParentType() == ItemType.SONGS*/ /*&& (App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused())*/){
+            if(itemList.get(position).getItemId() == nowPlayingItem.getItemId()){
+                holder.name.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+            }else{
+                holder.name.setTextColor(context.getResources().getColor(R.color.white));
+            }
+        }
     }
 
     private void setAlbumArt(String path, FavouriteListAdapter.SimpleItemViewHolder holder) {
@@ -123,6 +132,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
                 animate(holder);
                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
                     App.getPlayingQueueHandler().getUpNextList().addToPlay((LinkedList<MediaItem>) itemList, position);
+                    notifyDataSetChanged();
                 }
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_FAVOURITE_SECTION);
 

@@ -168,6 +168,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
                 }else{
                     App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
                 }
+                itemSongListAdapter.notifyDataSetChanged();
             }
         });
 

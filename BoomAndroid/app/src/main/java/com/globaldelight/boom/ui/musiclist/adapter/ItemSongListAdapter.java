@@ -169,6 +169,17 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             }
             setDragHandle(holder);
         }
+
+        if(position >= 1){
+            MediaItem nowPlayingItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+            if(null != nowPlayingItem /*&& nowPlayingItem.getParentType() == ItemType.SONGS*/ /*&& (App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused())*/){
+                if(currentItem.getItemId() == nowPlayingItem.getItemId()){
+                    holder.name.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
+                }else{
+                    holder.name.setTextColor(activity.getResources().getColor(R.color.white));
+                }
+            }
+        }
     }
 
     private void setOnCheckedChanged(SimpleItemViewHolder holder, final int pos) {
@@ -298,6 +309,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                     }else{
                         App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), position);
                     }
+                    notifyDataSetChanged();
                 }
             }
         });
