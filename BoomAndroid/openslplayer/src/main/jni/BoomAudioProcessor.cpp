@@ -17,6 +17,7 @@ using namespace gdpl;
 static const uint16_t UNITY_GAIN = 0x1000;
 static const int CHANNEL_COUNT = 2;
 
+#define MIN(A,B) (((A)<(B))? (A):(B))
 #define BYTES_PER_CHANNEL ((mAudioEngine->GetOutputType() == SAMPLE_TYPE_SHORT)? sizeof(int16_t) : sizeof(float))
 
 
@@ -38,7 +39,7 @@ gdpl::BoomAudioProcessor::BoomAudioProcessor(AudioEngine* engine, int32_t sample
     }
     mIndex = 0;
 
-    mAudioResampler = AudioResampler::create(16, channels, kNativeSampleRate, AudioResampler::HIGH_QUALITY);
+    mAudioResampler = AudioResampler::create(16, MIN(channels,2), kNativeSampleRate, AudioResampler::HIGH_QUALITY);
     mAudioResampler->setSampleRate(sampleRate);
     mAudioResampler->setVolume(UNITY_GAIN, UNITY_GAIN);
 
