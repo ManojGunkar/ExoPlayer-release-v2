@@ -636,6 +636,11 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     protected void onResume() {
         super.onResume();
         App.getPlayerEventHandler().isPlayerResume = true;
+
+        if(AudioEffect.getAudioEffectInstance(this).isMasterEffectControlEnabled()){
+
+        }
+
         if(null == App.getService())
             startService(new Intent(this, PlayerService.class));
 

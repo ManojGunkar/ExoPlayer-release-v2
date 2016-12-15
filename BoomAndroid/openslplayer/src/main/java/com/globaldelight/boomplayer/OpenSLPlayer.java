@@ -580,8 +580,10 @@ public class OpenSLPlayer implements Runnable {
 
     public synchronized void setEnable3DAudio(boolean enable3DAudio) {
         try {
-            if(isPlaying() || isPause())
-                enable3DAudio(enable3DAudio);
+            if(AudioEffect.getAudioEffectInstance(mContext).isMasterEffectControlEnabled()) {
+                if (isPlaying() || isPause())
+                    enable3DAudio(enable3DAudio);
+            }
         }catch (Exception e){}
     }
 
