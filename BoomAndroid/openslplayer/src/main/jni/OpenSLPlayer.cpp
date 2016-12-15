@@ -62,11 +62,11 @@ namespace gdpl
 
         // create audio player
         // NOTE: SL_IID_BASSBOOST is requested only to disable Fast Audio Path. It is not used anywhere
-        const SLInterfaceID ids[] = { SL_IID_ANDROIDSIMPLEBUFFERQUEUE, SL_IID_BASSBOOST };
+        const SLInterfaceID ids[] = { SL_IID_ANDROIDSIMPLEBUFFERQUEUE, SL_IID_ANDROIDCONFIGURATION };
         const SLboolean req[] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
 
         SLresult result = (*engineEngine)->CreateAudioPlayer(engineEngine, &bqPlayerObject, &audioSrc,
-                                                             &audioSnk, 1, ids, req);
+                                                             &audioSnk, 2, ids, req);
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
@@ -77,6 +77,18 @@ namespace gdpl
 
         // get the play interface
         result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_PLAY, &bqPlayerPlay);
+        assert(SL_RESULT_SUCCESS == result);
+        (void) result;
+
+
+        SLAndroidConfigurationItf configItf = nullptr;
+        result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_ANDROIDCONFIGURATION,
+                                                 &configItf);
+        assert(SL_RESULT_SUCCESS == result);
+        (void) result;
+
+        SLint32 st = SL_ANDROID_STREAM_MEDIA;
+        (*configItf)->SetConfiguration(configItf, SL_ANDROID_KEY_STREAM_TYPE, &st, sizeof(SLint32));
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
