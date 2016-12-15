@@ -336,6 +336,7 @@ public class MusicLibraryListFragment extends Fragment {
         mLibLoad.setVisibility(View.VISIBLE);
         mLibLoad.setEnabled(true);
         fetchMusicList();
+
     }
 
     public void onBackPress() {

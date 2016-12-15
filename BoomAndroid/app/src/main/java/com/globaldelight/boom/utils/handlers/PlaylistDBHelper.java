@@ -159,6 +159,8 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
             clearList(playlistId);
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
+            removeSong(songs.get(i).getItemId(), (int) playlistId, db);
+
             ContentValues values = new ContentValues();
             values.putNull(SONG_KEY_ID);
             values.put(SONG_KEY_REAL_ID, songs.get(i).getItemId());
@@ -174,10 +176,19 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
             values.put(ALBUM_ART, ((IMediaItem)songs.get(i)).getItemArtUrl());
             values.put(MEDIA_TYPE, ((IMediaItem)songs.get(i)).getMediaType().ordinal());
             values.put(SONG_KEY_PLAYLIST_ID, playlistId);
-
-            db.insert(TABLE_PLAYLIST_SONGS, null, values);
+            try {
+                db.insert(TABLE_PLAYLIST_SONGS, null, values);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
         db.close();
+    }
+
+    public void removeSong(long songId, int playlistId, SQLiteDatabase db) {
+        db.execSQL("DELETE FROM " + TABLE_PLAYLIST_SONGS + " WHERE " +
+                SONG_KEY_REAL_ID + "='" + songId + "' AND "
+                + SONG_KEY_PLAYLIST_ID + "='" + playlistId + "'");
     }
 
     public void removeSong(long songId, int playlistId) {

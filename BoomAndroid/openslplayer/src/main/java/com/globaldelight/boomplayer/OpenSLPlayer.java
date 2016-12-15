@@ -18,6 +18,8 @@ import com.example.openslplayer.R;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -453,9 +455,11 @@ public class OpenSLPlayer implements Runnable {
     private void setGenreType(String genreType) {
         if(AudioEffect.getAudioEffectInstance(mContext).getSelectedEqualizerPosition() == 0) {
             if (null != genreType) {
-                for (int i = 0; i <= mContext.getResources().getStringArray(R.array.eq_names).length - 1; i++) {
-                    if (genreType.toUpperCase().contains(mContext.getResources().getStringArray(R.array.eq_names)[i])) {
-                        AudioEffect.getAudioEffectInstance(mContext).setAutoEqualizerPosition(i);
+                for (int i = 0; i <= mContext.getResources().getStringArray(R.array.mapped_eq_key).length - 1; i++) {
+                    if (genreType.toUpperCase().contains(mContext.getResources().getStringArray(R.array.mapped_eq_key)[i].toUpperCase())) {
+                        String genre = mContext.getResources().getStringArray(R.array.mapped_eq_value)[i];
+                        List t = Arrays.asList(mContext.getResources().getStringArray(R.array.eq_names));
+                        AudioEffect.getAudioEffectInstance(mContext).setAutoEqualizerPosition(t.indexOf(genre.toUpperCase()));
                         return;
                     }
                 }

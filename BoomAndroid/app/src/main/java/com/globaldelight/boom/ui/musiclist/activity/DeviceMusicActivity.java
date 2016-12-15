@@ -103,7 +103,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
             public void run() {
                 musicSearchHelper.setSearchContent();
             }
-        });
+        }).start();
     }
 
     @Override
