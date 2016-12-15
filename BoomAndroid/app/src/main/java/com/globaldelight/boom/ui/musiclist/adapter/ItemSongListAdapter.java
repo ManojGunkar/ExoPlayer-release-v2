@@ -66,12 +66,10 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     private Activity activity;
     private MediaItem currentItem;
     private ListDetail listDetail;
-    private ArrayList list = new ArrayList();
 
     public ItemSongListAdapter(Activity activity, IMediaItemCollection collection, ListDetail listDetail, PermissionChecker permissionChecker, OnStartDragListener dragListener) {
         this.activity = activity;
         this.collection = (MediaItemCollection) collection;
-        list.addAll(collection.getMediaElement());
         this.permissionChecker = permissionChecker;
         this.listDetail = listDetail;
         this.mOnStartDragListener = dragListener;
@@ -148,7 +146,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             }
         } else if (position >= 1 && collection.getItemType() == BOOM_PLAYLIST) {
             int pos = position - 1;
-            currentItem = (MediaItem) list.get(pos);
+            currentItem = (MediaItem) collection.getMediaElement().get(pos);
             holder.undoButton.setVisibility(View.INVISIBLE);
             holder.name.setText(currentItem.getItemTitle());
             holder.artistName.setText(currentItem.getItemArtist());
@@ -436,14 +434,9 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
     }
     public void updateNewList(IMediaItemCollection collection, ListDetail listDetail, int startPosition) {
+        collection.getMediaElement().clear();
         this.collection = (MediaItemCollection) collection;
-        list.clear();
-        list.addAll(collection.getMediaElement());
         this.listDetail = listDetail;
-//        notifyItemChanged(startPosition+1);
-
-//        notifyDataSetChanged();
-//        notifyItemRangeChanged(0, collection.getMediaElement().size());
     }
 
     public void animate(final SimpleItemViewHolder holder) {

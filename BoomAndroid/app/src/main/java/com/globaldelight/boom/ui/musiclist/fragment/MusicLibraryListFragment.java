@@ -1,6 +1,9 @@
 package com.globaldelight.boom.ui.musiclist.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,6 +23,7 @@ import com.globaldelight.boom.ui.musiclist.adapter.AlbumsGridAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.ArtistsGridAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.DefaultPlayListAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.SongListAdapter;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
@@ -30,6 +34,8 @@ import com.globaldelight.boom.ui.musiclist.adapter.GenreGridAdapter;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.ArrayList;
+
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
 
 public class MusicLibraryListFragment extends Fragment {
@@ -44,7 +50,7 @@ public class MusicLibraryListFragment extends Fragment {
     private DefaultPlayListAdapter defaultPlayListAdapter;
     private GenreGridAdapter genreGridAdapter;
     private PermissionChecker permissionChecker;
-    private View emptyViewList;
+    private RegularTextView emptyListTxt;
     private LinearLayout emptyPlayList;
     private ProgressBar mLibLoad;
     private int page;
@@ -77,6 +83,35 @@ public class MusicLibraryListFragment extends Fragment {
         return view;
     }
 
+    private BroadcastReceiver mPlayerEventBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()){
+                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY :
+                    if(null != songListAdapter){
+                        songListAdapter.notifyDataSetChanged();
+                    }
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        if(null != getActivity())
+            getActivity().registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(null != getActivity())
+            getActivity().unregisterReceiver(mPlayerEventBroadcastReceiver);
+    }
+
     private void setSongList() {
         new Thread(new Runnable() {
             @Override
@@ -84,42 +119,44 @@ public class MusicLibraryListFragment extends Fragment {
 
                 final ArrayList<? extends IMediaItemBase> songList = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB) /*MediaQuery.getSongList(context)*/;
                 final LinearLayoutManager llm = new LinearLayoutManager(context);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        recyclerView.setLayoutManager(llm);
+                if(null != getActivity()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            recyclerView.setLayoutManager(llm);
 //                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, 0));
-                        recyclerView.setHasFixedSize(true);
-                        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                            @Override
-                            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                                super.onScrolled(recyclerView, dx, dy);
-                                songListAdapter.recyclerScrolled();
-                            }
-
-                            @Override
-                            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                                super.onScrollStateChanged(recyclerView, newState);
-
-                                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
-                                    // Do something
-                                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                                    // Do something
-                                } else {
-                                    // Do something
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                                @Override
+                                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                                    super.onScrolled(recyclerView, dx, dy);
+                                    songListAdapter.recyclerScrolled();
                                 }
+
+                                @Override
+                                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                                    super.onScrollStateChanged(recyclerView, newState);
+
+                                    if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
+                                        // Do something
+                                    } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                                        // Do something
+                                    } else {
+                                        // Do something
+                                    }
+                                }
+                            });
+                            songListAdapter = new SongListAdapter(context, MusicLibraryListFragment.this.getActivity(), songList, permissionChecker);
+                            recyclerView.setAdapter(songListAdapter);
+                            if (songList.size() < 1) {
+                                listIsEmpty(false);
                             }
-                        });
-                        songListAdapter = new SongListAdapter(context, MusicLibraryListFragment.this.getActivity(), songList, permissionChecker);
-                        recyclerView.setAdapter(songListAdapter);
-                        if (songList.size() < 1) {
-                            listIsEmpty(false);
+                            mLibContainer.setVisibility(View.VISIBLE);
+                            mLibLoad.setVisibility(View.GONE);
+                            mLibLoad.setEnabled(false);
                         }
-                        mLibContainer.setVisibility(View.VISIBLE);
-                        mLibLoad.setVisibility(View.GONE);
-                        mLibLoad.setEnabled(false);
-                    }
-                });
+                    });
+                }
             }
         }).start();
     }
@@ -131,22 +168,24 @@ public class MusicLibraryListFragment extends Fragment {
                 final ArrayList<? extends IMediaItemBase> albumList = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.ALBUM, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getAlbumList(context, !isOrderByAlbum)*/;
                 final GridLayoutManager gridLayoutManager =
                         new GridLayoutManager(mainView.getContext(), 2);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                        gridLayoutManager.scrollToPosition(0);
-                        recyclerView.setLayoutManager(gridLayoutManager);
-                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, Utils.getWindowWidth(context)));
-                        recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(context, 0)));
-                        albumsGridAdapter = new AlbumsGridAdapter(context, getActivity(), recyclerView, albumList, permissionChecker);
-                        recyclerView.setAdapter(albumsGridAdapter);
-                        recyclerView.setHasFixedSize(true);
-                        mLibContainer.setVisibility(View.VISIBLE);
-                        mLibLoad.setVisibility(View.GONE);
-                        mLibLoad.setEnabled(false);
-                    }
-                });
+                if (null != getActivity()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                            gridLayoutManager.scrollToPosition(0);
+                            recyclerView.setLayoutManager(gridLayoutManager);
+                            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, Utils.getWindowWidth(context)));
+                            recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(context, 0)));
+                            albumsGridAdapter = new AlbumsGridAdapter(context, getActivity(), recyclerView, albumList, permissionChecker);
+                            recyclerView.setAdapter(albumsGridAdapter);
+                            recyclerView.setHasFixedSize(true);
+                            mLibContainer.setVisibility(View.VISIBLE);
+                            mLibLoad.setVisibility(View.GONE);
+                            mLibLoad.setEnabled(false);
+                        }
+                    });
+
                 if (albumList.size() < 1) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -155,6 +194,7 @@ public class MusicLibraryListFragment extends Fragment {
                         }
                     });
                 }
+            }
             }
         }).start();
     }
@@ -166,29 +206,32 @@ public class MusicLibraryListFragment extends Fragment {
                 final ArrayList<? extends IMediaItemBase> artistList = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.ARTIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getArtistList(context)*/;
                 final GridLayoutManager gridLayoutManager =
                         new GridLayoutManager(mainView.getContext(), 2);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                        gridLayoutManager.scrollToPosition(0);
-                        recyclerView.setLayoutManager(gridLayoutManager);
-                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, Utils.getWindowWidth(context)));
-                        recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(context, 0)));
-                        artistsGridAdapter = new ArtistsGridAdapter(context, getActivity(), recyclerView, artistList, permissionChecker);
-                        recyclerView.setAdapter(artistsGridAdapter);
-                        recyclerView.setHasFixedSize(true);
-                        mLibContainer.setVisibility(View.VISIBLE);
-                        mLibLoad.setVisibility(View.GONE);
-                        mLibLoad.setEnabled(false);
-                    }
-                });
-                if (artistList.size() < 1) {
+                if(null != getActivity()) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            listIsEmpty(false);
+                            gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                            gridLayoutManager.scrollToPosition(0);
+                            recyclerView.setLayoutManager(gridLayoutManager);
+                            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, Utils.getWindowWidth(context)));
+                            recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(context, 0)));
+                            artistsGridAdapter = new ArtistsGridAdapter(context, getActivity(), recyclerView, artistList, permissionChecker);
+                            recyclerView.setAdapter(artistsGridAdapter);
+                            recyclerView.setHasFixedSize(true);
+                            mLibContainer.setVisibility(View.VISIBLE);
+                            mLibLoad.setVisibility(View.GONE);
+                            mLibLoad.setEnabled(false);
                         }
                     });
+
+                    if (artistList.size() < 1) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                listIsEmpty(false);
+                            }
+                        });
+                    }
                 }
             }
         }).start();
@@ -200,30 +243,32 @@ public class MusicLibraryListFragment extends Fragment {
                 final ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.PLAYLIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getPlayList(context)*/;
                 final GridLayoutManager gridLayoutManager =
                         new GridLayoutManager(mainView.getContext(), 2);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                        gridLayoutManager.scrollToPosition(0);
-                        recyclerView.setLayoutManager(gridLayoutManager);
-                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, Utils.getWindowWidth(context)));
-                        recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(context, 0)));
-                        defaultPlayListAdapter = new DefaultPlayListAdapter(context, getActivity(), recyclerView, playList, permissionChecker);
-                        recyclerView.setAdapter(defaultPlayListAdapter);
-                        recyclerView.setHasFixedSize(true);
-                        mLibContainer.setVisibility(View.VISIBLE);
-                        mLibLoad.setVisibility(View.GONE);
-                        mLibLoad.setEnabled(false);
-                    }
-                });
-                if (playList.size() < 1) {
+                if(null != getActivity()) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-
-                            listIsEmpty(true);
+                            gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                            gridLayoutManager.scrollToPosition(0);
+                            recyclerView.setLayoutManager(gridLayoutManager);
+                            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, Utils.getWindowWidth(context)));
+                            recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(context, 0)));
+                            defaultPlayListAdapter = new DefaultPlayListAdapter(context, getActivity(), recyclerView, playList, permissionChecker);
+                            recyclerView.setAdapter(defaultPlayListAdapter);
+                            recyclerView.setHasFixedSize(true);
+                            mLibContainer.setVisibility(View.VISIBLE);
+                            mLibLoad.setVisibility(View.GONE);
+                            mLibLoad.setEnabled(false);
                         }
                     });
+                    if (playList.size() < 1) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                listIsEmpty(true);
+                            }
+                        });
+                    }
                 }
             }
         }).start();
@@ -236,29 +281,31 @@ public class MusicLibraryListFragment extends Fragment {
                 final ArrayList<? extends IMediaItemBase> genreList = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.GENRE, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getGenreList(context)*/;
                 final GridLayoutManager gridLayoutManager =
                         new GridLayoutManager(mainView.getContext(), 2);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                        gridLayoutManager.scrollToPosition(0);
-                        recyclerView.setLayoutManager(gridLayoutManager);
-                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, Utils.getWindowWidth(context)));
-                        recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(context, 0)));
-                        genreGridAdapter = new GenreGridAdapter(context, getActivity(), recyclerView, genreList, permissionChecker);
-                        recyclerView.setAdapter(genreGridAdapter);
-                        recyclerView.setHasFixedSize(true);
-                        mLibContainer.setVisibility(View.VISIBLE);
-                        mLibLoad.setVisibility(View.GONE);
-                        mLibLoad.setEnabled(false);
-                    }
-                });
-                if (genreList.size() < 1) {
+                if(null != getActivity()) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            listIsEmpty(false);
+                            gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                            gridLayoutManager.scrollToPosition(0);
+                            recyclerView.setLayoutManager(gridLayoutManager);
+                            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, Utils.getWindowWidth(context)));
+                            recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(context, 0)));
+                            genreGridAdapter = new GenreGridAdapter(context, getActivity(), recyclerView, genreList, permissionChecker);
+                            recyclerView.setAdapter(genreGridAdapter);
+                            recyclerView.setHasFixedSize(true);
+                            mLibContainer.setVisibility(View.VISIBLE);
+                            mLibLoad.setVisibility(View.GONE);
+                            mLibLoad.setEnabled(false);
                         }
                     });
+                    if (genreList.size() < 1) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                listIsEmpty(false);
+                            }
+                        });
+                    }
                 }
             }
         }).start();
@@ -267,12 +314,11 @@ public class MusicLibraryListFragment extends Fragment {
     public void listIsEmpty(boolean isPlayList) {
         mLibContainer.setVisibility(View.VISIBLE);
         mLibProgress.setVisibility(View.GONE);
+        emptyPlayList.setVisibility(View.VISIBLE);
         if(isPlayList){
-            emptyPlayList.setVisibility(View.VISIBLE);
-            emptyViewList.setVisibility(View.GONE);
+            emptyListTxt.setText(getActivity().getResources().getString(R.string.playlist_placeholder_txt));
         }else{
-            emptyPlayList.setVisibility(View.GONE);
-            emptyViewList.setVisibility(View.VISIBLE);
+            emptyListTxt.setText(getActivity().getResources().getString(R.string.no_music_placeholder_txt));
         }
         recyclerView.setVisibility(View.GONE);
         mLibLoad.setVisibility(View.GONE);
@@ -283,7 +329,7 @@ public class MusicLibraryListFragment extends Fragment {
         mLibContainer = (LinearLayout)mainView.findViewById(R.id.lib_container);
         mLibProgress = (LinearLayout)mainView.findViewById(R.id.lib_progress);
         recyclerView = (RecyclerView) mainView.findViewById(R.id.albumsListContainer);
-        emptyViewList = mainView.findViewById(R.id.empty_list_all);
+        emptyListTxt = (RegularTextView) mainView.findViewById(R.id.empty_list_txt);
         emptyPlayList = (LinearLayout) mainView.findViewById(R.id.album_empty_view) ;
         mLibContainer.setVisibility(View.GONE);
         mLibLoad = (ProgressBar)mainView.findViewById(R.id.lib_load);

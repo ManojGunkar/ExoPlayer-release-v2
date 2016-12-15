@@ -186,7 +186,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     }
 
     public void playNextSong(boolean isUser) {
-        if(isNext()) {
+        if(isNext() || App.getUserPreferenceHandler().getRepeat() == UpNextList.REPEAT.one) {
             long sleepTime = 100;
             try {
                 Thread.sleep(sleepTime);

@@ -140,6 +140,7 @@
     <string name="boom_playlist_placeholder_txt">You\'ve not created \n any Playlist yet.</string>
     <!--PlayList-->
     <string name="playlist_placeholder_txt">There are no Playlists \n in music library.</string>
+    <string name="no_music_placeholder_txt">No music found \n in library.</string>
 
     <!--purchase-->
     <string name="title_fiveday_offer_expired">Limited Period Use</string>

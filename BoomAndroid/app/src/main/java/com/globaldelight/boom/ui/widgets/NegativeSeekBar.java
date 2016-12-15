@@ -49,9 +49,9 @@ public class NegativeSeekBar extends SeekBar {
     @Override
     protected synchronized void onDraw(Canvas canvas) {
 
-        rect.set(0 + getThumbOffset()*2 + 10,
+        rect.set(0 + getThumbOffset()*2 ,
                 (getHeight() / 2) - (seekbar_height/2),
-                getWidth()- getThumbOffset()*2 - 10,
+                getWidth()- getThumbOffset()*2 ,
                 (getHeight() / 2) + (seekbar_height/2));
 
         paint.setColor(Color.parseColor("#2b2c30"));
@@ -63,7 +63,7 @@ public class NegativeSeekBar extends SeekBar {
 
             rect.set(getWidth() / 2,
                     (getHeight() / 2) - (seekbar_height/2),
-                    (getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 50),
+                    (getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 54),
                     getHeight() / 2 + (seekbar_height/2));
 
 
@@ -104,7 +104,7 @@ public class NegativeSeekBar extends SeekBar {
         }else if (this.getProgress() > 50 && isDisable){
             rect.set(getWidth() / 2,
                     (getHeight() / 2) - (seekbar_height/2),
-                    (getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 50),
+                    (getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 54),
                     getHeight() / 2 + (seekbar_height/2));
 
             paint.setColor(mContext.getResources().getColor(R.color.card_grid_artist));
@@ -114,7 +114,7 @@ public class NegativeSeekBar extends SeekBar {
 
         if (this.getProgress() < 50 && !isDisable) {
 
-            rect.set(getWidth() / 2 - ((getWidth() / 100) * (50 - getProgress())),
+            rect.set(getWidth() / 2 - ((getWidth() / 100) * (46 - getProgress())),
                     (getHeight() / 2) - (seekbar_height/2),
                     getWidth() / 2,
                     getHeight() / 2 + (seekbar_height/2));
@@ -153,7 +153,7 @@ public class NegativeSeekBar extends SeekBar {
             canvas.drawRect(rect, paint);
 
         }else if (this.getProgress() < 50 && isDisable) {
-            rect.set(getWidth() / 2 - ((getWidth() / 100) * (50 - getProgress())),
+            rect.set(getWidth() / 2 - ((getWidth() / 100) * (46 - getProgress())),
                     (getHeight() / 2) - (seekbar_height/2),
                     getWidth() / 2,
                     getHeight() / 2 + (seekbar_height/2));

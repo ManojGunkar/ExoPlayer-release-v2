@@ -54,6 +54,7 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_REPEAT;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_SHUFFLE;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
@@ -91,6 +92,7 @@ public class FavouriteListActivity extends AppCompatActivity {
         intentFilter.addAction(ACTION_UPDATE_TRACK_SEEK);
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
+        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
     }
 
@@ -213,6 +215,10 @@ public class FavouriteListActivity extends AppCompatActivity {
                     break;
                 case ACTION_UPDATE_TRACK_SEEK :
                     mTrackProgress.setProgress(intent.getIntExtra("percent", 0));
+                    break;
+                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                    if(null != adapter)
+                        adapter.notifyDataSetChanged();
                     break;
             }
         }

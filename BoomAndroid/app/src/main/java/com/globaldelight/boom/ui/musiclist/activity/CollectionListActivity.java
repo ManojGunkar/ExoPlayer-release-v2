@@ -13,7 +13,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,26 +29,32 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.adapter.AlbumItemsListAdapter;
+import com.globaldelight.boom.ui.musiclist.adapter.CollectionItemListAdapter;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
+import com.globaldelight.boom.utils.handlers.PlaylistDBHelper;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -64,11 +69,16 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_REPEAT;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_SHUFFLE;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
 
-public class AlbumActivity extends AppCompatActivity {
+/**
+ * Created by Rahul Agarwal on 15-12-16.
+ */
+
+public class CollectionListActivity  extends AppCompatActivity {
     Toolbar toolbar;
-    IMediaItemCollection collection, currentItem;
+    IMediaItemCollection collection;
     private RecyclerView rv;
-    private ImageView albumArt;
+    private ImageView albumArt,artImg1,artImg2,artImg3,artImg4;
+    private TableLayout tblAlbumArt;
     private PermissionChecker permissionChecker;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private AppBarLayout appbarlayout;
@@ -78,7 +88,10 @@ public class AlbumActivity extends AppCompatActivity {
     private ProgressBar mTrackProgress;
     private RegularTextView mTitle, mSubTitle;
     private ImageView mPlayerArt, mPlayPause;
-    private AlbumItemsListAdapter albumItemsListAdapter;
+    private CollectionItemListAdapter collectionItemListAdapter;
+
+    private ItemType mParentType;
+    private long mParentId;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -89,28 +102,32 @@ public class AlbumActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color.transparent));
         overridePendingTransition(0, 0);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_album);
+        setContentView(R.layout.activity_song_detail_list);
 
-        collection = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
+        mParentType = ItemType.fromOrdinal(getIntent().getIntExtra("parent_type", 1));
+        mParentId = getIntent().getLongExtra("parent_id", 0);
 
-        if(collection.getItemType() == ItemType.ALBUM){
-            currentItem = collection;
-        }else {
-            currentItem = (IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex());
-        }
         initView();
     }
 
     private void initView() {
 
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingtoolbarlayout_album);
-        appbarlayout = (AppBarLayout) findViewById(R.id.appbarlayout_album);
-        permissionChecker = new PermissionChecker(this, this, findViewById(R.id.base_view_album));
-        rv = (RecyclerView) findViewById(R.id.rv_album_activity);
-        albumArt = (ImageView) findViewById(R.id.activity_album_art);
-        mPlayAlbum = (FloatingActionButton)findViewById(R.id.play_album);
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingtoolbarlayout_song_detail_list);
+        appbarlayout = (AppBarLayout) findViewById(R.id.appbarlayout_song_detail_list);
+        permissionChecker = new PermissionChecker(this, this, findViewById(R.id.song_detail_list_base_view));
+        rv = (RecyclerView) findViewById(R.id.rv_song_detail_list);
 
-        mMiniPlayer = (LinearLayout) findViewById(R.id.album_mini_player);
+        artImg1 = (ImageView)findViewById(R.id.song_detail_list_art_img1);
+        artImg2 = (ImageView)findViewById(R.id.song_detail_list_art_img2);
+        artImg3 = (ImageView)findViewById(R.id.song_detail_list_art_img3);
+        artImg4 = (ImageView)findViewById(R.id.song_detail_list_art_img4);
+        tblAlbumArt = (TableLayout)findViewById(R.id.song_detail_list_art_table);
+
+        albumArt = (ImageView) findViewById(R.id.song_detail_list_default_img);
+
+        mPlayAlbum = (FloatingActionButton)findViewById(R.id.play_song_detail_list);
+
+        mMiniPlayer = (LinearLayout) findViewById(R.id.detail_song_mini_player);
         mStartPlayer = (LinearLayout) findViewById(R.id.mini_touch_panel);
         mTrackProgress = (ProgressBar) findViewById(R.id.mini_player_track_progress);
         mTitle = (RegularTextView) findViewById(R.id.mini_player_title);
@@ -122,18 +139,51 @@ public class AlbumActivity extends AppCompatActivity {
         int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
         int height = Utils.getWindowHeight(this) - panelSize * 4;
         setAlbumArtSize(width, width);
-        setAlbumArt(width, width);
+        switch (mParentType){
+            case ALBUM:
+                collection = (IMediaItemCollection) DeviceMediaQuery.getAlbum(this, mParentId);
+                albumArt.setVisibility(View.VISIBLE);
+                tblAlbumArt.setVisibility(View.GONE);
+                setAlbumArt(width, width);
+                break;
+            case ARTIST:
+                albumArt.setVisibility(View.VISIBLE);
+                tblAlbumArt.setVisibility(View.GONE);
+                collection = (IMediaItemCollection) DeviceMediaQuery.getArtist(this, mParentId);
+                setAlbumArt(width, width);
+                break;
+            case PLAYLIST:
+                albumArt.setVisibility(View.GONE);
+                tblAlbumArt.setVisibility(View.VISIBLE);
+                collection = (IMediaItemCollection) DeviceMediaQuery.getPlaylistItem(this, mParentId);
+                collection.setArtUrlList(DeviceMediaQuery.getPlaylistArtList(this, mParentId, null));
+                setSongsArtImage(width, collection.getArtUrlList());
+                break;
+            case GENRE:
+                albumArt.setVisibility(View.VISIBLE);
+                tblAlbumArt.setVisibility(View.GONE);
+                collection = (IMediaItemCollection) DeviceMediaQuery.getGenre(this, mParentId);
+                setAlbumArt(width, width);
+                break;
+            case BOOM_PLAYLIST:
+                albumArt.setVisibility(View.GONE);
+                tblAlbumArt.setVisibility(View.VISIBLE);
+                collection = (IMediaItemCollection) new PlaylistDBHelper(this).gePlaylist(mParentId);
+                collection.setArtUrlList(new PlaylistDBHelper(this).getBoomPlayListArtList(mParentId));
+                setSongsArtImage(width, collection.getArtUrlList());
+                break;
+        }
 
         if (collapsingToolbarLayout != null)
             collapsingToolbarLayout.setTitle(" ");
 
         StringBuilder itemCount = new StringBuilder();
-        itemCount.append(currentItem.getItemCount() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
-        itemCount.append(" ").append(currentItem.getItemCount());
+        itemCount.append(collection.getItemCount() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
+        itemCount.append(" ").append(collection.getItemCount());
 
-        listDetail = new ListDetail(currentItem.getItemTitle(), currentItem.getItemSubTitle(), itemCount.toString());
+        listDetail = new ListDetail(collection.getItemTitle(), collection.getItemSubTitle(), itemCount.toString());
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar_album);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_song_detail_list);
 
         try {
             setSupportActionBar(toolbar);
@@ -146,12 +196,8 @@ public class AlbumActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                    if (collection.getItemType() == ItemType.ALBUM) {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0);
-                    } else {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
-                    }
-                    albumItemsListAdapter.notifyDataSetChanged();
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0);
+                    collectionItemListAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -159,7 +205,7 @@ public class AlbumActivity extends AppCompatActivity {
         mStartPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AlbumActivity.this, BoomPlayerActivity.class);
+                Intent intent = new Intent(CollectionListActivity.this, BoomPlayerActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 finish();
@@ -240,8 +286,8 @@ public class AlbumActivity extends AppCompatActivity {
                     mTrackProgress.setProgress(intent.getIntExtra("percent", 0));
                     break;
                 case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
-                    if(null != albumItemsListAdapter)
-                        albumItemsListAdapter.notifyDataSetChanged();
+                    if(null != collectionItemListAdapter)
+                        collectionItemListAdapter.notifyDataSetChanged();
                     break;
             }
         }
@@ -299,11 +345,11 @@ public class AlbumActivity extends AppCompatActivity {
                                     Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
                                     bitmap = Bitmap.createScaledBitmap(bitmap, (int) getResources().getDimension(R.dimen.one_hundred_eighty_pt),
                                             (int) getResources().getDimension(R.dimen.one_hundred_eighty_pt), false);
-                                    PlayerUtils.ImageViewAnimatedChange(AlbumActivity.this, mPlayerArt, bitmap);
+                                    PlayerUtils.ImageViewAnimatedChange(CollectionListActivity.this, mPlayerArt, bitmap);
                                 }catch (NullPointerException e){
                                     Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
                                             R.drawable.ic_default_small_grid_song);
-                                    PlayerUtils.ImageViewAnimatedChange(AlbumActivity.this, mPlayerArt, albumArt);
+                                    PlayerUtils.ImageViewAnimatedChange(CollectionListActivity.this, mPlayerArt, albumArt);
                                 }
                             }
                         }
@@ -314,15 +360,14 @@ public class AlbumActivity extends AppCompatActivity {
             if(item != null) {
                 Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
                         R.drawable.ic_default_small_grid_song);
-                PlayerUtils.ImageViewAnimatedChange(AlbumActivity.this, mPlayerArt, albumArt);
+                PlayerUtils.ImageViewAnimatedChange(CollectionListActivity.this, mPlayerArt, albumArt);
             }
         }
     }
 
     private void setAlbumArtSize(int width, int height) {
-        LinearLayout.LayoutParams lp = new LinearLayout
-                .LayoutParams(width, height);
-        albumArt.setLayoutParams(lp);
+        FrameLayout.LayoutParams param = new FrameLayout.LayoutParams(width, height);
+        albumArt.setLayoutParams(param);
     }
 
     private void setForAnimation() {
@@ -334,17 +379,26 @@ public class AlbumActivity extends AppCompatActivity {
             public void run() {
                 //ItemType.ALBUM, ItemType.ARTIST && ItemType.GENRE
                 if(collection.getItemType() == ItemType.ALBUM && collection.getMediaElement().isEmpty()) {
-                    collection.setMediaElement(MediaController.getInstance(AlbumActivity.this).getMediaCollectionItemDetails(collection));
-                }else if((collection.getItemType() == ItemType.ARTIST || collection.getItemType() == ItemType.GENRE) &&
-                        ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
-                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(AlbumActivity.this).getMediaCollectionItemDetails(collection));
+                    collection.setMediaElement(MediaController.getInstance(CollectionListActivity.this).getMediaCollectionItemDetails(collection));
+                }else if(collection.getItemType() == ItemType.ARTIST &&
+                        collection.getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
+                    collection.setMediaElement(DeviceMediaQuery.getSongListOfArtist(CollectionListActivity.this, mParentId, "item"));
+                }else if(collection.getItemType() == ItemType.GENRE &&
+                collection.getMediaElement().isEmpty()){
+                    collection.setMediaElement(DeviceMediaQuery.getSongListOfGenre(CollectionListActivity.this, mParentId, "item"));
+                }else if(collection.getItemType() == ItemType.PLAYLIST &&
+                        collection.getMediaElement().isEmpty()){
+                    collection.setMediaElement(DeviceMediaQuery.getPlaylistSongs(CollectionListActivity.this, mParentId, "item"));
+                }else if(collection.getItemType() == ItemType.BOOM_PLAYLIST &&
+                        collection.getMediaElement().isEmpty()){
+                    collection.setMediaElement(new PlaylistDBHelper(CollectionListActivity.this).getPlaylistSongs(mParentId));
                 }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        rv.setLayoutManager(new LinearLayoutManager(AlbumActivity.this));
-                        albumItemsListAdapter = new AlbumItemsListAdapter(AlbumActivity.this, collection, listDetail, permissionChecker);
-                        rv.setAdapter(albumItemsListAdapter);
+                        rv.setLayoutManager(new LinearLayoutManager(CollectionListActivity.this));
+                        collectionItemListAdapter = new CollectionItemListAdapter(CollectionListActivity.this, collection, listDetail, permissionChecker);
+                        rv.setAdapter(collectionItemListAdapter);
                     }
                 });
 //                if (favList.size() < 1) {
@@ -366,13 +420,7 @@ public class AlbumActivity extends AppCompatActivity {
     }
 
     public void setAlbumArt(int width, int height) {
-        Cursor cursor = getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                new String[]{MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},
-                MediaStore.Audio.Albums.ALBUM + "=?",
-                new String[]{currentItem.getItemTitle()/*String.valueOf(itemId)*/},
-                null);
-        if (cursor != null && cursor.moveToFirst()) {
-            String imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+            String imagePath = collection.getItemArtUrl();
             try {
                 if (imagePath == null) {
                     Utils utils = new Utils(this);
@@ -380,18 +428,68 @@ public class AlbumActivity extends AppCompatActivity {
                             width, height));
                     return;
                 }
-                Picasso.with(AlbumActivity.this)
+                Picasso.with(CollectionListActivity.this)
                         .load(new File(imagePath)).resize(width, height)
                         .error(getResources().getDrawable(R.drawable.ic_default_album_header, null)).noFade()
                         .into(albumArt);
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
-        }
-
-        cursor.close();
     }
 
+    private void setSongsArtImage(final int size, final ArrayList<String> Urls) {
+
+        int count = Urls.size() > 4 ? 4 : Urls.size();
+        TableRow.LayoutParams param = new TableRow.LayoutParams(size / 2, size / 2);
+        artImg1.setLayoutParams(param);
+        artImg2.setLayoutParams(param);
+        artImg3.setLayoutParams(param);
+        artImg4.setLayoutParams(param);
+
+
+        switch (count){
+            case 1:
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
+                break;
+            case 2:
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
+                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
+                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
+                break;
+            case 3:
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
+                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
+                Picasso.with(this).load(new File(Urls.get(2))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
+                break;
+            default:
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
+                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
+                Picasso.with(this).load(new File(Urls.get(2))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
+                Picasso.with(this).load(new File(Urls.get(3))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size/2, size/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
+                break;
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 

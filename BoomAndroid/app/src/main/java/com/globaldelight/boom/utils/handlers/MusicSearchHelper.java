@@ -49,7 +49,7 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
     }
 
 
-    public void setSearchContent(Context context){
+    public void setSearchContent(){
         clearList();
         final String where = MediaStore.Audio.Media.IS_MUSIC + "=1";
 

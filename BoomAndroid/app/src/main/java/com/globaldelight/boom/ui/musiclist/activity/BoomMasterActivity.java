@@ -215,7 +215,7 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
 
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            /*searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
                 @Override
                 public boolean onSuggestionSelect(int position) {
                     Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
@@ -233,9 +233,9 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
                     fetchAndUpdateSearchResult(feedName);
                     return true;
                 }
-            });*/
-//            searchSuggestionAdapter = new SearchSuggestionAdapter(BoomMasterActivity.this, R.layout.card_search_item, null, columns,null, -1000);
-//            searchView.setSuggestionsAdapter(searchSuggestionAdapter);
+            });
+            searchSuggestionAdapter = new SearchSuggestionAdapter(BoomMasterActivity.this, R.layout.card_search_item, null, columns,null, -1000);
+            searchView.setSuggestionsAdapter(searchSuggestionAdapter);
             registerSearchListeners();
 
             MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
@@ -253,7 +253,7 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
                 public boolean onMenuItemActionCollapse(MenuItem item) {
                     activityContainer.setVisibility(View.VISIBLE);
                     ft.hide(mSearchResult);
-//                    searchSuggestionAdapter.changeCursor(null);
+                    searchSuggestionAdapter.changeCursor(null);
                     return true;
                 }
             });
@@ -288,13 +288,13 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
 
             @Override
             public boolean onQueryTextChange(String query) {
-//                if(query.length() >= 2) {
-//                    MatrixCursor matrixCursor = convertToCursor(musicSearchHelper.getSongList(query));
-//                    searchSuggestionAdapter.changeCursor(matrixCursor);
-//                }
-//                if(null == query || query.length() <2){
-//                    searchSuggestionAdapter.changeCursor(null);
-//                }
+                if(query.length() >= 2) {
+                    MatrixCursor matrixCursor = convertToCursor(musicSearchHelper.getSongList(query));
+                    searchSuggestionAdapter.changeCursor(matrixCursor);
+                }
+                if(null == query || query.length() <2){
+                    searchSuggestionAdapter.changeCursor(null);
+                }
                 return false;
             }
         });

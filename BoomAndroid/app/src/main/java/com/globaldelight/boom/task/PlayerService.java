@@ -9,16 +9,15 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
-
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.ui.musiclist.activity.BoomPlayerActivity;
 import com.globaldelight.boom.ui.musiclist.activity.PlayingQueueActivity;
+import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
 
 import java.io.IOException;
-
 
 public class PlayerService extends Service {
 
@@ -48,6 +47,7 @@ public class PlayerService extends Service {
     private PlayerEventHandler musicPlayerHandler;
     private Context context;
     private NotificationHandler notificationHandler;
+
     private BroadcastReceiver playerServiceBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -108,6 +108,7 @@ public class PlayerService extends Service {
                     e.printStackTrace();
                 }
                 updatePlayingQueue();
+                sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
                 break;
             case ACTION_PLAYING_ITEM_CLICKED:
                 updatePlayPause(intent.getBooleanExtra("play_pause", false));

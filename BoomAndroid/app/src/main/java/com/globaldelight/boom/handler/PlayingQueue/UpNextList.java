@@ -25,6 +25,7 @@ public class UpNextList {
     private static Context context;
     public static int PlayItemIndex = 0;
     private QueueEvent queueEvent = null;
+    private long mShiftingTime = 0;
     Handler eventHandler = new Handler();
     private static UpNextList.SHUFFLE mShuffle = UpNextList.SHUFFLE.none;
     private static UpNextList.REPEAT mRepeat = UpNextList.REPEAT.none;
@@ -313,105 +314,137 @@ public class UpNextList {
 
     /******************************************************************************************************************/
 
-    public void addToPlay(LinkedList<MediaItem> itemList, int position) {
-        if(null != itemList && itemList.size() > 0) {
-            if (position > 0) {
-                setItemListAsPrevious(itemList.subList(0, position));
-            }
-            setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
-            mAutoNextList.clear();
-            if (itemList.size() > position + 1) {
-                setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
-            }
-            insertUnShuffledList(itemList.subList(position, itemList.size()), false);
-            if(SHUFFLE.all == mShuffle){
-                updateShuffleList();
-            }
-            if(REPEAT.all == mRepeat){
-                updateRepeatList();
-            }
-            PlayingItemChanged();
+    public void addToPlay(final LinkedList<MediaItem> itemList, final int position) {
+        if(System.currentTimeMillis() - mShiftingTime > 500) {
+            mShiftingTime = System.currentTimeMillis();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(null != itemList && itemList.size() > 0) {
+                        if (position > 0) {
+                            setItemListAsPrevious(itemList.subList(0, position));
+                        }
+                        setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
+                        mAutoNextList.clear();
+                        if (itemList.size() > position + 1) {
+                            setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
+                        }
+                        insertUnShuffledList(itemList.subList(position, itemList.size()), false);
+                        if(SHUFFLE.all == mShuffle){
+                            updateShuffleList();
+                        }
+                        if(REPEAT.all == mRepeat){
+                            updateRepeatList();
+                        }
+                        PlayingItemChanged();
+                    }
+                }
+            }, 100);
         }
     }
 
     //    itemList -> list of collection
 //    position -> Now Playing Item position in item list.
-    public void addToPlay(ArrayList<MediaItem> itemList, int position) {
-        if(null != itemList && itemList.size() > 0) {
-            if (position > 0) {
-                setItemListAsPrevious(itemList.subList(0, position));
-            }
-            setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
-            mAutoNextList.clear();
-            if (itemList.size() > position + 1) {
-                setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
-            }
-            insertUnShuffledList(itemList.subList(position, itemList.size()), false);
-            if(SHUFFLE.all == mShuffle){
-                updateShuffleList();
-            }
-            if(REPEAT.all == mRepeat){
-                updateRepeatList();
-            }
-            PlayingItemChanged();
+    public void addToPlay(final ArrayList<MediaItem> itemList, final int position) {
+        if(System.currentTimeMillis() - mShiftingTime > 500) {
+            mShiftingTime = System.currentTimeMillis();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(null != itemList && itemList.size() > 0) {
+                        if (position > 0) {
+                            setItemListAsPrevious(itemList.subList(0, position));
+                        }
+                        setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
+                        mAutoNextList.clear();
+                        if (itemList.size() > position + 1) {
+                            setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
+                        }
+                        insertUnShuffledList(itemList.subList(position, itemList.size()), false);
+                        if(SHUFFLE.all == mShuffle){
+                            updateShuffleList();
+                        }
+                        if(REPEAT.all == mRepeat){
+                            updateRepeatList();
+                        }
+                        PlayingItemChanged();
+                    }
+                }
+            }, 100);
         }
     }
 
     //    selected Collection, Like Album, ic_artist.
 //    index of now Playing item of the collection
-    public void addToPlay(IMediaItemCollection collection, int position) {
-        if(null != collection && collection.getMediaElement().size() > 0) {
-            if (position > 0) {
-                setItemListAsPrevious(collection.getMediaElement().subList(0, position));
-            }
-            setItemAsPlayingItem(collection.getMediaElement().get(position), QueueType.Auto_UpNext);
-            mAutoNextList.clear();
-            if (collection.getMediaElement().size() > position + 1) {
-                setItemListAsUpNextFrom(collection.getMediaElement().subList(position + 1, collection.getMediaElement().size()));
-            }
-            insertUnShuffledList(collection.getMediaElement().subList(position , collection.getMediaElement().size()), false);
-            if(SHUFFLE.all == mShuffle){
-                updateShuffleList();
-            }
-            if(REPEAT.all == mRepeat){
-                updateRepeatList();
-            }
-            PlayingItemChanged();
+    public void addToPlay(final IMediaItemCollection collection, final int position) {
+        if(System.currentTimeMillis() - mShiftingTime > 500) {
+            mShiftingTime = System.currentTimeMillis();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(null != collection && collection.getMediaElement().size() > 0) {
+                        if (position > 0) {
+                            setItemListAsPrevious(collection.getMediaElement().subList(0, position));
+                        }
+                        setItemAsPlayingItem(collection.getMediaElement().get(position), QueueType.Auto_UpNext);
+                        mAutoNextList.clear();
+                        if (collection.getMediaElement().size() > position + 1) {
+                            setItemListAsUpNextFrom(collection.getMediaElement().subList(position + 1, collection.getMediaElement().size()));
+                        }
+                        insertUnShuffledList(collection.getMediaElement().subList(position , collection.getMediaElement().size()), false);
+                        if(SHUFFLE.all == mShuffle){
+                            updateShuffleList();
+                        }
+                        if(REPEAT.all == mRepeat){
+                            updateRepeatList();
+                        }
+                        PlayingItemChanged();
+                    }
+                }
+            }, 100);
         }
     }
 
-    public void addToPlay(QueueType queueType, int position) {
-        switch (queueType) {
-            case History:
-                UpNextItem item = new UpNextItem(mHistoryList.remove(position), queueType);
-                managePlayedItem(true);
-                mCurrentList.add(item);
-                PlayingItemChanged();
-                break;
-            case Playing:
-                PlayPause();
-                break;
-            case Manual_UpNext:
-                managePlayedItem(true);
-                mCurrentList.add(new UpNextItem(mUpNextList.remove(position), queueType));
-                PlayingItemChanged();
-                break;
-            case Auto_UpNext:
-                managePlayedItem(true);
-                PlayItemIndex = position;
+    public void addToPlay(final QueueType queueType, final int position) {
+        if(System.currentTimeMillis() - mShiftingTime > 500) {
+            mShiftingTime = System.currentTimeMillis();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    switch (queueType) {
+                        case History:
+                            UpNextItem item = new UpNextItem(mHistoryList.remove(position), queueType);
+                            managePlayedItem(true);
+                            mCurrentList.add(item);
+                            PlayingItemChanged();
+                            break;
+                        case Playing:
+                            PlayPause();
+                            break;
+                        case Manual_UpNext:
+                            managePlayedItem(true);
+                            mCurrentList.add(new UpNextItem(mUpNextList.remove(position), queueType));
+                            PlayingItemChanged();
+                            break;
+                        case Auto_UpNext:
+                            managePlayedItem(true);
+                            PlayItemIndex = position;
                 /* Shuffle will not effect on random selection*/
-                if (mRepeat == REPEAT.none/* && mShuffle == SHUFFLE.none*/) {
-                    for (int i = 0; i < PlayItemIndex; PlayItemIndex--) {
-                        mGhostList.add(mAutoNextList.remove(i));
-                    }
-                    PlayItemIndex = 0;
+                            if (mRepeat != REPEAT.all/* && mShuffle == SHUFFLE.none*/) {
+                                for (int i = 0; i < PlayItemIndex; PlayItemIndex--) {
+                                    mGhostList.add(mAutoNextList.remove(i));
+                                }
+                                PlayItemIndex = 0;
 //                selected item comes on top, so remove only top (0) item
-                    mCurrentList.add(new UpNextItem(mAutoNextList.remove(0), queueType));
-                } else if (mRepeat == REPEAT.all/* && mShuffle == SHUFFLE.none*/) {
-                    mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), queueType));
+                                mCurrentList.add(new UpNextItem(mAutoNextList.remove(0), queueType));
+                            } else if (mRepeat == REPEAT.all/* && mShuffle == SHUFFLE.none*/) {
+                                mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), queueType));
+                            }
+                            PlayingItemChanged();
+                            break;
+                    }
                 }
-                PlayingItemChanged();
-                break;
+            }, 100);
         }
     }
 

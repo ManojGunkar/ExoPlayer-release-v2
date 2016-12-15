@@ -16,6 +16,8 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -32,10 +34,13 @@ import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.manager.MusicReceiver;
 import com.globaldelight.boom.purchase.PurchaseUtil;
 import com.globaldelight.boom.task.PlayerService;
+import com.globaldelight.boom.ui.musiclist.adapter.AlbumsGridAdapter;
 import com.globaldelight.boom.ui.widgets.CircularSeekBar;
 import com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
@@ -44,6 +49,8 @@ import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
+import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
+import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boomplayer.AudioEffect;
@@ -331,9 +338,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
         initViews();
 
-        MusicSearchHelper s = new MusicSearchHelper(this);
-        s.setSearchContent(this);
-
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_RECEIVE_SONG);
         intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
@@ -440,6 +444,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
         mPlayerRootView.setPadding(0, getStatusBarHeight(), 0, 0);
 
+        mTitleTxt.setOnClickListener(this);
+        mSubTitleTxt.setOnClickListener(this);
+
         mPlayPauseBtn.setOnClickListener(this);
         mLibraryBtn.setOnClickListener(this);
         mAudioEffectBtn.setOnClickListener(this);
@@ -502,6 +509,15 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
     }
 
+    private void startFavouriteActivity() {
+        App.getUserPreferenceHandler().setLibraryStartFromHome(true);
+
+        Intent listIntent = new Intent(BoomPlayerActivity.this, FavouriteListActivity.class);
+        listIntent.setAction("visible");
+        startActivity(listIntent);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -539,10 +555,43 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.player_setting_panel:
                 startSettingActivity();
+                break;
+            case R.id.player_title_txt:
+            case R.id.player_subtitle_txt:
+                MediaItem item = (MediaItem) App.getPlayerEventHandler().getPlayingItem();
+                if(null != item){
+                    switch (item.getParentType()){
+                        case SONGS:
+                            startLibraryActivity();
+                            break;
+                        case ALBUM:
+                        case ARTIST:
+                        case PLAYLIST:
+                        case GENRE:
+                        case BOOM_PLAYLIST:
+                            startCollectionListActivity(item.getParentType(), item.getParentId());
+                            break;
+                        case FAVOURITE:
+                            startFavouriteActivity();
+                            break;
+                    }
+                }
+
+                break;
             default:
 
                 break;
         }
+    }
+
+    private void startCollectionListActivity(ItemType parentType, long parentId) {
+        App.getUserPreferenceHandler().setLibraryStartFromHome(true);
+
+        Intent listIntent = new Intent(BoomPlayerActivity.this, CollectionListActivity.class);
+        listIntent.putExtra("parent_type", parentType.ordinal());
+        listIntent.putExtra("parent_id", parentId);
+        startActivity(listIntent);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
     }
 
     private void addToPlayList() {
@@ -637,7 +686,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused())
             updateUpNextDB();
         unregisterReceiver(mPlayerBroadcastReceiver);
     }

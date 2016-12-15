@@ -106,6 +106,24 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         return playlist;
     }
 
+    public IMediaItemBase gePlaylist(long id) {
+        String query = "SELECT  * FROM " + TABLE_PLAYLIST +" WHERE "+PLAYLIST_KEY_ID +"="+id;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        IMediaItemBase playlist = null;
+        try {
+            if (cursor.moveToFirst()) {
+                    playlist = getPlaylistFromCursor(cursor);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        db.close();
+        return playlist;
+    }
+
     private MediaItemCollection getPlaylistFromCursor(Cursor cursor) {
         int playlistId = cursor.getInt(0);
 

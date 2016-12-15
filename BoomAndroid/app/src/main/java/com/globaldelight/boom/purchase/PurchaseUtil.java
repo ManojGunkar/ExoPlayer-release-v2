@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class PurchaseUtil {
-    public static final int INITIAL_OFFER_DAYS = 1;
-    public static final int EXTEND_OFFER_DAYS = 0;
+    public static final int INITIAL_OFFER_DAYS = 5;
+    public static final int EXTEND_OFFER_DAYS = 5;
 
     public static int getRemainingDays(Context context) {
         SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");

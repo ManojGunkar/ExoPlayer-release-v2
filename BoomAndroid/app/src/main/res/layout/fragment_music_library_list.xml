@@ -32,8 +32,9 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_playlists_placeholder"/>
+                android:src="@drawable/ic_no_music_placeholder"/>
             <com.globaldelight.boom.ui.widgets.RegularTextView
+                android:id="@+id/empty_list_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#787878"
@@ -42,12 +43,5 @@
                 android:textSize="@dimen/eighty_eighty_pt"
                 android:layout_marginTop="@dimen/ninety_six_pt"/>
         </LinearLayout>
-
-        <View
-            android:id="@+id/empty_list_all"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
-
     </LinearLayout>
 </FrameLayout>
