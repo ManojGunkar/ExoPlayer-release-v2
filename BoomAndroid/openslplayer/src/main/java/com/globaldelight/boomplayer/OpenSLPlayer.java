@@ -460,6 +460,8 @@ public class OpenSLPlayer implements Runnable {
                         String genre = mContext.getResources().getStringArray(R.array.mapped_eq_value)[i];
                         List t = Arrays.asList(mContext.getResources().getStringArray(R.array.eq_names));
                         AudioEffect.getAudioEffectInstance(mContext).setAutoEqualizerPosition(t.indexOf(genre.toUpperCase()));
+                        Log.d("Song Genre : ", genreType);
+                        Log.d("Selected Song Genre : ", genre);
                         return;
                     }
                 }

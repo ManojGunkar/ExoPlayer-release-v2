@@ -33,26 +33,15 @@
         <item>ELECTRONIC</item>
         <item>FLAT</item>
         <item>LOUD</item>
-        <item>MUSIC</item>
+
         <item>PARTY</item>
 
         <item>SOFT</item>
         <item>TREBLE</item>
         <item>VOCALS</item>
 
-        <item>Alternative</item>
-        <item>Blues</item>
-        <item>Comedy</item>
-        <item>Childrenâ€™s Music</item>
-        <item>Holiday</item>
-        <item>Opera</item>
-        <item>Singer</item>
-        <item>Songwriter</item>
-        <item>Essential</item>
-        <item>Fitness &amp; Workout</item>
-        <item>Latino</item>
-        <item>Indie</item>
-        <item>Greatest Hits</item>
+
+
         <item>Classical</item>
         <item>Country</item>
         <item>Dance</item>
@@ -66,8 +55,9 @@
         <item>K-Pop</item>
         <item>Pop</item>
         <item>Metal</item>
-        <item>R&amp;B</item>
         <item>R&amp;B/Soul</item>
+        <item>R&amp;B</item>
+        <item>R &amp; B</item>
         <item>Reggae</item>
         <item>Rock</item>
         <item>Club</item>
@@ -76,8 +66,20 @@
         <item>Soundtrack</item>
         <item>Trance</item>
         <item>Bollywood</item>
-
-
+        <item>MUSIC</item>
+        <item>Alternative</item>
+        <item>Blues</item>
+        <item>Comedy</item>
+        <item>Childrenâ€™s Music</item>
+        <item>Holiday</item>
+        <item>Opera</item>
+        <item>Singer</item>
+        <item>Songwriter</item>
+        <item>Essential</item>
+        <item>Fitness &amp; Workout</item>
+        <item>Latino</item>
+        <item>Indie</item>
+        <item>Greatest Hits</item>
 
     </string-array>
 
@@ -88,24 +90,14 @@
         <item>ELECTRONIC</item>
         <item>FLAT</item>
         <item>LOUD</item>
-        <item>MUSIC</item>
+
         <item>PARTY</item>
         <item>SOFT</item>
         <item>TREBLE</item>
         <item>VOCALS</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Indie</item>
-        <item>Music</item>
+
+
+
         <item>Classical</item>
         <item>Accoustic</item>
         <item>Party</item>
@@ -119,7 +111,8 @@
         <item>Hiphop</item>
         <item>Hiphop</item>
         <item>Metal</item>
-        <item>R&amp;B</item>
+        <item>R &amp; B</item>
+        <item>R &amp; B</item>
         <item>R &amp; B</item>
         <item>Reggae</item>
         <item>Rock</item>
@@ -131,6 +124,19 @@
         <item>Loud</item>
 
 
-
+        <item>MUSIC</item>
+        <item>Music</item>
+        <item>Music</item>
+        <item>Music</item>
+        <item>Music</item>
+        <item>Music</item>
+        <item>Music</item>
+        <item>Music</item>
+        <item>Music</item>
+        <item>Music</item>
+        <item>Music</item>
+        <item>Music</item>
+        <item>Music</item>
+        <item>Music</item>
     </string-array>
 </resources>

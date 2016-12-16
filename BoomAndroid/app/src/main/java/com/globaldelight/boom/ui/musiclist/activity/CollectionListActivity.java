@@ -44,6 +44,7 @@ import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.adapter.AlbumItemsListAdapter;
@@ -89,7 +90,7 @@ public class CollectionListActivity  extends AppCompatActivity {
     private RegularTextView mTitle, mSubTitle;
     private ImageView mPlayerArt, mPlayPause;
     private CollectionItemListAdapter collectionItemListAdapter;
-
+    private MediaType mMediaType;
     private ItemType mParentType;
     private long mParentId;
 
@@ -105,6 +106,7 @@ public class CollectionListActivity  extends AppCompatActivity {
         setContentView(R.layout.activity_song_detail_list);
 
         mParentType = ItemType.fromOrdinal(getIntent().getIntExtra("parent_type", 1));
+        mMediaType = MediaType.fromOrdinal(getIntent().getIntExtra("media_type", 1));
         mParentId = getIntent().getLongExtra("parent_id", 0);
 
         initView();
@@ -139,9 +141,9 @@ public class CollectionListActivity  extends AppCompatActivity {
         int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
         int height = Utils.getWindowHeight(this) - panelSize * 4;
         setAlbumArtSize(width, width);
+        collection = (IMediaItemCollection) MediaController.getInstance(this).getMediaCollectionItem(this, mParentId, mParentType, mMediaType);
         switch (mParentType){
             case ALBUM:
-                collection = (IMediaItemCollection) DeviceMediaQuery.getAlbum(this, mParentId);
                 albumArt.setVisibility(View.VISIBLE);
                 tblAlbumArt.setVisibility(View.GONE);
                 setAlbumArt(width, width);
@@ -149,27 +151,21 @@ public class CollectionListActivity  extends AppCompatActivity {
             case ARTIST:
                 albumArt.setVisibility(View.VISIBLE);
                 tblAlbumArt.setVisibility(View.GONE);
-                collection = (IMediaItemCollection) DeviceMediaQuery.getArtist(this, mParentId);
                 setAlbumArt(width, width);
                 break;
             case PLAYLIST:
                 albumArt.setVisibility(View.GONE);
                 tblAlbumArt.setVisibility(View.VISIBLE);
-                collection = (IMediaItemCollection) DeviceMediaQuery.getPlaylistItem(this, mParentId);
-                collection.setArtUrlList(DeviceMediaQuery.getPlaylistArtList(this, mParentId, null));
                 setSongsArtImage(width, collection.getArtUrlList());
                 break;
             case GENRE:
                 albumArt.setVisibility(View.VISIBLE);
                 tblAlbumArt.setVisibility(View.GONE);
-                collection = (IMediaItemCollection) DeviceMediaQuery.getGenre(this, mParentId);
                 setAlbumArt(width, width);
                 break;
             case BOOM_PLAYLIST:
                 albumArt.setVisibility(View.GONE);
                 tblAlbumArt.setVisibility(View.VISIBLE);
-                collection = (IMediaItemCollection) new PlaylistDBHelper(this).gePlaylist(mParentId);
-                collection.setArtUrlList(new PlaylistDBHelper(this).getBoomPlayListArtList(mParentId));
                 setSongsArtImage(width, collection.getArtUrlList());
                 break;
         }
@@ -381,22 +377,6 @@ public class CollectionListActivity  extends AppCompatActivity {
     private void addSongList() {
         new Thread(new Runnable() {
             public void run() {
-                //ItemType.ALBUM, ItemType.ARTIST && ItemType.GENRE
-                if(collection.getItemType() == ItemType.ALBUM && collection.getMediaElement().isEmpty()) {
-                    collection.setMediaElement(MediaController.getInstance(CollectionListActivity.this).getMediaCollectionItemDetails(collection));
-                }else if(collection.getItemType() == ItemType.ARTIST &&
-                        collection.getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
-                    collection.setMediaElement(DeviceMediaQuery.getSongListOfArtist(CollectionListActivity.this, mParentId, "item"));
-                }else if(collection.getItemType() == ItemType.GENRE &&
-                collection.getMediaElement().isEmpty()){
-                    collection.setMediaElement(DeviceMediaQuery.getSongListOfGenre(CollectionListActivity.this, mParentId, "item"));
-                }else if(collection.getItemType() == ItemType.PLAYLIST &&
-                        collection.getMediaElement().isEmpty()){
-                    collection.setMediaElement(DeviceMediaQuery.getPlaylistSongs(CollectionListActivity.this, mParentId, "item"));
-                }else if(collection.getItemType() == ItemType.BOOM_PLAYLIST &&
-                        collection.getMediaElement().isEmpty()){
-                    collection.setMediaElement(new PlaylistDBHelper(CollectionListActivity.this).getPlaylistSongs(mParentId));
-                }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -405,14 +385,6 @@ public class CollectionListActivity  extends AppCompatActivity {
                         rv.setAdapter(collectionItemListAdapter);
                     }
                 });
-//                if (favList.size() < 1) {
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            listIsEmpty();
-//                        }
-//                    });
-//                }
             }
         }).start();
     }

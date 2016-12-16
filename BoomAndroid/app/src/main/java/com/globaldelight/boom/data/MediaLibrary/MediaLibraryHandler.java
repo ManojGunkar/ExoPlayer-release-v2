@@ -55,6 +55,13 @@ public class MediaLibraryHandler implements IMediaLibrary{
         return null;
     }
 
+    public IMediaItemBase requestMediaCollectionItem(Context context, long mParentId, ItemType mParentType, MediaType mMediaType) {
+        if(mMediaType == MediaType.DEVICE_MEDIA_LIB){
+            return DeviceMediaHandler.getInstance(context).requestMediaCollectionItem(context, mParentId, mParentType);
+        }
+        return null;
+    }
+
     public ArrayList<? extends IMediaItemBase> requestMediaCollectionItemsForQueue(IMediaItemBase collection, @IntRange(from=-1) int position){
         if(collection.getMediaType() == MediaType.DEVICE_MEDIA_LIB){
             return DeviceMediaHandler.getInstance(context).QueryMediaCollectionForQueue(collection, position);

@@ -11,6 +11,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
 import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
+import com.globaldelight.boom.ui.musiclist.activity.CollectionListActivity;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +48,10 @@ public class MediaController implements IMediaController{
     @Override
     public ArrayList<? extends IMediaItemBase> getMediaCollectionItemDetails(IMediaItemCollection collection){
             return MediaLibraryHandler.getInstance(context).requestMediaCollectionItemDetails(collection);
+    }
+
+    public IMediaItemBase getMediaCollectionItem(Context context, long mParentId, ItemType mParentType, MediaType mMediaType){
+        return MediaLibraryHandler.getInstance(context).requestMediaCollectionItem(context, mParentId, mParentType, mMediaType);
     }
 
     public ArrayList<? extends IMediaItemBase> getMediaCollectionItemsForQueue(IMediaItemCollection collection, @IntRange(from=-1) int position){

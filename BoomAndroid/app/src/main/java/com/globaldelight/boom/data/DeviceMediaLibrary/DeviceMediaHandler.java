@@ -2,13 +2,18 @@ package com.globaldelight.boom.data.DeviceMediaLibrary;
 
 import android.content.Context;
 import android.support.annotation.IntRange;
+import android.view.View;
 
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
 import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
+import com.globaldelight.boom.ui.musiclist.activity.CollectionListActivity;
+import com.globaldelight.boom.utils.handlers.PlaylistDBHelper;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -142,6 +147,36 @@ public class DeviceMediaHandler {
             if(((MediaItemCollection)collection).getMediaElement().size()==0){
                 return App.getBoomPlayListHelper().getPlaylistSongs(collection.getItemId());
             }
+        }
+        return null;
+    }
+
+    public IMediaItemBase requestMediaCollectionItem(Context context, long mParentId, ItemType mParentType) {
+        IMediaItemCollection collection;
+        switch (mParentType){
+            case ALBUM:
+                collection = (MediaItemCollection)DeviceMediaQuery.getAlbum(context, mParentId);
+                collection.setMediaElement(DeviceMediaQuery.getAlbumDetail(context, mParentId, null));
+                return collection;
+            case ARTIST:
+                collection = (MediaItemCollection)DeviceMediaQuery.getArtist(context, mParentId);
+                collection.setMediaElement(DeviceMediaQuery.getSongListOfArtist(context, mParentId, "item"));
+                return collection;
+            case PLAYLIST:
+                collection = (MediaItemCollection)DeviceMediaQuery.getPlaylistItem(context, mParentId);
+                collection.setMediaElement(DeviceMediaQuery.getPlaylistSongs(context, mParentId, "item"));
+                collection.setArtUrlList(DeviceMediaQuery.getPlaylistArtList(context, mParentId, null));
+                return collection;
+            case GENRE:
+                collection = (MediaItemCollection)DeviceMediaQuery.getGenre(context, mParentId);
+                collection.setMediaElement(DeviceMediaQuery.getSongListOfGenre(context, mParentId, "item"));
+                return collection;
+            case BOOM_PLAYLIST:
+                PlaylistDBHelper playlistDBHelper = new PlaylistDBHelper(context);
+                collection = (IMediaItemCollection) playlistDBHelper.gePlaylist(mParentId);
+                collection.setMediaElement(playlistDBHelper.getPlaylistSongs(mParentId));
+                collection.setArtUrlList(playlistDBHelper.getBoomPlayListArtList(mParentId));
+                return collection;
         }
         return null;
     }

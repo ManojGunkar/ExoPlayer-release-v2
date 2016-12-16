@@ -569,7 +569,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                         case PLAYLIST:
                         case GENRE:
                         case BOOM_PLAYLIST:
-                            startCollectionListActivity(item.getParentType(), item.getParentId());
+                            startCollectionListActivity(item.getParentType(), item.getParentId(), item.getMediaType());
                             break;
                         case FAVOURITE:
                             startFavouriteActivity();
@@ -584,11 +584,12 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void startCollectionListActivity(ItemType parentType, long parentId) {
+    private void startCollectionListActivity(ItemType parentType, long parentId, MediaType mediaType) {
         App.getUserPreferenceHandler().setLibraryStartFromHome(true);
 
         Intent listIntent = new Intent(BoomPlayerActivity.this, CollectionListActivity.class);
         listIntent.putExtra("parent_type", parentType.ordinal());
+        listIntent.putExtra("media_type", mediaType.ordinal());
         listIntent.putExtra("parent_id", parentId);
         startActivity(listIntent);
         overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
