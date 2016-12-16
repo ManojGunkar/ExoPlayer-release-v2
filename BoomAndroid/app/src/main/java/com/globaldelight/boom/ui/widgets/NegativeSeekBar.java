@@ -24,6 +24,7 @@ public class NegativeSeekBar extends SeekBar {
     private int plus_r=153, plus_g=204, plus_b=255;
     private int min_r=255, min_g=153, min_b=255;
 
+
     public NegativeSeekBar(Context context) {
         super(context);
         this.mContext = context;
@@ -40,10 +41,20 @@ public class NegativeSeekBar extends SeekBar {
 
     public void setDisable(boolean b){
         isDisable = b;
+        if(isDisable){
+            this.getThumb().setColorFilter(mContext.getResources().getColor(R.color.card_grid_artist), PorterDuff.Mode.SRC_IN);
+        }else{
+            this.getThumb().setColorFilter(Color.parseColor("#bfbfbf"), PorterDuff.Mode.SRC_IN);
+        }
     }
 
     public NegativeSeekBar(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        if(isDisable){
+            this.getThumb().setColorFilter(mContext.getResources().getColor(R.color.card_grid_artist), PorterDuff.Mode.SRC_IN);
+        }else{
+            this.getThumb().setColorFilter(Color.parseColor("#bfbfbf"), PorterDuff.Mode.SRC_IN);
+        }
     }
 
     @Override
@@ -54,16 +65,51 @@ public class NegativeSeekBar extends SeekBar {
                 getWidth()- getThumbOffset()*2 ,
                 (getHeight() / 2) + (seekbar_height/2));
 
-        paint.setColor(Color.parseColor("#2b2c30"));
+        paint.setColor(Color.parseColor("#313131"));
 
         canvas.drawRect(rect, paint);
 
         if (this.getProgress() > 50 && !isDisable) {
+            rect.set(getWidth() / 2,
+                    (getHeight() / 2) - (seekbar_height / 2),
+                    (getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 53),
+                    getHeight() / 2 + (seekbar_height / 2));
+            paint.setColor(Color.parseColor("#bfbfbf"));
+            canvas.drawRect(rect, paint);
+        }else if (this.getProgress() > 50 && isDisable){
+            rect.set(getWidth() / 2,
+                    (getHeight() / 2) - (seekbar_height/2),
+                    (getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 53),
+                    getHeight() / 2 + (seekbar_height/2));
+
+            paint.setColor(mContext.getResources().getColor(R.color.card_grid_artist));
+            canvas.drawRect(rect, paint);
+        }
+
+        if (this.getProgress() < 50 && !isDisable) {
+
+            rect.set(getWidth() / 2 - ((getWidth() / 100) * (47 - getProgress())),
+                    (getHeight() / 2) - (seekbar_height / 2),
+                    getWidth() / 2,
+                    getHeight() / 2 + (seekbar_height / 2));
+
+            paint.setColor(Color.parseColor("#bfbfbf"));
+            canvas.drawRect(rect, paint);
+        }else if (this.getProgress() < 50 && isDisable) {
+            rect.set(getWidth() / 2 - ((getWidth() / 100) * (47 - getProgress())),
+                    (getHeight() / 2) - (seekbar_height/2),
+                    getWidth() / 2,
+                    getHeight() / 2 + (seekbar_height/2));
+
+            paint.setColor(mContext.getResources().getColor(R.color.card_grid_artist));
+            canvas.drawRect(rect, paint);
+        }
+        /*if (this.getProgress() > 50 && !isDisable) {
 
 
             rect.set(getWidth() / 2,
                     (getHeight() / 2) - (seekbar_height/2),
-                    (getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 54),
+                    (getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 53),
                     getHeight() / 2 + (seekbar_height/2));
 
 
@@ -104,7 +150,7 @@ public class NegativeSeekBar extends SeekBar {
         }else if (this.getProgress() > 50 && isDisable){
             rect.set(getWidth() / 2,
                     (getHeight() / 2) - (seekbar_height/2),
-                    (getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 54),
+                    (getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 53),
                     getHeight() / 2 + (seekbar_height/2));
 
             paint.setColor(mContext.getResources().getColor(R.color.card_grid_artist));
@@ -114,7 +160,7 @@ public class NegativeSeekBar extends SeekBar {
 
         if (this.getProgress() < 50 && !isDisable) {
 
-            rect.set(getWidth() / 2 - ((getWidth() / 100) * (46 - getProgress())),
+            rect.set(getWidth() / 2 - ((getWidth() / 100) * (47 - getProgress())),
                     (getHeight() / 2) - (seekbar_height/2),
                     getWidth() / 2,
                     getHeight() / 2 + (seekbar_height/2));
@@ -153,7 +199,7 @@ public class NegativeSeekBar extends SeekBar {
             canvas.drawRect(rect, paint);
 
         }else if (this.getProgress() < 50 && isDisable) {
-            rect.set(getWidth() / 2 - ((getWidth() / 100) * (46 - getProgress())),
+            rect.set(getWidth() / 2 - ((getWidth() / 100) * (47 - getProgress())),
                     (getHeight() / 2) - (seekbar_height/2),
                     getWidth() / 2,
                     getHeight() / 2 + (seekbar_height/2));
@@ -161,7 +207,7 @@ public class NegativeSeekBar extends SeekBar {
             paint.setColor(mContext.getResources().getColor(R.color.card_grid_artist));
             this.getThumb().setColorFilter(mContext.getResources().getColor(R.color.card_grid_artist), PorterDuff.Mode.SRC_IN);
             canvas.drawRect(rect, paint);
-        }
+        }*/
 
         super.onDraw(canvas);
     }

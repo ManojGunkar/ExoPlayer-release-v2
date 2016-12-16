@@ -14,7 +14,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,14 +27,12 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
-import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.adapter.SearchSuggestionAdapter;
@@ -234,7 +231,7 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
                     return true;
                 }
             });
-            searchSuggestionAdapter = new SearchSuggestionAdapter(BoomMasterActivity.this, R.layout.card_search_item, null, columns,null, -1000);
+            searchSuggestionAdapter = new SearchSuggestionAdapter(BoomMasterActivity.this, R.layout.card_search_suggestion_item, null, columns,null, -1000);
             searchView.setSuggestionsAdapter(searchSuggestionAdapter);
             registerSearchListeners();
 

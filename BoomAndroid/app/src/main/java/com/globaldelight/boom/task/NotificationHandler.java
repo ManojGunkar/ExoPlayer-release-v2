@@ -83,23 +83,18 @@ public class NotificationHandler {
 
     public void changeNotificationDetails(MediaItem item, boolean playing, boolean isLastPlayed) {
         if(item == null && !isLastPlayed){
-            notificationCompat.bigContentView.setViewVisibility(R.id.noti_name, GONE);
-            notificationCompat.bigContentView.setViewVisibility(R.id.noti_artist, GONE);
+//            notificationCompat.bigContentView.setViewVisibility(R.id.noti_name, GONE);
+//            notificationCompat.bigContentView.setViewVisibility(R.id.noti_artist, GONE);
+//
+//            notificationCompat.contentView.setViewVisibility(R.id.noti_name, GONE);
+//            notificationCompat.contentView.setViewVisibility(R.id.noti_artist, GONE);
+//
+//            notificationCompat.bigContentView.setViewVisibility(R.id.noti_play_button, GONE);
+//            notificationCompat.contentView.setViewVisibility(R.id.noti_play_button, GONE);
 
-            notificationCompat.contentView.setViewVisibility(R.id.noti_name, GONE);
-            notificationCompat.contentView.setViewVisibility(R.id.noti_artist, GONE);
-
-            notificationCompat.bigContentView.setViewVisibility(R.id.noti_play_button, GONE);
-            notificationCompat.contentView.setViewVisibility(R.id.noti_play_button, GONE);
-
-            /*notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, GONE);
-            notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, GONE);
-
-            notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, GONE);
-            notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, GONE);*/
-
-            setNoTrackImageView();
-            notificationManager.notify(NOTIFICATION_ID, notificationCompat);
+//            setNoTrackImageView();
+//            notificationManager.notify(NOTIFICATION_ID, notificationCompat);
+            notificationManager.cancel(NOTIFICATION_ID);
             return;
         }else if (isLastPlayed){
             notificationCompat.bigContentView

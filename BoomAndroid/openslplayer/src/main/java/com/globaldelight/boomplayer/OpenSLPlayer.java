@@ -172,14 +172,14 @@ public class OpenSLPlayer implements Runnable {
     }
 
     public void seek(long pos) {
-        seekTo(pos);
-        Log.d("Track Seek", "Clear Ring Buffer");
-        if(extractor != null)
+        if(extractor != null) {
+            seekTo(pos);
             extractor.seekTo(pos, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
+        }
     }
 
     public void seek(int percent) {
-        if(!isPause()) {
+        if(!isPause() && extractor != null) {
             seek(percent * duration / 100);
         }else{
             mPauseSeek = percent;
@@ -468,6 +468,7 @@ public class OpenSLPlayer implements Runnable {
             }
         }
         AudioEffect.getAudioEffectInstance(mContext).setAutoEqualizerPosition(12);
+        Log.d("Selected Song Genre : ", "MUSIC");
     }
 
     public void SupportedCodec() {

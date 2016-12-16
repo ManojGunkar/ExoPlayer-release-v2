@@ -177,7 +177,7 @@ public class PlayerService extends Service {
                 break;
             case ACTION_NOTI_REMOVE:
                 notificationHandler.setNotificationActive(false);
-                updateUpNextDB();
+//                updateUpNextDB();
                 break;
             /*case ACTION_ADD_QUEUE:
                 musicPlayerHandler.addSongToQueue();
@@ -260,14 +260,17 @@ public class PlayerService extends Service {
     }
 
     private void updateNotificationPlayer(MediaItem playingItem, boolean playing, boolean isLastPlayed) {
-        notificationHandler.setNotificationPlayer(false);
+//        notificationHandler.setNotificationPlayer(false);
         if(!playing){
             stopForeground(false);
             notificationHandler.setNotificationPlayer(true);
-        }/*else{
+        }else{
             notificationHandler.setNotificationPlayer(false);
-        }*/
+        }
         notificationHandler.changeNotificationDetails(playingItem, playing, isLastPlayed);
+        if(playingItem == null && !isLastPlayed){
+            stopSelf();
+        }
     }
 
     @Nullable

@@ -642,8 +642,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
         }
 
-        if(null == App.getService())
-            startService(new Intent(this, PlayerService.class));
+//        if(null == App.getService())
+//            startService(new Intent(this, PlayerService.class));
 
 
         updateEffectIcon();
@@ -698,10 +698,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     private void updateUpNextDB() {
         App.getPlayingQueueHandler().getUpNextList().addUpNextItemsToDB();
-        if (App.getPlayerEventHandler().getPlayer() != null) {
+        /*if (App.getPlayerEventHandler().getPlayer() != null) {
             App.getPlayerEventHandler().stop();
             App.getPlayerEventHandler().release();
-        }
+        }*/
     }
 
     private void updateEffectIcon() {
