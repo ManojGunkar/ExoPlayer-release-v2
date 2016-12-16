@@ -126,29 +126,33 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
                 pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.popup_album_play_next :
-                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                        try {
+                            switch (item.getItemId()) {
+                                case R.id.popup_album_play_next:
+                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                        itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
+                                        if (itemList.get(position).getMediaElement().size() > 0)
+                                            App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(itemList.get(position));
+                                    }
+                                    break;
+                                case R.id.popup_album_add_queue:
+                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                        itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
+                                        if (itemList.get(position).getMediaElement().size() > 0)
+                                            App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(itemList.get(position));
+                                    }
+                                    break;
+                                case R.id.popup_album_add_playlist:
+                                    Utils util = new Utils(context);
                                     itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
-                                    if(itemList.get(position).getMediaElement().size() > 0)
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(itemList.get(position));
-                                }
-                                break;
-                            case R.id.popup_album_add_queue :
-                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                                    itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
-                                    if(itemList.get(position).getMediaElement().size() > 0)
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(itemList.get(position));
-                                }
-                                break;
-                            case R.id.popup_album_add_playlist:
-                                Utils util = new Utils(context);
-                                itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
 
-                                if(itemList.get(position).getMediaElement().size() >0)
-                                    util.addToPlaylist(activity, itemList.get(position).getMediaElement(), null);
-                                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
-                                break;
+                                    if (itemList.get(position).getMediaElement().size() > 0)
+                                        util.addToPlaylist(activity, itemList.get(position).getMediaElement(), null);
+                                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                    break;
+                            }
+                        }catch (Exception e){
+
                         }
                         return false;
                     }

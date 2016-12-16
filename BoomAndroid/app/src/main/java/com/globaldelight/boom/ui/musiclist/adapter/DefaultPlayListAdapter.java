@@ -199,26 +199,30 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
                 pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.popup_album_play_next :
-                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                        try {
+                            switch (item.getItemId()) {
+                                case R.id.popup_album_play_next:
+                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                        items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(items.get(position));
+                                    }
+                                    break;
+                                case R.id.popup_album_add_queue:
+                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                        items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(items.get(position));
+                                    }
+                                    break;
+                                case R.id.popup_album_add_playlist:
+                                    Utils util = new Utils(context);
                                     items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(items.get(position));
-                                }
-                                break;
-                            case R.id.popup_album_add_queue :
-                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                                    items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(items.get(position));
-                                }
-                                break;
-                            case R.id.popup_album_add_playlist:
-                                Utils util = new Utils(context);
-                                items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
 
-                                util.addToPlaylist(activity, items.get(position).getMediaElement(), null);
-                                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
-                                break;
+                                    util.addToPlaylist(activity, items.get(position).getMediaElement(), null);
+                                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                    break;
+                            }
+                        }catch (Exception e){
+
                         }
                         return false;
                     }

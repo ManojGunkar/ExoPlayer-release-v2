@@ -164,12 +164,14 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         mPlaySongDetailList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
-                    if(collection.getMediaElement().size() > 0)
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), 0);
-                }else{
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
-                }
+                try {
+                    if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
+                        if (collection.getMediaElement().size() > 0)
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), 0);
+                    } else {
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
+                    }
+                }catch (Exception e){}
                 itemSongListAdapter.notifyDataSetChanged();
             }
         });

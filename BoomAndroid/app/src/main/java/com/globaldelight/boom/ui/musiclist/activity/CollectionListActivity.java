@@ -195,9 +195,13 @@ public class CollectionListActivity  extends AppCompatActivity {
         mPlayAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0);
-                    collectionItemListAdapter.notifyDataSetChanged();
+                try {
+                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0);
+                        collectionItemListAdapter.notifyDataSetChanged();
+                    }
+                }catch (Exception e){
+
                 }
             }
         });

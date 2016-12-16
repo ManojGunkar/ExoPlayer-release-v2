@@ -146,21 +146,28 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
                     pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.popup_song_add_queue :
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) itemList.get(position));
-                                    break;
-                                case R.id.popup_song_add_playlist:
-                                    Utils util = new Utils(context);
-                                    ArrayList list = new ArrayList<IMediaItemBase>();
-                                    list.add(itemList.get(position));
-                                    util.addToPlaylist((FavouriteListActivity)context, list, null);
-                                    break;
-                                case R.id.popup_song_add_fav :
-                                    MediaController.getInstance(context).removeItemToFavoriteList(itemList.get(position).getItemId());
-                                    itemList = MediaController.getInstance(context).getFavouriteListItems();
-                                    updateFavoriteList(MediaController.getInstance(context).getFavouriteListItems());
-                                    break;
+                            try {
+                                switch (item.getItemId()) {
+                                    case R.id.popup_song_play_next:
+                                        App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom( itemList.get(position));
+                                        break;
+                                    case R.id.popup_song_add_queue:
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) itemList.get(position));
+                                        break;
+                                    case R.id.popup_song_add_playlist:
+                                        Utils util = new Utils(context);
+                                        ArrayList list = new ArrayList<IMediaItemBase>();
+                                        list.add(itemList.get(position));
+                                        util.addToPlaylist((FavouriteListActivity) context, list, null);
+                                        break;
+                                    case R.id.popup_song_add_fav:
+                                        MediaController.getInstance(context).removeItemToFavoriteList(itemList.get(position).getItemId());
+                                        itemList = MediaController.getInstance(context).getFavouriteListItems();
+                                        updateFavoriteList(MediaController.getInstance(context).getFavouriteListItems());
+                                        break;
+                                }
+                            }catch (Exception e){
+
                             }
                             return false;
                         }

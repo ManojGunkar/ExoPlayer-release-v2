@@ -148,26 +148,30 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                     pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.popup_song_play_next :
-                                    App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(itemList.get(position));
-                                    break;
-                                case R.id.popup_song_add_queue:
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(itemList.get(position));
-                                    break;
-                                case R.id.popup_song_add_playlist:
-                                    Utils util = new Utils(context);
-                                    ArrayList list = new ArrayList<IMediaItemBase>();
-                                    list.add(itemList.get(position));
-                                    util.addToPlaylist(activity, list, null);
-                                    break;
-                                case R.id.popup_song_add_fav:
-                                    if (MediaController.getInstance(context).isFavouriteItems(itemList.get(position).getItemId())) {
-                                        MediaController.getInstance(context).removeItemToFavoriteList(itemList.get(position).getItemId());
-                                    } else {
-                                        MediaController.getInstance(context).addSongsToFavoriteList(itemList.get(position));
-                                    }
-                                    break;
+                            try {
+                                switch (item.getItemId()) {
+                                    case R.id.popup_song_play_next:
+                                        App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(itemList.get(position));
+                                        break;
+                                    case R.id.popup_song_add_queue:
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(itemList.get(position));
+                                        break;
+                                    case R.id.popup_song_add_playlist:
+                                        Utils util = new Utils(context);
+                                        ArrayList list = new ArrayList<IMediaItemBase>();
+                                        list.add(itemList.get(position));
+                                        util.addToPlaylist(activity, list, null);
+                                        break;
+                                    case R.id.popup_song_add_fav:
+                                        if (MediaController.getInstance(context).isFavouriteItems(itemList.get(position).getItemId())) {
+                                            MediaController.getInstance(context).removeItemToFavoriteList(itemList.get(position).getItemId());
+                                        } else {
+                                            MediaController.getInstance(context).addSongsToFavoriteList(itemList.get(position));
+                                        }
+                                        break;
+                                }
+                            }catch (Exception e){
+
                             }
                             return false;
                         }

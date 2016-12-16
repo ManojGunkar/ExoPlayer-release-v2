@@ -227,40 +227,42 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                 pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.popup_play_next :
-                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                                    ((MediaItemCollection)items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(items.get(position));
-                                }
-                                break;
-                            case R.id.popup_add_queue :
-                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                                    ((MediaItemCollection)items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(items.get(position));
-                                }
-                                break;
-                            case R.id.popup_playlist_rename:
-                                renameDialog(position, items.get(position).getItemTitle());
-                                break;
-                            case R.id.popup_add_playlist :
-                                ((MediaItemCollection)items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
-                                Utils util = new Utils(context);
-                                util.addToPlaylist((BoomPlaylistActivity)context, ((MediaItemCollection)items.get(position)).getMediaElement(), ((MediaItemCollection) items.get(position)).getItemTitle());
-                                break;
-                            case R.id.popup_playlist_delete:
-                                MediaController.getInstance(context).deleteBoomPlaylist(items.get(position).getItemId());
-                                updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
-                                notifyItemRemoved(position);
-                                Toast.makeText(context, context.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
-                                break;
-                            case R.id.popup_add_song:
-                                App.getUserPreferenceHandler().setBoomPlayListId(items.get(position).getItemId());
-                                App.getUserPreferenceHandler().setLibraryStartFromHome(false);
-                                Intent i = new Intent(context, DeviceMusicActivity.class);
-                                context.startActivity(i);
-                                break;
-                        }
+                        try {
+                            switch (menuItem.getItemId()) {
+                                case R.id.popup_play_next:
+                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                        ((MediaItemCollection) items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(items.get(position));
+                                    }
+                                    break;
+                                case R.id.popup_add_queue:
+                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                        ((MediaItemCollection) items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(items.get(position));
+                                    }
+                                    break;
+                                case R.id.popup_playlist_rename:
+                                    renameDialog(position, items.get(position).getItemTitle());
+                                    break;
+                                case R.id.popup_add_playlist:
+                                    ((MediaItemCollection) items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
+                                    Utils util = new Utils(context);
+                                    util.addToPlaylist((BoomPlaylistActivity) context, ((MediaItemCollection) items.get(position)).getMediaElement(), ((MediaItemCollection) items.get(position)).getItemTitle());
+                                    break;
+                                case R.id.popup_playlist_delete:
+                                    MediaController.getInstance(context).deleteBoomPlaylist(items.get(position).getItemId());
+                                    updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                                    notifyItemRemoved(position);
+                                    Toast.makeText(context, context.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
+                                    break;
+                                case R.id.popup_add_song:
+                                    App.getUserPreferenceHandler().setBoomPlayListId(items.get(position).getItemId());
+                                    App.getUserPreferenceHandler().setLibraryStartFromHome(false);
+                                    Intent i = new Intent(context, DeviceMusicActivity.class);
+                                    context.startActivity(i);
+                                    break;
+                            }
+                        }catch (Exception e){}
                         return false;
                     }
                 });

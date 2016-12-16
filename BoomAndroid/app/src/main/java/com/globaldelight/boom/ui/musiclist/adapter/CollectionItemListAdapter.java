@@ -144,37 +144,39 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                 pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.album_header_add_play_next:
-                                if (item.getMediaElement().size() > 0) {
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(item);
-                                }
-                                break;
-                            case R.id.album_header_add_to_upnext :
-                                if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                        try {
+                            switch (menuItem.getItemId()) {
+                                case R.id.album_header_add_play_next:
                                     if (item.getMediaElement().size() > 0) {
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(item);
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(item);
                                     }
-                                }
-                                break;
-                            case R.id.album_header_add_to_playlist:
-                                Utils util = new Utils(context);
-                                if (item.getMediaElement().size() > 0) {
-                                    util.addToPlaylist((CollectionListActivity)context, item.getMediaElement(), null);
-                                }
+                                    break;
+                                case R.id.album_header_add_to_upnext:
+                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                        if (item.getMediaElement().size() > 0) {
+                                            App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(item);
+                                        }
+                                    }
+                                    break;
+                                case R.id.album_header_add_to_playlist:
+                                    Utils util = new Utils(context);
+                                    if (item.getMediaElement().size() > 0) {
+                                        util.addToPlaylist((CollectionListActivity) context, item.getMediaElement(), null);
+                                    }
 
-                                break;
-                            case R.id.album_header_shuffle :
-                                if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                    break;
+                                case R.id.album_header_shuffle:
+                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
 //                                    if(!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused()){
-                                    if (item.getMediaElement().size() > 0) {
-                                        App.getPlayingQueueHandler().getUpNextList().addToPlay(item, 0);
-                                    }
+                                        if (item.getMediaElement().size() > 0) {
+                                            App.getPlayingQueueHandler().getUpNextList().addToPlay(item, 0);
+                                        }
 //                                    }
-                                    context.sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
-                                }
-                                break;
-                        }
+                                        context.sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
+                                    }
+                                    break;
+                            }
+                        }catch (Exception e){}
                         return false;
                     }
                 });
@@ -207,41 +209,43 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                 pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.popup_song_play_next:
-                                if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                        try {
+                            switch (menuItem.getItemId()) {
+                                case R.id.popup_song_play_next:
+                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                        if (item.getMediaElement().size() > 0) {
+                                            App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(item.getMediaElement().get(position));
+                                        }
+                                    }
+                                    break;
+                                case R.id.popup_song_add_queue:
+                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                        if (item.getMediaElement().size() > 0) {
+                                            App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) item.getMediaElement().get(position));
+                                        }
+                                    }
+                                    break;
+                                case R.id.popup_song_add_playlist:
+                                    Utils util = new Utils(context);
+                                    ArrayList list = new ArrayList();
                                     if (item.getMediaElement().size() > 0) {
-                                        App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(item.getMediaElement().get(position));
+                                        list.add(item.getMediaElement().get(position));
+                                        util.addToPlaylist((CollectionListActivity) context, list, null);
                                     }
-                                }
-                                break;
-                            case R.id.popup_song_add_queue:
-                                if (App.getPlayingQueueHandler().getUpNextList() != null) {
+
+                                    break;
+                                case R.id.popup_song_add_fav:
                                     if (item.getMediaElement().size() > 0) {
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) item.getMediaElement().get(position));
+                                        if (MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())) {
+                                            MediaController.getInstance(context).removeItemToFavoriteList(item.getMediaElement().get(position).getItemId());
+                                        } else {
+                                            MediaController.getInstance(context).addSongsToFavoriteList(item.getMediaElement().get(position));
+                                        }
                                     }
-                                }
-                                break;
-                            case R.id.popup_song_add_playlist:
-                                Utils util = new Utils(context);
-                                ArrayList list = new ArrayList();
-                                if (item.getMediaElement().size() > 0) {
-                                    list.add(item.getMediaElement().get(position));
-                                    util.addToPlaylist((CollectionListActivity) context, list, null);
-                                }
+                                    break;
+                            }
+                        }catch (Exception e){
 
-                                break;
-                            case R.id.popup_song_add_fav:
-                                if (item.getMediaElement().size() > 0) {
-                                    if (MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())) {
-                                        MediaController.getInstance(context).removeItemToFavoriteList(item.getMediaElement().get(position).getItemId());
-                                    } else {
-                                        MediaController.getInstance(context).addSongsToFavoriteList(item.getMediaElement().get(position));
-                                    }
-                                }
-
-
-                                break;
                         }
                         return false;
                     }

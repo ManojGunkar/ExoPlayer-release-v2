@@ -324,64 +324,68 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                     pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.popup_song_play_next:
-                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                                        if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
-                                            App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(collection.getMediaElement().get(position));
-                                        } else {
-                                            App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
+                            try {
+                                switch (item.getItemId()) {
+                                    case R.id.popup_song_play_next:
+                                        if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                            if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
+                                                App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(collection.getMediaElement().get(position));
+                                            } else {
+                                                App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
+                                            }
                                         }
-                                    }
-                                    break;
-                                case R.id.popup_song_add_queue:
-                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                                        if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
-                                            App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) collection.getMediaElement().get(position));
-                                        } else {
-                                            App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
+                                        break;
+                                    case R.id.popup_song_add_queue:
+                                        if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                            if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
+                                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) collection.getMediaElement().get(position));
+                                            } else {
+                                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
+                                            }
                                         }
-                                    }
-                                    break;
-                                case R.id.popup_song_add_playlist:
-                                    Utils util = new Utils(activity);
-                                    ArrayList list = new ArrayList();
-                                    if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
-                                        list.add(collection.getMediaElement().get(position));
-                                        util.addToPlaylist(activity, list, null);
-                                    } else {
-                                        list.add(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
-                                        util.addToPlaylist(activity, list, null);
+                                        break;
+                                    case R.id.popup_song_add_playlist:
+                                        Utils util = new Utils(activity);
+                                        ArrayList list = new ArrayList();
+                                        if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
+                                            list.add(collection.getMediaElement().get(position));
+                                            util.addToPlaylist(activity, list, null);
+                                        } else {
+                                            list.add(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
+                                            util.addToPlaylist(activity, list, null);
 
-                                    }
-                                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
-                                    break;
-                                case R.id.popup_song_add_fav:
-                                    if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
-                                        if (MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())) {
-                                            MediaController.getInstance(activity).removeItemToFavoriteList(collection.getMediaElement().get(position).getItemId());
-                                        } else {
-                                            MediaController.getInstance(activity).addSongsToFavoriteList(collection.getMediaElement().get(position));
                                         }
-                                    } else {
-                                        if (MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())) {
-                                            MediaController.getInstance(activity).removeItemToFavoriteList(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position).getItemId());
+                                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                        break;
+                                    case R.id.popup_song_add_fav:
+                                        if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
+                                            if (MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())) {
+                                                MediaController.getInstance(activity).removeItemToFavoriteList(collection.getMediaElement().get(position).getItemId());
+                                            } else {
+                                                MediaController.getInstance(activity).addSongsToFavoriteList(collection.getMediaElement().get(position));
+                                            }
                                         } else {
-                                            MediaController.getInstance(activity).addSongsToFavoriteList(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
+                                            if (MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())) {
+                                                MediaController.getInstance(activity).removeItemToFavoriteList(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position).getItemId());
+                                            } else {
+                                                MediaController.getInstance(activity).addSongsToFavoriteList(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position));
+                                            }
                                         }
-                                    }
-                                    break;
-                                case R.id.boom_header_delete_songs:
-                                    if (collection.getItemType() == BOOM_PLAYLIST) {
-                                        App.getBoomPlayListHelper().removeSong(collection.getMediaElement().get(position).getItemId(), (int) collection.getItemId());
-                                        collection.getMediaElement().clear();
-                                        collection.setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
-                                        collection.setItemCount(collection.getMediaElement().size());
-                                        notifyItemRemoved(position);
-                                        setDetail(collection.getItemTitle(), collection.getItemCount());
-                                        notifyDataSetChanged();
-                                    }
-                                    break;
+                                        break;
+                                    case R.id.boom_header_delete_songs:
+                                        if (collection.getItemType() == BOOM_PLAYLIST) {
+                                            App.getBoomPlayListHelper().removeSong(collection.getMediaElement().get(position).getItemId(), (int) collection.getItemId());
+                                            collection.getMediaElement().clear();
+                                            collection.setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
+                                            collection.setItemCount(collection.getMediaElement().size());
+                                            notifyItemRemoved(position);
+                                            setDetail(collection.getItemTitle(), collection.getItemCount());
+                                            notifyDataSetChanged();
+                                        }
+                                        break;
+                                }
+                            }catch (Exception e){
+
                             }
                             return false;
                         }
@@ -433,9 +437,9 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         });
 
     }
-    public void updateNewList(IMediaItemCollection collection, ListDetail listDetail, int startPosition) {
-        collection.getMediaElement().clear();
-        this.collection = (MediaItemCollection) collection;
+    public void updateNewList(IMediaItemCollection collections, ListDetail listDetail, int startPosition) {
+//        this.collection.getMediaElement().clear();
+        this.collection.setMediaElement(collections.getMediaElement());
         this.listDetail = listDetail;
     }
 

@@ -145,13 +145,17 @@ public class AlbumActivity extends AppCompatActivity {
         mPlayAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                    if (collection.getItemType() == ItemType.ALBUM) {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0);
-                    } else {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
+                try {
+                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                        if (collection.getItemType() == ItemType.ALBUM) {
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0);
+                        } else {
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
+                        }
+                        albumItemsListAdapter.notifyDataSetChanged();
                     }
-                    albumItemsListAdapter.notifyDataSetChanged();
+                }catch (Exception e){
+
                 }
             }
         });
