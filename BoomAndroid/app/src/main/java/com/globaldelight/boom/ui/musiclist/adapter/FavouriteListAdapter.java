@@ -131,7 +131,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
             public void onClick(View view) {
                 animate(holder);
                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay((LinkedList<MediaItem>) itemList, position);
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay((LinkedList<MediaItem>) itemList, position, false);
                     notifyDataSetChanged();
                 }
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_FAVOURITE_SECTION);

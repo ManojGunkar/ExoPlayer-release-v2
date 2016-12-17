@@ -193,7 +193,7 @@ public class CollectionListActivity  extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0, true);
                         collectionItemListAdapter.notifyDataSetChanged();
                     }
                 }catch (Exception e){

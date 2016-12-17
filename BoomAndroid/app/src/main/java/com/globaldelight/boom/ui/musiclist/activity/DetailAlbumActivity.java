@@ -146,7 +146,7 @@ public class DetailAlbumActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(DetailAlbumActivity.this).getMediaCollectionItemDetails(collection));
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, true);
                 }catch (Exception e){}
             }
         });

@@ -204,9 +204,9 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                                     if (App.getPlayingQueueHandler().getUpNextList() != null) {
 //                                    if(!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused()){
                                         if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
-                                            App.getPlayingQueueHandler().getUpNextList().addToPlay(item, 0);
+                                            App.getPlayingQueueHandler().getUpNextList().addToPlay(item, 0, true);
                                         } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
-                                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), 0);
+                                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), 0, true);
                                         }
 //                                    }
                                         context.sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
@@ -230,9 +230,9 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
 
                 if (App.getPlayingQueueHandler().getUpNextList() != null) {
                     if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay(item, position);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay(item, position, false);
                     } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), position);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), position, false);
                     }
                     holder.name.setTextColor(context.getResources().getColor(R.color.boom_yellow));
                     holder.count.setTextColor(context.getResources().getColor(R.color.boom_yellow));

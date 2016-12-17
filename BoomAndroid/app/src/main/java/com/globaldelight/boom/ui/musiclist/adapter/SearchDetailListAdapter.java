@@ -91,6 +91,15 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             holder.mainView.setElevation(0);
             setSongArt(resultItemList.get(position).getItemArtUrl(), holder);
 
+            MediaItem nowPlayingItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+            if(null != nowPlayingItem /*&& nowPlayingItem.getParentType() == ItemType.SONGS*/ /*&& (App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused())*/){
+                if(resultItemList.get(position).getItemId() == nowPlayingItem.getItemId()){
+                    holder.name.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+                }else{
+                    holder.name.setTextColor(context.getResources().getColor(R.color.white));
+                }
+            }
+
             if(App.getUserPreferenceHandler().isLibFromHome()){
                 holder.menu.setVisibility(View.VISIBLE);
                 holder.songChk.setVisibility(View.GONE);
@@ -99,7 +108,13 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                     public void onClick(View view) {
                         animate(holder);
                         if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) resultItemList, position);
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) resultItemList, position, false);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    notifyDataSetChanged();
+                                }
+                            }, 500);
                         }
                     }
                 });

@@ -268,10 +268,10 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 //                                    if(!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused()){
                                         if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                                             if (collection.getMediaElement().size() > 0)
-                                                App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), 0);
+                                                App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), 0, true);
                                         } else {
                                             if (((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size() > 0)
-                                                App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
+                                                App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, true);
                                         }
 //                                    }
                                         activity.sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
@@ -309,9 +309,9 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                 animate(holder);
                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
                     if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), position);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), position, false);
                     }else{
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), position);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), position, false);
                     }
                     notifyDataSetChanged();
                 }

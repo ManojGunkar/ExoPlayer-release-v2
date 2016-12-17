@@ -148,9 +148,9 @@ public class AlbumActivity extends AppCompatActivity {
                 try {
                     if (App.getPlayingQueueHandler().getUpNextList() != null) {
                         if (collection.getItemType() == ItemType.ALBUM) {
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0);
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0, true);
                         } else {
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, true);
                         }
                         albumItemsListAdapter.notifyDataSetChanged();
                     }

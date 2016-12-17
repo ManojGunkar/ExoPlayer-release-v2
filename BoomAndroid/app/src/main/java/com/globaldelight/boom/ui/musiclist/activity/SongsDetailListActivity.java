@@ -167,9 +167,9 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
                 try {
                     if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                         if (collection.getMediaElement().size() > 0)
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), 0);
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), 0, true);
                     } else {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, true);
                     }
                 }catch (Exception e){}
                 itemSongListAdapter.notifyDataSetChanged();
