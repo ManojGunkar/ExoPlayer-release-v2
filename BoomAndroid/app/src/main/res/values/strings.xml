@@ -114,8 +114,6 @@
     <string name="song">Song</string>
 
     <!-- Player-->
-    <string name="added_to_favorite">Playing Song added as favorite.</string>
-    <string name="removed_from_favorite">Playing Song removed from favorite.</string>
     <string name="no_song">No Song Selected.</string>
     <!-- Boom Playlist-->
     <string name="boom_playlist_title">Boom Playlist</string>
@@ -136,6 +134,10 @@
     <string name="purchase_restore_txt">Restore Purchases</string>
     <!-- Favorite-->
     <string name="fav_placeholder_txt">You\'ve not liked \n any Songs yet.</string>
+    <string name="added_to_favorite">Added as favorite.</string>
+    <string name="playing_added_to_favorite">Playing Song added as favorite.</string>
+    <string name="removed_from_favorite">Removed from favorite.</string>
+    <string name="playing_removed_from_favorite">Playing Song removed from favorite.</string>
     <!--Boom PlayList-->
     <string name="boom_playlist_placeholder_txt">You\'ve not created \n any Playlist yet.</string>
     <!--PlayList-->
