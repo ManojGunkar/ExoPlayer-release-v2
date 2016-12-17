@@ -43,10 +43,14 @@ public class PlayerService extends Service {
 
     public static final String ACTION_UPDATE_BOOM_PLAYLIST ="ACTION_UPDATE_BOOM_PLAYLIST";
     public static final String ACTION_UPDATE_BOOM_PLAYLIST_LIST ="ACTION_UPDATE_BOOM_PLAYLIST_LIST";
+    public static final String ACTION_CREATE_PLAYER_SCREEN = "ACTION_CREATE_PLAYER_SCREEN";
+    public static final String ACTION_DESTROY_PLAYER_SCREEN ="ACTION_DESTROY_PLAYER_SCREEN";
+
     private static long mShiftingTime = 0;
     private PlayerEventHandler musicPlayerHandler;
     private Context context;
     private NotificationHandler notificationHandler;
+    private static boolean isPlayerScreenResume = false;
 
     private BroadcastReceiver playerServiceBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -67,12 +71,13 @@ public class PlayerService extends Service {
         App.setService(this);
 
         App.getPlayingQueueHandler().getUpNextList().fetchUpNextItemsToDB();
+
+        if (musicPlayerHandler == null)
+            musicPlayerHandler = App.getPlayerEventHandler();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (musicPlayerHandler == null)
-            musicPlayerHandler = App.getPlayerEventHandler();
 
         App.getPlayingQueueHandler().getUpNextList().updateRepeatShuffleOnAppStart();
 
@@ -93,6 +98,8 @@ public class PlayerService extends Service {
         filter.addAction(ACTION_UPNEXT_UPDATE);
         filter.addAction(ACTION_PLAYING_ITEM_CLICKED);
         filter.addAction(ACTION_LAST_PLAYED_SONG);
+        filter.addAction(ACTION_CREATE_PLAYER_SCREEN);
+        filter.addAction(ACTION_DESTROY_PLAYER_SCREEN);
         registerReceiver(playerServiceBroadcastReceiver, filter);
         notificationHandler = new NotificationHandler(context, this);
         return START_NOT_STICKY;
@@ -177,20 +184,21 @@ public class PlayerService extends Service {
                 break;
             case ACTION_NOTI_REMOVE:
                 notificationHandler.setNotificationActive(false);
-//                updateUpNextDB();
+                if(!isPlayerScreenResume) {
+                    updateUpNextDB();
+                    stopSelf();
+                }
                 break;
             /*case ACTION_ADD_QUEUE:
                 musicPlayerHandler.addSongToQueue();
                 break;
                 */
-        }
-    }
-
-    private void updateUpNextDB() {
-        App.getPlayingQueueHandler().getUpNextList().addUpNextItemsToDB();
-        if (musicPlayerHandler.getPlayer() != null) {
-            musicPlayerHandler.stop();
-            musicPlayerHandler.release();
+            case ACTION_CREATE_PLAYER_SCREEN:
+                isPlayerScreenResume = true;
+                break;
+            case ACTION_DESTROY_PLAYER_SCREEN:
+                isPlayerScreenResume = false;
+                break;
         }
     }
 
@@ -269,6 +277,7 @@ public class PlayerService extends Service {
         }
         notificationHandler.changeNotificationDetails(playingItem, playing, isLastPlayed);
         if(playingItem == null && !isLastPlayed){
+            updateUpNextDB();
             stopSelf();
         }
     }
@@ -282,6 +291,10 @@ public class PlayerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    private void updateUpNextDB() {
+        App.getPlayingQueueHandler().getUpNextList().addUpNextItemsToDB();
         if (musicPlayerHandler.getPlayer() != null) {
             musicPlayerHandler.stop();
             musicPlayerHandler.release();

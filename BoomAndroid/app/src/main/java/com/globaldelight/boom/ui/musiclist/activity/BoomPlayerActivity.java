@@ -336,6 +336,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 //        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         setContentView(R.layout.activity_boom_player);
 
+        sendBroadcast(new Intent(PlayerService.ACTION_CREATE_PLAYER_SCREEN));
         initViews();
 
         IntentFilter intentFilter = new IntentFilter();
@@ -638,14 +639,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         super.onResume();
         App.getPlayerEventHandler().isPlayerResume = true;
 
-        if(AudioEffect.getAudioEffectInstance(this).isMasterEffectControlEnabled()){
-
-        }
-
-//        if(null == App.getService())
-//            startService(new Intent(this, PlayerService.class));
-
-
         updateEffectIcon();
         if (null != App.getPlayerEventHandler().getPlayingItem()) {
             updateTrackToPlayer((MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isPlaying(), /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));
@@ -691,17 +684,20 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     protected void onDestroy() {
+        updateUpNextDB();
         super.onDestroy();
-            updateUpNextDB();
         unregisterReceiver(mPlayerBroadcastReceiver);
     }
 
+
     private void updateUpNextDB() {
-        App.getPlayingQueueHandler().getUpNextList().addUpNextItemsToDB();
-        /*if (App.getPlayerEventHandler().getPlayer() != null) {
-            App.getPlayerEventHandler().stop();
-            App.getPlayerEventHandler().release();
-        }*/
+        if(!App.getPlayerEventHandler().isPlaying()){
+            App.getPlayingQueueHandler().getUpNextList().addUpNextItemsToDB();
+            if (App.getPlayerEventHandler().getPlayer() != null) {
+                App.getPlayerEventHandler().stop();
+                App.getPlayerEventHandler().release();
+            }
+        }
     }
 
     private void updateEffectIcon() {
