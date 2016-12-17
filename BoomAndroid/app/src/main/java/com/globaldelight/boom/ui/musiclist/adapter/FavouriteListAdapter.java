@@ -19,6 +19,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -164,6 +165,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
                                         MediaController.getInstance(context).removeItemToFavoriteList(itemList.get(position).getItemId());
                                         itemList = MediaController.getInstance(context).getFavouriteListItems();
                                         updateFavoriteList(MediaController.getInstance(context).getFavouriteListItems());
+                                        Toast.makeText(context, context.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                                         break;
                                 }
                             }catch (Exception e){

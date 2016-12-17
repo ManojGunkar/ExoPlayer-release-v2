@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -284,14 +285,18 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                                         if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
                                             if (MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())) {
                                                 MediaController.getInstance(context).removeItemToFavoriteList(item.getMediaElement().get(position).getItemId());
+                                                Toast.makeText(context, context.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                                             } else {
                                                 MediaController.getInstance(context).addSongsToFavoriteList(item.getMediaElement().get(position));
+                                                Toast.makeText(context, context.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                                             }
                                         } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
                                             if (MediaController.getInstance(context).isFavouriteItems(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position).getItemId())) {
                                                 MediaController.getInstance(context).removeItemToFavoriteList(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position).getItemId());
+                                                Toast.makeText(context, context.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                                             } else {
                                                 MediaController.getInstance(context).addSongsToFavoriteList(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                                Toast.makeText(context, context.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                         break;

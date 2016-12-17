@@ -21,6 +21,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -165,8 +166,10 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                                     case R.id.popup_song_add_fav:
                                         if (MediaController.getInstance(context).isFavouriteItems(itemList.get(position).getItemId())) {
                                             MediaController.getInstance(context).removeItemToFavoriteList(itemList.get(position).getItemId());
+                                            Toast.makeText(context, context.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                                         } else {
                                             MediaController.getInstance(context).addSongsToFavoriteList(itemList.get(position));
+                                            Toast.makeText(context, context.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                                         }
                                         break;
                                 }

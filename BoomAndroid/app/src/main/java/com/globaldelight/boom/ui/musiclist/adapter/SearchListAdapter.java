@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
@@ -472,8 +473,10 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                                         case R.id.popup_song_add_fav:
                                             if (MediaController.getInstance(context).isFavouriteItems(songs.get(getPosition(position)).getItemId())) {
                                                 MediaController.getInstance(context).removeItemToFavoriteList(songs.get(getPosition(position)).getItemId());
+                                                Toast.makeText(context, context.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                                             } else {
                                                 MediaController.getInstance(context).addSongsToFavoriteList(songs.get(getPosition(position)));
+                                                Toast.makeText(context, context.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                                             }
                                             break;
                                     }
