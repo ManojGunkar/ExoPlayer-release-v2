@@ -72,14 +72,16 @@ public class NegativeSeekBar extends SeekBar {
         if (this.getProgress() > 50 && !isDisable) {
             rect.set(getWidth() / 2,
                     (getHeight() / 2) - (seekbar_height / 2),
-                    (getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 53),
+                    /*(getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 50)*/
+                    this.getThumb().getBounds().centerX() + 5,
                     getHeight() / 2 + (seekbar_height / 2));
             paint.setColor(Color.parseColor("#bfbfbf"));
             canvas.drawRect(rect, paint);
         }else if (this.getProgress() > 50 && isDisable){
             rect.set(getWidth() / 2,
                     (getHeight() / 2) - (seekbar_height/2),
-                    (getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 53),
+                    /*(getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 50)*/
+                    this.getThumb().getBounds().centerX() + 5,
                     getHeight() / 2 + (seekbar_height/2));
 
             paint.setColor(mContext.getResources().getColor(R.color.card_grid_artist));
@@ -88,7 +90,8 @@ public class NegativeSeekBar extends SeekBar {
 
         if (this.getProgress() < 50 && !isDisable) {
 
-            rect.set(getWidth() / 2 - ((getWidth() / 100) * (47 - getProgress())),
+            rect.set(/*getWidth() / 2 - ((getWidth() / 100) * (50 - getProgress()))*/
+                    this.getThumb().getBounds().centerX()+5,
                     (getHeight() / 2) - (seekbar_height / 2),
                     getWidth() / 2,
                     getHeight() / 2 + (seekbar_height / 2));
@@ -96,7 +99,8 @@ public class NegativeSeekBar extends SeekBar {
             paint.setColor(Color.parseColor("#bfbfbf"));
             canvas.drawRect(rect, paint);
         }else if (this.getProgress() < 50 && isDisable) {
-            rect.set(getWidth() / 2 - ((getWidth() / 100) * (47 - getProgress())),
+            rect.set(/*getWidth() / 2 - ((getWidth() / 100) * (50 - getProgress()))*/
+                    this.getThumb().getBounds().centerX()+5,
                     (getHeight() / 2) - (seekbar_height/2),
                     getWidth() / 2,
                     getHeight() / 2 + (seekbar_height/2));

@@ -670,6 +670,22 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mTrackSeek.setProgress(App.getUserPreferenceHandler().getPlayerSeekPosition());
+        mPlayedTime.setText(App.getUserPreferenceHandler().getPlayedTime());
+        mRemainsTime.setText(App.getUserPreferenceHandler().getRemainsTime());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        App.getUserPreferenceHandler().setPlayerSeekPosition(mTrackSeek.getProgress());
+        App.getUserPreferenceHandler().setPlayedTime(mPlayedTime.getText());
+        App.getUserPreferenceHandler().setRemainsTime(mRemainsTime.getText());
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         App.getPlayerEventHandler().isPlayerResume = false;

@@ -24,12 +24,17 @@ public class UserPreferenceHandler {
     public static final int ALBUM_SORTED_BY_TITLE = 1;
     private static final boolean LIB_FROM_HOME = true;
 
+    private static final String PLAYER_SEEK_POSITION = "player_seek_position";
+    private static final String PLAYER_PLAYED_TIME = "played_time";
+    private static final String PLAYER_REMAINS_TIME = "remains_time";
+
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
 
     private static ArrayList<MediaItem> list = new ArrayList<>();
     private static ArrayList<Long> idList = new ArrayList<>();
     private static long boomPlayListId;
+    private int playerSeekPosition;
 
     public UserPreferenceHandler(Context context) {
         shp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -152,5 +157,29 @@ public class UserPreferenceHandler {
 
     public long getBoomPlayListId(){
         return this.boomPlayListId;
+    }
+
+    public void setPlayerSeekPosition(int playerSeekPosition) {
+        shp.edit().putInt(PLAYER_SEEK_POSITION, playerSeekPosition);
+    }
+
+    public int getPlayerSeekPosition(){
+        return shp.getInt(PLAYER_SEEK_POSITION, 0);
+    }
+
+    public void setPlayedTime(CharSequence playedTime) {
+        shp.edit().putString(PLAYER_PLAYED_TIME, playedTime.toString());
+    }
+
+    public String getPlayedTime(){
+        return shp.getString(PLAYER_PLAYED_TIME, " ");
+    }
+
+    public void setRemainsTime(CharSequence remainsTime) {
+        shp.edit().putString(PLAYER_REMAINS_TIME, remainsTime.toString());
+    }
+
+    public String getRemainsTime(){
+        return shp.getString(PLAYER_REMAINS_TIME, " ");
     }
 }

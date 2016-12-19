@@ -99,6 +99,8 @@ public class MusicLibraryListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if(null != songListAdapter)
+            songListAdapter.notifyDataSetChanged();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         if(null != getActivity())

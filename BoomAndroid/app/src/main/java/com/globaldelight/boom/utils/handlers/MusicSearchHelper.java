@@ -84,7 +84,7 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
     }
 
     private void addSong(String title) {
-
+        removeSong(title);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.putNull(ITEM_KEY_ID);
@@ -93,6 +93,12 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void removeSong(String title) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_SEARCH + " WHERE " +
+                SEARCH_KEY + "='" + title + "'");
+        db.close();
+    }
 
     public void clearList(){
         SQLiteDatabase db = this.getWritableDatabase();
