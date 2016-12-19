@@ -305,11 +305,19 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                             return false;
                         }
                     });
+                if(item.getItemType() == ItemType.ALBUM) {
                     if (MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())) {
                         pm.inflate(R.menu.song_remove_fav);
                     } else {
                         pm.inflate(R.menu.song_add_fav);
                     }
+                }else{
+                    if (MediaController.getInstance(context).isFavouriteItems(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position).getItemId())) {
+                        pm.inflate(R.menu.song_remove_fav);
+                    } else {
+                        pm.inflate(R.menu.song_add_fav);
+                    }
+                }
                     pm.show();
             }
         });

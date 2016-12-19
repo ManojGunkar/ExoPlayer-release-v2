@@ -328,7 +328,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             audioEffectPreferenceHandler.setOnAllSpeaker(true);
             if(!audioEffectPreferenceHandler.isTweeterOn()){
                 mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_l_inactive, null));
-                mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_r_disabled, null));
+                mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_r_inactive, null));
             }else {
                 mTweeterLeft.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_l_active, null));
                 mTweeterRight.setImageDrawable(getResources().getDrawable(R.drawable.ic_tweeter_r_active, null));

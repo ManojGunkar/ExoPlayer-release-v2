@@ -169,7 +169,7 @@ public class BoomPlaylistActivity extends AppCompatActivity {
                         boomPlayListAdapter = new BoomPlayListAdapter(BoomPlaylistActivity.this, recyclerView, playList, permissionChecker);
                         recyclerView.setAdapter(boomPlayListAdapter);
                         recyclerView.addItemDecoration(new BoomPlayListFooterItemDecoration(2, boomPlayListAdapter));
-                        recyclerView.setHasFixedSize(true);
+//                        recyclerView.setHasFixedSize(true);
                     }
                 });
                 if (playList.size() < 1) {
@@ -234,7 +234,8 @@ public class BoomPlaylistActivity extends AppCompatActivity {
                         if (!input.toString().matches("")) {
                             MediaController.getInstance(BoomPlaylistActivity.this).createBoomPlaylist(input.toString());
                             listNoMoreEmpty();
-                            boomPlayListAdapter.updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(BoomPlaylistActivity.this).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                            boomPlayListAdapter.updateNewList(MediaController.getInstance(BoomPlaylistActivity.this).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+//                            recyclerView.scrollToPosition(boomPlayListAdapter.getItemCount()-1);
                             Toast.makeText(BoomPlaylistActivity.this, getResources().getString(R.string.playlist_created), Toast.LENGTH_SHORT).show();
                         }
                     }

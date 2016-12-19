@@ -237,6 +237,9 @@ public class CollectionListActivity  extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(null != collectionItemListAdapter){
+            collectionItemListAdapter.notifyDataSetChanged();
+        }
         mPlayAlbum.setVisibility(View.VISIBLE);
         if (null != App.getPlayerEventHandler().getPlayingItem()) {
             updateMiniPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?

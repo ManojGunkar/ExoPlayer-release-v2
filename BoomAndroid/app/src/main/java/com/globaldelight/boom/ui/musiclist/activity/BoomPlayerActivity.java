@@ -65,6 +65,7 @@ import java.util.concurrent.TimeUnit;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_REPEAT;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_SHUFFLE;
@@ -92,6 +93,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private CircularSeekBar mTrackSeek;
     private ImageView mPlayPauseBtn, mLibraryBtn, mAudioEffectBtn, mUpNextQueue;
     private TooltipWindow tipWindowLibrary, tipWindowEffect, tipWindowHold, tipWindowHeadset;
+    private static boolean isUpdateUpnextDB = true;
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -119,7 +121,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     }
                     break;
                 case ACTION_TRACK_STOPPED :
-                    updateTrackToPlayer(null, false, false);
+                    updateTrackToPlayer((MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), false, false);
                     break;
                 case ACTION_UPDATE_TRACK_SEEK :
                     if(!isUser)
@@ -141,6 +143,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     break;
                 case ACTION_UPDATE_REPEAT :
                     updateRepeat();
+                    break;
+                case ACTION_STOP_UPDATING_UPNEXT_DB:
+                        isUpdateUpnextDB = false;
                     break;
             }
         }
@@ -347,10 +352,13 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         intentFilter.addAction(ACTION_UPDATE_TRACK_SEEK);
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
+        intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
         registerReceiver(mPlayerBroadcastReceiver, intentFilter);
         // new BoomServerRequest().getAccessToken(this);
         showPurchaseOption();
         musicReceiver = new MusicReceiver(this);
+        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        registerReceiver(musicReceiver, filter);
     }
 
     public void showCoachMark() {
@@ -638,17 +646,15 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     protected void onResume() {
         super.onResume();
         App.getPlayerEventHandler().isPlayerResume = true;
-
+        isUpdateUpnextDB = true;
         updateEffectIcon();
         if (null != App.getPlayerEventHandler().getPlayingItem()) {
             updateTrackToPlayer((MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isPlaying(), /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));
         }else{
-            updateTrackToPlayer( null , App.getPlayerEventHandler().isPlaying(), /*if last played item is set as playing item*/ false);
+            updateTrackToPlayer( (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() , App.getPlayerEventHandler().isPlaying(), /*if last played item is set as playing item*/ false);
         }
 
         updateUpNextButton();
-        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-        registerReceiver(musicReceiver, filter);
     }
 
     private void updateUpNextButton() {
@@ -679,14 +685,15 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         if (tipWindowHeadset != null) {
             tipWindowHeadset.dismissTooltip();
         }
-        unregisterReceiver(musicReceiver);
     }
 
     @Override
     protected void onDestroy() {
-        updateUpNextDB();
+        if(isUpdateUpnextDB)
+            updateUpNextDB();
         super.onDestroy();
         unregisterReceiver(mPlayerBroadcastReceiver);
+        unregisterReceiver(musicReceiver);
     }
 
 

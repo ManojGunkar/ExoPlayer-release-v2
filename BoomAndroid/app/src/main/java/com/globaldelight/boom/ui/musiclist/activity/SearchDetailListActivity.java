@@ -318,6 +318,9 @@ public class SearchDetailListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(null != adapter){
+            adapter.notifyDataSetChanged();
+        }
         if (null != App.getPlayerEventHandler().getPlayingItem()) {
             updateMiniPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
                             (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :

@@ -150,7 +150,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         if (collapsingToolbarLayout != null)
             collapsingToolbarLayout.setTitle(" ");
 
-        setDetail(collection.getItemTitle(), collection.getItemCount());
+        setDetail(collection);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_song_detail_list);
         try {
@@ -180,16 +180,34 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         setForAnimation();
     }
 
-    private void setDetail(String title, int count) {
+    private void setDetail(IMediaItemCollection collection) {
         StringBuilder itemCount = new StringBuilder();
+        String title;
+        int count = collection.getItemCount();
+        if(collection.getItemType() == BOOM_PLAYLIST || collection.getItemType() == PLAYLIST){
+            title = collection.getItemTitle();
+            count = collection.getItemCount();
+
+        }else{
+            title = ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getItemTitle();
+            count = ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getItemCount();
+        }
         itemCount.append(count > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
         itemCount.append(" ").append(count);
         listDetail = new ListDetail(title, itemCount.toString(), null);
+
+
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if(null != itemSongListAdapter){
+            itemSongListAdapter.notifyDataSetChanged();
+        }
+
         if (null != App.getPlayerEventHandler().getPlayingItem()) {
             updateMiniPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
                             (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
@@ -220,7 +238,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
             @Override
             public void run() {
                 getCollectionData();
-                setDetail(collection.getItemTitle(), collection.getMediaElement().size());
+                setDetail(collection);
                 final LinearLayoutManager llm = new LinearLayoutManager(SongsDetailListActivity.this);
                 runOnUiThread(new Runnable() {
                     @Override
@@ -469,7 +487,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
                         int oldCount = collection.getMediaElement().size();
                         collection.getMediaElement().clear();
                         collection.setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
-                        setDetail(collection.getItemTitle(), collection.getMediaElement().size());
+                        setDetail(collection);
                         collection.setItemCount(collection.getMediaElement().size());
                         itemSongListAdapter.updateNewList(collection, listDetail, oldCount);
                         itemSongListAdapter.notifyDataSetChanged();

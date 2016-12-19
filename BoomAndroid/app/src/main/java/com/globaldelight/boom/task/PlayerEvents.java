@@ -15,4 +15,6 @@ public class PlayerEvents {
     public static final String ACTION_LAST_PLAYED_SONG = "ACTION_LAST_PLAYED_TRACK";
 
     public static final String ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY = "ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY";
+
+    public static final String ACTION_STOP_UPDATING_UPNEXT_DB = "ACTION_STOP_UPDATING_UPNEXT_DB";
 }

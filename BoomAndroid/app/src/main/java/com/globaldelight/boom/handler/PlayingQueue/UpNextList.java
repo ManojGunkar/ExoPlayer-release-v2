@@ -146,7 +146,7 @@ public class UpNextList {
             }
         }else{
             if(mAutoNextList.size() > 0)
-            for (int i = 0; i <= PlayItemIndex; PlayItemIndex--) {
+            for (int i = 0; i < PlayItemIndex; PlayItemIndex--) {
                 addItemAsPrevious(new UpNextItem(mAutoNextList.remove(i), QueueType.Auto_UpNext));
             }
             if(PlayItemIndex == -1){
@@ -238,9 +238,9 @@ public class UpNextList {
         if(mCurrentList.size() > 0){
             /*Add Now Playing Item to relevant up-next list*/
             if(mCurrentList.get(0).getUpNextItemType() == QueueType.Manual_UpNext){
-                mUpNextList.add(0, mCurrentList.remove(0).getUpNextItem());
-            }else{
-                mAutoNextList.add(0, mCurrentList.remove(0).getUpNextItem());
+                mUpNextList.addLast(mCurrentList.remove(0).getUpNextItem());
+            }else if(mCurrentList.get(0).getUpNextItemType() == QueueType.Auto_UpNext){
+                mAutoNextList.addLast(mCurrentList.remove(0).getUpNextItem());
             }
         }
         if(mUpNextList.size() > 0)
@@ -260,11 +260,12 @@ public class UpNextList {
             mGhostList = (LinkedList<IMediaItemBase>) getUpNextItemList(QueueType.Previous);
 
         /*Fetch Now Playing Item from relevant up-next list*/
-        mCurrentList.clear();
-        if(mUpNextList.size() > 0){
-            mCurrentList.add(new UpNextItem(mUpNextList.remove(0), QueueType.Manual_UpNext));
-        }else if(mAutoNextList.size() > 0){
-            mCurrentList.add(new UpNextItem(mAutoNextList.remove(0), QueueType.Auto_UpNext));
+        if(mCurrentList.size() == 0) {
+            if (mUpNextList.size() > 0) {
+                mCurrentList.add(new UpNextItem(mUpNextList.removeLast(), QueueType.Manual_UpNext));
+            } else if (mAutoNextList.size() > 0) {
+                mCurrentList.add(new UpNextItem(mAutoNextList.removeLast(), QueueType.Auto_UpNext));
+            }
         }
     }
 

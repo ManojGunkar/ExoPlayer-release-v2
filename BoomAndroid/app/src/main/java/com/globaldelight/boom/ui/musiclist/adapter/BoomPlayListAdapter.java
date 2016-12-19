@@ -76,6 +76,14 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
         }
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    public IMediaItemBase getItem(int position){
+        return items.get(position);
+    }
 
     @Override
     public BoomPlayListAdapter.SimpleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -93,21 +101,12 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     @Override
     public void onBindViewHolder(final BoomPlayListAdapter.SimpleItemViewHolder holder, final int position) {
         if(position < items.size()) {
-            if (((IMediaItemCollection) items.get(position)).getArtUrlList().isEmpty())
-                ((IMediaItemCollection) items.get(position)).setArtUrlList(MediaController.getInstance(context).getArtUrlList((MediaItemCollection) items.get(position)));
+//            if (((IMediaItemCollection) items.get(position)).getArtUrlList().isEmpty())
+//                ((IMediaItemCollection) items.get(position)).setArtUrlList(MediaController.getInstance(context).getArtUrlList((MediaItemCollection) items.get(position)));
             Size size = setSize(holder);
-            if (((IMediaItemCollection) items.get(position)).getArtUrlList().size() >= 1) {
-                holder.artTable.setVisibility(View.VISIBLE);
-                setSongsArtImage(holder, position, size, ((IMediaItemCollection) items.get(position)).getArtUrlList());
-            } else if (((IMediaItemCollection) items.get(position)).getArtUrlList().size() == 0) {
-                holder.defaultImg.setVisibility(View.VISIBLE);
-                setDefaultImage(holder.defaultImg, size.width, size.height);
-            } else {
-                holder.mainView.setVisibility(View.GONE);
-            }
 
-            holder.title.setText(items.get(position).getItemTitle());
-            int itemcount = ((IMediaItemCollection) items.get(position)).getItemCount();
+            holder.title.setText(getItem(position).getItemTitle());
+            int itemcount = ((IMediaItemCollection) getItem(position)).getItemCount();
             holder.subTitle.setText((itemcount > 1 ? context.getResources().getString(R.string.songs) : context.getResources().getString(R.string.song)) + " " + itemcount);
 
             if (App.getUserPreferenceHandler().isLibFromHome()) {
@@ -115,6 +114,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
             } else {
                 holder.grid_menu.setVisibility(View.INVISIBLE);
             }
+            setSongsArtImage(holder, position, size);
             setOnClicks(holder, position);
         }else{
 
@@ -140,63 +140,73 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
         return new Size(width, height);
     }
 
-    private void setSongsArtImage(final SimpleItemViewHolder holder, final int position, final Size size, final ArrayList<String> Urls) {
+    private void setSongsArtImage(final SimpleItemViewHolder holder, final int position, final Size size) {
 
-        int count = Urls.size()>4?4:Urls.size();
-        TableRow.LayoutParams param = new TableRow.LayoutParams(size.width/2, size.height/2);
-        holder.artImg1.setLayoutParams(param);
-        holder.artImg2.setLayoutParams(param);
-        holder.artImg3.setLayoutParams(param);
-        holder.artImg4.setLayoutParams(param);
-        Urls.trimToSize();
-        try {
-            switch (count){
-                case 1:
-                    Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                    Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                    Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                    Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
-                    break;
-                case 2:
-                    Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                    Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                    Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                    Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
-                    break;
-                case 3:
-                    Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                    Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                    Picasso.with(context).load(new File(Urls.get(2))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                    Picasso.with(context).load(new File(Urls.get(2))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
-                    break;
-                case 4:
-                    Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                    Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                    Picasso.with(context).load(new File(Urls.get(2))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                    Picasso.with(context).load(new File(Urls.get(3))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                            .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
-                    break;
+        if (((IMediaItemCollection) getItem(position)).getArtUrlList().size() > 0) {
+            holder.defaultImg.setVisibility(View.GONE);
+            holder.artTable.setVisibility(View.VISIBLE);
+            ArrayList<String> Urls = ((IMediaItemCollection) getItem(position)).getArtUrlList();
+            int count = Urls.size() > 4 ? 4 : Urls.size();
+            TableRow.LayoutParams param = new TableRow.LayoutParams(size.width / 2, size.height / 2);
+            holder.artImg1.setLayoutParams(param);
+            holder.artImg2.setLayoutParams(param);
+            holder.artImg3.setLayoutParams(param);
+            holder.artImg4.setLayoutParams(param);
+            Urls.trimToSize();
+            try {
+                switch (count) {
+                    case 1:
+                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
+                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
+                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
+                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
+                        break;
+                    case 2:
+                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
+                        Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
+                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
+                        Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
+                        break;
+                    case 3:
+                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
+                        Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
+                        Picasso.with(context).load(new File(Urls.get(2))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
+                        Picasso.with(context).load(new File(Urls.get(2))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
+                        break;
+                    case 4:
+                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
+                        Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
+                        Picasso.with(context).load(new File(Urls.get(2))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
+                        Picasso.with(context).load(new File(Urls.get(3))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                                .centerCrop().resize(size.width / 2, size.height / 2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
+                        break;
+                }
+            } catch (NullPointerException e) {
             }
-        }catch (NullPointerException e){}
+        } else {
+            holder.defaultImg.setVisibility(View.VISIBLE);
+            holder.artTable.setVisibility(View.GONE);
+            setDefaultImage(holder, size.width, size.height);
+        }
     }
 
-    private void setDefaultImage(ImageView img, int width, int height){
-        img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, width, height));
+    private void setDefaultImage(SimpleItemViewHolder holder, int width, int height){
+        holder.defaultImg.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, width, height));
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {
@@ -209,7 +219,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                     @Override
                     public void run() {
                         Intent i = new Intent(context, SongsDetailListActivity.class);
-                        i.putExtra("mediaItemCollection", (MediaItemCollection)items.get(position));
+                        i.putExtra("mediaItemCollection", (MediaItemCollection)getItem(position));
                         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                                 (Activity) context,
                                 new Pair<View, String>(holder.imgPanel, "transition:imgholder")
@@ -251,8 +261,13 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                                     break;
                                 case R.id.popup_playlist_delete:
                                     MediaController.getInstance(context).deleteBoomPlaylist(items.get(position).getItemId());
-                                    updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                                    items.clear();
+                                    items = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB);
                                     notifyItemRemoved(position);
+                                    notifyDataSetChanged();
+                                    if(items.size() == 0){
+                                        ((BoomPlaylistActivity)context).listIsEmpty();
+                                    }
                                     Toast.makeText(context, context.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
                                     break;
                                 case R.id.popup_add_song:
@@ -319,8 +334,9 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
         return items.size()+1;
     }
 
-    public void updateNewList(ArrayList<? extends MediaItemCollection> newList) {
-        ((BoomPlaylistActivity)context).resetAdp();
+    public void updateNewList(ArrayList<? extends IMediaItemBase> newList) {
+        items.clear();
+        items = newList;
         notifyDataSetChanged();
     }
 

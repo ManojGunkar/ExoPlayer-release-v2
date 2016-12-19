@@ -195,6 +195,9 @@ public class AlbumActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(null != albumItemsListAdapter){
+            albumItemsListAdapter.notifyDataSetChanged();
+        }
         mPlayAlbum.setVisibility(View.VISIBLE);
         if (null != App.getPlayerEventHandler().getPlayingItem()) {
             updateMiniPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?

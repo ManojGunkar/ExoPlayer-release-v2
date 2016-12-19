@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -70,6 +71,7 @@ public class PlayerService extends Service {
         context = this;
         App.setService(this);
 
+        Log.d("PlayerService", "Create");
         App.getPlayingQueueHandler().getUpNextList().fetchUpNextItemsToDB();
 
         if (musicPlayerHandler == null)
@@ -175,6 +177,7 @@ public class PlayerService extends Service {
                 updatePlayerToLastPlayedSong();
                 break;
             case ACTION_NOTI_CLICK:
+                sendBroadcast(new Intent(PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB));
                 final Intent i = new Intent();
                     i.setClass(context, BoomPlayerActivity.class);
                 if(!App.getPlayerEventHandler().isPlayerResume) {

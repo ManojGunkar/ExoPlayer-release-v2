@@ -368,7 +368,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                                                 Toast.makeText(activity, activity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                                             }
                                         } else {
-                                            if (MediaController.getInstance(activity).isFavouriteItems(collection.getMediaElement().get(position).getItemId())) {
+                                            if (MediaController.getInstance(activity).isFavouriteItems(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position).getItemId())) {
                                                 MediaController.getInstance(activity).removeItemToFavoriteList(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(position).getItemId());
                                                 Toast.makeText(activity, activity.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                                             } else {

@@ -127,9 +127,11 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
     private MediaItemCollection getPlaylistFromCursor(Cursor cursor) {
         int playlistId = cursor.getInt(0);
 
-        return new MediaItemCollection(playlistId, cursor.getString(1),
+        MediaItemCollection collection = new MediaItemCollection(playlistId, cursor.getString(1),
                 null, null,
                 getPlaylistSongCount(playlistId), 0,  ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB);
+        collection.setArtUrlList(getBoomPlayListArtList(playlistId));
+        return collection;
     }
 
     public void addSong(long playlistId, IMediaItemBase song) {
