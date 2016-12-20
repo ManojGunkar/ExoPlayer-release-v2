@@ -95,8 +95,9 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
 
     public void removeSong(String title) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + TABLE_SEARCH + " WHERE " +
-                SEARCH_KEY + "='" + title + "'");
+        db.rawQuery("DELETE FROM " + TABLE_SEARCH + " WHERE " +
+                SEARCH_KEY+" = ?", new String[] { title } );
+
         db.close();
     }
 

@@ -129,14 +129,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
                     long totalMillis = intent.getLongExtra("totalms", 0);
                     long currentMillis = intent.getLongExtra("currentms", 0);
-                    mPlayedTime.setText(String.format("%02d:%02d",
-                            TimeUnit.MILLISECONDS.toMinutes(currentMillis),
-                            TimeUnit.MILLISECONDS.toSeconds(currentMillis ) -
-                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentMillis))));
-                    mRemainsTime.setText("-"+String.format("%02d:%02d",
-                            TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis),
-                            TimeUnit.MILLISECONDS.toSeconds(totalMillis - currentMillis) -
-                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis))));
+                    updateTrackPlayTime(totalMillis, currentMillis);
                     break;
                 case ACTION_UPDATE_SHUFFLE:
                     updateShuffle();
@@ -291,14 +284,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
                 long totalMillis = item.getDurationLong();
                 long currentMillis = 0;
-                mPlayedTime.setText(String.format("%02d:%02d",
-                        TimeUnit.MILLISECONDS.toMinutes(currentMillis),
-                        TimeUnit.MILLISECONDS.toSeconds(currentMillis ) -
-                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentMillis))));
-                mRemainsTime.setText("-"+String.format("%02d:%02d",
-                        TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis),
-                        TimeUnit.MILLISECONDS.toSeconds(totalMillis - currentMillis) -
-                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis))));
+
+                updateTrackPlayTime(totalMillis, currentMillis);
+
             }else {
                 if (playing) {
                     mPlayPauseBtn.setVisibility(View.VISIBLE);
@@ -329,6 +317,20 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
         updateShuffle();
         updateRepeat();
+    }
+
+    private void updateTrackPlayTime(long totalMillis, long currentMillis) {
+
+        if(null != mPlayedTime)
+            mPlayedTime.setText(String.format("%02d:%02d",
+                    TimeUnit.MILLISECONDS.toMinutes(currentMillis),
+                    TimeUnit.MILLISECONDS.toSeconds(currentMillis ) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentMillis))));
+        if(null != mRemainsTime)
+            mRemainsTime.setText("-"+String.format("%02d:%02d",
+                    TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis),
+                    TimeUnit.MILLISECONDS.toSeconds(totalMillis - currentMillis) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis))));
     }
 
     @Override
@@ -497,6 +499,13 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         });
 
         updateEffectIcon();
+
+        long totalMillis = App.getUserPreferenceHandler().getRemainsTime();
+        long currentMillis = App.getUserPreferenceHandler().getPlayedTime();
+
+        updateTrackPlayTime(totalMillis, currentMillis);
+        if(null != mTrackSeek)
+            mTrackSeek.setProgress(App.getUserPreferenceHandler().getPlayerSeekPosition());
     }
 
     private void startEffectActivity(){
@@ -667,22 +676,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mUpNextQueue.setVisibility(View.INVISIBLE);
         }
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mTrackSeek.setProgress(App.getUserPreferenceHandler().getPlayerSeekPosition());
-        mPlayedTime.setText(App.getUserPreferenceHandler().getPlayedTime());
-        mRemainsTime.setText(App.getUserPreferenceHandler().getRemainsTime());
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        App.getUserPreferenceHandler().setPlayerSeekPosition(mTrackSeek.getProgress());
-        App.getUserPreferenceHandler().setPlayedTime(mPlayedTime.getText());
-        App.getUserPreferenceHandler().setRemainsTime(mRemainsTime.getText());
     }
 
     @Override

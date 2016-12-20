@@ -36,6 +36,7 @@ import com.globaldelight.boom.ui.musiclist.adapter.SearchDetailListAdapter;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.PlayerUtils;
+import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 
@@ -63,6 +64,7 @@ public class SearchDetailListActivity extends AppCompatActivity {
     private ProgressBar mTrackProgress;
     private RegularTextView mTitle, mSubTitle;
     private ImageView mPlayerArt, mPlayPause;
+    private GridLayoutManager gridLayoutManager;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -115,7 +117,13 @@ public class SearchDetailListActivity extends AppCompatActivity {
 
     private void addDetailList() {
         Search result = new Search();
-        final GridLayoutManager manager = new GridLayoutManager(this, 2);
+        if(Utils.isPhone(SearchDetailListActivity.this)){
+            gridLayoutManager =
+                    new GridLayoutManager(SearchDetailListActivity.this, 2);
+        }else{
+            gridLayoutManager =
+                    new GridLayoutManager(SearchDetailListActivity.this, 3);
+        }
         if(mResultType.equals(SearchResult.ARTISTS)){
             adapter = new SearchDetailListAdapter(this, result.getResultArtistList(this, mQuery, false), mResultType);
         }else if(mResultType.equals(SearchResult.ALBUMS)){
@@ -126,7 +134,7 @@ public class SearchDetailListActivity extends AppCompatActivity {
         }
 
         recyclerView.setHasFixedSize(true);
-        manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if(mResultType.equals(SearchResult.ARTISTS)){
@@ -139,7 +147,7 @@ public class SearchDetailListActivity extends AppCompatActivity {
                     return 0;
             }
         });
-        recyclerView.setLayoutManager(manager);
+        recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(adapter);
     }
 

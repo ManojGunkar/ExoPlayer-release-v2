@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.globaldelight.boom.handler.search.Search;
 import com.globaldelight.boom.ui.musiclist.activity.BoomMasterActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.SearchListAdapter;
+import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.decorations.SearchListSpacesItemDecoration;
 import com.globaldelight.boom.R;
 
@@ -25,6 +26,7 @@ public class SearchViewFragment extends Fragment {
     private BoomMasterActivity activity;
     private View mainView, emptyView;
     private SearchListAdapter adapter;
+    private GridLayoutManager gridLayoutManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,8 +43,14 @@ public class SearchViewFragment extends Fragment {
     private void setRecyclerView(String query) {
         Search searchRes = new Search();
         searchRes.getSearchResult(context, query, true);
-        final GridLayoutManager manager = new GridLayoutManager(context, 2);
-        manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        if(Utils.isPhone(getActivity())){
+            gridLayoutManager =
+                    new GridLayoutManager(mainView.getContext(), 2);
+        }else{
+            gridLayoutManager =
+                    new GridLayoutManager(mainView.getContext(), 3);
+        }
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (adapter.whatView(position) == SearchListAdapter.ITEM_VIEW_TYPE_LIST_ALBUM ||
@@ -53,7 +61,7 @@ public class SearchViewFragment extends Fragment {
                 }
             }
         });
-        recyclerView.setLayoutManager(manager);
+        recyclerView.setLayoutManager(gridLayoutManager);
         adapter = new SearchListAdapter(context, getActivity(), searchRes, recyclerView);
         recyclerView.addItemDecoration(new SearchListSpacesItemDecoration(2, adapter));
         recyclerView.setAdapter(adapter);

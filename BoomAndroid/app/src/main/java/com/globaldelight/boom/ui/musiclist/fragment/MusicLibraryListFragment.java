@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.ui.musiclist.activity.SearchDetailListActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.AlbumsGridAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.ArtistsGridAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.DefaultPlayListAdapter;
@@ -55,6 +56,7 @@ public class MusicLibraryListFragment extends Fragment {
     private ProgressBar mLibLoad;
     private int page;
     private int title;
+    private GridLayoutManager gridLayoutManager;
 
     public static MusicLibraryListFragment getInstance(int page, int title) {
         MusicLibraryListFragment fragmentFirst = new MusicLibraryListFragment();
@@ -168,9 +170,14 @@ public class MusicLibraryListFragment extends Fragment {
         new Thread(new Runnable() {
             public void run() {
                 final ArrayList<? extends IMediaItemBase> albumList = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.ALBUM, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getAlbumList(context, !isOrderByAlbum)*/;
-                final GridLayoutManager gridLayoutManager =
-                        new GridLayoutManager(mainView.getContext(), 2);
                 if (null != getActivity()) {
+                    if(Utils.isPhone(getActivity())){
+                        gridLayoutManager =
+                                new GridLayoutManager(mainView.getContext(), 2);
+                    }else{
+                        gridLayoutManager =
+                                new GridLayoutManager(mainView.getContext(), 3);
+                    }
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -206,9 +213,14 @@ public class MusicLibraryListFragment extends Fragment {
         new Thread(new Runnable() {
             public void run() {
                 final ArrayList<? extends IMediaItemBase> artistList = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.ARTIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getArtistList(context)*/;
-                final GridLayoutManager gridLayoutManager =
-                        new GridLayoutManager(mainView.getContext(), 2);
                 if(null != getActivity()) {
+                    if(Utils.isPhone(getActivity())){
+                        gridLayoutManager =
+                                new GridLayoutManager(mainView.getContext(), 2);
+                    }else{
+                        gridLayoutManager =
+                                new GridLayoutManager(mainView.getContext(), 3);
+                    }
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -243,9 +255,14 @@ public class MusicLibraryListFragment extends Fragment {
         new Thread(new Runnable() {
             public void run() {
                 final ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.PLAYLIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getPlayList(context)*/;
-                final GridLayoutManager gridLayoutManager =
-                        new GridLayoutManager(mainView.getContext(), 2);
                 if(null != getActivity()) {
+                    if(Utils.isPhone(getActivity())){
+                        gridLayoutManager =
+                                new GridLayoutManager(mainView.getContext(), 2);
+                    }else{
+                        gridLayoutManager =
+                                new GridLayoutManager(mainView.getContext(), 3);
+                    }
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -281,9 +298,14 @@ public class MusicLibraryListFragment extends Fragment {
         new Thread(new Runnable() {
             public void run() {
                 final ArrayList<? extends IMediaItemBase> genreList = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.GENRE, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getGenreList(context)*/;
-                final GridLayoutManager gridLayoutManager =
-                        new GridLayoutManager(mainView.getContext(), 2);
                 if(null != getActivity()) {
+                    if(Utils.isPhone(getActivity())){
+                        gridLayoutManager =
+                                new GridLayoutManager(mainView.getContext(), 2);
+                    }else{
+                        gridLayoutManager =
+                                new GridLayoutManager(mainView.getContext(), 3);
+                    }
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

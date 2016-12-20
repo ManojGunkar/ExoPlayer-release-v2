@@ -160,26 +160,26 @@ public class UserPreferenceHandler {
     }
 
     public void setPlayerSeekPosition(int playerSeekPosition) {
-        shp.edit().putInt(PLAYER_SEEK_POSITION, playerSeekPosition);
+        shp.edit().putInt(PLAYER_SEEK_POSITION, playerSeekPosition).apply();
     }
 
     public int getPlayerSeekPosition(){
         return shp.getInt(PLAYER_SEEK_POSITION, 0);
     }
 
-    public void setPlayedTime(CharSequence playedTime) {
-        shp.edit().putString(PLAYER_PLAYED_TIME, playedTime.toString());
+    public void setPlayedTime(long playedTime) {
+        shp.edit().putLong(PLAYER_PLAYED_TIME, playedTime).apply();
     }
 
-    public String getPlayedTime(){
-        return shp.getString(PLAYER_PLAYED_TIME, " ");
+    public long getPlayedTime(){
+        return shp.getLong(PLAYER_PLAYED_TIME, 0);
     }
 
-    public void setRemainsTime(CharSequence remainsTime) {
-        shp.edit().putString(PLAYER_REMAINS_TIME, remainsTime.toString());
+    public void setRemainsTime(long remainsTime) {
+        shp.edit().putLong(PLAYER_REMAINS_TIME, remainsTime).apply();
     }
 
-    public String getRemainsTime(){
-        return shp.getString(PLAYER_REMAINS_TIME, " ");
+    public long getRemainsTime(){
+        return shp.getLong(PLAYER_REMAINS_TIME, 0);
     }
 }

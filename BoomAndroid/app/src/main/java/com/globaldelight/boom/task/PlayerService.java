@@ -216,6 +216,10 @@ public class PlayerService extends Service {
             seek.putExtra("currentms", intent.getLongExtra("currentms", 0));
             seek.putExtra("totalms", intent.getLongExtra("totalms", 0));
             sendBroadcast(seek);
+
+            App.getUserPreferenceHandler().setPlayerSeekPosition(intent.getIntExtra("percent", 0));
+            App.getUserPreferenceHandler().setPlayedTime(intent.getLongExtra("currentms", 0));
+            App.getUserPreferenceHandler().setRemainsTime(intent.getLongExtra("totalms", 0));
         }else{
             musicPlayerHandler.seek(intent.getIntExtra("seek", 0));
         }

@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
@@ -176,6 +177,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         if(null != mPlayer && null != playingItem ) {
             if ( requestAudioFocus() ) {
                 mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
+                Log.e("Play_Time : ", "After Play "+System.currentTimeMillis());
                 setSessionState(PlaybackState.STATE_PLAYING);
                 context.sendBroadcast(new Intent(PlayerService.ACTION_GET_SONG));
                 AnalyticsHelper.songSelectionChanged(context, playingItem);

@@ -2,6 +2,7 @@ package com.globaldelight.boom.handler.PlayingQueue;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
@@ -349,6 +350,7 @@ public class UpNextList {
     //    itemList -> list of collection
 //    position -> Now Playing Item position in item list.
     public void addToPlay(final ArrayList<MediaItem> itemList, final int position, boolean isPlayAll) {
+        Log.e("Play_Time : ", "Before Play "+System.currentTimeMillis());
         if(null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId()){
             PlayPause();
         }else if(System.currentTimeMillis() - mShiftingTime > 500) {

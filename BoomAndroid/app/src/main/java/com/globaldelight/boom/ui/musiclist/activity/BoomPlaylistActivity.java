@@ -77,7 +77,7 @@ public class BoomPlaylistActivity extends AppCompatActivity {
     private ProgressBar mTrackProgress;
     private RegularTextView mTitle, mSubTitle;
     private ImageView mAlbumArt, mPlayPause;
-
+    private GridLayoutManager gridLayoutManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -142,12 +142,18 @@ public class BoomPlaylistActivity extends AppCompatActivity {
 
     private void setPlayListList() {
 
-
         new Thread(new Runnable() {
             public void run() {
                 final ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(BoomPlaylistActivity.this).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getPlayList(context)*/;
-                final GridLayoutManager gridLayoutManager =
-                        new GridLayoutManager(BoomPlaylistActivity.this, 2);
+
+                if(Utils.isPhone(BoomPlaylistActivity.this)){
+                    gridLayoutManager =
+                            new GridLayoutManager(BoomPlaylistActivity.this, 2);
+                }else{
+                    gridLayoutManager =
+                            new GridLayoutManager(BoomPlaylistActivity.this, 3);
+                }
+
                 gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                     @Override
                     public int getSpanSize(int position) {

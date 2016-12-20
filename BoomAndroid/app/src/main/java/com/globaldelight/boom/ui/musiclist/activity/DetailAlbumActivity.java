@@ -75,6 +75,7 @@ public class DetailAlbumActivity extends AppCompatActivity {
     private RegularTextView mTitle, mSubTitle;
     private ImageView mPlayerArt, mPlayPause;
     private static boolean isExpended = false;
+    private GridLayoutManager gridLayoutManager;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -321,20 +322,25 @@ public class DetailAlbumActivity extends AppCompatActivity {
                 if(collection.getMediaElement().isEmpty())
                     collection.setMediaElement(MediaController.getInstance(DetailAlbumActivity.this).getMediaCollectionItemDetails(collection));
 
-                final GridLayoutManager manager = new GridLayoutManager(DetailAlbumActivity.this, 2);
-
+                if(Utils.isPhone(DetailAlbumActivity.this)){
+                    gridLayoutManager =
+                            new GridLayoutManager(DetailAlbumActivity.this, 2);
+                }else{
+                    gridLayoutManager =
+                            new GridLayoutManager(DetailAlbumActivity.this, 3);
+                }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        recyclerView.setLayoutManager(manager);
+                        recyclerView.setLayoutManager(gridLayoutManager);
                         recyclerView.addItemDecoration(new MarginDecoration(DetailAlbumActivity.this));
                         recyclerView.setHasFixedSize(true);
                         final DetailAlbumGridAdapter detailAlbumGridAdapter = new DetailAlbumGridAdapter(DetailAlbumActivity.this, recyclerView, collection, listDetail, permissionChecker);
                         recyclerView.setAdapter(detailAlbumGridAdapter);
-                        manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                                     @Override
                                     public int getSpanSize(int position) {
-                                        return detailAlbumGridAdapter.isHeader(position) ? manager.getSpanCount() : 1;
+                                        return detailAlbumGridAdapter.isHeader(position) ? gridLayoutManager.getSpanCount() : 1;
                                     }
                                 });
                             }

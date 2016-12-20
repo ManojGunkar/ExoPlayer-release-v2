@@ -231,4 +231,21 @@ public class Utils {
         return Html.fromHtml(context.getResources().getString(string));
     }
 
+
+    public static boolean isPhone(Activity activity){
+        DisplayMetrics metrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        float yInches= metrics.heightPixels/metrics.ydpi;
+        float xInches= metrics.widthPixels/metrics.xdpi;
+        double diagonalInches = Math.sqrt(xInches*xInches + yInches*yInches);
+        if (diagonalInches>=6.5){
+            // 6.5inch device or bigger
+            return false;
+        }else{
+            // smaller device
+            return true;
+        }
+    }
+
 }
