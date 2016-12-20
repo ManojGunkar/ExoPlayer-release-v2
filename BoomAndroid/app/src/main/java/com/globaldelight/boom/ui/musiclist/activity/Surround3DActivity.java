@@ -34,7 +34,6 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.manager.MusicReceiver;
 import com.globaldelight.boom.ui.musiclist.adapter.EqualizerViewAdapter;
 import com.globaldelight.boom.ui.widgets.NegativeSeekBar;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
@@ -50,7 +49,7 @@ import java.util.List;
  * Created by Rahul Agarwal on 05-10-16.
  */
 
-public class Surround3DActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, MusicReceiver.updateMusic, EqualizerViewAdapter.onEqualizerUpdate {
+public class Surround3DActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, EqualizerViewAdapter.onEqualizerUpdate {
     TooltipWindow tipWindow, tipSpeakerWidow;
     private RegularTextView mToolbarTitle, mEffectTxt, mEffectSwitchTxt, m3DTxt, m3DSwitchTxt, mSpeakerInfo, mFullbassTxt,
             mIntensityTxt, mIntensitySwitchTxt, mEqualizerTxt, mEqualizerSwitchTxt;
@@ -66,7 +65,6 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     private RecyclerView recyclerView;
     private ScrollEnableLayoutManager layoutManager;
     private EqualizerViewAdapter mEqualizerAdapter;
-    private MusicReceiver musicReceiver;
     private AudioEffect audioEffectPreferenceHandler;
     private boolean isExpended = false;
     private ScrollView mPanelScroll;
@@ -127,7 +125,6 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
 
     public void initViews(){
-        musicReceiver = new MusicReceiver(this);
         toolbar = (Toolbar)findViewById(R.id.effect_toolbar);
         mToolbarTitle = (RegularTextView) findViewById(R.id.toolbr_title);
         mToolbarTitle.setTextColor(Color.WHITE);
@@ -389,11 +386,6 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
             mSpeakerRightSurround.setImageDrawable(getResources().getDrawable(R.drawable.ic_speakers_r_surround_active, null));
         }
         updateTweeterAndWoofer(audioEffectPreferenceHandler.isAllSpeakerOn());
-        if(MusicReceiver.isPlugged){
-            mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.ic_man_active, null));
-        }else{
-            mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.ic_man_active, null));
-        }
     }
 
     public void updateIntensity(){
@@ -852,14 +844,11 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-        registerReceiver(musicReceiver, filter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(musicReceiver);
         if (tipWindow != null && tipWindow.isTooltipShown()) {
             tipWindow.dismissTooltip();
         }
@@ -889,18 +878,6 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 //        App.getPlayerEventHandler().setIntensityValue(audioEffectPreferenceHandler.getIntensity()/(double)100);
-    }
-
-    @Override
-    public void onHeadsetUnplugged() {
-//        mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.man_normal, null));
-//        audioEffectPreferenceHandler.setEnableHeadsetPlugged(false);
-    }
-
-    @Override
-    public void onHeadsetPlugged() {
-//        mCenterMan.setImageDrawable(getResources().getDrawable(R.drawable.man_plugged, null));
-//        audioEffectPreferenceHandler.setEnableHeadsetPlugged(true);
     }
 
     @Override

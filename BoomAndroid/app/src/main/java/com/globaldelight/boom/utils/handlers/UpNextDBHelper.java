@@ -72,7 +72,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public void insertUnShuffledList(List<? extends IMediaItemBase> songs, boolean isAppend) {
+    public synchronized void insertUnShuffledList(List<? extends IMediaItemBase> songs, boolean isAppend) {
         if(!isAppend)
             clearList(SHUFfLED_QUEUE);
 
@@ -102,7 +102,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addSongs(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
+    public synchronized void addSongs(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
         clearList(queueType);
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
@@ -132,7 +132,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
 
 /*History Table List*/
 
-    public void addSong(IMediaItemBase song, QueueType queueType) {
+    public synchronized void addSong(IMediaItemBase song, QueueType queueType) {
         if(queueType == QueueType.History){
             removeSong(song.getItemId(), queueType);
         }
@@ -159,7 +159,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public LinkedList<? extends IMediaItemBase> getSongList(QueueType queueType) {
+    public synchronized LinkedList<? extends IMediaItemBase> getSongList(QueueType queueType) {
         SQLiteDatabase db = this.getWritableDatabase();
         LinkedList<MediaItem> songList = new LinkedList<>();
         String query = "SELECT  * FROM " + TABLE_UPNEXT + " WHERE " +
@@ -187,26 +187,26 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         return songList;
     }
 
-    public void removeSong(long songId, QueueType queueType) {
+    public synchronized void removeSong(long songId, QueueType queueType) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_UPNEXT + " WHERE " +
                 SONG_KEY_REAL_ID + "='" + songId + "' AND "+QUEUE_TYPE+ "='" + queueType.ordinal() + "'");
         db.close();
     }
 
-    public void clearList(QueueType queueType){
+    public synchronized void clearList(QueueType queueType){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_UPNEXT + " WHERE " + QUEUE_TYPE + "='" + queueType.ordinal() + "'");
         db.close();
     }
 
-    public void clearList(int queueType){
+    public synchronized void clearList(int queueType){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_UPNEXT + " WHERE " + QUEUE_TYPE + "='" + queueType + "'");
         db.close();
     }
 
-    public LinkedList<? extends IMediaItemBase> getUnShuffledList() {
+    public synchronized LinkedList<? extends IMediaItemBase> getUnShuffledList() {
         SQLiteDatabase db = this.getWritableDatabase();
         LinkedList<MediaItem> songList = new LinkedList<>();
         String query = "SELECT  * FROM " + TABLE_UPNEXT + " WHERE " +

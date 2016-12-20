@@ -14,13 +14,14 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
+import com.globaldelight.boom.manager.MusicReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.BoomPlayerActivity;
 import com.globaldelight.boom.ui.musiclist.activity.PlayingQueueActivity;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
 
 import java.io.IOException;
 
-public class PlayerService extends Service {
+public class PlayerService extends Service implements MusicReceiver.updateMusic{
 
     public static final String ACTION_NOTI_CLICK = "ACTION_NOTI_CLICK";
     public static final String ACTION_NOTI_REMOVE = "ACTION_NOTI_REMOVE";
@@ -52,6 +53,7 @@ public class PlayerService extends Service {
     private Context context;
     private NotificationHandler notificationHandler;
     private static boolean isPlayerScreenResume = false;
+    private MusicReceiver musicReceiver;
 
     private BroadcastReceiver playerServiceBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -76,6 +78,10 @@ public class PlayerService extends Service {
 
         if (musicPlayerHandler == null)
             musicPlayerHandler = App.getPlayerEventHandler();
+
+        musicReceiver = new MusicReceiver(this);
+        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        registerReceiver(musicReceiver, filter);
     }
 
     @Override
@@ -298,6 +304,7 @@ public class PlayerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(musicReceiver);
     }
 
     private void updateUpNextDB() {
@@ -306,5 +313,15 @@ public class PlayerService extends Service {
             musicPlayerHandler.stop();
             musicPlayerHandler.release();
         }
+    }
+
+    @Override
+    public void onHeadsetUnplugged() {
+
+    }
+
+    @Override
+    public void onHeadsetPlugged() {
+        sendBroadcast(new Intent(PlayerEvents.ACTION_HEADSET_PLUGGED));
     }
 }

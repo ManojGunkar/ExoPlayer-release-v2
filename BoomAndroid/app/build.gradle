@@ -18,7 +18,7 @@ android {
         applicationId "com.globaldelight.boom"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 32
+        versionCode 34
         versionName "1.0.0"
         multiDexEnabled true
     }

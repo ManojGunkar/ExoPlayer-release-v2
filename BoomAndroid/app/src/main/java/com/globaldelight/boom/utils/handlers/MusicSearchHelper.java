@@ -109,10 +109,12 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
 
     public Cursor getSongList(String arg) {
         SQLiteDatabase db = this.getWritableDatabase();
-
-        String query = "SELECT  * FROM " + TABLE_SEARCH +" where " + SEARCH_KEY + " like '%" + arg
-                + "%'";
-
-        return db.rawQuery(query, null);
+        Cursor c = db.query(true, TABLE_SEARCH, new String[] { ITEM_KEY_ID,
+                        SEARCH_KEY }, SEARCH_KEY + " LIKE ?",
+                new String[] {"%"+ arg+ "%" }, null, null, null,
+                null);
+        /*String query = "SELECT  * FROM " + TABLE_SEARCH +" where " + SEARCH_KEY + " like '%" + arg
+                + "%'";*/
+        return c;
     }
 }

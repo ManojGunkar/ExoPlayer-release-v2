@@ -62,20 +62,13 @@ import java.util.Calendar;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_REPEAT;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_SHUFFLE;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
+import static com.globaldelight.boom.task.PlayerEvents.*;
 
 /**
  * Created by Rahul Agarwal on 30-09-16.
  */
 
-public class BoomPlayerActivity extends AppCompatActivity implements View.OnClickListener, CircularSeekBar.OnCircularSeekBarChangeListener, MusicReceiver.updateMusic {
+public class BoomPlayerActivity extends AppCompatActivity implements View.OnClickListener, CircularSeekBar.OnCircularSeekBarChangeListener {
 
     private static final float BITMAP_SCALE = 0.4f;
     private static final float BLUR_RADIUS = 25.0f;
@@ -87,7 +80,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     LinearLayout mPlayerRootView, mPlayerSetting;
     AudioEffect audioEffectPreferenceHandler;
     FrameLayout.LayoutParams param;
-    MusicReceiver musicReceiver;
     private RegularTextView mTitleTxt, mSubTitleTxt, mPlayedTime, mRemainsTime;
     private CircularCoverView mAlbumArt;
     private CircularSeekBar mTrackSeek;
@@ -139,6 +131,12 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     break;
                 case ACTION_STOP_UPDATING_UPNEXT_DB:
                         isUpdateUpnextDB = false;
+                    break;
+                case ACTION_HEADSET_PLUGGED:
+                    if (tipWindowHeadset != null) {//Plugged
+                        tipWindowHeadset.dismissTooltip();
+                        Preferences.writeBoolean(BoomPlayerActivity.this, Preferences.PLAYER_SCREEN_HEADSET_ENABLE, false);
+                    }
                     break;
             }
         }
@@ -355,12 +353,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
+        intentFilter.addAction(ACTION_HEADSET_PLUGGED);
         registerReceiver(mPlayerBroadcastReceiver, intentFilter);
         // new BoomServerRequest().getAccessToken(this);
         showPurchaseOption();
-        musicReceiver = new MusicReceiver(this);
-        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-        registerReceiver(musicReceiver, filter);
     }
 
     public void showCoachMark() {
@@ -702,7 +698,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             updateUpNextDB();
         super.onDestroy();
         unregisterReceiver(mPlayerBroadcastReceiver);
-        unregisterReceiver(musicReceiver);
     }
 
 
@@ -769,22 +764,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         tmpOut.copyTo(outputBitmap);
 
         return outputBitmap;
-    }
-
-    @Override
-    public void onHeadsetUnplugged() {
-
-    }
-
-    @Override
-    public void onHeadsetPlugged() {
-
-        if (tipWindowHeadset != null) {
-            tipWindowHeadset.dismissTooltip();
-            Preferences.writeBoolean(this, Preferences.PLAYER_SCREEN_HEADSET_ENABLE, false);
-
-        }
-
     }
 
     class TrackTimerTask extends TimerTask {

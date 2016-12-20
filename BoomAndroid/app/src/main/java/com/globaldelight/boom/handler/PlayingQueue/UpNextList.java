@@ -219,8 +219,13 @@ public class UpNextList {
         MediaController.getInstance(context).addUpNextItem(songs, queueType);
     }
 
-    public void insertUnShuffledList(List<? extends IMediaItemBase> songs, boolean isAppend) {
-        MediaController.getInstance(context).insertUnShuffledList(songs, isAppend);
+    public void insertUnShuffledList(final List<? extends IMediaItemBase> songs, final boolean isAppend) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MediaController.getInstance(context).insertUnShuffledList(songs, isAppend);
+            }
+        }).start();
     }
 
     public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
@@ -317,10 +322,11 @@ public class UpNextList {
     /******************************************************************************************************************/
 
     public void addToPlay(final LinkedList<MediaItem> itemList, final int position, boolean isPlayAll) {
+        long mTime = System.currentTimeMillis();
         if(null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId()){
             PlayPause();
-        }else  if(System.currentTimeMillis() - mShiftingTime > 500) {
-            mShiftingTime = System.currentTimeMillis();
+        }else  if(mTime - mShiftingTime > 500) {
+            mShiftingTime = mTime;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -350,11 +356,11 @@ public class UpNextList {
     //    itemList -> list of collection
 //    position -> Now Playing Item position in item list.
     public void addToPlay(final ArrayList<MediaItem> itemList, final int position, boolean isPlayAll) {
-        Log.e("Play_Time : ", "Before Play "+System.currentTimeMillis());
+        long mTime = System.currentTimeMillis();
         if(null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId()){
             PlayPause();
-        }else if(System.currentTimeMillis() - mShiftingTime > 500) {
-            mShiftingTime = System.currentTimeMillis();
+        }else if(mTime - mShiftingTime > 500) {
+            mShiftingTime = mTime;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -384,11 +390,12 @@ public class UpNextList {
     //    selected Collection, Like Album, ic_artist.
 //    index of now Playing item of the collection
     public void addToPlay(final IMediaItemCollection collection, final int position, boolean isPlayAll) {
+        long mTime = System.currentTimeMillis();
         if(null != getPlayingItem() && collection.getMediaElement().size() > 0 && !isPlayAll &&
                 collection.getMediaElement().get(position).getItemId() == getPlayingItem().getItemId()){
             PlayPause();
-        }else if(System.currentTimeMillis() - mShiftingTime > 500) {
-            mShiftingTime = System.currentTimeMillis();
+        }else if(mTime - mShiftingTime > 500) {
+            mShiftingTime = mTime;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -416,8 +423,9 @@ public class UpNextList {
     }
 
     public void addToPlay(final QueueType queueType, final int position) {
-        if(System.currentTimeMillis() - mShiftingTime > 500) {
-            mShiftingTime = System.currentTimeMillis();
+        long mTime = System.currentTimeMillis();
+        if(mTime - mShiftingTime > 500) {
+            mShiftingTime = mTime;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
