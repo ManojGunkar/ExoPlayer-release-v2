@@ -14,15 +14,16 @@ static void convert_multi_to_stereo(void* ioBuf, int inChannels, int frameCount)
     int16_t* ptr = (int16_t*)ioBuf;
     for ( int i = 0; i < frameCount; i++ ) {
         // L C R Lr Rr
-        size_t left = i * inChannels;
-        size_t center = i * inChannels + 1;
-        size_t right = i * inChannels + 2;
-        size_t leftSurround = (inChannels >= 5)? i * inChannels + 4 : left;
-        size_t rightSurround = (inChannels >= 5)? i * inChannels + 5 : right;
+        size_t frameStart = i * inChannels;
+        size_t left = frameStart;
+        size_t right = frameStart + 1;
+        size_t center = frameStart + 2;
+        size_t leftSurround = (inChannels >= 5)? frameStart + 4 : left;
+        size_t rightSurround = (inChannels >= 5)? frameStart + 5 : right;
 
 
-        int16_t leftValue = (ptr[left] + ptr[center] + ptr[leftSurround]) / 3;
-        int16_t rightValue = (ptr[right] + ptr[center]+ ptr[rightSurround]) / 3;
+        int16_t leftValue = ((int32_t)ptr[left] + ptr[leftSurround] + ptr[center]) / 3;
+        int16_t rightValue = ((int32_t)ptr[right] + ptr[rightSurround] + ptr[center]) / 3;
 
         int j = i*2;
         ptr[j] = leftValue;
