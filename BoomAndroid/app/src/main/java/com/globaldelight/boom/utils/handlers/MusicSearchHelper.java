@@ -38,7 +38,7 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_SEARCH_SONG_TABLE = "CREATE TABLE "+TABLE_SEARCH+" (" +
-                ITEM_KEY_ID+" INTEGER PRIMARY KEY AUTOINCREMENT," + SEARCH_KEY+" TEXT)";
+                ITEM_KEY_ID+" INTEGER PRIMARY KEY AUTOINCREMENT," + SEARCH_KEY+" TEXT UNIQUE)";
         db.execSQL(CREATE_SEARCH_SONG_TABLE);
     }
 
@@ -51,6 +51,7 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
 
     public void setSearchContent(){
         clearList();
+
         final String where = MediaStore.Audio.Media.IS_MUSIC + "=1";
 
         final String orderBy = MediaStore.Audio.Media.TITLE;
@@ -71,16 +72,17 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
                     (MediaStore.Audio.Media.ARTIST);
 
             do{
-                addSong(songListCursor.getString(Song_Name_Column));
+                addSong(songListCursor.getString(Song_Name_Column).trim());
 //                addSong(songListCursor.getString(Song_Display_Name_Column));
-                addSong(songListCursor.getString(Album_Name_Column));
-                addSong(songListCursor.getString(Artist_Name_Column));
+                addSong(songListCursor.getString(Album_Name_Column).trim());
+                addSong(songListCursor.getString(Artist_Name_Column).trim());
             }while (songListCursor.moveToNext());
 
         }
         if (songListCursor != null) {
             songListCursor.close();
         }
+
     }
 
     private void addSong(String title) {
@@ -95,7 +97,7 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
 
     public void removeSong(String title) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.rawQuery("DELETE FROM " + TABLE_SEARCH + " WHERE " +
+        db.delete(TABLE_SEARCH,
                 SEARCH_KEY+" = ?", new String[] { title } );
 
         db.close();

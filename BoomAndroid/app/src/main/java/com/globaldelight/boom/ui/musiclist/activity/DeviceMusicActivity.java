@@ -428,6 +428,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
 
         ValueAnimator animator = ValueAnimator.ofInt(start, end);
 
+
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
