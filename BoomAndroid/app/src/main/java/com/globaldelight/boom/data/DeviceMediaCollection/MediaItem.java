@@ -124,6 +124,11 @@ public class MediaItem implements IMediaItem, Parcelable {
     }
 
     @Override
+    public void setItemArtUrl(String url) {
+        this.ItemArtUrl = url;
+    }
+
+    @Override
     public ItemType getItemType() {
         return itemType;
     }

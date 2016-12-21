@@ -134,7 +134,6 @@ public class MusicLibraryListFragment extends Fragment {
                                 @Override
                                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                                     super.onScrolled(recyclerView, dx, dy);
-                                    songListAdapter.recyclerScrolled();
                                 }
 
                                 @Override
@@ -150,7 +149,7 @@ public class MusicLibraryListFragment extends Fragment {
                                     }
                                 }
                             });
-                            songListAdapter = new SongListAdapter(context, MusicLibraryListFragment.this.getActivity(), songList, permissionChecker);
+                            songListAdapter = new SongListAdapter(context, MusicLibraryListFragment.this.getActivity(), songList);
                             recyclerView.setAdapter(songListAdapter);
                             if (songList.size() < 1) {
                                 listIsEmpty(false);
@@ -370,8 +369,8 @@ public class MusicLibraryListFragment extends Fragment {
     private void fetchMusicList(){
         switch (title){
             case R.string.songs:
-                setSongList();
-//                new LoadSongsList().execute(title);
+//                setSongList();
+                new LoadSongsList().execute(title);
                 break;
             case R.string.albums:
                 setAlbumList();
@@ -413,7 +412,6 @@ public class MusicLibraryListFragment extends Fragment {
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    songListAdapter.recyclerScrolled();
                 }
 
                 @Override
@@ -429,7 +427,7 @@ public class MusicLibraryListFragment extends Fragment {
                     }
                 }
             });
-            songListAdapter = new SongListAdapter(context, MusicLibraryListFragment.this.getActivity(), songList, permissionChecker);
+            songListAdapter = new SongListAdapter(context, MusicLibraryListFragment.this.getActivity(), songList);
             recyclerView.setAdapter(songListAdapter);
             if (songList.size() < 1) {
                 listIsEmpty(false);

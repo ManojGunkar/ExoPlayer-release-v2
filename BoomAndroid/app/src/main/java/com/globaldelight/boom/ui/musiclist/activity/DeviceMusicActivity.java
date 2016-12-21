@@ -71,6 +71,15 @@ public class DeviceMusicActivity extends BoomMasterActivity{
 
         setContentView(R.layout.activity_music_library);
 
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_RECEIVE_SONG);
+        intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
+        intentFilter.addAction(ACTION_ITEM_CLICKED);
+        intentFilter.addAction(ACTION_TRACK_STOPPED);
+        intentFilter.addAction(ACTION_UPDATE_TRACK_SEEK);
+        intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
+        intentFilter.addAction(ACTION_UPDATE_REPEAT);
+        registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
         checkPermissions();
     }
 
@@ -86,16 +95,6 @@ public class DeviceMusicActivity extends BoomMasterActivity{
         mViewPager.getCurrentItem();
 
         initHandyTabBar();
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_RECEIVE_SONG);
-        intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
-        intentFilter.addAction(ACTION_ITEM_CLICKED);
-        intentFilter.addAction(ACTION_TRACK_STOPPED);
-        intentFilter.addAction(ACTION_UPDATE_TRACK_SEEK);
-        intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
-        intentFilter.addAction(ACTION_UPDATE_REPEAT);
-        registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
 
         musicSearchHelper = new MusicSearchHelper(App.getApplication());
         new Thread(new Runnable() {
