@@ -406,6 +406,15 @@ public class OpenSLPlayer implements Runnable {
         }
         //Log.d(LOG_TAG, "stopping...");
 
+        if ( !stop && events != null ) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    events.onPlayUpdate(100, duration / 1000, duration / 1000);
+                }
+            });
+        }
+
         if(codec != null) {
             try {
                 codec.stop();
