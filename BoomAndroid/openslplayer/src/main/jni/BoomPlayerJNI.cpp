@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <cmath>
 #include "logger/log.h"
-#include "AudioTrackActivity.h"
+#include "BoomPlayerJNI.h"
 #include "audioresampler/include/AudioResampler.h"
 #include "bufferprovider/include/RingBuffer.h"
 #include "audioFx/AudioEngine.h"
