@@ -27,13 +27,13 @@ namespace gdpl {
     }
 
 
-    size_t RingBuffer::Read(uint8_t *dataPtr, size_t count) {
+    size_t RingBuffer::Read(void *dataPtr, size_t count) {
         return (size_t)audio_utils_fifo_read(&_fifo, dataPtr, count);
     }
 
 // Write to the ring buffer.  Do not overwrite data that has not yet
 // been read.
-    size_t RingBuffer::Write(uint8_t *dataPtr, size_t offset, size_t count) {
+    size_t RingBuffer::Write(void *dataPtr, size_t offset, size_t count) {
         int offsetBytes = (offset * channelCount * bytesPerChannel);
         return (size_t)audio_utils_fifo_write(&_fifo, (dataPtr + offsetBytes), count-offset);
     }

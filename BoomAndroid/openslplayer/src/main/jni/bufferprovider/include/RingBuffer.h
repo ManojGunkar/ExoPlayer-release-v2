@@ -8,16 +8,20 @@
 namespace gdpl {
     using namespace android;
 
+    // Lock free ring buffer
     class RingBuffer {
     public:
         RingBuffer(size_t frameCount, uint32_t channels, uint32_t bytesPerChannel);
 
         ~RingBuffer();
 
-        size_t Read(uint8_t *dataPtr, size_t numBytes);
+        // Read 'count' frames from the ring buffer
+        size_t Read(void *dataPtr, size_t count);
 
-        size_t Write(uint8_t *dataPtr, size_t offset, size_t numBytes);
+        // Write 'count' frames to the RingBuffer
+        size_t Write(void *dataPtr, size_t offset, size_t count);
 
+        // Clear the buffer
         bool Empty(void);
 
     public:
