@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
@@ -24,6 +25,7 @@ public class DeviceMediaQuery {
 
 
     public static ArrayList<? extends IMediaItemBase> getSongList(Context context){
+        Log.e("ToTaL_TiMe : ", "On_StArT : "+System.currentTimeMillis());
         ArrayList<MediaItem> songList = new ArrayList<>();
 
         final String where = MediaStore.Audio.Media.IS_MUSIC + "=1";
@@ -31,6 +33,7 @@ public class DeviceMediaQuery {
         final String orderBy = MediaStore.Audio.Media.TITLE;
         Cursor songListCursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 null, where, null, orderBy);
+        Log.e("ToTaL_TiMe : ", "On_EnD : "+System.currentTimeMillis());
         if (songListCursor != null && songListCursor.moveToFirst()) {
 
             int Song_Id_Column = songListCursor.getColumnIndex
@@ -62,7 +65,8 @@ public class DeviceMediaQuery {
 
             int Date_Added_Column = songListCursor.getColumnIndex
                     (MediaStore.Audio.Media.DATE_ADDED);
-
+            int album_art = songListCursor.getColumnIndex
+                    (MediaStore.Audio.AlbumColumns.ALBUM_ART);
             do{
                 songList.add(new MediaItem(songListCursor.getLong(Song_Id_Column), songListCursor.getString(Song_Name_Column),
                         songListCursor.getString(Song_Display_Name_Column), songListCursor.getString(Song_Path_Column),
@@ -74,6 +78,7 @@ public class DeviceMediaQuery {
             }while (songListCursor.moveToNext());
 
         }
+        Log.e("ToTaL_TiMe : ", "On_EnD : "+System.currentTimeMillis());
         if (songListCursor != null) {
             songListCursor.close();
         }

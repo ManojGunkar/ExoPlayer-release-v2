@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,7 +20,6 @@ import android.widget.ProgressBar;
 
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.ui.musiclist.activity.SearchDetailListActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.AlbumsGridAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.ArtistsGridAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.DefaultPlayListAdapter;
@@ -371,6 +371,7 @@ public class MusicLibraryListFragment extends Fragment {
         switch (title){
             case R.string.songs:
                 setSongList();
+//                new LoadSongsList().execute(title);
                 break;
             case R.string.albums:
                 setAlbumList();
@@ -392,4 +393,51 @@ public class MusicLibraryListFragment extends Fragment {
                 container, false);
         return view;
     }
+
+    private class LoadSongsList extends AsyncTask<Integer, Integer, ArrayList<? extends IMediaItemBase>> {
+        ArrayList<? extends IMediaItemBase> songList = null;
+        @Override
+        protected ArrayList<? extends IMediaItemBase> doInBackground(Integer... params) {
+            songList = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB) /*MediaQuery.getSongList(context)*/;
+            return songList;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemBases) {
+            super.onPostExecute(iMediaItemBases);
+            final LinearLayoutManager llm = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(llm);
+//                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, 0));
+            recyclerView.setHasFixedSize(true);
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    songListAdapter.recyclerScrolled();
+                }
+
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+
+                    if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
+                        // Do something
+                    } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                        // Do something
+                    } else {
+                        // Do something
+                    }
+                }
+            });
+            songListAdapter = new SongListAdapter(context, MusicLibraryListFragment.this.getActivity(), songList, permissionChecker);
+            recyclerView.setAdapter(songListAdapter);
+            if (songList.size() < 1) {
+                listIsEmpty(false);
+            }
+            mLibContainer.setVisibility(View.VISIBLE);
+            mLibLoad.setVisibility(View.GONE);
+            mLibLoad.setEnabled(false);
+        }
+    }
+
 }

@@ -440,7 +440,11 @@ public class UpNextList {
                             PlayingItemChanged();
                             break;
                         case Playing:
-                            PlayPause();
+                            if(App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused()) {
+                                PlayPause();
+                            }else{
+                                PlayingItemChanged();
+                            }
                             break;
                         case Manual_UpNext:
                             managePlayedItem(true);
