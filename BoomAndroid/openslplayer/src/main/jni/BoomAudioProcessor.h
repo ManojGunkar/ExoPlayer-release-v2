@@ -16,6 +16,8 @@ using namespace android;
 namespace gdpl {
 
     class RingBuffer;
+    class RingBufferProvider;
+
     class BoomAudioProcessor : public gdpl::IDataSource {
 
     public:
@@ -35,7 +37,7 @@ namespace gdpl {
 
     private:
 
-        void ProcessAudio(RingBuffer* buffer, void* output, int frameCount);
+        void ProcessAudio(void* output, int frameCount);
 
         void SendToPlayback(void* outBuffer, int frameCount);
 
@@ -52,8 +54,9 @@ namespace gdpl {
         int mQueueCount;
         bool mIsReady;
 
-        RingBuffer* mPlaybackBuffer;
-        RingBuffer* mInputBuffer;
+        RingBuffer* mPlaybackQueue;
+        RingBuffer* mInputQueue;
+        RingBufferProvider* mProvider;
         AudioEngine* mAudioEngine;
 
 
@@ -61,7 +64,6 @@ namespace gdpl {
         const int kInputChannels;
         const int kNativeSampleRate;
         const size_t kFrameCount;
-        const int kBytesPerFrame;
     };
 
 }

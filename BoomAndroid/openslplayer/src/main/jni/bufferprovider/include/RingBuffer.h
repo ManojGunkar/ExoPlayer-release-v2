@@ -1,16 +1,14 @@
-#include <pthread.h>
-#include "jni.h"
+#ifndef RINGBUFFER_H_
+#define RINGBUFFER_H_
+
 #include "AudioBufferProvider.h"
 #include "audio_utils/fifo.h"
 
 
-#ifndef RINGBUFFER_H_
-#define RINGBUFFER_H_
-
 namespace gdpl {
     using namespace android;
 
-    class RingBuffer : public AudioBufferProvider {
+    class RingBuffer {
     public:
         RingBuffer(size_t frameCount, uint32_t channels, uint32_t bytesPerChannel);
 
@@ -22,18 +20,14 @@ namespace gdpl {
 
         bool Empty(void);
 
-        virtual status_t getNextBuffer(Buffer* buffer);
-
-        virtual void releaseBuffer(Buffer* buffer);
+    public:
+        const int  channelCount;
+        const int  bytesPerChannel;
+        const size_t  frameCount;
 
     private:
         uint8_t*            _data;
-        uint8_t*            _tempBuffer;
         audio_utils_fifo    _fifo;
-
-        const size_t  kFrameCount;
-        const int  kChannelCount;
-        const int  kBytesPerChannel;
     };
 };
 

@@ -5,6 +5,7 @@
 #include <assert.h>
 #include "audioresampler/include/AudioResampler.h"
 #include "bufferprovider/include/RingBuffer.h"
+#include "bufferprovider/include/RingBufferProvider.h"
 #include "logger/log.h"
 #include "Utilities/Utility.h"
 #include "BoomAudioProcessor.h"
@@ -29,8 +30,7 @@ gdpl::BoomAudioProcessor::BoomAudioProcessor(AudioEngine* engine, int32_t sample
         kInputSampleRate(sampleRate),
         kInputChannels(channels),
         kNativeSampleRate(OpenSLPlayer::getSampleRate()),
-        kFrameCount((size_t)engine->GetSampleSize()),
-        kBytesPerFrame(kFrameCount * CHANNEL_COUNT * BYTES_PER_CHANNEL)
+        kFrameCount((size_t)engine->GetSampleSize())
 {
     mBuffer = (int16_t *)calloc(kFrameCount * CHANNEL_COUNT, sizeof(int16_t));
     mOutputBuffer = (float*)calloc(kFrameCount * CHANNEL_COUNT, BYTES_PER_CHANNEL);
@@ -45,8 +45,10 @@ gdpl::BoomAudioProcessor::BoomAudioProcessor(AudioEngine* engine, int32_t sample
     mAudioResampler->setVolume(UNITY_GAIN, UNITY_GAIN);
 
     size_t inFrameCount = (kFrameCount * kInputSampleRate) / kNativeSampleRate;
-    mInputBuffer = new RingBuffer(inFrameCount * 2, channels, sizeof(uint16_t));
-    mPlaybackBuffer = new RingBuffer(kFrameCount * OUTPUT_QUEUE_SIZE, 2, BYTES_PER_CHANNEL);
+    mInputQueue = new RingBuffer(inFrameCount * 2, channels, sizeof(uint16_t));
+    mPlaybackQueue = new RingBuffer(kFrameCount * OUTPUT_QUEUE_SIZE, 2, BYTES_PER_CHANNEL);
+
+    mProvider = new RingBufferProvider(*mInputQueue);
 }
 
 
@@ -58,9 +60,10 @@ gdpl::BoomAudioProcessor::~BoomAudioProcessor() {
         free(mTempBuffers[i]);
     }
 
-    delete mPlaybackBuffer;
-    delete mInputBuffer;
+    delete mPlaybackQueue;
+    delete mInputQueue;
     delete mAudioResampler;
+    delete mProvider;
 }
 
 size_t gdpl::BoomAudioProcessor::Write(uint8_t* data, size_t size) {
@@ -73,9 +76,9 @@ size_t gdpl::BoomAudioProcessor::Write(uint8_t* data, size_t size) {
 
     size_t inputOffset = 0;
     while ( count > inputOffset ) {
-        inputOffset += mInputBuffer->Write(data, inputOffset, count);
+        inputOffset += mInputQueue->Write(data, inputOffset, count);
         if ( inputOffset < count ) { // if the buffer is full
-            ProcessAudio(mInputBuffer, mOutputBuffer, kFrameCount);
+            ProcessAudio(mOutputBuffer, kFrameCount);
             SendToPlayback(mOutputBuffer, kFrameCount);
         }
     }
@@ -85,8 +88,8 @@ size_t gdpl::BoomAudioProcessor::Write(uint8_t* data, size_t size) {
 
 
 void BoomAudioProcessor::Flush() {
-    mInputBuffer->Empty();
-    mPlaybackBuffer->Empty();
+    mInputQueue->Empty();
+    mPlaybackQueue->Empty();
     mAudioResampler->reset();
     mIsReady = false;
     mQueueCount = 0;
@@ -98,7 +101,7 @@ void gdpl::BoomAudioProcessor::getNextBuffer(AudioBufferProvider::Buffer *buffer
     buffer->raw = mTempBuffers[mIndex];
     mIndex = (mIndex + 1) % kTempBufferCount;
 
-    size_t count = mPlaybackBuffer->Read((uint8_t*)buffer->raw, buffer->frameCount);
+    size_t count = mPlaybackQueue->Read((uint8_t*)buffer->raw, buffer->frameCount);
     if ( count < buffer->frameCount ) {
         LOGW("Reading less data [requested = %d read = %d]", buffer->frameCount, count);
     }
@@ -111,10 +114,10 @@ void gdpl::BoomAudioProcessor::getNextBuffer(AudioBufferProvider::Buffer *buffer
 }
 
 
-void gdpl::BoomAudioProcessor::ProcessAudio(RingBuffer* buffer, void* output, int frameCount)
+void gdpl::BoomAudioProcessor::ProcessAudio(void* output, int frameCount)
 {
     memset(mResampleBuffer, 0, kFrameCount * CHANNEL_COUNT * sizeof(int32_t));
-    mAudioResampler->resample(mResampleBuffer, (size_t)frameCount, buffer);
+    mAudioResampler->resample(mResampleBuffer, (size_t)frameCount, mProvider);
     ditherAndClamp((int32_t *) mBuffer, mResampleBuffer, (size_t)frameCount);
     mAudioEngine->ProcessAudio(mBuffer, output, frameCount * CHANNEL_COUNT);
 }
@@ -125,7 +128,7 @@ void gdpl::BoomAudioProcessor::SendToPlayback(void* outBuffer, int frameCount)
     const uint32_t timeToWait = (uint32_t)((frameCount * 1000000ULL)/(uint64_t)(kNativeSampleRate*2));
 
     while ( frameCount > offset ) {
-        offset += mPlaybackBuffer->Write((uint8_t*)outBuffer, offset, (size_t)frameCount);
+        offset += mPlaybackQueue->Write((uint8_t*)outBuffer, offset, (size_t)frameCount);
         if ( offset < frameCount && mIsReady ) {
             usleep(timeToWait);
         }
