@@ -10,6 +10,7 @@ import android.media.MediaCodecList;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
+import android.media.browse.MediaBrowser;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
@@ -384,12 +385,15 @@ public class OpenSLPlayer implements Runnable {
                             sawOutputEOS = true;
                         }
                     } else if (outputBufIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                        outputFormat = codec.getOutputFormat();
-                        Log.d(LOG_TAG,"Format changed" + outputFormat);
+                        MediaFormat newFormat = codec.getOutputFormat();
+                        if ( !isSameFormat(newFormat, outputFormat) ) {
+                            outputFormat = newFormat;
+                            Log.d(LOG_TAG,"Format changed" + outputFormat);
+                            shutdown(false);
+                            createPlayer(outputFormat);
+                        }
 
                         // Restart player
-                        shutdown(false);
-                        createPlayer(outputFormat);
                     }
                 } catch (MediaCodec.CodecException e) {
                     e.printStackTrace();
@@ -493,9 +497,31 @@ public class OpenSLPlayer implements Runnable {
 
     private void createPlayer(MediaFormat format)
     {
+        Log.d(LOG_TAG, "createPlayer " + format);
+
+        // if no output format; create a player with default configuration
+        if ( format == null ) {
+            createAudioPlayer(44100, 2);
+            return;
+        }
+
         int sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
+        if ( sampleRate == 0 ) {
+            sampleRate = 44100;
+        }
         int channels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
+        if ( channels == 0 ) {
+            channels = 2;
+        }
+
         createAudioPlayer(sampleRate, channels);
+    }
+
+
+
+    private boolean isSameFormat(MediaFormat f1, MediaFormat f2) {
+        return (f1.getInteger(MediaFormat.KEY_SAMPLE_RATE) == f2.getInteger(MediaFormat.KEY_SAMPLE_RATE)
+                && f1.getInteger(MediaFormat.KEY_CHANNEL_COUNT) == f1.getInteger(MediaFormat.KEY_CHANNEL_COUNT));
     }
 
 

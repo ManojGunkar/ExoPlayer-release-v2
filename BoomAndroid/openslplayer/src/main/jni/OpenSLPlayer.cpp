@@ -142,7 +142,6 @@ namespace gdpl
 
     SLresult OpenSLPlayer::stop()
     {
-        (*_bufferQueue)->Clear(_bufferQueue);
         SLresult result = (*bqPlayerPlay)->SetPlayState(bqPlayerPlay, SL_PLAYSTATE_STOPPED);
         if ( SL_RESULT_SUCCESS == result ) {
             playState = SL_PLAYSTATE_STOPPED;

@@ -191,14 +191,13 @@ namespace gdpl {
  */
     extern "C" jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_shutdown(JNIEnv *env, jclass clazz,
                                                                  jboolean wait) {
-        gdpl::AutoLock lock(&mLock);
 
         stopPlayer(wait);
         mPlayer->tearDown();
         delete mPlayer;
-
-//        destroy buffers
         delete mProcessor;
+
+        pthread_mutex_destroy(&mLock);
         return wait;
     }
 
