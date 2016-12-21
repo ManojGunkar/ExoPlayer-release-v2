@@ -203,14 +203,18 @@ public class OpenSLPlayer implements Runnable {
     @Override
     public void run() {
         android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
-        try {
-            MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
-            metadataRetriever.setDataSource(this.sourcePath);
-            setGenreType(metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE));
-        }catch (IllegalArgumentException e){
-            setGenreType(null);
-        }catch (SecurityException e1){
-            setGenreType(null);
+        if(AudioEffect.getAudioEffectInstance(mContext).getSelectedEqualizerPosition() == 0) {
+            try {
+                MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
+                metadataRetriever.setDataSource(this.sourcePath);
+                setGenreType(metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE));
+            } catch (IllegalArgumentException e) {
+                setGenreType(null);
+            } catch (SecurityException e1) {
+                setGenreType(null);
+            } catch (Exception e) {
+                setGenreType(null);
+            }
         }
 
         // extractor gets information about the stream
@@ -453,7 +457,7 @@ public class OpenSLPlayer implements Runnable {
     }
 
     private void setGenreType(String genreType) {
-        if(AudioEffect.getAudioEffectInstance(mContext).getSelectedEqualizerPosition() == 0) {
+
             if (null != genreType) {
                 for (int i = 0; i <= mContext.getResources().getStringArray(R.array.mapped_eq_key).length - 1; i++) {
                     if (genreType.toUpperCase().contains(mContext.getResources().getStringArray(R.array.mapped_eq_key)[i].toUpperCase())) {
@@ -465,7 +469,6 @@ public class OpenSLPlayer implements Runnable {
                         return;
                     }
                 }
-            }
         }
         AudioEffect.getAudioEffectInstance(mContext).setAutoEqualizerPosition(12);
         Log.d("Selected Song Genre : ", "MUSIC");

@@ -323,7 +323,8 @@ public class UpNextList {
 
     public void addToPlay(final LinkedList<MediaItem> itemList, final int position, boolean isPlayAll) {
         long mTime = System.currentTimeMillis();
-        if(null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId()){
+        boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
+        if(null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
             PlayPause();
         }else  if(mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
@@ -357,7 +358,8 @@ public class UpNextList {
 //    position -> Now Playing Item position in item list.
     public void addToPlay(final ArrayList<MediaItem> itemList, final int position, boolean isPlayAll) {
         long mTime = System.currentTimeMillis();
-        if(null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId()){
+        boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
+        if(null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
             PlayPause();
         }else if(mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
@@ -390,9 +392,10 @@ public class UpNextList {
     //    selected Collection, Like Album, ic_artist.
 //    index of now Playing item of the collection
     public void addToPlay(final IMediaItemCollection collection, final int position, boolean isPlayAll) {
+        boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
         long mTime = System.currentTimeMillis();
         if(null != getPlayingItem() && collection.getMediaElement().size() > 0 && !isPlayAll &&
-                collection.getMediaElement().get(position).getItemId() == getPlayingItem().getItemId()){
+                collection.getMediaElement().get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
             PlayPause();
         }else if(mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
