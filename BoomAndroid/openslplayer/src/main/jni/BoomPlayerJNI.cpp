@@ -1,8 +1,5 @@
 /** log */
-#define LOG_TAG "AudioTrackActivity"
-#define DGB 1
 #include <stddef.h>
-#include <cmath>
 #include "logger/log.h"
 #include "BoomPlayerJNI.h"
 #include "audioresampler/include/AudioResampler.h"
@@ -11,6 +8,8 @@
 #include "Utilities/AutoLock.hpp"
 #include "BoomAudioProcessor.h"
 #include "OpenSLPlayer.hpp"
+
+#define LOG_TAG "BoomPlayerJNI"
 
 #define BYTES_PER_CHANNEL ((mEngine->GetOutputType() == SAMPLE_TYPE_SHORT)? sizeof(int16_t) : sizeof(float))
 
@@ -32,7 +31,6 @@ namespace gdpl {
     static BoomAudioProcessor *mProcessor = nullptr;
     static gdpl::OpenSLPlayer *mPlayer = nullptr;
     static pthread_mutex_t mLock;
-
 
 
 
