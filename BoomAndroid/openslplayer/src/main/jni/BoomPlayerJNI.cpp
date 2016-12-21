@@ -17,10 +17,6 @@
 
 namespace gdpl {
 
-    using namespace android;
-
-    class PlaybackThread;
-
     static const int32_t DEFAULT_FRAME_COUNT = 2048;
     static const int32_t CHANNEL_COUNT = 2;
 
@@ -29,7 +25,7 @@ namespace gdpl {
 
     static AudioEngine *mEngine = nullptr;
     static BoomAudioProcessor *mProcessor = nullptr;
-    static gdpl::OpenSLPlayer *mPlayer = nullptr;
+    static OpenSLPlayer *mPlayer = nullptr;
     static pthread_mutex_t mLock;
 
 
