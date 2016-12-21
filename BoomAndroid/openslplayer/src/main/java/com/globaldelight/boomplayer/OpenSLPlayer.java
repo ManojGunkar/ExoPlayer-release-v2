@@ -521,7 +521,7 @@ public class OpenSLPlayer implements Runnable {
 
     private boolean isSameFormat(MediaFormat f1, MediaFormat f2) {
         return (f1.getInteger(MediaFormat.KEY_SAMPLE_RATE) == f2.getInteger(MediaFormat.KEY_SAMPLE_RATE)
-                && f1.getInteger(MediaFormat.KEY_CHANNEL_COUNT) == f1.getInteger(MediaFormat.KEY_CHANNEL_COUNT));
+                && f1.getInteger(MediaFormat.KEY_CHANNEL_COUNT) == f2.getInteger(MediaFormat.KEY_CHANNEL_COUNT));
     }
 
 
