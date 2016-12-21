@@ -35,6 +35,6 @@ namespace gdpl {
 // been read.
     size_t RingBuffer::Write(void *dataPtr, size_t offset, size_t count) {
         int offsetBytes = (offset * channelCount * bytesPerChannel);
-        return (size_t)audio_utils_fifo_write(&_fifo, (dataPtr + offsetBytes), count-offset);
+        return (size_t)audio_utils_fifo_write(&_fifo, ((uint8_t*)dataPtr + offsetBytes), count-offset);
     }
 }
