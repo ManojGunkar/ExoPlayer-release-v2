@@ -1,5 +1,6 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -54,6 +56,7 @@ import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boomplayer.AudioEffect;
+import com.surveymonkey.surveymonkeyandroidsdk.SurveyMonkey;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -86,6 +89,14 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private ImageView mPlayPauseBtn, mLibraryBtn, mAudioEffectBtn, mUpNextQueue;
     private TooltipWindow tipWindowLibrary, tipWindowEffect, tipWindowHold, tipWindowHeadset;
     private static boolean isUpdateUpnextDB = true;
+
+    final static String SURVEY_HASH = "98ZDBXQ";
+    final static int SURVEY_REQUEST_CODE = 2000;
+
+    private  SurveyMonkey surveyInstance = new SurveyMonkey();
+
+
+
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -357,6 +368,8 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         registerReceiver(mPlayerBroadcastReceiver, intentFilter);
         // new BoomServerRequest().getAccessToken(this);
         showPurchaseOption();
+
+        surveyInstance.onStart(this, "Boom", SURVEY_REQUEST_CODE, SURVEY_HASH);
     }
 
     public void showCoachMark() {
@@ -502,6 +515,16 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         updateTrackPlayTime(totalMillis, currentMillis);
         if(null != mTrackSeek)
             mTrackSeek.setProgress(App.getUserPreferenceHandler().getPlayerSeekPosition());
+
+
+        Button feedbackBtn = (Button)findViewById(R.id.feedback);
+        final Activity me = this;
+        feedbackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                surveyInstance.startSMFeedbackActivityForResult(me, SURVEY_REQUEST_CODE, SURVEY_HASH);
+            }
+        });
     }
 
     private void startEffectActivity(){
@@ -700,6 +723,13 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         unregisterReceiver(mPlayerBroadcastReceiver);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ( requestCode == SURVEY_REQUEST_CODE ) {
+            // Handle survey result if any
+        }
+    }
 
     private void updateUpNextDB() {
         if(!App.getPlayerEventHandler().isPlaying()){
