@@ -11,8 +11,8 @@
 #include <stdlib.h>
 #include "android/asset_manager_jni.h"
 
-#ifndef AUDIOTRACKACTIVITY_H_
-#define AUDIOTRACKACTIVITY_H_
+#ifndef BOOMPLAYERJNI_H_
+#define BOOMPLAYERJNI_H_
 
 #ifdef __cplusplus
 extern "C" {

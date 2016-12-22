@@ -1,10 +1,7 @@
 /** log */
-#define LOG_TAG "AudioTrackActivity"
-#define DGB 1
 #include <stddef.h>
-#include <cmath>
 #include "logger/log.h"
-#include "AudioTrackActivity.h"
+#include "BoomPlayerJNI.h"
 #include "audioresampler/include/AudioResampler.h"
 #include "bufferprovider/include/RingBuffer.h"
 #include "audioFx/AudioEngine.h"
@@ -12,15 +9,13 @@
 #include "BoomAudioProcessor.h"
 #include "OpenSLPlayer.hpp"
 
+#define LOG_TAG "BoomPlayerJNI"
+
 #define BYTES_PER_CHANNEL ((mEngine->GetOutputType() == SAMPLE_TYPE_SHORT)? sizeof(int16_t) : sizeof(float))
 
 
 
 namespace gdpl {
-
-    using namespace android;
-
-    class PlaybackThread;
 
     static const int32_t DEFAULT_FRAME_COUNT = 2048;
     static const int32_t CHANNEL_COUNT = 2;
@@ -30,9 +25,8 @@ namespace gdpl {
 
     static AudioEngine *mEngine = nullptr;
     static BoomAudioProcessor *mProcessor = nullptr;
-    static gdpl::OpenSLPlayer *mPlayer = nullptr;
+    static OpenSLPlayer *mPlayer = nullptr;
     static pthread_mutex_t mLock;
-
 
 
 
