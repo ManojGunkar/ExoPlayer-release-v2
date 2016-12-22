@@ -50,18 +50,16 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
 
     private static final String TAG = "AlbumListAdapter-TAG";
     ArrayList<MediaItemCollection> itemList;
-    private PermissionChecker permissionChecker;
     private Context context;
     private Activity activity;
     private  RecyclerView recyclerView;
 
     public ArtistsGridAdapter(Context context, FragmentActivity activity, RecyclerView recyclerView,
-                              ArrayList<? extends IMediaItemBase> itemList, PermissionChecker permissionChecker) {
+                              ArrayList<? extends IMediaItemBase> itemList) {
         this.context = context;
         this.activity = activity;
         this.recyclerView = recyclerView;
         this.itemList = (ArrayList<MediaItemCollection>) itemList;
-        this.permissionChecker = permissionChecker;
     }
 
     @Override

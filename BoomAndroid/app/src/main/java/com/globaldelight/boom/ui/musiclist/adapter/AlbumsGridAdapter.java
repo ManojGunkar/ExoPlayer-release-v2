@@ -52,17 +52,15 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
 
     private static final String TAG = "AlbumsGridAdapter-TAG";
     ArrayList<MediaItemCollection> itemList;
-    private PermissionChecker permissionChecker;
     private Context context;
     private Activity activity;
     private  RecyclerView recyclerView;
 
-    public AlbumsGridAdapter(Context context, FragmentActivity activity, RecyclerView recyclerView, ArrayList<? extends IMediaItemBase> itemList, PermissionChecker permissionChecker) {
+    public AlbumsGridAdapter(Context context, FragmentActivity activity, RecyclerView recyclerView, ArrayList<? extends IMediaItemBase> itemList) {
         this.context = context;
         this.activity = activity;
         this.recyclerView = recyclerView;
         this.itemList = (ArrayList<MediaItemCollection>)itemList;
-        this.permissionChecker = permissionChecker;
     }
 
     @Override

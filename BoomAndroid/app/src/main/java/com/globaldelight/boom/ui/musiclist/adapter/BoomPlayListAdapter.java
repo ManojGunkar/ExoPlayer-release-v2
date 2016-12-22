@@ -56,16 +56,14 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     ArrayList<? extends IMediaItemBase> items;
     public static final int ITEM_VIEW_TYPE_ITEM_LIST = 0;
     public static final int ITEM_VIEW_TYPE_ITEM_LIST_FOOTER = 1;
-    private PermissionChecker permissionChecker;
     private Activity context;
     private  RecyclerView recyclerView;
 
     public BoomPlayListAdapter(Activity context, RecyclerView recyclerView,
-                                  ArrayList<? extends IMediaItemBase> items, PermissionChecker permissionChecker) {
+                                  ArrayList<? extends IMediaItemBase> items) {
         this.context = context;
         this.recyclerView = recyclerView;
         this.items = items;
-        this.permissionChecker = permissionChecker;
     }
 
     public int whatView(int position){

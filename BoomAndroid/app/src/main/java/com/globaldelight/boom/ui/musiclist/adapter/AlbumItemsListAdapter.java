@@ -37,15 +37,13 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
 
     public static final int TYPE_HEADER = 111;
     public static final int TYPE_ITEM = 222;
-    private PermissionChecker permissionChecker;
     private Context context;
     private MediaItemCollection item;
     private ListDetail listDetail;
 
-    public AlbumItemsListAdapter(AlbumActivity context, IMediaItemCollection item, ListDetail listDetail, PermissionChecker permissionChecker) {
+    public AlbumItemsListAdapter(AlbumActivity context, IMediaItemCollection item, ListDetail listDetail) {
         this.context = context;
         this.item = (MediaItemCollection) item;
-        this.permissionChecker = permissionChecker;
         this.listDetail = listDetail;
     }
 

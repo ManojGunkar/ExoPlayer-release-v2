@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -85,9 +86,6 @@ public class BoomPlaylistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_boom_playlist);
 
-        init();
-        initMiniPlayer();
-
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PlayerService.ACTION_UPDATE_BOOM_PLAYLIST);
         intentFilter.addAction(ACTION_RECEIVE_SONG);
@@ -98,6 +96,9 @@ public class BoomPlaylistActivity extends AppCompatActivity {
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
+
+        init();
+        initMiniPlayer();
     }
 
     private void init() {
@@ -130,7 +131,7 @@ public class BoomPlaylistActivity extends AppCompatActivity {
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
-                        setPlayListList();
+                        new LoadBoomPlaylist().execute();
                     }
 
                     @Override
@@ -138,56 +139,6 @@ public class BoomPlaylistActivity extends AppCompatActivity {
                         finish();
                     }
                 });
-    }
-
-    private void setPlayListList() {
-
-        new Thread(new Runnable() {
-            public void run() {
-                final ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(BoomPlaylistActivity.this).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getPlayList(context)*/;
-
-                if(Utils.isPhone(BoomPlaylistActivity.this)){
-                    gridLayoutManager =
-                            new GridLayoutManager(BoomPlaylistActivity.this, 2);
-                }else{
-                    gridLayoutManager =
-                            new GridLayoutManager(BoomPlaylistActivity.this, 3);
-                }
-
-                gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                    @Override
-                    public int getSpanSize(int position) {
-                        if (boomPlayListAdapter.whatView(position) == BoomPlayListAdapter.ITEM_VIEW_TYPE_ITEM_LIST) {
-                            return 1;
-                        } else {
-                            return 2;
-                        }
-                    }
-                });
-                        runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                        gridLayoutManager.scrollToPosition(0);
-                        recyclerView.setLayoutManager(gridLayoutManager);
-                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(BoomPlaylistActivity.this, Utils.getWindowWidth(BoomPlaylistActivity.this)));
-                        recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(BoomPlaylistActivity.this, 0)));
-                        boomPlayListAdapter = new BoomPlayListAdapter(BoomPlaylistActivity.this, recyclerView, playList, permissionChecker);
-                        recyclerView.setAdapter(boomPlayListAdapter);
-                        recyclerView.addItemDecoration(new BoomPlayListFooterItemDecoration(2, boomPlayListAdapter));
-//                        recyclerView.setHasFixedSize(true);
-                    }
-                });
-                if (playList.size() < 1) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            listIsEmpty();
-                        }
-                    });
-                }
-            }
-        }).start();
     }
 
     @Override
@@ -204,7 +155,7 @@ public class BoomPlaylistActivity extends AppCompatActivity {
         }
 
         if(boomPlayListAdapter != null){
-            boomPlayListAdapter.updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(BoomPlaylistActivity.this).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+            boomPlayListAdapter.updateNewList(MediaController.getInstance(BoomPlaylistActivity.this).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
         }
     }
 
@@ -249,16 +200,10 @@ public class BoomPlaylistActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        Logger.LOGD("BoomPlaylistActivity", "Pause");
-        super.onPause();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mPlayerEventBroadcastReceiver);
-        Logger.LOGD("BoomPlaylistActivity", "Destroy");
+        if(null != mPlayerEventBroadcastReceiver)
+            unregisterReceiver(mPlayerEventBroadcastReceiver);
     }
 
     @Override
@@ -477,7 +422,50 @@ public class BoomPlaylistActivity extends AppCompatActivity {
         return animator;
     }
 
-    public void resetAdp() {
-        setPlayListList();
+    public class LoadBoomPlaylist  extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {
+        @Override
+        protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
+            return MediaController.getInstance(BoomPlaylistActivity.this).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getPlayList(context)*/;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
+            super.onPostExecute(iMediaItemList);
+            if(Utils.isPhone(BoomPlaylistActivity.this)){
+                gridLayoutManager =
+                        new GridLayoutManager(BoomPlaylistActivity.this, 2);
+            }else{
+                gridLayoutManager =
+                        new GridLayoutManager(BoomPlaylistActivity.this, 3);
+            }
+
+            gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    if (boomPlayListAdapter.whatView(position) == BoomPlayListAdapter.ITEM_VIEW_TYPE_ITEM_LIST) {
+                        return 1;
+                    } else {
+                        return 2;
+                    }
+                }
+            });
+            gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            gridLayoutManager.scrollToPosition(0);
+            recyclerView.setLayoutManager(gridLayoutManager);
+            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(BoomPlaylistActivity.this, Utils.getWindowWidth(BoomPlaylistActivity.this)));
+            recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(BoomPlaylistActivity.this, 0)));
+            boomPlayListAdapter = new BoomPlayListAdapter(BoomPlaylistActivity.this, recyclerView, iMediaItemList);
+            recyclerView.setAdapter(boomPlayListAdapter);
+            recyclerView.addItemDecoration(new BoomPlayListFooterItemDecoration(2, boomPlayListAdapter));
+//                        recyclerView.setHasFixedSize(true);
+            if (iMediaItemList.size() < 1) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listIsEmpty();
+                    }
+                });
+            }
+        }
     }
 }

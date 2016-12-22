@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +39,7 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -177,9 +179,6 @@ public class AlbumActivity extends AppCompatActivity {
             }
         });
 
-        addSongList();
-        setForAnimation();
-
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_RECEIVE_SONG);
         intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
@@ -190,6 +189,9 @@ public class AlbumActivity extends AppCompatActivity {
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
+
+        new LoadAlbumSongs().execute();
+        setForAnimation();
     }
 
     @Override
@@ -213,7 +215,8 @@ public class AlbumActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mPlayerEventBroadcastReceiver);
+        if(null != mPlayerEventBroadcastReceiver)
+            unregisterReceiver(mPlayerEventBroadcastReceiver);
     }
 
     private BroadcastReceiver mPlayerEventBroadcastReceiver = new BroadcastReceiver() {
@@ -336,35 +339,28 @@ public class AlbumActivity extends AppCompatActivity {
         rv.scrollTo(0, 100);
     }
 
-    private void addSongList() {
-        new Thread(new Runnable() {
-            public void run() {
-                //ItemType.ALBUM, ItemType.ARTIST && ItemType.GENRE
-                if(collection.getItemType() == ItemType.ALBUM && collection.getMediaElement().isEmpty()) {
-                    collection.setMediaElement(MediaController.getInstance(AlbumActivity.this).getMediaCollectionItemDetails(collection));
-                }else if((collection.getItemType() == ItemType.ARTIST || collection.getItemType() == ItemType.GENRE) &&
-                        ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
-                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(AlbumActivity.this).getMediaCollectionItemDetails(collection));
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        rv.setLayoutManager(new LinearLayoutManager(AlbumActivity.this));
-                        albumItemsListAdapter = new AlbumItemsListAdapter(AlbumActivity.this, collection, listDetail, permissionChecker);
-                        rv.setAdapter(albumItemsListAdapter);
-                    }
-                });
-//                if (favList.size() < 1) {
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            listIsEmpty();
-//                        }
-//                    });
-//                }
+    private class LoadAlbumSongs extends AsyncTask<Void, Integer, IMediaItemBase> {
+
+        @Override
+        protected IMediaItemBase doInBackground(Void... params) {
+            if(collection.getItemType() == ItemType.ALBUM && collection.getMediaElement().isEmpty()) {
+                collection.setMediaElement(MediaController.getInstance(AlbumActivity.this).getMediaCollectionItemDetails(collection));
+            }else if((collection.getItemType() == ItemType.ARTIST || collection.getItemType() == ItemType.GENRE) &&
+                ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
+                ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(AlbumActivity.this).getMediaCollectionItemDetails(collection));
             }
-        }).start();
+            return collection;
+        }
+
+        @Override
+        protected void onPostExecute(IMediaItemBase iMediaItemBase) {
+            super.onPostExecute(iMediaItemBase);
+            rv.setLayoutManager(new LinearLayoutManager(AlbumActivity.this));
+            albumItemsListAdapter = new AlbumItemsListAdapter(AlbumActivity.this, (IMediaItemCollection) iMediaItemBase, listDetail);
+            rv.setAdapter(albumItemsListAdapter);
+        }
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,

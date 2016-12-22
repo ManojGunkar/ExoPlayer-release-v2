@@ -49,18 +49,16 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
 
     private static final String TAG = "AlbumListAdapter-TAG";
     ArrayList<MediaItemCollection> items;
-    private PermissionChecker permissionChecker;
     private Context context;
     private Activity activity;
     private  RecyclerView recyclerView;
 
     public DefaultPlayListAdapter(Context context, FragmentActivity activity, RecyclerView recyclerView,
-                                  ArrayList<? extends IMediaItemBase> items, PermissionChecker permissionChecker) {
+                                  ArrayList<? extends IMediaItemBase> items) {
         this.context = context;
         this.activity = activity;
         this.recyclerView = recyclerView;
         this.items = (ArrayList<MediaItemCollection>) items;
-        this.permissionChecker = permissionChecker;
     }
 
     @Override

@@ -80,6 +80,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
+
         checkPermissions();
     }
 
@@ -324,7 +325,8 @@ public class DeviceMusicActivity extends BoomMasterActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mPlayerEventBroadcastReceiver);
+        if(null != mPlayerEventBroadcastReceiver)
+            unregisterReceiver(mPlayerEventBroadcastReceiver);
         Logger.LOGD("DeviceMusicActivity", "Destroy");
     }
 
