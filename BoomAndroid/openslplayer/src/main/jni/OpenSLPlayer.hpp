@@ -21,8 +21,6 @@ namespace gdpl {
         virtual void getNextBuffer(AudioBufferProvider::Buffer* buffer) = 0;
     };
 
-    class FIFOBuffer;
-
     class OpenSLPlayer {
     public:
 
