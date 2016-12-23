@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,6 +36,7 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.task.PlayerService;
@@ -89,9 +91,6 @@ public class DetailAlbumActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail_album);
 
         collection = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
-        
-        initView();
-        initMiniPlayer();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_RECEIVE_SONG);
@@ -102,6 +101,9 @@ public class DetailAlbumActivity extends AppCompatActivity {
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
+
+        initView();
+        initMiniPlayer();
     }
 
     private void initView() {
@@ -152,7 +154,7 @@ public class DetailAlbumActivity extends AppCompatActivity {
             }
         });
 
-        addSongList();
+        new LoadDetailAlbumList().execute();
     }
 
     private BroadcastReceiver mPlayerEventBroadcastReceiver = new BroadcastReceiver() {
@@ -305,7 +307,8 @@ public class DetailAlbumActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mPlayerEventBroadcastReceiver);
+        if(null != mPlayerEventBroadcastReceiver)
+            unregisterReceiver(mPlayerEventBroadcastReceiver);
     }
 
     private void setAlbumArtSize(int width, int height) {
@@ -314,47 +317,41 @@ public class DetailAlbumActivity extends AppCompatActivity {
         albumArt.setLayoutParams(lp);
     }
 
-    private void addSongList() {
-        new Thread(new Runnable() {
-            public void run() {
+    private class LoadDetailAlbumList extends AsyncTask<Void, Integer, IMediaItemBase> {
 
-//                ItemType.ARTIST && ItemType.GENRE
-                if(collection.getMediaElement().isEmpty())
-                    collection.setMediaElement(MediaController.getInstance(DetailAlbumActivity.this).getMediaCollectionItemDetails(collection));
+        @Override
+        protected IMediaItemBase doInBackground(Void... params) {
+//            ItemType.ARTIST && ItemType.GENRE
+            if(collection.getMediaElement().isEmpty())
+                collection.setMediaElement(MediaController.getInstance(DetailAlbumActivity.this).getMediaCollectionItemDetails(collection));
+            return collection;
+        }
 
-                if(Utils.isPhone(DetailAlbumActivity.this)){
-                    gridLayoutManager =
-                            new GridLayoutManager(DetailAlbumActivity.this, 2);
-                }else{
-                    gridLayoutManager =
-                            new GridLayoutManager(DetailAlbumActivity.this, 3);
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        recyclerView.setLayoutManager(gridLayoutManager);
-                        recyclerView.addItemDecoration(new MarginDecoration(DetailAlbumActivity.this));
-                        recyclerView.setHasFixedSize(true);
-                        final DetailAlbumGridAdapter detailAlbumGridAdapter = new DetailAlbumGridAdapter(DetailAlbumActivity.this, recyclerView, collection, listDetail, permissionChecker);
-                        recyclerView.setAdapter(detailAlbumGridAdapter);
-                        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                                    @Override
-                                    public int getSpanSize(int position) {
-                                        return detailAlbumGridAdapter.isHeader(position) ? gridLayoutManager.getSpanCount() : 1;
-                                    }
-                                });
-                            }
-                        });
-                        if (collection.getMediaElement().size() < 1) {
-                                runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    listIsEmpty();
-                                }
-                            });
-                        }
+        @Override
+        protected void onPostExecute(IMediaItemBase iMediaItemBase) {
+            super.onPostExecute(iMediaItemBase);
+            if(Utils.isPhone(DetailAlbumActivity.this)){
+                gridLayoutManager =
+                        new GridLayoutManager(DetailAlbumActivity.this, 2);
+            }else{
+                gridLayoutManager =
+                        new GridLayoutManager(DetailAlbumActivity.this, 3);
             }
-        }).start();
+            recyclerView.setLayoutManager(gridLayoutManager);
+            recyclerView.addItemDecoration(new MarginDecoration(DetailAlbumActivity.this));
+            recyclerView.setHasFixedSize(true);
+            final DetailAlbumGridAdapter detailAlbumGridAdapter = new DetailAlbumGridAdapter(DetailAlbumActivity.this, recyclerView, (IMediaItemCollection) iMediaItemBase, listDetail);
+            recyclerView.setAdapter(detailAlbumGridAdapter);
+            gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    return detailAlbumGridAdapter.isHeader(position) ? gridLayoutManager.getSpanCount() : 1;
+                }
+            });
+            if (((IMediaItemCollection) iMediaItemBase).getMediaElement().size() < 1) {
+                listIsEmpty();
+            }
+        }
     }
 
     public void listIsEmpty() {

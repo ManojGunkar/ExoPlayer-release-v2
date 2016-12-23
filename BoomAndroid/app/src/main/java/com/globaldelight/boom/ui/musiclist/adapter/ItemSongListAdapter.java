@@ -61,17 +61,15 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     private static final String TAG = "ItemSongListAdapter-TAG";
     OnStartDragListener mOnStartDragListener;
     private MediaItemCollection collection;
-    private PermissionChecker permissionChecker;
     private int selectedSongId = -1;
     private SimpleItemViewHolder selectedHolder;
     private Activity activity;
     private MediaItem currentItem;
     private ListDetail listDetail;
 
-    public ItemSongListAdapter(Activity activity, IMediaItemCollection collection, ListDetail listDetail, PermissionChecker permissionChecker, OnStartDragListener dragListener) {
+    public ItemSongListAdapter(Activity activity, IMediaItemCollection collection, ListDetail listDetail, OnStartDragListener dragListener) {
         this.activity = activity;
         this.collection = (MediaItemCollection) collection;
-        this.permissionChecker = permissionChecker;
         this.listDetail = listDetail;
         this.mOnStartDragListener = dragListener;
     }

@@ -99,8 +99,6 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     @Override
     public void onBindViewHolder(final BoomPlayListAdapter.SimpleItemViewHolder holder, final int position) {
         if(position < items.size()) {
-//            if (((IMediaItemCollection) items.get(position)).getArtUrlList().isEmpty())
-//                ((IMediaItemCollection) items.get(position)).setArtUrlList(MediaController.getInstance(context).getArtUrlList((MediaItemCollection) items.get(position)));
             Size size = setSize(holder);
 
             holder.title.setText(getItem(position).getItemTitle());
@@ -112,6 +110,8 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
             } else {
                 holder.grid_menu.setVisibility(View.INVISIBLE);
             }
+            if (((IMediaItemCollection) items.get(position)).getArtUrlList().isEmpty())
+                ((IMediaItemCollection) items.get(position)).setArtUrlList(MediaController.getInstance(context).getArtUrlList((MediaItemCollection) items.get(position)));
             setSongsArtImage(holder, position, size);
             setOnClicks(holder, position);
         }else{

@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -80,10 +81,6 @@ public class FavouriteListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite);
 
-        initView();
-
-        initMiniPlayer();
-
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_RECEIVE_SONG);
         intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
@@ -94,6 +91,10 @@ public class FavouriteListActivity extends AppCompatActivity {
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
+
+        initView();
+
+        initMiniPlayer();
     }
 
     private void initView() {
@@ -111,35 +112,28 @@ public class FavouriteListActivity extends AppCompatActivity {
         checkPermissions();
     }
 
-    private void setFavouriteList() {
+    private class LoadFavouriteList extends AsyncTask<Void, Integer, LinkedList<? extends IMediaItemBase>> {
 
+        @Override
+        protected LinkedList<? extends IMediaItemBase> doInBackground(Void... params) {
+            return MediaController.getInstance(FavouriteListActivity.this).getFavouriteListItems();
+        }
 
-        new Thread(new Runnable() {
-            public void run() {
-                final LinkedList<? extends IMediaItemBase> favList = MediaController.getInstance(FavouriteListActivity.this).getFavouriteListItems();
-                final GridLayoutManager gridLayoutManager =
-                        new GridLayoutManager(FavouriteListActivity.this, 1);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                        gridLayoutManager.scrollToPosition(0);
-                        recyclerView.setLayoutManager(gridLayoutManager);
-                        adapter = new FavouriteListAdapter(FavouriteListActivity.this, recyclerView, favList, permissionChecker);
-                        recyclerView.setAdapter(adapter);
-                        recyclerView.setHasFixedSize(true);
-                    }
-                });
-                if (favList.size() < 1) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            listIsEmpty();
-                        }
-                    });
-                }
+        @Override
+        protected void onPostExecute(LinkedList<? extends IMediaItemBase> iMediaItemList) {
+            super.onPostExecute(iMediaItemList);
+            final GridLayoutManager gridLayoutManager =
+                    new GridLayoutManager(FavouriteListActivity.this, 1);
+            gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            gridLayoutManager.scrollToPosition(0);
+            recyclerView.setLayoutManager(gridLayoutManager);
+            adapter = new FavouriteListAdapter(FavouriteListActivity.this, recyclerView, iMediaItemList);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setHasFixedSize(true);
+            if (iMediaItemList.size() < 1) {
+                listIsEmpty();
             }
-        }).start();
+        }
     }
 
     public void listIsEmpty() {
@@ -154,7 +148,7 @@ public class FavouriteListActivity extends AppCompatActivity {
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
-                        setFavouriteList();
+                        new LoadFavouriteList().execute();
                     }
 
                     @Override
@@ -343,7 +337,8 @@ public class FavouriteListActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mPlayerEventBroadcastReceiver);
+        if(null != mPlayerEventBroadcastReceiver)
+            unregisterReceiver(mPlayerEventBroadcastReceiver);
     }
 
     private void expand() {

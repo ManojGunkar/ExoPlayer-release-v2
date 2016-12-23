@@ -48,17 +48,15 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
 
     private static final String TAG = "FavouriteListAdapter-TAG";
     LinkedList<? extends IMediaItemBase> itemList;
-    private PermissionChecker permissionChecker;
     private int selectedSongId = -1;
     private FavouriteListAdapter.SimpleItemViewHolder selectedHolder;
     private Context context;
     private RecyclerView recyclerView;
 
-    public FavouriteListAdapter(Context context, RecyclerView recyclerView, LinkedList<? extends IMediaItemBase> itemList, PermissionChecker permissionChecker) {
+    public FavouriteListAdapter(Context context, RecyclerView recyclerView, LinkedList<? extends IMediaItemBase> itemList) {
         this.context = context;
         this.recyclerView = recyclerView;
         this.itemList = itemList;
-        this.permissionChecker = permissionChecker;
     }
 
     @Override

@@ -63,6 +63,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
     private RegularTextView mTitle, mSubTitle;
     private ImageView mAlbumArt, mPlayPause;
     MusicSearchHelper musicSearchHelper;
+    private int mPagerPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,8 @@ public class DeviceMusicActivity extends BoomMasterActivity{
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_music_library);
+
+        mPagerPosition = getIntent().getIntExtra("Page", 0);
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_RECEIVE_SONG);
@@ -93,6 +96,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
         mPageAdapter=new ListPageAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mPageAdapter);
         mViewPager.setOffscreenPageLimit(mPageAdapter.getCount() - 1);
+        mViewPager.setCurrentItem(mPagerPosition);
         mViewPager.getCurrentItem();
 
         initHandyTabBar();
@@ -272,15 +276,17 @@ public class DeviceMusicActivity extends BoomMasterActivity{
     }
 
     private void setCustomTab(){
-        int[] res=new int[]{R.drawable.library_songs_normal,
-                R.drawable.library_albums_normal,
+        int[] res=new int[]{
                 R.drawable.library_artists_normal,
+                R.drawable.library_albums_normal,
+                R.drawable.library_songs_normal,
                 R.drawable.library_playlists_normal ,
                 R.drawable.library_genres_normal};
 
-        int[] selected_res=new int[]{R.drawable.library_songs_active,
-                R.drawable.library_albums_active,
+        int[] selected_res=new int[]{
                 R.drawable.library_artists_active,
+                R.drawable.library_albums_active,
+                R.drawable.library_songs_active,
                 R.drawable.library_playlists_active ,
                 R.drawable.library_genres_active};
 
@@ -358,7 +364,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
 
     private class ListPageAdapter extends FragmentPagerAdapter {
 
-        private int[] items = {R.string.songs, R.string.albums, R.string.artists, R.string.playlists, R.string.genres};
+        private int[] items = {R.string.artists, R.string.albums, R.string.songs, R.string.playlists, R.string.genres};
 
         public ListPageAdapter(FragmentManager fm) {
             super(fm);

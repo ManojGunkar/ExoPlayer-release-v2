@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,6 +30,7 @@ import android.widget.ProgressBar;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.handler.search.Search;
 import com.globaldelight.boom.handler.search.SearchResult;
 import com.globaldelight.boom.task.PlayerService;
@@ -41,6 +43,7 @@ import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
@@ -76,10 +79,6 @@ public class SearchDetailListActivity extends AppCompatActivity {
         mResultType = getIntent().getStringExtra("list_type");
         mQuery = getIntent().getStringExtra("query");
 
-        initView();
-
-        initMiniPlayer();
-
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_RECEIVE_SONG);
         intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
@@ -89,6 +88,10 @@ public class SearchDetailListActivity extends AppCompatActivity {
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
+
+        initView();
+
+        initMiniPlayer();
     }
 
     private void initView() {
@@ -106,63 +109,67 @@ public class SearchDetailListActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        addDetailList();
+        new LoadSearchDetailList().execute(mResultType, mQuery);
         setForAnimation();
     }
-
 
     private void setForAnimation() {
         recyclerView.scrollTo(0, 100);
     }
 
-    private void addDetailList() {
-        Search result = new Search();
-        if(Utils.isPhone(SearchDetailListActivity.this)){
-            gridLayoutManager =
-                    new GridLayoutManager(SearchDetailListActivity.this, 2);
-        }else{
-            gridLayoutManager =
-                    new GridLayoutManager(SearchDetailListActivity.this, 3);
-        }
-        if(mResultType.equals(SearchResult.ARTISTS)){
-            adapter = new SearchDetailListAdapter(this, result.getResultArtistList(this, mQuery, false), mResultType);
-        }else if(mResultType.equals(SearchResult.ALBUMS)){
-            adapter = new SearchDetailListAdapter(this, result.getResultAlbumList(this, mQuery, false), mResultType);
-        }else if(mResultType.equals(SearchResult.SONGS)){
-            adapter = new SearchDetailListAdapter(this, result.getResultSongList(this, mQuery, false), mResultType);
-            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this, 0));
+    private class LoadSearchDetailList extends AsyncTask<String, Void, ArrayList<? extends IMediaItemBase>> {
+        private String mResultType, mQuery;
+        @Override
+        protected ArrayList<? extends IMediaItemBase> doInBackground(String... params) {
+            Search result = new Search();
+            mResultType = params[0];
+            mQuery = params[1];
+            if(mResultType.equals(SearchResult.ARTISTS)){
+                return result.getResultArtistList(SearchDetailListActivity.this, mQuery, false);
+            }else if(mResultType.equals(SearchResult.ALBUMS)){
+                return result.getResultAlbumList(SearchDetailListActivity.this, mQuery, false);
+            }else if(mResultType.equals(SearchResult.SONGS)){
+                return result.getResultSongList(SearchDetailListActivity.this, mQuery, false);
+            }
+            return null;
         }
 
-        recyclerView.setHasFixedSize(true);
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                if(mResultType.equals(SearchResult.ARTISTS)){
-                    return 1;
-                }else if(mResultType.equals(SearchResult.ALBUMS)){
-                    return 1;
-                }else if(mResultType.equals(SearchResult.SONGS)){
-                    return 2;
-                }else
-                    return 0;
+        @Override
+        protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
+            super.onPostExecute(iMediaItemList);
+            if(Utils.isPhone(SearchDetailListActivity.this)){
+                gridLayoutManager =
+                        new GridLayoutManager(SearchDetailListActivity.this, 2);
+            }else{
+                gridLayoutManager =
+                        new GridLayoutManager(SearchDetailListActivity.this, 3);
             }
-        });
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.setAdapter(adapter);
+
+            adapter = new SearchDetailListAdapter(SearchDetailListActivity.this, iMediaItemList, mResultType);
+            if(mResultType.equals(SearchResult.SONGS)){
+                recyclerView.addItemDecoration(new SimpleDividerItemDecoration(SearchDetailListActivity.this, 0));
+            }
+            recyclerView.setHasFixedSize(true);
+            gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    if(mResultType.equals(SearchResult.ARTISTS)){
+                        return 1;
+                    }else if(mResultType.equals(SearchResult.ALBUMS)){
+                        return 1;
+                    }else if(mResultType.equals(SearchResult.SONGS)){
+                        return 2;
+                    }else
+                        return 0;
+                }
+            });
+            recyclerView.setLayoutManager(gridLayoutManager);
+            recyclerView.setAdapter(adapter);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-       /* MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.search_menu, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setQueryHint(getResources().getString(R.string.search_hint));
-
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));*/
         return true;
     }
 
@@ -343,12 +350,12 @@ public class SearchDetailListActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mPlayerEventBroadcastReceiver);
+        if(null != mPlayerEventBroadcastReceiver)
+            unregisterReceiver(mPlayerEventBroadcastReceiver);
     }
 
     private void expand() {
         mMiniPlayer.setVisibility(View.VISIBLE);
-
         final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         mMiniPlayer.measure(widthSpec, heightSpec);

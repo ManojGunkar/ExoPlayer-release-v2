@@ -293,7 +293,7 @@ public class DeviceMediaQuery {
 
                 artistList.add(new MediaItemCollection(artistListCursor.getLong(Item_ID_Column),
                         artistListCursor.getString(Item_Title_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : artistListCursor.getString(Item_Title_Column),
-                        null, getAlbumArtByArtist(context, artistListCursor.getString(Item_Title_Column)),
+                        null, /*getAlbumArtByArtist(context, artistListCursor.getString(Item_Title_Column))*/ null,
                         artistListCursor.getInt(Item_Count_Column), artistListCursor.getInt(numOfAlbumsColumn), ItemType.ARTIST,
                         MediaType.DEVICE_MEDIA_LIB));
             }
@@ -547,7 +547,7 @@ public class DeviceMediaQuery {
     }
 
     //    get art url of the ic_artist
-    private static String getAlbumArtByArtist(Context context, String artist) {
+    public static String getAlbumArtByArtist(Context context, String artist) {
         if(artist.equalsIgnoreCase(context.getResources().getString(R.string.unknown_artist))){
             artist = "<unknown>";
         }
@@ -556,18 +556,18 @@ public class DeviceMediaQuery {
         Cursor albumListCursor = context.getContentResolver().
                 query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, new String[]{MediaStore.Audio.Albums.ALBUM_ART}, where, new String[]{artist}, null);
 
-        StringBuilder sb = new StringBuilder();
+        String albumArt = null;
         if (albumListCursor != null && albumListCursor.moveToFirst()) {
             //get columns
             int Item_Album_Art_Path_Column = albumListCursor.getColumnIndex
                     (MediaStore.Audio.Albums.ALBUM_ART);
 
-            sb.append(albumListCursor.getString(Item_Album_Art_Path_Column));
+            albumArt = albumListCursor.getString(Item_Album_Art_Path_Column);
         }
         if (albumListCursor != null) {
             albumListCursor.close();
         }
-        return sb.toString();
+        return albumArt;
     }
 
 /*****************************************************Playlist Query****************************************************************/
@@ -751,7 +751,7 @@ public class DeviceMediaQuery {
                     }catch (Exception e){}
 
                     genreList.add(new MediaItemCollection(genreId, genreListCursor.getString(genreListCursor.getColumnIndex(MediaStore.Audio.Genres.NAME)),
-                            null, getAlbumArtByAlbum(context, genreSongCursor.getString(3)), genreSongCount, genreAlbumCount,
+                            genreSongCursor.getString(3), /*getAlbumArtByAlbum(context, genreSongCursor.getString(3))*/ null, genreSongCount, genreAlbumCount,
                             ItemType.GENRE, MediaType.DEVICE_MEDIA_LIB));
                 }
                 // Close the cursor
@@ -792,7 +792,7 @@ public class DeviceMediaQuery {
                     }catch (Exception e){}
 
                     genre = new MediaItemCollection(genreId, genreListCursor.getString(genreListCursor.getColumnIndex(MediaStore.Audio.Genres.NAME)),
-                            null, getAlbumArtByAlbum(context, genreSongCursor.getString(3)), genreSongCount, genreAlbumCount,
+                            genreSongCursor.getString(3), getAlbumArtByAlbum(context, genreSongCursor.getString(3)), genreSongCount, genreAlbumCount,
                             ItemType.GENRE, MediaType.DEVICE_MEDIA_LIB);
                 }
                 // Close the cursor

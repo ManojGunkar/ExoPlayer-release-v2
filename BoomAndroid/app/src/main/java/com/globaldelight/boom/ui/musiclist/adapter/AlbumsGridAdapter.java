@@ -28,6 +28,7 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -76,6 +77,7 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
         holder.title.setText(itemList.get(position).getItemTitle());
         holder.subTitle.setText(itemList.get(position).getItemSubTitle());
         int size = setSize(holder);
+
         setArtistImg(holder, position, size);
 
         if(App.getUserPreferenceHandler().isLibFromHome()) {

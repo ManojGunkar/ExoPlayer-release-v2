@@ -1,6 +1,7 @@
 package com.globaldelight.boom.ui.musiclist.fragment;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -40,36 +41,45 @@ public class SearchViewFragment extends Fragment {
         return view;
     }
 
-    private void setRecyclerView(String query) {
-        Search searchRes = new Search();
-        searchRes.getSearchResult(context, query, true);
-        if(Utils.isPhone(getActivity())){
-            gridLayoutManager =
-                    new GridLayoutManager(mainView.getContext(), 2);
-        }else{
-            gridLayoutManager =
-                    new GridLayoutManager(mainView.getContext(), 3);
+    private class LoadSearchResult extends AsyncTask<String, Void, Search> {
+
+        @Override
+        protected Search doInBackground(String... params) {
+            Search searchRes = new Search();
+            searchRes.getSearchResult(context, params[0], true);
+            return searchRes;
         }
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                if (adapter.whatView(position) == SearchListAdapter.ITEM_VIEW_TYPE_LIST_ALBUM ||
-                        adapter.whatView(position) == SearchListAdapter.ITEM_VIEW_TYPE_LIST_ARTIST) {
-                    return 1;
-                } else {
-                    return 2;
-                }
+
+        @Override
+        protected void onPostExecute(Search search) {
+            super.onPostExecute(search);
+            if(Utils.isPhone(getActivity())){
+                gridLayoutManager =
+                        new GridLayoutManager(mainView.getContext(), 2);
+            }else{
+                gridLayoutManager =
+                        new GridLayoutManager(mainView.getContext(), 3);
             }
-        });
-        recyclerView.setLayoutManager(gridLayoutManager);
-        adapter = new SearchListAdapter(context, getActivity(), searchRes, recyclerView);
-        recyclerView.addItemDecoration(new SearchListSpacesItemDecoration(2, adapter));
-        recyclerView.setAdapter(adapter);
+            gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    if (adapter.whatView(position) == SearchListAdapter.ITEM_VIEW_TYPE_LIST_ALBUM ||
+                            adapter.whatView(position) == SearchListAdapter.ITEM_VIEW_TYPE_LIST_ARTIST) {
+                        return 1;
+                    } else {
+                        return 2;
+                    }
+                }
+            });
+            recyclerView.setLayoutManager(gridLayoutManager);
+            adapter = new SearchListAdapter(context, getActivity(), search, recyclerView);
+            recyclerView.addItemDecoration(new SearchListSpacesItemDecoration(2, adapter));
+            recyclerView.setAdapter(adapter);
+        }
     }
 
-
     public void updateSearchResult(String query) {
-        setRecyclerView(query);
+        new LoadSearchResult().equals(query);
         showEmpty(false);
     }
 

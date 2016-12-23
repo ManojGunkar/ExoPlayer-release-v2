@@ -28,6 +28,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -89,6 +90,8 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
 
         holder.subTitle.setText( sb.toString());
         int size = setSize(holder);
+        if(null == items.get(position).getItemArtUrl())
+            items.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbum(context, items.get(position).getItemSubTitle()));
         setArtistImg(holder, position, size);
 
         if(App.getUserPreferenceHandler().isLibFromHome()) {

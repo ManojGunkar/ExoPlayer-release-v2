@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -46,7 +47,6 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.adapter.ItemSongListAdapter;
@@ -110,10 +110,6 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
 
         collection = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
 
-        initView();
-
-        initMiniPlayer();
-
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PlayerService.ACTION_UPDATE_BOOM_PLAYLIST_LIST);
         intentFilter.addAction(ACTION_RECEIVE_SONG);
@@ -125,6 +121,10 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
+
+        initView();
+
+        initMiniPlayer();
     }
 
     private void initView() {
@@ -172,11 +172,12 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
                         App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, true);
                     }
                 }catch (Exception e){}
-                itemSongListAdapter.notifyDataSetChanged();
+                if(null != itemSongListAdapter)
+                    itemSongListAdapter.notifyDataSetChanged();
             }
         });
 
-        setSongList();
+        new LoadSongsDetailList().execute();
         setForAnimation();
     }
 
@@ -219,63 +220,64 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         }
     }
 
-    public void getCollectionData(){
-        //              ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
-        if (collection.getItemType() == ItemType.BOOM_PLAYLIST /*&& collection.getMediaElement().isEmpty()*/) {
-            collection.setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
-        } else
-        //ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
-        if(collection.getItemType() == ItemType.PLAYLIST && collection.getMediaElement().isEmpty()) {
-            collection.setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
-        }else if((collection.getItemType() == ItemType.ARTIST || collection.getItemType() == ItemType.GENRE) &&
-                ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
-            ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
-        }
-    }
+    private class LoadSongsDetailList extends AsyncTask<Void, Void, IMediaItemCollection> {
 
-    private void setSongList() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                getCollectionData();
+        @Override
+        protected IMediaItemCollection doInBackground(Void... params) {
+            //ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
+            if (collection.getItemType() == ItemType.BOOM_PLAYLIST /*&& collection.getMediaElement().isEmpty()*/) {
+                collection.setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
                 setDetail(collection);
-                final LinearLayoutManager llm = new LinearLayoutManager(SongsDetailListActivity.this);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        rv.setLayoutManager(llm);
+                return collection;
+            } else
+                //ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
+                if(collection.getItemType() == ItemType.PLAYLIST && collection.getMediaElement().isEmpty()) {
+                    collection.setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
+                    setDetail(collection);
+                    return collection;
+                }else if((collection.getItemType() == ItemType.ARTIST || collection.getItemType() == ItemType.GENRE) &&
+                        ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
+                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
+                    setDetail(collection);
+                    return collection;
+                }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(IMediaItemCollection iMediaItemCollection) {
+            super.onPostExecute(iMediaItemCollection);
+            LinearLayoutManager llm = new LinearLayoutManager(SongsDetailListActivity.this);
+
+            rv.setLayoutManager(llm);
 //                        rv.addItemDecoration(new SimpleDividerItemDecoration(SongsDetailListActivity.this, 0));
-                        rv.setHasFixedSize(true);
-                        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                            @Override
-                            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                                super.onScrolled(recyclerView, dx, dy);
-                                itemSongListAdapter.recyclerScrolled();
-                            }
+            rv.setHasFixedSize(true);
+            rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    itemSongListAdapter.recyclerScrolled();
+                }
 
-                            @Override
-                            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                                super.onScrollStateChanged(recyclerView, newState);
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
 
-                                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
-                                    // Do something
-                                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                                    // Do something
-                                } else {
-                                    // Do something
-                                }
-                            }
-                        });
-                        itemSongListAdapter = new ItemSongListAdapter(SongsDetailListActivity.this, collection, listDetail, permissionChecker, SongsDetailListActivity.this);
-                        rv.setAdapter(itemSongListAdapter);
-                        if (collection.getItemType() == ItemType.BOOM_PLAYLIST) {
-                            setUpItemTouchHelper();
-                        }
-
+                    if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
+                        // Do something
+                    } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                        // Do something
+                    } else {
+                        // Do something
                     }
-                });
+                }
+            });
+            itemSongListAdapter = new ItemSongListAdapter(SongsDetailListActivity.this, iMediaItemCollection, listDetail, SongsDetailListActivity.this);
+            rv.setAdapter(itemSongListAdapter);
+            if (iMediaItemCollection.getItemType() == ItemType.BOOM_PLAYLIST) {
+                setUpItemTouchHelper();
             }
-        }).start();
+        }
     }
 
     private void setAlbumArt(Size size) {

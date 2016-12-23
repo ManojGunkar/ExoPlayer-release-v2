@@ -52,7 +52,6 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     private static final int ITEM_VIEW_ALBUM = 222;
     private static final int ITEM_VIEW_SONG = 333;
     private MediaItemCollection collection;
-    private PermissionChecker permissionChecker;
     private Context context;
     private Activity activity;
     private  RecyclerView recyclerView;
@@ -63,12 +62,11 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     }
 
     public DetailAlbumGridAdapter(DetailAlbumActivity detailAlbumActivity, RecyclerView recyclerView,
-                                  IMediaItemCollection collection, ListDetail listDetail, PermissionChecker permissionChecker) {
+                                  IMediaItemCollection collection, ListDetail listDetail) {
         this.context = detailAlbumActivity;
         activity = detailAlbumActivity;
         this.recyclerView = recyclerView;
         this.collection = (MediaItemCollection) collection;
-        this.permissionChecker = permissionChecker;
         this.listDetail = listDetail;
     }
 
@@ -132,7 +130,6 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                 case ITEM_VIEW_SONG:
                     if (collection.getArtUrlList().isEmpty())
                         ((MediaItemCollection) collection.getMediaElement().get(pos)).setArtUrlList(MediaController.getInstance(context).getArtUrlList(collection));
-                /*ArrayList<String> artUrlList = MediaController.getInstance(context).getArtUrlList((MediaItemCollection) collection.getMediaElement().get(pos));*/
                     int artCount = ((MediaItemCollection) collection.getMediaElement().get(pos)).getArtUrlList().size();
                     if (artCount >= 1) {
                         holder.artTable.setVisibility(View.VISIBLE);

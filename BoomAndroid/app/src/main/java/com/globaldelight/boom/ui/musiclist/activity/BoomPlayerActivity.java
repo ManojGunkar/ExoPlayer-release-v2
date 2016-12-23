@@ -16,9 +16,6 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,7 +37,6 @@ import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.manager.MusicReceiver;
 import com.globaldelight.boom.purchase.PurchaseUtil;
 import com.globaldelight.boom.task.PlayerService;
-import com.globaldelight.boom.ui.musiclist.adapter.AlbumsGridAdapter;
 import com.globaldelight.boom.ui.widgets.CircularSeekBar;
 import com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
@@ -49,9 +45,6 @@ import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
-import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
-import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
-import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boomplayer.AudioEffect;
 
@@ -514,11 +507,12 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         startActivity(queueIntent);
     }
 
-    private void startLibraryActivity() {
+    private void startLibraryActivity(boolean isSongs) {
         App.getUserPreferenceHandler().setLibraryStartFromHome(true);
-
         Intent listIntent = new Intent(BoomPlayerActivity.this, DeviceMusicActivity.class);
         listIntent.setAction("visible");
+        if(isSongs)
+            listIntent.putExtra("Page", 2);
         startActivity(listIntent);
         overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
     }
@@ -544,7 +538,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_QUEUE_BUTTON_FROM_PLAYER_SCREEN);
                 break;
             case R.id.library_btn:
-                startLibraryActivity();
+                startLibraryActivity(false);
                 break;
             case R.id.audio_effect_btn:
                 startEffectActivity();
@@ -576,7 +570,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 if(null != item){
                     switch (item.getParentType()){
                         case SONGS:
-                            startLibraryActivity();
+                            startLibraryActivity(true);
                             break;
                         case ALBUM:
                         case ARTIST:

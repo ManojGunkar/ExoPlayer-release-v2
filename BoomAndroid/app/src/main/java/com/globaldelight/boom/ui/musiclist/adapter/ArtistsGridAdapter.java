@@ -28,6 +28,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -79,6 +80,8 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
         holder.subTitle.setText((count<=1 ? context.getResources().getString(R.string.song) : context.getResources().getString(R.string.songs)) +" "+count+" "+
                 (albumCount<=1 ? context.getResources().getString(R.string.album) : context.getResources().getString(R.string.albums)) +" "+albumCount);
         int size = setSize(holder);
+        if(null==itemList.get(position).getItemArtUrl())
+            itemList.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByArtist(context, itemList.get(position).getItemTitle()));
         setArtistImg(holder, position, size);
 
         if(App.getUserPreferenceHandler().isLibFromHome()) {

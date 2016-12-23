@@ -130,7 +130,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         MediaItemCollection collection = new MediaItemCollection(playlistId, cursor.getString(1),
                 null, null,
                 getPlaylistSongCount(playlistId), 0,  ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB);
-        collection.setArtUrlList(getBoomPlayListArtList(playlistId));
+        /*collection.setArtUrlList(getBoomPlayListArtList(playlistId));*/
         return collection;
     }
 

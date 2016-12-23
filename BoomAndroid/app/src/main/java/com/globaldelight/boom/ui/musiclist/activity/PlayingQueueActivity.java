@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Canvas;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,17 +22,15 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.handler.PlayingQueue.QueueType;
+import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
 import com.globaldelight.boom.ui.musiclist.adapter.PlayingQueueListAdapter;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.PermissionChecker;
@@ -91,12 +90,12 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playing_queue);
 
-        initView();
-        setupToolbar();
-
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_UPDATE_QUEUE);
         registerReceiver(upnextBroadcastReceiver, filter);
+
+        initView();
+        setupToolbar();
     }
 
     private void initView() {
@@ -134,7 +133,7 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
-                        setPlayingQueueList();
+                        new LoadPlayingQueueList().execute();
                     }
 
                     @Override
@@ -144,45 +143,35 @@ public class PlayingQueueActivity extends AppCompatActivity implements OnStartDr
                 });
     }
 
-    public void setPlayingQueueList() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final GridLayoutManager gridLayoutManager =
-                        new GridLayoutManager(PlayingQueueActivity.this, 1);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                        recyclerView.setLayoutManager(gridLayoutManager);
-                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(PlayingQueueActivity.this, Utils.getWindowWidth(PlayingQueueActivity.this)));
-                        recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(PlayingQueueActivity.this, 0)));
-                        playingQueueListAdapter = new PlayingQueueListAdapter(PlayingQueueActivity.this, App.getPlayingQueueHandler().getUpNextList(), PlayingQueueActivity.this);
-                        recyclerView.setAdapter(playingQueueListAdapter);
-                        gridLayoutManager.scrollToPosition(playingQueueListAdapter.getPlayingHeaderPosition());
-                        recyclerView.setHasFixedSize(true);
-                        setUpItemTouchHelper();
-                        mQueueContainer.setVisibility(View.VISIBLE);
-                        mQueueLoad.setVisibility(View.GONE);
-                        mQueueLoad.setEnabled(false);
-                    }
-                });
-            }
-        }).start();
+    private class LoadPlayingQueueList extends AsyncTask<Void, Integer, UpNextList> {
+
+        @Override
+        protected UpNextList doInBackground(Void... params) {
+            return App.getPlayingQueueHandler().getUpNextList();
+        }
+
+        @Override
+        protected void onPostExecute(UpNextList upNextList) {
+            super.onPostExecute(upNextList);
+            GridLayoutManager gridLayoutManager =
+                    new GridLayoutManager(PlayingQueueActivity.this, 1);
+            gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            recyclerView.setLayoutManager(gridLayoutManager);
+            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(PlayingQueueActivity.this, Utils.getWindowWidth(PlayingQueueActivity.this)));
+            recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(PlayingQueueActivity.this, 0)));
+            playingQueueListAdapter = new PlayingQueueListAdapter(PlayingQueueActivity.this, upNextList, PlayingQueueActivity.this);
+            recyclerView.setAdapter(playingQueueListAdapter);
+            gridLayoutManager.scrollToPosition(playingQueueListAdapter.getPlayingHeaderPosition());
+            recyclerView.setHasFixedSize(true);
+            setUpItemTouchHelper();
+            mQueueContainer.setVisibility(View.VISIBLE);
+            mQueueLoad.setVisibility(View.GONE);
+            mQueueLoad.setEnabled(false);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        /*MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.search_menu, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setQueryHint(getResources().getString(R.string.search_hint));
-
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));*/
         return true;
     }
 
