@@ -489,8 +489,8 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
                         int oldCount = collection.getMediaElement().size();
                         collection.getMediaElement().clear();
                         collection.setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
-                        setDetail(collection);
                         collection.setItemCount(collection.getMediaElement().size());
+                        setDetail(collection);
                         itemSongListAdapter.updateNewList(collection, listDetail, oldCount);
                         itemSongListAdapter.notifyDataSetChanged();
                     }
