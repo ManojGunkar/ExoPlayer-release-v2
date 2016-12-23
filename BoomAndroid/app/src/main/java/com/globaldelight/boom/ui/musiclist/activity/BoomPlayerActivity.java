@@ -721,7 +721,10 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if ( requestCode == SURVEY_REQUEST_CODE ) {
-            // Handle survey result if any
+            if ( resultCode != RESULT_OK ) {
+                Toast t = Toast.makeText(this, getString(R.string.feedback_error), Toast.LENGTH_LONG);
+                t.show();
+            }
         }
     }
 
