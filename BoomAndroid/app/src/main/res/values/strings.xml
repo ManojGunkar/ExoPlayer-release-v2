@@ -193,8 +193,8 @@
 
     <!-- Survey -->
     <string name="feedback_error">Error! Please check your internet connection.</string>
-    <string name="feedback_title">Hope you are enjoying Boom App.</string>
-    <string name="feedback_text">Please help us to improve the app by providing feedback.</string>
+    <string name="feedback_title">Enjoying the Boom App?</string>
+    <string name="feedback_text">Take our quick feedback survey and tell us what you think.</string>
 
 
 </resources>
