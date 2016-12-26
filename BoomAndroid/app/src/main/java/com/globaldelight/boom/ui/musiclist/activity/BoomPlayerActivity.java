@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -51,11 +52,13 @@ import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.surveymonkey.surveymonkeyandroidsdk.SurveyMonkey;
+import com.surveymonkey.surveymonkeyandroidsdk.utils.SMConstants;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
@@ -729,12 +732,19 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if ( requestCode == SURVEY_REQUEST_CODE ) {
-            if ( resultCode != RESULT_OK ) {
-            //    Toast t = Toast.makeText(this, getString(R.string.feedback_error), Toast.LENGTH_LONG);
-            //    t.show();
+            // After feedback is provided adjust the date of next prompt.
+            long nextPromptInterval = DECLINE_TIME_LIMIT;
+            if ( resultCode == RESULT_OK ) {
+                nextPromptInterval = ACCEPT_TIME_LIMIT;
             }
+
+            SharedPreferences prefs = getApplicationContext().getSharedPreferences(SMConstants.PREF_NAME, Context.MODE_PRIVATE);
+            final long currentDate = new Date().getTime();
+            prefs.edit().putLong(SMConstants.PROMPT_DATE, currentDate + nextPromptInterval).commit();
         }
     }
+
+
 
     private void updateUpNextDB() {
         if(!App.getPlayerEventHandler().isPlaying()){
