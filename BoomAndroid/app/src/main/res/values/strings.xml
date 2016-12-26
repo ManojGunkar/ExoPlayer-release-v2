@@ -191,5 +191,10 @@
     <string name="speaker_status_all_on">All Speakers are On</string>
     <string name="search_settings">Search in Music Library</string>
 
+    <!-- Survey -->
+    <string name="feedback_error">Error! Please check your internet connection.</string>
+    <string name="feedback_title">Enjoying the Boom App?</string>
+    <string name="feedback_text">Take our quick feedback survey and tell us what you think.</string>
+
 
 </resources>

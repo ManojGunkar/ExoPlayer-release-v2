@@ -64,7 +64,8 @@ dependencies {
         transitive = true;
     }
     compile 'com.android.volley:volley:1.0.0'
-
+    compile 'com.surveymonkey:surveymonkey-android-sdk:1.0.5'
 }
+
 // ADD THIS AT THE BOTTOM
 apply plugin: 'com.google.gms.google-services'
