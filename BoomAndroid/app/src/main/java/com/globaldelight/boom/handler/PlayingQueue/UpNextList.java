@@ -199,7 +199,6 @@ public class UpNextList {
         if(getItemList(listType).size() > 0)
             getItemList(listType).remove(itemPosition);
     }
-
     public enum REPEAT {
         one,
         all,
