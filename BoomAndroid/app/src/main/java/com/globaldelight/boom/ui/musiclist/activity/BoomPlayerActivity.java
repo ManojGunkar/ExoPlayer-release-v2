@@ -90,11 +90,11 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     final static String SURVEY_HASH = "VVLMBV2";
     final static int SURVEY_REQUEST_CODE = 2000;
 
-    private final static long MS_PER_MIN = 60 * 1000;
-    private final static long MS_PER_DAY = 24 * 60 * MS_PER_MIN;
-    private final static long FEEDBACK_TIME_LIMIT = 30 * MS_PER_MIN;
-    private final static long DECLINE_TIME_LIMIT = 1 * MS_PER_DAY;
-    private final static long ACCEPT_TIME_LIMIT = 10 * MS_PER_DAY;
+    private final static long MINS = 60 * 1000;
+    private final static long DAYS = 24 * 60 * MINS;
+    private final static long FEEDBACK_TIME_LIMIT = 1 * MINS;
+    private final static long DECLINE_TIME_LIMIT = 15 * MINS;
+    private final static long ACCEPT_TIME_LIMIT = 10 * DAYS;
 
     private  SurveyMonkey surveyInstance = new SurveyMonkey();
 
