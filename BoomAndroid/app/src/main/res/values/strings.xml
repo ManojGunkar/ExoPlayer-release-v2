@@ -28,7 +28,6 @@
     <string name="pref_nav_trans">Fully Transparent Navigationbar</string>
     <string name="pref_draw_over">Shade over album art</string>
 
-
     <!--3d surround-->
     <string name="title_effects">Effects</string>
     <string name="switch_on">ON</string>
@@ -40,13 +39,12 @@
     <string name="speaker_status_all_off">All speakers are Off</string>
     <string name="full_bass">Full Bass</string>
     <string name="req_of_3d">3D needs</string>
-    <string name="req_intensity">intensity ON</string>
-    <string name="req_equlaizer">equalizer ON</string>
+    <string name="req_intensity">Intensity ON</string>
+    <string name="req_equlaizer">Equalizer ON</string>
     <string name="status_on">on</string>
     <string name="status_off">off</string>
     <string name="status_on_caps">ON</string>
     <string name="status_off_caps">OFF</string>
-
 
     <!--Setting-->
     <string name="title_settings">Settings</string>
@@ -82,10 +80,8 @@
     <string name="settings_menu_share">Share</string>
     <string name="settings_menu_support">Support</string>
 
-
     <!-- about-->
     <string name="header_about">About</string>
-
     <string name="title_about">Boom</string>
     <string name="version">v1.0</string>
     <string name="description_about">Delightful Surround Sound Engineered by \n Global Delight</string>
@@ -102,19 +98,23 @@
     <string name="tutorial_effect_tap_hold">Tap and hold to turn \n Effects On/Off</string>
     <string name="tutorial_select_speaker">Tap to modify Speakers</string>
     <string name="tutorial_use_headphones">Use Headphones for the \n best experience</string>
+
     <!-- playing queue-->
     <string name="title_playingque">Up Next</string>
+
     <!-- Menu-->
     <string name="playque_menu_remove">Remove</string>
     <string name="playlist_menu_addtoqueue">Add To Queue</string>
     <string name="playlist_menu_delete_list">Delete Playlist</string>
     <string name="search_fragment">Search</string>
-    <string name="cant_play_song">Song can\'t played...!</string>
+    <string name="cant_play_song">Song can\'t be played...!</string>
     <string name="title_favourite_list">Boom Favourite</string>
     <string name="song">Song</string>
 
+
     <!-- Player-->
     <string name="no_song">No Song Selected.</string>
+
     <!-- Boom Playlist-->
     <string name="boom_playlist_title">Boom Playlist</string>
     <string name="playlist_created">PlayList Created.</string>
@@ -123,6 +123,7 @@
     <string name="dialog_txt_cancel">Cancel</string>
     <string name="dialog_txt_rename">Rename</string>
     <string name="dialog_txt_done">Done</string>
+
     <!-- library-->
     <string name="title_library">Music Library</string>
 
@@ -132,14 +133,17 @@
     <string name="purchase_item_desc2">Intensity control with a single purchase!</string>
     <string name="purchase_buton_text">Buy Now @ $ 3.99 </string>
     <string name="purchase_restore_txt">Restore Purchases</string>
+
     <!-- Favorite-->
     <string name="fav_placeholder_txt">You\'ve not liked \n any Songs yet.</string>
-    <string name="added_to_favorite">Added as favorite.</string>
-    <string name="playing_added_to_favorite">Playing Song added as favorite.</string>
-    <string name="removed_from_favorite">Removed from favorite.</string>
-    <string name="playing_removed_from_favorite">Playing Song removed from favorite.</string>
+    <string name="added_to_favorite">Added as favourite.</string>
+    <string name="playing_added_to_favorite">Playing Song added as favourite.</string>
+    <string name="removed_from_favorite">Removed from favourite.</string>
+    <string name="playing_removed_from_favorite">Playing Song removed from favourite.</string>
+
     <!--Boom PlayList-->
     <string name="boom_playlist_placeholder_txt">You\'ve not created \n any Playlist yet.</string>
+
     <!--PlayList-->
     <string name="playlist_placeholder_txt">There are no Playlists \n in music library.</string>
     <string name="no_music_placeholder_txt">No music found \n in library.</string>
@@ -187,14 +191,16 @@
     <string name="menu_add_songs">Add Songs</string>
     <string name="menu_add_boom_fav">Add to Boom Favourites</string>
     <string name="menu_remove_boom_fav">Remove from Boom Favourites</string>
-    <string name="unknown_artist">unknown artist</string>
+    <string name="unknown_artist">Unknown Artist</string>
     <string name="speaker_status_all_on">All Speakers are On</string>
     <string name="search_settings">Search in Music Library</string>
+
 
     <!-- Survey -->
     <string name="feedback_error">Error! Please check your internet connection.</string>
     <string name="feedback_title">Enjoying the Boom App?</string>
     <string name="feedback_text">Take our quick feedback survey and tell us what you think.</string>
+    <string name="feedback">Feedback</string>
 
 
 </resources>

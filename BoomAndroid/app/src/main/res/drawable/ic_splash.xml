@@ -2,9 +2,14 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item>
+        <color
+            android:gravity="fill"
+            android:color="@color/black_color" />
+    </item>
+    <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/boom_splash"/>
+            android:src="@drawable/ic_boom_splash"/>
     </item>
 
 </layer-list>

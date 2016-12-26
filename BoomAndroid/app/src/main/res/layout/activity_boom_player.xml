@@ -15,7 +15,7 @@
             android:layout_height="match_parent"
             android:background="#D9000000"
             android:orientation="vertical"
-            android:weightSum="100">
+            android:weightSum="91">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -136,15 +136,21 @@
 
             </LinearLayout>
 
-            <Button
-                android:text="Feedback"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/feedback"
-                android:layout_weight="0.25"
-                android:textColor="@color/yellow"
-                android:layout_gravity="right"
-                style="@style/Widget.AppCompat.Button.Borderless" />
+                android:background="@drawable/ic_boom_feedback"
+                android:layout_gravity="right">
+                <Button
+                    android:text="@string/feedback"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/seventy_two_px"
+                    android:textAllCaps="false"
+                    android:id="@+id/boom_feedback"
+                    android:textColor="@color/white"
+                    style="@style/Widget.AppCompat.Button.Borderless" />
+            </LinearLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"

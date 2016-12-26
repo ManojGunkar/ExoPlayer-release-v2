@@ -227,21 +227,16 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
             //ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
             if (collection.getItemType() == ItemType.BOOM_PLAYLIST /*&& collection.getMediaElement().isEmpty()*/) {
                 collection.setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
-                setDetail(collection);
-                return collection;
             } else
                 //ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
                 if(collection.getItemType() == ItemType.PLAYLIST && collection.getMediaElement().isEmpty()) {
                     collection.setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
-                    setDetail(collection);
-                    return collection;
                 }else if((collection.getItemType() == ItemType.ARTIST || collection.getItemType() == ItemType.GENRE) &&
                         ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
                     ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(SongsDetailListActivity.this).getMediaCollectionItemDetails(collection));
-                    setDetail(collection);
-                    return collection;
                 }
-            return null;
+            setDetail(collection);
+            return collection;
         }
 
         @Override

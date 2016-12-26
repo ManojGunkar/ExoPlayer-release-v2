@@ -68,6 +68,7 @@ public class DeviceMediaQuery {
             int album_art = songListCursor.getColumnIndex
                     (MediaStore.Audio.AlbumColumns.ALBUM_ART);
             do{
+                Log.d("Song_Name : ", songListCursor.getString(Song_Name_Column));
                 songList.add(new MediaItem(songListCursor.getLong(Song_Id_Column), songListCursor.getString(Song_Name_Column),
                         songListCursor.getString(Song_Display_Name_Column), songListCursor.getString(Song_Path_Column),
                         songListCursor.getLong(Album_ID_Column), songListCursor.getString(Album_Name_Column),

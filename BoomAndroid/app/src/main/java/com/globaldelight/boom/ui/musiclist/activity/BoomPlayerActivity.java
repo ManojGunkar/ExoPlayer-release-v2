@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -514,12 +515,15 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mTrackSeek.setProgress(App.getUserPreferenceHandler().getPlayerSeekPosition());
 
 
-        Button feedbackBtn = (Button)findViewById(R.id.feedback);
-        final Activity me = this;
+        Button feedbackBtn = (Button)findViewById(R.id.boom_feedback);
+        /*Typeface typeface=Typeface.createFromAsset(getAssets(), "fonts/TitilliumWeb-BoldItalic.ttf");
+        feedbackBtn.setTypeface(typeface);
+        String s = "feedback";
+        feedbackBtn.setText(s);*/
         feedbackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                surveyInstance.startSMFeedbackActivityForResult(me, SURVEY_REQUEST_CODE, SURVEY_HASH);
+                surveyInstance.startSMFeedbackActivityForResult(BoomPlayerActivity.this, SURVEY_REQUEST_CODE, SURVEY_HASH);
             }
         });
     }

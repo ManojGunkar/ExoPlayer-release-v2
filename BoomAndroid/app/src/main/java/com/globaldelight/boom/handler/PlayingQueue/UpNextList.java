@@ -113,6 +113,14 @@ public class UpNextList {
 
     public boolean resetRepeat() {
         mRepeat = App.getUserPreferenceHandler().resetRepeat();
+        if(mRepeat == REPEAT.none && mUpNextList.size() == 0){
+            for(int i=0;i<mAutoNextList.size();i++) {
+                if (getPlayingItem().getItemId() == mAutoNextList.get(i).getItemId()){
+                    PlayItemIndex = i+1;
+                    break;
+                }
+            }
+        }
         updateRepeatList();
         return true;
     }
@@ -147,7 +155,7 @@ public class UpNextList {
             }
         }else{
             if(mAutoNextList.size() > 0)
-            for (int i = 0; i <= PlayItemIndex; PlayItemIndex--) {
+            for (int i = 0; i < PlayItemIndex; PlayItemIndex--) {
                 addItemAsPrevious(new UpNextItem(mAutoNextList.remove(i), QueueType.Auto_UpNext));
             }
             if(PlayItemIndex == -1){
@@ -494,7 +502,7 @@ public class UpNextList {
                 managePlayedItem(true);
                 mCurrentList.add(new UpNextItem(mUpNextList.remove(0), QueueType.Manual_UpNext));
             } else if (mAutoNextList.size() > 0) {
-                for (int i = 0; i <= PlayItemIndex; PlayItemIndex--) {
+                for (int i = 0; i < PlayItemIndex; PlayItemIndex--) {
                     addItemAsPrevious(new UpNextItem(mAutoNextList.remove(i), QueueType.Auto_UpNext));
                 }
                 managePlayedItem(true);
