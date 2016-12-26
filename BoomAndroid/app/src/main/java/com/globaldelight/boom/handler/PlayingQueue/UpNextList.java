@@ -281,6 +281,14 @@ public class UpNextList {
             } else if (mAutoNextList.size() > 0) {
                 mCurrentList.add(new UpNextItem(mAutoNextList.removeLast(), QueueType.Auto_UpNext));
             }
+            overFillingPlayingItem();
+        }
+    }
+
+    private void overFillingPlayingItem(){
+        if(mCurrentList.size() > 1){
+            for(int i =0; i< mCurrentList.size()-1; i++)
+                mCurrentList.remove(i);
         }
     }
 
@@ -445,6 +453,7 @@ public class UpNextList {
                             UpNextItem item = new UpNextItem(mHistoryList.remove(position), queueType);
                             managePlayedItem(true);
                             mCurrentList.add(item);
+                            overFillingPlayingItem();
                             PlayingItemChanged();
                             break;
                         case Playing:
@@ -457,6 +466,7 @@ public class UpNextList {
                         case Manual_UpNext:
                             managePlayedItem(true);
                             mCurrentList.add(new UpNextItem(mUpNextList.remove(position), queueType));
+                            overFillingPlayingItem();
                             PlayingItemChanged();
                             break;
                         case Auto_UpNext:
@@ -473,6 +483,7 @@ public class UpNextList {
                             } else if (mRepeat == REPEAT.all/* && mShuffle == SHUFFLE.none*/) {
                                 mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), queueType));
                             }
+                            overFillingPlayingItem();
                             PlayingItemChanged();
                             break;
                     }
@@ -546,6 +557,7 @@ public class UpNextList {
             }
 
         }
+        overFillingPlayingItem();
         PlayingItemChanged();
     }
 
@@ -561,7 +573,6 @@ public class UpNextList {
                     PlayItemIndex--;
                 }
                 mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
-                PlayingItemChanged();
             } else /*if (((mRepeat == REPEAT.all && mShuffle == SHUFFLE.all) || mRepeat != REPEAT.all) && mAutoNextList.size() != -1)*/ {
                 int prevSize = mGhostList.size();
                 MediaItem playingItem = null;
@@ -572,8 +583,9 @@ public class UpNextList {
                 if (null != playingItem) {
                     mCurrentList.add(new UpNextItem(playingItem, QueueType.Auto_UpNext));
                 }
-                PlayingItemChanged();
             }
+            overFillingPlayingItem();
+            PlayingItemChanged();
         }
     }
 
@@ -627,8 +639,10 @@ public class UpNextList {
         if (mCurrentList.size() == 1)
             addItemToHistory(mCurrentList.remove(0).getUpNextItem());
 
-        if(null != item)
+        if(null != item) {
             mCurrentList.add(new UpNextItem(item, queueType));
+            overFillingPlayingItem();
+        }
     }
 
     private void setItemListAsPrevious(List<? extends IMediaItemBase> itemList) {
