@@ -480,6 +480,7 @@
 
             <com.globaldelight.boom.ui.widgets.RegularButton
                 android:id="@+id/buyButton"
+                android:visibility="gone"
                 android:layout_width="@dimen/one_thousand_twenty_eight"
                 android:layout_height="@dimen/two_hundred_eight"
                 android:layout_gravity="center_horizontal"
