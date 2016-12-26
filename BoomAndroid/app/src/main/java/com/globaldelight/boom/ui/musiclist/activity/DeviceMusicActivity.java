@@ -301,6 +301,9 @@ public class DeviceMusicActivity extends BoomMasterActivity{
 
     @Override
     public void onBackPressed() {
+        if(App.getUserPreferenceHandler().isLibFromHome()){
+            App.getUserPreferenceHandler().setLibraryCurrentTabPosition(mViewPager.getCurrentItem());
+        }
         clearBoomListPreference();
         finish();
         overridePendingTransition(R.anim.stay_out, R.anim.slide_out_left);

@@ -536,8 +536,11 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         App.getUserPreferenceHandler().setLibraryStartFromHome(true);
         Intent listIntent = new Intent(BoomPlayerActivity.this, DeviceMusicActivity.class);
         listIntent.setAction("visible");
-        if(isSongs)
+        if(isSongs) {
             listIntent.putExtra("Page", 2);
+        }else{
+            listIntent.putExtra("Page", App.getUserPreferenceHandler().getLibraryCurrentTabPosition());
+        }
         startActivity(listIntent);
         overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
     }

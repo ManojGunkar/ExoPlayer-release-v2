@@ -28,6 +28,8 @@ public class UserPreferenceHandler {
     private static final String PLAYER_PLAYED_TIME = "played_time";
     private static final String PLAYER_REMAINS_TIME = "remains_time";
 
+    private static final String LIBRARY_TAB_POSITION = "library_tab_position";
+
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
 
@@ -181,5 +183,13 @@ public class UserPreferenceHandler {
 
     public long getRemainsTime(){
         return shp.getLong(PLAYER_REMAINS_TIME, 0);
+    }
+
+    public void setLibraryCurrentTabPosition(int TabPosition) {
+        shp.edit().putInt(LIBRARY_TAB_POSITION, TabPosition).apply();
+    }
+
+    public int getLibraryCurrentTabPosition() {
+        return shp.getInt(LIBRARY_TAB_POSITION, 0);
     }
 }

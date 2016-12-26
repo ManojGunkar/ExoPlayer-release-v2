@@ -253,9 +253,9 @@ public class UpNextList {
         if(mCurrentList.size() > 0){
             /*Add Now Playing Item to relevant up-next list*/
             if(mCurrentList.get(0).getUpNextItemType() == QueueType.Manual_UpNext){
-                mUpNextList.addLast(mCurrentList.remove(0).getUpNextItem());
+                mUpNextList.addLast(mCurrentList.get(0).getUpNextItem());
             }else if(mCurrentList.get(0).getUpNextItemType() == QueueType.Auto_UpNext){
-                mAutoNextList.addLast(mCurrentList.remove(0).getUpNextItem());
+                mAutoNextList.addLast(mCurrentList.get(0).getUpNextItem());
             }
         }
         if(mUpNextList.size() > 0)
@@ -264,6 +264,13 @@ public class UpNextList {
             addUpNextItem(mAutoNextList, QueueType.Auto_UpNext);
         if(mGhostList.size() > 0)
             addUpNextItem(mGhostList, QueueType.Previous);
+
+        /*If service is not destroyed remove current item from upnext*/
+        if (mUpNextList.size() > 0) {
+            mUpNextList.removeLast();
+        } else if (mAutoNextList.size() > 0) {
+            mAutoNextList.removeLast();
+        }
     }
 
     public void fetchUpNextItemsToDB(){
@@ -275,14 +282,13 @@ public class UpNextList {
             mGhostList = (LinkedList<IMediaItemBase>) getUpNextItemList(QueueType.Previous);
 
         /*Fetch Now Playing Item from relevant up-next list*/
-        if(mCurrentList.size() == 0) {
-            if (mUpNextList.size() > 0) {
-                mCurrentList.add(new UpNextItem(mUpNextList.removeLast(), QueueType.Manual_UpNext));
-            } else if (mAutoNextList.size() > 0) {
-                mCurrentList.add(new UpNextItem(mAutoNextList.removeLast(), QueueType.Auto_UpNext));
-            }
-            overFillingPlayingItem();
+        mUpNextList.clear();
+        if (mUpNextList.size() > 0) {
+            mCurrentList.add(new UpNextItem(mUpNextList.removeLast(), QueueType.Manual_UpNext));
+        } else if (mAutoNextList.size() > 0) {
+            mCurrentList.add(new UpNextItem(mAutoNextList.removeLast(), QueueType.Auto_UpNext));
         }
+        overFillingPlayingItem();
     }
 
     private void overFillingPlayingItem(){
@@ -549,7 +555,12 @@ public class UpNextList {
                     PlayItemIndex++;
                 }
                 mCurrentList.clear();
-                mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
+                if((mAutoNextList.size() - 1) > PlayItemIndex) {
+                    mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
+                }else {
+                    PlayItemIndex = 0;
+                    mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
+                }
             } else if (mAutoNextList.size() > 0){
                 PlayItemIndex = 0;
                 mCurrentList.clear();
