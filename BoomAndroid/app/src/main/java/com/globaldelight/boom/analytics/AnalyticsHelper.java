@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.flurry.android.FlurryAgent;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.purchase.PurchaseUtil;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
@@ -209,70 +208,6 @@ public class AnalyticsHelper {
         mixpanel.registerSuperProperties(properties);
         mixpanel.getPeople().set(properties);
     }
-
-    public static void purchaseFailed(Context context) {
-        JSONObject properties = new JSONObject();
-        try {
-            properties.put(PARAM_REMAINING_DAYS, PurchaseUtil.getRemainingDays(context));
-            MixPanelAnalyticHelper.getInstance(context).track(EVENT_PURCHASE_FAILED, properties);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        FlurryAnalyticHelper.logEvent(EVENT_PURCHASE_FAILED);
-    }
-
-    public static void trackPurchaseCancelled(Context context) {
-
-        JSONObject properties = new JSONObject();
-        try {
-            properties.put(PARAM_REMAINING_DAYS, PurchaseUtil.getRemainingDays(context));
-            MixPanelAnalyticHelper.getInstance(context).track(EVENT_PURCHASE_CANCELLED, properties);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        FlurryAnalyticHelper.logEvent(EVENT_PURCHASE_CANCELLED);
-    }
-
-    public static void purchaseSuccess(Application application, Map map, boolean isRestore, String purchasedItem) {
-        JSONObject properties = new JSONObject();
-        if (isRestore) {
-            properties = new JSONObject();
-            try {
-                properties.put(PARAM_PURCHASED_ITEM, purchasedItem);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            MixPanelAnalyticHelper.getInstance(application).track(EVENT_PURCHASE_RESTORED, properties);
-            FlurryAnalyticHelper.logEvent(EVENT_PURCHASE_RESTORED);
-            AppsFlyerAnalyticHelper.trackEvent(application, EVENT_PURCHASE_RESTORED, map
-            );
-        } else {
-            properties = new JSONObject();
-            try {
-                properties.put(PARAM_PURCHASED_ITEM, purchasedItem);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            MixPanelAnalyticHelper.getInstance(application).track(EVENT_PURCHASE_SUCCESS, properties);
-            JSONObject props = new JSONObject();
-            try {
-                props.put(EVENT_EFFECT_PACK_PURCHASE, true);
-                MixPanelAnalyticHelper.getInstance(application).registerSuperProperties(props);
-                MixPanelAnalyticHelper.getInstance(application).getPeople().set(props);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            FlurryAnalyticHelper.logEvent(EVENT_PURCHASE_SUCCESS);
-            AppsFlyerAnalyticHelper.trackEvent(application, EVENT_PURCHASE_SUCCESS, map);
-
-        }
-
-
-    }
-
 
     public void logCommonEvent(Context context, String event) {
        FlurryAgent.logEvent(event);

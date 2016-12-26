@@ -40,7 +40,6 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
-import com.globaldelight.boom.purchase.InAppPurchaseActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.HeadSetListAdapter;
 import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
@@ -722,15 +721,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    public void openStore(View v) {
-        Intent intent = new Intent(SettingsActivity.this, InAppPurchaseActivity.class);
-        startActivity(intent);
-    }
-
 
     public void customMaterialTimepicker(boolean running) {
-
-
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .customView(R.layout.custom_time_picker, false)
                 .backgroundColor(Color.parseColor("#171921"))

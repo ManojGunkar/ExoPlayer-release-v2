@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
@@ -39,7 +40,6 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.manager.MusicReceiver;
-import com.globaldelight.boom.purchase.PurchaseUtil;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.widgets.CircularSeekBar;
 import com.globaldelight.boom.ui.widgets.CoverView.CircularCoverView;
@@ -97,8 +97,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private final static long ACCEPT_TIME_LIMIT = 10 * MS_PER_DAY;
 
     private  SurveyMonkey surveyInstance = new SurveyMonkey();
-
-
 
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -369,8 +367,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
         registerReceiver(mPlayerBroadcastReceiver, intentFilter);
-        // new BoomServerRequest().getAccessToken(this);
-        showPurchaseOption();
     }
 
     public void showCoachMark() {
@@ -408,9 +404,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    public void showPurchaseOption() {
-        PurchaseUtil.checkUserPurchase(this);
-    }
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
@@ -518,11 +511,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             mTrackSeek.setProgress(App.getUserPreferenceHandler().getPlayerSeekPosition());
 
 
-        Button feedbackBtn = (Button)findViewById(R.id.boom_feedback);
-        /*Typeface typeface=Typeface.createFromAsset(getAssets(), "fonts/TitilliumWeb-BoldItalic.ttf");
-        feedbackBtn.setTypeface(typeface);
-        String s = "feedback";
-        feedbackBtn.setText(s);*/
+        TextView feedbackBtn = (TextView)findViewById(R.id.boom_feedback);
+//        Typeface typeface=Typeface.createFromAsset(getAssets(), "fonts/TitilliumWeb-SemiBoldItalic.ttf");
+//        feedbackBtn.setTypeface(typeface);
         feedbackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

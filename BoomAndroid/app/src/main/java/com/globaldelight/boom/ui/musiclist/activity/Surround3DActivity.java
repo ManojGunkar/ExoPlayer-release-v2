@@ -248,8 +248,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void update3DSurround(){
-        if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn() &&
-                audioEffectPreferenceHandler.isMasterEffectControlEnabled()){
+        if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()){
             m3DSwitchBtn.setImageDrawable(getResources().getDrawable(R.drawable.three_d_surround, null));
             m3DSwitchTxt.setText(getResources().getString(R.string.status_on_caps));
             m3DTxt.setTextColor(Color.WHITE);
@@ -444,8 +443,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     public void switch3DSurround(boolean isPowerOn){
         if(isPowerOn) {
-            if(!audioEffectPreferenceHandler.is3DSurroundOn() &&
-                    audioEffectPreferenceHandler.isMasterEffectControlEnabled()){
+            if(!audioEffectPreferenceHandler.is3DSurroundOn()){
                 audioEffectPreferenceHandler.setEnable3DSurround(true);
                 App.getPlayerEventHandler().set3DAudioEnable(true);
             }else{

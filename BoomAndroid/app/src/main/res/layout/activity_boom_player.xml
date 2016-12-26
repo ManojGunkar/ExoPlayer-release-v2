@@ -15,7 +15,7 @@
             android:layout_height="match_parent"
             android:background="#D9000000"
             android:orientation="vertical"
-            android:weightSum="91">
+            android:weightSum="96">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -138,19 +138,23 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/thirty_six_pt"
+                android:layout_weight="6"
                 android:background="@drawable/ic_boom_feedback"
+                android:gravity="center"
                 android:layout_gravity="right">
-                <Button
+                <TextView
                     android:text="@string/feedback"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textStyle="italic|bold"
                     android:textSize="@dimen/seventy_two_px"
                     android:textAllCaps="false"
                     android:id="@+id/boom_feedback"
-                    android:textColor="@color/white"
-                    style="@style/Widget.AppCompat.Button.Borderless" />
-                
+                    android:textColor="@color/white"/>
+
             </LinearLayout>
 
             <FrameLayout

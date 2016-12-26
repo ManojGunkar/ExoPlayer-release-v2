@@ -6,7 +6,7 @@
     <string name="albums">Albums</string>
     <string name="album">Album</string>
     <string name="artists">Artists</string>
-    <string name="playlists">PlayLists</string>
+    <string name="playlists">Playlists</string>
     <string name="genres">Genres</string>
     <string name="add_to_playlist">Add to playlist</string>
     <string name="new_playlist">New Playlist</string>
@@ -18,7 +18,7 @@
     <string name="up_next_auto">Next From</string>
     <string name="up_next_manual">Up Next</string>
 
-    <string name="added_to_playlist">Added to playlist</string>
+    <string name="added_to_playlist">Added to Playlist</string>
     <string name="rename">Rename</string>
     <string name="delete">Delete</string>
     <string name="search_hint">Search</string>
@@ -60,7 +60,7 @@
 
     <string name="title_sort_albums">Sort Albums</string>
     <string name="sort_by_artist">By Artist</string>
-    <string name="sort_by_title">By Title Albums</string>
+    <string name="sort_by_title">By Title</string>
 
     <string name="title_shake">Set Shake Gesture</string>
     <string name="description_shake">Please choose the action you\'d like triggered when you shake your device.</string>
@@ -108,7 +108,7 @@
     <string name="playlist_menu_delete_list">Delete Playlist</string>
     <string name="search_fragment">Search</string>
     <string name="cant_play_song">Song can\'t be played...!</string>
-    <string name="title_favourite_list">Boom Favourite</string>
+    <string name="title_favourite_list">Boom Favourites</string>
     <string name="song">Song</string>
 
 
@@ -117,8 +117,8 @@
 
     <!-- Boom Playlist-->
     <string name="boom_playlist_title">Boom Playlist</string>
-    <string name="playlist_created">PlayList Created.</string>
-    <string name="playlist_deleted">PlayList Deleted.</string>
+    <string name="playlist_created">Playlist Created.</string>
+    <string name="playlist_deleted">Playlist Deleted.</string>
     <string name="txt_undo">UNDO</string>
     <string name="dialog_txt_cancel">Cancel</string>
     <string name="dialog_txt_rename">Rename</string>
@@ -129,7 +129,7 @@
 
     <!--inapp-->
     <string name="purchase_item_title">Magical Effects Pack</string>
-    <string name="purchase_item_desc1">Enjoy 3D Surround.all EQ, and full</string>
+    <string name="purchase_item_desc1">Enjoy 3D Surround all EQ, and full</string>
     <string name="purchase_item_desc2">Intensity control with a single purchase!</string>
     <string name="purchase_buton_text">Buy Now @ $ 3.99 </string>
     <string name="purchase_restore_txt">Restore Purchases</string>
@@ -200,7 +200,7 @@
     <string name="feedback_error">Error! Please check your internet connection.</string>
     <string name="feedback_title">Enjoying the Boom App?</string>
     <string name="feedback_text">Take our quick feedback survey and tell us what you think.</string>
-    <string name="feedback">Feedback</string>
+    <string name="feedback">feedback</string>
 
 
 </resources>
