@@ -14,7 +14,8 @@ public enum QueueType {
     Playing,
     Manual_UpNext,
     Auto_UpNext,
-    Previous;
+    Previous,
+    unshuffled;
     private static final Map<Integer, QueueType> lookup = new HashMap<Integer, QueueType>();
 
     static{

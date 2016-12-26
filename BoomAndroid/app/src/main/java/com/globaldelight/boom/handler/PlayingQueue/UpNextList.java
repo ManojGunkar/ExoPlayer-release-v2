@@ -147,7 +147,7 @@ public class UpNextList {
             }
         }else{
             if(mAutoNextList.size() > 0)
-            for (int i = 0; i < PlayItemIndex; PlayItemIndex--) {
+            for (int i = 0; i <= PlayItemIndex; PlayItemIndex--) {
                 addItemAsPrevious(new UpNextItem(mAutoNextList.remove(i), QueueType.Auto_UpNext));
             }
             if(PlayItemIndex == -1){
@@ -223,7 +223,7 @@ public class UpNextList {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                MediaController.getInstance(context).insertUnShuffledList(songs, isAppend);
+                MediaController.getInstance(context).insertUnShuffledList(songs, QueueType.unshuffled, isAppend);
             }
         }).start();
     }
@@ -233,11 +233,13 @@ public class UpNextList {
     }
 
     public LinkedList<? extends IMediaItemBase> getUnShuffledList() {
-        return MediaController.getInstance(context).getUnShuffledList();
+        return MediaController.getInstance(context).getUnShuffledList(QueueType.unshuffled);
     }
 
     public void clearUpNextList(QueueType queueType) {
         MediaController.getInstance(context).clearUpNextList(queueType);
+        if(queueType == QueueType.Auto_UpNext)
+            MediaController.getInstance(context).clearUpNextList(QueueType.unshuffled);
     }
 
     public void addUpNextItemsToDB(){
@@ -320,6 +322,20 @@ public class UpNextList {
 
 
     /******************************************************************************************************************/
+    public void insertUnShuffledListWithUpdateUpNext(final List<? extends IMediaItemBase> songs, final boolean isAppend) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MediaController.getInstance(context).insertUnShuffledList(songs, QueueType.unshuffled, isAppend);
+                if(SHUFFLE.all == mShuffle){
+                    updateShuffleList();
+                }
+                if(REPEAT.all == mRepeat){
+                    updateRepeatList();
+                }
+            }
+        }).start();
+    }
 
     public void addToPlay(final LinkedList<MediaItem> itemList, final int position, boolean isPlayAll) {
         long mTime = System.currentTimeMillis();
@@ -340,13 +356,8 @@ public class UpNextList {
                         if (itemList.size() > position + 1) {
                             setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
                         }
-                        insertUnShuffledList(itemList.subList(position, itemList.size()), false);
-                        if(SHUFFLE.all == mShuffle){
-                            updateShuffleList();
-                        }
-                        if(REPEAT.all == mRepeat){
-                            updateRepeatList();
-                        }
+                        insertUnShuffledListWithUpdateUpNext(itemList.subList(position, itemList.size()), false);
+
                         PlayingItemChanged();
                     }
                 }
@@ -375,13 +386,8 @@ public class UpNextList {
                         if (itemList.size() > position + 1) {
                             setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
                         }
-                        insertUnShuffledList(itemList.subList(position, itemList.size()), false);
-                        if(SHUFFLE.all == mShuffle){
-                            updateShuffleList();
-                        }
-                        if(REPEAT.all == mRepeat){
-                            updateRepeatList();
-                        }
+                        insertUnShuffledListWithUpdateUpNext(itemList.subList(position, itemList.size()), false);
+
                         PlayingItemChanged();
                     }
                 }
@@ -411,13 +417,8 @@ public class UpNextList {
                         if (collection.getMediaElement().size() > position + 1) {
                             setItemListAsUpNextFrom(collection.getMediaElement().subList(position + 1, collection.getMediaElement().size()));
                         }
-                        insertUnShuffledList(collection.getMediaElement().subList(position , collection.getMediaElement().size()), false);
-                        if(SHUFFLE.all == mShuffle){
-                            updateShuffleList();
-                        }
-                        if(REPEAT.all == mRepeat){
-                            updateRepeatList();
-                        }
+                        insertUnShuffledListWithUpdateUpNext(collection.getMediaElement().subList(position , collection.getMediaElement().size()), false);
+
                         PlayingItemChanged();
                     }
                 }
@@ -494,7 +495,7 @@ public class UpNextList {
                 managePlayedItem(true);
                 mCurrentList.add(new UpNextItem(mUpNextList.remove(0), QueueType.Manual_UpNext));
             } else if (mAutoNextList.size() > 0) {
-                for (int i = 0; i < PlayItemIndex; PlayItemIndex--) {
+                for (int i = 0; i <= PlayItemIndex; PlayItemIndex--) {
                     addItemAsPrevious(new UpNextItem(mAutoNextList.remove(i), QueueType.Auto_UpNext));
                 }
                 managePlayedItem(true);

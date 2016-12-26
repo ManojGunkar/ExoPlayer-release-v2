@@ -295,7 +295,8 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     }
 
     public void setSpeakerEnable(AudioEffect.Speaker speaker, boolean enable) {
-        mPlayer.setSpeakerEnable(speaker, enable);
+        if(null != mPlayer)
+            mPlayer.setSpeakerEnable(speaker, enable);
     }
 
     public void setHighQualityEnable(boolean highQualityEnable) {

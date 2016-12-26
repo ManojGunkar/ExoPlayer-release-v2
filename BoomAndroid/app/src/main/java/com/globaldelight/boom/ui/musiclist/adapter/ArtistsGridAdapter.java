@@ -98,7 +98,7 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null))
                     .centerCrop().resize(size, size)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else {
-            holder.defaultImg.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, size, size));
+            holder.defaultImg.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_default_album_grid));
         }
     }
 

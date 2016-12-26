@@ -402,9 +402,7 @@ public class CollectionListActivity  extends AppCompatActivity {
             String imagePath = collection.getItemArtUrl();
             try {
                 if (imagePath == null) {
-                    Utils utils = new Utils(this);
-                    albumArt.setImageBitmap(utils.getBitmapOfVector(this, R.drawable.ic_default_album_header,
-                            width, height));
+                    albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_header));
                     return;
                 }
                 Picasso.with(CollectionListActivity.this)
@@ -488,6 +486,8 @@ public class CollectionListActivity  extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                if(null != mPlayAlbum)
+                    mPlayAlbum.setVisibility(View.GONE);
                 super.onBackPressed();
                 break;
         }
@@ -504,6 +504,8 @@ public class CollectionListActivity  extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if(null != mPlayAlbum)
+            mPlayAlbum.setVisibility(View.GONE);
         super.onBackPressed();
     }
 

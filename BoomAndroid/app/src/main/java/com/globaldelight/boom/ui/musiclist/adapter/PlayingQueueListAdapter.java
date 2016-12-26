@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
@@ -140,40 +141,9 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         View itemView;
         switch (viewType) {
             case ITEM_VIEW_TYPE_HEADER_PLAYING:
-//                if(mPlaying.size() > 0) {
-//                    itemView = from(parent.getContext()).
-//                            inflate(R.layout.card_header_playing_queue, parent, false);
-//                }else{
-//                    itemView = from(parent.getContext()).
-//                            inflate(R.layout.card_row_hide, parent, false);
-//                }
-//                return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_HEADER_MANUAL:
-//                if(App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0) {
-//                    itemView = from(parent.getContext()).
-//                            inflate(R.layout.card_header_playing_queue, parent, false);
-//                }else{
-//                    itemView = from(parent.getContext()).
-//                            inflate(R.layout.card_row_hide, parent, false);
-//                }
-//                return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_HEADER_HISTORY:
-//                if(mHistoryList.size() > 0) {
-//                    itemView = from(parent.getContext()).
-//                            inflate(R.layout.card_header_playing_queue, parent, false);
-//                }else{
-//                    itemView = from(parent.getContext()).
-//                            inflate(R.layout.card_row_hide, parent, false);
-//                }
-//                return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_HEADER_AUTO:
-//                if(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
-//                    itemView = from(parent.getContext()).
-//                            inflate(R.layout.card_header_playing_queue, parent, false);
-//                }else{
-//                    itemView = from(parent.getContext()).
-//                            inflate(R.layout.card_row_hide, parent, false);
-//                }
                 itemView = from(parent.getContext()).
                         inflate(R.layout.card_header_playing_queue, parent, false);
                 return new SimpleItemViewHolder(itemView);
@@ -203,7 +173,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         final ListPosition item;
         switch (whatView(position)) {
             case ITEM_VIEW_TYPE_HEADER_MANUAL:
-//                if(App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0) {
                     setHeaderBg(holder);
                     holder.headerText.setText(R.string.up_next_manual);
                     if (App.getPlayingQueueHandler().getUpNextList().getManualUpNextList() != null && App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0) {
@@ -212,17 +181,13 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     } else {
                         holder.buttonClrear.setVisibility(View.INVISIBLE);
                     }
-//                }
                 break;
             case ITEM_VIEW_TYPE_HEADER_PLAYING:
-//                if(mPlaying.size() > 0) {
                     setHeaderBg(holder);
                     holder.headerText.setText(R.string.Playing);
                     holder.buttonClrear.setVisibility(View.INVISIBLE);
-//                }
                 break;
             case ITEM_VIEW_TYPE_HEADER_HISTORY:
-//                if(mHistoryList.size() > 0) {
                     setHeaderBg(holder);
                     holder.headerText.setText(R.string.History);
                     if (mHistoryList != null && mHistoryList.size() > 0) {
@@ -231,10 +196,8 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     } else {
                         holder.buttonClrear.setVisibility(View.INVISIBLE);
                     }
-//                }
                 break;
             case ITEM_VIEW_TYPE_HEADER_AUTO:
-//                if(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
                     setHeaderBg(holder);
                     holder.headerText.setText(R.string.up_next_auto);
                     if (App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList() != null && App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
@@ -243,7 +206,6 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     } else {
                         holder.buttonClrear.setVisibility(View.INVISIBLE);
                     }
-//                }
                 break;
             case ITEM_VIEW_TYPE_LIST_MANUAL:
 
@@ -281,6 +243,8 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                         holder.undoButton.setVisibility(View.GONE);
                         holder.undoButton.setOnClickListener(null);
                         itemPosition = getPositionObject(position).getItemPosition();
+                        if(null == App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).getItemArtUrl())
+                            App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem)App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition)).getItemAlbumId()));
                         setArt(holder, App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).getItemArtUrl(), whatView(position));
                         holder.name.setText(App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).getItemTitle());
                         holder.artistName.setText(((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition)).getItemArtist());
@@ -293,6 +257,8 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                 break;
             case ITEM_VIEW_TYPE_LIST_PLAYING:
                 itemPosition = getPosition(position);
+                if(null == mPlaying.get(0).getUpNextItem().getItemArtUrl())
+                    mPlaying.get(0).getUpNextItem().setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem)mPlaying.get(0).getUpNextItem()).getItemAlbumId()));
                 setArt(holder, mPlaying.get(0).getUpNextItem().getItemArtUrl(), whatView(position));
                 holder.name.setText(mPlaying.get(0).getUpNextItem().getItemTitle());
                 holder.artistName.setText(((MediaItem)mPlaying.get(0).getUpNextItem()).getItemArtist());
@@ -349,6 +315,8 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     holder.undoButton.setVisibility(View.GONE);
                     holder.undoButton.setOnClickListener(null);
                     itemPosition = getPositionObject(position).getItemPosition();
+                    if(null == App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemArtUrl())
+                        App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem)App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition)).getItemAlbumId()));
                     setArt(holder, App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemArtUrl(), whatView(position));
                     holder.name.setText(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemTitle());
                     holder.artistName.setText(((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition)).getItemArtist());
@@ -418,8 +386,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
     private void setDefaultArt(SimpleItemViewHolder holder, int size) {
 
-        holder.img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_list,
-                size, size));
+        holder.img.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_list));
     }
 
     @Override

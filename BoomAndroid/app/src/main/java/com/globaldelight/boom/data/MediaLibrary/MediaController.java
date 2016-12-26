@@ -109,8 +109,8 @@ public class MediaController implements IMediaController{
         MediaLibraryHandler.getInstance(context).addUpNextItem(songs, queueType);
     }
 
-    public void insertUnShuffledList(List<? extends IMediaItemBase> songs, boolean isAppend) {
-        MediaLibraryHandler.getInstance(context).insertUnShuffledList(songs, isAppend);
+    public void insertUnShuffledList(List<? extends IMediaItemBase> songs, QueueType queueType, boolean isAppend) {
+        MediaLibraryHandler.getInstance(context).insertUnShuffledList(songs, queueType, isAppend);
     }
 
     public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
@@ -121,7 +121,7 @@ public class MediaController implements IMediaController{
         MediaLibraryHandler.getInstance(context).clearUpNextList(queueType);
     }
 
-    public LinkedList<? extends IMediaItemBase> getUnShuffledList() {
-        return MediaLibraryHandler.getInstance(context).getUnShuffledList();
+    public LinkedList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) {
+        return MediaLibraryHandler.getInstance(context).getUnShuffledList(queueType);
     }
 }

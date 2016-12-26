@@ -32,8 +32,10 @@ import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.activity.DeviceMusicActivity;
@@ -127,6 +129,10 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             holder.name.setText(currentItem.getItemTitle());
             holder.artistName.setText(currentItem.getItemArtist());
             holder.mainView.setElevation(0);
+
+            if(null == currentItem.getItemArtUrl())
+                currentItem.setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(activity, currentItem.getItemAlbumId()));
+
             setAlbumArt(currentItem.getItemArtUrl(), holder);
             if (selectedHolder != null)
                 selectedHolder.mainView.setBackgroundColor(ContextCompat
@@ -150,6 +156,8 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             holder.name.setText(currentItem.getItemTitle());
             holder.artistName.setText(currentItem.getItemArtist());
             holder.mainView.setElevation(0);
+            if(currentItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB && null == currentItem.getItemArtUrl())
+                currentItem.setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(activity, currentItem.getItemAlbumId()));
             setAlbumArt(currentItem.getItemArtUrl(), holder);
             if (selectedHolder != null)
                 selectedHolder.mainView.setBackgroundColor(ContextCompat
@@ -219,8 +227,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
     private void setDefaultArt(SimpleItemViewHolder holder, int size) {
 
-        holder.img.setImageBitmap(Utils.getBitmapOfVector(activity, R.drawable.ic_default_list,
-                size, size));
+        holder.img.setImageDrawable(activity.getResources().getDrawable( R.drawable.ic_default_list));
     }
 
     private void setOnMenuClickListener(SimpleItemViewHolder holder, final int position) {

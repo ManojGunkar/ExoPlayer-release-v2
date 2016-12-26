@@ -38,12 +38,6 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
     private static final String ALBUM_ART = "ItemArtUrl";
     private static final String MEDIA_TYPE = "mediaType";
 
-//    for history use only
-//    private static final String ISHISTORY = "is_history";
-
-//    for favorite use only
-//    private static final String ISFAVORITE = "is_favorite";
-
     public FavoriteDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;

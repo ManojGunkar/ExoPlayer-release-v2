@@ -398,6 +398,8 @@ public class DetailAlbumActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                if(null != mPlayArtistGenreBtn)
+                    mPlayArtistGenreBtn.setVisibility(View.GONE);
                 super.onBackPressed();
                 break;
         }
@@ -414,6 +416,8 @@ public class DetailAlbumActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if(null != mPlayArtistGenreBtn)
+            mPlayArtistGenreBtn.setVisibility(View.GONE);
         super.onBackPressed();
     }
 

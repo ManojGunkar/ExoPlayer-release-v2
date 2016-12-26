@@ -79,7 +79,7 @@ public class SearchViewFragment extends Fragment {
     }
 
     public void updateSearchResult(String query) {
-        new LoadSearchResult().equals(query);
+        new LoadSearchResult().execute(query);
         showEmpty(false);
     }
 

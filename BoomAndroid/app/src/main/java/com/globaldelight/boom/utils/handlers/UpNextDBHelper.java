@@ -26,9 +26,6 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "UpNextDB";
     private static final String TABLE_UPNEXT = "history_table";
 
-    private static final int SHUFfLED_QUEUE = 100;
-
-    private static final String ITEM_KEY_ID = "db_item_id";
     private static final String SONG_KEY_ID = "song_id";
     private static final String SONG_KEY_REAL_ID = "ItemId";
     private static final String TITLE = "ItemTitle";
@@ -72,9 +69,9 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public synchronized void insertUnShuffledList(List<? extends IMediaItemBase> songs, boolean isAppend) {
+    public synchronized void insertUnShuffledList(List<? extends IMediaItemBase> songs, QueueType queueType, boolean isAppend) {
         if(!isAppend)
-            clearList(SHUFfLED_QUEUE);
+            clearList(queueType);
 
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
@@ -95,14 +92,14 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
             values.put(MEDIA_TYPE, ((IMediaItem)songs.get(i)).getMediaType().ordinal());
             values.put(PARENT_TYPE, ((IMediaItem)songs.get(i)).getParentType().ordinal());
             values.put(PARENT_ID, ((IMediaItem)songs.get(i)).getParentId());
-            values.put(QUEUE_TYPE, SHUFfLED_QUEUE);
+            values.put(QUEUE_TYPE, queueType.ordinal());
 
             db.insert(TABLE_UPNEXT, null, values);
         }
         db.close();
     }
 
-    public synchronized void addSongs(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
+    public synchronized void addSongsToUpNext(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
         clearList(queueType);
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
@@ -159,7 +156,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public synchronized LinkedList<? extends IMediaItemBase> getSongList(QueueType queueType) {
+    public synchronized LinkedList<? extends IMediaItemBase> getUpNextSongs(QueueType queueType) {
         SQLiteDatabase db = this.getWritableDatabase();
         LinkedList<MediaItem> songList = new LinkedList<>();
         String query = "SELECT  * FROM " + TABLE_UPNEXT + " WHERE " +
@@ -206,11 +203,11 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public synchronized LinkedList<? extends IMediaItemBase> getUnShuffledList() {
+    public synchronized LinkedList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) {
         SQLiteDatabase db = this.getWritableDatabase();
         LinkedList<MediaItem> songList = new LinkedList<>();
         String query = "SELECT  * FROM " + TABLE_UPNEXT + " WHERE " +
-                QUEUE_TYPE + "='" + SHUFfLED_QUEUE + "'";
+                QUEUE_TYPE + "='" + queueType.ordinal() + "'";
 
         Cursor cursor = db.rawQuery(query, null);
 

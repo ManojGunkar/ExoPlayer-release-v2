@@ -120,8 +120,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
     }
 
     private void setDefaultArt(SimpleItemViewHolder holder, int size) {
-        holder.img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_list,
-                size, size));
+        holder.img.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_default_list));
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {

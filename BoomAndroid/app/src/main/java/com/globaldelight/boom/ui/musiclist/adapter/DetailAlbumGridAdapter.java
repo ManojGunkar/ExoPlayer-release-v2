@@ -25,6 +25,7 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -124,6 +125,8 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     holder.title.setText(collection.getMediaElement().get(pos).getItemTitle());
                     holder.subTitle.setText(((MediaItemCollection) collection.getMediaElement().get(pos)).getItemSubTitle());
                     holder.defaultImg.setVisibility(View.VISIBLE);
+                    if(null == collection.getMediaElement().get(pos).getItemArtUrl())
+                        collection.getMediaElement().get(pos).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, collection.getMediaElement().get(pos).getItemId()));
                     setArtistImg(holder, pos, size, collection.getMediaElement().get(pos).getItemArtUrl());
                     setOnClicks(holder, pos, ITEM_VIEW_ALBUM);
                     break;
@@ -244,7 +247,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     }
 
     private void setDefaultImage(ImageView img, int width, int height){
-        img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, width, height));
+        img.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_album_grid));
     }
 
     private void setOnMenuClickListener(SimpleItemViewHolder holder, int position) {
@@ -383,6 +386,11 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                 - utils.dpToPx(context, 15)) / 2;
         TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(size, size);
         holder.imgPanel.setLayoutParams(layoutParams);
+
+        FrameLayout.LayoutParams defaultParam = new FrameLayout.LayoutParams(size, size);
+        holder.defaultImg.setLayoutParams(defaultParam);
+        holder.defaultImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
         return new Size(size, size);
     }
 

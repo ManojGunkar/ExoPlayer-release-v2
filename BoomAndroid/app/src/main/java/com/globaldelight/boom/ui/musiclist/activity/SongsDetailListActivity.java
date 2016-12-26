@@ -400,6 +400,8 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         switch (item.getItemId()) {
             case android.R.id.home:
                 updateBoomPlayList();
+                if(null != mPlaySongDetailList)
+                    mPlaySongDetailList.setVisibility(View.GONE);
                 super.onBackPressed();
                 break;
         }
@@ -417,6 +419,8 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
     @Override
     public void onBackPressed() {
         updateBoomPlayList();
+        if(null != mPlaySongDetailList)
+            mPlaySongDetailList.setVisibility(View.GONE);
         super.onBackPressed();
     }
 

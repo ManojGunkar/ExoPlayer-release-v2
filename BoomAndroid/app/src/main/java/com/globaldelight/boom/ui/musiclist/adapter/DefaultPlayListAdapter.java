@@ -106,6 +106,10 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
         TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(width, height);
         holder.imgPanel.setLayoutParams(layoutParams);
 
+        FrameLayout.LayoutParams defaultParam = new FrameLayout.LayoutParams(width, height);
+        holder.defaultImg.setLayoutParams(defaultParam);
+        holder.defaultImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (height/2.5));
         holder.gridBottomBg.setLayoutParams(params);
 
@@ -166,7 +170,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
     }
 
     private void setDefaultImage(ImageView img, int width, int height){
-        img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, width, height));
+        img.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_album_grid));
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {

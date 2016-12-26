@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.handler.search.SearchResult;
@@ -259,6 +260,9 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             holder.subTitle.setText((count<=1 ? context.getResources().getString(R.string.song) : context.getResources().getString(R.string.songs)) +" "+count+" "+
                     (albumCount<=1 ? context.getResources().getString(R.string.album) : context.getResources().getString(R.string.albums)) +" "+albumCount);
             int size = setSize(holder);
+
+            if(null == artists.get(getPosition(position)).getItemArtUrl())
+                artists.get(getPosition(position)).setItemArtUrl(DeviceMediaQuery.getAlbumArtByArtist(context, artists.get(getPosition(position)).getItemTitle()));
             setArtistImg(holder, ((MediaItemCollection) artists.get(getPosition(position))).getItemArtUrl(), size);
 
             if(App.getUserPreferenceHandler().isLibFromHome()){
@@ -404,6 +408,8 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             holder.name.setText(songs.get(getPosition(position)).getItemTitle());
             holder.artistName.setText(((MediaItem)songs.get(getPosition(position))).getItemArtist());
             holder.mainView.setElevation(0);
+            if(null == songs.get(getPosition(position)).getItemArtUrl())
+                songs.get(getPosition(position)).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem) songs.get(getPosition(position))).getItemAlbumId()));
             setSongArt(songs.get(getPosition(position)).getItemArtUrl(), holder);
 
             MediaItem nowPlayingItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
@@ -569,7 +575,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null))
                     .centerCrop().resize(size, size)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else {
-            holder.defaultImg.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, size, size));
+            holder.defaultImg.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_default_album_grid));
         }
     }
 

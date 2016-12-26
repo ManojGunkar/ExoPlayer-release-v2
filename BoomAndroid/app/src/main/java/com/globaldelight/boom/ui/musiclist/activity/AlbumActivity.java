@@ -75,7 +75,7 @@ public class AlbumActivity extends AppCompatActivity {
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private AppBarLayout appbarlayout;
     private ListDetail listDetail;
-    FloatingActionButton mPlayAlbum;
+    private FloatingActionButton mPlayAlbum;
     private LinearLayout mMiniPlayer, mStartPlayer;
     private ProgressBar mTrackProgress;
     private RegularTextView mTitle, mSubTitle;
@@ -333,6 +333,7 @@ public class AlbumActivity extends AppCompatActivity {
         LinearLayout.LayoutParams lp = new LinearLayout
                 .LayoutParams(width, height);
         albumArt.setLayoutParams(lp);
+        albumArt.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
     private void setForAnimation() {
@@ -378,9 +379,7 @@ public class AlbumActivity extends AppCompatActivity {
             String imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
             try {
                 if (imagePath == null) {
-                    Utils utils = new Utils(this);
-                    albumArt.setImageBitmap(utils.getBitmapOfVector(this, R.drawable.ic_default_album_header,
-                            width, height));
+                    albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_header));
                     return;
                 }
                 Picasso.with(AlbumActivity.this)
@@ -414,6 +413,8 @@ public class AlbumActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                if(null != mPlayAlbum)
+                    mPlayAlbum.setVisibility(View.GONE);
                 super.onBackPressed();
                 break;
         }
@@ -430,6 +431,8 @@ public class AlbumActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if(null != mPlayAlbum)
+            mPlayAlbum.setVisibility(View.GONE);
         super.onBackPressed();
     }
 

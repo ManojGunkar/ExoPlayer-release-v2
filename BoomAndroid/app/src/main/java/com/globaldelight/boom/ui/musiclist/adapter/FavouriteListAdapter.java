@@ -26,9 +26,11 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.ui.musiclist.activity.FavouriteListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
@@ -72,6 +74,8 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
         holder.name.setText(itemList.get(position).getItemTitle());
         holder.artistName.setText(((MediaItem)itemList.get(position)).getItemArtist());
         holder.mainView.setElevation(0);
+        if((itemList.get(position)).getMediaType() == MediaType.DEVICE_MEDIA_LIB && null == itemList.get(position).getItemArtUrl())
+            itemList.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem) itemList.get(position)).getItemAlbumId()));
         setAlbumArt(itemList.get(position).getItemArtUrl(), holder);
         if (selectedHolder != null)
             selectedHolder.mainView.setBackgroundColor(ContextCompat
@@ -120,8 +124,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
 
     private void setDefaultArt(FavouriteListAdapter.SimpleItemViewHolder holder, int size) {
 
-        holder.img.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_list,
-                size, size));
+        holder.img.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_list ));
     }
 
     private void setOnClicks(final FavouriteListAdapter.SimpleItemViewHolder holder, final int position) {

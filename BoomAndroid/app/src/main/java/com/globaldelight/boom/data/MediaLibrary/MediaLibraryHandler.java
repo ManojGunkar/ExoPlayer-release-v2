@@ -120,8 +120,8 @@ public class MediaLibraryHandler implements IMediaLibrary{
         DeviceMediaHandler.getInstance(context).addUpNextItem(songs, queueType);
     }
 
-    public void insertUnShuffledList(List<? extends IMediaItemBase> songs, boolean isAppend) {
-        DeviceMediaHandler.getInstance(context).insertUnShuffledList(songs, isAppend);
+    public void insertUnShuffledList(List<? extends IMediaItemBase> songs, QueueType queueType, boolean isAppend) {
+        DeviceMediaHandler.getInstance(context).insertUnShuffledList(songs, queueType, isAppend);
     }
 
     public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
@@ -132,7 +132,7 @@ public class MediaLibraryHandler implements IMediaLibrary{
         DeviceMediaHandler.getInstance(context).clearUpNextList(queueType);
     }
 
-    public LinkedList<? extends IMediaItemBase> getUnShuffledList() {
-        return DeviceMediaHandler.getInstance(context).getUnShuffledList();
+    public LinkedList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) {
+        return DeviceMediaHandler.getInstance(context).getUnShuffledList(queueType);
     }
 }

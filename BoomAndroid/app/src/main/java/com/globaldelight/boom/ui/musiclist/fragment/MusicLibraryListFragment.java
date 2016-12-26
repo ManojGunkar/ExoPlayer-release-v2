@@ -148,7 +148,7 @@ public class MusicLibraryListFragment extends Fragment {
         songListAdapter.onBackPressed();
     }
 
-    private void fetchMusicList(){
+    private synchronized void fetchMusicList(){
         switch (title){
             case R.string.songs:
                 new LoadSongsList().execute(title);
@@ -228,7 +228,7 @@ public class MusicLibraryListFragment extends Fragment {
     private class LoadSongsList extends AsyncTask<Integer, Integer, ArrayList<? extends IMediaItemBase>> {
         @Override
         protected ArrayList<? extends IMediaItemBase> doInBackground(Integer... params) {
-            return MediaController.getInstance(context).getMediaCollectionItemList(ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB) /*MediaQuery.getSongList(context)*/;
+            return MediaController.getInstance(context).getMediaCollectionItemList(ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB) /*MediaQuery.getUpNextSongs(context)*/;
         }
 
         @Override

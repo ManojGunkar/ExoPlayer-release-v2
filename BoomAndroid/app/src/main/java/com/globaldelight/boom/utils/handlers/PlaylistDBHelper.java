@@ -7,9 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
+import android.widget.CompoundButton;
 
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
@@ -42,9 +44,11 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
 
     private static final String PLAYLIST_KEY_ID = "playlist_id";
     private static final String PLAYLIST_KEY_NAME = "playlist_name";
+    private Context mContext;
 
     public PlaylistDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        mContext = context;
     }
 
     @Override
@@ -163,6 +167,8 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         for (int i = 0; i < songs.size(); i++) {
             removeSong(songs.get(i).getItemId(), (int) playlistId, db);
 
+            if(songs.get(i).getMediaType() == MediaType.DEVICE_MEDIA_LIB && null == songs.get(i).getItemArtUrl())
+                songs.get(i).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(mContext, ((IMediaItem)songs.get(i)).getItemAlbumId()));
             ContentValues values = new ContentValues();
             values.putNull(SONG_KEY_ID);
             values.put(SONG_KEY_REAL_ID, songs.get(i).getItemId());

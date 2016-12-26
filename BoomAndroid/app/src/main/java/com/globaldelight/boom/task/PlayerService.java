@@ -47,6 +47,7 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
     public static final String ACTION_UPDATE_BOOM_PLAYLIST_LIST ="ACTION_UPDATE_BOOM_PLAYLIST_LIST";
     public static final String ACTION_CREATE_PLAYER_SCREEN = "ACTION_CREATE_PLAYER_SCREEN";
     public static final String ACTION_DESTROY_PLAYER_SCREEN ="ACTION_DESTROY_PLAYER_SCREEN";
+    public static final String ACTION_SETUP_SEARCH ="ACTION_SETUP_SEARCH";
 
     private static long mShiftingTime = 0;
     private PlayerEventHandler musicPlayerHandler;
@@ -54,6 +55,8 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
     private NotificationHandler notificationHandler;
     private static boolean isPlayerScreenResume = false;
     private MusicReceiver musicReceiver;
+    private MusicSearchHelper musicSearchHelper;
+    private boolean isSearch = false;
 
     private BroadcastReceiver playerServiceBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -108,6 +111,7 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
         filter.addAction(ACTION_LAST_PLAYED_SONG);
         filter.addAction(ACTION_CREATE_PLAYER_SCREEN);
         filter.addAction(ACTION_DESTROY_PLAYER_SCREEN);
+        filter.addAction(ACTION_SETUP_SEARCH);
         registerReceiver(playerServiceBroadcastReceiver, filter);
         notificationHandler = new NotificationHandler(context, this);
         return START_NOT_STICKY;
@@ -207,6 +211,18 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
                 break;
             case ACTION_DESTROY_PLAYER_SCREEN:
                 isPlayerScreenResume = false;
+                break;
+            case ACTION_SETUP_SEARCH:
+                if(!isSearch) {
+                    isSearch = true;
+                    musicSearchHelper = new MusicSearchHelper(App.getApplication());
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            musicSearchHelper.setSearchContent();
+                        }
+                    }).start();
+                }
                 break;
         }
     }

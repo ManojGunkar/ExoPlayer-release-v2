@@ -2,17 +2,13 @@ package com.globaldelight.boom.data.DeviceMediaLibrary;
 
 import android.content.Context;
 import android.support.annotation.IntRange;
-import android.view.View;
 
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
-import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
-import com.globaldelight.boom.ui.musiclist.activity.CollectionListActivity;
 import com.globaldelight.boom.utils.handlers.PlaylistDBHelper;
 
 import java.util.ArrayList;
@@ -243,22 +239,22 @@ public class DeviceMediaHandler {
     }
 
     public void addUpNextItem(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
-        App.getUPNEXTDBHelper().addSongs(songs, queueType);
+        App.getUPNEXTDBHelper().addSongsToUpNext(songs, queueType);
     }
 
-    public void insertUnShuffledList(List<? extends IMediaItemBase> songs, boolean isAppend) {
-        App.getUPNEXTDBHelper().insertUnShuffledList(songs, isAppend);
+    public void insertUnShuffledList(List<? extends IMediaItemBase> songs, QueueType queueType, boolean isAppend) {
+        App.getUPNEXTDBHelper().insertUnShuffledList(songs, queueType, isAppend);
     }
 
     public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
-        return App.getUPNEXTDBHelper().getSongList(queueType);
+        return App.getUPNEXTDBHelper().getUpNextSongs(queueType);
     }
 
     public void clearUpNextList(QueueType queueType){
         App.getUPNEXTDBHelper().clearList(queueType);
     }
 
-    public LinkedList<? extends IMediaItemBase> getUnShuffledList() {
-        return App.getUPNEXTDBHelper().getUnShuffledList();
+    public LinkedList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) {
+        return App.getUPNEXTDBHelper().getUnShuffledList(queueType);
     }
 }

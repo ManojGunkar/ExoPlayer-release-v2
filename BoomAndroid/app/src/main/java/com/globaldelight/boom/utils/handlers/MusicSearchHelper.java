@@ -49,7 +49,7 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
     }
 
 
-    public void setSearchContent(){
+    public synchronized void setSearchContent(){
         clearList();
 
         final String where = MediaStore.Audio.Media.IS_MUSIC + "=1";
@@ -85,7 +85,7 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
 
     }
 
-    private void addSong(String title) {
+    private synchronized void addSong(String title) {
         removeSong(title);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -103,20 +103,18 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void clearList(){
+    public synchronized void clearList(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_SEARCH);
         db.close();
     }
 
-    public Cursor getSongList(String arg) {
+    public synchronized Cursor getSongList(String arg) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor c = db.query(true, TABLE_SEARCH, new String[] { ITEM_KEY_ID,
                         SEARCH_KEY }, SEARCH_KEY + " LIKE ?",
                 new String[] {"%"+ arg+ "%" }, null, null, null,
                 null);
-        /*String query = "SELECT  * FROM " + TABLE_SEARCH +" where " + SEARCH_KEY + " like '%" + arg
-                + "%'";*/
         return c;
     }
 }

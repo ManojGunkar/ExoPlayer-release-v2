@@ -35,6 +35,7 @@ import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -90,6 +91,8 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             holder.name.setText(resultItemList.get(position).getItemTitle());
             holder.artistName.setText(((MediaItem)resultItemList.get(position)).getItemArtist());
             holder.mainView.setElevation(0);
+            if(null == resultItemList.get(position).getItemArtUrl())
+                resultItemList.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem) resultItemList.get(position)).getItemAlbumId()));
             setSongArt(resultItemList.get(position).getItemArtUrl(), holder);
 
             MediaItem nowPlayingItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
@@ -261,6 +264,8 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             holder.subTitle.setText((count<=1 ? context.getResources().getString(R.string.song) : context.getResources().getString(R.string.songs)) +" "+count+" "+
                     (albumCount<=1 ? context.getResources().getString(R.string.album) : context.getResources().getString(R.string.albums)) +" "+albumCount);
             int size = setSize(holder);
+            if(null == resultItemList.get(position).getItemArtUrl())
+                resultItemList.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByArtist(context, resultItemList.get(position).getItemTitle()));
             setArtistImg(holder, ((MediaItemCollection) resultItemList.get(position)).getItemArtUrl(), size);
 
             if(App.getUserPreferenceHandler().isLibFromHome()){
@@ -404,7 +409,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null))
                     .centerCrop().resize(size, size)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else {
-            holder.defaultImg.setImageBitmap(Utils.getBitmapOfVector(context, R.drawable.ic_default_album_grid, size, size));
+            holder.defaultImg.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_album_grid));
         }
     }
 

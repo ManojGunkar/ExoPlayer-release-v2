@@ -38,8 +38,6 @@ import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.async.Action;
-import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
-
 import java.io.File;
 
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
@@ -62,7 +60,6 @@ public class DeviceMusicActivity extends BoomMasterActivity{
     private ProgressBar mTrackProgress;
     private RegularTextView mTitle, mSubTitle;
     private ImageView mAlbumArt, mPlayPause;
-    MusicSearchHelper musicSearchHelper;
     private int mPagerPosition = 0;
 
     @Override
@@ -100,14 +97,6 @@ public class DeviceMusicActivity extends BoomMasterActivity{
         mViewPager.getCurrentItem();
 
         initHandyTabBar();
-
-        musicSearchHelper = new MusicSearchHelper(App.getApplication());
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                musicSearchHelper.setSearchContent();
-            }
-        }).start();
     }
 
     @Override
@@ -343,6 +332,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
+                        sendBroadcast(new Intent(PlayerService.ACTION_SETUP_SEARCH));
                         initView();
                     }
 
