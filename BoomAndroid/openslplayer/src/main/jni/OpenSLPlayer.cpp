@@ -62,11 +62,11 @@ namespace gdpl
 
         // create audio player
         // NOTE: SL_IID_BASSBOOST is requested only to disable Fast Audio Path. It is not used anywhere
-        const SLInterfaceID ids[] = { SL_IID_ANDROIDSIMPLEBUFFERQUEUE };
-        const SLboolean req[] = { SL_BOOLEAN_TRUE };
+        const SLInterfaceID ids[] = { SL_IID_ANDROIDSIMPLEBUFFERQUEUE, SL_IID_BASSBOOST };
+        const SLboolean req[] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
 
         SLresult result = (*engineEngine)->CreateAudioPlayer(engineEngine, &bqPlayerObject, &audioSrc,
-                                                             &audioSnk, 1, ids, req);
+                                                             &audioSnk, 2, ids, req);
         assert(SL_RESULT_SUCCESS == result);
         (void) result;
 
