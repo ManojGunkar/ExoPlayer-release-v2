@@ -18,6 +18,8 @@ import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.adapter.AlbumsGridAdapter;
@@ -234,6 +236,7 @@ public class MusicLibraryListFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
             super.onPostExecute(iMediaItemList);
+            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SONG_COUNT);
             final LinearLayoutManager llm = new LinearLayoutManager(context);
             recyclerView.setLayoutManager(llm);
 //                        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, 0));

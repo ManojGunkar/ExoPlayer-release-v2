@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -108,6 +110,13 @@ public class UpNextList {
     public boolean resetShuffle() {
         mShuffle = App.getUserPreferenceHandler().resetShuffle();
         updateShuffleList();
+        try {
+            if (mShuffle == SHUFFLE.all) {
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SHUFFLE_ON_PLAYING);
+            } else {
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SHUFFLE_OFF_PLAYING);
+            }
+        }catch (Exception e){}
         return true;
     }
 
@@ -122,6 +131,15 @@ public class UpNextList {
             }
         }
         updateRepeatList();
+        try {
+            if (mRepeat == REPEAT.one) {
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_ONE_PLAYING);
+            } else if (mRepeat == REPEAT.all) {
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_ALL_PLAYING);
+            } else {
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_NONE_PLAYING);
+            }
+        }catch (Exception e){}
         return true;
     }
 
@@ -555,7 +573,7 @@ public class UpNextList {
                     PlayItemIndex++;
                 }
                 mCurrentList.clear();
-                if((mAutoNextList.size() - 1) > PlayItemIndex) {
+                if((mAutoNextList.size() - 1) >= PlayItemIndex) {
                     mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
                 }else {
                     PlayItemIndex = 0;

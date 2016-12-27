@@ -7,11 +7,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.manager.MusicReceiver;
@@ -20,6 +23,8 @@ import com.globaldelight.boom.ui.musiclist.activity.PlayingQueueActivity;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerService extends Service implements MusicReceiver.updateMusic{
 
@@ -49,6 +54,8 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
     public static final String ACTION_DESTROY_PLAYER_SCREEN ="ACTION_DESTROY_PLAYER_SCREEN";
     public static final String ACTION_SETUP_SEARCH ="ACTION_SETUP_SEARCH";
 
+    private long mServiceStartTime = 0;
+    private long mServiceStopTime = 0;
     private static long mShiftingTime = 0;
     private PlayerEventHandler musicPlayerHandler;
     private Context context;
@@ -76,15 +83,21 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
         context = this;
         App.setService(this);
 
-        Log.d("PlayerService", "Create");
-        App.getPlayingQueueHandler().getUpNextList().fetchUpNextItemsToDB();
+        try {
+            App.getPlayingQueueHandler().getUpNextList().fetchUpNextItemsToDB();
+        }catch (Exception e){
 
+        }
         if (musicPlayerHandler == null)
             musicPlayerHandler = App.getPlayerEventHandler();
 
         musicReceiver = new MusicReceiver(this);
         IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(musicReceiver, filter);
+
+        try {
+            mServiceStartTime = SystemClock.currentThreadTimeMillis();
+        }catch (Exception e){}
     }
 
     @Override
@@ -319,8 +332,19 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         unregisterReceiver(musicReceiver);
+        try {
+            mServiceStopTime = SystemClock.currentThreadTimeMillis();
+            mServiceStartTime = mServiceStopTime - mServiceStartTime;
+            String time = String.format("%02d:%02d",
+                    TimeUnit.MILLISECONDS.toMinutes(mServiceStartTime),
+                    TimeUnit.MILLISECONDS.toSeconds(mServiceStartTime ) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(mServiceStartTime)));
+            HashMap<String, String> val = new HashMap<>();
+            val.put(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, time);
+            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, val);
+        }catch (Exception e){}
+        super.onDestroy();
     }
 
     private void updateUpNextDB() {
