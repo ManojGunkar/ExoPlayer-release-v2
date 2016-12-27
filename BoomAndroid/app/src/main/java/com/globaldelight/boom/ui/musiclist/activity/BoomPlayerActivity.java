@@ -92,9 +92,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
 
     private final static long MINS = 60 * 1000;
     private final static long DAYS = 24 * 60 * MINS;
-    private final static long FEEDBACK_TIME_LIMIT = 1 * MINS;
-    private final static long DECLINE_TIME_LIMIT = 15 * MINS;
-    private final static long ACCEPT_TIME_LIMIT = 10 * DAYS;
+    private final static long FEEDBACK_TIME_LIMIT = 1 * 60 * MINS;
+    private final static long DECLINE_TIME_LIMIT = 2 * 60 *  MINS;
+    private final static long ACCEPT_TIME_LIMIT = 3 * 60 *  MINS;
 
     private  SurveyMonkey surveyInstance = new SurveyMonkey();
 
