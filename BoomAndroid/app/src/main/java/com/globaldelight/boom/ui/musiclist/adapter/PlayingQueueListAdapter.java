@@ -24,6 +24,7 @@ import com.globaldelight.boom.handler.PlayingQueue.QueueType;
 import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.OnStartDragListener;
+import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
@@ -245,6 +246,10 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                         itemPosition = getPositionObject(position).getItemPosition();
                         if(null == App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).getItemArtUrl())
                             App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem)App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition)).getItemAlbumId()));
+
+                        if(null == App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).getItemArtUrl())
+                            App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
+
                         setArt(holder, App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).getItemArtUrl(), whatView(position));
                         holder.name.setText(App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).getItemTitle());
                         holder.artistName.setText(((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition)).getItemArtist());
@@ -259,6 +264,10 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                 itemPosition = getPosition(position);
                 if(null == mPlaying.get(0).getUpNextItem().getItemArtUrl())
                     mPlaying.get(0).getUpNextItem().setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem)mPlaying.get(0).getUpNextItem()).getItemAlbumId()));
+
+                if(null == mPlaying.get(0).getUpNextItem().getItemArtUrl())
+                    mPlaying.get(0).getUpNextItem().setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
+
                 setArt(holder, mPlaying.get(0).getUpNextItem().getItemArtUrl(), whatView(position));
                 holder.name.setText(mPlaying.get(0).getUpNextItem().getItemTitle());
                 holder.artistName.setText(((MediaItem)mPlaying.get(0).getUpNextItem()).getItemArtist());
@@ -278,12 +287,8 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                 setOnItemClick(holder, QueueType.History, itemPosition);
                 break;
             case ITEM_VIEW_TYPE_LIST_AUTO:
-
                 item = getPositionObject(position);
-
-
                 if (itemDelete != null && itemDelete.getItemPosition() == item.getItemPosition() && item.getListType() == itemDelete.getListType()) {
-
                     // we need to show the "undo" state of the row
                     holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.upnext_delete_background));
 
@@ -317,6 +322,10 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     itemPosition = getPositionObject(position).getItemPosition();
                     if(null == App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemArtUrl())
                         App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem)App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition)).getItemAlbumId()));
+
+                    if(null == App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemArtUrl())
+                        App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
+
                     setArt(holder, App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemArtUrl(), whatView(position));
                     holder.name.setText(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemTitle());
                     holder.artistName.setText(((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition)).getItemArtist());
@@ -376,7 +385,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
 
     private void setArt(SimpleItemViewHolder holder, String path, int what) {
         int size = dpToPx(context, (int) context.getResources().getDimension(R.dimen.one_hundred_eighty_six_pt));
-        if (path != null && !path.equals("null"))
+        if (PlayerUtils.isPathValid(path ))
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null)).resize(size,
                     size).centerCrop().into(holder.img);
         else{

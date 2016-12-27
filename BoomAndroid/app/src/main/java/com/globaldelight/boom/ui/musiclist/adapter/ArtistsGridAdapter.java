@@ -27,6 +27,7 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
@@ -37,6 +38,7 @@ import com.globaldelight.boom.ui.musiclist.activity.DetailAlbumActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
+import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
@@ -82,6 +84,10 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
         int size = setSize(holder);
         if(null==itemList.get(position).getItemArtUrl())
             itemList.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByArtist(context, itemList.get(position).getItemTitle()));
+
+        if(null==itemList.get(position).getItemArtUrl())
+            itemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
+
         setArtistImg(holder, position, size);
 
         if(App.getUserPreferenceHandler().isLibFromHome()) {
@@ -94,7 +100,7 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
 
     private void setArtistImg(final SimpleItemViewHolder holder, final int position, final int size) {
         String path = itemList.get(position).getItemArtUrl();
-        if (isPathValid(path))
+        if (PlayerUtils.isPathValid(path))
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null))
                     .centerCrop().resize(size, size)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else {
@@ -184,15 +190,6 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/2.5));
         holder.gridBottomBg.setLayoutParams(params);
         return size;
-    }
-
-    private boolean fileExist(String albumArtPath) {
-        File imgFile = new File(albumArtPath);
-        return imgFile.exists();
-    }
-
-    public boolean isPathValid(String path) {
-        return path != null && fileExist(path);
     }
 
     public int dpToPx(int dp) {

@@ -37,6 +37,7 @@ import com.globaldelight.boom.ui.musiclist.activity.SongsDetailListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
+import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
@@ -127,14 +128,24 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     holder.defaultImg.setVisibility(View.VISIBLE);
                     if(null == collection.getMediaElement().get(pos).getItemArtUrl())
                         collection.getMediaElement().get(pos).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, collection.getMediaElement().get(pos).getItemId()));
+
+                    if(null == collection.getMediaElement().get(pos).getItemArtUrl())
+                        collection.getMediaElement().get(pos).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
+
                     setArtistImg(holder, pos, size, collection.getMediaElement().get(pos).getItemArtUrl());
                     setOnClicks(holder, pos, ITEM_VIEW_ALBUM);
                     break;
                 case ITEM_VIEW_SONG:
                     if (collection.getArtUrlList().isEmpty())
                         ((MediaItemCollection) collection.getMediaElement().get(pos)).setArtUrlList(MediaController.getInstance(context).getArtUrlList(collection));
+
+                    if (collection.getArtUrlList().isEmpty()) {
+                        ArrayList list = new ArrayList();
+                        list.add(MediaItem.UNKNOWN_ART_URL);
+                        ((MediaItemCollection) collection.getMediaElement().get(pos)).setArtUrlList(list);
+                    }
                     int artCount = ((MediaItemCollection) collection.getMediaElement().get(pos)).getArtUrlList().size();
-                    if (artCount >= 1) {
+                    if (artCount >= 1 && !((MediaItemCollection) collection.getMediaElement().get(pos)).getArtUrlList().get(0).equals(MediaItem.UNKNOWN_ART_URL)) {
                         holder.artTable.setVisibility(View.VISIBLE);
                         setSongsArtImage(holder, pos, size, ((MediaItemCollection) collection.getMediaElement().get(pos)).getArtUrlList());
                     } else if (artCount == 0) {
@@ -239,7 +250,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
 
     private void setArtistImg(final SimpleItemViewHolder holder, final int position, final Size size, final String path) {
 
-        if (isPathValid(path))
+        if (PlayerUtils.isPathValid(path))
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null)).noFade()
                     .centerCrop().resize(size.width, size.height)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else
@@ -392,15 +403,6 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
         holder.defaultImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         return new Size(size, size);
-    }
-
-    private boolean fileExist(String albumArtPath) {
-        File imgFile = new File(albumArtPath);
-        return imgFile.exists();
-    }
-
-    public boolean isPathValid(String path) {
-        return path != null && fileExist(path);
     }
 
     public int dpToPx(int dp) {

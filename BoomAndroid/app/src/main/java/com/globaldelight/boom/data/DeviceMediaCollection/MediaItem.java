@@ -27,7 +27,7 @@ public class MediaItem implements IMediaItem, Parcelable {
     private MediaType mediaType;
     private ItemType parentType;
     private long parentId;
-
+    public static String UNKNOWN_ART_URL = "unknown_art_url";
 
     public MediaItem(long ItemId, String ItemTitle, String ItemDisplayName, String ItemUrl, long ItemAlbumId, String ItemAlbum, long ItemArtistId,
                      String ItemArtist, long Duration, long DateAdded, String ItemArtUrl, ItemType itemType, MediaType mediaType, ItemType parentType, long parentId){

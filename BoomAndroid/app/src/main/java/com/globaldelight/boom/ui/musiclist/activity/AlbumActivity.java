@@ -290,7 +290,7 @@ public class AlbumActivity extends AppCompatActivity {
                 @Nullable
                 @Override
                 protected Object run() throws InterruptedException {
-                    if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
+                    if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
                         return null;
                     } else {
                         return img = BitmapFactory.decodeResource(getBaseContext().getResources(),
@@ -303,7 +303,7 @@ public class AlbumActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
+                            if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
                                 Logger.LOGD("ImageLoad", "Always call --");
                                 try {
                                     Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
@@ -377,20 +377,18 @@ public class AlbumActivity extends AppCompatActivity {
                 null);
         if (cursor != null && cursor.moveToFirst()) {
             String imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-            try {
-                if (imagePath == null) {
+            if(null != albumArt){
+                if (PlayerUtils.isPathValid(imagePath )) {
+                    Picasso.with(AlbumActivity.this)
+                            .load(new File(imagePath)).resize(width, height)
+                            .error(getResources().getDrawable(R.drawable.ic_default_album_header, null)).noFade()
+                            .into(albumArt);
+                }else{
                     albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_header));
-                    return;
                 }
-                Picasso.with(AlbumActivity.this)
-                        .load(new File(imagePath)).resize(width, height)
-                        .error(getResources().getDrawable(R.drawable.ic_default_album_header, null)).noFade()
-                        .into(albumArt);
-            } catch (NullPointerException e) {
-                e.printStackTrace();
+
             }
         }
-
         cursor.close();
     }
 

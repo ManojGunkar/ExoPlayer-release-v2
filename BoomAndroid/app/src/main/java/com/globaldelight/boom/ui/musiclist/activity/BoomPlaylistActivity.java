@@ -295,7 +295,7 @@ public class BoomPlaylistActivity extends AppCompatActivity {
                 @Nullable
                 @Override
                 protected Object run() throws InterruptedException {
-                    if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
+                    if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
                         return null;
                     } else {
                         return img = BitmapFactory.decodeResource(getBaseContext().getResources(),
@@ -308,7 +308,7 @@ public class BoomPlaylistActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
+                            if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
                                 Logger.LOGD("ImageLoad", "Always call --");
                                 try {
                                     Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());

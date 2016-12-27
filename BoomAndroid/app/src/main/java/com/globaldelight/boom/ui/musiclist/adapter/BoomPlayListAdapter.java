@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
@@ -39,6 +40,7 @@ import com.globaldelight.boom.ui.musiclist.activity.SongsDetailListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
+import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
@@ -112,6 +114,13 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
             }
             if (((IMediaItemCollection) items.get(position)).getArtUrlList().isEmpty())
                 ((IMediaItemCollection) items.get(position)).setArtUrlList(MediaController.getInstance(context).getArtUrlList((MediaItemCollection) items.get(position)));
+
+            if (((IMediaItemCollection) items.get(position)).getArtUrlList().isEmpty()) {
+                ArrayList list = new ArrayList();
+                list.add(MediaItem.UNKNOWN_ART_URL);
+                ((IMediaItemCollection) items.get(position)).setArtUrlList(list);
+            }
+
             setSongsArtImage(holder, position, size);
             setOnClicks(holder, position);
         }else{
@@ -144,7 +153,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
 
     private void setSongsArtImage(final SimpleItemViewHolder holder, final int position, final Size size) {
 
-        if (((IMediaItemCollection) getItem(position)).getArtUrlList().size() > 0) {
+        if (((IMediaItemCollection) getItem(position)).getArtUrlList().size() > 0 && PlayerUtils.isPathValid(((IMediaItemCollection) getItem(position)).getArtUrlList().get(0))){
             holder.defaultImg.setVisibility(View.GONE);
             holder.artTable.setVisibility(View.VISIBLE);
             ArrayList<String> Urls = ((IMediaItemCollection) getItem(position)).getArtUrlList();

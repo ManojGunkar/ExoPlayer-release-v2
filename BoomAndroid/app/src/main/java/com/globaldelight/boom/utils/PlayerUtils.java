@@ -6,6 +6,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+
 import java.io.File;
 
 /**
@@ -49,7 +51,7 @@ public class PlayerUtils {
     }
 
     public static boolean isPathValid(String path) {
-        return path != null && fileExist(path);
+        return path != null && !path.equals(MediaItem.UNKNOWN_ART_URL) && fileExist(path);
     }
 
     private static boolean fileExist(String albumArtPath) {

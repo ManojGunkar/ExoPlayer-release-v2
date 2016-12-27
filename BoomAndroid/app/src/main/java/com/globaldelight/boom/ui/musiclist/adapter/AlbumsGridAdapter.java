@@ -36,6 +36,7 @@ import com.globaldelight.boom.ui.musiclist.activity.AlbumActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
+import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
@@ -90,7 +91,7 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
 
     private void setArtistImg(final SimpleItemViewHolder holder, final int position, final int size) {
         String path = itemList.get(position).getItemArtUrl();
-        if (isPathValid(path))
+        if (PlayerUtils.isPathValid(path))
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null)).noFade()
                     .centerCrop().resize(size, size)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else
@@ -175,15 +176,6 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/2.5));
         holder.gridBottomBg.setLayoutParams(params);
         return size;
-    }
-
-    private boolean fileExist(String albumArtPath) {
-        File imgFile = new File(albumArtPath);
-        return imgFile.exists();
-    }
-
-    public boolean isPathValid(String path) {
-        return path != null && fileExist(path);
     }
 
     public int dpToPx(int dp) {

@@ -283,7 +283,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
             artUrlList = ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getArtUrlList();
         }
 
-        if(artUrlList.size()==0){
+        if(artUrlList.size()==0 || !PlayerUtils.isPathValid(artUrlList.get(0))){
             albumArt.setVisibility(View.VISIBLE);
             setDefaultImage(size);
         }else{
@@ -560,7 +560,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
                 @Nullable
                 @Override
                 protected Object run() throws InterruptedException {
-                    if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
+                    if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
                         return null;
                     } else {
                         return img = BitmapFactory.decodeResource(getBaseContext().getResources(),
@@ -573,7 +573,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
+                            if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
                                 Logger.LOGD("ImageLoad", "Always call --");
                                 try {
                                     Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());

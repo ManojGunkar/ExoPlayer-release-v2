@@ -44,6 +44,7 @@ import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.PermissionChecker;
+import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
 import com.squareup.picasso.Picasso;
@@ -133,6 +134,9 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             if(null == currentItem.getItemArtUrl())
                 currentItem.setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(activity, currentItem.getItemAlbumId()));
 
+            if(null == currentItem.getItemArtUrl())
+                currentItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
+
             setAlbumArt(currentItem.getItemArtUrl(), holder);
             if (selectedHolder != null)
                 selectedHolder.mainView.setBackgroundColor(ContextCompat
@@ -158,6 +162,10 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             holder.mainView.setElevation(0);
             if(currentItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB && null == currentItem.getItemArtUrl())
                 currentItem.setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(activity, currentItem.getItemAlbumId()));
+
+            if(null == currentItem.getItemArtUrl())
+                currentItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
+
             setAlbumArt(currentItem.getItemArtUrl(), holder);
             if (selectedHolder != null)
                 selectedHolder.mainView.setBackgroundColor(ContextCompat
@@ -217,7 +225,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     }
 
     private void setAlbumArt(String path, SimpleItemViewHolder holder) {
-        if (path != null && !path.equals("null"))
+        if (PlayerUtils.isPathValid(path ))
             Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_list, null))
                     .noFade().resize(dpToPx(90), dpToPx(90)).centerCrop().into(holder.img);
         else{

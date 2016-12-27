@@ -154,9 +154,16 @@ public class CollectionListActivity  extends AppCompatActivity {
                 setAlbumArt(width, width);
                 break;
             case PLAYLIST:
-                albumArt.setVisibility(View.GONE);
-                tblAlbumArt.setVisibility(View.VISIBLE);
-                setSongsArtImage(width, collection.getArtUrlList());
+                if(collection.getArtUrlList().size() >= 1 &&
+                        PlayerUtils.isPathValid(collection.getArtUrlList().get(0))) {
+                    albumArt.setVisibility(View.GONE);
+                    tblAlbumArt.setVisibility(View.VISIBLE);
+                    setSongsArtImage(width, collection.getArtUrlList());
+                }else{
+                    albumArt.setVisibility(View.VISIBLE);
+                    tblAlbumArt.setVisibility(View.GONE);
+                    setDefaultImage(null);
+                }
                 break;
             case GENRE:
                 albumArt.setVisibility(View.VISIBLE);
@@ -164,9 +171,16 @@ public class CollectionListActivity  extends AppCompatActivity {
                 setAlbumArt(width, width);
                 break;
             case BOOM_PLAYLIST:
-                albumArt.setVisibility(View.GONE);
-                tblAlbumArt.setVisibility(View.VISIBLE);
-                setSongsArtImage(width, collection.getArtUrlList());
+                if(collection.getArtUrlList().size() >= 1 &&
+                        PlayerUtils.isPathValid(collection.getArtUrlList().get(0))) {
+                    albumArt.setVisibility(View.GONE);
+                    tblAlbumArt.setVisibility(View.VISIBLE);
+                    setSongsArtImage(width, collection.getArtUrlList());
+                }else{
+                    albumArt.setVisibility(View.VISIBLE);
+                    tblAlbumArt.setVisibility(View.GONE);
+                    setDefaultImage(null);
+                }
                 break;
         }
 
@@ -400,18 +414,22 @@ public class CollectionListActivity  extends AppCompatActivity {
 
     public void setAlbumArt(int width, int height) {
             String imagePath = collection.getItemArtUrl();
-            try {
-                if (imagePath == null) {
-                    albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_header));
-                    return;
+            if(null != albumArt) {
+                if (PlayerUtils.isPathValid(imagePath)) {
+                    Picasso.with(CollectionListActivity.this)
+                            .load(new File(imagePath)).resize(width, height)
+                            .error(getResources().getDrawable(R.drawable.ic_default_album_header, null)).noFade()
+                            .into(albumArt);
+                } else {
+                    setDefaultImage(imagePath);
                 }
-                Picasso.with(CollectionListActivity.this)
-                        .load(new File(imagePath)).resize(width, height)
-                        .error(getResources().getDrawable(R.drawable.ic_default_album_header, null)).noFade()
-                        .into(albumArt);
-            } catch (NullPointerException e) {
-                e.printStackTrace();
             }
+    }
+
+    private void setDefaultImage(String imagePath) {
+        if (imagePath == null || imagePath.equals(MediaItem.UNKNOWN_ART_URL)) {
+            albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_header));
+        }
     }
 
     private void setSongsArtImage(final int size, final ArrayList<String> Urls) {

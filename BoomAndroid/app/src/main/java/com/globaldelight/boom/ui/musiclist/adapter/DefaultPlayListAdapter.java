@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -35,6 +36,7 @@ import com.globaldelight.boom.ui.musiclist.activity.SongsDetailListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
+import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
@@ -73,13 +75,19 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
 
         if(items.get(position).getArtUrlList().isEmpty())
             items.get(position).setArtUrlList(MediaController.getInstance(context).getArtUrlList(items.get(position)));
+
+        if(items.get(position).getArtUrlList().isEmpty()) {
+            ArrayList list = new ArrayList();
+            list.add(MediaItem.UNKNOWN_ART_URL);
+            items.get(position).setArtUrlList(list);
+        }
+
         Size size= setSize(holder);
-        if(items.get(position).getArtUrlList().size() >= 1){
+        if(items.get(position).getArtUrlList().size() >= 1 && PlayerUtils.isPathValid(items.get(position).getArtUrlList().get(0))){
             holder.artTable.setVisibility(View.VISIBLE);
             setSongsArtImage(holder, position, size, items.get(position).getArtUrlList());
-        }else if(items.get(position).getArtUrlList().size() == 0){
+        }else if(items.get(position).getArtUrlList().size() == 0 || !PlayerUtils.isPathValid(items.get(position).getArtUrlList().get(0))){
             holder.defaultImg.setVisibility(View.VISIBLE);
-
             setDefaultImage(holder.defaultImg, size.width, size.height);
         }else{
             holder.mainView.setVisibility(View.GONE);

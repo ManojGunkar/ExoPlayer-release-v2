@@ -45,6 +45,7 @@ import com.globaldelight.boom.ui.musiclist.activity.DetailAlbumActivity;
 import com.globaldelight.boom.ui.musiclist.activity.SearchDetailListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
+import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.R;
@@ -93,6 +94,10 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             holder.mainView.setElevation(0);
             if(null == resultItemList.get(position).getItemArtUrl())
                 resultItemList.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem) resultItemList.get(position)).getItemAlbumId()));
+
+            if(null == resultItemList.get(position).getItemArtUrl())
+                resultItemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
+
             setSongArt(resultItemList.get(position).getItemArtUrl(), holder);
 
             MediaItem nowPlayingItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
@@ -266,6 +271,10 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             int size = setSize(holder);
             if(null == resultItemList.get(position).getItemArtUrl())
                 resultItemList.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByArtist(context, resultItemList.get(position).getItemTitle()));
+
+            if(null == resultItemList.get(position).getItemArtUrl())
+                resultItemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
+
             setArtistImg(holder, ((MediaItemCollection) resultItemList.get(position)).getItemArtUrl(), size);
 
             if(App.getUserPreferenceHandler().isLibFromHome()){
@@ -405,7 +414,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
     }
 
     private void setArtistImg(final SearchDetailListAdapter.SimpleItemViewHolder holder, final String path, final int size) {
-        if (isPathValid(path))
+        if (PlayerUtils.isPathValid(path))
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null))
                     .centerCrop().resize(size, size)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else {
@@ -414,21 +423,12 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
     }
 
     private void setSongArt(String path, SearchDetailListAdapter.SimpleItemViewHolder holder) {
-        if (path != null && !path.equals("null"))
+        if (PlayerUtils.isPathValid(path))
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null)).resize(dpToPx(90),
                     dpToPx(90)).centerCrop().into(holder.img);
         else{
             holder.img.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_default_list));
         }
-    }
-
-    private boolean fileExist(String albumArtPath) {
-        File imgFile = new File(albumArtPath);
-        return imgFile.exists();
-    }
-
-    public boolean isPathValid(String path) {
-        return path != null && fileExist(path);
     }
 
     public int dpToPx(int dp) {

@@ -35,6 +35,7 @@ import com.globaldelight.boom.ui.musiclist.activity.FavouriteListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
+import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
 import com.squareup.picasso.Picasso;
@@ -76,6 +77,10 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
         holder.mainView.setElevation(0);
         if((itemList.get(position)).getMediaType() == MediaType.DEVICE_MEDIA_LIB && null == itemList.get(position).getItemArtUrl())
             itemList.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem) itemList.get(position)).getItemAlbumId()));
+
+        if(null == itemList.get(position).getItemArtUrl())
+            itemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
+
         setAlbumArt(itemList.get(position).getItemArtUrl(), holder);
         if (selectedHolder != null)
             selectedHolder.mainView.setBackgroundColor(ContextCompat
@@ -114,7 +119,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
     }
 
     private void setAlbumArt(String path, FavouriteListAdapter.SimpleItemViewHolder holder) {
-        if (path != null && !path.equals("null"))
+        if (PlayerUtils.isPathValid(path ))
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null)).resize(dpToPx(90),
                     dpToPx(90)).centerCrop().into(holder.img);
         else{
@@ -123,7 +128,6 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
     }
 
     private void setDefaultArt(FavouriteListAdapter.SimpleItemViewHolder holder, int size) {
-
         holder.img.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_list ));
     }
 
