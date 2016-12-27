@@ -212,7 +212,7 @@ namespace gdpl {
     extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableAudioEffect(JNIEnv *env, jclass clazz,
                                                                       jboolean enabled) {
         gdpl::AutoLock lock(&mLock);
-        LOGD("OpenSLPlayer: enableAudioEffect(%d)", enabled);
+        LOGD("enableAudioEffect(%d)", enabled);
         mEngine->SetEffectsState(enabled);
 
     }
@@ -220,7 +220,7 @@ namespace gdpl {
     extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_enable3DAudio(JNIEnv *env, jclass clazz,
                                                                   jboolean enabled) {
         gdpl::AutoLock lock(&mLock);
-        LOGD("OpenSLPlayer: enable3DAudio(%d)", enabled);
+        LOGD("enable3DAudio(%d)", enabled);
         mEngine->Set3DAudioState(enabled);
     }
 
@@ -228,7 +228,7 @@ namespace gdpl {
                                                                     jboolean enabled) {
         /*openSLEqualizer->Enable(enabled);*/
         gdpl::AutoLock lock(&mLock);
-        LOGD("OpenSLPlayer: enableEqualizer(%d)", enabled);
+        LOGD("enableEqualizer(%d)", enabled);
         mEngine->SetEffectsState(enabled);
     }
 
@@ -236,21 +236,21 @@ namespace gdpl {
                                                                     jboolean enable) {
 
         gdpl::AutoLock lock(&mLock);
-        LOGD("OpenSLPlayer: enableSuperBass(%d)", enable);
+        LOGD("enableSuperBass(%d)", enable);
         mEngine->SetSuperBass(enable);
     }
 
     extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableHighQuality(JNIEnv *env, jobject instance,
                                                                       jboolean enable) {
         gdpl::AutoLock lock(&mLock);
-        LOGD("OpenSLPlayer: enableHighQuality(%d)", enable);
+        LOGD("enableHighQuality(%d)", enable);
         mEngine->SetHighQuality(enable);
     }
 
     extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_setIntensity(JNIEnv *env, jobject instance,
                                                                  jdouble value) {
         gdpl::AutoLock lock(&mLock);
-        LOGD("OpenSLPlayer: setIntensity(%g)", value);
+        LOGD("setIntensity(%g)", value);
         mEngine->SetIntensity(value);
 
     }
@@ -261,7 +261,7 @@ namespace gdpl {
         jfloat *bandGains = env->GetFloatArrayElements(bandGains_, NULL);
 
         gdpl::AutoLock lock(&mLock);
-        LOGD("OpenSLPlayer: SetEqualizer(%d)", id);
+        LOGD("SetEqualizer(%d)", id);
         mEngine->SetEqualizer(id, (float *) bandGains);
 
         env->ReleaseFloatArrayElements(bandGains_, bandGains, 0);
@@ -314,6 +314,7 @@ namespace gdpl {
                                                                          jint headphoneType)
     {
         gdpl::AutoLock lock(&mLock);
+        LOGD("setHeadPhoneType(%d)", headphoneType);
         mEngine->SetHeadPhoneType(headphoneType);
     }
 
