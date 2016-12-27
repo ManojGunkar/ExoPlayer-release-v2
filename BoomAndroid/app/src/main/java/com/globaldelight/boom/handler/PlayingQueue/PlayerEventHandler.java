@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.task.PlayerService;
@@ -199,6 +200,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         }else{
             context.sendBroadcast(new Intent(PlayerService.ACTION_LAST_PLAYED_SONG));
         }
+        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MOVE_TO_NEXT_SONG);
     }
 
     public void playPrevSong() {
@@ -210,6 +212,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         }
         PLAYER_DIRECTION = PREVIOUS;
         App.getPlayingQueueHandler().getUpNextList().setPreviousPlayingItem();
+        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MOVE_TO_PRE_SONG);
     }
 
     @Override
@@ -232,10 +235,12 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     public PlayState PlayPause() {
         if(isPlaying()){
             setSessionState(PlaybackState.STATE_PAUSED);
+            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_PAUSE_PLAYING);
             return pause;
         } else {
             if ( requestAudioFocus() ) {
                 setSessionState(PlaybackState.STATE_PLAYING);
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_PLAY_PLAYING);
                 return play;
             }
             else {

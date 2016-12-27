@@ -87,12 +87,19 @@ public class AnalyticsHelper {
     public static final String EVENT_MUSIC_SESSION_DURATION = " music_session_duration";
     public static final String EVENT_TOTAL_USAGE_IN_MINUTES = "total_usage_in_minutes";
     public static final String EVENT_QUEUE_BUTTON_FROM_PLAYER_SCREEN = "queue_button_from_player_screen";
-
+    public static final String EVENT_PLAY_PLAYING = "event_play_song";
+    public static final String EVENT_PAUSE_PLAYING = "event_pause_song";
+    public static final String EVENT_REPEAT_ONE_PLAYING = "event_repeat_one_song";
+    public static final String EVENT_REPEAT_ALL_PLAYING = "event_repeat_all_song";
+    public static final String EVENT_REPEAT_NONE_PLAYING = "event_repeat_none_song";
+    public static final String EVENT_SHUFFLE_ON_PLAYING = "event_shuffle_on_song";
+    public static final String EVENT_SHUFFLE_OFF_PLAYING = "event_shuffle_off_song";
 
     //Mixpanel
 
     public static final String EVENT_EFFECTS_TURNED_ON = "effects_turned_on";
     public static final String EVENT_EFFECTS_TURNED_OFF = "effects_turned_off";
+    public static final String EVENT_EFFECTS_BACK_BUTTON = "effects_back_button_pressed";
 
     public static final String EVENT_3D_TURNED_ON = "3d_turned_on";
     public static final String EVENT_3D_TURNED_OFF = "3d_turned_on";

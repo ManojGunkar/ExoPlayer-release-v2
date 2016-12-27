@@ -699,6 +699,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onBackPressed() {
+        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_EFFECTS_BACK_BUTTON);
         finish();
         overridePendingTransition(R.anim.stay_out, R.anim.push_up_out);
     }
@@ -707,6 +708,7 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_EFFECTS_BACK_BUTTON);
                 finish();
                 overridePendingTransition(R.anim.stay_out, R.anim.push_up_out);
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_EFFECTS_BACK_BUTTON_TAPPED);
