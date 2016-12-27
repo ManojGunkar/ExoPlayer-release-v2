@@ -149,11 +149,12 @@ namespace gdpl
 
     void OpenSLPlayer::startReading()
     {
-        _isReading = true;
-        (*_bufferQueue)->Clear(_bufferQueue);
+        pause(); // prevent buffers from intermixing to produce noise at the beginning.
         for ( int i = 0; i < BUFFER_COUNT; i++ ) {
             enqueue();
         }
+        resume();
+        _isReading = true;
     }
 
     void OpenSLPlayer::stopReading()
