@@ -201,6 +201,8 @@
     <string name="feedback_title">Enjoying the Boom App?</string>
     <string name="feedback_text">Take our quick feedback survey and tell us what you think.</string>
     <string name="feedback">feedback</string>
+    <string name="feedback_error_no_network">No network connection! Try Again Later.</string>
+
 
 
 </resources>

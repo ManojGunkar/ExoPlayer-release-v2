@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.renderscript.Allocation;
@@ -97,6 +99,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private final static long ACCEPT_TIME_LIMIT = 3 * 60 *  MINS;
 
     private  SurveyMonkey surveyInstance = new SurveyMonkey();
+    private boolean surveyInProgress = false;
 
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -153,7 +156,6 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
             }
         }
     };
-
 
 
     private void updateShuffle(){
@@ -517,9 +519,23 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         feedbackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                surveyInstance.startSMFeedbackActivityForResult(BoomPlayerActivity.this, SURVEY_REQUEST_CODE, SURVEY_HASH);
+                if ( surveyInProgress ) return;
+
+                if ( isNetworkConnected(BoomPlayerActivity.this) ) {
+                    surveyInProgress = true;
+                    surveyInstance.startSMFeedbackActivityForResult(BoomPlayerActivity.this, SURVEY_REQUEST_CODE, SURVEY_HASH);
+                }
+                else {
+                    Toast.makeText(BoomPlayerActivity.this, BoomPlayerActivity.this.getResources().getString(R.string.feedback_error_no_network), Toast.LENGTH_SHORT).show();
+                }
             }
         });
+    }
+
+    private static boolean isNetworkConnected(Context context) {
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetInfo = manager.getActiveNetworkInfo();
+        return activeNetInfo != null && activeNetInfo.isConnected();
     }
 
     private void startEffectActivity(){
@@ -726,6 +742,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if ( requestCode == SURVEY_REQUEST_CODE ) {
+            surveyInProgress = false;
             // After feedback is provided adjust the date of next prompt.
             long nextPromptInterval = DECLINE_TIME_LIMIT;
             if ( resultCode == RESULT_OK ) {
