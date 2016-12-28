@@ -127,7 +127,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     holder.subTitle.setText(((MediaItemCollection) collection.getMediaElement().get(pos)).getItemSubTitle());
                     holder.defaultImg.setVisibility(View.VISIBLE);
                     if(null == collection.getMediaElement().get(pos).getItemArtUrl())
-                        collection.getMediaElement().get(pos).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, collection.getMediaElement().get(pos).getItemId()));
+                        collection.getMediaElement().get(pos).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItemCollection) collection.getMediaElement().get(pos)).getItemId()));
 
                     if(null == collection.getMediaElement().get(pos).getItemArtUrl())
                         collection.getMediaElement().get(pos).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -136,10 +136,10 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     setOnClicks(holder, pos, ITEM_VIEW_ALBUM);
                     break;
                 case ITEM_VIEW_SONG:
-                    if (collection.getArtUrlList().isEmpty())
+                    if (((MediaItemCollection) collection.getMediaElement().get(pos)).getArtUrlList().isEmpty())
                         ((MediaItemCollection) collection.getMediaElement().get(pos)).setArtUrlList(MediaController.getInstance(context).getArtUrlList(collection));
 
-                    if (collection.getArtUrlList().isEmpty()) {
+                    if (((MediaItemCollection) collection.getMediaElement().get(pos)).getArtUrlList().isEmpty()) {
                         ArrayList list = new ArrayList();
                         list.add(MediaItem.UNKNOWN_ART_URL);
                         ((MediaItemCollection) collection.getMediaElement().get(pos)).setArtUrlList(list);
@@ -148,14 +148,12 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     if (artCount >= 1 && !((MediaItemCollection) collection.getMediaElement().get(pos)).getArtUrlList().get(0).equals(MediaItem.UNKNOWN_ART_URL)) {
                         holder.artTable.setVisibility(View.VISIBLE);
                         setSongsArtImage(holder, pos, size, ((MediaItemCollection) collection.getMediaElement().get(pos)).getArtUrlList());
-                    } else if (artCount == 0) {
+                    } else {
                         holder.defaultImg.setVisibility(View.VISIBLE);
                         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(size.width, size.height);
                         holder.defaultImg.setLayoutParams(layoutParams);
 
                         setDefaultImage(holder.defaultImg, size.width, size.height);
-                    } else {
-                        holder.mainView.setVisibility(View.GONE);
                     }
                     holder.title.setText(collection.getMediaElement().get(pos).getItemTitle());
 

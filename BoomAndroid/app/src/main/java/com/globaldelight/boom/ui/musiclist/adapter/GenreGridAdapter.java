@@ -93,7 +93,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
         holder.subTitle.setText( sb.toString());
         int size = setSize(holder);
         if(null == items.get(position).getItemArtUrl())
-            items.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbum(context, items.get(position).getItemSubTitle()));
+            items.get(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(items.get(position).getItemSubTitle()));
 
         if(null == items.get(position).getItemArtUrl())
             items.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);

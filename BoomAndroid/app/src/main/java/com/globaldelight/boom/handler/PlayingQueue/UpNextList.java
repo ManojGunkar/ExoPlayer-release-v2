@@ -2,7 +2,6 @@ package com.globaldelight.boom.handler.PlayingQueue;
 
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
@@ -15,6 +14,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -39,6 +39,9 @@ public class UpNextList {
     private static LinkedList<IMediaItemBase> mAutoNextList = new LinkedList<>();
     private static LinkedList<IMediaItemBase> mGhostList = new LinkedList<>();
 
+    private HashMap<String, String> mAlbumArtList = new HashMap<>();
+    private HashMap<Long, String> mArtistArtList = new HashMap<>();
+
     private static UpNextList handler;
 
     private UpNextList(Context application) {
@@ -51,6 +54,21 @@ public class UpNextList {
         }
         return handler;
     }
+
+    public void setAlbumArtList(HashMap<String, String> artList){
+        this.mAlbumArtList = artList;
+    }
+    public HashMap<String, String> getAlbumArtList(){
+        return mAlbumArtList;
+    }
+
+    public void setArtistArtList(HashMap<Long, String> artList){
+        this.mArtistArtList = artList;
+    }
+    public HashMap<Long, String> getArtistArtList(){
+        return mArtistArtList;
+    }
+
 
     public void setQueueEvent(QueueEvent event) {
         this.queueEvent = event;

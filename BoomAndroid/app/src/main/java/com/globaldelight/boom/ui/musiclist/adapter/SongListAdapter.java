@@ -75,9 +75,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
 
         holder.mainView.setElevation(0);
 
-        if(null == getMediaItem(position).getItemArtUrl())
-            getMediaItem(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, getMediaItem(position).getItemAlbumId()));
-
+        if(null == getMediaItem(position).getItemArtUrl()) {
+            getMediaItem(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(getMediaItem(position).getItemAlbum()));
+        }
         if(null == getMediaItem(position).getItemArtUrl())
             getMediaItem(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
 

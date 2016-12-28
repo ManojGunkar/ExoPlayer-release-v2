@@ -25,7 +25,6 @@ public class DeviceMediaQuery {
 
 
     public static ArrayList<? extends IMediaItemBase> getSongList(Context context){
-        Log.e("ToTaL_TiMe : ", "On_StArT : "+System.currentTimeMillis());
         ArrayList<MediaItem> songList = new ArrayList<>();
 
         final String where = MediaStore.Audio.Media.IS_MUSIC + "=1";
@@ -33,7 +32,6 @@ public class DeviceMediaQuery {
         final String orderBy = MediaStore.Audio.Media.TITLE;
         Cursor songListCursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 null, where, null, orderBy);
-        Log.e("ToTaL_TiMe : ", "On_EnD : "+System.currentTimeMillis());
         if (songListCursor != null && songListCursor.moveToFirst()) {
 
             int Song_Id_Column = songListCursor.getColumnIndex
@@ -65,10 +63,7 @@ public class DeviceMediaQuery {
 
             int Date_Added_Column = songListCursor.getColumnIndex
                     (MediaStore.Audio.Media.DATE_ADDED);
-            int album_art = songListCursor.getColumnIndex
-                    (MediaStore.Audio.AlbumColumns.ALBUM_ART);
             do{
-                Log.d("Song_Name : ", songListCursor.getString(Song_Name_Column));
                 songList.add(new MediaItem(songListCursor.getLong(Song_Id_Column), songListCursor.getString(Song_Name_Column),
                         songListCursor.getString(Song_Display_Name_Column), songListCursor.getString(Song_Path_Column),
                         songListCursor.getLong(Album_ID_Column), songListCursor.getString(Album_Name_Column),
@@ -291,7 +286,6 @@ public class DeviceMediaQuery {
 
             //add albums to list
             do {
-
                 artistList.add(new MediaItemCollection(artistListCursor.getLong(Item_ID_Column),
                         artistListCursor.getString(Item_Title_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : artistListCursor.getString(Item_Title_Column),
                         null, /*getAlbumArtByArtist(context, artistListCursor.getString(Item_Title_Column))*/ null,

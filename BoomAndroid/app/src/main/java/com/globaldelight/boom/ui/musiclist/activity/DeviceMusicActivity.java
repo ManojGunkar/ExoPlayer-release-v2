@@ -325,7 +325,6 @@ public class DeviceMusicActivity extends BoomMasterActivity{
         super.onDestroy();
         if(null != mPlayerEventBroadcastReceiver)
             unregisterReceiver(mPlayerEventBroadcastReceiver);
-        Logger.LOGD("DeviceMusicActivity", "Destroy");
     }
 
     private void checkPermissions() {
@@ -335,7 +334,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
-                        sendBroadcast(new Intent(PlayerService.ACTION_SETUP_SEARCH));
+                        sendBroadcast(new Intent(PlayerService.ACTION_READ_WRITE_STORAGE_PERMISSION_GRANTED));
                         initView();
                     }
 

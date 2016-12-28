@@ -245,7 +245,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                         holder.undoButton.setOnClickListener(null);
                         itemPosition = getPositionObject(position).getItemPosition();
                         if(null == App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).getItemArtUrl())
-                            App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem)App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition)).getItemAlbumId()));
+                            App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem)App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition)).getItemAlbum()));
 
                         if(null == App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).getItemArtUrl())
                             App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -263,7 +263,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
             case ITEM_VIEW_TYPE_LIST_PLAYING:
                 itemPosition = getPosition(position);
                 if(null == mPlaying.get(0).getUpNextItem().getItemArtUrl())
-                    mPlaying.get(0).getUpNextItem().setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem)mPlaying.get(0).getUpNextItem()).getItemAlbumId()));
+                    mPlaying.get(0).getUpNextItem().setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem)mPlaying.get(0).getUpNextItem()).getItemAlbum()));
 
                 if(null == mPlaying.get(0).getUpNextItem().getItemArtUrl())
                     mPlaying.get(0).getUpNextItem().setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -321,7 +321,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
                     holder.undoButton.setOnClickListener(null);
                     itemPosition = getPositionObject(position).getItemPosition();
                     if(null == App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemArtUrl())
-                        App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem)App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition)).getItemAlbumId()));
+                        App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem)App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition)).getItemAlbum()));
 
                     if(null == App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemArtUrl())
                         App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);

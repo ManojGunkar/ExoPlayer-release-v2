@@ -93,7 +93,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             holder.artistName.setText(((MediaItem)resultItemList.get(position)).getItemArtist());
             holder.mainView.setElevation(0);
             if(null == resultItemList.get(position).getItemArtUrl())
-                resultItemList.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem) resultItemList.get(position)).getItemAlbumId()));
+                resultItemList.get(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem) resultItemList.get(position)).getItemAlbum()));
 
             if(null == resultItemList.get(position).getItemArtUrl())
                 resultItemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -270,7 +270,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                     (albumCount<=1 ? context.getResources().getString(R.string.album) : context.getResources().getString(R.string.albums)) +" "+albumCount);
             int size = setSize(holder);
             if(null == resultItemList.get(position).getItemArtUrl())
-                resultItemList.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByArtist(context, resultItemList.get(position).getItemTitle()));
+                resultItemList.get(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getArtistArtList().get(((MediaItemCollection) resultItemList.get(position)).getItemId()));
 
             if(null == resultItemList.get(position).getItemArtUrl())
                 resultItemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);

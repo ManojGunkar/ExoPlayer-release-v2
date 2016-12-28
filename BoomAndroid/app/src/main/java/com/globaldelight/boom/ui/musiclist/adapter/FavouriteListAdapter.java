@@ -76,7 +76,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
         holder.artistName.setText(((MediaItem)itemList.get(position)).getItemArtist());
         holder.mainView.setElevation(0);
         if((itemList.get(position)).getMediaType() == MediaType.DEVICE_MEDIA_LIB && null == itemList.get(position).getItemArtUrl())
-            itemList.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem) itemList.get(position)).getItemAlbumId()));
+            itemList.get(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem) itemList.get(position)).getItemAlbum()));
 
         if(null == itemList.get(position).getItemArtUrl())
             itemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);

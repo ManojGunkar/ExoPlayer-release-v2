@@ -263,7 +263,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             int size = setSize(holder);
 
             if(null == artists.get(getPosition(position)).getItemArtUrl())
-                artists.get(getPosition(position)).setItemArtUrl(DeviceMediaQuery.getAlbumArtByArtist(context, artists.get(getPosition(position)).getItemTitle()));
+                artists.get(getPosition(position)).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getArtistArtList().get(artists.get(getPosition(position)).getItemId()));
 
             if(null == artists.get(getPosition(position)).getItemArtUrl())
                 artists.get(getPosition(position)).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -414,7 +414,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             holder.artistName.setText(((MediaItem)songs.get(getPosition(position))).getItemArtist());
             holder.mainView.setElevation(0);
             if(null == songs.get(getPosition(position)).getItemArtUrl())
-                songs.get(getPosition(position)).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(context, ((MediaItem) songs.get(getPosition(position))).getItemAlbumId()));
+                songs.get(getPosition(position)).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem) songs.get(getPosition(position))).getItemAlbum()));
 
             if(null == songs.get(getPosition(position)).getItemArtUrl())
                 songs.get(getPosition(position)).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);

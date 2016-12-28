@@ -1,14 +1,17 @@
 package com.globaldelight.boom.task;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 import com.globaldelight.boom.App;
@@ -23,11 +26,16 @@ import com.globaldelight.boom.ui.musiclist.activity.PlayingQueueActivity;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
 
 import java.io.IOException;
+import java.security.SecurityPermission;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
 public class PlayerService extends Service implements MusicReceiver.updateMusic{
 
+    SharedPreferences shp;
+    public static final String STORAGE_PERMISSION = "Permission_granted";
     public static final String ACTION_NOTI_CLICK = "ACTION_NOTI_CLICK";
     public static final String ACTION_NOTI_REMOVE = "ACTION_NOTI_REMOVE";
 
@@ -52,7 +60,7 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
     public static final String ACTION_UPDATE_BOOM_PLAYLIST_LIST ="ACTION_UPDATE_BOOM_PLAYLIST_LIST";
     public static final String ACTION_CREATE_PLAYER_SCREEN = "ACTION_CREATE_PLAYER_SCREEN";
     public static final String ACTION_DESTROY_PLAYER_SCREEN ="ACTION_DESTROY_PLAYER_SCREEN";
-    public static final String ACTION_SETUP_SEARCH ="ACTION_SETUP_SEARCH";
+    public static final String ACTION_READ_WRITE_STORAGE_PERMISSION_GRANTED ="ACTION_READ_WRITE_STORAGE_PERMISSION_GRANTED";
 
     private long mServiceStartTime = 0;
     private long mServiceStopTime = 0;
@@ -98,6 +106,26 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
         try {
             mServiceStartTime = SystemClock.currentThreadTimeMillis();
         }catch (Exception e){}
+
+        shp = getSharedPreferences("STORAGE_PERMISSION", Context.MODE_PRIVATE);
+        // Assume thisActivity is the current activity
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(PERMISSION_GRANTED == permissionCheck){
+            if (!isSearch) {
+                isSearch = true;
+                musicSearchHelper = new MusicSearchHelper(App.getApplication());
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initSearchAndArt();
+                    }
+                }).start();
+            }
+            shp.edit().putBoolean(STORAGE_PERMISSION, true).apply();
+        }else{
+            shp.edit().putBoolean(STORAGE_PERMISSION, false).apply();
+        }
     }
 
     @Override
@@ -124,7 +152,7 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
         filter.addAction(ACTION_LAST_PLAYED_SONG);
         filter.addAction(ACTION_CREATE_PLAYER_SCREEN);
         filter.addAction(ACTION_DESTROY_PLAYER_SCREEN);
-        filter.addAction(ACTION_SETUP_SEARCH);
+        filter.addAction(ACTION_READ_WRITE_STORAGE_PERMISSION_GRANTED);
         registerReceiver(playerServiceBroadcastReceiver, filter);
         notificationHandler = new NotificationHandler(context, this);
         return START_NOT_STICKY;
@@ -225,19 +253,28 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
             case ACTION_DESTROY_PLAYER_SCREEN:
                 isPlayerScreenResume = false;
                 break;
-            case ACTION_SETUP_SEARCH:
-                if(!isSearch) {
-                    isSearch = true;
-                    musicSearchHelper = new MusicSearchHelper(App.getApplication());
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            musicSearchHelper.setSearchContent();
-                        }
-                    }).start();
+            case ACTION_READ_WRITE_STORAGE_PERMISSION_GRANTED:
+                if(false == shp.getBoolean(STORAGE_PERMISSION, false)) {
+                    if (!isSearch) {
+                        isSearch = true;
+                        musicSearchHelper = new MusicSearchHelper(App.getApplication());
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                initSearchAndArt();
+                            }
+                        }).start();
+                    }
                 }
+                shp.edit().putBoolean(STORAGE_PERMISSION, true).apply();
                 break;
         }
+    }
+
+    private void initSearchAndArt(){
+        musicSearchHelper.getAlbumList(App.getApplication());
+        musicSearchHelper.getArtistList(App.getApplication());
+        musicSearchHelper.setSearchContent();
     }
 
     private void updatePlayerToLastPlayedSong() {

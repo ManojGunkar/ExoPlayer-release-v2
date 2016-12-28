@@ -83,7 +83,7 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
                 (albumCount<=1 ? context.getResources().getString(R.string.album) : context.getResources().getString(R.string.albums)) +" "+albumCount);
         int size = setSize(holder);
         if(null==itemList.get(position).getItemArtUrl())
-            itemList.get(position).setItemArtUrl(DeviceMediaQuery.getAlbumArtByArtist(context, itemList.get(position).getItemTitle()));
+            itemList.get(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getArtistArtList().get(itemList.get(position).getItemId()));
 
         if(null==itemList.get(position).getItemArtUrl())
             itemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);

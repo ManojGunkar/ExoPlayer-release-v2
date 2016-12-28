@@ -132,7 +132,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             holder.mainView.setElevation(0);
 
             if(null == currentItem.getItemArtUrl())
-                currentItem.setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(activity, currentItem.getItemAlbumId()));
+                currentItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(currentItem.getItemAlbum()));
 
             if(null == currentItem.getItemArtUrl())
                 currentItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -161,7 +161,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             holder.artistName.setText(currentItem.getItemArtist());
             holder.mainView.setElevation(0);
             if(currentItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB && null == currentItem.getItemArtUrl())
-                currentItem.setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(activity, currentItem.getItemAlbumId()));
+                currentItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(currentItem.getItemAlbum()));
 
             if(null == currentItem.getItemArtUrl())
                 currentItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);

@@ -86,11 +86,9 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
         if(items.get(position).getArtUrlList().size() >= 1 && PlayerUtils.isPathValid(items.get(position).getArtUrlList().get(0))){
             holder.artTable.setVisibility(View.VISIBLE);
             setSongsArtImage(holder, position, size, items.get(position).getArtUrlList());
-        }else if(items.get(position).getArtUrlList().size() == 0 || !PlayerUtils.isPathValid(items.get(position).getArtUrlList().get(0))){
+        }else /*if(items.get(position).getArtUrlList().size() == 0 || !PlayerUtils.isPathValid(items.get(position).getArtUrlList().get(0)))*/{
             holder.defaultImg.setVisibility(View.VISIBLE);
             setDefaultImage(holder.defaultImg, size.width, size.height);
-        }else{
-            holder.mainView.setVisibility(View.GONE);
         }
 
         holder.title.setText(items.get(position).getItemTitle());
