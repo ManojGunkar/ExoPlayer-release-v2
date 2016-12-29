@@ -127,7 +127,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     holder.subTitle.setText(((MediaItemCollection) collection.getMediaElement().get(pos)).getItemSubTitle());
                     holder.defaultImg.setVisibility(View.VISIBLE);
                     if(null == collection.getMediaElement().get(pos).getItemArtUrl())
-                        collection.getMediaElement().get(pos).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItemCollection) collection.getMediaElement().get(pos)).getItemId()));
+                        collection.getMediaElement().get(pos).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItemCollection) collection.getMediaElement().get(pos)).getItemTitle()));
 
                     if(null == collection.getMediaElement().get(pos).getItemArtUrl())
                         collection.getMediaElement().get(pos).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
