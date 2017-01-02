@@ -7,6 +7,7 @@ build_project:
   stage: build
   script:
     - echo "Building..."
+    - chmod +x build.sh
     - ./build.sh
 
 test_project:
