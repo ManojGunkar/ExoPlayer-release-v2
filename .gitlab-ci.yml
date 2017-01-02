@@ -1,0 +1,20 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build_project:
+  stage: build
+  script:
+    - echo "Building..."
+    - ./build.sh
+
+test_project:
+  stage: test
+  script:
+    - echo "Testing..."
+
+deploy_project:
+  stage: deploy
+  script:
+    - echo "Deploying.."
