@@ -3,19 +3,27 @@ stages:
   - test
   - deploy
 
+variables:
+  BUILD_DIR: "$TMPDIR/boom-$CI_BUILD_ID"
+  APK_NAME: boom-release.apk
+  DEPLOY_DIR: s/Volumes/DATA/Projects/iBoom-Android/Builds/CI/Latest/ 
+
 build_project:
   stage: build
   script:
-    - echo "Building..."
+    - echo "*** Building..."
     - chmod +x build.sh
     - ./build.sh
 
 test_project:
   stage: test
   script:
-    - echo "Testing..."
+    - echo "*** Testing..."
 
 deploy_project:
   stage: deploy
   script:
-    - echo "Deploying.."
+    - echo "*** Deploying..."
+    - cat pre_deploy.sh | ssh -t fs.globaldelight.com
+    - ssh -t fs.globaldelight.com "mkdir -p $DEPLOY_DIR/Build_$CI_PIPELINE_ID"
+    - scp "$BUILD_DIR/$APK_NAME" "fs.globaldelight.com:$DEPLOY_DIR/Build_$CI_PIPELINE_ID/$APK_NAME"

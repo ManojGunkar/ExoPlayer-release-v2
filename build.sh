@@ -3,7 +3,6 @@
 ROOT_DIR=$(pwd)
 BUILD_TOOLS="${ANDROID_HOME}/build-tools/24.0.3"
 APK_DIR=app/build/outputs/apk
-BUILD_DIR=$TMPDIR/boom
 
 check_error() {
 	if [ $1 -ne 0 ]; then
@@ -13,13 +12,16 @@ check_error() {
 }
 
 
-cd BoomAndroid
-
-mkdir -p "$BUILD_DIR"
-if [ -f "../boom-release.apk" ]; then
-	rm -rdf "../boom-release.apk"
+# Clean build directory
+if [ -d "$BUILD_DIR" ]; then
+	rm -rdf $BUILD_DIR/*.*
+else
+	mkdir -p "$BUILD_DIR"
 fi
 
+
+
+cd BoomAndroid
 chmod +x gradlew
 
 ./gradlew assembleRelease
@@ -30,7 +32,7 @@ check_error $?
 
 $BUILD_TOOLS/apksigner sign --ks keystore.jks \
 	--ks-pass pass:BoomAndroid \
-	--out "../boom-release.apk" \
+	--out "${BUILD_DIR}/$APK_NAME" \
 	"${BUILD_DIR}/app-unsigned-aligned.apk"
 check_error $?
 
