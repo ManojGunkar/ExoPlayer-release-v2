@@ -4,7 +4,8 @@ stages:
   - deploy
 
 variables:
-  BUILD_DIR: "/tmp/$CI_PROJECT_ID/boom-$CI_BUILD_ID"
+  BUILD_NUMBER: $CI_PIPELINE_ID
+  BUILD_DIR: "/tmp/$CI_PROJECT_ID/boom-$BUILD_NUMBER"
   APK_NAME: boom-release.apk
   DEPLOY_SERVER_PATH: /Volumes/DATA/Projects/iBoom-Android/Builds/CI
   DEPLOY_DIR: $DEPLOY_SERVER_PATH/Latest/ 
@@ -25,6 +26,6 @@ deploy_project:
   stage: deploy
   script:
     - echo "*** Deploying..."
-    - cat pre_deploy.sh | ssh -t fs.globaldelight.com
-    - ssh -t fs.globaldelight.com "mkdir -p $DEPLOY_DIR/Build_$CI_PIPELINE_ID"
-    - scp "$BUILD_DIR/$APK_NAME" "fs.globaldelight.com:$DEPLOY_DIR/Build_$CI_PIPELINE_ID/$APK_NAME"
+    - ssh -t fs.globaldelight.com DEPLOY_SERVER_PATH=$DEPLOY_SERVER_PATH DEPLOY_DIR=$DEPLOY_DIR 'bash -s' < pre_deploy.sh
+    - ssh -t fs.globaldelight.com "mkdir -p $DEPLOY_DIR/Build_$BUILD_NUMBER"
+    - scp "$BUILD_DIR/$APK_NAME" "fs.globaldelight.com:$DEPLOY_DIR/Build_$BUILD_NUMBER/$APK_NAME"
