@@ -26,6 +26,6 @@ deploy_project:
   stage: deploy
   script:
     - echo "*** Deploying..."
-    - ssh -t fs.globaldelight.com DEPLOY_SERVER_PATH=$DEPLOY_SERVER_PATH DEPLOY_DIR=$DEPLOY_DIR 'bash -s' < pre_deploy.sh
-    - ssh -t fs.globaldelight.com "mkdir -p $DEPLOY_DIR/Build_$BUILD_NUMBER"
-    - scp "$BUILD_DIR/$APK_NAME" "fs.globaldelight.com:$DEPLOY_DIR/Build_$BUILD_NUMBER/$APK_NAME"
+    - ssh -t adarsh@fs.globaldelight.com DEPLOY_SERVER_PATH=$DEPLOY_SERVER_PATH DEPLOY_DIR=$DEPLOY_DIR 'bash -s' < pre_deploy.sh
+    - ssh -t adarsh@fs.globaldelight.com "mkdir -p $DEPLOY_DIR/Build_$BUILD_NUMBER"
+    - scp "$BUILD_DIR/$APK_NAME" "adarsh@fs.globaldelight.com:$DEPLOY_DIR/Build_$BUILD_NUMBER/$APK_NAME"
