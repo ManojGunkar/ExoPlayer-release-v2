@@ -23,7 +23,7 @@ fi
 cd BoomAndroid
 chmod +x gradlew
 
-./gradlew assembleRelease
+./gradlew assembleRelease -PbuildNumber=$BUILD_NUMBER
 check_error $?
 
 $BUILD_TOOLS/zipalign -v -p 4 "${APK_DIR}/app-release-unsigned.apk" "${BUILD_DIR}/app-unsigned-aligned.apk"
@@ -35,5 +35,9 @@ $BUILD_TOOLS/apksigner sign --ks keystore.jks \
 	"${BUILD_DIR}/app-unsigned-aligned.apk"
 check_error $?
 
+$BUILD_TOOLS/apksigner verify "${BUILD_DIR}/$APK_NAME"
+check_error $?
+
+aapt dump badging "${BUILD_DIR}/$APK_NAME"
 
 cd "$ROOT_DIR"
