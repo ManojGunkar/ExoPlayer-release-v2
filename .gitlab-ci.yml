@@ -37,6 +37,6 @@ deploy_project:
     - scp "$BUILD_DIR/$APK_NAME" "adarsh@fs.globaldelight.com:$DEPLOY_DIR/Build_$BUILD_NUMBER/$APK_NAME"
   environment:
     name: Daily Builds 
-    url: fs.globaldelight.com:/Volumes/DATA/Projects/iBoom-Android/Builds/CI/Latest
+    url: afp://fs.globaldelight.com/Projects/iBoom-Android/Builds/CI/
   only:
     - master
