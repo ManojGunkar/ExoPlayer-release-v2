@@ -5,7 +5,7 @@ stages:
 
 variables:
   BUILD_NUMBER: $CI_PIPELINE_ID
-  BUILD_DIR: "/tmp/$CI_PROJECT_ID/boom-$BUILD_NUMBER"
+  BUILD_DIR: "/tmp/$CI_PROJECT_ID/boom-$CI_PIPELINE_ID"
   APK_NAME: boom-release.apk
   DEPLOY_SERVER_PATH: /Volumes/DATA/Projects/iBoom-Android/Builds/CI
   DEPLOY_DIR: $DEPLOY_SERVER_PATH/Latest/ 
