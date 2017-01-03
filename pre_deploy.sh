@@ -1,7 +1,8 @@
 #!/bin/sh
 
-
-BUILDS_FOLDER_PATH=/Volumes/DATA/Projects/iBoom-Android/Builds/CI/
-mkdir -p ${BUILDS_FOLDER_PATH}/Latest
-mkdir -p ${BUILDS_FOLDER_PATH}/History
-mv ${VL_BUILDS_FOLDER_PATH}/Latest/Build_* ${VL_BUILDS_FOLDER_PATH}/History/" 
+if [ -d "$DEPLOY_DIR" ]; then
+	mkdir -p "${DEPLOY_SERVER_PATH}/History"
+	mv "${DEPLOY_DIR}/Build_* ${DEPLOY_SERVER_PATH}/History/" 
+else
+	mkdir -p "$DEPLOY_DIR"
+fi

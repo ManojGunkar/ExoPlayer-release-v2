@@ -4,9 +4,10 @@ stages:
   - deploy
 
 variables:
-  BUILD_DIR: "$TMPDIR/boom-$CI_BUILD_ID"
+  BUILD_DIR: "/tmp/$CI_PROJECT_ID/boom-$CI_BUILD_ID"
   APK_NAME: boom-release.apk
-  DEPLOY_DIR: s/Volumes/DATA/Projects/iBoom-Android/Builds/CI/Latest/ 
+  DEPLOY_SERVER_PATH: /Volumes/DATA/Projects/iBoom-Android/Builds/CI
+  DEPLOY_DIR: $DEPLOY_SERVER_PATH/Latest/ 
 
 build_project:
   stage: build

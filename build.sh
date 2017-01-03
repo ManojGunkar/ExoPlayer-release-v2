@@ -20,7 +20,6 @@ else
 fi
 
 
-
 cd BoomAndroid
 chmod +x gradlew
 
