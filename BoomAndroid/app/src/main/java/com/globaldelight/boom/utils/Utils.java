@@ -46,14 +46,6 @@ import java.util.ArrayList;
 
 
 public class Utils {
-
-    /*public static String SCREEN_SONGS = "player.songs";
-    public static String SCREEN_ALBUM = "player.album";
-    public static String SCREEN_ARTIST = "player.ic_artist";
-    public static String SCREEN_GENRE = "player.genre";
-    public static String SCREEN_PLAYLIST = "player.playlist";
-    public static String SCREEN_BOOM_PLAYLIST = "player.boom.playlist";*/
-
     private Context context;
 
     public Utils(Context context) {

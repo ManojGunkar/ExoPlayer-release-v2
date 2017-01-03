@@ -53,28 +53,30 @@ public class SearchViewFragment extends Fragment {
         @Override
         protected void onPostExecute(Search search) {
             super.onPostExecute(search);
-            if(Utils.isPhone(getActivity())){
-                gridLayoutManager =
-                        new GridLayoutManager(mainView.getContext(), 2);
-            }else{
-                gridLayoutManager =
-                        new GridLayoutManager(mainView.getContext(), 3);
-            }
-            gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                @Override
-                public int getSpanSize(int position) {
-                    if (adapter.whatView(position) == SearchListAdapter.ITEM_VIEW_TYPE_LIST_ALBUM ||
-                            adapter.whatView(position) == SearchListAdapter.ITEM_VIEW_TYPE_LIST_ARTIST) {
-                        return 1;
-                    } else {
-                        return 2;
-                    }
+            if (null != getActivity()) {
+                if (Utils.isPhone(getActivity())) {
+                    gridLayoutManager =
+                            new GridLayoutManager(mainView.getContext(), 2);
+                } else {
+                    gridLayoutManager =
+                            new GridLayoutManager(mainView.getContext(), 3);
                 }
-            });
-            recyclerView.setLayoutManager(gridLayoutManager);
-            adapter = new SearchListAdapter(context, getActivity(), search, recyclerView);
-            recyclerView.addItemDecoration(new SearchListSpacesItemDecoration(2, adapter));
-            recyclerView.setAdapter(adapter);
+                gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                    @Override
+                    public int getSpanSize(int position) {
+                        if (adapter.whatView(position) == SearchListAdapter.ITEM_VIEW_TYPE_LIST_ALBUM ||
+                                adapter.whatView(position) == SearchListAdapter.ITEM_VIEW_TYPE_LIST_ARTIST) {
+                            return 1;
+                        } else {
+                            return 2;
+                        }
+                    }
+                });
+                recyclerView.setLayoutManager(gridLayoutManager);
+                adapter = new SearchListAdapter(context, getActivity(), search, recyclerView);
+                recyclerView.addItemDecoration(new SearchListSpacesItemDecoration(2, adapter));
+                recyclerView.setAdapter(adapter);
+            }
         }
     }
 
