@@ -4,7 +4,7 @@ stages:
   - deploy
 
 variables:
-  BUILD_NUMBER: $CI_PIPELINE_ID
+  BUILD_NUMBER: $(git rev-list --count Build_46.. HEAD) + 46
   BUILD_DIR: "/tmp/$CI_PROJECT_ID/boom-$CI_PIPELINE_ID"
   APK_NAME: boom-release.apk
   DEPLOY_SERVER_PATH: /Volumes/DATA/Projects/iBoom-Android/Builds/CI
@@ -15,12 +15,15 @@ build_project:
   script:
     - echo "*** Building..."
     - chmod +x build.sh
-    - ./build.sh
+    - ./build.sh    
 
 test_project:
   stage: test
   script:
     - echo "*** Testing..."
+  only:
+    - master
+
 
 deploy_project:
   stage: deploy
@@ -29,3 +32,5 @@ deploy_project:
     - ssh -t adarsh@fs.globaldelight.com DEPLOY_SERVER_PATH=$DEPLOY_SERVER_PATH DEPLOY_DIR=$DEPLOY_DIR 'bash -s' < pre_deploy.sh
     - ssh -t adarsh@fs.globaldelight.com "mkdir -p $DEPLOY_DIR/Build_$BUILD_NUMBER"
     - scp "$BUILD_DIR/$APK_NAME" "adarsh@fs.globaldelight.com:$DEPLOY_DIR/Build_$BUILD_NUMBER/$APK_NAME"
+  only:
+    - master
