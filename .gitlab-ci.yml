@@ -3,8 +3,11 @@ stages:
   - test
   - deploy
 
+before_script:
+  - export BUILD_NUMBER=$(( $(git rev-list --count Build_46.. HEAD) + 46 ))
+
+
 variables:
-  BUILD_NUMBER: "$(($(git rev-list --count Build_46.. HEAD) + 12))"
   BUILD_DIR: "/tmp/$CI_PROJECT_ID/boom-$CI_PIPELINE_ID"
   APK_NAME: boom-release.apk
   DEPLOY_SERVER_PATH: /Volumes/DATA/Projects/iBoom-Android/Builds/CI
