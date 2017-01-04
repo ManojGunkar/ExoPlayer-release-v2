@@ -431,7 +431,8 @@ public class BoomPlaylistActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
             super.onPostExecute(iMediaItemList);
-            if(Utils.isPhone(BoomPlaylistActivity.this)){
+            boolean isPhone = Utils.isPhone(BoomPlaylistActivity.this);
+            if(isPhone){
                 gridLayoutManager =
                         new GridLayoutManager(BoomPlaylistActivity.this, 2);
             }else{
@@ -454,7 +455,7 @@ public class BoomPlaylistActivity extends AppCompatActivity {
             recyclerView.setLayoutManager(gridLayoutManager);
             recyclerView.addItemDecoration(new SimpleDividerItemDecoration(BoomPlaylistActivity.this, Utils.getWindowWidth(BoomPlaylistActivity.this)));
             recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(BoomPlaylistActivity.this, 0)));
-            boomPlayListAdapter = new BoomPlayListAdapter(BoomPlaylistActivity.this, recyclerView, iMediaItemList);
+            boomPlayListAdapter = new BoomPlayListAdapter(BoomPlaylistActivity.this, recyclerView, iMediaItemList, isPhone);
             recyclerView.setAdapter(boomPlayListAdapter);
             recyclerView.addItemDecoration(new BoomPlayListFooterItemDecoration(2, boomPlayListAdapter));
 //                        recyclerView.setHasFixedSize(true);

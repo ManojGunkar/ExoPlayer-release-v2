@@ -149,7 +149,7 @@ public class DetailAlbumActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(DetailAlbumActivity.this).getMediaCollectionItemDetails(collection));
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, true);
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, false, true);
                 }catch (Exception e){}
             }
         });
@@ -330,7 +330,8 @@ public class DetailAlbumActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(IMediaItemBase iMediaItemBase) {
             super.onPostExecute(iMediaItemBase);
-            if(Utils.isPhone(DetailAlbumActivity.this)){
+            boolean isPhone = Utils.isPhone(DetailAlbumActivity.this);
+            if(isPhone){
                 gridLayoutManager =
                         new GridLayoutManager(DetailAlbumActivity.this, 2);
             }else{
@@ -340,7 +341,7 @@ public class DetailAlbumActivity extends AppCompatActivity {
             recyclerView.setLayoutManager(gridLayoutManager);
             recyclerView.addItemDecoration(new MarginDecoration(DetailAlbumActivity.this));
             recyclerView.setHasFixedSize(true);
-            final DetailAlbumGridAdapter detailAlbumGridAdapter = new DetailAlbumGridAdapter(DetailAlbumActivity.this, recyclerView, (IMediaItemCollection) iMediaItemBase, listDetail);
+            final DetailAlbumGridAdapter detailAlbumGridAdapter = new DetailAlbumGridAdapter(DetailAlbumActivity.this, recyclerView, (IMediaItemCollection) iMediaItemBase, listDetail, isPhone);
             recyclerView.setAdapter(detailAlbumGridAdapter);
             gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override

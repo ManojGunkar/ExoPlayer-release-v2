@@ -1,81 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_about"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/appBackground"
-    android:orientation="vertical"
-    tools:context="com.globaldelight.boom.ui.musiclist.activity.AboutActivity">
+    android:fillViewport="true"
+    android:background="@color/appBackground">
 
-
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:weightSum="1"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:layout_weight=".10">
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/textView7"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/ninety_six_pt"
-                android:gravity="center"
                 android:text="@string/header_about"
                 android:textColor="@color/white"
                 android:textSize="@dimen/about_title"
                 android:typeface="normal" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:layout_weight=".43">
             <ImageView
                 android:id="@+id/imageView4"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/two_hundred_twelve"
-                app:srcCompat="@drawable/ic_boom_about_icon" />
+                android:src="@drawable/ic_boom_about_icon" />
+        </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/one_twenty_pt"
-                android:orientation="horizontal">
-
-                <com.globaldelight.boom.ui.widgets.RegularTextView
-                    android:id="@+id/textView8"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:paddingRight="4dp"
-                    android:text="@string/title_about"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/about_title"
-                    android:typeface="normal" />
-
-                <com.globaldelight.boom.ui.widgets.RegularTextView
-                    android:id="@+id/textView9"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="left"
-                    android:paddingLeft="4dp"
-                    android:text="@string/version"
-                    android:textColor="@color/glowyellow"
-                    android:typeface="normal" />
-            </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".12"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <com.globaldelight.boom.ui.widgets.RegularTextView
-                android:id="@+id/textView10"
-                android:layout_width="match_parent"
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/sixty_four_pt"
-                android:gravity="center"
+                android:gravity="right"
+                android:paddingRight="4dp"
+                android:text="@string/title_about"
+                android:textColor="@color/white"
+                android:textSize="@dimen/about_title"
+                android:typeface="normal" />
+
+            <com.globaldelight.boom.ui.widgets.RegularTextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingLeft="4dp"
+                android:text="@string/version"
+                android:textColor="@color/glowyellow"
+                android:typeface="normal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".20"
+            android:gravity="center"
+            android:orientation="vertical">
+            <com.globaldelight.boom.ui.widgets.RegularTextView
+                android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/description_about"
+                android:gravity="center"
                 android:textColor="@color/about_company_color"
                 android:textSize="@dimen/grid_item_desc_size"
                 android:typeface="normal" />
@@ -83,44 +90,48 @@
             <com.globaldelight.boom.ui.widgets.RegularButton
                 android:id="@+id/btn_rate_app"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/one_hundred_fourty_eight_pt"
                 android:text="@string/rate_app"
                 android:textColor="@color/rate_btn_blue"
                 android:textSize="@dimen/rate_btn_size" />
 
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/textView11"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/one_hundred_fourty_eight_pt"
                 android:gravity="center"
                 android:text="@string/about_technology"
                 android:textColor="@color/about_company_color"
                 android:textSize="@dimen/about_copyright_txt_size" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="bottom"
+            android:layout_weight=".02">
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:layout_marginBottom="@dimen/fourty_eight_pt"
-                android:layout_marginLeft="60dp"
-                android:layout_marginRight="60dp"
-                android:layout_marginTop="@dimen/fourty_eight_pt"
                 android:background="@color/black_shade" />
+        </LinearLayout>
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:layout_weight=".13">
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/textView12"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:text="@string/copyright"
                 android:textColor="@color/about_company_color"
                 android:textSize="@dimen/about_copyright_txt_size" />
         </LinearLayout>
-    </ScrollView>
-
+    </LinearLayout>
+</ScrollView>
 </LinearLayout>

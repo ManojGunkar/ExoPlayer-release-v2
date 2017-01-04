@@ -50,13 +50,13 @@ import java.util.LinkedList;
 public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdapter.SimpleItemViewHolder> {
 
     private static final String TAG = "FavouriteListAdapter-TAG";
-    LinkedList<? extends IMediaItemBase> itemList;
+    ArrayList<? extends IMediaItemBase> itemList;
     private int selectedSongId = -1;
     private FavouriteListAdapter.SimpleItemViewHolder selectedHolder;
     private Context context;
     private RecyclerView recyclerView;
 
-    public FavouriteListAdapter(Context context, RecyclerView recyclerView, LinkedList<? extends IMediaItemBase> itemList) {
+    public FavouriteListAdapter(Context context, RecyclerView recyclerView, ArrayList<? extends IMediaItemBase> itemList) {
         this.context = context;
         this.recyclerView = recyclerView;
         this.itemList = itemList;
@@ -137,7 +137,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
             public void onClick(View view) {
                 animate(holder);
                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay((LinkedList<MediaItem>) itemList, position, false);
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) itemList, position, false);
                     notifyDataSetChanged();
                 }
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_FAVOURITE_SECTION);
@@ -185,7 +185,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<FavouriteListAdap
         });
     }
 
-    private void updateFavoriteList(LinkedList<? extends IMediaItemBase> newList) {
+    private void updateFavoriteList(ArrayList<? extends IMediaItemBase> newList) {
         itemList = newList;
         notifyDataSetChanged();
         if(itemList.size() == 0){

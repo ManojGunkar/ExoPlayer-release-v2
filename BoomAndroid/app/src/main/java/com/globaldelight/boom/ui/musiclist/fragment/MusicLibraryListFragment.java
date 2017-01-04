@@ -190,7 +190,8 @@ public class MusicLibraryListFragment extends Fragment {
         protected synchronized void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaCollectionList) {
             super.onPostExecute(iMediaCollectionList);
             if (null != getActivity()) {
-                if(Utils.isPhone(getActivity())){
+                boolean isPhone = Utils.isPhone(getActivity());
+                if(isPhone){
                     gridLayoutManager =
                             new GridLayoutManager(mainView.getContext(), 2);
                 }else{
@@ -203,16 +204,16 @@ public class MusicLibraryListFragment extends Fragment {
                 recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context, Utils.getWindowWidth(context)));
                 recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(context, 0)));
                 if(param == R.string.albums) {
-                    albumsGridAdapter = new AlbumsGridAdapter(context, getActivity(), recyclerView, iMediaCollectionList);
+                    albumsGridAdapter = new AlbumsGridAdapter(context, getActivity(), recyclerView, iMediaCollectionList, isPhone);
                     recyclerView.setAdapter(albumsGridAdapter);
                 } else if(param == R.string.artists){
-                    artistsGridAdapter = new ArtistsGridAdapter(context, getActivity(), recyclerView, iMediaCollectionList);
+                    artistsGridAdapter = new ArtistsGridAdapter(context, getActivity(), recyclerView, iMediaCollectionList, isPhone);
                     recyclerView.setAdapter(artistsGridAdapter);
                 } else if(param == R.string.playlists) {
-                    defaultPlayListAdapter = new DefaultPlayListAdapter(context, getActivity(), recyclerView, iMediaCollectionList);
+                    defaultPlayListAdapter = new DefaultPlayListAdapter(context, getActivity(), recyclerView, iMediaCollectionList, isPhone);
                     recyclerView.setAdapter(defaultPlayListAdapter);
                 }else{
-                    genreGridAdapter = new GenreGridAdapter(context, getActivity(), recyclerView, iMediaCollectionList);
+                    genreGridAdapter = new GenreGridAdapter(context, getActivity(), recyclerView, iMediaCollectionList, isPhone);
                     recyclerView.setAdapter(genreGridAdapter);
                 }
                 recyclerView.setHasFixedSize(true);

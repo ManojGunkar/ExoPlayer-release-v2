@@ -214,7 +214,7 @@ public class DeviceMediaHandler {
         App.getBoomPlayListHelper().renamePlaylist(input, itemId);
     }
 
-    public LinkedList<? extends IMediaItemBase> getFavItemList() {
+    public ArrayList<? extends IMediaItemBase> getFavItemList() {
         return App.getFavoriteDBHelper().getSongList();
     }
 
@@ -238,7 +238,7 @@ public class DeviceMediaHandler {
         App.getUPNEXTDBHelper().addSong(song, queueType);
     }
 
-    public void addUpNextItem(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
+    public void addUpNextItem(ArrayList<? extends IMediaItemBase> songs, QueueType queueType) {
         App.getUPNEXTDBHelper().addSongsToUpNext(songs, queueType);
     }
 
@@ -246,7 +246,7 @@ public class DeviceMediaHandler {
         App.getUPNEXTDBHelper().insertUnShuffledList(songs, queueType, isAppend);
     }
 
-    public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
+    public ArrayList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
         return App.getUPNEXTDBHelper().getUpNextSongs(queueType);
     }
 
@@ -254,7 +254,7 @@ public class DeviceMediaHandler {
         App.getUPNEXTDBHelper().clearList(queueType);
     }
 
-    public LinkedList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) {
+    public ArrayList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) {
         return App.getUPNEXTDBHelper().getUnShuffledList(queueType);
     }
 }

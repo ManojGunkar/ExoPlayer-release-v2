@@ -112,15 +112,15 @@ public class FavouriteListActivity extends AppCompatActivity {
         checkPermissions();
     }
 
-    private class LoadFavouriteList extends AsyncTask<Void, Integer, LinkedList<? extends IMediaItemBase>> {
+    private class LoadFavouriteList extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {
 
         @Override
-        protected LinkedList<? extends IMediaItemBase> doInBackground(Void... params) {
+        protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
             return MediaController.getInstance(FavouriteListActivity.this).getFavouriteListItems();
         }
 
         @Override
-        protected void onPostExecute(LinkedList<? extends IMediaItemBase> iMediaItemList) {
+        protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
             super.onPostExecute(iMediaItemList);
             final GridLayoutManager gridLayoutManager =
                     new GridLayoutManager(FavouriteListActivity.this, 1);

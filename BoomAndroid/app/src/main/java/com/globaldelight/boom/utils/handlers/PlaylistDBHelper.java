@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.widget.CompoundButton;
 
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
@@ -280,7 +281,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         try {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    if(cursor.getString(0) != null)
+                    if(cursor.getString(0) != null && !cursor.getString(0).equals(MediaItem.UNKNOWN_ART_URL))
                         artList.add(cursor.getString(0));
                 } while (cursor.moveToNext());
             }

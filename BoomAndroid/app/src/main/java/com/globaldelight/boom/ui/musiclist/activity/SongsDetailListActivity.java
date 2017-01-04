@@ -96,6 +96,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
     private RegularTextView mTitle, mSubTitle;
     private ImageView mPlayerArt, mPlayPause;
     private static boolean isMoved = false;
+    private Size size;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -144,8 +145,8 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         int width = Utils.getWindowWidth(this);
         int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
         int height = Utils.getWindowHeight(this) - panelSize * 4;
-        Size size = new Size(width, width);
-        setAlbumArt(size);
+        size = new Size(width, width);
+        setAlbumArt();
 
         if (collapsingToolbarLayout != null)
             collapsingToolbarLayout.setTitle(" ");
@@ -167,9 +168,9 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
                 try {
                     if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                         if (collection.getMediaElement().size() > 0)
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), 0, true);
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), 0, false, true);
                     } else {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, true);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, false, true);
                     }
                 }catch (Exception e){}
                 if(null != itemSongListAdapter)
@@ -275,7 +276,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         }
     }
 
-    private void setAlbumArt(Size size) {
+    private void setAlbumArt() {
         ArrayList<String> artUrlList;
         if(collection.getItemType() == ItemType.PLAYLIST || collection.getItemType() == ItemType.BOOM_PLAYLIST){
             artUrlList = collection.getArtUrlList();
@@ -285,10 +286,10 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
 
         if(artUrlList.size()==0 || !PlayerUtils.isPathValid(artUrlList.get(0))){
             albumArt.setVisibility(View.VISIBLE);
-            setDefaultImage(size);
+            setDefaultImage();
         }else{
             tblAlbumArt.setVisibility(View.VISIBLE);
-            setSongsArtImage(size, artUrlList);
+            setSongsArtImage(artUrlList);
         }
 
         int colorPrimary = ContextCompat.getColor(this, R.color.colorPrimary);
@@ -310,7 +311,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         return Color.HSVToColor(hsv);
     }
 
-    private void setSongsArtImage(final Size size, final ArrayList<String> Urls) {
+    private void setSongsArtImage(final ArrayList<String> Urls) {
 
         int count = Urls.size() > 4 ? 4 : Urls.size();
         TableRow.LayoutParams param = new TableRow.LayoutParams(size.width / 2, size.height / 2);
@@ -319,6 +320,9 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         artImg3.setLayoutParams(param);
         artImg4.setLayoutParams(param);
 
+        for (int i =0; i < Urls.size(); i++){
+            Log.d("Art_URL : "+i, Urls.get(i));
+        }
 
         switch (count){
             case 1:
@@ -336,9 +340,9 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
                         .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
                 Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
                         .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
-                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
                 Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                        .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
                         .centerCrop().resize(size.width/2, size.height/2)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
                 break;
             case 3:
@@ -364,7 +368,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
         }
     }
 
-    private void setDefaultImage(Size size){
+    private void setDefaultImage(){
         FrameLayout.LayoutParams param = new FrameLayout.LayoutParams(size.width, size.height);
         albumArt.setLayoutParams(param);
         albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_grid));
@@ -492,6 +496,7 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
                         setDetail(collection);
                         itemSongListAdapter.updateNewList(collection, listDetail, oldCount);
                         itemSongListAdapter.notifyDataSetChanged();
+                        updateAlbumArt(collection);
                     }
                     break;
                 case ACTION_RECEIVE_SONG :
@@ -526,6 +531,18 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
             }
         }
     };
+
+    public void updateAlbumArt(IMediaItemCollection collection) {
+        if(collection.getMediaElement().size() > 0){
+            albumArt.setVisibility(View.GONE);
+            tblAlbumArt.setVisibility(View.VISIBLE);
+            setSongsArtImage(MediaController.getInstance(SongsDetailListActivity.this).getArtUrlList((MediaItemCollection) collection));
+        }else{
+            albumArt.setVisibility(View.VISIBLE);
+            tblAlbumArt.setVisibility(View.GONE);
+            setDefaultImage();
+        }
+    }
 
     private void updateMiniPlayer(MediaItem item, boolean playing, boolean isLastPlayedSong) {
         if(item != null) {

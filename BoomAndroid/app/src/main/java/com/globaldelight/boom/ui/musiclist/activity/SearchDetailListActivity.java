@@ -137,7 +137,8 @@ public class SearchDetailListActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
             super.onPostExecute(iMediaItemList);
-            if(Utils.isPhone(SearchDetailListActivity.this)){
+            final boolean isPhone = Utils.isPhone(SearchDetailListActivity.this);
+            if(isPhone){
                 gridLayoutManager =
                         new GridLayoutManager(SearchDetailListActivity.this, 2);
             }else{
@@ -145,7 +146,7 @@ public class SearchDetailListActivity extends AppCompatActivity {
                         new GridLayoutManager(SearchDetailListActivity.this, 3);
             }
 
-            adapter = new SearchDetailListAdapter(SearchDetailListActivity.this, iMediaItemList, mResultType);
+            adapter = new SearchDetailListAdapter(SearchDetailListActivity.this, iMediaItemList, mResultType, isPhone);
             if(mResultType.equals(SearchResult.SONGS)){
                 recyclerView.addItemDecoration(new SimpleDividerItemDecoration(SearchDetailListActivity.this, 0));
             }
@@ -158,7 +159,10 @@ public class SearchDetailListActivity extends AppCompatActivity {
                     }else if(mResultType.equals(SearchResult.ALBUMS)){
                         return 1;
                     }else if(mResultType.equals(SearchResult.SONGS)){
-                        return 2;
+                        if(isPhone)
+                            return 2;
+                        else
+                            return 3;
                     }else
                         return 0;
                 }

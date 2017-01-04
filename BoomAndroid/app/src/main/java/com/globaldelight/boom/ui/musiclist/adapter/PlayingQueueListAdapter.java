@@ -29,7 +29,8 @@ import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.ArrayList;
 
 import static android.view.LayoutInflater.from;
 import static com.globaldelight.boom.utils.Utils.dpToPx;
@@ -48,10 +49,10 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     final Handler swipeDeletehandler = new Handler();
     public ListPosition itemDelete;
     OnStartDragListener mOnStartDragListener;
-    private LinkedList<IMediaItemBase> mHistoryList;
-    LinkedList<UpNextList.UpNextItem> mPlaying;
-//    private LinkedList<IMediaItemBase> mUpnextManualList;
-//    private LinkedList<IMediaItemBase> mUpnextAutoList;
+    private ArrayList<IMediaItemBase> mHistoryList;
+    ArrayList<UpNextList.UpNextItem> mPlaying;
+//    private ArrayList<IMediaItemBase> mUpnextManualList;
+//    private ArrayList<IMediaItemBase> mUpnextAutoList;
     private int headerHistoryPos, headerPlayingPos, headerManualPos,
             headerAutoPos, totalSize;
     private Context context;
@@ -63,7 +64,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
     }
 
 
-    private void init(LinkedList<IMediaItemBase> history, LinkedList<UpNextList.UpNextItem> playing) {
+    private void init(ArrayList<IMediaItemBase> history, ArrayList<UpNextList.UpNextItem> playing) {
         this.mHistoryList = history;
         this.mPlaying = playing;
         updateHeaderPosition();
@@ -481,7 +482,7 @@ public class PlayingQueueListAdapter extends RecyclerView.Adapter<PlayingQueueLi
         return normalposition;
     }
 
-    public LinkedList<IMediaItemBase> getListForType(int type) {
+    public ArrayList<IMediaItemBase> getListForType(int type) {
 
         switch (type) {
             case ITEM_VIEW_TYPE_LIST_HISTORY:

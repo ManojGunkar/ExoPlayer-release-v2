@@ -6,14 +6,17 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -99,7 +102,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public synchronized void addSongsToUpNext(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
+    public synchronized void addSongsToUpNext(ArrayList<? extends IMediaItemBase> songs, QueueType queueType) {
         clearList(queueType);
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
@@ -156,9 +159,9 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public synchronized LinkedList<? extends IMediaItemBase> getUpNextSongs(QueueType queueType) {
+    public synchronized ArrayList<? extends IMediaItemBase> getUpNextSongs(QueueType queueType) {
         SQLiteDatabase db = this.getWritableDatabase();
-        LinkedList<MediaItem> songList = new LinkedList<>();
+        ArrayList<MediaItem> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_UPNEXT + " WHERE " +
                 QUEUE_TYPE + "='" + queueType.ordinal() + "'";
 
@@ -203,9 +206,9 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public synchronized LinkedList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) {
+    public synchronized ArrayList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) {
         SQLiteDatabase db = this.getWritableDatabase();
-        LinkedList<MediaItem> songList = new LinkedList<>();
+        ArrayList<MediaItem> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_UPNEXT + " WHERE " +
                 QUEUE_TYPE + "='" + queueType.ordinal() + "'";
 
@@ -216,10 +219,13 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
                 do {
                     String duration = cursor.getString(9);
                     String dateAdded = cursor.getString(10);
-
-                    songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5),
-                            cursor.getString(6), cursor.getInt(7), cursor.getString(8), Long.parseLong(duration),
-                            Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(12)), ItemType.fromOrdinal(cursor.getInt(13)), cursor.getInt(14)));
+                    if(cursor.getString(2).equals(context.getResources().getString(R.string.all_songs))){
+                        songList.addAll((Collection<? extends MediaItem>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB));
+                    }else {
+                        songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5),
+                                cursor.getString(6), cursor.getInt(7), cursor.getString(8), Long.parseLong(duration),
+                                Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(12)), ItemType.fromOrdinal(cursor.getInt(13)), cursor.getInt(14)));
+                    }
                 } while (cursor.moveToNext());
             }
         }catch (Exception e){

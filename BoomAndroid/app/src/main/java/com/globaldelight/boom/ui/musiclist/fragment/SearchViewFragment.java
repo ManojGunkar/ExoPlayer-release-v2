@@ -54,7 +54,8 @@ public class SearchViewFragment extends Fragment {
         protected void onPostExecute(Search search) {
             super.onPostExecute(search);
             if (null != getActivity()) {
-                if (Utils.isPhone(getActivity())) {
+                final boolean isPhone = Utils.isPhone(getActivity());
+                if (isPhone) {
                     gridLayoutManager =
                             new GridLayoutManager(mainView.getContext(), 2);
                 } else {
@@ -68,12 +69,15 @@ public class SearchViewFragment extends Fragment {
                                 adapter.whatView(position) == SearchListAdapter.ITEM_VIEW_TYPE_LIST_ARTIST) {
                             return 1;
                         } else {
-                            return 2;
+                            if(isPhone)
+                                return 2;
+                            else
+                                return 3;
                         }
                     }
                 });
                 recyclerView.setLayoutManager(gridLayoutManager);
-                adapter = new SearchListAdapter(context, getActivity(), search, recyclerView);
+                adapter = new SearchListAdapter(context, getActivity(), search, recyclerView, isPhone);
                 recyclerView.addItemDecoration(new SearchListSpacesItemDecoration(2, adapter));
                 recyclerView.setAdapter(adapter);
             }

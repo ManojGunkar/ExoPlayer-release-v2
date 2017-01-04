@@ -205,7 +205,7 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                                         if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
                                             App.getPlayingQueueHandler().getUpNextList().addToPlay(item, 0, true);
                                         } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
-                                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), 0, true);
+                                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), 0, false, true);
                                         }
 //                                    }
                                         context.sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
@@ -231,7 +231,7 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                     if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
                         App.getPlayingQueueHandler().getUpNextList().addToPlay(item, position, false);
                     } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), position, false);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), position, false, false);
                     }
                     holder.name.setTextColor(context.getResources().getColor(R.color.boom_yellow));
                     holder.count.setTextColor(context.getResources().getColor(R.color.boom_yellow));

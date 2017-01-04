@@ -92,7 +92,7 @@ public class MediaLibraryHandler implements IMediaLibrary{
         DeviceMediaHandler.getInstance(context).renameBoomPlaylist(input, itemId);
     }
 
-    public LinkedList<? extends IMediaItemBase> getFavoriteItemList() {
+    public ArrayList<? extends IMediaItemBase> getFavoriteItemList() {
         return DeviceMediaHandler.getInstance(context).getFavItemList();
     }
 
@@ -116,7 +116,7 @@ public class MediaLibraryHandler implements IMediaLibrary{
         DeviceMediaHandler.getInstance(context).addUpNextItem(song, queueType);
     }
 
-    public void addUpNextItem(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
+    public void addUpNextItem(ArrayList<? extends IMediaItemBase> songs, QueueType queueType) {
         DeviceMediaHandler.getInstance(context).addUpNextItem(songs, queueType);
     }
 
@@ -124,7 +124,7 @@ public class MediaLibraryHandler implements IMediaLibrary{
         DeviceMediaHandler.getInstance(context).insertUnShuffledList(songs, queueType, isAppend);
     }
 
-    public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
+    public ArrayList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
         return DeviceMediaHandler.getInstance(context).getUpNextItemList(queueType);
     }
 
@@ -132,7 +132,7 @@ public class MediaLibraryHandler implements IMediaLibrary{
         DeviceMediaHandler.getInstance(context).clearUpNextList(queueType);
     }
 
-    public LinkedList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) {
+    public ArrayList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) {
         return DeviceMediaHandler.getInstance(context).getUnShuffledList(queueType);
     }
 }

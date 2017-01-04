@@ -25,6 +25,66 @@
             android:textStyle="normal" />
     </android.support.v7.widget.Toolbar>
 
+    <LinearLayout
+        android:id="@+id/effect_switch_panel"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/effect_powerpanel"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".8"
+            android:gravity="center_vertical|start"
+            android:orientation="horizontal">
+
+            <com.globaldelight.boom.ui.widgets.RegularTextView
+                android:id="@+id/effect_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/one_hundred_fourty_eight_pt"
+                android:maxLines="1"
+                android:text="@string/title_effects"
+                android:textColor="@color/white"
+                android:textSize="@dimen/effect_switch_txt"
+                android:textStyle="normal" />
+
+            <com.globaldelight.boom.ui.widgets.RegularTextView
+                android:id="@+id/effect_switch_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/twenty_pt"
+                android:maxLines="1"
+                android:text="@string/switch_on"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/effect_switch_txt"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/gh"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:layout_weight=".2"
+            android:orientation="horizontal">
+
+            <Switch
+                android:id="@+id/effect_power_switch"
+                style="@style/RedSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:layout_marginRight="@dimen/one_ten_pt"
+
+                android:theme="@style/RedSwitch" />
+        </LinearLayout>
+
+    </LinearLayout>
+
     <ScrollView
         android:id="@+id/effect_panel_scroll"
         android:layout_width="match_parent"
@@ -34,67 +94,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <LinearLayout
-                android:id="@+id/effect_switch_panel"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/effect_powerpanel"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:weightSum="1">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".8"
-                    android:gravity="center_vertical|start"
-                    android:orientation="horizontal">
-
-                    <com.globaldelight.boom.ui.widgets.RegularTextView
-                        android:id="@+id/effect_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/one_hundred_fourty_eight_pt"
-                        android:maxLines="1"
-                        android:text="@string/title_effects"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/effect_switch_txt"
-                        android:textStyle="normal" />
-
-                    <com.globaldelight.boom.ui.widgets.RegularTextView
-                        android:id="@+id/effect_switch_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/twenty_pt"
-                        android:maxLines="1"
-                        android:text="@string/switch_on"
-                        android:textColor="#ffffff"
-                        android:textSize="@dimen/effect_switch_txt"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/gh"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-
-                    android:layout_weight=".2"
-                    android:orientation="horizontal">
-
-                    <Switch
-                        android:id="@+id/effect_power_switch"
-                        style="@style/RedSwitch"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="right"
-                        android:layout_marginRight="@dimen/one_ten_pt"
-
-                        android:theme="@style/RedSwitch" />
-                </LinearLayout>
-
-
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -199,6 +198,7 @@
                 android:layout_height="@dimen/one_one_nine_four_pt"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/eighty_eighty_pt"
+                android:visibility="gone"
                 android:orientation="vertical">
 
                 <FrameLayout
@@ -317,12 +317,10 @@
                 android:layout_marginTop="@dimen/one_fifty_four_pt"
                 android:background="#222327" />
 
-
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/one_ten_pt">
-
 
                 <ImageView
                     android:id="@+id/intensity_switch_btn"
@@ -429,7 +427,6 @@
                 android:layout_marginRight="@dimen/one_twenty_pt"
                 android:layout_marginTop="@dimen/one_fifty_four_pt"
                 android:background="@color/line_view" />
-
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -539,6 +536,7 @@
                 android:layout_marginTop="@dimen/one_fifty_four_pt"
                 android:background="#222327"
                 android:visibility="invisible" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -3,19 +3,23 @@ package com.globaldelight.boom.handler.PlayingQueue;
 import android.content.Context;
 import android.os.Handler;
 
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
+import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -33,11 +37,11 @@ public class UpNextList {
     private static UpNextList.SHUFFLE mShuffle = UpNextList.SHUFFLE.none;
     private static UpNextList.REPEAT mRepeat = UpNextList.REPEAT.none;
 
-    private static LinkedList<IMediaItemBase> mHistoryList = new LinkedList<>();
-    private static LinkedList<IMediaItemBase> mUpNextList = new LinkedList<>();
-    private static LinkedList<UpNextItem> mCurrentList = new LinkedList<>();
-    private static LinkedList<IMediaItemBase> mAutoNextList = new LinkedList<>();
-    private static LinkedList<IMediaItemBase> mGhostList = new LinkedList<>();
+    private static ArrayList<IMediaItemBase> mHistoryList = new ArrayList<>();
+    private static ArrayList<IMediaItemBase> mUpNextList = new ArrayList<>();
+    private static ArrayList<UpNextItem> mCurrentList = new ArrayList<>();
+    private static ArrayList<IMediaItemBase> mAutoNextList = new ArrayList<>();
+    private static ArrayList<IMediaItemBase> mGhostList = new ArrayList<>();
 
     private HashMap<String, String> mAlbumArtList = new HashMap<>();
     private HashMap<Long, String> mArtistArtList = new HashMap<>();
@@ -69,12 +73,11 @@ public class UpNextList {
         return mArtistArtList;
     }
 
-
     public void setQueueEvent(QueueEvent event) {
         this.queueEvent = event;
     }
 
-    private LinkedList<IMediaItemBase> getItemList(QueueType type) {
+    private ArrayList<IMediaItemBase> getItemList(QueueType type) {
         switch (type) {
             case History:
                 if (mHistoryList != null) {
@@ -93,11 +96,11 @@ public class UpNextList {
 
     /**************************************************************************************************************************/
 //Fetch Queue Items
-    public LinkedList<IMediaItemBase> getHistoryList() {
+    public ArrayList<IMediaItemBase> getHistoryList() {
         return getItemList(QueueType.History);
     }
 
-    public LinkedList<UpNextItem> getPlayingList() {
+    public ArrayList<UpNextItem> getPlayingList() {
         return mCurrentList;
     }
 
@@ -105,15 +108,15 @@ public class UpNextList {
         return mCurrentList.size() > 0 ? mCurrentList.get(0).getUpNextItem() : null;
     }
 
-    public LinkedList<IMediaItemBase> getManualUpNextList() {
+    public ArrayList<IMediaItemBase> getManualUpNextList() {
         return getItemList(QueueType.Manual_UpNext);
     }
 
-    public LinkedList<IMediaItemBase> getAutoUpNextList() {
+    public ArrayList<IMediaItemBase> getAutoUpNextList() {
         return getItemList(QueueType.Auto_UpNext);
     }
 
-    public void setUpdatedListItem(QueueType queueType, LinkedList<IMediaItemBase> list){
+    public void setUpdatedListItem(QueueType queueType, ArrayList<IMediaItemBase> list){
         if(queueType == QueueType.Manual_UpNext){
             mUpNextList.clear();
             mUpNextList.addAll(list);
@@ -165,8 +168,8 @@ public class UpNextList {
         if(mShuffle == SHUFFLE.all && mAutoNextList.size() > 0){
             Collections.shuffle(mAutoNextList, new Random(mAutoNextList.size()));
         }else if(mAutoNextList.size() > 0){
-            LinkedList<IMediaItemBase> tempList1 = (LinkedList<IMediaItemBase>) getUnShuffledList();
-            LinkedList<IMediaItemBase> tempList2 = new LinkedList<>();
+            ArrayList<IMediaItemBase> tempList1 = (ArrayList<IMediaItemBase>) getUnShuffledList();
+            ArrayList<IMediaItemBase> tempList2 = new ArrayList<>();
             for(int i = 0; i< tempList1.size() ; i++){
                 for(int j = 0; j < mAutoNextList.size() ; j++){
                     if(mAutoNextList.get(j).getItemId() == tempList1.get(i).getItemId()){
@@ -258,7 +261,7 @@ public class UpNextList {
         MediaController.getInstance(context).addUpNextItem(song, queueType);
     }
 
-    public void addUpNextItem(LinkedList<? extends IMediaItemBase> songs, QueueType queueType) {
+    public void addUpNextItem(ArrayList<? extends IMediaItemBase> songs, QueueType queueType) {
         MediaController.getInstance(context).addUpNextItem(songs, queueType);
     }
 
@@ -271,11 +274,11 @@ public class UpNextList {
         }).start();
     }
 
-    public LinkedList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
+    public ArrayList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
         return MediaController.getInstance(context).getUpNextItemList(queueType);
     }
 
-    public LinkedList<? extends IMediaItemBase> getUnShuffledList() {
+    public ArrayList<? extends IMediaItemBase> getUnShuffledList() {
         return MediaController.getInstance(context).getUnShuffledList(QueueType.unshuffled);
     }
 
@@ -286,45 +289,55 @@ public class UpNextList {
     }
 
     public void addUpNextItemsToDB(){
-        if(mCurrentList.size() > 0){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(mCurrentList.size() > 0){
             /*Add Now Playing Item to relevant up-next list*/
-            if(mCurrentList.get(0).getUpNextItemType() == QueueType.Manual_UpNext){
-                mUpNextList.addLast(mCurrentList.get(0).getUpNextItem());
-            }else if(mCurrentList.get(0).getUpNextItemType() == QueueType.Auto_UpNext){
-                mAutoNextList.addLast(mCurrentList.get(0).getUpNextItem());
-            }
-        }
-        if(mUpNextList.size() > 0)
-            addUpNextItem(mUpNextList, QueueType.Manual_UpNext);
-        if(mAutoNextList.size() > 0)
-            addUpNextItem(mAutoNextList, QueueType.Auto_UpNext);
-        if(mGhostList.size() > 0)
-            addUpNextItem(mGhostList, QueueType.Previous);
+                    if(mCurrentList.get(0).getUpNextItemType() == QueueType.Manual_UpNext){
+                        mUpNextList.add(mUpNextList.size() > 0 ? mUpNextList.size() - 1 : 0 ,mCurrentList.get(0).getUpNextItem());
+                    }else if(mCurrentList.get(0).getUpNextItemType() == QueueType.Auto_UpNext){
+                        mAutoNextList.add(mAutoNextList.size() > 0 ? mAutoNextList.size() - 1 : 0 ,mCurrentList.get(0).getUpNextItem());
+                    }
+                }
+                if(mUpNextList.size() > 0)
+                    addUpNextItem(mUpNextList, QueueType.Manual_UpNext);
+                if(mAutoNextList.size() > 0)
+                    addUpNextItem(mAutoNextList, QueueType.Auto_UpNext);
+                if(mGhostList.size() > 0)
+                    addUpNextItem(mGhostList, QueueType.Previous);
 
         /*If service is not destroyed remove current item from upnext*/
-        if (mUpNextList.size() > 0) {
-            mUpNextList.removeLast();
-        } else if (mAutoNextList.size() > 0) {
-            mAutoNextList.removeLast();
-        }
+                if (mUpNextList.size() > 0) {
+                    mUpNextList.remove(mUpNextList.size() - 1);
+                } else if (mAutoNextList.size() > 0) {
+                    mAutoNextList.remove(mAutoNextList.size() -1);
+                }
+            }
+        }).start();
     }
 
     public void fetchUpNextItemsToDB(){
-        if(mUpNextList.size() == 0)
-            mUpNextList = (LinkedList<IMediaItemBase>) getUpNextItemList(QueueType.Manual_UpNext);
-        if(mAutoNextList.size() == 0)
-            mAutoNextList = (LinkedList<IMediaItemBase>) getUpNextItemList(QueueType.Auto_UpNext);
-        if(mGhostList.size() == 0)
-            mGhostList = (LinkedList<IMediaItemBase>) getUpNextItemList(QueueType.Previous);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(mUpNextList.size() == 0)
+                    mUpNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Manual_UpNext);
+                if(mAutoNextList.size() == 0)
+                    mAutoNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Auto_UpNext);
+                if(mGhostList.size() == 0)
+                    mGhostList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Previous);
 
         /*Fetch Now Playing Item from relevant up-next list*/
-        mUpNextList.clear();
-        if (mUpNextList.size() > 0) {
-            mCurrentList.add(new UpNextItem(mUpNextList.removeLast(), QueueType.Manual_UpNext));
-        } else if (mAutoNextList.size() > 0) {
-            mCurrentList.add(new UpNextItem(mAutoNextList.removeLast(), QueueType.Auto_UpNext));
-        }
-        overFillingPlayingItem();
+                mUpNextList.clear();
+                if (mUpNextList.size() > 0) {
+                    mCurrentList.add(new UpNextItem(mUpNextList.remove(mUpNextList.size() - 1), QueueType.Manual_UpNext));
+                } else if (mAutoNextList.size() > 0) {
+                    mCurrentList.add(new UpNextItem(mAutoNextList.remove(mAutoNextList.size() - 1), QueueType.Auto_UpNext));
+                }
+                overFillingPlayingItem();
+            }
+        }).start();
     }
 
     private void overFillingPlayingItem(){
@@ -394,7 +407,7 @@ public class UpNextList {
         }).start();
     }
 
-    public void addToPlay(final LinkedList<MediaItem> itemList, final int position, boolean isPlayAll) {
+    public void addToPlay(final ArrayList<MediaItem> itemList, final int position, boolean isPlayAll) {
         long mTime = System.currentTimeMillis();
         boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
         if(null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
@@ -413,7 +426,12 @@ public class UpNextList {
                         if (itemList.size() > position + 1) {
                             setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
                         }
-                        insertUnShuffledListWithUpdateUpNext(itemList.subList(position, itemList.size()), false);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                insertUnShuffledListWithUpdateUpNext(itemList.subList(position, itemList.size()), false);
+                            }
+                        }).start();
 
                         PlayingItemChanged();
                     }
@@ -424,7 +442,7 @@ public class UpNextList {
 
     //    itemList -> list of collection
 //    position -> Now Playing Item position in item list.
-    public void addToPlay(final ArrayList<MediaItem> itemList, final int position, boolean isPlayAll) {
+    public void addToPlay(final ArrayList<MediaItem> itemList, final int position, final boolean fromSongList, boolean isPlayAll) {
         long mTime = System.currentTimeMillis();
         boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
         if(null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
@@ -443,7 +461,19 @@ public class UpNextList {
                         if (itemList.size() > position + 1) {
                             setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
                         }
-                        insertUnShuffledListWithUpdateUpNext(itemList.subList(position, itemList.size()), false);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(fromSongList) {
+                                    ArrayList songsList = new ArrayList();
+                                    IMediaItem item = new MediaItem(0, context.getResources().getString(R.string.all_songs), null, null, 0, null, 0, null, 0, 0, null, ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.SONGS, 0);
+                                    songsList.add(item);
+                                    insertUnShuffledListWithUpdateUpNext(songsList, false);
+                                }else {
+                                    insertUnShuffledListWithUpdateUpNext(itemList.subList(position, itemList.size()), false);
+                                }
+                            }
+                        }).start();
 
                         PlayingItemChanged();
                     }
@@ -474,7 +504,12 @@ public class UpNextList {
                         if (collection.getMediaElement().size() > position + 1) {
                             setItemListAsUpNextFrom(collection.getMediaElement().subList(position + 1, collection.getMediaElement().size()));
                         }
-                        insertUnShuffledListWithUpdateUpNext(collection.getMediaElement().subList(position , collection.getMediaElement().size()), false);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                insertUnShuffledListWithUpdateUpNext(collection.getMediaElement().subList(position , collection.getMediaElement().size()), false);
+                            }
+                        }).start();
 
                         PlayingItemChanged();
                     }

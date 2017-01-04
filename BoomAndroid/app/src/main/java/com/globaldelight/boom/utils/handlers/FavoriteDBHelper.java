@@ -11,8 +11,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
-
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Created by Rahul Kumar Agrawal on 7/5/2016.
@@ -84,7 +83,7 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addSongs(LinkedList<? extends IMediaItemBase> songs) {
+    public void addSongs(ArrayList<? extends IMediaItemBase> songs) {
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
             ContentValues values = new ContentValues();
@@ -121,9 +120,9 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public LinkedList<? extends IMediaItemBase> getSongList() {
+    public ArrayList<? extends IMediaItemBase> getSongList() {
         SQLiteDatabase db = this.getWritableDatabase();
-        LinkedList<MediaItem> songList = new LinkedList<>();
+        ArrayList<MediaItem> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_FAVORITE + " ORDER BY "+SONG_KEY_ID + " DESC";
 
         Cursor cursor = db.rawQuery(query, null);

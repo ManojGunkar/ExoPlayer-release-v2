@@ -56,13 +56,15 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
     private Context context;
     private Activity activity;
     private RecyclerView recyclerView;
+    private boolean isPhone;
 
     public GenreGridAdapter(Context context, FragmentActivity activity, RecyclerView recyclerView,
-                            ArrayList<? extends IMediaItemBase> items) {
+                            ArrayList<? extends IMediaItemBase> items, boolean isPhone) {
         this.context = context;
         this.activity = activity;
         this.recyclerView = recyclerView;
         this.items = (ArrayList<MediaItemCollection>) items;
+        this.isPhone = isPhone;
     }
 
     @Override
@@ -112,7 +114,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
         String path = items.get(position).getItemArtUrl();
         if (PlayerUtils.isPathValid(path))
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null))
-                    .centerCrop().resize(size, size)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
+                    /*.centerCrop().resize(size, size)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else
             holder.defaultImg.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_album_grid ));
     }
@@ -185,13 +187,15 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
 
     private int setSize(SimpleItemViewHolder holder) {
         Utils utils = new Utils(context);
-        int size = (utils.getWindowWidth(context)
-                - utils.dpToPx(context, 15)) / 2;
+        int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
+                - (int)(context.getResources().getDimension(R.dimen.twenty_four_pt)*2);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
+        holder.gridBottomBg.setLayoutParams(params);
+
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(size, size);
         holder.defaultImg.setLayoutParams(layoutParams);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/2.5));
-        holder.gridBottomBg.setLayoutParams(params);
+        holder.defaultImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
         return size;
     }
 

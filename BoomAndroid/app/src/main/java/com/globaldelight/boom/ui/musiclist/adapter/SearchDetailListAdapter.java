@@ -65,12 +65,14 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
     private String mResultType;
     public static final int TYPE_ROW = 111;
     public static final int TYPE_GRID = 222;
+    private boolean isPhone;
 
-    public SearchDetailListAdapter(SearchDetailListActivity searchDetailListActivity, ArrayList<? extends IMediaItemBase> resultItemList, String mResultType) {
+    public SearchDetailListAdapter(SearchDetailListActivity searchDetailListActivity, ArrayList<? extends IMediaItemBase> resultItemList, String mResultType, boolean isPhone) {
         this.context = searchDetailListActivity;
         activity = searchDetailListActivity;
         this.resultItemList = resultItemList;
         this.mResultType = mResultType;
+        this.isPhone = isPhone;
     }
 
     @Override
@@ -117,7 +119,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                     public void onClick(View view) {
                         animate(holder);
                         if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) resultItemList, position, false);
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) resultItemList, position, false, false);
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -347,7 +349,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                 }
             });
         }
-        holder.mainView.setElevation(dpToPx(2));
+        holder.mainView.setElevation(Utils.dpToPx(context, 2));
     }
 
     public void animate(final SearchDetailListAdapter.SimpleItemViewHolder holder) {
@@ -370,8 +372,8 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
 
             @Override
             protected void done(@Nullable Object result) {
-                animateElevation(0, dpToPx(10), holder);
-                animateElevation(dpToPx(10), 0, holder);
+                animateElevation(0, Utils.dpToPx(context, 10), holder);
+                animateElevation(Utils.dpToPx(context, 10), 0, holder);
             }
         }.execute();
     }
@@ -402,21 +404,22 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
 
     private int setSize(SearchDetailListAdapter.SimpleItemViewHolder holder) {
         Utils utils = new Utils(context);
-        int size = (utils.getWindowWidth(context)
-                - utils.dpToPx(context, 15)) / 2;
+        int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
+                - (int)(context.getResources().getDimension(R.dimen.twenty_four_pt)*2);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
+        holder.gridBottomBg.setLayoutParams(params);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(size, size);
         holder.defaultImg.setLayoutParams(layoutParams);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/2.5));
-        holder.gridBottomBg.setLayoutParams(params);
+        holder.defaultImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
         return size;
     }
 
     private void setArtistImg(final SearchDetailListAdapter.SimpleItemViewHolder holder, final String path, final int size) {
         if (PlayerUtils.isPathValid(path))
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null))
-                    .centerCrop().resize(size, size)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
+                    /*.centerCrop().resize(size, size)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else {
             holder.defaultImg.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_album_grid));
         }
@@ -424,16 +427,11 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
 
     private void setSongArt(String path, SearchDetailListAdapter.SimpleItemViewHolder holder) {
         if (PlayerUtils.isPathValid(path))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null)).resize(dpToPx(90),
-                    dpToPx(90)).centerCrop().into(holder.img);
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null))
+                    /*.resize(dpToPx(90), dpToPx(90)).centerCrop()*/.into(holder.img);
         else{
             holder.img.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_default_list));
         }
-    }
-
-    public int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
     @Override

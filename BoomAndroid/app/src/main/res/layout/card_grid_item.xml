@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/twenty_four_pt"
     android:foreground="?android:attr/selectableItemBackground"
-    android:gravity="center_vertical"
+    android:gravity="center"
     android:orientation="vertical">
     <FrameLayout
         android:id="@+id/card_grid_img_panel"
@@ -13,9 +13,8 @@
         android:transitionName="transition:imgholder">
         <ImageView
             android:id="@+id/card_grid_default_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:visibility="gone" />
 
         <TableLayout
@@ -103,6 +102,7 @@
                     android:background="@drawable/unbounded_ripple"
                     android:backgroundTint="@color/card_grid_item_title_background_tint"
                     android:padding="5dp"
+                    android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_more_button_playlists"
                     android:theme="@style/Theme.AppCompat.Light"/>
             </LinearLayout>

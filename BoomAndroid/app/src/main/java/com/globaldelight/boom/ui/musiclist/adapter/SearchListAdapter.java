@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,12 +76,14 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
     private Activity activity;
     private RecyclerView recyclerView;
     private Search searchRes;
+    private boolean isPhone;
 
-    public SearchListAdapter(Context context, FragmentActivity activity, Search searchRes, RecyclerView recyclerView) {
+    public SearchListAdapter(Context context, FragmentActivity activity, Search searchRes, RecyclerView recyclerView, boolean isPhone) {
         this.context = context;
         this.activity = activity;
         this.searchRes = searchRes;
         this.recyclerView = recyclerView;
+        this.isPhone = isPhone;
         init(searchRes.getSongResult(), searchRes.getAlbumResult(), searchRes.getArtistResult());
     }
 
@@ -438,7 +441,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                     public void onClick(View view) {
                         if(App.getPlayingQueueHandler().getUpNextList()!=null) {
                             animate(holder);
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) songs, getPosition(position), false);
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) songs, getPosition(position), false, false);
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -508,7 +511,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                 }
             });
         }
-        holder.mainView.setElevation(dpToPx(2));
+        holder.mainView.setElevation(Utils.dpToPx(context, 2));
     }
 
     public void animate(final SimpleItemViewHolder holder) {
@@ -531,15 +534,15 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
 
             @Override
             protected void done(@Nullable Object result) {
-                animateElevation(0, dpToPx(10), holder);
-                animateElevation(dpToPx(10), 0, holder);
+                animateElevation(0, Utils.dpToPx(context, 10), holder);
+                animateElevation(Utils.dpToPx(context, 10), 0, holder);
             }
         }.execute();
     }
 
     private void setHeaderBg(SimpleItemViewHolder holder) {
         holder.mainView.setBackgroundColor(ContextCompat.getColor(context, R.color.appBackground));
-        holder.mainView.setElevation(dpToPx(0));
+        holder.mainView.setElevation(Utils.dpToPx(context, 0));
     }
 
     private ValueAnimator animateElevation(int from, int to, final SimpleItemViewHolder holder) {
@@ -568,21 +571,22 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
 
     private int setSize(SimpleItemViewHolder holder) {
         Utils utils = new Utils(context);
-        int size = (utils.getWindowWidth(context)
-                - utils.dpToPx(context, 15)) / 2;
+        int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
+                - (int)(context.getResources().getDimension(R.dimen.twenty_four_pt)*2);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
+        holder.gridBottomBg.setLayoutParams(params);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(size, size);
         holder.defaultImg.setLayoutParams(layoutParams);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/2.5));
-        holder.gridBottomBg.setLayoutParams(params);
+        holder.defaultImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
         return size;
     }
 
     private void setArtistImg(final SimpleItemViewHolder holder, final String path, final int size) {
         if (PlayerUtils.isPathValid(path))
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null))
-                    .centerCrop().resize(size, size)/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
+                    /*.centerCrop().resize(size, size)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else {
             holder.defaultImg.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_default_album_grid));
         }
@@ -590,16 +594,11 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
 
     private void setSongArt(String path, SimpleItemViewHolder holder) {
         if (PlayerUtils.isPathValid(path))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null)).resize(dpToPx(90),
-                    dpToPx(90)).centerCrop().into(holder.img);
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null))
+                    /*.resize(dpToPx(90), dpToPx(90)).centerCrop()*/.into(holder.img);
         else{
             holder.img.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_default_list));
         }
-    }
-
-    public int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
     @Override

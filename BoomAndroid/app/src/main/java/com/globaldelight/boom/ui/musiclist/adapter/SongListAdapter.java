@@ -132,7 +132,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
             @Override
             public void onClick(View view) {
                 if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay(itemList, position, false);
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay(itemList, position, true, false);
                     notifyDataSetChanged();
                 }
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_SONG_SECTION);
