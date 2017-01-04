@@ -80,7 +80,9 @@ public class App extends Application implements SensorEventListener {
         return favoriteDBHelper;
     }
 
-
+    public static void startPlayerService(){
+        application.startService(new Intent(application, PlayerService.class));
+    }
 
     @Override
     public void onCreate() {

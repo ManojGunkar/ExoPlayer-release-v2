@@ -689,6 +689,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onResume() {
         super.onResume();
+        if(null == App.getService())
+            App.startPlayerService();
+
         App.getPlayerEventHandler().isPlayerResume = true;
         isUpdateUpnextDB = true;
         updateEffectIcon();

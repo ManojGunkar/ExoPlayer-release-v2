@@ -53,7 +53,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if(!isExpire("JAN-20-2017")) {
-            startService(new Intent(this, PlayerService.class));
+            App.startPlayerService();
             new Handler().postDelayed(new Runnable() {
 
             /*

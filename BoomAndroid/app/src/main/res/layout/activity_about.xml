@@ -12,18 +12,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="1"
+        android:weightSum="100"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:gravity="center"
-            android:layout_weight=".10">
+            android:gravity="center_horizontal|top"
+            android:layout_weight="10.761">
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/textView7"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="@string/header_about"
                 android:textColor="@color/white"
                 android:textSize="@dimen/about_title"
@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:gravity="center"
-            android:layout_weight=".43">
+            android:layout_weight="33.634">
             <ImageView
                 android:id="@+id/imageView4"
                 android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".12"
+            android:layout_weight="8.314"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -74,7 +74,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".20"
+            android:layout_weight="7.498"
             android:gravity="center"
             android:orientation="vertical">
             <com.globaldelight.boom.ui.widgets.RegularTextView
@@ -86,7 +86,13 @@
                 android:textColor="@color/about_company_color"
                 android:textSize="@dimen/grid_item_desc_size"
                 android:typeface="normal" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:layout_weight="28.279">
             <com.globaldelight.boom.ui.widgets.RegularButton
                 android:id="@+id/btn_rate_app"
                 style="?android:attr/borderlessButtonStyle"
@@ -95,7 +101,13 @@
                 android:text="@string/rate_app"
                 android:textColor="@color/rate_btn_blue"
                 android:textSize="@dimen/rate_btn_size" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:layout_weight="7.187">
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/textView11"
                 android:layout_width="wrap_content"
@@ -106,23 +118,16 @@
                 android:textSize="@dimen/about_copyright_txt_size" />
         </LinearLayout>
 
-        <LinearLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:gravity="bottom"
-            android:layout_weight=".02">
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="@color/black_shade" />
-        </LinearLayout>
-
+            android:layout_height="2px"
+            android:background="@color/black_shade" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:gravity="center"
-            android:layout_weight=".13">
+            android:layout_weight="6.796">
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
