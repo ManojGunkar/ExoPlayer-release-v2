@@ -4,7 +4,7 @@ stages:
   - deploy
 
 before_script:
-  - export BUILD_NUMBER=$(( $(git rev-list --count Build_47.. HEAD) + 47 - 2 ))
+  - export BUILD_NUMBER=$(( $(git rev-list --count Build_48.. HEAD) + 48 - 2 ))
 
 
 variables:
