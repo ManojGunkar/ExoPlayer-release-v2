@@ -246,4 +246,24 @@ public class NotificationHandler {
     public Notification getNotificationCompat() {
         return notificationCompat;
     }
+
+    public void updatePreviousNext(boolean previous, boolean next) {
+        if(next){
+            notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
+            notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
+        }else{
+            notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, INVISIBLE);
+            notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, INVISIBLE);
+        }
+
+        if(previous){
+            notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
+            notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
+        }else{
+            notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, INVISIBLE);
+            notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, INVISIBLE);
+        }
+
+        notificationManager.notify(NOTIFICATION_ID, notificationCompat);
+    }
 }

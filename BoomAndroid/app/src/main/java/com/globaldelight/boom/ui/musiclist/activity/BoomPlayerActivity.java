@@ -143,6 +143,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                     break;
                 case ACTION_UPDATE_REPEAT :
                     updateRepeat();
+                    updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
                     break;
                 case ACTION_STOP_UPDATING_UPNEXT_DB:
                         isUpdateUpnextDB = false;

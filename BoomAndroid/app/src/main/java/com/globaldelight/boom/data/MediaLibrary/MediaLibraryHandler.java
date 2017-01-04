@@ -124,6 +124,10 @@ public class MediaLibraryHandler implements IMediaLibrary{
         DeviceMediaHandler.getInstance(context).insertUnShuffledList(songs, queueType, isAppend);
     }
 
+    public void insertUnShuffledList(IMediaItemBase item, QueueType queueType, boolean isAppend) {
+        DeviceMediaHandler.getInstance(context).insertUnShuffledList(item, queueType, isAppend);
+    }
+
     public ArrayList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
         return DeviceMediaHandler.getInstance(context).getUpNextItemList(queueType);
     }

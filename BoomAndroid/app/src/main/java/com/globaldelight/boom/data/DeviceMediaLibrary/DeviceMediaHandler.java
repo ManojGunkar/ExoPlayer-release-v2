@@ -246,6 +246,10 @@ public class DeviceMediaHandler {
         App.getUPNEXTDBHelper().insertUnShuffledList(songs, queueType, isAppend);
     }
 
+    public void insertUnShuffledList(IMediaItemBase item, QueueType queueType, boolean isAppend) {
+        App.getUPNEXTDBHelper().insertUnShuffledList(item, queueType, isAppend);
+    }
+
     public ArrayList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
         return App.getUPNEXTDBHelper().getUpNextSongs(queueType);
     }

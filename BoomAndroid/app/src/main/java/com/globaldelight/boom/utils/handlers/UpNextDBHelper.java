@@ -72,6 +72,32 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
+    public synchronized void insertUnShuffledList(IMediaItemBase item, QueueType queueType, boolean isAppend) {
+        if(!isAppend)
+            clearList(queueType);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.putNull(SONG_KEY_ID);
+        values.put(SONG_KEY_REAL_ID, item.getItemId());
+        values.put(TITLE, item.getItemTitle());
+        values.put(DISPLAY_NAME, ((IMediaItem)item).getItemDisplayName());
+        values.put(DATA_PATH, ((IMediaItem)item).getItemUrl());
+        values.put(ALBUM_ID, ((IMediaItem)item).getItemAlbumId());
+        values.put(ALBUM, ((IMediaItem)item).getItemAlbum());
+        values.put(ARTIST_ID, ((IMediaItem)item).getItemArtistId());
+        values.put(ARTIST, ((IMediaItem)item).getItemArtist());
+        values.put(DURATION, ((IMediaItem)item).getDurationLong());
+        values.put(DATE_ADDED, ((IMediaItem)item).getDateAdded());
+        values.put(ALBUM_ART, ((IMediaItem)item).getItemArtUrl());
+        values.put(MEDIA_TYPE, ((IMediaItem)item).getMediaType().ordinal());
+        values.put(PARENT_TYPE, ((IMediaItem)item).getParentType().ordinal());
+        values.put(PARENT_ID, ((IMediaItem)item).getParentId());
+        values.put(QUEUE_TYPE, queueType.ordinal());
+        db.insert(TABLE_UPNEXT, null, values);
+        db.close();
+    }
+
     public synchronized void insertUnShuffledList(List<? extends IMediaItemBase> songs, QueueType queueType, boolean isAppend) {
         if(!isAppend)
             clearList(queueType);

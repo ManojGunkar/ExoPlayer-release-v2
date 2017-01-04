@@ -113,6 +113,10 @@ public class MediaController implements IMediaController{
         MediaLibraryHandler.getInstance(context).insertUnShuffledList(songs, queueType, isAppend);
     }
 
+    public void insertUnShuffledList(IMediaItemBase item, QueueType queueType, boolean isAppend) {
+        MediaLibraryHandler.getInstance(context).insertUnShuffledList(item, queueType, isAppend);
+    }
+
     public ArrayList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
         return MediaLibraryHandler.getInstance(context).getUpNextItemList(queueType);
     }

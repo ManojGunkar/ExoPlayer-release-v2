@@ -407,6 +407,21 @@ public class UpNextList {
         }).start();
     }
 
+    public void insertUnShuffledListWithUpdateUpNext(final IMediaItemBase item, final boolean isAppend) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MediaController.getInstance(context).insertUnShuffledList(item, QueueType.unshuffled, isAppend);
+                if(SHUFFLE.all == mShuffle){
+                    updateShuffleList();
+                }
+                if(REPEAT.all == mRepeat){
+                    updateRepeatList();
+                }
+            }
+        }).start();
+    }
+
     public void addToPlay(final ArrayList<MediaItem> itemList, final int position, boolean isPlayAll) {
         long mTime = System.currentTimeMillis();
         boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
@@ -465,10 +480,8 @@ public class UpNextList {
                             @Override
                             public void run() {
                                 if(fromSongList) {
-                                    ArrayList songsList = new ArrayList();
                                     IMediaItem item = new MediaItem(0, context.getResources().getString(R.string.all_songs), null, null, 0, null, 0, null, 0, 0, null, ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.SONGS, 0);
-                                    songsList.add(item);
-                                    insertUnShuffledListWithUpdateUpNext(songsList, false);
+                                    insertUnShuffledListWithUpdateUpNext(item, false);
                                 }else {
                                     insertUnShuffledListWithUpdateUpNext(itemList.subList(position, itemList.size()), false);
                                 }
@@ -710,10 +723,18 @@ public class UpNextList {
     }
 
     public boolean isPrevious() {
+        if(mRepeat == REPEAT.all){
+            return (null != mUpNextList && mUpNextList.size() > 0) || (null != mAutoNextList && mAutoNextList.size() > 0)
+                    || (mGhostList != null && mGhostList.size() > 0) ? true : false;
+        }
         return mGhostList != null && mGhostList.size() > 0 ? true : false;
     }
 
     public boolean isNext() {
+        if(mRepeat == REPEAT.all){
+            return (null != mUpNextList && mUpNextList.size() > 0) || (null != mAutoNextList && mAutoNextList.size() > 0)
+                    ? true : false;
+        }
         return (mUpNextList != null && mUpNextList.size() > 0) || (null != mAutoNextList && mAutoNextList.size() > 0) ? true : false;
     }
 
