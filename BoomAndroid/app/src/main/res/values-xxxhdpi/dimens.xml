@@ -8,6 +8,7 @@
     <dimen name="about_copyright_txt_size">11sp</dimen>
     <dimen name="toolbar_titile">21sp</dimen>//80
     <dimen name="about_title">29sp</dimen>
+    <dimen name="about_title_padding_top">24dp</dimen>
     <dimen name="effect_switch_txt">20sp</dimen>//72
     <dimen name="sixty_pt_txt">15sp</dimen>//52
     <dimen name="fullbass_txt">16sp</dimen>//62

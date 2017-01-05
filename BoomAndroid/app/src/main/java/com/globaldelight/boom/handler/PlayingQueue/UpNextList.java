@@ -295,9 +295,9 @@ public class UpNextList {
                 if(mCurrentList.size() > 0){
             /*Add Now Playing Item to relevant up-next list*/
                     if(mCurrentList.get(0).getUpNextItemType() == QueueType.Manual_UpNext){
-                        mUpNextList.add(mUpNextList.size() > 0 ? mUpNextList.size() - 1 : 0 ,mCurrentList.get(0).getUpNextItem());
+                        mUpNextList.add(0 ,mCurrentList.get(0).getUpNextItem());
                     }else if(mCurrentList.get(0).getUpNextItemType() == QueueType.Auto_UpNext){
-                        mAutoNextList.add(mAutoNextList.size() > 0 ? mAutoNextList.size() - 1 : 0 ,mCurrentList.get(0).getUpNextItem());
+                        mAutoNextList.add(0 ,mCurrentList.get(0).getUpNextItem());
                     }
                 }
                 if(mUpNextList.size() > 0)
@@ -309,9 +309,9 @@ public class UpNextList {
 
         /*If service is not destroyed remove current item from upnext*/
                 if (mUpNextList.size() > 0) {
-                    mUpNextList.remove(mUpNextList.size() - 1);
+                    mUpNextList.remove(0);
                 } else if (mAutoNextList.size() > 0) {
-                    mAutoNextList.remove(mAutoNextList.size() -1);
+                    mAutoNextList.remove(0);
                 }
             }
         }).start();
@@ -331,9 +331,9 @@ public class UpNextList {
         /*Fetch Now Playing Item from relevant up-next list*/
                 mUpNextList.clear();
                 if (mUpNextList.size() > 0) {
-                    mCurrentList.add(new UpNextItem(mUpNextList.remove(mUpNextList.size() - 1), QueueType.Manual_UpNext));
+                    mCurrentList.add(new UpNextItem(mUpNextList.remove(0), QueueType.Manual_UpNext));
                 } else if (mAutoNextList.size() > 0) {
-                    mCurrentList.add(new UpNextItem(mAutoNextList.remove(mAutoNextList.size() - 1), QueueType.Auto_UpNext));
+                    mCurrentList.add(new UpNextItem(mAutoNextList.remove(0), QueueType.Auto_UpNext));
                 }
                 overFillingPlayingItem();
             }
