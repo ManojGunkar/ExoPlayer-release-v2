@@ -93,6 +93,7 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
 
         try {
             App.getPlayingQueueHandler().getUpNextList().fetchUpNextItemsToDB();
+            Log.d("Add_to_Fetch", "out UP_NEXT");
         }catch (Exception e){
 
         }
@@ -201,7 +202,7 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
             case ACTION_REPEAT_SONG :
                 musicPlayerHandler.resetRepeat();
                 sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_REPEAT));
-                notificationHandler.updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
+                updateNotificationPlayer((MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isPlaying(), false);
                 break;
             case ACTION_NEXT_SONG :
                 if(System.currentTimeMillis() - mShiftingTime > 1000) {

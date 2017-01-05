@@ -2,6 +2,7 @@ package com.globaldelight.boom.handler.PlayingQueue;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
@@ -289,55 +290,51 @@ public class UpNextList {
     }
 
     public void addUpNextItemsToDB(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(mCurrentList.size() > 0){
+        if(mCurrentList.size() > 0){
             /*Add Now Playing Item to relevant up-next list*/
-                    if(mCurrentList.get(0).getUpNextItemType() == QueueType.Manual_UpNext){
-                        mUpNextList.add(0 ,mCurrentList.get(0).getUpNextItem());
-                    }else if(mCurrentList.get(0).getUpNextItemType() == QueueType.Auto_UpNext){
-                        mAutoNextList.add(0 ,mCurrentList.get(0).getUpNextItem());
-                    }
-                }
-                if(mUpNextList.size() > 0)
-                    addUpNextItem(mUpNextList, QueueType.Manual_UpNext);
-                if(mAutoNextList.size() > 0)
-                    addUpNextItem(mAutoNextList, QueueType.Auto_UpNext);
-                if(mGhostList.size() > 0)
-                    addUpNextItem(mGhostList, QueueType.Previous);
+            if(mCurrentList.get(0).getUpNextItemType() == QueueType.Manual_UpNext){
+                mUpNextList.add(0 ,mCurrentList.get(0).getUpNextItem());
+                Log.d("Add_to_Manual", "in UP_NEXT");
+            }else if(mCurrentList.get(0).getUpNextItemType() == QueueType.Auto_UpNext){
+                mAutoNextList.add(0 ,mCurrentList.get(0).getUpNextItem());
+                Log.d("Add_to_Auto", "in UP_NEXT");
+            }
+        }
+        if(mUpNextList.size() > 0)
+            addUpNextItem(mUpNextList, QueueType.Manual_UpNext);
+        if(mAutoNextList.size() > 0)
+            addUpNextItem(mAutoNextList, QueueType.Auto_UpNext);
+        if(mGhostList.size() > 0)
+            addUpNextItem(mGhostList, QueueType.Previous);
 
         /*If service is not destroyed remove current item from upnext*/
-                if (mUpNextList.size() > 0) {
-                    mUpNextList.remove(0);
-                } else if (mAutoNextList.size() > 0) {
-                    mAutoNextList.remove(0);
-                }
-            }
-        }).start();
+        if (mUpNextList.size() > 0) {
+            mUpNextList.remove(0);
+        } else if (mAutoNextList.size() > 0) {
+            mAutoNextList.remove(0);
+        }
     }
 
     public void fetchUpNextItemsToDB(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(mUpNextList.size() == 0)
-                    mUpNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Manual_UpNext);
-                if(mAutoNextList.size() == 0)
-                    mAutoNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Auto_UpNext);
-                if(mGhostList.size() == 0)
-                    mGhostList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Previous);
+        mUpNextList.clear();
+        mUpNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Manual_UpNext);
+
+        mAutoNextList.clear();
+        mAutoNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Auto_UpNext);
+
+        mGhostList.clear();
+        mGhostList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Previous);
 
         /*Fetch Now Playing Item from relevant up-next list*/
-                mUpNextList.clear();
-                if (mUpNextList.size() > 0) {
-                    mCurrentList.add(new UpNextItem(mUpNextList.remove(0), QueueType.Manual_UpNext));
-                } else if (mAutoNextList.size() > 0) {
-                    mCurrentList.add(new UpNextItem(mAutoNextList.remove(0), QueueType.Auto_UpNext));
-                }
-                overFillingPlayingItem();
-            }
-        }).start();
+        mCurrentList.clear();
+        if (mUpNextList.size() > 0) {
+            mCurrentList.add(new UpNextItem(mUpNextList.remove(0), QueueType.Manual_UpNext));
+            Log.d("Add_to_Manual", "out UP_NEXT");
+        } else if (mAutoNextList.size() > 0) {
+            mCurrentList.add(new UpNextItem(mAutoNextList.remove(0), QueueType.Auto_UpNext));
+            Log.d("Add_to_Auto", "out UP_NEXT");
+        }
+//                overFillingPlayingItem();
     }
 
     private void overFillingPlayingItem(){
