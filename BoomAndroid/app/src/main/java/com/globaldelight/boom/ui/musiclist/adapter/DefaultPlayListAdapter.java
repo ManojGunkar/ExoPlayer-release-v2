@@ -152,9 +152,9 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
                 Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
                 Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
+                Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
                 break;
             case 3:
@@ -164,7 +164,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
                 Picasso.with(context).load(new File(Urls.get(2))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                Picasso.with(context).load(new File(Urls.get(2))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
                 break;
             case 4:

@@ -30,6 +30,8 @@ public class NegativeSeekBar extends SeekBar {
         this.mContext = context;
     }
 
+
+
     public NegativeSeekBar(Context context, AttributeSet attrs) {
 
         super(context, attrs);
@@ -41,8 +43,10 @@ public class NegativeSeekBar extends SeekBar {
 
     public void setDisable(boolean b){
         isDisable = b;
+        setEnabled(!isDisable);
         if(isDisable){
             this.getThumb().setColorFilter(mContext.getResources().getColor(R.color.card_grid_artist), PorterDuff.Mode.SRC_IN);
+
         }else{
             this.getThumb().setColorFilter(Color.parseColor("#bfbfbf"), PorterDuff.Mode.SRC_IN);
         }
@@ -50,6 +54,7 @@ public class NegativeSeekBar extends SeekBar {
 
     public NegativeSeekBar(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        setEnabled(!isDisable);
         if(isDisable){
             this.getThumb().setColorFilter(mContext.getResources().getColor(R.color.card_grid_artist), PorterDuff.Mode.SRC_IN);
         }else{

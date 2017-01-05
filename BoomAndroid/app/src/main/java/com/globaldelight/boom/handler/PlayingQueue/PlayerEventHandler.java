@@ -179,6 +179,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
             if ( requestAudioFocus() ) {
                 mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
                 setSessionState(PlaybackState.STATE_PLAYING);
+                playingItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem) playingItem).getItemAlbum()));
                 context.sendBroadcast(new Intent(PlayerService.ACTION_GET_SONG));
                 AnalyticsHelper.songSelectionChanged(context, playingItem);
             }

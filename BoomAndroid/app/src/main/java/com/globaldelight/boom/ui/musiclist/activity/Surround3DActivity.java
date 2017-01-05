@@ -409,15 +409,10 @@ public class Surround3DActivity extends AppCompatActivity implements View.OnClic
 
     private void EnableSeek(boolean isEnable){
         if(isEnable){
-            mIntensitySeek.setOnTouchListener(null);
             mIntensitySeek.setDisable(false);
+//            mIntensitySeek.setEnabled(true);
         }else{
-            mIntensitySeek.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    return true;
-                }
-            });
+//            mIntensitySeek.setEnabled(false);
             mIntensitySeek.setDisable(true);
         }
     }

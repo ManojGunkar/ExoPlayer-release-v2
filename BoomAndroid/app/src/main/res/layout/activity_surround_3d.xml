@@ -198,7 +198,6 @@
                 android:layout_height="@dimen/one_one_nine_four_pt"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/eighty_eighty_pt"
-                android:visibility="gone"
                 android:orientation="vertical">
 
                 <FrameLayout
@@ -407,7 +406,7 @@
                     android:id="@+id/intensity_seek"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                    android:thumbTint="#bfbfbf"
                     android:layout_alignStart="@+id/intensity_switch_btn"
                     android:layout_below="@+id/intensity_switch_btn"
                     android:layout_marginRight="@dimen/one_fifty_six_pt"

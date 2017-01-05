@@ -166,10 +166,10 @@ public class DeviceMediaQuery {
     public static IMediaItemBase getAlbum(Context context, long id) {
         System.gc();
         MediaItemCollection album = null;
-        final String where = MediaStore.Audio.Albums._ID+ "="+id;
-
+        final String where = MediaStore.Audio.Albums._ID+ "=?";
+        String whereVal[] = {String.valueOf(id)};
         Cursor albumListCursor = context.getContentResolver().
-                query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, null, where, null, null);
+                query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, null, where, whereVal, null);
 
         if (albumListCursor != null && albumListCursor.moveToFirst()) {
             //get columns
@@ -302,10 +302,10 @@ public class DeviceMediaQuery {
 
     public static IMediaItemBase getArtist(Context context, long id) {
         MediaItemCollection artist = null;
-        final String where = MediaStore.Audio.Artists._ID+ "="+id;
-
+        final String where = MediaStore.Audio.Artists._ID+ "=?";
+        String whereVal[] = {String.valueOf(id)};
         Cursor artistListCursor = context.getContentResolver().
-                query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, null, where, null, null);
+                query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, null, where, whereVal, null);
 
         if (artistListCursor != null && artistListCursor.moveToFirst()) {
             //get columns
@@ -392,11 +392,13 @@ public class DeviceMediaQuery {
         ArrayList<String> urlList = new ArrayList<>();
         StringBuilder where = new StringBuilder();
         where.append(MediaStore.Audio.Media.IS_MUSIC + "=1 AND ");
-        where.append(MediaStore.Audio.Media.ARTIST_ID + "='" + itemId + "'");
+        where.append(MediaStore.Audio.Media.ARTIST_ID + "=?");
+
+        String whereVal[] = {String.valueOf(itemId)};
 
         final String orderBy = MediaStore.Audio.Media.TITLE;
         Cursor songListCursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                null, where.toString(), null, orderBy);
+                null, where.toString(), whereVal, orderBy);
         if (songListCursor != null && songListCursor.moveToFirst()) {
 
             int Album_ID_Column = songListCursor.getColumnIndex
@@ -419,14 +421,14 @@ public class DeviceMediaQuery {
         System.gc();
         ArrayList<MediaItem> songList = new ArrayList<>();
 
-        String where = MediaStore.Audio.Media.IS_MUSIC + "=1 AND "+MediaStore.Audio.Media.ARTIST_ID+ "="+parentId+" AND "+
-                MediaStore.Audio.Media.ALBUM_ID + "="+itemId;
+        String where = MediaStore.Audio.Media.IS_MUSIC + "=1 AND "+MediaStore.Audio.Media.ARTIST_ID+ "=? AND "+
+                MediaStore.Audio.Media.ALBUM_ID + "=?";
 
-//        String whereVal[] = { album};
+        String whereVal[] = {String.valueOf(parentId), String.valueOf(itemId)};
         String orderBy = MediaStore.Audio.Media.ALBUM + " COLLATE NOCASE ASC";//MediaStore.Audio.Media.ALBUM_ID;
 
         Cursor songListCursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                null, where, null, orderBy);
+                null, where, whereVal, orderBy);
 
         if (songListCursor != null && songListCursor.moveToFirst()) {
 
@@ -483,16 +485,20 @@ public class DeviceMediaQuery {
         }
         ArrayList<MediaItem> songList = new ArrayList<>();
         System.gc();
+        final String orderBy = MediaStore.Audio.Media.TITLE;
         StringBuilder where = new StringBuilder();
         where.append(MediaStore.Audio.Media.IS_MUSIC + "=1 AND ");
+        String whereVal[] = new String[1];
         if(itemTitle.equals("item") || (itemTitle.equals("") || itemTitle.isEmpty())) {
-            where.append(MediaStore.Audio.Media.ARTIST_ID + "='" + itemId + "'");
+            where.append(MediaStore.Audio.Media.ARTIST_ID + "=?");
+            whereVal[0] = String.valueOf(itemId);
         }else {
-            where.append(MediaStore.Audio.Media.ARTIST + "='" + itemTitle.replace("'", "''") + "'");
+            where.append(MediaStore.Audio.Media.ARTIST + "=?");
+            whereVal[0] = itemTitle;
         }
-        final String orderBy = MediaStore.Audio.Media.TITLE;
+
         Cursor songListCursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                null, where.toString(), null, orderBy);
+                null, where.toString(), whereVal, orderBy);
         if (songListCursor != null && songListCursor.moveToFirst()) {
             int Song_Id_Column = songListCursor.getColumnIndex
                     (MediaStore.Audio.Media._ID);
@@ -596,9 +602,9 @@ public class DeviceMediaQuery {
     public static IMediaItemBase getPlaylistItem(Context context, long id) {
         //Get a cursor of all genres in MediaStore.
         MediaItemCollection playlist = null;
-        final String where = MediaStore.Audio.Playlists._ID+ "="+id;
+        final String where = MediaStore.Audio.Playlists._ID+ "=?";
         Cursor playListCursor = context.getContentResolver().query(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
-                new String[] { MediaStore.Audio.Playlists._ID, MediaStore.Audio.Playlists.NAME }, where, null, null);
+                new String[] { MediaStore.Audio.Playlists._ID, MediaStore.Audio.Playlists.NAME }, where, new String[]{String.valueOf(id)}, null);
 
         //Iterate thru all playlist in MediaStore.
         if(playListCursor.getCount()>0) {
@@ -762,9 +768,10 @@ public class DeviceMediaQuery {
 
     public static IMediaItemBase getGenre(Context context, long id) {
         MediaItemCollection genre = null;
-        final String where = MediaStore.Audio.Genres._ID+ "="+id;
+        final String where = MediaStore.Audio.Genres._ID+ "=?";
+        String whereVal[] = new String[]{String.valueOf(id)};
         Cursor genreListCursor = context.getContentResolver().query(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
-                new String[] { MediaStore.Audio.Genres._ID, MediaStore.Audio.Genres.NAME }, where, null, null);
+                new String[] { MediaStore.Audio.Genres._ID, MediaStore.Audio.Genres.NAME }, where, whereVal, null);
 
         //Iterate thru all genres in MediaStore.
         if(genreListCursor.getCount()>0) {
@@ -946,10 +953,10 @@ public class DeviceMediaQuery {
     private static Cursor getSongOfGenreAlbumCursor(Context context, final Long genreId, final String album){
         Uri uri = MediaStore.Audio.Genres.Members.getContentUri("external", genreId);
         final String where = MediaStore.Audio.Media.IS_MUSIC + "=1 AND "
-                + MediaStore.Audio.Media.ALBUM + "=" + "'"+album+"'";
+                + MediaStore.Audio.Media.ALBUM + "=?";
         final String orderBy = MediaStore.Audio.Media.TITLE;
 
-        return context.getContentResolver().query(uri, null, where, null, orderBy)/*.getCount()*/;
+        return context.getContentResolver().query(uri, null, where, new String[]{album}, orderBy)/*.getCount()*/;
     }
 
     public static ArrayList<? extends IMediaItemBase> getSongListOfGenre(Context context, long itemId, String itemTitle) {

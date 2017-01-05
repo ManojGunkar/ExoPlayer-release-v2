@@ -231,8 +231,8 @@ public class Utils {
         float yInches= metrics.heightPixels/metrics.ydpi;
         float xInches= metrics.widthPixels/metrics.xdpi;
         double diagonalInches = Math.sqrt(xInches*xInches + yInches*yInches);
-        if (diagonalInches>=6.5){
-            // 6.5inch device or bigger
+        if (diagonalInches >= 6.7){
+            // 6.7 inch device or bigger
             return false;
         }else{
             // smaller device
