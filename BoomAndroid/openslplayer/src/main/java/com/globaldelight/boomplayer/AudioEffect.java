@@ -62,9 +62,10 @@ public class AudioEffect {
     }
 
 
+    // Devices listed under high_end_devices.csv are not low end devices, rest are low end.
     private boolean checkLowEndDevice(Context context) {
         try {
-            InputStreamReader is = new InputStreamReader(context.getAssets().open("low_end_devices.csv"));
+            InputStreamReader is = new InputStreamReader(context.getAssets().open("high_end_devices.csv"));
 
             BufferedReader reader = new BufferedReader(is);
             reader.readLine();
@@ -76,7 +77,7 @@ public class AudioEffect {
                     final String model = fields[3];
 
                     if ( manufacturer.equalsIgnoreCase(Build.MANUFACTURER) && model.equalsIgnoreCase(Build.MODEL) ) {
-                        return true;
+                        return false;
                     }
                 }
             }
@@ -84,7 +85,7 @@ public class AudioEffect {
         catch (Exception e) {
         }
 
-        return false;
+        return true;
     }
 
     public static AudioEffect getAudioEffectInstance(Context context) {
