@@ -68,7 +68,6 @@ namespace gdpl {
         }
         OpenSLPlayer::setupEngine(sampleRate, frameCount, useFloat);
         mEngine = new AudioEngine(sampleRate, DEFAULT_FRAME_COUNT);
-        //engine->SetHighQuality(false);
         mEngine->SetHeadPhoneType(eOnEar);
         if ( !useFloat ) {
             mEngine->SetOutputType(SAMPLE_TYPE_SHORT);
@@ -240,11 +239,11 @@ namespace gdpl {
         mEngine->SetSuperBass(enable);
     }
 
-    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableHighQuality(JNIEnv *env, jobject instance,
-                                                                      jboolean enable) {
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_setQuality(JNIEnv *env, jobject instance,
+                                                                      jint quality) {
         gdpl::AutoLock lock(&mLock);
-        LOGD("enableHighQuality(%d)", enable);
-        mEngine->SetHighQuality(enable);
+        LOGD("setQuality(%d)", quality);
+        mEngine->SetQuality(eQualityLevel(quality));
     }
 
     extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_setIntensity(JNIEnv *env, jobject instance,

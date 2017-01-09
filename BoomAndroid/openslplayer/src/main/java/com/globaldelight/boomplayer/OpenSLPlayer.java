@@ -559,7 +559,7 @@ public class OpenSLPlayer implements Runnable {
 
     public native void enableSuperBass(boolean enable);
 
-    public native void enableHighQuality(boolean enable);
+    public native void setQuality(int quality);
 
     public native void enableEqualizer(boolean enable);
 
@@ -589,6 +589,7 @@ public class OpenSLPlayer implements Runnable {
     public void updatePlayerEffect(){
 
         setEnableEffect(audioEffectPreferenceHandler.isAudioEffectOn());
+        setQuality(audioEffectPreferenceHandler.getAudioQuality());
         if(audioEffectPreferenceHandler.isAudioEffectOn()) {
             setEnable3DAudio(audioEffectPreferenceHandler.is3DSurroundOn());
             if (audioEffectPreferenceHandler.isIntensityOn()) {
