@@ -102,8 +102,8 @@ namespace gdpl {
     void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableSuperBass(JNIEnv *env, jobject instance,
                                                                     jboolean enable);
 
-    void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableHighQuality(JNIEnv *env, jobject instance,
-                                                                      jboolean enable);
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_setQuality(JNIEnv *env, jobject instance,
+                                                                      jint quality);
 
     void Java_com_globaldelight_boomplayer_OpenSLPlayer_setIntensity(JNIEnv *env, jobject instance,
                                                                     jdouble value);

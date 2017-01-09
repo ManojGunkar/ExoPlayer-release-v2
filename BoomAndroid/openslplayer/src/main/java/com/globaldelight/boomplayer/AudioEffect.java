@@ -253,6 +253,16 @@ public class AudioEffect {
         editor.commit();
     }
 
+
+    public static int LOW_QUALITY_AUDIO = 1;
+    public static int MID_QUALITY_AUDIO = 2;
+    public static int HIGH_QUALITY_AUDIO = 3;
+
+    public int getAudioQuality() {
+        if ( isLowEndDevice ) return MID_QUALITY_AUDIO;
+        return HIGH_QUALITY_AUDIO;
+    }
+
     public enum headphone {
         OVER_EAR,
         ON_EAR,
@@ -322,6 +332,4 @@ public class AudioEffect {
             return lookup.get(ordinal);
         }
     }
-
-
 }

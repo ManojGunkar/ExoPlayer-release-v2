@@ -6,17 +6,7 @@
 #ifndef BOOM_AUDIOENGINE_H
 #define BOOM_AUDIOENGINE_H
 
-//#include "SoundLayout.hpp"
-
-
-
-
-#define NUM_BANDS 16
-#define NUM_SPEAKERS 6
-#define SAMPLE_TYPE_FLOAT 1
-#define SAMPLE_TYPE_SHORT 2
-
-
+#include "AudioEngineHeaders.h"
 
 static float Music[] = {4.0, 4.6, 4.5, 2.6, 2.0, 2.21, 2.0, 2.5, 1.75, 2.0, 2.0, 3.0, 3.0, 3.7, 4.1, 4.0};
 static float BassBoost[] = {4.5, 5.5, 4.5, 3.0, 2.2, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
@@ -67,10 +57,10 @@ static float Rock[] = {4.0, 4.5, 4.2, 3.7, 3.2, 2.3, 1.0, 0.0, -1.0, -1.0, -1.0,
 //static float RnB[NUM_BANDS] = {3.0, 5.0, 4.0, 2.0, 1.0, 0.0, -1.0, -1.0, -1.0, 1.0, 2.0, 3.5, 4.0, 4.5, 4.0, 4.0};
 //static float Flat[NUM_BANDS] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
-#define eOverEar 0
-#define eOnEar 1
-#define eInEar 2
-#define eInCanal 3
+//#define eOverEar 0
+//#define eOnEar 1
+//#define eInEar 2
+//#define eInCanal 3
 
 #include <android/asset_manager.h>
 
@@ -96,7 +86,8 @@ public:
     bool GetEffectsState();
     void SetSuperBass(bool state);
 
-    void SetHighQuality(bool state);
+    //void SetHighQuality(bool state);
+    void SetQuality(eQualityLevel qLevel);
 
     void SetIntensity(float value); // value from -1.0 to +1.0
     float GetIntensity();
