@@ -2,7 +2,9 @@ package com.globaldelight.boomplayer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
+import android.os.Build;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,10 +53,39 @@ public class AudioEffect {
 
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
+    private boolean isLowEndDevice = false;
 
     private AudioEffect(Context context) {
         shp = context.getSharedPreferences(AUDIO_EFFECT_SETTING, Context.MODE_PRIVATE);
         editor = shp.edit();
+        isLowEndDevice = checkLowEndDevice(context);
+    }
+
+
+    // Devices listed under high_end_devices.csv are not low end devices, rest are low end.
+    private boolean checkLowEndDevice(Context context) {
+        try {
+            InputStreamReader is = new InputStreamReader(context.getAssets().open("high_end_devices.csv"));
+
+            BufferedReader reader = new BufferedReader(is);
+            reader.readLine();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split(",");
+                if ( fields.length == 4 ) {
+                    final String manufacturer = fields[0];
+                    final String model = fields[3];
+
+                    if ( manufacturer.equalsIgnoreCase(Build.MANUFACTURER) && model.equalsIgnoreCase(Build.MODEL) ) {
+                        return false;
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+        }
+
+        return true;
     }
 
     public static AudioEffect getAudioEffectInstance(Context context) {
@@ -100,7 +131,7 @@ public class AudioEffect {
     }
 
     public boolean isFullBassOn(){
-        return shp.getBoolean(FULL_BASS, DEFAULT_POWER);
+        return shp.getBoolean(FULL_BASS, !isLowEndDevice);
     }
 
     public void setEnableFullBass(boolean enableBass) {
