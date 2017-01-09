@@ -61,6 +61,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
@@ -748,11 +749,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         if ( requestCode == SURVEY_REQUEST_CODE ) {
             surveyInProgress = false;
             // After feedback is provided adjust the date of next prompt.
-            long nextPromptInterval = DECLINE_TIME_LIMIT;
-            if ( resultCode == RESULT_OK ) {
-                nextPromptInterval = ACCEPT_TIME_LIMIT;
-            }
-
+            long nextPromptInterval = ACCEPT_TIME_LIMIT;
             SharedPreferences prefs = getApplicationContext().getSharedPreferences(SMConstants.PREF_NAME, Context.MODE_PRIVATE);
             final long currentDate = new Date().getTime();
             prefs.edit().putLong(SMConstants.PROMPT_DATE, currentDate + nextPromptInterval).commit();
@@ -787,16 +784,43 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private Timer feedbackTimer = null;
+
+    private void runSurvey() {
         surveyInstance.onStart(this, SURVEY_REQUEST_CODE, SURVEY_HASH,
                 getString(R.string.feedback_title),
                 getString(R.string.feedback_text),
                 FEEDBACK_TIME_LIMIT,
                 DECLINE_TIME_LIMIT,
                 ACCEPT_TIME_LIMIT);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (feedbackTimer == null) {
+            feedbackTimer = new Timer();
+            feedbackTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            runSurvey();
+                        }
+                    });
+                }
+            }, 2000);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if ( feedbackTimer != null ) {
+            feedbackTimer.cancel();
+            feedbackTimer = null;
+        }
     }
 
     @Override
