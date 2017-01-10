@@ -14,6 +14,7 @@ import android.widget.RemoteViews;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -81,7 +82,7 @@ public class NotificationHandler {
         notificationActive = true;
     }
 
-    public void changeNotificationDetails(MediaItem item, boolean playing, boolean isLastPlayed) {
+    public void changeNotificationDetails(IMediaItem item, boolean playing, boolean isLastPlayed) {
         if(item == null && !isLastPlayed){
 //            notificationCompat.bigContentView.setViewVisibility(R.id.noti_name, GONE);
 //            notificationCompat.bigContentView.setViewVisibility(R.id.noti_artist, GONE);

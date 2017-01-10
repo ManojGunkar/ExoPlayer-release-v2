@@ -19,7 +19,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,6 +34,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.adapter.SearchSuggestionAdapter;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
@@ -99,7 +99,8 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
         mFavPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(BoomMasterActivity.this, FavouriteListActivity.class);
+                Intent intent = new Intent(BoomMasterActivity.this, CloudItemListActivity.class);
+                intent.putExtra("SONG_LIST_TYPE", MediaType.DROP_BOX.ordinal());
                 startActivity(intent);
                 drawerLayout.closeDrawer(Gravity.LEFT);
             }
@@ -372,7 +373,7 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
 //                drawerLayout.closeDrawer(Gravity.LEFT);
 //                break;
 //            case R.id.navigation_boom_favourites:
-//                intent = new Intent(BoomMasterActivity.this, FavouriteListActivity.class);
+//                intent = new Intent(BoomMasterActivity.this, CloudItemListActivity.class);
 //                startActivity(intent);
 //                drawerLayout.closeDrawer(Gravity.LEFT);
 //                break;

@@ -126,6 +126,8 @@
 
     <!-- library-->
     <string name="title_library">Music Library</string>
+    <string name="title_dropbox_list">Dropbox</string>
+    <string name="title_google_drive_list">Google Drive</string>
 
     <!--inapp-->
     <string name="purchase_item_title">Magical Effects Pack</string>

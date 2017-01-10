@@ -14,16 +14,23 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.dropbox.client2.DropboxAPI;
+import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.DropboxMedia.DropboxMediaItem;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.manager.MusicReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.BoomPlayerActivity;
 import com.globaldelight.boom.ui.musiclist.activity.PlayingQueueActivity;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
+import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 
 import java.io.IOException;
 import java.security.SecurityPermission;
@@ -72,6 +79,7 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
     private MusicReceiver musicReceiver;
     private MusicSearchHelper musicSearchHelper;
     private boolean isSearch = false;
+    private DropboxAPI<AndroidAuthSession> dropboxAPI;
 
     private BroadcastReceiver playerServiceBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -127,6 +135,16 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
         }else{
             shp.edit().putBoolean(STORAGE_PERMISSION, false).apply();
         }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AndroidAuthSession session = DropBoxUtills.buildSession(App.getApplication());
+                dropboxAPI = new DropboxAPI<AndroidAuthSession>(session);
+                App.setDropboxAPI(dropboxAPI);
+                DropBoxUtills.checkAppKeySetup(App.getApplication());
+            }
+        }).start();
     }
 
     @Override
@@ -202,7 +220,7 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
             case ACTION_REPEAT_SONG :
                 musicPlayerHandler.resetRepeat();
                 sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_REPEAT));
-                updateNotificationPlayer((MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isPlaying(), false);
+                updateNotificationPlayer((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isPlaying(), false);
                 break;
             case ACTION_NEXT_SONG :
                 if(System.currentTimeMillis() - mShiftingTime > 1000) {
@@ -305,7 +323,7 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
         i.putExtra("play_pause", play_pause);
         sendBroadcast(i);
 
-        updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), play_pause, false);
+        updateNotificationPlayer((IMediaItem) musicPlayerHandler.getPlayingItem(), play_pause, false);
     }
 
     private void updatePlayingQueue() {
@@ -318,23 +336,35 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
         if(!isLastPlayedSong) {
             Intent i = new Intent();
             i.setAction(PlayerEvents.ACTION_RECEIVE_SONG);
-            i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
+            if(musicPlayerHandler.getPlayingItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB) {
+                i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
+            } else if(musicPlayerHandler.getPlayingItem().getMediaType() == MediaType.DROP_BOX) {
+                i.putExtra("playing_song", (DropboxMediaItem) musicPlayerHandler.getPlayingItem());
+            } else if(musicPlayerHandler.getPlayingItem().getMediaType() == MediaType.GOOGLE_DRIVE) {
+                i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
+            }
             i.putExtra("playing", true);
             i.putExtra("is_previous", musicPlayerHandler.isPrevious());
             i.putExtra("is_next", musicPlayerHandler.isNext());
 
             sendBroadcast(i);
-            updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), true, false);
+            updateNotificationPlayer((IMediaItem) musicPlayerHandler.getPlayingItem(), true, false);
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), true, false);
+            updateNotificationPlayer((IMediaItem) musicPlayerHandler.getPlayingItem(), true, false);
         }else{
             Intent i = new Intent();
             i.setAction(PlayerEvents.ACTION_LAST_PLAYED_SONG);
-            i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
+            if(musicPlayerHandler.getPlayingItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB) {
+                i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
+            } else if(musicPlayerHandler.getPlayingItem().getMediaType() == MediaType.DROP_BOX) {
+                i.putExtra("playing_song", (DropboxMediaItem) musicPlayerHandler.getPlayingItem());
+            } else if(musicPlayerHandler.getPlayingItem().getMediaType() == MediaType.GOOGLE_DRIVE) {
+                i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
+            }
             i.putExtra("last_played_song", true);
             i.putExtra("is_previous", musicPlayerHandler.isPrevious());
             i.putExtra("is_next", musicPlayerHandler.isNext());
@@ -344,14 +374,14 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), false, true);
+            updateNotificationPlayer((IMediaItem) musicPlayerHandler.getPlayingItem(), false, true);
         }
     }
 
-    private void updateNotificationPlayer(MediaItem playingItem, boolean playing, boolean isLastPlayed) {
+    private void updateNotificationPlayer(IMediaItem playingItem, boolean playing, boolean isLastPlayed) {
 //        notificationHandler.setNotificationPlayer(false);
         if(!playing){
-            stopForeground(false);
+            stopForeground(true);
             notificationHandler.setNotificationPlayer(true);
         }else{
             notificationHandler.setNotificationPlayer(false);

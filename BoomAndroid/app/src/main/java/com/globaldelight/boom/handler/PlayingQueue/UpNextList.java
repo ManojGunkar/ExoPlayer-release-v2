@@ -419,12 +419,16 @@ public class UpNextList {
         }).start();
     }
 
-    public void addToPlay(final ArrayList<MediaItem> itemList, final int position, boolean isPlayAll) {
+    public void addToPlay(final ArrayList<IMediaItem> itemList, final int position, boolean isPlayAll) {
         long mTime = System.currentTimeMillis();
         boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
-        if(null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
+        if(itemList.get(position).getMediaType() == MediaType.DEVICE_MEDIA_LIB && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
             PlayPause();
-        }else  if(mTime - mShiftingTime > 500) {
+        }else if(itemList.get(position).getMediaType() == MediaType.GOOGLE_DRIVE && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
+            PlayPause();
+        } else if(itemList.get(position).getMediaType() == MediaType.DROP_BOX && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
+            PlayPause();
+        }else if(mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -524,7 +528,7 @@ public class UpNextList {
                         PlayingItemChanged();
                     }
                 }
-            }, 100);
+            }, 300);
         }
     }
 

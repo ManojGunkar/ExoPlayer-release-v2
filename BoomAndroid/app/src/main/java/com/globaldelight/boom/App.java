@@ -11,6 +11,8 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.dropbox.client2.DropboxAPI;
+import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
@@ -42,6 +44,7 @@ public class App extends Application implements SensorEventListener {
     float mAccelCurrent;
     float mAccel;
     SensorManager mSensorManager;
+    private static DropboxAPI<AndroidAuthSession> dropboxAPI;
 
 
     public static void setService(PlayerService service) {
@@ -82,6 +85,14 @@ public class App extends Application implements SensorEventListener {
 
     public static void startPlayerService(){
         application.startService(new Intent(application, PlayerService.class));
+    }
+
+    public static void setDropboxAPI(DropboxAPI<AndroidAuthSession> dropboxAPI) {
+        App.dropboxAPI = dropboxAPI;
+    }
+
+    public static DropboxAPI<AndroidAuthSession> getDropboxAPI(){
+        return App.dropboxAPI;
     }
 
     @Override

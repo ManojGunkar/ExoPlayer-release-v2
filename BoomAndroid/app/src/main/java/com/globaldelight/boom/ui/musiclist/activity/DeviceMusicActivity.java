@@ -28,6 +28,7 @@ import android.widget.RelativeLayout;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.fragment.MusicLibraryListFragment;
 import com.globaldelight.boom.ui.widgets.MusicListTabs.MusicTabBar;
@@ -107,7 +108,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
     private BroadcastReceiver mPlayerEventBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            MediaItem item;
+            IMediaItem item;
             switch (intent.getAction()){
                 case ACTION_RECEIVE_SONG :
                     item = intent.getParcelableExtra("playing_song");
@@ -138,7 +139,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
         }
     };
 
-    private void updateMiniPlayer(MediaItem item, boolean playing, boolean isLastPlayedSong) {
+    private void updateMiniPlayer(IMediaItem item, boolean playing, boolean isLastPlayedSong) {
         if(item != null) {
             updateAlbumArt(item);
             mTitle.setText(item.getItemTitle());
@@ -156,7 +157,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
         }
     }
 
-    private void updateAlbumArt(final MediaItem item){
+    private void updateAlbumArt(final IMediaItem item){
         if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
             new Action() {
                 public static final String TAG = "DEVICE_MUSIC_ACTIVITY";
@@ -217,7 +218,7 @@ public class DeviceMusicActivity extends BoomMasterActivity{
 
             if (null != App.getPlayerEventHandler().getPlayingItem()) {
                 updateMiniPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
-                        (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
+                        (IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
                         null, App.getPlayerEventHandler().isPlaying(),
                        /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));
                 mMiniPlayer.setVisibility(View.VISIBLE);

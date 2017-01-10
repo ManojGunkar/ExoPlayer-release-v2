@@ -108,8 +108,16 @@ public class MediaLibraryHandler implements IMediaLibrary{
         DeviceMediaHandler.getInstance(context).removeItemToFavList(itemId);
     }
 
+    public void removeItemToFavoriteList(String itemTitle) {
+        DeviceMediaHandler.getInstance(context).removeItemToFavList(itemTitle);
+    }
+
     public boolean isFavouriteItems(long itemId) {
         return DeviceMediaHandler.getInstance(context).isFavouriteItems(itemId);
+    }
+
+    public boolean isFavouriteItems(String itemTitle) {
+        return DeviceMediaHandler.getInstance(context).isFavouriteItems(itemTitle);
     }
 
     public void addUpNextItem(IMediaItemBase song, QueueType queueType) {

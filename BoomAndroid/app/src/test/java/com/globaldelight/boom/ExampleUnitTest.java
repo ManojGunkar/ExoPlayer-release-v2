@@ -1,4 +1,4 @@
-package com.player.myspotifymusic;
+package com.globaldelight.boom;
 
 import org.junit.Test;
 

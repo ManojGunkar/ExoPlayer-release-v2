@@ -7,17 +7,12 @@ import android.media.AudioManager;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
-import android.media.MediaDataSource;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
-import android.media.browse.MediaBrowser;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
-
-import com.example.openslplayer.R;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -294,9 +289,20 @@ public class OpenSLPlayer implements Runnable {
         }catch (MediaCodec.CryptoException e){
 
         }
-
-        MediaFormat outputFormat = codec.getOutputFormat();
-        createPlayer(outputFormat);
+        MediaFormat outputFormat = null;
+        try {
+            outputFormat = codec.getOutputFormat();
+        } catch (MediaCodec.CodecException e){
+            e.printStackTrace();
+        } catch (IllegalStateException e){
+            e.printStackTrace();
+        }
+        if(null != outputFormat) {
+            createPlayer(outputFormat);
+        }else{
+            if (events != null) handler.post(new Runnable() { @Override public void run() { events.onError();  } });
+            return;
+        }
 
         if(null != extractor) {
             extractor.selectTrack(0);
@@ -332,7 +338,8 @@ public class OpenSLPlayer implements Runnable {
                 waitPlay();
 
                 // read a buffer before feeding it to the decoder
-                if (!sawInputEOS) {
+                if (!sawInputEOS /*&& extractor.getCachedDuration() < 100*/) {
+
                     try {
                         int inputBufIndex = codec.dequeueInputBuffer(kTimeOutUs);
                         if (inputBufIndex >= 0) {
@@ -382,6 +389,7 @@ public class OpenSLPlayer implements Runnable {
                             }
                         }
                         codec.releaseOutputBuffer(outputBufIndex, false);
+                        Log.d(" extractor CachedDuration", ""+ extractor.getCachedDuration());
                         if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
                             sawOutputEOS = true;
                         }
