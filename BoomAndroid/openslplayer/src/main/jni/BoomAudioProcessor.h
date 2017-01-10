@@ -6,6 +6,7 @@
 #define BOOMANDROID_BOOMAUDIOPROCESSOR_H
 
 #include <stdlib.h>
+#include <atomic>
 #include "audioFx/AudioEngine.h"
 #include "audioresampler/include/AudioResampler.h"
 #include "OpenSLPlayer.hpp"
@@ -35,6 +36,11 @@ namespace gdpl {
 
         void getNextBuffer(AudioBufferProvider::Buffer *buffer);
 
+        void reset() {
+            mIsReady = false;
+            mQueueCount = 0;
+        }
+
     private:
 
         void ProcessAudio(void* output, int frameCount);
@@ -51,8 +57,8 @@ namespace gdpl {
         int     mIndex;
 
         AudioResampler *mAudioResampler;
-        int mQueueCount;
-        bool mIsReady;
+        std::atomic<int> mQueueCount;
+        std::atomic<bool> mIsReady;
 
         RingBuffer* mPlaybackQueue;
         RingBuffer* mInputQueue;
