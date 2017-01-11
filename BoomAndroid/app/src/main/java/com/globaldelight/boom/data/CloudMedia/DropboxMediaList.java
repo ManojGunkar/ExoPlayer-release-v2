@@ -1,30 +1,30 @@
-package com.globaldelight.boom.data.DropboxMedia;
+package com.globaldelight.boom.data.CloudMedia;
 
 import android.content.Context;
 import android.os.Handler;
-import com.dropbox.client2.DropboxAPI;
+
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import java.util.ArrayList;
 
 /**
- * Created by Venkata N M on 12/29/2016.
+ * Created by Rahul Agarwal on 11-01-17.
  */
 
-public class DropboxFileList {
+public class DropboxMediaList {
 
     private ArrayList<IMediaItemBase> fileList;
     private IDropboxUpdater dropboxUpdater;
-    private static DropboxFileList handler;
+    private static DropboxMediaList handler;
     private Handler postMessage;
 
-    private DropboxFileList(Context context){
+    private DropboxMediaList(Context context){
         fileList = new ArrayList<IMediaItemBase>();
         postMessage = new Handler();
     }
 
-    public static DropboxFileList getDropboxListInstance(Context context){
+    public static DropboxMediaList getDropboxListInstance(Context context){
         if(null == handler){
-            handler = new DropboxFileList(context);
+            handler = new DropboxMediaList(context);
         }
         return handler;
     }

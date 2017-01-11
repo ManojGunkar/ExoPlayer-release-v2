@@ -1,12 +1,14 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
 import android.Manifest;
+import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -25,12 +27,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.data.DropboxMedia.DropboxFileList;
+import com.globaldelight.boom.data.CloudMedia.DropboxMediaList;
+import com.globaldelight.boom.data.CloudMedia.GoogleDriveMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
@@ -45,25 +47,18 @@ import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 
 import java.util.ArrayList;
-
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_REPEAT;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_SHUFFLE;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
+import static com.globaldelight.boom.task.PlayerEvents.*;
 
 /**
  * Created by Rahul Agarwal on 20-11-16.
  */
 
-public class CloudItemListActivity extends AppCompatActivity implements DropboxFileList.IDropboxUpdater {
+public class CloudItemListActivity extends AppCompatActivity implements DropboxMediaList.IDropboxUpdater, GoogleDriveMediaList.IGoogleDriveMediaUpdater {
 
-    private DropboxFileList dropboxFileList;
+    private DropboxMediaList dropboxMediaList;
     private Toolbar toolbar;
     private RecyclerView recyclerView;
     private CloudItemListAdapter adapter;
@@ -75,6 +70,7 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxF
     private ImageView mPlayerArt, mPlayPause;
     private ItemType itemType;
     private MediaType mediaType;
+    private GoogleDriveHandler googleDriveHandler;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -125,20 +121,66 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxF
         emptyView = findViewById(R.id.fav_empty_view);
 
         if(mediaType == MediaType.DROP_BOX && itemType == ItemType.SONGS){
-            dropboxFileList = DropboxFileList.getDropboxListInstance(this);
-            dropboxFileList.setDropboxUpdater(this);
-            dropboxFileList.clearDropboxContent();
+            dropboxMediaList = DropboxMediaList.getDropboxListInstance(this);
+            dropboxMediaList.setDropboxUpdater(this);
+            dropboxMediaList.clearDropboxContent();
 
             DropBoxUtills.checkDropboxAuthentication(this);
 
-            setSongListAdapter(dropboxFileList.getFileList(), itemType);
+            setSongListAdapter(dropboxMediaList.getFileList(), itemType);
+        }
+
+        if(mediaType == MediaType.GOOGLE_DRIVE && itemType == ItemType.SONGS){
+            googleDriveHandler = GoogleDriveHandler.getGoogleDriveInstance(this, CloudItemListActivity.this);
         }
 
         checkPermissions();
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(null != adapter){
+            adapter.notifyDataSetChanged();
+        }
+        if (null != App.getPlayerEventHandler().getPlayingItem()) {
+            updateMiniPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
+                            (IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
+                            null, App.getPlayerEventHandler().isPlaying(),
+                       /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));
+            mMiniPlayer.setVisibility(View.VISIBLE);
+        } else {
+            mMiniPlayer.setVisibility(View.GONE);
+        }
+
+        if(mediaType == MediaType.DROP_BOX && null != App.getDropboxAPI()) {
+            AndroidAuthSession session = App.getDropboxAPI().getSession();
+            if (session.authenticationSuccessful()) {
+                try {
+                    session.finishAuthentication();
+                    TokenPair tokens = session.getAccessTokenPair();
+                    DropBoxUtills.storeKeys(this, tokens.key, tokens.secret);
+                } catch (IllegalStateException e) {
+                    Toast.makeText(this,"Couldn't authenticate with Dropbox:"
+                            + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        if(mediaType == MediaType.GOOGLE_DRIVE){
+            googleDriveHandler.connectGoogleAccount();
+            googleDriveHandler.getGoogleAccountCredential();
+        }
+    }
+
+    @Override
     public void UpdateDropboxEntryList() {
+        adapter.notifyDataSetChanged();
+        listIsEmpty(adapter.getItemCount());
+    }
+
+    @Override
+    public void UpdateGoogleDriveMediaList() {
         adapter.notifyDataSetChanged();
         listIsEmpty(adapter.getItemCount());
     }
@@ -191,8 +233,9 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxF
                             new LoadFavouriteList().execute();
                         else if(mediaType == MediaType.DROP_BOX)
                             new LoadDropBoxList(CloudItemListActivity.this).execute();
-                        /*else if(mediaType == MediaType.GOOGLE_DRIVE)
-                            new LoadGoogleDriveList().execute();*/
+                        else if(mediaType == MediaType.GOOGLE_DRIVE)
+                            googleDriveHandler.getResultsFromApi();
+//                            new LoadGoogleDriveList().execute();
                     }
 
                     @Override
@@ -202,11 +245,60 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxF
                 });
     }
 
+
+
+
+
+    /**
+     * Called when an activity launched here (specifically, AccountPicker
+     * and authorization) exits, giving you the requestCode you started it with,
+     * the resultCode it returned, and any additional data from it.
+     *
+     * @param requestCode code indicating which activity result is incoming.
+     * @param resultCode  code indicating the result of the incoming
+     *                    activity result.
+     * @param data        Intent (containing result data) returned by incoming
+     *                    activity result.
+     */
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        permissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    protected void onActivityResult(
+            int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case GoogleDriveHandler.REQUEST_GOOGLE_PLAY_SERVICES:
+                if (resultCode != RESULT_OK) {
+                    Toast.makeText(CloudItemListActivity.this,
+                            "This app requires Google Play Services. Please install " +
+                                    "Google Play Services on your device and relaunch this app.", Toast.LENGTH_SHORT).show();
+                } else {
+                    googleDriveHandler.getResultsFromApi();
+                }
+                break;
+            case GoogleDriveHandler.REQUEST_ACCOUNT_PICKER:
+                if (resultCode == RESULT_OK && data != null &&
+                        data.getExtras() != null) {
+                    String accountName =
+                            data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                    if (accountName != null) {
+                        SharedPreferences settings =
+                                getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putString(GoogleDriveHandler.PREF_ACCOUNT_NAME, accountName);
+                        editor.apply();
+                        googleDriveHandler.setSelectedGoogleAccountName(accountName);
+                        googleDriveHandler.getResultsFromApi();
+                    }
+                }
+                break;
+            case GoogleDriveHandler.REQUEST_AUTHORIZATION:
+                if (resultCode == RESULT_OK) {
+                    googleDriveHandler.getResultsFromApi();
+                }
+                break;
+        }
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -363,34 +455,21 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxF
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if(null != adapter){
-            adapter.notifyDataSetChanged();
-        }
-        if (null != App.getPlayerEventHandler().getPlayingItem()) {
-            updateMiniPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
-                            (IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
-                            null, App.getPlayerEventHandler().isPlaying(),
-                       /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));
-            mMiniPlayer.setVisibility(View.VISIBLE);
-        } else {
-            mMiniPlayer.setVisibility(View.GONE);
-        }
+    protected void onStart() {
+        super.onStart();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        if(mediaType == MediaType.GOOGLE_DRIVE)
+            googleDriveHandler.connectGoogleAccount();
+    }
 
-        if(mediaType == MediaType.DROP_BOX && null != App.getDropboxAPI()) {
-            AndroidAuthSession session = App.getDropboxAPI().getSession();
-            if (session.authenticationSuccessful()) {
-                try {
-                    session.finishAuthentication();
-                    TokenPair tokens = session.getAccessTokenPair();
-                    DropBoxUtills.storeKeys(this, tokens.key, tokens.secret);
-                } catch (IllegalStateException e) {
-                    Toast.makeText(this,"Couldn't authenticate with Dropbox:"
-                            + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        if(mediaType == MediaType.GOOGLE_DRIVE)
+            googleDriveHandler.disconnectToGoogleAccount();
     }
 
     @Override

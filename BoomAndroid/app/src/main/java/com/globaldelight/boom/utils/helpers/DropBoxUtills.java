@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.dropbox.client2.DropboxAPI;
@@ -17,7 +16,7 @@ import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
-import com.globaldelight.boom.data.DropboxMedia.DropboxFileList;
+import com.globaldelight.boom.data.CloudMedia.DropboxMediaList;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 
@@ -110,7 +109,7 @@ public class DropBoxUtills {
         }
     }
 
-    public static boolean getFiles(String DIR, DropboxFileList dropboxFileList) {
+    public static boolean getFiles(String DIR, DropboxMediaList dropboxMediaList) {
         ArrayList<DropboxAPI.Entry> dropboxFolderList = new ArrayList<>();
         com.dropbox.client2.DropboxAPI.Entry dirent;
         try {
@@ -121,20 +120,20 @@ public class DropBoxUtills {
                     dropboxFolderList.add(entry);
                 } else {
                     if(entry.mimeType.toString().startsWith("audio/")){
-                        dropboxFileList.addFileInDropboxList(new MediaItem(entry.fileName(), entry.path, ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
+                        dropboxMediaList.addFileInDropboxList(new MediaItem(entry.fileName(), entry.path, ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
                     }
                 }
             }
         } catch (DropboxException e) {
             e.printStackTrace();
         }
-        getFolderDataFiles(dropboxFolderList, dropboxFileList);
+        getFolderDataFiles(dropboxFolderList, dropboxMediaList);
         return true;
     }
 
-    public static void getFolderDataFiles(ArrayList<DropboxAPI.Entry> dropboxFolderList, DropboxFileList dropboxFileList) {
+    public static void getFolderDataFiles(ArrayList<DropboxAPI.Entry> dropboxFolderList, DropboxMediaList dropboxMediaList) {
         for (int i =0; i < dropboxFolderList.size(); i++ ) {
-            getFiles(dropboxFolderList.get(i).path, dropboxFileList);
+            getFiles(dropboxFolderList.get(i).path, dropboxMediaList);
         }
     }
     public static String getDropboxItemUrl(String path){
