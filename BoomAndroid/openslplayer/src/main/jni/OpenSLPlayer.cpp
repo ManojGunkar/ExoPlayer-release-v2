@@ -160,6 +160,7 @@ namespace gdpl
     void OpenSLPlayer::stopReading()
     {
         _isReading = false;
+        _dataSource->reset();
     }
 
 
@@ -251,7 +252,6 @@ namespace gdpl
             if ( state.count == 0 ) {
                 LOGE("OpenSLPlayer: Run out of buffers -- restarting!");
                 stopReading(); // signals the writer that callback has stopped reading
-                _dataSource->reset();
             }
         }
     }
