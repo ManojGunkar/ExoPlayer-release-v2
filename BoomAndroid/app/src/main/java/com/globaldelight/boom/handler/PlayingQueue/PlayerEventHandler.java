@@ -7,15 +7,13 @@ import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
-import com.globaldelight.boom.data.DropboxMedia.DropboxMediaItem;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
@@ -34,7 +32,7 @@ import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.Pla
 
 public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocusChangeListener {
     public static boolean isPlayerResume = false;
-    private static IMediaItemBase playingItem;
+    private static IMediaItem playingItem;
     private static OpenSLPlayer mPlayer;
     private static PlayerEventHandler handler;
     private static int NEXT = 0;
@@ -66,7 +64,6 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
             intent.putExtra("currentms", currentms);
             intent.putExtra("totalms", totalms);
             context.sendBroadcast(intent);
-            Toast.makeText(context, "Start playing Song", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -185,19 +182,19 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         new PlayingItemChanged().execute(playingItem);
     }
 
-    public class PlayingItemChanged extends AsyncTask<IMediaItemBase, Void, String>{
-        IMediaItemBase mediaItemBase;
+    public class PlayingItemChanged extends AsyncTask<IMediaItem, Void, String>{
+        IMediaItem mediaItemBase;
 
         @Override
-        protected String doInBackground(IMediaItemBase... params) {
+        protected String doInBackground(IMediaItem... params) {
             String dataSource = null;
             mediaItemBase = params[0];
             if(mediaItemBase.getMediaType() == MediaType.DEVICE_MEDIA_LIB){
-                dataSource = ((MediaItem) mediaItemBase).getItemUrl();
+                dataSource = mediaItemBase.getItemUrl();
                 mediaItemBase.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem) mediaItemBase).getItemAlbum()));
             }else if(mediaItemBase.getMediaType() == MediaType.DROP_BOX){
                 if(null != App.getDropboxAPI().getSession()){
-                    dataSource = DropBoxUtills.getDropboxItemUrl(((DropboxMediaItem)mediaItemBase).getItemUrl());
+                    dataSource = DropBoxUtills.getDropboxItemUrl(mediaItemBase.getItemUrl());
                 }else{
                     Toast.makeText(context, "not logged in Dropbox", Toast.LENGTH_SHORT).show();
                 }
@@ -298,7 +295,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         mPlayer = null;
     }
 
-    public IMediaItemBase getPlayingItem() {
+    public IMediaItem getPlayingItem() {
         return App.getPlayingQueueHandler().getUpNextList().getPlayingItem()/*playingItem*/;
     }
 

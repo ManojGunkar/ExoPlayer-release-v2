@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.handler.search.SearchResult;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
@@ -24,8 +25,8 @@ import java.util.ArrayList;
 public class DeviceMediaQuery {
 
 
-    public static ArrayList<? extends IMediaItemBase> getSongList(Context context){
-        ArrayList<MediaItem> songList = new ArrayList<>();
+    public static ArrayList<? extends IMediaItem> getSongList(Context context){
+        ArrayList<IMediaItem> songList = new ArrayList<>();
 
         final String where = MediaStore.Audio.Media.IS_MUSIC + "=1";
 
@@ -201,9 +202,9 @@ public class DeviceMediaQuery {
         return album;
     }
 
-    public static ArrayList<? extends IMediaItemBase> getAlbumDetail(Context context, long itemId, String itemTitle) {
+    public static ArrayList<? extends IMediaItem> getAlbumDetail(Context context, long itemId, String itemTitle) {
         System.gc();
-        ArrayList<MediaItem> songList = new ArrayList<>();
+        ArrayList<IMediaItem> songList = new ArrayList<>();
 
         String where = MediaStore.Audio.Media.IS_MUSIC + "=1 AND "+MediaStore.Audio.Media.ALBUM_ID + "=?";
 
@@ -417,9 +418,9 @@ public class DeviceMediaQuery {
         return urlList;
     }
 
-    public static ArrayList<? extends IMediaItemBase> getSongListOfArtistsAlbum(Context context, long parentId, String parentTitle, long itemId, String itemTitle) {
+    public static ArrayList<? extends IMediaItem> getSongListOfArtistsAlbum(Context context, long parentId, String parentTitle, long itemId, String itemTitle) {
         System.gc();
-        ArrayList<MediaItem> songList = new ArrayList<>();
+        ArrayList<IMediaItem> songList = new ArrayList<>();
 
         String where = MediaStore.Audio.Media.IS_MUSIC + "=1 AND "+MediaStore.Audio.Media.ARTIST_ID+ "=? AND "+
                 MediaStore.Audio.Media.ALBUM_ID + "=?";
@@ -479,11 +480,11 @@ public class DeviceMediaQuery {
         return songList;
     }
 
-    public static ArrayList<? extends IMediaItemBase> getSongListOfArtist(Context context, long itemId, String itemTitle) {
+    public static ArrayList<? extends IMediaItem> getSongListOfArtist(Context context, long itemId, String itemTitle) {
         if(itemTitle.equalsIgnoreCase(context.getResources().getString(R.string.unknown_artist))){
             itemTitle = "<unknown>";
         }
-        ArrayList<MediaItem> songList = new ArrayList<>();
+        ArrayList<IMediaItem> songList = new ArrayList<>();
         System.gc();
         final String orderBy = MediaStore.Audio.Media.TITLE;
         StringBuilder where = new StringBuilder();
@@ -660,10 +661,10 @@ public class DeviceMediaQuery {
                 }, selection.toString(), null, MediaStore.Audio.Playlists.Members.PLAY_ORDER);
     }
 
-    public static ArrayList<? extends IMediaItemBase> getPlaylistSongs(Context context, long itemId, String itemTitle) {
+    public static ArrayList<? extends IMediaItem> getPlaylistSongs(Context context, long itemId, String itemTitle) {
 //        returns all the songs of playlist
         System.gc();
-        ArrayList<MediaItem> songList = new ArrayList<>();
+        ArrayList<IMediaItem> songList = new ArrayList<>();
 
         String where = MediaStore.Audio.Playlists.Members.IS_MUSIC + "=1 AND "+MediaStore.Audio.Playlists.Members.TITLE + "!=''";
 
@@ -902,8 +903,8 @@ public class DeviceMediaQuery {
         return artList;
     }
 
-    public static ArrayList<? extends IMediaItemBase> getSongListOfGenreAlbum(Context context, long parentId, String parentTitle, long itemId, String itemTitle) {
-        ArrayList<MediaItem> songList = new ArrayList<>();
+    public static ArrayList<? extends IMediaItem> getSongListOfGenreAlbum(Context context, long parentId, String parentTitle, long itemId, String itemTitle) {
+        ArrayList<IMediaItem> songList = new ArrayList<>();
         Cursor songListCursor = getSongOfGenreAlbumCursor(context, parentId, itemTitle);
         int Song_Id_Column = songListCursor.getColumnIndex
                 (MediaStore.Audio.Media._ID);
@@ -959,9 +960,9 @@ public class DeviceMediaQuery {
         return context.getContentResolver().query(uri, null, where, new String[]{album}, orderBy)/*.getCount()*/;
     }
 
-    public static ArrayList<? extends IMediaItemBase> getSongListOfGenre(Context context, long itemId, String itemTitle) {
+    public static ArrayList<? extends IMediaItem> getSongListOfGenre(Context context, long itemId, String itemTitle) {
         //Get a cursor of all genres in MediaStore.
-        ArrayList<MediaItem> songList = new ArrayList<>();
+        ArrayList<IMediaItem> songList = new ArrayList<>();
         StringBuilder selection = new StringBuilder();
         selection.append(MediaStore.Audio.Genres.Members.IS_MUSIC + "=1");
         selection.append(" AND " + MediaStore.Audio.Genres.Members.TITLE + "!=''"); //$NON-NLS-2$

@@ -36,6 +36,7 @@ import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -119,7 +120,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                     public void onClick(View view) {
                         animate(holder);
                         if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) resultItemList, position, false, false);
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) resultItemList, position, false, false);
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {

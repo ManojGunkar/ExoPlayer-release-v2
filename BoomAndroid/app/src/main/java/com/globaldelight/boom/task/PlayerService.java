@@ -22,9 +22,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
-import com.globaldelight.boom.data.DropboxMedia.DropboxMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.manager.MusicReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.BoomPlayerActivity;
@@ -33,7 +31,6 @@ import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 
 import java.io.IOException;
-import java.security.SecurityPermission;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -336,35 +333,23 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
         if(!isLastPlayedSong) {
             Intent i = new Intent();
             i.setAction(PlayerEvents.ACTION_RECEIVE_SONG);
-            if(musicPlayerHandler.getPlayingItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB) {
-                i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
-            } else if(musicPlayerHandler.getPlayingItem().getMediaType() == MediaType.DROP_BOX) {
-                i.putExtra("playing_song", (DropboxMediaItem) musicPlayerHandler.getPlayingItem());
-            } else if(musicPlayerHandler.getPlayingItem().getMediaType() == MediaType.GOOGLE_DRIVE) {
-                i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
-            }
+            i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
             i.putExtra("playing", true);
             i.putExtra("is_previous", musicPlayerHandler.isPrevious());
             i.putExtra("is_next", musicPlayerHandler.isNext());
 
             sendBroadcast(i);
-            updateNotificationPlayer((IMediaItem) musicPlayerHandler.getPlayingItem(), true, false);
+            updateNotificationPlayer(musicPlayerHandler.getPlayingItem(), true, false);
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            updateNotificationPlayer((IMediaItem) musicPlayerHandler.getPlayingItem(), true, false);
+            updateNotificationPlayer(musicPlayerHandler.getPlayingItem(), true, false);
         }else{
             Intent i = new Intent();
             i.setAction(PlayerEvents.ACTION_LAST_PLAYED_SONG);
-            if(musicPlayerHandler.getPlayingItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB) {
-                i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
-            } else if(musicPlayerHandler.getPlayingItem().getMediaType() == MediaType.DROP_BOX) {
-                i.putExtra("playing_song", (DropboxMediaItem) musicPlayerHandler.getPlayingItem());
-            } else if(musicPlayerHandler.getPlayingItem().getMediaType() == MediaType.GOOGLE_DRIVE) {
-                i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
-            }
+            i.putExtra("playing_song", (MediaItem) musicPlayerHandler.getPlayingItem());
             i.putExtra("last_played_song", true);
             i.putExtra("is_previous", musicPlayerHandler.isPrevious());
             i.putExtra("is_next", musicPlayerHandler.isNext());

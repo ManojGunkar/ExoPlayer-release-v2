@@ -44,6 +44,7 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -168,9 +169,9 @@ public class SongsDetailListActivity extends AppCompatActivity implements OnStar
                 try {
                     if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                         if (collection.getMediaElement().size() > 0)
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) collection.getMediaElement(), 0, false, true);
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) collection.getMediaElement(), 0, false, true);
                     } else {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, false, true);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, false, true);
                     }
                 }catch (Exception e){}
                 if(null != itemSongListAdapter)

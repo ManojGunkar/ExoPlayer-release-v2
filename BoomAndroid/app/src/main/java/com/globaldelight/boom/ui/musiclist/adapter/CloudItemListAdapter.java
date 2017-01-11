@@ -27,6 +27,7 @@ import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.ui.musiclist.activity.CloudItemListActivity;
@@ -53,12 +54,14 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
     private int selectedSongId = -1;
     private CloudItemListAdapter.SimpleItemViewHolder selectedHolder;
     private Context context;
+    private ItemType listItemType;
     private RecyclerView recyclerView;
 
-    public CloudItemListAdapter(Context context, RecyclerView recyclerView, ArrayList<? extends IMediaItemBase> itemList) {
+    public CloudItemListAdapter(Context context, RecyclerView recyclerView, ArrayList<? extends IMediaItemBase> itemList, ItemType listItemType) {
         this.context = context;
         this.recyclerView = recyclerView;
         this.itemList = itemList;
+        this.listItemType = listItemType;
     }
 
     @Override
@@ -183,33 +186,28 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                                         App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom( itemList.get(position));
                                         break;
                                     case R.id.popup_song_add_queue:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((MediaItem) itemList.get(position));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((IMediaItem) itemList.get(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
                                         Utils util = new Utils(context);
-                                        ArrayList list = new ArrayList<IMediaItemBase>();
+                                        ArrayList list = new ArrayList();
                                         list.add(itemList.get(position));
                                         util.addToPlaylist((CloudItemListActivity) context, list, null);
                                         break;
                                     case R.id.popup_song_add_fav:
                                         if(itemList.get(position).getMediaType() == MediaType.DEVICE_MEDIA_LIB) {
                                             MediaController.getInstance(context).removeItemToFavoriteList(itemList.get(position).getItemId());
-                                            itemList = MediaController.getInstance(context).getFavouriteListItems();
-                                            updateFavoriteList(MediaController.getInstance(context).getFavouriteListItems());
                                             Toast.makeText(context, context.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                                         }else{
                                             if(MediaController.getInstance(context).isFavouriteItems(itemList.get(position).getItemTitle())){
                                                 MediaController.getInstance(context).removeItemToFavoriteList(itemList.get(position).getItemTitle());
-                                                itemList = MediaController.getInstance(context).getFavouriteListItems();
-                                                updateFavoriteList(MediaController.getInstance(context).getFavouriteListItems());
                                                 Toast.makeText(context, context.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                                             }else{
                                                 MediaController.getInstance(context).addSongsToFavoriteList(itemList.get(position));
-                                                itemList = MediaController.getInstance(context).getFavouriteListItems();
-                                                updateFavoriteList(MediaController.getInstance(context).getFavouriteListItems());
                                                 Toast.makeText(context, context.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                                             }
                                         }
+                                        updateFavoriteList(MediaController.getInstance(context).getFavouriteListItems());
                                         break;
                                 }
                             }catch (Exception e){
@@ -218,8 +216,8 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                             return false;
                         }
                     });
-                    if(itemList.get(position).getMediaType() == MediaType.DEVICE_MEDIA_LIB ||
-                            !MediaController.getInstance(context).isFavouriteItems(itemList.get(position).getItemTitle())) {
+                    if(listItemType == ItemType.FAVOURITE ||
+                            MediaController.getInstance(context).isFavouriteItems(itemList.get(position).getItemTitle())) {
                         pm.inflate(R.menu.song_remove_fav);
                     }else{
                         pm.inflate(R.menu.song_add_fav);
@@ -231,10 +229,12 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
     }
 
     private void updateFavoriteList(ArrayList<? extends IMediaItemBase> newList) {
-        itemList = newList;
-        notifyDataSetChanged();
-        if(itemList.size() == 0){
-            ((CloudItemListActivity)context).listIsEmpty(itemList.size());
+        if(listItemType == ItemType.FAVOURITE) {
+            itemList = newList;
+            notifyDataSetChanged();
+            if (itemList.size() == 0) {
+                ((CloudItemListActivity) context).listIsEmpty(itemList.size());
+            }
         }
     }
 

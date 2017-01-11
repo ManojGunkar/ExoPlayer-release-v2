@@ -338,8 +338,7 @@ public class OpenSLPlayer implements Runnable {
                 waitPlay();
 
                 // read a buffer before feeding it to the decoder
-                if (!sawInputEOS /*&& extractor.getCachedDuration() < 100*/) {
-
+                if (!sawInputEOS) {
                     try {
                         int inputBufIndex = codec.dequeueInputBuffer(kTimeOutUs);
                         if (inputBufIndex >= 0) {
@@ -389,7 +388,6 @@ public class OpenSLPlayer implements Runnable {
                             }
                         }
                         codec.releaseOutputBuffer(outputBufIndex, false);
-                        Log.d(" extractor CachedDuration", ""+ extractor.getCachedDuration());
                         if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
                             sawOutputEOS = true;
                         }

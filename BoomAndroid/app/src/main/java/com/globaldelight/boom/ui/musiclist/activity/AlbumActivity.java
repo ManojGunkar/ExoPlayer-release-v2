@@ -39,6 +39,7 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
@@ -152,7 +153,7 @@ public class AlbumActivity extends AppCompatActivity {
                         if (collection.getItemType() == ItemType.ALBUM) {
                             App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0, true);
                         } else {
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, false, true);
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) ((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, false, true);
                         }
                         albumItemsListAdapter.notifyDataSetChanged();
                     }

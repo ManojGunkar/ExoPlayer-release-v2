@@ -33,6 +33,7 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
@@ -49,7 +50,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
  */
 public class BoomMasterActivity extends AppCompatActivity/* implements NavigationView.OnNavigationItemSelectedListener*/ {
     DrawerLayout drawerLayout;
-    private LinearLayout mLibPanel, mListPanel, mFavPanel, mClosePanel;
+    private LinearLayout mLibPanel, mListPanel, mFavPanel, mDropboxPanel, mClosePanel;
     FrameLayout activityContainer;
     Fragment mSearchResult;
     Toolbar toolbar;
@@ -78,6 +79,7 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
         mLibPanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_lib_option);
         mListPanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_playlist_option);
         mFavPanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_fav_option);
+        mDropboxPanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_dropbox_option);
         mClosePanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_close_option);
 
         mLibPanel.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +102,18 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(BoomMasterActivity.this, CloudItemListActivity.class);
-                intent.putExtra("SONG_LIST_TYPE", MediaType.DROP_BOX.ordinal());
+                intent.putExtra("SONG_LIST_TYPE", ItemType.FAVOURITE.ordinal());
+                intent.putExtra("MEDIA_LIST_TYPE", MediaType.DEVICE_MEDIA_LIB.ordinal());
+                startActivity(intent);
+                drawerLayout.closeDrawer(Gravity.LEFT);
+            }
+        });
+        mDropboxPanel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BoomMasterActivity.this, CloudItemListActivity.class);
+                intent.putExtra("SONG_LIST_TYPE", ItemType.SONGS.ordinal());
+                intent.putExtra("MEDIA_LIST_TYPE", MediaType.DROP_BOX.ordinal());
                 startActivity(intent);
                 drawerLayout.closeDrawer(Gravity.LEFT);
             }

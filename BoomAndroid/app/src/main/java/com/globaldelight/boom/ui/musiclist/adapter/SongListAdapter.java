@@ -51,14 +51,14 @@ import java.util.ArrayList;
 public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SimpleItemViewHolder> {
 
     private static final String TAG = "SongListAdapter-TAG";
-    ArrayList<MediaItem> itemList;
+    ArrayList<IMediaItem> itemList;
     private Context context;
     private Activity activity;
 
     public SongListAdapter(Context context, FragmentActivity activity, ArrayList<? extends IMediaItemBase> itemList) {
         this.context = context;
         this.activity = activity;
-        this.itemList = (ArrayList<MediaItem>) itemList;
+        this.itemList = (ArrayList<IMediaItem>) itemList;
     }
 
     @Override
@@ -192,7 +192,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
         return itemList.size();
     }
 
-    public MediaItem getMediaItem(int position){
+    public IMediaItem getMediaItem(int position){
         return itemList.get(position);
     }
 

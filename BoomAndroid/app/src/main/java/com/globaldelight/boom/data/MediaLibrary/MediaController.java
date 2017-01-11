@@ -105,8 +105,8 @@ public class MediaController implements IMediaController{
         MediaLibraryHandler.getInstance(context).removeItemToFavoriteList(itemId);
     }
 
-    public void removeItemToFavoriteList(String itemTime) {
-        MediaLibraryHandler.getInstance(context).removeItemToFavoriteList(itemTime);
+    public void removeItemToFavoriteList(String itemTitle) {
+        MediaLibraryHandler.getInstance(context).removeItemToFavoriteList(itemTitle);
     }
 
     public void addUpNextItem(IMediaItemBase song, QueueType queueType) {

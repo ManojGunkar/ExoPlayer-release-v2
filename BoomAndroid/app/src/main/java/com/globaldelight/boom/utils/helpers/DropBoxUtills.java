@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,8 +16,8 @@ import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session;
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DropboxMedia.DropboxFileList;
-import com.globaldelight.boom.data.DropboxMedia.DropboxMediaItem;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 
@@ -124,11 +121,7 @@ public class DropBoxUtills {
                     dropboxFolderList.add(entry);
                 } else {
                     if(entry.mimeType.toString().startsWith("audio/")){
-                        dropboxFileList.addFileInDropboxList(new DropboxMediaItem(entry.icon, entry.modified, entry.size, entry.mimeType, entry.thumbExists, entry.isDeleted, entry.path, entry.fileName(), ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
-
-                        Log.d("Dropbox_Item : ", "Path : " + entry.path);
-                        Log.d("Dropbox_Item : ", "Url : " + getDropboxItemUrl(entry.path));
-
+                        dropboxFileList.addFileInDropboxList(new MediaItem(entry.fileName(), entry.path, ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
                     }
                 }
             }

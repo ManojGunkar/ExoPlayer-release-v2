@@ -33,6 +33,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DropboxMedia.DropboxFileList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.LoadDropBoxList;
@@ -72,6 +73,7 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxF
     private ProgressBar mTrackProgress;
     private RegularTextView mTitle, mSubTitle, mToolTitle;
     private ImageView mPlayerArt, mPlayPause;
+    private ItemType itemType;
     private MediaType mediaType;
 
     @Override
@@ -80,7 +82,8 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite);
 
-        mediaType = MediaType.fromOrdinal(getIntent().getIntExtra("SONG_LIST_TYPE", MediaType.DEVICE_MEDIA_LIB.ordinal()));
+        mediaType = MediaType.fromOrdinal(getIntent().getIntExtra("MEDIA_LIST_TYPE", MediaType.DEVICE_MEDIA_LIB.ordinal()));
+        itemType = ItemType.fromOrdinal(getIntent().getIntExtra("SONG_LIST_TYPE", ItemType.FAVOURITE.ordinal()));
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_RECEIVE_SONG);
@@ -109,11 +112,11 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxF
 
         mToolTitle = (RegularTextView) findViewById(R.id.favourite_list_toolbar_title);
 
-        if(mediaType == MediaType.DEVICE_MEDIA_LIB){
+        if(itemType == ItemType.FAVOURITE){
             mToolTitle.setText(getResources().getString(R.string.title_favourite_list));
-        }else if(mediaType == MediaType.DROP_BOX){
+        }else if(mediaType == MediaType.DROP_BOX && itemType == ItemType.SONGS){
             mToolTitle.setText(getResources().getString(R.string.title_dropbox_list));
-        }else if(mediaType == MediaType.GOOGLE_DRIVE){
+        }else if(mediaType == MediaType.GOOGLE_DRIVE && itemType == ItemType.SONGS){
             mToolTitle.setText(getResources().getString(R.string.title_google_drive_list));
         }
 
@@ -121,14 +124,14 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxF
 
         emptyView = findViewById(R.id.fav_empty_view);
 
-        if(mediaType == MediaType.DROP_BOX){
+        if(mediaType == MediaType.DROP_BOX && itemType == ItemType.SONGS){
             dropboxFileList = DropboxFileList.getDropboxListInstance(this);
             dropboxFileList.setDropboxUpdater(this);
             dropboxFileList.clearDropboxContent();
 
             DropBoxUtills.checkDropboxAuthentication(this);
 
-            setSongListAdapter(dropboxFileList.getFileList());
+            setSongListAdapter(dropboxFileList.getFileList(), itemType);
         }
 
         checkPermissions();
@@ -150,20 +153,20 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxF
         @Override
         protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
             super.onPostExecute(iMediaItemList);
-            setSongListAdapter(iMediaItemList);
+            setSongListAdapter(iMediaItemList, itemType);
         }
     }
 
-    private void setSongListAdapter(ArrayList<? extends IMediaItemBase> iMediaItemList) {
+    private void setSongListAdapter(ArrayList<? extends IMediaItemBase> iMediaItemList, ItemType itemType) {
         final GridLayoutManager gridLayoutManager =
                 new GridLayoutManager(CloudItemListActivity.this, 1);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         gridLayoutManager.scrollToPosition(0);
         recyclerView.setLayoutManager(gridLayoutManager);
-        adapter = new CloudItemListAdapter(CloudItemListActivity.this, recyclerView, iMediaItemList);
+        adapter = new CloudItemListAdapter(CloudItemListActivity.this, recyclerView, iMediaItemList, itemType);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
-        if(mediaType == MediaType.DROP_BOX)
+        if(itemType == ItemType.FAVOURITE)
             listIsEmpty(iMediaItemList.size());
     }
 
@@ -175,7 +178,6 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxF
             emptyView.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
         }
-
     }
 
     private void checkPermissions() {
@@ -185,7 +187,7 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxF
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
-                        if(mediaType == MediaType.DEVICE_MEDIA_LIB)
+                        if(itemType == ItemType.FAVOURITE)
                             new LoadFavouriteList().execute();
                         else if(mediaType == MediaType.DROP_BOX)
                             new LoadDropBoxList(CloudItemListActivity.this).execute();

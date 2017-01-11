@@ -35,6 +35,7 @@ import android.widget.Toast;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.handler.search.SearchResult;
@@ -441,7 +442,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                     public void onClick(View view) {
                         if(App.getPlayingQueueHandler().getUpNextList()!=null) {
                             animate(holder);
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) songs, getPosition(position), false, false);
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) songs, getPosition(position), false, false);
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {

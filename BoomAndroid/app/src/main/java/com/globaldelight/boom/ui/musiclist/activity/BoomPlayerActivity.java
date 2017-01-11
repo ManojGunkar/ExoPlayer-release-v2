@@ -19,6 +19,7 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -560,11 +561,12 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
     }
 
-    private void startFavouriteActivity(MediaType mediaType) {
+    private void startFavouriteActivity(MediaType mediaType, ItemType itemType) {
         App.getUserPreferenceHandler().setLibraryStartFromHome(true);
 
         Intent listIntent = new Intent(BoomPlayerActivity.this, CloudItemListActivity.class);
-        listIntent.putExtra("SONG_LIST_TYPE", mediaType.ordinal());
+        listIntent.putExtra("MEDIA_LIST_TYPE", mediaType.ordinal());
+        listIntent.putExtra("SONG_LIST_TYPE", itemType.ordinal());
         listIntent.setAction("visible");
         startActivity(listIntent);
         overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
@@ -614,7 +616,12 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 if(null != item){
                     switch (item.getParentType()){
                         case SONGS:
-                            startLibraryActivity(true);
+                            if(item.getMediaType() == MediaType.DEVICE_MEDIA_LIB)
+                                startLibraryActivity(true);
+                            else if(item.getMediaType() == MediaType.DROP_BOX)
+                                startFavouriteActivity(MediaType.DROP_BOX, ItemType.SONGS);
+                            else
+                                startFavouriteActivity(MediaType.GOOGLE_DRIVE, ItemType.SONGS);
                             break;
                         case ALBUM:
                         case ARTIST:
@@ -624,7 +631,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                             startCollectionListActivity(item.getParentType(), item.getParentId(), item.getMediaType());
                             break;
                         case FAVOURITE:
-                            startFavouriteActivity(item.getMediaType());
+                            startFavouriteActivity(MediaType.DEVICE_MEDIA_LIB, ItemType.FAVOURITE);
                             break;
                     }
                 }
