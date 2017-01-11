@@ -2,11 +2,14 @@ package com.globaldelight.boom.task;
 
 import android.Manifest;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
@@ -100,8 +103,17 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
         if (musicPlayerHandler == null)
             musicPlayerHandler = App.getPlayerEventHandler();
 
-        musicReceiver = new MusicReceiver(this);
-        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        String[] actions = new String[] {
+                Intent.ACTION_HEADSET_PLUG,
+                BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED,
+                BluetoothAdapter.ACTION_STATE_CHANGED
+        };
+
+        musicReceiver = new MusicReceiver(context, this);
+        IntentFilter filter = new IntentFilter();
+        for ( String anAction: actions) {
+            filter.addAction(anAction);
+        }
         registerReceiver(musicReceiver, filter);
 
         try {

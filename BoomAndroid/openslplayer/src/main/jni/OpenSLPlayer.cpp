@@ -160,6 +160,7 @@ namespace gdpl
     void OpenSLPlayer::stopReading()
     {
         _isReading = false;
+        _dataSource->reset();
     }
 
 

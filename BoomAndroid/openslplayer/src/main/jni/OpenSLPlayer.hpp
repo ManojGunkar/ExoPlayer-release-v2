@@ -19,6 +19,7 @@ namespace gdpl {
     class IDataSource {
     public:
         virtual void getNextBuffer(AudioBufferProvider::Buffer* buffer) = 0;
+        virtual void reset() = 0;
     };
 
     class OpenSLPlayer {
