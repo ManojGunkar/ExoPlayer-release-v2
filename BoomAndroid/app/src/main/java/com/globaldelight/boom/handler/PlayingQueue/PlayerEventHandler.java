@@ -124,7 +124,9 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
 
         @Override
         public void onStop() {
-            handler.stopPlayer();
+            //TODO: implement proper stop behaviour
+            // handler.stopPlayer();
+            onPause();
         }
     };
 
