@@ -52,68 +52,61 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         super.onCreate(savedInstanceState);
 
-        if(!isExpire("FEB-10-2017")) {
-            App.startPlayerService();
-            new Handler().postDelayed(new Runnable() {
+        App.startPlayerService();
+        new Handler().postDelayed(new Runnable() {
 
             /*
              * Showing splash screen with a timer. This will be useful when you
              * want to show case your app logo / company
              */
 
-                @Override
-                public void run() {
-                    // This method will be executed once the timer is over
-                    // Start your app main activity
-                    startPlayer();
-                    // close this activity
-                    //finish();
-                }
-            }, SPLASH_TIME_OUT);
-            audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
-            //flurry
-            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_APP_OPEN);
-
-            //get current date
-            currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-            mixpanel = MixPanelAnalyticHelper.getInstance(this);
-            //new Launch of app.Use for tutorial
-            if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true)) {
-                Preferences.writeString(this, Preferences.INSTALL_DATE, currentDate);
-                audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.FIVE_DAY_OFFER);
-                //register first app open once as super property
-                propsFirst = new JSONObject();
-                try {
-                    propsFirst.put(AnalyticsHelper.EVENT_FIRST_VISIT, currentDate);
-                    mixpanel.registerSuperPropertiesOnce(propsFirst);//super property
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
+            @Override
+            public void run() {
+                // This method will be executed once the timer is over
+                // Start your app main activity
+                startPlayer();
+                // close this activity
+                //finish();
             }
+        }, SPLASH_TIME_OUT);
+        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
+        //flurry
+        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_APP_OPEN);
 
-            //get last opened date
-            String lastOpen = Preferences.readString(this, Preferences.APP_LAST_OPEN, currentDate);
-            propsLast = new JSONObject();
-
-
+        //get current date
+        currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+        mixpanel = MixPanelAnalyticHelper.getInstance(this);
+        //new Launch of app.Use for tutorial
+        if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true)) {
+            Preferences.writeString(this, Preferences.INSTALL_DATE, currentDate);
+            audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.FIVE_DAY_OFFER);
+            //register first app open once as super property
+            propsFirst = new JSONObject();
             try {
-                propsLast.put(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
-                mixpanel.registerSuperProperties(propsLast);//super property
+                propsFirst.put(AnalyticsHelper.EVENT_FIRST_VISIT, currentDate);
+                mixpanel.registerSuperPropertiesOnce(propsFirst);//super property
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            MixPanelAnalyticHelper.initPushNotification(this);
-            MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
-            MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_APP_OPEN, currentDate);
-            Preferences.writeString(this, Preferences.APP_LAST_OPEN, currentDate);
 
 
-        }else{
-            Toast.makeText(this, "App Expired...!", Toast.LENGTH_LONG).show();
-            finish();
         }
+
+        //get last opened date
+        String lastOpen = Preferences.readString(this, Preferences.APP_LAST_OPEN, currentDate);
+        propsLast = new JSONObject();
+
+
+        try {
+            propsLast.put(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
+            mixpanel.registerSuperProperties(propsLast);//super property
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        MixPanelAnalyticHelper.initPushNotification(this);
+        MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
+        MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_APP_OPEN, currentDate);
+        Preferences.writeString(this, Preferences.APP_LAST_OPEN, currentDate);
     }
 
     private void startPlayer(){
@@ -121,39 +114,6 @@ public class SplashActivity extends AppCompatActivity {
         startActivity(i);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         finish();
-    }
-
-    private boolean isExpire(String date){
-        if(date.isEmpty() || date.trim().equals("")){
-            return false;
-        }else{
-            SimpleDateFormat sdf =  new SimpleDateFormat("MMM-dd-yyyy"); // Jan-20-2015 1:30:55 PM
-            Date d=null;
-            Date d1=null;
-            String today=   getToday("MMM-dd-yyyy");
-            try {
-                //System.out.println("expdate>> "+date);
-                //System.out.println("today>> "+today+"\n\n");
-                d = sdf.parse(date);
-                d1 = sdf.parse(today);
-                if(d1.compareTo(d) <0){// not expired
-                    return false;
-                }else if(d.compareTo(d1)==0){// both date are same
-                    if(d.getTime() < d1.getTime()){// not expired
-                        return false;
-                    }else if(d.getTime() == d1.getTime()){//expired
-                        return true;
-                    }else{//expired
-                        return true;
-                    }
-                }else{//expired
-                    return true;
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
     }
 
     @Override

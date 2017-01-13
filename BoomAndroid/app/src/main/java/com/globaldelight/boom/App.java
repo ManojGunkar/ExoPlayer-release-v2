@@ -1,5 +1,6 @@
 package com.globaldelight.boom;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -7,8 +8,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
@@ -22,10 +25,17 @@ import com.globaldelight.boom.utils.handlers.PlaylistDBHelper;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boom.utils.handlers.UpNextDBHelper;
 import com.globaldelight.boom.utils.handlers.UserPreferenceHandler;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import io.fabric.sdk.android.Fabric;
 
 
-public class App extends Application implements SensorEventListener {
+public class App extends Application implements SensorEventListener, Application.ActivityLifecycleCallbacks {
 
     private static App application;
 
@@ -104,6 +114,8 @@ public class App extends Application implements SensorEventListener {
         userPreferenceHandler = new UserPreferenceHandler(application);
         FlurryAnalyticHelper.init(this);
 
+        registerActivityLifecycleCallbacks(this);
+
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
@@ -177,6 +189,60 @@ public class App extends Application implements SensorEventListener {
                     }
                 }, 1000);
                 break;
+        }
+    }
+
+
+    public void onActivityCreated(Activity var1, Bundle var2) {
+
+    }
+
+    public void onActivityStarted(Activity activity) {
+        if(isExpired()) {
+            Toast.makeText(this, "App Expired...!", Toast.LENGTH_LONG).show();
+            activity.finishAndRemoveTask();
+
+            // Terminate the App process after 2 seconds
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.exit(0);
+                }
+            }, 2000);
+        }
+    }
+
+    public void onActivityResumed(Activity activity) {
+    }
+
+    public void onActivityPaused(Activity var1) {
+
+    }
+
+    public void onActivityStopped(Activity var1) {
+
+    }
+
+    public void onActivitySaveInstanceState(Activity var1, Bundle var2) {
+
+    }
+
+    public void onActivityDestroyed(Activity var1) {
+
+    }
+
+
+    private boolean isExpired(){
+        String expiryDateString = "FEB-10-2017";
+        try {
+            SimpleDateFormat sdf =  new SimpleDateFormat("MMM-dd-yyyy");
+            Date expiryDate = sdf.parse(expiryDateString);
+            Date today= new Date();
+            return today.after(expiryDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }
