@@ -90,7 +90,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private TooltipWindow tipWindowLibrary, tipWindowEffect, tipWindowHold, tipWindowHeadset;
     private static boolean isUpdateUpnextDB = true;
 
-    final static String SURVEY_HASH = "VVLMBV2";
+    final static String SURVEY_HASH = "PTXJR5S";
     final static int SURVEY_REQUEST_CODE = 2000;
 
     private final static long MINS = 60 * 1000;
