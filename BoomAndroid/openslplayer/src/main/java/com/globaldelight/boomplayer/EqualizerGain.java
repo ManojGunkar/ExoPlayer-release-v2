@@ -8,7 +8,6 @@ import java.util.Map;
  */
 
 public class EqualizerGain {
-    private static Map<Integer, double[]> EQ_GAIN = new Hashtable<>();
 
     public static float[] getEqGain(int equalizerId){
         double[] gains = EQ_GAIN.get(equalizerId);
@@ -22,33 +21,6 @@ public class EqualizerGain {
 
     public static int getEqualizerSize(){
         return EQ_GAIN.size();
-    }
-
-    public static void setEqGain(){
-
-        EQ_GAIN.clear();
-        EQ_GAIN.put(0, EQ_AUTO);
-        EQ_GAIN.put(1, EQ_BASSBOOST);
-        EQ_GAIN.put(2, EQ_ACOUSTIC);
-        EQ_GAIN.put(3, EQ_SIXTIES);
-        EQ_GAIN.put(4, EQ_CLASSICAL);
-        EQ_GAIN.put(5, EQ_DUBSTEP);
-        EQ_GAIN.put(6, EQ_ELECTRONIC);
-        EQ_GAIN.put(7, EQ_FLAT);
-        EQ_GAIN.put(8, EQ_HIPHOP);
-        EQ_GAIN.put(9, EQ_HOUSE);
-        EQ_GAIN.put(10, EQ_JAZZ);
-        EQ_GAIN.put(11, EQ_LOUD);
-        EQ_GAIN.put(12, EQ_MUSIC);
-        EQ_GAIN.put(13, EQ_PARTY);
-        EQ_GAIN.put(14, EQ_POP);
-        EQ_GAIN.put(15, EQ_REGGAE);
-        EQ_GAIN.put(16, EQ_ROCK);
-        EQ_GAIN.put(17, EQ_SOFT);
-        EQ_GAIN.put(18, EQ_TREBLE);
-        EQ_GAIN.put(19, EQ_VOCALS);
-        EQ_GAIN.put(20, EQ_RNB);
-        EQ_GAIN.put(21, EQ_METAL);
     }
 //  1 -  36.0
 //  2 -  50.0
@@ -96,4 +68,31 @@ public class EqualizerGain {
     private static double EQ_POP[] = {0.0, 0.5, 0.5, 1.0, 1.72, 2.8, 3.2, 1.2, 3.2, 3.7, 2.2, 1.0, 0.0, 0.0, -1.0, -1.5};
     private static double EQ_ROCK[] = {4.0, 4.5, 4.2, 3.7, 3.2, 2.3, 1.0, 0.0, -1.0, -1.0, -1.0, 1.0, 2.4, 3.2, 3.1, 3.2};
     private static double EQ_MUSIC[] = EQ_AUTO;
+
+    private static Map<Integer, double[]> EQ_GAIN = new Hashtable<>();
+    static {
+        EQ_GAIN.clear();
+        EQ_GAIN.put(0, EQ_AUTO);
+        EQ_GAIN.put(1, EQ_BASSBOOST);
+        EQ_GAIN.put(2, EQ_ACOUSTIC);
+        EQ_GAIN.put(3, EQ_SIXTIES);
+        EQ_GAIN.put(4, EQ_CLASSICAL);
+        EQ_GAIN.put(5, EQ_DUBSTEP);
+        EQ_GAIN.put(6, EQ_ELECTRONIC);
+        EQ_GAIN.put(7, EQ_FLAT);
+        EQ_GAIN.put(8, EQ_HIPHOP);
+        EQ_GAIN.put(9, EQ_HOUSE);
+        EQ_GAIN.put(10, EQ_JAZZ);
+        EQ_GAIN.put(11, EQ_LOUD);
+        EQ_GAIN.put(12, EQ_MUSIC);
+        EQ_GAIN.put(13, EQ_PARTY);
+        EQ_GAIN.put(14, EQ_POP);
+        EQ_GAIN.put(15, EQ_REGGAE);
+        EQ_GAIN.put(16, EQ_ROCK);
+        EQ_GAIN.put(17, EQ_SOFT);
+        EQ_GAIN.put(18, EQ_TREBLE);
+        EQ_GAIN.put(19, EQ_VOCALS);
+        EQ_GAIN.put(20, EQ_RNB);
+        EQ_GAIN.put(21, EQ_METAL);
+    }
 }

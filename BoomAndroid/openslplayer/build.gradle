@@ -11,7 +11,7 @@ model {
         }
         ndk {
             platformVersion = 23
-            moduleName = 'AudioTrackActivity'
+            moduleName = 'BoomPlayer'
             toolchain = 'clang'
             stl       = 'c++_shared'
             CFlags.addAll(['-std=c11'])

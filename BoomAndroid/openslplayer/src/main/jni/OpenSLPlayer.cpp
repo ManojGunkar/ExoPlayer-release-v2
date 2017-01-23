@@ -4,6 +4,7 @@
 
 #include <assert.h>
 #include <logger/log.h>
+#include <stdint.h>
 #include "OpenSLPlayer.hpp"
 
 #define LOG_TAG "OpenSLPlayer"
@@ -15,9 +16,9 @@ namespace gdpl
     static const int BUFFER_COUNT = 4;
     static const int CHANNEL_COUNT = 2;
 
-    static SLObjectItf engineObject = NULL;
-    static SLObjectItf outputMixObject = NULL;
-    static SLEngineItf engineEngine = NULL;
+    static SLObjectItf engineObject = nullptr;
+    static SLObjectItf outputMixObject = nullptr;
+    static SLEngineItf engineEngine = nullptr;
     static bool        sUseFloatAudio = true;
 
 
@@ -58,7 +59,7 @@ namespace gdpl
 
         // configure audio sink
         SLDataLocator_OutputMix loc_outmix = {SL_DATALOCATOR_OUTPUTMIX, outputMixObject};
-        SLDataSink audioSnk = {&loc_outmix, NULL};
+        SLDataSink audioSnk = {&loc_outmix, nullptr};
 
         // create audio player
         // NOTE: SL_IID_BASSBOOST is requested only to disable Fast Audio Path. It is not used anywhere
@@ -96,11 +97,11 @@ namespace gdpl
 
     SLresult OpenSLPlayer::tearDown()
     {
-        if (bqPlayerObject != NULL) {
+        if (bqPlayerObject != nullptr) {
             (*bqPlayerObject)->Destroy(bqPlayerObject);
-            bqPlayerObject = NULL;
-            bqPlayerPlay = NULL;
-            _bufferQueue = NULL;
+            bqPlayerObject = nullptr;
+            bqPlayerPlay = nullptr;
+            _bufferQueue = nullptr;
         //    bqPlayerVolume = NULL;
         }
 
@@ -170,7 +171,7 @@ namespace gdpl
         _frameCount = frameCount;
         sUseFloatAudio = useFloat;
 
-        SLresult result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
+        SLresult result = slCreateEngine(&engineObject, 0, nullptr, 0, nullptr, nullptr);
         assert(SL_RESULT_SUCCESS == result);
         (void)result;
 
@@ -201,16 +202,16 @@ namespace gdpl
     SLresult OpenSLPlayer::tearDownEngine()
     {
         // destroy output mix object, and invalidate all associated interfaces
-        if (outputMixObject != NULL) {
+        if (outputMixObject != nullptr) {
             (*outputMixObject)->Destroy(outputMixObject);
-            outputMixObject = NULL;
+            outputMixObject = nullptr;
         }
 
         // destroy engine object, and invalidate all associated interfaces
-        if (engineObject != NULL) {
+        if (engineObject != nullptr) {
             (*engineObject)->Destroy(engineObject);
-            engineObject = NULL;
-            engineEngine = NULL;
+            engineObject = nullptr;
+            engineEngine = nullptr;
         }
 
         return SL_RESULT_SUCCESS;
