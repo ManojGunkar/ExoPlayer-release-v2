@@ -21,6 +21,7 @@ class AudioTrackReader extends MediaCodec.Callback {
         ByteBuffer   byteBuffer;
         long         size;
         long         timeStamp; // presentation time in micro seconds
+        int          index;
     }
 
     private MediaExtractor mExtractor;
@@ -85,6 +86,11 @@ class AudioTrackReader extends MediaCodec.Callback {
                 }
             } else if (outputBufIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                 onOutputFormatChanged(mCodec, mCodec.getOutputFormat());
+            }
+            else {
+                mSampleBuffer.index = -1;
+                mSampleBuffer.size = 0;
+                mSampleBuffer.byteBuffer = null;
             }
         }
         catch ( MediaCodec.CodecException e) {
@@ -151,8 +157,7 @@ class AudioTrackReader extends MediaCodec.Callback {
         mSampleBuffer.byteBuffer = mediaCodec.getOutputBuffer(outputBufIndex);
         mSampleBuffer.size = bufferInfo.size;
         mSampleBuffer.timeStamp = bufferInfo.presentationTimeUs;
-
-        mCodec.releaseOutputBuffer(outputBufIndex, false);
+        mSampleBuffer.index = outputBufIndex;
     }
 
     @Override
