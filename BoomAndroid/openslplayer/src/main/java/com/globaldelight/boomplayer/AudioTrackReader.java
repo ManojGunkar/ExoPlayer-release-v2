@@ -94,6 +94,16 @@ class AudioTrackReader extends MediaCodec.Callback {
         return mSampleBuffer;
     }
 
+    void releaseBuffer(SampleBuffer buffer) {
+        if ( buffer.index >= 0 ) {
+            mCodec.releaseOutputBuffer(buffer.index,false);
+        }
+
+        buffer.index = -1;
+        buffer.size = 0;
+        buffer.byteBuffer = null;
+    }
+
     void seekTo(long time) {
         mExtractor.seekTo(time, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
     }

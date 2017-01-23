@@ -209,9 +209,9 @@ public class AudioPlayer implements Runnable {
             boolean completed = false;
             while ( !stop && !completed ) {
                 waitPlay();
+                AudioTrackReader.SampleBuffer buffer = reader.readNextBuffer();
                 switch ( reader.getState() ) {
                     case AudioTrackReader.STATE_READING:
-                        AudioTrackReader.SampleBuffer buffer = reader.readNextBuffer();
                         onReadBuffer(buffer);
                         if (  Math.abs(buffer.timeStamp - pts) > 500000) {
                             pts = buffer.timeStamp;
@@ -227,6 +227,7 @@ public class AudioPlayer implements Runnable {
                         completed = true;
                         break;
                 }
+                reader.releaseBuffer(buffer);
             }
 
             if ( !stop  ) {
