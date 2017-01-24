@@ -77,6 +77,7 @@ public class SplashActivity extends AppCompatActivity {
         if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true)) {
             Preferences.writeString(this, Preferences.INSTALL_DATE, currentDate);
             audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.FIVE_DAY_OFFER);
+            String lastOpen = Preferences.readString(this, Preferences.APP_LAST_OPEN, currentDate);
             //register first app open once as super property
             propsFirst = new JSONObject();
             try {
@@ -93,25 +94,7 @@ public class SplashActivity extends AppCompatActivity {
             MixPanelAnalyticHelper.getInstance(this).getPeople().set("Device_ID", android_id);*/
 
             Preferences.writeString(this, Preferences.APP_LAST_OPEN, currentDate);
-
-
         }
-
-        //get last opened date
-        String lastOpen = Preferences.readString(this, Preferences.APP_LAST_OPEN, currentDate);
-        propsLast = new JSONObject();
-
-
-        try {
-            propsLast.put(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
-            mixpanel.registerSuperProperties(propsLast);//super property
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        MixPanelAnalyticHelper.initPushNotification(this);
-        MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
-        MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_APP_OPEN, currentDate);
-        Preferences.writeString(this, Preferences.APP_LAST_OPEN, currentDate);
     }
 
     private void startPlayer(){

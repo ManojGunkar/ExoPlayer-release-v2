@@ -8,8 +8,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
-import com.example.openslplayer.R;
-
 import java.util.Arrays;
 import java.util.List;
 
