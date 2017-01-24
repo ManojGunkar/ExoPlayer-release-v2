@@ -1,6 +1,5 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -21,11 +19,11 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,6 +35,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -105,7 +104,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            MediaItem item;
+            IMediaItem item;
             switch (intent.getAction()){
                 case ACTION_RECEIVE_SONG :
                     item = intent.getParcelableExtra("playing_song");
@@ -199,7 +198,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void updateAlbumArt(final MediaItem item){
+    private void updateAlbumArt(final IMediaItem item){
         if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
             new Action() {
                 private Bitmap img;
@@ -269,7 +268,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void updateTrackToPlayer(final MediaItem item, boolean playing, boolean isLastPlayedSong) {
+    private void updateTrackToPlayer(final IMediaItem item, boolean playing, boolean isLastPlayedSong) {
         if(null != item){
             mRepeatBtn.setVisibility(View.VISIBLE);
             mShuffleBtn.setVisibility(View.VISIBLE);
@@ -563,10 +562,12 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
     }
 
-    private void startFavouriteActivity() {
+    private void startFavouriteActivity(MediaType mediaType, ItemType itemType) {
         App.getUserPreferenceHandler().setLibraryStartFromHome(true);
 
-        Intent listIntent = new Intent(BoomPlayerActivity.this, FavouriteListActivity.class);
+        Intent listIntent = new Intent(BoomPlayerActivity.this, CloudItemListActivity.class);
+        listIntent.putExtra("MEDIA_LIST_TYPE", mediaType.ordinal());
+        listIntent.putExtra("SONG_LIST_TYPE", itemType.ordinal());
         listIntent.setAction("visible");
         startActivity(listIntent);
         overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
@@ -616,7 +617,12 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                 if(null != item){
                     switch (item.getParentType()){
                         case SONGS:
-                            startLibraryActivity(true);
+                            if(item.getMediaType() == MediaType.DEVICE_MEDIA_LIB)
+                                startLibraryActivity(true);
+                            else if(item.getMediaType() == MediaType.DROP_BOX)
+                                startFavouriteActivity(MediaType.DROP_BOX, ItemType.SONGS);
+                            else
+                                startFavouriteActivity(MediaType.GOOGLE_DRIVE, ItemType.SONGS);
                             break;
                         case ALBUM:
                         case ARTIST:
@@ -626,7 +632,7 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
                             startCollectionListActivity(item.getParentType(), item.getParentId(), item.getMediaType());
                             break;
                         case FAVOURITE:
-                            startFavouriteActivity();
+                            startFavouriteActivity(MediaType.DEVICE_MEDIA_LIB, ItemType.FAVOURITE);
                             break;
                     }
                 }
@@ -697,9 +703,9 @@ public class BoomPlayerActivity extends AppCompatActivity implements View.OnClic
         isUpdateUpnextDB = true;
         updateEffectIcon();
         if (null != App.getPlayerEventHandler().getPlayingItem()) {
-            updateTrackToPlayer((MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isPlaying(), /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));
+            updateTrackToPlayer((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isPlaying(), /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));
         }else{
-            updateTrackToPlayer( (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() , App.getPlayerEventHandler().isPlaying(), /*if last played item is set as playing item*/ false);
+            updateTrackToPlayer( (IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() , App.getPlayerEventHandler().isPlaying(), /*if last played item is set as playing item*/ false);
         }
 
         updateUpNextButton();

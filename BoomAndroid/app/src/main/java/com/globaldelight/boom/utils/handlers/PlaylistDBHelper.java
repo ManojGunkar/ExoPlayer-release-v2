@@ -208,6 +208,14 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void removeSong(String songTitle, int playlistId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_PLAYLIST_SONGS + " WHERE " +
+                TITLE + "='" + songTitle + "' AND "
+                + SONG_KEY_PLAYLIST_ID + "='" + playlistId + "'");
+        db.close();
+    }
+
     public void deletePlaylist(long playlistId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_PLAYLIST + " WHERE " +

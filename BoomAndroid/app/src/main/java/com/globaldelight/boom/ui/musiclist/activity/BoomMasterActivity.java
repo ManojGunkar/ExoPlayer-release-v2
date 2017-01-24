@@ -19,7 +19,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,7 +33,9 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.adapter.SearchSuggestionAdapter;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
@@ -49,7 +50,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
  */
 public class BoomMasterActivity extends AppCompatActivity/* implements NavigationView.OnNavigationItemSelectedListener*/ {
     DrawerLayout drawerLayout;
-    private LinearLayout mLibPanel, mListPanel, mFavPanel, mClosePanel;
+    private LinearLayout mLibPanel, mListPanel, mFavPanel, mGoogleDrivePanel, mDropboxPanel, mClosePanel;
     FrameLayout activityContainer;
     Fragment mSearchResult;
     Toolbar toolbar;
@@ -60,11 +61,6 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
     MusicSearchHelper musicSearchHelper;
     private SearchSuggestionAdapter searchSuggestionAdapter;
     public static String[] columns = new String[]{"_id", "FEED_TITLE"};
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
@@ -78,6 +74,8 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
         mLibPanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_lib_option);
         mListPanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_playlist_option);
         mFavPanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_fav_option);
+        mGoogleDrivePanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_google_drive_option);
+        mDropboxPanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_dropbox_option);
         mClosePanel = (LinearLayout) drawerLayout.findViewById(R.id.drawer_close_option);
 
         mLibPanel.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +97,29 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
         mFavPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(BoomMasterActivity.this, FavouriteListActivity.class);
+                Intent intent = new Intent(BoomMasterActivity.this, CloudItemListActivity.class);
+                intent.putExtra("SONG_LIST_TYPE", ItemType.FAVOURITE.ordinal());
+                intent.putExtra("MEDIA_LIST_TYPE", MediaType.DEVICE_MEDIA_LIB.ordinal());
+                startActivity(intent);
+                drawerLayout.closeDrawer(Gravity.LEFT);
+            }
+        });
+        mDropboxPanel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BoomMasterActivity.this, CloudItemListActivity.class);
+                intent.putExtra("SONG_LIST_TYPE", ItemType.SONGS.ordinal());
+                intent.putExtra("MEDIA_LIST_TYPE", MediaType.DROP_BOX.ordinal());
+                startActivity(intent);
+                drawerLayout.closeDrawer(Gravity.LEFT);
+            }
+        });
+        mGoogleDrivePanel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BoomMasterActivity.this, CloudItemListActivity.class);
+                intent.putExtra("SONG_LIST_TYPE", ItemType.SONGS.ordinal());
+                intent.putExtra("MEDIA_LIST_TYPE", MediaType.GOOGLE_DRIVE.ordinal());
                 startActivity(intent);
                 drawerLayout.closeDrawer(Gravity.LEFT);
             }
@@ -313,77 +333,17 @@ public class BoomMasterActivity extends AppCompatActivity/* implements Navigatio
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-    }
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("BoomMaster Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
     }
-
-//    @Override
-//    public boolean onNavigationItemSelected(MenuItem item) {
-//        Intent intent;
-//        switch (item.getItemId()) {
-//            case R.id.navigation_music:
-//
-//                break;
-//            case R.id.navigation_spotify:
-//
-//                drawerLayout.closeDrawer(Gravity.LEFT);
-//                break;
-//            case R.id.navigation_boom_palylist:
-//                intent = new Intent(BoomMasterActivity.this, BoomPlaylistActivity.class);
-//                startActivity(intent);
-//                drawerLayout.closeDrawer(Gravity.LEFT);
-//                break;
-//            case R.id.navigation_boom_favourites:
-//                intent = new Intent(BoomMasterActivity.this, FavouriteListActivity.class);
-//                startActivity(intent);
-//                drawerLayout.closeDrawer(Gravity.LEFT);
-//                break;
-//            case R.id.navigation_close:
-//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_LIBRARY_CLOSE_BUTTON_TAPPED);
-//                finish();
-//                overridePendingTransition(R.anim.stay_out, R.anim.slide_out_left);
-//                break;
-//        }
-//        return true;
-//    }
 
     @Override
     protected void onNewIntent(Intent intent) {

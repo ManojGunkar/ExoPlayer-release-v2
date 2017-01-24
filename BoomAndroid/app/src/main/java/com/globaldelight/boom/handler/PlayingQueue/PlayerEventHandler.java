@@ -5,16 +5,19 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
+import android.os.AsyncTask;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
+import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.globaldelight.boomplayer.AudioPlayer;
 import com.globaldelight.boomplayer.OpenSLPlayer;
@@ -31,8 +34,8 @@ import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.Pla
 
 public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocusChangeListener {
     public static boolean isPlayerResume = false;
-    private static IMediaItemBase playingItem;
-    private static AudioPlayer mPlayer;
+    private static IMediaItem playingItem;
+    private static OpenSLPlayer mPlayer;
     private static PlayerEventHandler handler;
     private static int NEXT = 0;
     private static int PREVIOUS = 1;
@@ -72,6 +75,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
 
         @Override
         public void onPlay() {
+
         }
 
         @Override
@@ -173,21 +177,50 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
 
     @Override
     public synchronized void onPlayingItemChanged() {
-
         if(isPlaying() || isPaused()) {
             setSessionState(PlaybackState.STATE_STOPPED);
         }
+
         playingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
-        if(null != mPlayer && null != playingItem ) {
-            if ( requestAudioFocus() ) {
-                mPlayer.setDataSource(((MediaItem) playingItem).getItemUrl());
-                setSessionState(PlaybackState.STATE_PLAYING);
-                playingItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem) playingItem).getItemAlbum()));
-                context.sendBroadcast(new Intent(PlayerService.ACTION_GET_SONG));
-                AnalyticsHelper.songSelectionChanged(context, playingItem);
+
+        new PlayingItemChanged().execute(playingItem);
+    }
+
+    public class PlayingItemChanged extends AsyncTask<IMediaItem, Void, String>{
+        IMediaItem mediaItemBase;
+
+        @Override
+        protected String doInBackground(IMediaItem... params) {
+            String dataSource = null;
+            mediaItemBase = params[0];
+            if(mediaItemBase.getMediaType() == MediaType.DEVICE_MEDIA_LIB){
+                dataSource = mediaItemBase.getItemUrl();
+                mediaItemBase.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem) mediaItemBase).getItemAlbum()));
+            }else if(mediaItemBase.getMediaType() == MediaType.DROP_BOX){
+                if(null != App.getDropboxAPI().getSession()){
+                    dataSource = DropBoxUtills.getDropboxItemUrl(mediaItemBase.getItemUrl());
+                }else{
+                    Toast.makeText(context, "not logged in Dropbox", Toast.LENGTH_SHORT).show();
+                }
+            }else if(mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){
+                dataSource = mediaItemBase.getItemUrl();
             }
-        }else{
-            context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
+            return dataSource;
+        }
+
+        @Override
+        protected void onPostExecute(String dataSource) {
+            super.onPostExecute(dataSource);
+            if(null != mPlayer && null != mediaItemBase) {
+                if ( requestAudioFocus() ) {
+                    mPlayer.setDataSource(dataSource);
+                    setSessionState(PlaybackState.STATE_PLAYING);
+                    context.sendBroadcast(new Intent(PlayerService.ACTION_GET_SONG));
+                    AnalyticsHelper.songSelectionChanged(context, mediaItemBase);
+                }
+            }else{
+                context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
+            }
         }
     }
 
@@ -263,7 +296,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         mPlayer = null;
     }
 
-    public IMediaItemBase getPlayingItem() {
+    public IMediaItem getPlayingItem() {
         return App.getPlayingQueueHandler().getUpNextList().getPlayingItem()/*playingItem*/;
     }
 
@@ -350,15 +383,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
             session.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
             setSessionState(PlaybackState.STATE_STOPPED);
             session.setCallback(mediaSessionCallback);
-
-//            Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
-//            ComponentName comp = new ComponentName(context.getPackageName(), PlayerService.RemoteControlReceiver.class.getName());
-//            mediaButtonIntent.setComponent(comp);
-//            PendingIntent mediaPendingIntent = PendingIntent.getBroadcast(context, 0, mediaButtonIntent, 0);
-//            session.setMediaButtonReceiver(mediaPendingIntent);
         }
-
-
         session.setActive(true);
     }
 

@@ -1,4 +1,4 @@
-package com.example.openslplayer;
+package com.globaldelight.boomplayer;
 
 
 /**

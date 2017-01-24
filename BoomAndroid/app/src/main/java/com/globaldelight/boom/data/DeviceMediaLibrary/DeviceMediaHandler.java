@@ -230,8 +230,16 @@ public class DeviceMediaHandler {
         App.getFavoriteDBHelper().removeSong(itemId);
     }
 
+    public void removeItemToFavList(String itemTitle) {
+        App.getFavoriteDBHelper().removeSong(itemTitle);
+    }
+
     public boolean isFavouriteItems(long itemId) {
         return App.getFavoriteDBHelper().isFavouriteItems(itemId);
+    }
+
+    public boolean isFavouriteItems(String itemTitle) {
+        return App.getFavoriteDBHelper().isFavouriteItems(itemTitle);
     }
 
     public void addUpNextItem(IMediaItemBase song, QueueType queueType) {

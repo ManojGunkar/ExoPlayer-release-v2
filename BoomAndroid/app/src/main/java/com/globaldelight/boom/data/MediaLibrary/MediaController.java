@@ -89,6 +89,10 @@ public class MediaController implements IMediaController{
         return MediaLibraryHandler.getInstance(context).isFavouriteItems(itemId);
     }
 
+    public boolean isFavouriteItems(String itemTitle) {
+        return MediaLibraryHandler.getInstance(context).isFavouriteItems(itemTitle);
+    }
+
     public void clearFavoriteList() {
         MediaLibraryHandler.getInstance(context).clearFavoriteList();
     }
@@ -99,6 +103,10 @@ public class MediaController implements IMediaController{
 
     public void removeItemToFavoriteList(long itemId) {
         MediaLibraryHandler.getInstance(context).removeItemToFavoriteList(itemId);
+    }
+
+    public void removeItemToFavoriteList(String itemTitle) {
+        MediaLibraryHandler.getInstance(context).removeItemToFavoriteList(itemTitle);
     }
 
     public void addUpNextItem(IMediaItemBase song, QueueType queueType) {

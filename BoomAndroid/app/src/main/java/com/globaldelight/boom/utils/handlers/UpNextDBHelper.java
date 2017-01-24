@@ -17,6 +17,7 @@ import com.globaldelight.boom.handler.PlayingQueue.QueueType;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
@@ -103,29 +104,36 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
             clearList(queueType);
 
         SQLiteDatabase db = this.getWritableDatabase();
-        for (int i = 0; i < songs.size(); i++) {
-            ContentValues values = new ContentValues();
 
-            values.putNull(SONG_KEY_ID);
-            values.put(SONG_KEY_REAL_ID, songs.get(i).getItemId());
-            values.put(TITLE, songs.get(i).getItemTitle());
-            values.put(DISPLAY_NAME, ((IMediaItem)songs.get(i)).getItemDisplayName());
-            values.put(DATA_PATH, ((IMediaItem)songs.get(i)).getItemUrl());
-            values.put(ALBUM_ID, ((IMediaItem)songs.get(i)).getItemAlbumId());
-            values.put(ALBUM, ((IMediaItem)songs.get(i)).getItemAlbum());
-            values.put(ARTIST_ID, ((IMediaItem)songs.get(i)).getItemArtistId());
-            values.put(ARTIST, ((IMediaItem)songs.get(i)).getItemArtist());
-            values.put(DURATION, ((IMediaItem)songs.get(i)).getDurationLong());
-            values.put(DATE_ADDED, ((IMediaItem)songs.get(i)).getDateAdded());
-            values.put(ALBUM_ART, ((IMediaItem)songs.get(i)).getItemArtUrl());
-            values.put(MEDIA_TYPE, ((IMediaItem)songs.get(i)).getMediaType().ordinal());
-            values.put(PARENT_TYPE, ((IMediaItem)songs.get(i)).getParentType().ordinal());
-            values.put(PARENT_ID, ((IMediaItem)songs.get(i)).getParentId());
-            values.put(QUEUE_TYPE, queueType.ordinal());
+        try {
+            for (IMediaItemBase item : songs) {
+                ContentValues values = new ContentValues();
 
-            db.insert(TABLE_UPNEXT, null, values);
+                values.putNull(SONG_KEY_ID);
+                values.put(SONG_KEY_REAL_ID, item.getItemId());
+                values.put(TITLE, item.getItemTitle());
+                values.put(DISPLAY_NAME, ((IMediaItem) item).getItemDisplayName());
+                values.put(DATA_PATH, ((IMediaItem) item).getItemUrl());
+                values.put(ALBUM_ID, ((IMediaItem) item).getItemAlbumId());
+                values.put(ALBUM, ((IMediaItem) item).getItemAlbum());
+                values.put(ARTIST_ID, ((IMediaItem) item).getItemArtistId());
+                values.put(ARTIST, ((IMediaItem) item).getItemArtist());
+                values.put(DURATION, ((IMediaItem) item).getDurationLong());
+                values.put(DATE_ADDED, ((IMediaItem) item).getDateAdded());
+                values.put(ALBUM_ART, ((IMediaItem) item).getItemArtUrl());
+                values.put(MEDIA_TYPE, ((IMediaItem) item).getMediaType().ordinal());
+                values.put(PARENT_TYPE, ((IMediaItem) item).getParentType().ordinal());
+                values.put(PARENT_ID, ((IMediaItem) item).getParentId());
+                values.put(QUEUE_TYPE, queueType.ordinal());
+
+                db.insert(TABLE_UPNEXT, null, values);
+            }
+            db.close();
+        }catch (ConcurrentModificationException e){
+            e.printStackTrace();
+        }catch (IllegalStateException e){
+            e.printStackTrace();
         }
-        db.close();
     }
 
     public synchronized void addSongsToUpNext(ArrayList<? extends IMediaItemBase> songs, QueueType queueType) {

@@ -79,6 +79,57 @@
             android:textColor="#ffffff"
             android:singleLine="true"/>
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/drawer_google_drive_option"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fifty_six_pt"
+        android:layout_marginBottom="@dimen/fifty_six_pt"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sixteen_pt"
+            android:layout_marginRight="@dimen/thirty_two_px"
+            android:src="@drawable/ic_drawer_icons_favourites"/>
+
+        <com.globaldelight.boom.ui.widgets.RegularTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sixty_four_pt"
+            android:textStyle="normal"
+            android:text="@string/title_google_drive_list"
+            android:textColor="#ffffff"
+            android:singleLine="true"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/drawer_dropbox_option"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fifty_six_pt"
+        android:layout_marginBottom="@dimen/fifty_six_pt"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sixteen_pt"
+            android:layout_marginRight="@dimen/thirty_two_px"
+            android:src="@drawable/ic_drawer_icons_favourites"/>
+
+        <com.globaldelight.boom.ui.widgets.RegularTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sixty_four_pt"
+            android:textStyle="normal"
+            android:text="@string/title_dropbox_list"
+            android:textColor="#ffffff"
+            android:singleLine="true"/>
+    </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

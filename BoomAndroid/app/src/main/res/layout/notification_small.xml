@@ -11,6 +11,7 @@
         android:id="@+id/noti_album_art"
         android:layout_width="@dimen/noti_small_art_size"
         android:layout_height="@dimen/noti_small_art_size"
+        android:src="@drawable/ic_default_list"
         android:layout_weight="0" />
 
     <LinearLayout

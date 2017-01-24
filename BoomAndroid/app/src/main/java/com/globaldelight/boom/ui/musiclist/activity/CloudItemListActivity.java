@@ -1,16 +1,17 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
 import android.Manifest;
+import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,61 +26,63 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-
+import android.widget.Toast;
+import com.dropbox.client2.android.AndroidAuthSession;
+import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
+import com.globaldelight.boom.data.MediaCallback.FavouriteMediaList;
+import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.task.MediaLoader.LoadDropBoxList;
+import com.globaldelight.boom.task.MediaLoader.LoadFavouriteList;
 import com.globaldelight.boom.task.PlayerService;
-import com.globaldelight.boom.ui.musiclist.adapter.BoomPlayListAdapter;
-import com.globaldelight.boom.ui.musiclist.adapter.FavouriteListAdapter;
+import com.globaldelight.boom.ui.musiclist.adapter.CloudItemListAdapter;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.Logger;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.PlayerUtils;
-import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
-import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
-import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
+import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_REPEAT;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_SHUFFLE;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
+import static com.globaldelight.boom.task.PlayerEvents.*;
 
 /**
  * Created by Rahul Agarwal on 20-11-16.
  */
 
-public class FavouriteListActivity extends AppCompatActivity {
+public class CloudItemListActivity extends AppCompatActivity implements FavouriteMediaList.IFavouriteUpdater, DropboxMediaList.IDropboxUpdater, GoogleDriveMediaList.IGoogleDriveMediaUpdater {
+
+    private DropboxMediaList dropboxMediaList;
+    private GoogleDriveMediaList googleDriveMediaList;
+    private FavouriteMediaList favouriteMediaList;
     private Toolbar toolbar;
     private RecyclerView recyclerView;
-    private FavouriteListAdapter adapter;
+    private CloudItemListAdapter adapter;
     private PermissionChecker permissionChecker;
     private View emptyView;
     private LinearLayout mMiniPlayer, mStartPlayer;
     private ProgressBar mTrackProgress;
-    private RegularTextView mTitle, mSubTitle;
+    private RegularTextView mTitle, mSubTitle, mToolTitle;
     private ImageView mPlayerArt, mPlayPause;
-
+    private ItemType itemType;
+    private MediaType mediaType;
+    private GoogleDriveHandler googleDriveHandler;
+    private ProgressDialog progressLoader;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourite);
+
+        mediaType = MediaType.fromOrdinal(getIntent().getIntExtra("MEDIA_LIST_TYPE", MediaType.DEVICE_MEDIA_LIB.ordinal()));
+        itemType = ItemType.fromOrdinal(getIntent().getIntExtra("SONG_LIST_TYPE", ItemType.FAVOURITE.ordinal()));
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_RECEIVE_SONG);
@@ -105,40 +108,148 @@ public class FavouriteListActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        mToolTitle = (RegularTextView) findViewById(R.id.favourite_list_toolbar_title);
+
         recyclerView = (RecyclerView) findViewById(R.id.rv_favourite_list);
 
         emptyView = findViewById(R.id.fav_empty_view);
 
+        progressLoader = new ProgressDialog(this);
+        if(itemType == ItemType.FAVOURITE){
+            mToolTitle.setText(getResources().getString(R.string.title_favourite_list));
+            favouriteMediaList = FavouriteMediaList.getFavouriteListInstance(this);
+            favouriteMediaList.setFavouriteUpdater(this);
+            favouriteMediaList.clearFavouriteContent();
+            progressLoader = new ProgressDialog(this);
+            setSongListAdapter(favouriteMediaList.getFileList(), itemType);
+        }else if(mediaType == MediaType.DROP_BOX && itemType == ItemType.SONGS){
+            mToolTitle.setText(getResources().getString(R.string.title_dropbox_list));
+            progressLoader.show();
+            dropboxMediaList = DropboxMediaList.getDropboxListInstance(this);
+            dropboxMediaList.setDropboxUpdater(this);
+            dropboxMediaList.clearDropboxContent();
+            DropBoxUtills.checkDropboxAuthentication(this);
+            setSongListAdapter(dropboxMediaList.getFileList(), itemType);
+        }else if(mediaType == MediaType.GOOGLE_DRIVE && itemType == ItemType.SONGS){
+            mToolTitle.setText(getResources().getString(R.string.title_google_drive_list));
+            progressLoader.show();
+            googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(this);
+            googleDriveMediaList.setGoogleDriveMediaUpdater(this);
+            googleDriveMediaList.clearGoogleDriveMediaContent();
+            googleDriveHandler = GoogleDriveHandler.getGoogleDriveInstance(this, CloudItemListActivity.this);
+            googleDriveHandler.getGoogleAccountCredential();
+            googleDriveHandler.getGoogleApiClient();
+            googleDriveHandler.connectGoogleAccount();
+            setSongListAdapter(googleDriveMediaList.getFileList(), itemType);
+        }
+
         checkPermissions();
     }
 
-    private class LoadFavouriteList extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        notifyAdapter();
 
-        @Override
-        protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
-            return MediaController.getInstance(FavouriteListActivity.this).getFavouriteListItems();
+        if (null != App.getPlayerEventHandler().getPlayingItem()) {
+            updateMiniPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
+                            (IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
+                            null, App.getPlayerEventHandler().isPlaying(),
+                       /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));
+            mMiniPlayer.setVisibility(View.VISIBLE);
+        } else {
+            mMiniPlayer.setVisibility(View.GONE);
         }
 
-        @Override
-        protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
-            super.onPostExecute(iMediaItemList);
-            final GridLayoutManager gridLayoutManager =
-                    new GridLayoutManager(FavouriteListActivity.this, 1);
-            gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            gridLayoutManager.scrollToPosition(0);
-            recyclerView.setLayoutManager(gridLayoutManager);
-            adapter = new FavouriteListAdapter(FavouriteListActivity.this, recyclerView, iMediaItemList);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setHasFixedSize(true);
-            if (iMediaItemList.size() < 1) {
-                listIsEmpty();
+        if(mediaType == MediaType.DROP_BOX && null != App.getDropboxAPI()) {
+            AndroidAuthSession session = App.getDropboxAPI().getSession();
+            if (session.authenticationSuccessful()) {
+                try {
+                    session.finishAuthentication();
+                    TokenPair tokens = session.getAccessTokenPair();
+                    DropBoxUtills.storeKeys(this, tokens.key, tokens.secret);
+                } catch (IllegalStateException e) {
+                    Toast.makeText(this,"Couldn't authenticate with Dropbox:"
+                            + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
 
-    public void listIsEmpty() {
-        emptyView.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
+    private void notifyAdapter(){
+        if(null != adapter){
+            adapter.notifyDataSetChanged();
+            listIsEmpty(adapter.getItemCount());
+        }
+    }
+
+    @Override
+    public void onUpdateFavouriteList() {
+        dismissLoader();
+        notifyAdapter();
+    }
+
+    @Override
+    public void UpdateDropboxEntryList() {
+        dismissLoader();
+        notifyAdapter();
+    }
+
+    @Override
+    public void onGoogleDriveMediaListUpdate() {
+        dismissLoader();
+        notifyAdapter();
+    }
+
+    @Override
+    public void onRequestCancelled() {
+        dismissLoader();
+        Toast.makeText(this, "Request cancelled.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onError(String e) {
+        dismissLoader();
+        Toast.makeText(this, "The following error occurred:\n"
+                + e, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onEmptyList() {
+        dismissLoader();
+        Toast.makeText(this, "No results returned.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void dismissLoader(){
+        if(progressLoader.isShowing()){
+            progressLoader.dismiss();
+        }
+    }
+
+
+    private void setSongListAdapter(ArrayList<? extends IMediaItemBase> iMediaItemList, ItemType itemType) {
+        final GridLayoutManager gridLayoutManager =
+                new GridLayoutManager(CloudItemListActivity.this, 1);
+        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        gridLayoutManager.scrollToPosition(0);
+        recyclerView.setLayoutManager(gridLayoutManager);
+        adapter = new CloudItemListAdapter(CloudItemListActivity.this, recyclerView, iMediaItemList, itemType);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
+        if(itemType == ItemType.FAVOURITE)
+            listIsEmpty(iMediaItemList.size());
+    }
+
+    public void listIsEmpty(int size) {
+        if (size < 1) {
+            if(itemType == ItemType.FAVOURITE)
+                emptyView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }else{
+            emptyView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void checkPermissions() {
@@ -148,7 +259,12 @@ public class FavouriteListActivity extends AppCompatActivity {
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
-                        new LoadFavouriteList().execute();
+                        if(itemType == ItemType.FAVOURITE)
+                            new LoadFavouriteList(CloudItemListActivity.this).execute();
+                        else if(mediaType == MediaType.DROP_BOX)
+                            new LoadDropBoxList(CloudItemListActivity.this).execute();
+                        else if(mediaType == MediaType.GOOGLE_DRIVE)
+                            googleDriveHandler.getResultsFromApi();
                     }
 
                     @Override
@@ -158,11 +274,56 @@ public class FavouriteListActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Called when an activity launched here (specifically, AccountPicker
+     * and authorization) exits, giving you the requestCode you started it with,
+     * the resultCode it returned, and any additional data from it.
+     *
+     * @param requestCode code indicating which activity result is incoming.
+     * @param resultCode  code indicating the result of the incoming
+     *                    activity result.
+     * @param data        Intent (containing result data) returned by incoming
+     *                    activity result.
+     */
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        permissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    protected void onActivityResult(
+            int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case GoogleDriveHandler.REQUEST_GOOGLE_PLAY_SERVICES:
+                if (resultCode != RESULT_OK) {
+                    Toast.makeText(CloudItemListActivity.this,
+                            "This app requires Google Play Services. Please install " +
+                                    "Google Play Services on your device and relaunch this app.", Toast.LENGTH_SHORT).show();
+                } else {
+                    googleDriveHandler.getResultsFromApi();
+                }
+                break;
+            case GoogleDriveHandler.REQUEST_ACCOUNT_PICKER:
+                if (resultCode == RESULT_OK && data != null &&
+                        data.getExtras() != null) {
+                    String accountName =
+                            data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                    if (accountName != null) {
+                        SharedPreferences settings =
+                                getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putString(GoogleDriveHandler.PREF_ACCOUNT_NAME, accountName);
+                        editor.apply();
+                        googleDriveHandler.setSelectedGoogleAccountName(accountName);
+                        googleDriveHandler.getResultsFromApi();
+                    }
+                }
+                break;
+            case GoogleDriveHandler.REQUEST_AUTHORIZATION:
+                if (resultCode == RESULT_OK) {
+                    googleDriveHandler.getResultsFromApi();
+                }
+                break;
+        }
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -184,9 +345,10 @@ public class FavouriteListActivity extends AppCompatActivity {
     private BroadcastReceiver mPlayerEventBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            IMediaItem item;
             switch (intent.getAction()){
                 case ACTION_RECEIVE_SONG :
-                    MediaItem item = intent.getParcelableExtra("playing_song");
+                    item = intent.getParcelableExtra("playing_song");
                     updateMiniPlayer(item, intent.getBooleanExtra("playing", false), false);
                     if(mMiniPlayer.getVisibility() != View.VISIBLE)
                         expand();
@@ -211,14 +373,13 @@ public class FavouriteListActivity extends AppCompatActivity {
                     mTrackProgress.setProgress(intent.getIntExtra("percent", 0));
                     break;
                 case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
-                    if(null != adapter)
-                        adapter.notifyDataSetChanged();
+                    notifyAdapter();
                     break;
             }
         }
     };
 
-    private void updateMiniPlayer(MediaItem item, boolean playing, boolean isLastPlayedSong) {
+    private void updateMiniPlayer(IMediaItem item, boolean playing, boolean isLastPlayedSong) {
         if(item != null) {
             updateAlbumArt(item);
             mTitle.setText(item.getItemTitle());
@@ -236,7 +397,7 @@ public class FavouriteListActivity extends AppCompatActivity {
         }
     }
 
-    private void updateAlbumArt(final MediaItem item){
+    private void updateAlbumArt(final IMediaItem item){
         if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
             new Action() {
                 public static final String TAG = "DEVICE_MUSIC_ACTIVITY";
@@ -270,11 +431,11 @@ public class FavouriteListActivity extends AppCompatActivity {
                                     Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
                                     bitmap = Bitmap.createScaledBitmap(bitmap, (int) getResources().getDimension(R.dimen.one_hundred_eighty_pt),
                                             (int) getResources().getDimension(R.dimen.one_hundred_eighty_pt), false);
-                                    PlayerUtils.ImageViewAnimatedChange(FavouriteListActivity.this, mPlayerArt, bitmap);
+                                    PlayerUtils.ImageViewAnimatedChange(CloudItemListActivity.this, mPlayerArt, bitmap);
                                 }catch (NullPointerException e){
                                     Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
                                             R.drawable.ic_default_small_grid_song);
-                                    PlayerUtils.ImageViewAnimatedChange(FavouriteListActivity.this, mPlayerArt, albumArt);
+                                    PlayerUtils.ImageViewAnimatedChange(CloudItemListActivity.this, mPlayerArt, albumArt);
                                 }
                             }
                         }
@@ -285,7 +446,7 @@ public class FavouriteListActivity extends AppCompatActivity {
             if(item != null) {
                 Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
                         R.drawable.ic_default_small_grid_song);
-                PlayerUtils.ImageViewAnimatedChange(FavouriteListActivity.this, mPlayerArt, albumArt);
+                PlayerUtils.ImageViewAnimatedChange(CloudItemListActivity.this, mPlayerArt, albumArt);
             }
         }
     }
@@ -302,7 +463,7 @@ public class FavouriteListActivity extends AppCompatActivity {
         mStartPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(FavouriteListActivity.this, BoomPlayerActivity.class);
+                Intent intent = new Intent(CloudItemListActivity.this, BoomPlayerActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 finish();
@@ -318,20 +479,21 @@ public class FavouriteListActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if(null != adapter){
-            adapter.notifyDataSetChanged();
-        }
-        if (null != App.getPlayerEventHandler().getPlayingItem()) {
-            updateMiniPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
-                            (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
-                            null, App.getPlayerEventHandler().isPlaying(),
-                       /*if last played item is set as playing item*/ (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false));
-            mMiniPlayer.setVisibility(View.VISIBLE);
-        } else {
-            mMiniPlayer.setVisibility(View.GONE);
-        }
+    protected void onStart() {
+        super.onStart();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        if(mediaType == MediaType.GOOGLE_DRIVE)
+            googleDriveHandler.connectGoogleAccount();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        if(mediaType == MediaType.GOOGLE_DRIVE)
+            googleDriveHandler.disconnectToGoogleAccount();
     }
 
     @Override

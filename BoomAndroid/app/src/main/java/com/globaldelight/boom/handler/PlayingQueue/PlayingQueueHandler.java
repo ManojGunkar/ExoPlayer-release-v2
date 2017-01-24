@@ -12,15 +12,15 @@ public class PlayingQueueHandler {
     private static PlayingQueueHandler handler;
     private static UpNextList upNextList;
 
-    private PlayingQueueHandler(Context application){
+    private PlayingQueueHandler(Context context){
         if(upNextList == null){
-            upNextList = UpNextList.getUpNextInstance(application);
+            upNextList = UpNextList.getUpNextInstance(context);
         }
     }
 
-    public static PlayingQueueHandler getHandlerInstance(App application) {
+    public static PlayingQueueHandler getHandlerInstance(Context context) {
         if(handler == null){
-            handler = new PlayingQueueHandler(application);
+            handler = new PlayingQueueHandler(context);
         }
         return handler;
     }

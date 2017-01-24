@@ -27,6 +27,7 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -299,7 +300,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
 //                                    if(!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused()){
                                         ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
                                         if (((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() > 0)
-                                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), 0, false, true);
+                                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), 0, false, true);
 //                                    }
                                         context.sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
                                     }

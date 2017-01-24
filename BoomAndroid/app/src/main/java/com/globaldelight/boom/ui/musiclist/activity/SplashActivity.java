@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -39,10 +40,6 @@ public class SplashActivity extends AppCompatActivity {
     JSONObject propsFirst, propsLast;
     String currentDate;
     private AudioEffect audioEffectPreferenceHandler;
-    public static String getToday(String format) {
-        Date date = new Date();
-        return new SimpleDateFormat(format).format(date);
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,6 +85,14 @@ public class SplashActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            MixPanelAnalyticHelper.initPushNotification(this);
+            MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
+            MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_APP_OPEN, currentDate);
+          /*  String android_id = Settings.Secure.getString(this.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+            MixPanelAnalyticHelper.getInstance(this).getPeople().set("Device_ID", android_id);*/
+
+            Preferences.writeString(this, Preferences.APP_LAST_OPEN, currentDate);
 
 
         }

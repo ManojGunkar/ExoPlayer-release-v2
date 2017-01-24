@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 
 import java.io.File;
+import com.dropbox.client2.session.Session.AccessType;
 
 /**
  * Created by Rahul Agarwal on 30-11-16.
