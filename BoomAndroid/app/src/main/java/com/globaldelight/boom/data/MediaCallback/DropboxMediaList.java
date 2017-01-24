@@ -1,61 +1,60 @@
-package com.globaldelight.boom.data.CloudMedia;
+package com.globaldelight.boom.data.MediaCallback;
 
 import android.content.Context;
 import android.os.Handler;
 
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-
 import java.util.ArrayList;
 
 /**
  * Created by Rahul Agarwal on 11-01-17.
  */
 
-public class GoogleDriveMediaList {
+public class DropboxMediaList {
 
     private ArrayList<IMediaItemBase> fileList;
-    private IGoogleDriveMediaUpdater googleDriveMediaUpdater;
-    private static GoogleDriveMediaList handler;
+    private IDropboxUpdater dropboxUpdater;
+    private static DropboxMediaList handler;
     private Handler postMessage;
 
-    private GoogleDriveMediaList(Context context){
+    private DropboxMediaList(Context context){
         fileList = new ArrayList<IMediaItemBase>();
         postMessage = new Handler();
     }
 
-    public static GoogleDriveMediaList geGoogleDriveMediaListInstance(Context context){
+    public static DropboxMediaList getDropboxListInstance(Context context){
         if(null == handler){
-            handler = new GoogleDriveMediaList(context);
+            handler = new DropboxMediaList(context);
         }
         return handler;
     }
 
-    public void addFileInGoogleDriveMediaList(IMediaItemBase entry){
+    public void addFileInDropboxList(IMediaItemBase entry){
         fileList.add(entry);
         postMessage.post(new Runnable() {
             @Override
             public void run() {
-                googleDriveMediaUpdater.UpdateGoogleDriveMediaList();
+                dropboxUpdater.UpdateDropboxEntryList();
             }
         });
     }
 
-    public void addFilesInGoogleDriveMediaList(ArrayList<IMediaItemBase> entries){
+    public void addFilesInDropboxList(ArrayList<IMediaItemBase> entries){
         fileList.addAll(entries);
         postMessage.post(new Runnable() {
             @Override
             public void run() {
-                googleDriveMediaUpdater.UpdateGoogleDriveMediaList();
+                dropboxUpdater.UpdateDropboxEntryList();
             }
         });
     }
 
-    public void removeFilesInGoogleDriveMediaList(int position){
+    public void removeFilesInDropboxList(int position){
         fileList.remove(position);
         postMessage.post(new Runnable() {
             @Override
             public void run() {
-                googleDriveMediaUpdater.UpdateGoogleDriveMediaList();
+                dropboxUpdater.UpdateDropboxEntryList();
             }
         });
     }
@@ -68,24 +67,24 @@ public class GoogleDriveMediaList {
         return fileList.size();
     }
 
-    public void clearGoogleDriveMediaContent(){
+    public void clearDropboxContent(){
         fileList.clear();
     }
 
-    public void finishGoogleDriveMediaLoading(){
+    public void finishDropboxLoading(){
         postMessage.post(new Runnable() {
             @Override
             public void run() {
-                googleDriveMediaUpdater.UpdateGoogleDriveMediaList();
+                dropboxUpdater.UpdateDropboxEntryList();
             }
         });
     }
 
-    public void setGoogleDriveMediaUpdater(IGoogleDriveMediaUpdater googleDriveMediaUpdater){
-        this.googleDriveMediaUpdater = googleDriveMediaUpdater;
+    public void setDropboxUpdater(IDropboxUpdater dropboxUpdater){
+        this.dropboxUpdater = dropboxUpdater;
     }
 
-    public interface IGoogleDriveMediaUpdater {
-        void UpdateGoogleDriveMediaList();
+    public interface IDropboxUpdater {
+        void UpdateDropboxEntryList();
     }
 }

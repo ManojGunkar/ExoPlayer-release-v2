@@ -204,7 +204,8 @@
     <string name="feedback_text">Take our quick feedback survey and tell us what you think.</string>
     <string name="feedback">feedback</string>
     <string name="feedback_error_no_network">No network connection! Try Again Later.</string>
-
+    <string name="network_error">No network connection available.</string>
+    <string name="error_fetch_data">Error to fetch Data</string>
 
 
 </resources>

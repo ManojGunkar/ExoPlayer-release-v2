@@ -11,9 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
-import com.globaldelight.boom.task.LoadGoogleDriveList;
-import com.google.android.gms.appindexing.AppIndex;
+import com.globaldelight.boom.R;
+import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
+import com.globaldelight.boom.task.MediaLoader.LoadGoogleDriveList;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.common.ConnectionResult;
@@ -99,13 +99,13 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
     public void connectGoogleAccount(){
         if(null != client) {
             client.connect();
-            AppIndex.AppIndexApi.start(client, getIndexApiAction());
+//            AppIndex.AppIndexApi.start(client, getIndexApiAction());
         }
     }
 
     public void disconnectToGoogleAccount() {
         if (null != client){
-            AppIndex.AppIndexApi.end(client, googleDriveHandler.getIndexApiAction());
+//            AppIndex.AppIndexApi.end(client, getIndexApiAction());
             client.disconnect();
         }
     }
@@ -133,7 +133,7 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (!isDeviceOnline()) {
-            Toast.makeText(mContext, "No network connection available.", Toast.LENGTH_SHORT).show();
+            GoogleDriveMediaList.geGoogleDriveMediaListInstance(mContext).onErrorOccurred(mContext.getResources().getString(R.string.network_error));
         } else {
             new LoadGoogleDriveList(mActivity, googleDriveHandler).execute();
         }

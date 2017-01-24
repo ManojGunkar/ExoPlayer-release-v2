@@ -79,7 +79,6 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
                 android:layout_marginRight="@dimen/one_ten_pt"
-
                 android:theme="@style/RedSwitch" />
         </LinearLayout>
 

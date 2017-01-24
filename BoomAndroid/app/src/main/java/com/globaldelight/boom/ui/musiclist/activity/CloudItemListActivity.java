@@ -4,6 +4,7 @@ import android.Manifest;
 import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,14 +31,15 @@ import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.data.CloudMedia.DropboxMediaList;
-import com.globaldelight.boom.data.CloudMedia.GoogleDriveMediaList;
+import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
+import com.globaldelight.boom.data.MediaCallback.FavouriteMediaList;
+import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
-import com.globaldelight.boom.task.LoadDropBoxList;
+import com.globaldelight.boom.task.MediaLoader.LoadDropBoxList;
+import com.globaldelight.boom.task.MediaLoader.LoadFavouriteList;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.adapter.CloudItemListAdapter;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
@@ -56,9 +57,11 @@ import static com.globaldelight.boom.task.PlayerEvents.*;
  * Created by Rahul Agarwal on 20-11-16.
  */
 
-public class CloudItemListActivity extends AppCompatActivity implements DropboxMediaList.IDropboxUpdater, GoogleDriveMediaList.IGoogleDriveMediaUpdater {
+public class CloudItemListActivity extends AppCompatActivity implements FavouriteMediaList.IFavouriteUpdater, DropboxMediaList.IDropboxUpdater, GoogleDriveMediaList.IGoogleDriveMediaUpdater {
 
     private DropboxMediaList dropboxMediaList;
+    private GoogleDriveMediaList googleDriveMediaList;
+    private FavouriteMediaList favouriteMediaList;
     private Toolbar toolbar;
     private RecyclerView recyclerView;
     private CloudItemListAdapter adapter;
@@ -71,7 +74,7 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxM
     private ItemType itemType;
     private MediaType mediaType;
     private GoogleDriveHandler googleDriveHandler;
-
+    private ProgressDialog progressLoader;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         overridePendingTransition(R.anim.slide_in_left, R.anim.stay_out);
@@ -108,30 +111,37 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxM
 
         mToolTitle = (RegularTextView) findViewById(R.id.favourite_list_toolbar_title);
 
-        if(itemType == ItemType.FAVOURITE){
-            mToolTitle.setText(getResources().getString(R.string.title_favourite_list));
-        }else if(mediaType == MediaType.DROP_BOX && itemType == ItemType.SONGS){
-            mToolTitle.setText(getResources().getString(R.string.title_dropbox_list));
-        }else if(mediaType == MediaType.GOOGLE_DRIVE && itemType == ItemType.SONGS){
-            mToolTitle.setText(getResources().getString(R.string.title_google_drive_list));
-        }
-
         recyclerView = (RecyclerView) findViewById(R.id.rv_favourite_list);
 
         emptyView = findViewById(R.id.fav_empty_view);
 
-        if(mediaType == MediaType.DROP_BOX && itemType == ItemType.SONGS){
+        progressLoader = new ProgressDialog(this);
+        if(itemType == ItemType.FAVOURITE){
+            mToolTitle.setText(getResources().getString(R.string.title_favourite_list));
+            favouriteMediaList = FavouriteMediaList.getFavouriteListInstance(this);
+            favouriteMediaList.setFavouriteUpdater(this);
+            favouriteMediaList.clearFavouriteContent();
+            progressLoader = new ProgressDialog(this);
+            setSongListAdapter(favouriteMediaList.getFileList(), itemType);
+        }else if(mediaType == MediaType.DROP_BOX && itemType == ItemType.SONGS){
+            mToolTitle.setText(getResources().getString(R.string.title_dropbox_list));
+            progressLoader.show();
             dropboxMediaList = DropboxMediaList.getDropboxListInstance(this);
             dropboxMediaList.setDropboxUpdater(this);
             dropboxMediaList.clearDropboxContent();
-
             DropBoxUtills.checkDropboxAuthentication(this);
-
             setSongListAdapter(dropboxMediaList.getFileList(), itemType);
-        }
-
-        if(mediaType == MediaType.GOOGLE_DRIVE && itemType == ItemType.SONGS){
+        }else if(mediaType == MediaType.GOOGLE_DRIVE && itemType == ItemType.SONGS){
+            mToolTitle.setText(getResources().getString(R.string.title_google_drive_list));
+            progressLoader.show();
+            googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(this);
+            googleDriveMediaList.setGoogleDriveMediaUpdater(this);
+            googleDriveMediaList.clearGoogleDriveMediaContent();
             googleDriveHandler = GoogleDriveHandler.getGoogleDriveInstance(this, CloudItemListActivity.this);
+            googleDriveHandler.getGoogleAccountCredential();
+            googleDriveHandler.getGoogleApiClient();
+            googleDriveHandler.connectGoogleAccount();
+            setSongListAdapter(googleDriveMediaList.getFileList(), itemType);
         }
 
         checkPermissions();
@@ -140,9 +150,8 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxM
     @Override
     protected void onResume() {
         super.onResume();
-        if(null != adapter){
-            adapter.notifyDataSetChanged();
-        }
+        notifyAdapter();
+
         if (null != App.getPlayerEventHandler().getPlayingItem()) {
             updateMiniPlayer(App.getPlayingQueueHandler().getUpNextList().getPlayingItem() != null ?
                             (IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem() :
@@ -166,38 +175,58 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxM
                 }
             }
         }
+    }
 
-        if(mediaType == MediaType.GOOGLE_DRIVE){
-            googleDriveHandler.connectGoogleAccount();
-            googleDriveHandler.getGoogleAccountCredential();
+    private void notifyAdapter(){
+        if(null != adapter){
+            adapter.notifyDataSetChanged();
+            listIsEmpty(adapter.getItemCount());
         }
+    }
+
+    @Override
+    public void onUpdateFavouriteList() {
+        dismissLoader();
+        notifyAdapter();
     }
 
     @Override
     public void UpdateDropboxEntryList() {
-        adapter.notifyDataSetChanged();
-        listIsEmpty(adapter.getItemCount());
+        dismissLoader();
+        notifyAdapter();
     }
 
     @Override
-    public void UpdateGoogleDriveMediaList() {
-        adapter.notifyDataSetChanged();
-        listIsEmpty(adapter.getItemCount());
+    public void onGoogleDriveMediaListUpdate() {
+        dismissLoader();
+        notifyAdapter();
     }
 
-    private class LoadFavouriteList extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {
+    @Override
+    public void onRequestCancelled() {
+        dismissLoader();
+        Toast.makeText(this, "Request cancelled.", Toast.LENGTH_SHORT).show();
+    }
 
-        @Override
-        protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
-            return MediaController.getInstance(CloudItemListActivity.this).getFavouriteListItems();
-        }
+    @Override
+    public void onError(String e) {
+        dismissLoader();
+        Toast.makeText(this, "The following error occurred:\n"
+                + e, Toast.LENGTH_SHORT).show();
+    }
 
-        @Override
-        protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
-            super.onPostExecute(iMediaItemList);
-            setSongListAdapter(iMediaItemList, itemType);
+    @Override
+    public void onEmptyList() {
+        dismissLoader();
+        Toast.makeText(this, "No results returned.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void dismissLoader(){
+        if(progressLoader.isShowing()){
+            progressLoader.dismiss();
         }
     }
+
 
     private void setSongListAdapter(ArrayList<? extends IMediaItemBase> iMediaItemList, ItemType itemType) {
         final GridLayoutManager gridLayoutManager =
@@ -214,7 +243,8 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxM
 
     public void listIsEmpty(int size) {
         if (size < 1) {
-            emptyView.setVisibility(View.VISIBLE);
+            if(itemType == ItemType.FAVOURITE)
+                emptyView.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }else{
             emptyView.setVisibility(View.GONE);
@@ -230,12 +260,11 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxM
                     @Override
                     public void onAccepted() {
                         if(itemType == ItemType.FAVOURITE)
-                            new LoadFavouriteList().execute();
+                            new LoadFavouriteList(CloudItemListActivity.this).execute();
                         else if(mediaType == MediaType.DROP_BOX)
                             new LoadDropBoxList(CloudItemListActivity.this).execute();
                         else if(mediaType == MediaType.GOOGLE_DRIVE)
                             googleDriveHandler.getResultsFromApi();
-//                            new LoadGoogleDriveList().execute();
                     }
 
                     @Override
@@ -244,10 +273,6 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxM
                     }
                 });
     }
-
-
-
-
 
     /**
      * Called when an activity launched here (specifically, AccountPicker
@@ -348,8 +373,7 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxM
                     mTrackProgress.setProgress(intent.getIntExtra("percent", 0));
                     break;
                 case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
-                    if(null != adapter)
-                        adapter.notifyDataSetChanged();
+                    notifyAdapter();
                     break;
             }
         }
@@ -539,6 +563,4 @@ public class CloudItemListActivity extends AppCompatActivity implements DropboxM
         });
         return animator;
     }
-
-
 }

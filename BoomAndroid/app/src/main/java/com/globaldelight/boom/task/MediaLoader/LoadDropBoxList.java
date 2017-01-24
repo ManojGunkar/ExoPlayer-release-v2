@@ -1,9 +1,9 @@
-package com.globaldelight.boom.task;
+package com.globaldelight.boom.task.MediaLoader;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.globaldelight.boom.data.CloudMedia.DropboxMediaList;
+import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 
 /**

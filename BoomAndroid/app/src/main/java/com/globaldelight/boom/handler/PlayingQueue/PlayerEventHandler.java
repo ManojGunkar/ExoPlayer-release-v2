@@ -17,6 +17,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.globaldelight.boomplayer.OpenSLPlayer;
 import com.globaldelight.boomplayer.PlayerEvents;
@@ -199,7 +200,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
                     Toast.makeText(context, "not logged in Dropbox", Toast.LENGTH_SHORT).show();
                 }
             }else if(mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){
-
+                dataSource = mediaItemBase.getItemUrl();
             }
             return dataSource;
         }
@@ -219,9 +220,6 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
             }
         }
     }
-
-
-
 
     public void playNextSong(boolean isUser) {
         if(isNext() || App.getUserPreferenceHandler().getRepeat() == UpNextList.REPEAT.one) {
