@@ -66,6 +66,23 @@ public class SplashActivity extends AppCompatActivity {
                 //finish();
             }
         }, SPLASH_TIME_OUT);
+        App.startPlayerService();
+        new Handler().postDelayed(new Runnable() {
+
+            /*
+             * Showing splash screen with a timer. This will be useful when you
+             * want to show case your app logo / company
+             */
+
+            @Override
+            public void run() {
+                // This method will be executed once the timer is over
+                // Start your app main activity
+                startPlayer();
+                // close this activity
+                //finish();
+            }
+        }, SPLASH_TIME_OUT);
         audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
         //flurry
         FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_APP_OPEN);
@@ -77,7 +94,6 @@ public class SplashActivity extends AppCompatActivity {
         if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true)) {
             Preferences.writeString(this, Preferences.INSTALL_DATE, currentDate);
             audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.FIVE_DAY_OFFER);
-            String lastOpen = Preferences.readString(this, Preferences.APP_LAST_OPEN, currentDate);
             //register first app open once as super property
             propsFirst = new JSONObject();
             try {
@@ -86,15 +102,29 @@ public class SplashActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            MixPanelAnalyticHelper.initPushNotification(this);
-            MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
-            MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_APP_OPEN, currentDate);
+
+
+        }
+
+        //get last opened date
+        String lastOpen = Preferences.readString(this, Preferences.APP_LAST_OPEN, currentDate);
+        propsLast = new JSONObject();
+
+
+        try {
+            propsLast.put(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
+            mixpanel.registerSuperProperties(propsLast);//super property
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        MixPanelAnalyticHelper.initPushNotification(this);
+        MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
+        MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_APP_OPEN, currentDate);
           /*  String android_id = Settings.Secure.getString(this.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
             MixPanelAnalyticHelper.getInstance(this).getPeople().set("Device_ID", android_id);*/
 
-            Preferences.writeString(this, Preferences.APP_LAST_OPEN, currentDate);
-        }
+        Preferences.writeString(this, Preferences.APP_LAST_OPEN, currentDate);
     }
 
     private void startPlayer(){
