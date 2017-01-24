@@ -190,13 +190,12 @@ public class AudioPlayer implements Runnable {
             reader = new AudioTrackReader(sourcePath);
             reader.startReading();
 
-            state.set(PlayerStates.PLAYING);
-            updatePlayerEffect();
-
             MediaFormat inputFormat = reader.getInputFormat();
             duration = inputFormat.getLong(MediaFormat.KEY_DURATION);
 
-            createPlayer(reader.getOutputFormat());
+            startPlayer(reader.getOutputFormat(), true);
+
+            state.set(PlayerStates.PLAYING);
 
             postOnStart(inputFormat.getString(MediaFormat.KEY_MIME),
                     inputFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE),
@@ -223,8 +222,12 @@ public class AudioPlayer implements Runnable {
                         onFormatChanged(reader.getOutputFormat());
                         break;
 
-                    default:
+                    case AudioTrackReader.STATE_FINISHED:
+                    case AudioTrackReader.STATE_ERROR:
                         completed = true;
+                        break;
+
+                    default:
                         break;
                 }
                 reader.releaseBuffer(buffer);
@@ -254,6 +257,8 @@ public class AudioPlayer implements Runnable {
             }
 
         } catch (Exception e) {
+            state.set(PlayerStates.STOPPED);
+            stop = true;
             postError();
         }
     }
@@ -276,7 +281,7 @@ public class AudioPlayer implements Runnable {
         Log.d("Selected Song Genre : ", "MUSIC");
     }
 
-    private void createPlayer(MediaFormat format)
+    private void startPlayer(MediaFormat format, boolean applyEffects)
     {
         Log.d(LOG_TAG, "createPlayer " + format);
 
@@ -296,6 +301,9 @@ public class AudioPlayer implements Runnable {
         }
 
         nativePlayer.createAudioPlayer(sampleRate, channels);
+        if ( applyEffects ) {
+            updatePlayerEffect();
+        }
     }
 
     private void onReadBuffer(AudioTrackReader.SampleBuffer buffer) {
@@ -309,7 +317,7 @@ public class AudioPlayer implements Runnable {
 
     private void onFormatChanged(MediaFormat format) {
         nativePlayer.shutdown(false);
-        createPlayer(format);
+        startPlayer(format, false);
     }
 
     private void postProgressUpdate(final long curTime, final long duration) {
@@ -427,7 +435,9 @@ public class AudioPlayer implements Runnable {
         try {
             if(isPlaying() || isPause())
                 nativePlayer.enableAudioEffect(enableEffect);
-        }catch (Exception e){}
+        }catch (Exception e){
+
+        }
     }
 
     public synchronized void setEnableEqualizer(boolean enable){

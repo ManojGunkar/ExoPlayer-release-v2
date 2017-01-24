@@ -39,6 +39,7 @@ namespace gdpl {
         void reset() {
             mIsReady = false;
             mQueueCount = 0;
+            mReset = true;
         }
 
     private:
@@ -59,6 +60,8 @@ namespace gdpl {
         AudioResampler *mAudioResampler;
         std::atomic<int> mQueueCount;
         std::atomic<bool> mIsReady;
+        std::atomic<bool> mReset;
+
 
         RingBuffer* mPlaybackQueue;
         RingBuffer* mInputQueue;
