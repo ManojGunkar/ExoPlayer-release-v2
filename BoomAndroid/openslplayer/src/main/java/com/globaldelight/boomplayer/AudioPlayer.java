@@ -30,6 +30,7 @@ public class AudioPlayer implements Runnable {
     private Handler handler = new Handler();
     private boolean isFinish = false;
     private int mPauseSeek = -1;
+    private static boolean engineCreated = false;
 
     long duration = 0;
 
@@ -41,34 +42,17 @@ public class AudioPlayer implements Runnable {
         setEventsListener(events);
         mContext = context;
         audioEffect = AudioEffect.getAudioEffectInstance(context);
-
-        AudioManager am = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
-
-        String sampleRateStr = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
-        int sampleRate = Integer.parseInt(sampleRateStr);
-        if ( sampleRate == 0 ) sampleRate = 44100; // if not available use 44.1kHz
-
-        String frameSizeStr = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
-        int frameCount = Integer.parseInt(frameSizeStr);
-        if ( frameCount == 0 ) frameCount = 1024; // if not available use 4k byteBuffer - 1024*2*2
-
-        Log.d(LOG_TAG, "sampleRate:"+sampleRate);
-        Log.d(LOG_TAG, "frameSize:"+frameCount);
-
-        OpenSLPlayer.createEngine(mContext.getAssets(), sampleRate, frameCount, floatAudioSupported());
     }
 
     private boolean floatAudioSupported() {
-        if ( Build.BRAND.equalsIgnoreCase("vivo") ) {
-            return false;
-        }
-
-        return true;
+        return (AudioConfiguration.getInstance(mContext).getFormat() == AudioConfiguration.FORMAT_FLOAT);
     }
 
     @Override
     protected void finalize() throws Throwable {
-        OpenSLPlayer.releaseEngine();
+        if ( isEngineInitalized ) {
+            OpenSLPlayer.releaseEngine();
+        }
     }
 
     /**
@@ -283,6 +267,8 @@ public class AudioPlayer implements Runnable {
     {
         Log.d(LOG_TAG, "createPlayer " + format);
 
+        initEngine();
+
         // if no output format; create a player with default configuration
         if ( format == null ) {
             nativePlayer.createAudioPlayer(44100, 2);
@@ -302,6 +288,30 @@ public class AudioPlayer implements Runnable {
         if ( applyEffects ) {
             updatePlayerEffect();
         }
+    }
+
+    private static boolean isEngineInitalized = false;
+    private void initEngine() {
+        if ( isEngineInitalized ) {
+            return;
+        }
+
+        isEngineInitalized = true;
+        AudioManager am = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
+
+        String sampleRateStr = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
+        int sampleRate = Integer.parseInt(sampleRateStr);
+        if ( sampleRate == 0 ) sampleRate = 44100; // if not available use 44.1kHz
+
+        String frameSizeStr = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
+        int frameCount = Integer.parseInt(frameSizeStr);
+        if ( frameCount == 0 ) frameCount = 1024; // if not available use 4k byteBuffer - 1024*2*2
+
+        Log.d(LOG_TAG, "sampleRate:"+sampleRate);
+        Log.d(LOG_TAG, "frameSize:"+frameCount);
+
+        OpenSLPlayer.createEngine(mContext.getAssets(), sampleRate, frameCount, floatAudioSupported());
+
     }
 
     private void onReadBuffer(AudioTrackReader.SampleBuffer buffer) {
@@ -370,7 +380,7 @@ public class AudioPlayer implements Runnable {
 
     public void updatePlayerEffect(){
         setEnableEffect(audioEffect.isAudioEffectOn());
-        nativePlayer.setQuality(audioEffect.getAudioQuality());
+        nativePlayer.setQuality(AudioConfiguration.getInstance(mContext).getQuality());
         if(audioEffect.isAudioEffectOn()) {
             setEnable3DAudio(audioEffect.is3DSurroundOn());
             if (audioEffect.isIntensityOn()) {

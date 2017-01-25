@@ -98,6 +98,7 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
         super.onCreate();
         context = this;
         App.setService(this);
+        AudioConfiguration.getInstance(this).load();
 
         try {
             App.getPlayingQueueHandler().getUpNextList().fetchUpNextItemsToDB();
