@@ -6,6 +6,7 @@ import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import java.util.Arrays;
@@ -30,7 +31,7 @@ public class AudioPlayer implements Runnable {
     private Handler handler = new Handler();
     private boolean isFinish = false;
     private int mPauseSeek = -1;
-    private static boolean engineCreated = false;
+    private AudioConfiguration mAudioConfig;
 
     long duration = 0;
 
@@ -42,10 +43,11 @@ public class AudioPlayer implements Runnable {
         setEventsListener(events);
         mContext = context;
         audioEffect = AudioEffect.getAudioEffectInstance(context);
+        mAudioConfig = AudioConfiguration.getInstance(context);
     }
 
     private boolean floatAudioSupported() {
-        return (AudioConfiguration.getInstance(mContext).getFormat() == AudioConfiguration.FORMAT_FLOAT);
+        return (mAudioConfig.getFormat() == AudioConfiguration.FORMAT_FLOAT);
     }
 
     @Override
@@ -380,7 +382,7 @@ public class AudioPlayer implements Runnable {
 
     public void updatePlayerEffect(){
         setEnableEffect(audioEffect.isAudioEffectOn());
-        nativePlayer.setQuality(AudioConfiguration.getInstance(mContext).getQuality());
+        nativePlayer.setQuality(mAudioConfig.getQuality());
         if(audioEffect.isAudioEffectOn()) {
             setEnable3DAudio(audioEffect.is3DSurroundOn());
             if (audioEffect.isIntensityOn()) {

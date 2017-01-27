@@ -9,16 +9,10 @@ import android.net.Uri;
 import android.os.Build;
 
 import com.android.volley.*;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
-
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by adarsh on 25/01/17.
@@ -87,15 +81,15 @@ public class AudioConfiguration {
 
 
     private void downloadConfig() {
-        final String baseURL = "http://devboom2.globaldelight.net/audioconfig.php";
+        final String BASE_URL = "http://devboom2.globaldelight.net/audioconfig.php";
 
-        Uri uri = Uri.parse(baseURL).buildUpon()
+        Uri uri = Uri.parse(BASE_URL).buildUpon()
                 .appendQueryParameter("action", "query")
                 .appendQueryParameter("manufacturer", Build.MANUFACTURER)
                 .appendQueryParameter("modelname", Build.MODEL)
                 .build();
 
-        String URL = uri.toString();
+        String configURL = uri.toString();
 
 
         Response.Listener<String> listener = new Response.Listener<String>() {
@@ -121,9 +115,7 @@ public class AudioConfiguration {
             }
         };
 
-        StringRequest configRequest = new StringRequest(Request.Method.GET, URL, listener, errorListener);
-;
-
+        StringRequest configRequest = new StringRequest(Request.Method.GET, configURL, listener, errorListener);
         queue.add(configRequest);
     }
 
