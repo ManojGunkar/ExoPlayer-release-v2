@@ -32,6 +32,7 @@ import com.globaldelight.boom.ui.musiclist.activity.BoomPlayerActivity;
 import com.globaldelight.boom.ui.musiclist.activity.PlayingQueueActivity;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.globaldelight.boomplayer.AudioConfiguration;
 
 import java.io.IOException;
 import java.util.HashMap;
