@@ -20,6 +20,7 @@ import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boomplayer.AudioEffect;
+import com.globaldelight.boomplayer.AudioPlayer;
 import com.globaldelight.boomplayer.OpenSLPlayer;
 import com.globaldelight.boomplayer.IPlayerEvents;
 
@@ -35,7 +36,7 @@ import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.Pla
 public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocusChangeListener {
     public static boolean isPlayerResume = false;
     private static IMediaItem playingItem;
-    private static OpenSLPlayer mPlayer;
+    private static AudioPlayer mPlayer;
     private static PlayerEventHandler handler;
     private static int NEXT = 0;
     private static int PREVIOUS = 1;
@@ -136,7 +137,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     private PlayerEventHandler(Context context, PlayerService service){
         this.context = context;
         if(null == mPlayer)
-            mPlayer = new OpenSLPlayer(context, IPlayerEvents);
+            mPlayer = new AudioPlayer(context, IPlayerEvents);
         if(null == audioManager)
             audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
         focusChangeListener = this;
@@ -154,7 +155,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         return handler;
     }
 
-    public OpenSLPlayer getPlayer(){
+    public AudioPlayer getPlayer(){
         return mPlayer;
     }
 

@@ -22,7 +22,7 @@ public class AudioPlayer implements Runnable {
     private OpenSLPlayer nativePlayer = new OpenSLPlayer();
     private AudioEffect audioEffect;
     private AudioTrackReader reader = null;
-    private PlayerEvents events = null;
+    private IPlayerEvents events = null;
     private PlayerStates state = new PlayerStates();
     private String sourcePath = null;
     private Context mContext;
@@ -35,11 +35,11 @@ public class AudioPlayer implements Runnable {
 
     long duration = 0;
 
-    public void setEventsListener(PlayerEvents events) {
+    public void setEventsListener(IPlayerEvents events) {
         this.events = events;
     }
 
-    public AudioPlayer(Context context, PlayerEvents events) {
+    public AudioPlayer(Context context, IPlayerEvents events) {
         setEventsListener(events);
         mContext = context;
         audioEffect = AudioEffect.getAudioEffectInstance(context);

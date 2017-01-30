@@ -22,10 +22,12 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.manager.MusicReceiver;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.globaldelight.boomplayer.AudioConfiguration;
+
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-public class PlayerService extends Service implements MusicReceiver.updateMusic, PlayerServiceReceiver.IPlayerService{
+public class PlayerService extends Service implements MusicReceiver.IUpdateMusic, PlayerServiceReceiver.IPlayerService{
 
     private long mServiceStartTime = 0;
     private long mServiceStopTime = 0;
@@ -43,7 +45,7 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic,
         super.onCreate();
         context = this;
         App.setService(this);
-
+        AudioConfiguration.getInstance(this).load();
 
         serviceReceiver = new PlayerServiceReceiver();
         serviceReceiver.registerPlayerServiceReceiver(this, serviceReceiver, this);
@@ -58,7 +60,9 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic,
             musicPlayerHandler = App.getPlayerEventHandler();
             Log.d("Service : ", "onCreate");
         }
-        musicReceiver = new MusicReceiver(this);
+
+        musicReceiver = new MusicReceiver(this, this);
+
         IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(musicReceiver, filter);
 
