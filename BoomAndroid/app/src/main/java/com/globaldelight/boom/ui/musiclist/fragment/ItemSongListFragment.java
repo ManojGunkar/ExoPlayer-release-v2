@@ -94,8 +94,14 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
 
         initViews();
-
-        setForAnimation();
+        if(mediaType == MediaType.GOOGLE_DRIVE) {
+            if (googleDriveMediaList.getGoogleDriveMediaList().isEmpty()) {
+                googleDriveHandler.getResultsFromApi();
+            } else {
+                notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
+                setForAnimation();
+            }
+        }
         return rootView;
     }
 
@@ -202,27 +208,21 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
-                        if(itemType == ItemType.FAVOURITE)
-                            if(favouriteMediaList.getFavouriteMediaList().isEmpty()) {
+                        if(itemType == ItemType.FAVOURITE) {
+                            if (favouriteMediaList.getFavouriteMediaList().isEmpty()) {
                                 new LoadFavouriteList(getActivity()).execute();
-                            } else{
+                            } else {
                                 notifyAdapter(favouriteMediaList.getFavouriteMediaList());
                             }
-
-                        else if(mediaType == MediaType.DROP_BOX)
-                            if(dropboxMediaList.getDropboxMediaList().isEmpty()) {
+                            setForAnimation();
+                        } else if(mediaType == MediaType.DROP_BOX) {
+                            if (dropboxMediaList.getDropboxMediaList().isEmpty()) {
                                 new LoadDropBoxList(getActivity()).execute();
-                            } else{
+                            } else {
                                 notifyAdapter(dropboxMediaList.getDropboxMediaList());
                             }
-
-                        else if(mediaType == MediaType.GOOGLE_DRIVE)
-                            if(googleDriveMediaList.getGoogleDriveMediaList().isEmpty()) {
-                                googleDriveHandler.getResultsFromApi();
-                            } else{
-                                notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
-                            }
-
+                            setForAnimation();
+                        }
                     }
 
                     @Override
