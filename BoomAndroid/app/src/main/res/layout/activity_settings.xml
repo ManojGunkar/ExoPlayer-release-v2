@@ -440,7 +440,7 @@
                 android:text="@string/settings_menu_support"
                 android:textColor="@color/white"
                 android:textSize="@dimen/settings_item_title_size"
-
+                android:visibility="invisible"
                 android:textStyle="bold" />
 
             <View
@@ -448,7 +448,7 @@
                 android:layout_height="1px"
                 android:layout_marginTop="@dimen/one_ten_pt"
                 android:background="#222327"
-                android:visibility="visible" />
+                android:visibility="invisible" />
 
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/title_share"
@@ -459,13 +459,14 @@
                 android:text="@string/settings_menu_share"
                 android:textColor="@color/white"
                 android:textSize="@dimen/settings_item_title_size"
-
+                android:visibility="invisible"
                 android:textStyle="bold" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_marginTop="@dimen/one_ten_pt"
+                android:visibility="invisible"
                 android:background="#222327" />
 
 

@@ -102,27 +102,27 @@ namespace gdpl {
     void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableSuperBass(JNIEnv *env, jobject instance,
                                                                     jboolean enable);
 
-    void Java_com_globaldelight_boomplayer_OpenSLPlayer_enableHighQuality(JNIEnv *env, jobject instance,
-                                                                      jboolean enable);
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_setQuality(JNIEnv *env, jobject instance,
+                                                                      jint quality);
 
     void Java_com_globaldelight_boomplayer_OpenSLPlayer_setIntensity(JNIEnv *env, jobject instance,
                                                                     jdouble value);
 
-    void Java_com_globaldelight_boomplayer_OpenSLPlayer_SetEqualizer(JNIEnv *env, jobject instance, jint id,
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_setEqualizer(JNIEnv *env, jobject instance, jint id,
                                                                  jfloatArray bandGains_);
 
-    void Java_com_globaldelight_boomplayer_OpenSLPlayer_SetSpeakerState(JNIEnv *env, jobject instance,
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_setSpeakerState(JNIEnv *env, jobject instance,
                                                                     jint speakerId, jfloat value);
 
-    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_Get3DAudioState(JNIEnv *env, jobject instance);
+    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_get3DAudioState(JNIEnv *env, jobject instance);
 
-    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_GetEffectsState(JNIEnv *env, jobject instance);
+    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_getEffectsState(JNIEnv *env, jobject instance);
 
-    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_GetIntensity(JNIEnv *env, jobject instance);
+    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_getIntensity(JNIEnv *env, jobject instance);
 
-    jint Java_com_globaldelight_boomplayer_OpenSLPlayer_GetEqualizerId(JNIEnv *env, jobject instance);
+    jint Java_com_globaldelight_boomplayer_OpenSLPlayer_getEqualizerId(JNIEnv *env, jobject instance);
 
-    jfloat Java_com_globaldelight_boomplayer_OpenSLPlayer_GetSpeakerState(JNIEnv *env, jobject instance,
+    jfloat Java_com_globaldelight_boomplayer_OpenSLPlayer_getSpeakerState(JNIEnv *env, jobject instance,
                                                                       jint speakerId);
 
     void Java_com_globaldelight_boomplayer_OpenSLPlayer_setHeadphoneType(JNIEnv *env, jobject instance,

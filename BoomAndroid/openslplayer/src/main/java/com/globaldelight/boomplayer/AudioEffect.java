@@ -2,7 +2,9 @@ package com.globaldelight.boomplayer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
+import android.os.Build;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,8 +53,10 @@ public class AudioEffect {
 
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
+    private Context context;
 
     private AudioEffect(Context context) {
+        this.context = context;
         shp = context.getSharedPreferences(AUDIO_EFFECT_SETTING, Context.MODE_PRIVATE);
         editor = shp.edit();
     }
@@ -100,7 +104,8 @@ public class AudioEffect {
     }
 
     public boolean isFullBassOn(){
-        return shp.getBoolean(FULL_BASS, DEFAULT_POWER);
+        boolean isOn = AudioConfiguration.getInstance(context).getQuality() == AudioConfiguration.QUALITY_HIGH;
+        return shp.getBoolean(FULL_BASS, isOn);
     }
 
     public void setEnableFullBass(boolean enableBass) {
@@ -222,6 +227,7 @@ public class AudioEffect {
         editor.commit();
     }
 
+
     public enum headphone {
         OVER_EAR,
         ON_EAR,
@@ -291,6 +297,4 @@ public class AudioEffect {
             return lookup.get(ordinal);
         }
     }
-
-
 }
