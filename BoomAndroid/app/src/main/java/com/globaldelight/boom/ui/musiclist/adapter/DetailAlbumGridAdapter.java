@@ -20,24 +20,22 @@ import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
+import com.globaldelight.boom.ui.musiclist.activity.AlbumDetailActivity;
+import com.globaldelight.boom.ui.musiclist.activity.AlbumSongListActivity;
+import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
-import com.globaldelight.boom.ui.musiclist.activity.AlbumActivity;
-import com.globaldelight.boom.ui.musiclist.activity.DetailAlbumActivity;
-import com.globaldelight.boom.ui.musiclist.activity.SongsDetailListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
-import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
@@ -55,7 +53,6 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     private static final int ITEM_VIEW_ALBUM = 222;
     private static final int ITEM_VIEW_SONG = 333;
     private MediaItemCollection collection;
-    private Context context;
     private Activity activity;
     private  RecyclerView recyclerView;
     private ListDetail listDetail;
@@ -65,10 +62,9 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
         return position == 0;
     }
 
-    public DetailAlbumGridAdapter(DetailAlbumActivity detailAlbumActivity, RecyclerView recyclerView,
+    public DetailAlbumGridAdapter(Activity activity, RecyclerView recyclerView,
                                   IMediaItemCollection collection, ListDetail listDetail, boolean isPhone) {
-        this.context = detailAlbumActivity;
-        activity = detailAlbumActivity;
+        this.activity = activity;
         this.recyclerView = recyclerView;
         this.collection = (MediaItemCollection) collection;
         this.listDetail = listDetail;
@@ -140,7 +136,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     break;
                 case ITEM_VIEW_SONG:
                     if (((MediaItemCollection) collection.getMediaElement().get(pos)).getArtUrlList().isEmpty())
-                        ((MediaItemCollection) collection.getMediaElement().get(pos)).setArtUrlList(MediaController.getInstance(context).getArtUrlList(collection));
+                        ((MediaItemCollection) collection.getMediaElement().get(pos)).setArtUrlList(MediaController.getInstance(activity).getArtUrlList(collection));
 
                     if (((MediaItemCollection) collection.getMediaElement().get(pos)).getArtUrlList().isEmpty()) {
                         ArrayList list = new ArrayList();
@@ -161,7 +157,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     holder.title.setText(collection.getMediaElement().get(pos).getItemTitle());
 
                     StringBuilder countStr = new StringBuilder();
-                    countStr.append(((MediaItemCollection) collection.getMediaElement().get(pos)).getItemCount() > 1 ? context.getResources().getString(R.string.songs) : context.getResources().getString(R.string.song));
+                    countStr.append(((MediaItemCollection) collection.getMediaElement().get(pos)).getItemCount() > 1 ? activity.getResources().getString(R.string.songs) : activity.getResources().getString(R.string.song));
                     countStr.append(" ");
                     countStr.append(((MediaItemCollection) collection.getMediaElement().get(pos)).getItemCount());
 
@@ -187,43 +183,43 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
 
         switch (count){
             case 1:
-                Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
                 break;
             case 2:
-                Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
                 break;
             case 3:
-                Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                Picasso.with(context).load(new File(Urls.get(2))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(2))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
                 break;
             case 4:
-                Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                Picasso.with(context).load(new File(Urls.get(2))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(2))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                Picasso.with(context).load(new File(Urls.get(3))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                Picasso.with(activity).load(new File(Urls.get(3))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                         /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
                 break;
         }
@@ -256,52 +252,52 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     private void setArtistImg(final SimpleItemViewHolder holder, final int position, final int size, final String path) {
 
         if (PlayerUtils.isPathValid(path))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null)).noFade()
+            Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_album_grid, null)).noFade()
                     /*.centerCrop().resize(size, size)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else
             setDefaultImage(holder.defaultImg, size, size);
     }
 
     private void setDefaultImage(ImageView img, int width, int height){
-        img.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_album_grid));
+        img.setImageDrawable(activity.getResources().getDrawable( R.drawable.ic_default_album_grid));
     }
 
     private void setOnMenuClickListener(SimpleItemViewHolder holder, int position) {
         holder.mMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-                PopupMenu pm = new PopupMenu(context, anchorView);
+                PopupMenu pm = new PopupMenu(activity, anchorView);
                 pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         try {
                             switch (menuItem.getItemId()) {
                                 case R.id.album_header_add_play_next:
-                                    ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                    ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
                                     if (((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() > 0)
                                         App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(collection.getMediaElement().get(0));
                                     break;
                                 case R.id.album_header_add_to_upnext:
                                     if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                                        ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                        ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
                                         if (((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() > 0)
                                             App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(0));
                                     }
                                     break;
                                 case R.id.album_header_add_to_playlist:
-                                    Utils util = new Utils(context);
-                                    ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                    Utils util = new Utils(activity);
+                                    ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
                                     if (((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() > 0)
-                                        util.addToPlaylist((DetailAlbumActivity) context, ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), null);
+                                        util.addToPlaylist(activity, ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), null);
                                     break;
                                 case R.id.album_header_shuffle:
                                     if (App.getPlayingQueueHandler().getUpNextList() != null) {
 //                                    if(!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused()){
-                                        ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                        ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
                                         if (((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() > 0)
-                                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), 0, false, true);
+                                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), 0, false, true);
 //                                    }
-                                        context.sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
+                                        activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
                                     }
                                     break;
                             }
@@ -329,17 +325,17 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                         collection.setCurrentIndex(position);
                         Intent i = null;
                         if(itemView == ITEM_VIEW_SONG){
-                            i = new Intent(context, SongsDetailListActivity.class);
+                            i = new Intent(activity, AlbumSongListActivity.class);
                         }else if (itemView == ITEM_VIEW_ALBUM) {
-                            i = new Intent(context, AlbumActivity.class);
+                            i = new Intent(activity, AlbumDetailActivity.class);
                             i.putExtra("albumColor", holder.defaultAlbumColor);
                         }
                         i.putExtra("mediaItemCollection", collection);
                         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                (Activity) context,
+                                (Activity) activity,
                                 new Pair<View, String>(holder.defaultImg, "transition:imgholder")
                         );
-                        ActivityCompat.startActivity((Activity) context, i, options.toBundle());
+                        ActivityCompat.startActivity((Activity) activity, i, options.toBundle());
                     }
                 }, 100);
             }
@@ -348,17 +344,17 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
         holder.grid_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu pm = new PopupMenu(context, view);
+                PopupMenu pm = new PopupMenu(activity, view);
                 pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.popup_album_play_next :
                                 if(itemView == ITEM_VIEW_SONG){
-                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
                                 }else if (itemView == ITEM_VIEW_ALBUM) {
                                     if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                                        ((IMediaItemCollection)collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                        ((IMediaItemCollection)collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
                                     }
                                 }
                                 if(((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement().size() > 0)
@@ -366,21 +362,21 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                                 break;
                             case R.id.popup_album_add_queue :
                                 if(itemView == ITEM_VIEW_SONG){
-                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
                                 }else if (itemView == ITEM_VIEW_ALBUM) {
                                     if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                                        ((IMediaItemCollection)collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                        ((IMediaItemCollection)collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
                                     }
                                 }
                                 if(((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement().size() > 0)
                                     App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(position));
                                 break;
                             case R.id.popup_album_add_playlist:
-                                Utils util = new Utils(context);
+                                Utils util = new Utils(activity);
                                 if(itemView == ITEM_VIEW_SONG){
-                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
                                 }else if (itemView == ITEM_VIEW_ALBUM) {
-                                    ((IMediaItemCollection)collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(collection));
+                                    ((IMediaItemCollection)collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
                                 }
                                 if(((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement().size() > 0)
                                     util.addToPlaylist(activity, ((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement(), null);
@@ -397,9 +393,9 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     }
 
     private int setSize(SimpleItemViewHolder holder) {
-        Utils utils = new Utils(context);
-        int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
-                - (int)(context.getResources().getDimension(R.dimen.twenty_four_pt)*2);
+        Utils utils = new Utils(activity);
+        int size = (utils.getWindowWidth(activity) / (isPhone ? 2 : 3))
+                - (int)(activity.getResources().getDimension(R.dimen.twenty_four_pt)*2);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
         holder.gridBottomBg.setLayoutParams(params);
@@ -415,7 +411,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     }
 
     public int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 

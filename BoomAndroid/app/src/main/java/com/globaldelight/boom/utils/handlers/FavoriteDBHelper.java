@@ -114,6 +114,13 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void removeSong(String songTitle) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_FAVORITE + " WHERE " +
+                TITLE + "='" + songTitle + "'");
+        db.close();
+    }
+
     public void clearList(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_FAVORITE);
@@ -151,6 +158,19 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT  * FROM " + TABLE_FAVORITE+ " WHERE " +
                 SONG_KEY_REAL_ID + "='" + itemId + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
+
+    public boolean isFavouriteItems(String itemTitle) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT  * FROM " + TABLE_FAVORITE+ " WHERE " +
+                TITLE + "='" + itemTitle + "'";
         Cursor cursor = db.rawQuery(query, null);
         if(cursor.getCount() <= 0){
             cursor.close();

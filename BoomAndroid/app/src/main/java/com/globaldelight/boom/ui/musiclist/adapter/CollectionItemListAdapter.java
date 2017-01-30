@@ -1,6 +1,6 @@
 package com.globaldelight.boom.ui.musiclist.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,18 +14,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
-import com.globaldelight.boom.ui.musiclist.activity.CollectionListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
-import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.ArrayList;
@@ -38,15 +36,13 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
 
     public static final int TYPE_HEADER = 111;
     public static final int TYPE_ITEM = 222;
-    private PermissionChecker permissionChecker;
-    private Context context;
+    private Activity activity;
     private MediaItemCollection item;
     private ListDetail listDetail;
 
-    public CollectionItemListAdapter(CollectionListActivity context, IMediaItemCollection item, ListDetail listDetail, PermissionChecker permissionChecker) {
-        this.context = context;
+    public CollectionItemListAdapter(Activity activity, IMediaItemCollection item, ListDetail listDetail) {
+        this.activity = activity;
         this.item = (MediaItemCollection) item;
-        this.permissionChecker = permissionChecker;
         this.listDetail = listDetail;
     }
 
@@ -99,11 +95,11 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                 title = item.getMediaElement().get(pos).getItemTitle();
                 duration = ((MediaItem) item.getMediaElement().get(pos)).getDuration();
                 if (null != nowPlayingItem && item.getMediaElement().get(pos).getItemId() == nowPlayingItem.getItemId()) {
-                    holder.name.setTextColor(context.getResources().getColor(R.color.boom_yellow));
-                    holder.count.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+                    holder.name.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
+                    holder.count.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
                 } else if (null != nowPlayingItem) {
-                    holder.name.setTextColor(context.getResources().getColor(R.color.white));
-                    holder.count.setTextColor(context.getResources().getColor(R.color.white));
+                    holder.name.setTextColor(activity.getResources().getColor(R.color.white));
+                    holder.count.setTextColor(activity.getResources().getColor(R.color.white));
                 }
 
                 holder.name.setText(title);
@@ -141,7 +137,7 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
         holder.mMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-                PopupMenu pm = new PopupMenu(context, anchorView);
+                PopupMenu pm = new PopupMenu(activity, anchorView);
                 pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
@@ -160,9 +156,9 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                                     }
                                     break;
                                 case R.id.album_header_add_to_playlist:
-                                    Utils util = new Utils(context);
+                                    Utils util = new Utils(activity);
                                     if (item.getMediaElement().size() > 0) {
-                                        util.addToPlaylist((CollectionListActivity) context, item.getMediaElement(), null);
+                                        util.addToPlaylist(activity, item.getMediaElement(), null);
                                     }
 
                                     break;
@@ -173,7 +169,7 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                                             App.getPlayingQueueHandler().getUpNextList().addToPlay(item, 0, true);
                                         }
 //                                    }
-                                        context.sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
+                                        activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
                                     }
                                     break;
                             }
@@ -196,8 +192,8 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                     if (item.getMediaElement().size() > 0) {
                         App.getPlayingQueueHandler().getUpNextList().addToPlay(item, position, false);
                     }
-                    holder.name.setTextColor(context.getResources().getColor(R.color.boom_yellow));
-                    holder.count.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+                    holder.name.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
+                    holder.count.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
                     notifyDataSetChanged();
                 }
             }
@@ -206,7 +202,7 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
         holder.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-                PopupMenu pm = new PopupMenu(context, anchorView);
+                PopupMenu pm = new PopupMenu(activity, anchorView);
                 pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
@@ -227,22 +223,22 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                                     }
                                     break;
                                 case R.id.popup_song_add_playlist:
-                                    Utils util = new Utils(context);
+                                    Utils util = new Utils(activity);
                                     ArrayList list = new ArrayList();
                                     if (item.getMediaElement().size() > 0) {
                                         list.add(item.getMediaElement().get(position));
-                                        util.addToPlaylist((CollectionListActivity) context, list, null);
+                                        util.addToPlaylist(activity, list, null);
                                     }
 
                                     break;
                                 case R.id.popup_song_add_fav:
                                     if (item.getMediaElement().size() > 0) {
-                                        if (MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())) {
-                                            MediaController.getInstance(context).removeItemToFavoriteList(item.getMediaElement().get(position).getItemId());
-                                            Toast.makeText(context, context.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
+                                        if (MediaController.getInstance(activity).isFavouriteItems(item.getMediaElement().get(position).getItemId())) {
+                                            MediaController.getInstance(activity).removeItemToFavoriteList(item.getMediaElement().get(position).getItemId());
+                                            Toast.makeText(activity, activity.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                                         } else {
-                                            MediaController.getInstance(context).addSongsToFavoriteList(item.getMediaElement().get(position));
-                                            Toast.makeText(context, context.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
+                                            MediaController.getInstance(activity).addSongsToFavoriteList(item.getMediaElement().get(position));
+                                            Toast.makeText(activity, activity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                     break;
@@ -253,7 +249,7 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                         return false;
                     }
                 });
-                if (MediaController.getInstance(context).isFavouriteItems(item.getMediaElement().get(position).getItemId())) {
+                if (MediaController.getInstance(activity).isFavouriteItems(item.getMediaElement().get(position).getItemId())) {
                     pm.inflate(R.menu.song_remove_fav);
                 } else {
                     pm.inflate(R.menu.song_add_fav);

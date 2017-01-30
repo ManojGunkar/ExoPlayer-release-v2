@@ -1,5 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="background_3d_side_margine">20dp</dimen>
-    <dimen name="background_3d_top_margine">50dp</dimen>
-</resources>
+<resources></resources>

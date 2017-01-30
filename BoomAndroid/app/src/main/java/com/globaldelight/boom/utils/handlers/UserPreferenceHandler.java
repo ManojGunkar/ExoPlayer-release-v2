@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class UserPreferenceHandler {
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
 
-    private static ArrayList<MediaItem> list = new ArrayList<>();
+    private static ArrayList<IMediaItem> list = new ArrayList<>();
     private static ArrayList<Long> idList = new ArrayList<>();
     private static long boomPlayListId;
     private int playerSeekPosition;
@@ -130,7 +131,7 @@ public class UserPreferenceHandler {
         return shp.getBoolean(LIBRARY_FROM, LIB_FROM_HOME);
     }
 
-    public void addItemToPlayList(MediaItem item) {
+    public void addItemToPlayList(IMediaItem item) {
         if(idList.contains(item.getItemId())){
             list.remove(idList.indexOf(item.getItemId()));
             idList.remove(item.getItemId());
@@ -140,7 +141,7 @@ public class UserPreferenceHandler {
         }
     }
 
-    public ArrayList<MediaItem> getItemList(){
+    public ArrayList<IMediaItem> getItemList(){
         return list;
     }
 

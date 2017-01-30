@@ -5,6 +5,9 @@ import android.provider.Settings;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by nidhin on 17/11/16.
  */
@@ -16,9 +19,19 @@ public class MixPanelAnalyticHelper {
     private static String SENDER_ID = "862807752058";
 
     public static MixpanelAPI getInstance(Context context) {
-
-
-        return MixpanelAPI.getInstance(context, projectToken);
+        MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, projectToken);
+        String android_id = Settings.Secure.getString(context.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        mixpanel.identify(android_id);
+        JSONObject props = new JSONObject();
+        try {
+            props.put("DeviceID", android_id);
+            // mixpanel.registerSuperProperties(props);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mixpanel.getPeople().set(props);
+        return mixpanel;
     }
 
     public static void initPushNotification(Context context) {
@@ -28,8 +41,11 @@ public class MixPanelAnalyticHelper {
         String android_id = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         people.identify(android_id);
+
+
         people.initPushHandling(SENDER_ID);
     }
+
     public static void track(Context context, String eventName) {
 
         getInstance(context).track(eventName);

@@ -9,7 +9,7 @@ import java.util.Map;
  */
 
 public enum MediaType {
-    DEVICE_MEDIA_LIB, GMUSIC_MEDIA_LIB, SPOTIFY;
+    DEVICE_MEDIA_LIB, DROP_BOX, GOOGLE_DRIVE, SEARCH;
 
     private static final Map<Integer, MediaType> lookup = new HashMap<Integer, MediaType>();
 

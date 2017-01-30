@@ -29,6 +29,7 @@ public class MediaItem implements IMediaItem, Parcelable {
     private long parentId;
     public static String UNKNOWN_ART_URL = "unknown_art_url";
 
+    /*Only for Device Media Item*/
     public MediaItem(long ItemId, String ItemTitle, String ItemDisplayName, String ItemUrl, long ItemAlbumId, String ItemAlbum, long ItemArtistId,
                      String ItemArtist, long Duration, long DateAdded, String ItemArtUrl, ItemType itemType, MediaType mediaType, ItemType parentType, long parentId){
         this.ItemId = ItemId;
@@ -46,6 +47,15 @@ public class MediaItem implements IMediaItem, Parcelable {
         this.mediaType = mediaType;
         this.parentType = parentType;
         this.parentId = parentId;
+    }
+
+    /*Only for Dropbox*/
+    public MediaItem(String ItemTitle, String  ItemUrl, ItemType itemType, MediaType mediaType, ItemType parentType) {
+        this.ItemUrl = ItemUrl;
+        this.ItemTitle = ItemTitle;
+        this.itemType = itemType;
+        this.mediaType = mediaType;
+        this.parentType = parentType;
     }
 
     protected MediaItem(Parcel in) {

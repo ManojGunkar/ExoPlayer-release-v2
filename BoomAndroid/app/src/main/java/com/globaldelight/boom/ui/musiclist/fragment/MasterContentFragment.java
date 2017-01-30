@@ -1,0 +1,1338 @@
+package com.globaldelight.boom.ui.musiclist.fragment;
+
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.widget.AppCompatCheckBox;
+import android.support.v7.widget.AppCompatSeekBar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.App;
+import com.globaldelight.boom.ui.musiclist.activity.MasterActivity;
+import com.globaldelight.boom.ui.musiclist.adapter.EqualizerDialogAdapter;
+import com.globaldelight.boom.handler.controller.EffectUIController;
+import com.globaldelight.boom.handler.controller.PlayerUIController;
+import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
+import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
+import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.task.PlayerEvents;
+import com.globaldelight.boom.ui.widgets.NegativeSeekBar;
+import com.globaldelight.boom.utils.PlayerUtils;
+import com.globaldelight.boom.utils.async.Action;
+import com.globaldelight.boomplayer.AudioEffect;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_HEADSET_PLUGGED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_PLAYER_SCREEN_RESUME;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_REPEAT;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_SHUFFLE;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
+
+/**
+ * Created by Rahul Agarwal on 16-01-17.
+ */
+
+public class MasterContentFragment extends Fragment implements MasterActivity.IPlayerSliderControl, View.OnClickListener, View.OnTouchListener, EqualizerDialogAdapter.IEqualizerSelect {
+    private final String TAG = "PlayerFragment-TAG";
+
+    private long mItemId=-1;
+    private boolean isUser = false;
+
+    private AudioEffect audioEffectPreferenceHandler;
+
+    public static boolean isUpdateUpnextDB = true;
+
+    private static MediaItem mPlayingMediaItem;
+    private static boolean mIsPlaying, mIsLastPlayed;
+
+    /************************************************************************************/
+
+    public View miniController, mPlayerActionPanel;
+
+    private TextView mMiniSongTitle, mMiniSongSubTitle, mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
+    private Activity mContext;
+    private View mInflater, revealView;
+    private ImageView mMiniPlayerPlayPause;
+    private int size, colorLight, colorTo = 0xffffffff, colorDark;
+    private AppCompatSeekBar mTrackSeek, mMiniPlayerSeek;
+    private ImageView mPlayerFav, mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mEffectTab, mPlayerTab, mPlayerBackBtn, mLargeAlbumArt;
+    private LinearLayout mEffectContent, mPlayerSwitcherPanel, mSeekbarPanel, mPlayerControllerHolder, mPlayerLarge, mPlayerTitlePanel, mMiniTitlePanel, mMiniPlayerEffectPanel, mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
+    private FrameLayout mPlayerContent;
+    private FrameLayout mPlayerBackground;
+
+    private TextView mDisableIntensity;
+    private NegativeSeekBar mIntensitySeek;
+    private SwitchCompat mEffectSwitch;
+    private AppCompatCheckBox mFullBassCheck;
+    private TextView mEffectSwitchTxt, m3DSurroundTxt, mIntensityTxt, mEqualizerTxt, mSelectedEqTxt;
+    private ImageView m3DSurroundBtn, mIntensityBtn, mEqualizerBtn, mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
+    private LinearLayout mEqDialogPanel, mSpeakerDialogPanel;
+    private double mOldIntensity;
+
+    private List<String> eq_names;
+    private TypedArray eq_active_on, eq_active_off;
+
+    private int ScreenWidth, ScreenHeight;
+    private boolean isEffectOn = false;
+    private EffectUIController aaEffectUIController;
+    private PlayerUIController playerUIController;
+    private Handler postMessage;
+
+    private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            IMediaItem item;
+            switch (intent.getAction()){
+                case ACTION_RECEIVE_SONG :
+                    item = intent.getParcelableExtra("playing_song");
+                    if(item != null){
+                        mPlayingMediaItem = (MediaItem) item;
+                        mIsPlaying = intent.getBooleanExtra("playing", false);
+                        mIsLastPlayed = false;
+                        updatePlayerUI();
+                    }
+                    break;
+                case ACTION_LAST_PLAYED_SONG:
+                    item = intent.getParcelableExtra("playing_song");
+                    mPlayingMediaItem = (MediaItem) item;
+                    mIsPlaying = false;
+                    mIsLastPlayed = intent.getBooleanExtra("last_played_song", true);
+                    updatePlayerUI();
+                    break;
+                case ACTION_ITEM_CLICKED :
+                    try {
+                        if (intent.getBooleanExtra("play_pause", false) == false) {
+                            mMiniPlayerPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_miniplayer_play, null));
+                            mPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_play, null));
+                        } else {
+                            mMiniPlayerPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_miniplayer_pause, null));
+                            mPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_pause, null));
+                        }
+                    }catch (Exception e){}
+                    break;
+                case ACTION_TRACK_STOPPED :
+                    mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+                    mIsPlaying = false;
+                    mIsLastPlayed = false;
+                    updatePlayerUI();
+                    break;
+                case ACTION_UPDATE_TRACK_SEEK :
+                    if(!isUser) {
+                        mTrackSeek.setProgress(intent.getIntExtra("percent", 0));
+                        mMiniPlayerSeek.setProgress(intent.getIntExtra("percent", 0));
+                    }
+
+                    long totalMillis = intent.getLongExtra("totalms", 0);
+                    long currentMillis = intent.getLongExtra("currentms", 0);
+                    updateTrackPlayTime(totalMillis, currentMillis);
+                    break;
+                case ACTION_UPDATE_SHUFFLE:
+                    updateShuffle();
+                    break;
+                case ACTION_UPDATE_REPEAT :
+                    updateRepeat();
+                    updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
+                    break;
+                case ACTION_STOP_UPDATING_UPNEXT_DB:
+                    isUpdateUpnextDB = false;
+                    break;
+                case ACTION_HEADSET_PLUGGED:
+//                    if (tipWindowHeadset != null) {//Plugged
+//                        tipWindowHeadset.dismissTooltip();
+//                        Preferences.writeBoolean(getActivity(), Preferences.PLAYER_SCREEN_HEADSET_ENABLE, false);
+//                    }
+                    break;
+                case ACTION_PLAYER_SCREEN_RESUME:
+                    onResumePlayerScreen();
+                    break;
+            }
+        }
+    };
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mInflater = inflater.inflate(R.layout.fragment_content_master, container, false);
+        mContext = getActivity();
+
+        Point point = new Point();
+        getActivity().getWindowManager().getDefaultDisplay().getSize(point);
+        ScreenWidth = point.x;
+        ScreenHeight = point.y;
+
+        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(getActivity());
+
+        playerUIController = new PlayerUIController(getActivity());
+        PlayerUIController.registerPlayerUIController(playerUIController);
+
+        mPlayerBackground = (FrameLayout) mInflater.findViewById(R.id.player_src_background);
+
+        initMiniPlayer();
+        initLargePlayer();
+        initEffectControl();
+
+        setPlayerInfo();
+
+        return mInflater;
+    }
+
+    private void setPlayerEnable(boolean isEnable){
+        if(isEnable){
+            mPlayerTab.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_active, null));
+            mEffectTab.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_effects_normal, null));
+            mPlayerContent.setVisibility(View.VISIBLE);
+            mEffectContent.setVisibility(View.GONE);
+            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_PLAYER_TAB);
+        }else{
+            mPlayerContent.setVisibility(View.GONE);
+            mEffectContent.setVisibility(View.VISIBLE);
+            mPlayerTab.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_normal, null));
+            mEffectTab.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_effects_active, null));
+            mEffectSwitch.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
+
+            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_EFFECT_TAB);
+        }
+    }
+
+    private void onResumePlayerScreen() {
+        App.getPlayerEventHandler().isPlayerResume = true;
+    }
+
+
+    private void setPlayerInfo(){
+        mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        mIsPlaying = App.getPlayerEventHandler().isPlaying();
+        mIsLastPlayed = (null != App.getPlayerEventHandler().getPlayingItem() ?
+                (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false) :
+                false);
+        updatePlayerUI();
+
+        updateUpNextButton();
+    }
+
+    /* Large Player UI and Functionality*/
+
+
+    private void updateUpNextButton() {
+        if(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0 ||
+                App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0 ||
+                null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem() ||
+                App.getPlayingQueueHandler().getUpNextList().getHistoryList().size() > 0){
+            mUpNextBtnPanel.setVisibility(View.VISIBLE);
+        }else{
+            mUpNextBtnPanel.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void updateShuffle(){
+        switch (App.getUserPreferenceHandler().getShuffle()){
+            case none:
+                mShuffle.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_shuffle_off, null));
+                break;
+            case all:
+                mShuffle.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_shuffle_on, null));
+                break;
+        }
+    }
+
+    private void updateRepeat(){
+        switch (App.getUserPreferenceHandler().getRepeat()){
+            case none:
+                mRepeat.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_repeat_off, null));
+                break;
+            case one:
+                mRepeat.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_repeat_one, null));
+                break;
+            case all:
+                mRepeat.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_repeat_all, null));
+                break;
+        }
+    }
+
+    private void updatePreviousNext(boolean prev_enable, boolean next_enable){
+        if(prev_enable){
+            mPrevious.setVisibility(View.VISIBLE);
+        }else{
+            mPrevious.setVisibility(View.INVISIBLE);
+        }
+
+        if(next_enable){
+            mNext.setVisibility(View.VISIBLE);
+        }else{
+            mNext.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void updateAlbumArt(final IMediaItem item){
+        if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
+            new Action() {
+                private Bitmap img;
+
+                @NonNull
+                @Override
+                public String id() {
+                    return TAG;
+                }
+
+                @Nullable
+                @Override
+                protected Object run() throws InterruptedException {
+                    if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
+                        return null;
+                    } else {
+                        return img = BitmapFactory.decodeResource(mContext.getResources(),
+                                R.drawable.ic_default_art_player);
+                    }
+                }
+
+                @Override
+                protected void done(@Nullable final Object result) {
+                    postMessage.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
+                                bitmap = Bitmap.createScaledBitmap(bitmap, (int) mContext.getResources().getDimension(R.dimen.home_album_art_size),
+                                        (int) mContext.getResources().getDimension(R.dimen.home_album_art_size), false);
+                                Bitmap blurredBitmap = PlayerUtils.blur(mContext, bitmap);
+                                if ( mItemId == -1 || mItemId != item.getItemId() ) {
+                                    PlayerUtils.ImageViewAnimatedChange(mContext, mLargeAlbumArt, bitmap);
+                                    mItemId = item.getItemId();
+                                }else{
+                                    mLargeAlbumArt.setImageBitmap(bitmap);
+                                }
+                                mPlayerBackground.setBackground(new BitmapDrawable(mContext.getResources(), blurredBitmap));
+                            }catch (NullPointerException e){
+                                Bitmap albumArt = BitmapFactory.decodeResource(mContext.getResources(),
+                                        R.drawable.ic_default_art_player);
+                                if ( mItemId == -1 || mItemId != item.getItemId() ) {
+                                    PlayerUtils.ImageViewAnimatedChange(mContext, mLargeAlbumArt, albumArt);
+                                }else{
+                                    mLargeAlbumArt.setImageBitmap(albumArt);
+                                }
+                                Bitmap blurredBitmap = PlayerUtils.blur(mContext, albumArt);
+                                mPlayerBackground.setBackground(new BitmapDrawable(mContext.getResources(), blurredBitmap));
+                            }
+                        }
+                    });
+                }
+            }.execute();
+        } else {
+            if(item != null) {
+                Bitmap albumArt = BitmapFactory.decodeResource(mContext.getResources(),
+                        R.drawable.ic_default_art_player);
+                if ( mItemId == -1 || mItemId != item.getItemId() ) {
+                    PlayerUtils.ImageViewAnimatedChange(mContext, mLargeAlbumArt, albumArt);
+                    mItemId = item.getItemId();
+                }else {
+                    mLargeAlbumArt.setImageBitmap(albumArt);
+                }
+                Bitmap blurredBitmap = PlayerUtils.blur(mContext, albumArt);
+                mPlayerBackground.setBackground(new BitmapDrawable(mContext.getResources(), blurredBitmap));
+            }
+        }
+    }
+
+    private void updateTrackPlayTime(long totalMillis, long currentMillis) {
+
+        if(null != mCurrentSeekTime)
+            mCurrentSeekTime.setText(String.format("%02d:%02d",
+                    TimeUnit.MILLISECONDS.toMinutes(currentMillis),
+                    TimeUnit.MILLISECONDS.toSeconds(currentMillis ) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentMillis))));
+        if(null != mTotalSeekTime)
+            mTotalSeekTime.setText("-"+String.format("%02d:%02d",
+                    TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis),
+                    TimeUnit.MILLISECONDS.toSeconds(totalMillis - currentMillis) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis))));
+    }
+
+    private void updateFavoriteTrack(boolean isUser) {
+        if(App.getPlayerEventHandler().getPlayingItem() != null) {
+            boolean isCurrentTrackFav = MediaController.getInstance(mContext).isFavouriteItems(App.getPlayerEventHandler().getPlayingItem().getItemId());
+            if (isCurrentTrackFav) {
+                if(isUser){
+                    MediaController.getInstance(mContext).removeItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem().getItemId());
+                    Toast.makeText(mContext, mContext.getResources().getString(R.string.playing_removed_from_favorite), Toast.LENGTH_SHORT).show();
+                    mPlayerFav.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favourites_normal, null));
+                }else {
+                    mPlayerFav.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favourites_selected, null));
+                }
+            } else {
+                if(isUser){
+                    MediaController.getInstance(mContext).addSongsToFavoriteList(App.getPlayerEventHandler().getPlayingItem());
+                    Toast.makeText(mContext, mContext.getResources().getString(R.string.playing_added_to_favorite), Toast.LENGTH_SHORT).show();
+                    mPlayerFav.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favourites_selected, null));
+                }else{
+                    mPlayerFav.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favourites_normal, null));
+                }
+            }
+        }else{
+            Toast.makeText(mContext, mContext.getResources().getString(R.string.no_song), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void initLargePlayer() {
+        mPlayerLarge = (LinearLayout) mInflater.findViewById(R.id.player_large);
+        mPlayerLarge.setOnTouchListener(this);
+
+        mPlayerActionPanel = mInflater.findViewById(R.id.player_action_bar);
+
+        mPlayerBackBtn = (ImageView) mInflater.findViewById(R.id.player_back_button);
+        mPlayerBackBtn.setOnClickListener(this);
+        mPlayerTitlePanel = (LinearLayout) mInflater.findViewById(R.id.player_title_panel);
+        mPlayerTitlePanel.setOnClickListener(this);
+        mLargeSongTitle = (TextView) mInflater.findViewById(R.id.large_player_title);
+        mLargeSongSubTitle = (TextView) mInflater.findViewById(R.id.large_player_sub_title);
+        mUpNextBtnPanel = (LinearLayout) mInflater.findViewById(R.id.player_upnext_button);
+        mUpNextBtnPanel.setOnClickListener(this);
+        mPlayerOverFlowMenuPanel = (LinearLayout) mInflater.findViewById(R.id.player_overflow_button);
+        mPlayerOverFlowMenuPanel.setOnClickListener(this);
+
+        mPlayerFav = (ImageView) mInflater.findViewById(R.id.player_fav);
+        mPlayerFav.setOnClickListener(this);
+
+        mLargeAlbumArt = (ImageView) mInflater.findViewById(R.id.player_album_art);
+
+        LinearLayout.LayoutParams artParam = new LinearLayout.LayoutParams((ScreenWidth*85)/100, (ScreenWidth*85)/100);
+        artParam.setMargins((int) ((ScreenWidth*7.5)/100), 0, (int) ((ScreenWidth*7.5)/100), 0);
+        mInflater.findViewById(R.id.player_large_header).setLayoutParams(artParam);
+        mPlayerContent = (FrameLayout) mInflater.findViewById(R.id.player_content);
+
+        mPlayerSwitcherPanel = (LinearLayout) mInflater.findViewById(R.id.player_switcher_panel);
+        mPlayerTab = (ImageView) mInflater.findViewById(R.id.player_tab);
+        mPlayerTab.setOnClickListener(this);
+        mEffectTab = (ImageView) mInflater.findViewById(R.id.effect_tab);
+        mEffectTab.setOnClickListener(this);
+
+        mSeekbarPanel = (LinearLayout) mInflater.findViewById(R.id.progress_panel);
+        mTrackSeek = (AppCompatSeekBar) mInflater.findViewById(R.id.control_seek_bar);
+        mTrackSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
+                if(fromUser) {
+                    isUser = true;
+                    mTrackSeek.setProgress(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if(isUser)
+                    postMessage.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            playerUIController.OnPlayerSeekChange(mTrackSeek.getProgress());
+                        }
+                    });
+                postMessage.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        isUser = false;
+                    }
+                }, 300);
+            }
+        });
+        revealView = mInflater.findViewById(R.id.player_reveal_view);
+        mCurrentSeekTime = (TextView) mInflater.findViewById(R.id.played_time);
+        mTotalSeekTime = (TextView) mInflater.findViewById(R.id.remain_time);
+
+        mPlayerControllerHolder = (LinearLayout) mInflater.findViewById(R.id.player_controller_holder);
+        mRepeat = (ImageView) mInflater.findViewById(R.id.controller_repeat);
+        mRepeat.setOnClickListener(this);
+        mPrevious = (ImageView) mInflater.findViewById(R.id.controller_prev);
+        mPrevious.setOnClickListener(this);
+        mPlayPause = (ImageView) mInflater.findViewById(R.id.controller_play);
+        mPlayPause.setOnClickListener(this);
+        mNext = (ImageView) mInflater.findViewById(R.id.controller_next);
+        mNext.setOnClickListener(this);
+        mShuffle = (ImageView) mInflater.findViewById(R.id.controller_shuffle);
+        mShuffle.setOnClickListener(this);
+    }
+
+    private void updatePlayerUI(){
+        if(MasterActivity.isPlayerExpended()){
+            updateLargePlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
+        }else {
+            updateMiniPlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
+        }
+        if(null != mPlayingMediaItem)
+            updateAlbumArt(mPlayingMediaItem);
+    }
+
+    private void updateLargePlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
+        if(null != item){
+            mRepeat.setVisibility(View.VISIBLE);
+            mShuffle.setVisibility(View.VISIBLE);
+            mLargeSongTitle.setVisibility(View.VISIBLE);
+            mLargeSongSubTitle.setVisibility(View.VISIBLE);
+            mTrackSeek.setVisibility(View.VISIBLE);
+            mTotalSeekTime.setVisibility(View.VISIBLE);
+            mCurrentSeekTime.setVisibility(View.VISIBLE);
+            mNext.setVisibility(View.VISIBLE);
+            mPrevious.setVisibility(View.VISIBLE);
+            mLargeSongTitle.setSelected(true);
+            mLargeSongSubTitle.setSelected(true);
+            mPlayerFav.setVisibility(View.VISIBLE);
+
+            updateFavoriteTrack(false);
+
+            mLargeSongTitle.setText(item.getItemTitle());
+            mLargeSongSubTitle.setText(item.getItemArtist());
+
+            if(isLastPlayedItem){
+                mTrackSeek.setProgress(0);
+                mPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_play, null));
+
+                long totalMillis = item.getDurationLong();
+                long currentMillis = 0;
+
+                updateTrackPlayTime(totalMillis, currentMillis);
+
+            }else {
+                if (isPlaying) {
+                    mPlayPause.setVisibility(View.VISIBLE);
+                    mPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_pause, null));
+                } else {
+                    mPlayPause.setVisibility(View.VISIBLE);
+                    mPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_play, null));
+                }
+            }
+        }else if(!isLastPlayedItem){
+            mRepeat.setVisibility(View.INVISIBLE);
+            mShuffle.setVisibility(View.INVISIBLE);
+            mLargeSongTitle.setVisibility(View.GONE);
+            mLargeSongSubTitle.setVisibility(View.GONE);
+            mTrackSeek.setVisibility(View.INVISIBLE);
+            mPlayPause.setVisibility(View.INVISIBLE);
+            mLargeAlbumArt.setImageDrawable(mContext.getResources().getDrawable(R.drawable.no_song_selected, null));
+//            ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, BitmapFactory.decodeResource(getBaseContext().getResources(),
+//                    R.drawable.no_song_selected));
+            mTotalSeekTime.setVisibility(View.INVISIBLE);
+            mCurrentSeekTime.setVisibility(View.INVISIBLE);
+            mPlayerFav.setVisibility(View.INVISIBLE);
+        }
+        updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
+        updateShuffle();
+        updateRepeat();
+    }
+
+
+
+    /* Mini Player UI & Functionality*/
+
+
+    private void initMiniPlayer() {
+        miniController = mInflater.findViewById(R.id.small_panel);
+        miniController.setOnTouchListener(this);
+
+        mMiniPlayerSeek = (AppCompatSeekBar) mInflater.findViewById(R.id.mini_player_progress);
+        mMiniPlayerSeek.setPadding(0,0,0,0);
+        mMiniPlayerSeek.setOnTouchListener(this);
+
+        mMiniPlayerEffectPanel = (LinearLayout) mInflater.findViewById(R.id.mini_player_boom_effect);
+        mMiniPlayerEffectPanel.setOnClickListener(this);
+        mMiniPlayerPlayPause = (ImageView) mInflater.findViewById(R.id.mini_player_play_pause_btn);
+        mMiniPlayerPlayPause.setOnClickListener(this);
+        mMiniTitlePanel = (LinearLayout) mInflater.findViewById(R.id.mini_player_title_panel);
+        mMiniTitlePanel.setOnClickListener(this);
+        mMiniSongTitle = (TextView) mInflater.findViewById(R.id.mini_player_song_title);
+        mMiniSongSubTitle = (TextView) mInflater.findViewById(R.id.mini_player_song_sub_title);
+    }
+
+    private void updateMiniPlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
+        if(audioEffectPreferenceHandler.isAudioEffectOn()) {
+            ((ImageView) mInflater.findViewById(R.id.mini_player_effect_img)).setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_effects_on, null));
+        }else{
+            ((ImageView) mInflater.findViewById(R.id.mini_player_effect_img)).setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_effects, null));
+        }
+
+        if(null != item){
+            mMiniSongTitle.setText(item.getItemTitle());
+            mMiniSongSubTitle.setText(item.getItemArtist());
+            if(isLastPlayedItem)
+                mMiniPlayerPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_play, null));
+            else if(isPlaying)
+                mMiniPlayerPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_pause, null));
+            else
+                mMiniPlayerPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_play, null));
+        }
+    }
+
+    public void setMiniPlayerAlpha(float alpha) {
+        miniController.setAlpha(alpha);
+    }
+
+    public void setMiniPlayerVisible(boolean isMiniPlayerVisible) {
+        if(isMiniPlayerVisible){
+            miniController.setAlpha(1);
+            mPlayerActionPanel.setAlpha(0);
+        }else{
+            miniController.setAlpha(0);
+            mPlayerActionPanel.setAlpha(1);
+        }
+    }
+
+
+    /* Player Slider Callbacks*/
+
+
+    @Override
+    public void onPanelSlide(View panel, float slideOffset) {
+//        if (slideOffset == 1 && colorLight != 0 && isVisible()) {
+//            setStatusBarColor(getActivity(), colorDark);
+//        }else if (isVisible()) {
+//            setStatusBarColor(getActivity(), ContextCompat.getColor(mContext, R.color.colorPrimaryDark));
+//        }
+        setMiniPlayerAlpha(1 - slideOffset);
+        mPlayerActionPanel.setAlpha(0 + slideOffset);
+    }
+
+    @Override
+    public void onPanelCollapsed(View panel) {
+        updatePlayerUI();
+        setMiniPlayerVisible(true);
+        if (revealView.getVisibility() == View.VISIBLE) {
+            revealView.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void onPanelExpanded(View panel) {
+        updatePlayerUI();
+        setMiniPlayerVisible(false);
+        setPlayerInfo();
+        setEnableEffects(audioEffectPreferenceHandler.isAudioEffectOn());
+    }
+
+    @Override
+    public void onPanelAnchored(View panel) {
+
+    }
+
+    @Override
+    public void onPanelHidden(View panel) {
+
+    }
+
+    @Override
+    public void onResumeFragment(int alfa) {
+        mPlayerActionPanel.setAlpha(alfa);
+    }
+
+    @Override
+    public void onVolumeUp() {
+    }
+
+    @Override
+    public void onVolumeDown() {
+    }
+
+
+
+/*Player Screen Utils*/
+
+
+    public void registerPlayerReceiver(Context context){
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_RECEIVE_SONG);
+        intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
+        intentFilter.addAction(ACTION_ITEM_CLICKED);
+        intentFilter.addAction(ACTION_TRACK_STOPPED);
+        intentFilter.addAction(ACTION_UPDATE_TRACK_SEEK);
+        intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
+        intentFilter.addAction(ACTION_UPDATE_REPEAT);
+        intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
+        intentFilter.addAction(ACTION_HEADSET_PLUGGED);
+        context.registerReceiver(mPlayerBroadcastReceiver, intentFilter);
+
+//        mPlayingMediaItem = (MediaItem) App.getPlayerEventHandler().getPlayingItem();
+//        mIsPlaying = App.getPlayerEventHandler().isPlaying();
+//        mIsLastPlayed = !(App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused());
+        try {
+            updatePlayerUI();
+        }catch (Exception e){}
+    }
+
+    public void unregisterPlayerReceiver(Context context){
+        context.unregisterReceiver(mPlayerBroadcastReceiver);
+    }
+
+    public MasterActivity.IPlayerSliderControl getPlayerSliderControl() {
+        return this;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.player_back_button:
+            case R.id.mini_player_boom_effect:
+                if(!MasterActivity.isPlayerExpended()){
+                    setPlayerEnable(false);
+                }
+                getActivity().sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+                break;
+            case R.id.mini_player_title_panel:
+            case R.id.player_title_panel:
+                if(MasterActivity.isPlayerExpended()) {
+                    postMessage.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            playerUIController.OnPlayerTitleClick((MasterActivity) getActivity());
+                        }
+                    });
+                }else{
+                    setPlayerEnable(true);
+                    getActivity().sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+                }
+                break;
+            case R.id.player_upnext_button:
+                if(MasterActivity.isPlayerExpended()) {
+                    postMessage.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            playerUIController.OnUpNextClick(getActivity());
+                        }
+                    });
+                }else{
+                    postMessage.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            playerUIController.OnPlayPause();
+                        }
+                    });
+                }
+                break;
+            case R.id.player_overflow_button:
+                if(MasterActivity.isPlayerExpended()) {
+
+                }else{
+                    postMessage.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            playerUIController.OnPlayPause();
+                        }
+                    });
+                }
+                break;
+            case R.id.mini_player_play_pause_btn:
+            case R.id.controller_play:
+                postMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        playerUIController.OnPlayPause();
+                    }
+                });
+                break;
+            case R.id.controller_prev:
+                postMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        playerUIController.OnPreviousTrackClick();
+                    }
+                });
+                break;
+            case R.id.controller_next:
+                postMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        playerUIController.OnNextTrackClick();
+                    }
+                });
+                break;
+            case R.id.controller_repeat:
+                postMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        playerUIController.OnRepeatClick();
+                    }
+                });
+                break;
+            case R.id.controller_shuffle:
+                postMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        playerUIController.OnShuffleClick();
+                    }
+                });
+                break;
+            case R.id.player_fav:
+                updateFavoriteTrack(true);
+                break;
+            case R.id.player_tab:
+                setPlayerEnable(true);
+                break;
+            case R.id.effect_tab:
+                setPlayerEnable(false);
+                break;
+            case R.id.three_surround_btn:
+                switch3DSurround();
+                break;
+            case R.id.intensity_btn:
+                switchIntensity();
+                break;
+            case R.id.equalizer_btn:
+                switchEqualizer();
+                break;
+            case R.id.fullbass_chk:
+                switchFullBass();
+                break;
+            case R.id.eq_dialog_panel:
+                if(isEffectOn && audioEffectPreferenceHandler.isEqualizerOn())
+                    onEqDialogOpen();
+                break;
+            case R.id.speaker_btn :
+                if(isEffectOn && audioEffectPreferenceHandler.is3DSurroundOn())
+                    openSpeakerDialog();
+                break;
+            case R.id.speaker_left_front:
+                updateSpeakers(AudioEffect.Speaker.FrontLeft);
+                break;
+            case R.id.speaker_right_front:
+                updateSpeakers(AudioEffect.Speaker.FrontRight);
+                break;
+            case R.id.speaker_left_surround:
+                updateSpeakers(AudioEffect.Speaker.RearLeft);
+                break;
+            case R.id.speaker_right_surround:
+                updateSpeakers(AudioEffect.Speaker.RearRight);
+                break;
+            case R.id.speaker_left_tweeter:
+                updateSpeakers(AudioEffect.Speaker.Tweeter);
+                break;
+            case R.id.speaker_right_tweeter:
+                updateSpeakers(AudioEffect.Speaker.Tweeter);
+                break;
+            case R.id.speaker_sub_woofer:
+                updateSpeakers(AudioEffect.Speaker.Woofer);
+                break;
+        }
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        switch (view.getId()){
+            case R.id.small_panel:
+                return true;
+            case R.id.player_large:
+                return true;
+            case R.id.intensity_disable_img:
+                if(isEffectOn)
+                    return false;
+                else
+                    return true;
+            case R.id.mini_player_progress :
+                return false;
+        }
+        return false;
+    }
+
+
+
+
+    /*Audio Effect UI & Functionality*/
+
+
+    private void initEffectControl() {
+        postMessage = new Handler();
+
+        aaEffectUIController = new EffectUIController(mContext);
+        EffectUIController.registerEffectController(aaEffectUIController);
+
+//        FrameLayout.LayoutParams effectParam = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (ScreenWidth*85)/100);
+        mEffectContent = (LinearLayout) mInflater.findViewById(R.id.effect_content);
+//        mEffectContent.setLayoutParams(effectParam);
+
+        mEffectSwitchTxt = (TextView) mInflater.findViewById(R.id.effect_switch_txt);
+        mEffectSwitch = (SwitchCompat) mInflater.findViewById(R.id.effect_switch);
+        switchAudioEffect();
+
+        m3DSurroundBtn = (ImageView) mInflater.findViewById(R.id.three_surround_btn);
+        m3DSurroundBtn.setOnClickListener(this);
+        m3DSurroundTxt = (TextView) mInflater.findViewById(R.id.three_surround_txt);
+        mSpeakerBtn = (ImageView) mInflater.findViewById(R.id.speaker_btn) ;
+        mSpeakerBtn.setOnClickListener(this);
+
+        mFullBassCheck = (AppCompatCheckBox) mInflater.findViewById(R.id.fullbass_chk);
+        mFullBassCheck.setOnClickListener(this);
+
+        mIntensityBtn = (ImageView) mInflater.findViewById(R.id.intensity_btn);
+        mIntensityBtn.setOnClickListener(this);
+        mIntensityTxt = (TextView) mInflater.findViewById(R.id.intensity_txt);
+        mIntensitySeek = (NegativeSeekBar) mInflater.findViewById(R.id.intensity_seek);
+        mIntensitySeek.setProgress(audioEffectPreferenceHandler.getIntensity());
+        mIntensitySeek.setOnClickListener(this);
+
+        mEqualizerBtn = (ImageView) mInflater.findViewById(R.id.equalizer_btn);
+        mEqualizerBtn.setOnClickListener(this);
+        mEqualizerTxt = (TextView) mInflater.findViewById(R.id.equalizer_txt);
+        mEqDialogPanel = (LinearLayout) mInflater.findViewById(R.id.eq_dialog_panel);
+        mEqDialogPanel.setOnClickListener(this);
+
+        mSelectedEqImg = (ImageView) mInflater.findViewById(R.id.selected_eq_img);
+        mSelectedEqTxt = (TextView) mInflater.findViewById(R.id.selected_eq_txt);
+        mSelectedEqGoImg = (ImageView) mInflater.findViewById(R.id.selected_eq_go_img);
+
+        mDisableIntensity = (TextView) mInflater.findViewById(R.id.intensity_disable_img);
+        mDisableIntensity.setOnTouchListener(this);
+        eq_names = Arrays.asList(mContext.getResources().getStringArray(R.array.eq_names));
+        eq_active_on = mContext.getResources().obtainTypedArray(R.array.eq_active_on);
+        eq_active_off = mContext.getResources().obtainTypedArray(R.array.eq_active_off);
+
+        setEffectIntensity();
+
+        setEnableEffects(audioEffectPreferenceHandler.isAudioEffectOn());
+    }
+
+    private void switchAudioEffect(){
+
+        mEffectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
+                audioEffectPreferenceHandler.setEnableAudioEffect(enable);
+                setEnableEffects(enable);
+                MixPanelAnalyticHelper.track(mContext, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
+                FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffectPreferenceHandler.isAudioEffectOn());
+            }
+        });
+    }
+
+    private void setEnableEffects(boolean enable){
+        isEffectOn =enable;
+
+        mOldIntensity = audioEffectPreferenceHandler.getIntensity()/(double)100;
+
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                aaEffectUIController.OnEffectEnable(isEffectOn);
+            }
+        });
+
+        if(isEffectOn){
+            mEffectSwitchTxt.setText(mContext.getString(R.string.on));
+
+            setEnable3DEffect(audioEffectPreferenceHandler.is3DSurroundOn());
+
+            setEnableIntensity(audioEffectPreferenceHandler.isIntensityOn());
+
+            setEnableEqualizer(audioEffectPreferenceHandler.isEqualizerOn());
+
+        }else{
+            mEffectSwitchTxt.setText(mContext.getString(R.string.off));
+
+            setEnable3DEffect(audioEffectPreferenceHandler.is3DSurroundOn());
+
+            setEnableIntensity(audioEffectPreferenceHandler.isIntensityOn());
+
+            setEnableEqualizer(audioEffectPreferenceHandler.isEqualizerOn());
+        }
+
+        mFullBassCheck.setEnabled(isEffectOn);
+    }
+
+    private void setEnable3DEffect(boolean enable){
+        if(enable && audioEffectPreferenceHandler.isAudioEffectOn()) {
+            m3DSurroundBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_three_d_on, null));
+            m3DSurroundTxt.setTextColor(Color.WHITE);
+            mSpeakerBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_three_d_dropdown, null));
+        }else{
+            m3DSurroundBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_three_d_off, null));
+            m3DSurroundTxt.setTextColor(Color.LTGRAY);
+            mSpeakerBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_three_d_dropdown_off, null));
+        }
+
+        setEnableFullBass(enable && audioEffectPreferenceHandler.isFullBassOn());
+    }
+
+    private void setEnableFullBass(boolean enable){
+        mFullBassCheck.setChecked(enable);
+        if(enable && audioEffectPreferenceHandler.isAudioEffectOn()){
+            mFullBassCheck.setTextColor(Color.WHITE);
+        }else{
+            mFullBassCheck.setTextColor(Color.LTGRAY);
+        }
+    }
+
+    private void setEnableIntensity(boolean enable) {
+        if(enable && audioEffectPreferenceHandler.isAudioEffectOn()){
+            mIntensityBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_intensity_on, null));
+            mIntensityTxt.setTextColor(Color.WHITE);
+            mIntensitySeek.setDisable(false);
+        }else{
+            mIntensityBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_intensity_off, null));
+            mIntensityTxt.setTextColor(Color.LTGRAY);
+            mIntensitySeek.setDisable(true);
+        }
+        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_INTENSITY_STATE_CHANGED);
+    }
+
+    private void setEnableEqualizer(boolean enable) {
+        setChangeEqualizerValue(audioEffectPreferenceHandler.getSelectedEqualizerPosition());
+        if(enable && audioEffectPreferenceHandler.isAudioEffectOn()){
+            mEqualizerBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_equalizer_on, null));
+            mEqualizerTxt.setTextColor(Color.WHITE);
+            mEqDialogPanel.setBackground(mContext.getResources().getDrawable(R.drawable.equalizer_border_active, null));
+
+            try {
+                DrawableCompat.setTint(mSelectedEqImg.getDrawable(), colorTo);
+                mSelectedEqTxt.setTextColor(Color.WHITE);
+                DrawableCompat.setTint(mSelectedEqGoImg.getDrawable(), colorTo);
+            }catch (Exception e){}
+        }else{
+            mEqualizerBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_equalizer_off, null));
+            mEqualizerTxt.setTextColor(Color.LTGRAY);
+            mEqDialogPanel.setBackground(mContext.getResources().getDrawable(R.drawable.equalizer_border_inactive, null));
+
+            try {
+                DrawableCompat.setTint(mSelectedEqImg.getDrawable(), Color.BLACK);
+                mSelectedEqTxt.setTextColor(Color.LTGRAY);
+                DrawableCompat.setTint(mSelectedEqGoImg.getDrawable(), Color.BLACK);
+            }catch (NullPointerException e){}
+        }
+    }
+
+    private void updateSpeakers(LinearLayout speakerPanel){
+        ImageView mFrontLeftSpeaker, mFrontRightSpeaker, mSurroundLeftSpeaker, mSurroundRightSpeaker;
+
+        mFrontLeftSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_left_front);
+        mFrontRightSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_right_front);
+        mSurroundLeftSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_left_surround);
+        mSurroundRightSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_right_surround);
+
+        mFrontLeftSpeaker.setOnClickListener(this);
+        mFrontRightSpeaker.setOnClickListener(this);
+        mSurroundLeftSpeaker.setOnClickListener(this);
+        mSurroundRightSpeaker.setOnClickListener(this);
+
+        if(!audioEffectPreferenceHandler.isLeftFrontSpeakerOn()){
+            mFrontLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_l_front_inactive, null));
+        }else {
+            mFrontLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_l_front_active, null));
+        }
+        if(!audioEffectPreferenceHandler.isRightFrontSpeakerOn()){
+            mFrontRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_r_front_inactive, null));
+        }else {
+            mFrontRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_r_front_active, null));
+        }
+        if(!audioEffectPreferenceHandler.isLeftSurroundSpeakerOn()){
+            mSurroundLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_l_surround_inactive, null));
+        }else {
+            mSurroundLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_l_surround_active, null));
+        }
+        if(!audioEffectPreferenceHandler.isRightSurroundSpeakerOn()){
+            mSurroundRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_r_surround_inactive, null));
+        }else {
+            mSurroundRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_r_surround_active, null));
+        }
+        updateTweeterAndWoofer(speakerPanel, audioEffectPreferenceHandler.isAllSpeakerOn());
+    }
+
+    private void updateTweeterAndWoofer(LinearLayout speakerPanel, boolean enable){
+        ImageView mTweeterLeftSpeaker, mTweeterRightSpeaker, mWoofer;
+        mTweeterLeftSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_left_tweeter);
+        mTweeterRightSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_right_tweeter);
+        mWoofer = (ImageView) speakerPanel.findViewById(R.id.speaker_sub_woofer);
+
+        mTweeterLeftSpeaker.setOnClickListener(this);
+        mTweeterRightSpeaker.setOnClickListener(this);
+        mWoofer.setOnClickListener(this);
+
+        if(enable){
+            audioEffectPreferenceHandler.setOnAllSpeaker(true);
+            if(!audioEffectPreferenceHandler.isTweeterOn()){
+                mTweeterLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_tweeter_l_inactive, null));
+                mTweeterRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_tweeter_r_inactive, null));
+            }else {
+                mTweeterLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_tweeter_l_active, null));
+                mTweeterRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_tweeter_r_active, null));
+            }
+            if(!audioEffectPreferenceHandler.isWooferOn()){
+                mWoofer.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_woofer_inactive, null));
+            }else {
+                mWoofer.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_woofer_active, null));
+            }
+        }else{
+            audioEffectPreferenceHandler.setOnAllSpeaker(false);
+            mTweeterLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_tweeter_l_disabled, null));
+            mTweeterRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_tweeter_r_disabled, null));
+            mWoofer.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_woofer_disabled, null));
+        }
+    }
+
+    private void onEqDialogOpen(){
+        final EqualizerDialogAdapter adapter = new EqualizerDialogAdapter(mContext, audioEffectPreferenceHandler.getSelectedEqualizerPosition(), eq_names, eq_active_on, eq_active_off, this);
+        RecyclerView recyclerView = (RecyclerView) getActivity().getLayoutInflater()
+                .inflate(R.layout.recycler_view_layout, null);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        recyclerView.setAdapter(adapter);
+
+        MaterialDialog dialog = new MaterialDialog.Builder(mContext)
+                .title(R.string.dialog_title)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .positiveColor(Color.parseColor("#81cbc4"))
+                .negativeColor(Color.parseColor("#81cbc4"))
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#ffffff"))
+                .customView(recyclerView, false)
+                .positiveText(R.string.done)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .autoDismiss(false)
+                .canceledOnTouchOutside(false)
+                .show();
+        dialog.getWindow().setLayout((ScreenWidth *80)/100, (ScreenHeight *70)/100);
+        adapter.setDialog(dialog);
+    }
+
+    private void openSpeakerDialog() {
+        mSpeakerDialogPanel = (LinearLayout) getActivity().getLayoutInflater()
+                .inflate(R.layout.speaker_panel, null);
+
+        updateSpeakers(mSpeakerDialogPanel);
+
+        MaterialDialog dialog = new MaterialDialog.Builder(mContext)
+                .title(R.string.dialog_title)
+                .backgroundColor(Color.parseColor("#171921"))
+                .titleColor(Color.parseColor("#ffffff"))
+                .positiveColor(Color.parseColor("#81cbc4"))
+                .negativeColor(Color.parseColor("#81cbc4"))
+                .widgetColor(Color.parseColor("#ffffff"))
+                .contentColor(Color.parseColor("#ffffff"))
+                .customView(mSpeakerDialogPanel, false)
+                .positiveText(R.string.done)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .autoDismiss(false)
+                .canceledOnTouchOutside(false)
+                .show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    }
+
+    private void switch3DSurround(){
+        if(audioEffectPreferenceHandler.isAudioEffectOn()) {
+            audioEffectPreferenceHandler.setEnable3DSurround(!audioEffectPreferenceHandler.is3DSurroundOn());
+            postMessage.post(new Runnable() {
+                @Override
+                public void run() {
+                    aaEffectUIController.On3DSurroundEnable(audioEffectPreferenceHandler.is3DSurroundOn());
+                }
+            });
+            setEnable3DEffect(audioEffectPreferenceHandler.is3DSurroundOn());
+
+            if(audioEffectPreferenceHandler.is3DSurroundOn()) {
+                if (!audioEffectPreferenceHandler.isIntensityOn()) {
+                    switchIntensity();
+                }
+                if (!audioEffectPreferenceHandler.isEqualizerOn()) {
+                    switchEqualizer();
+                }
+            }
+            MixPanelAnalyticHelper.track(mContext, audioEffectPreferenceHandler.is3DSurroundOn() ? AnalyticsHelper.EVENT_3D_TURNED_ON : AnalyticsHelper.EVENT_3D_TURNED_OFF);
+            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_3D_STATE_CHANGED, audioEffectPreferenceHandler.is3DSurroundOn());
+        }
+    }
+
+    private void switchFullBass(){
+        if(audioEffectPreferenceHandler.isAudioEffectOn() &&
+                audioEffectPreferenceHandler.is3DSurroundOn()){
+
+            audioEffectPreferenceHandler.setEnableFullBass(!audioEffectPreferenceHandler.isFullBassOn());
+            postMessage.post(new Runnable() {
+                @Override
+                public void run() {
+                    aaEffectUIController.OnFullBassEnable(audioEffectPreferenceHandler.isFullBassOn());
+                }
+            });
+
+            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FULL_BASS_ENABLED, audioEffectPreferenceHandler.isFullBassOn());
+        }
+    }
+
+    private void switchIntensity(){
+        if(audioEffectPreferenceHandler.isAudioEffectOn() && !audioEffectPreferenceHandler.is3DSurroundOn()){
+            setEnableIntensity(!audioEffectPreferenceHandler.isIntensityOn());
+            audioEffectPreferenceHandler.setEnableIntensity(!audioEffectPreferenceHandler.isIntensityOn());
+        }else if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn() && !audioEffectPreferenceHandler.isIntensityOn()){
+            setEnableIntensity(!audioEffectPreferenceHandler.isIntensityOn());
+            audioEffectPreferenceHandler.setEnableIntensity(!audioEffectPreferenceHandler.isIntensityOn());
+        }else if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn() && audioEffectPreferenceHandler.isIntensityOn()){
+            Toast.makeText(mContext, mContext.getResources().getString(R.string.req_intensity), Toast.LENGTH_LONG).show();
+        }
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                aaEffectUIController.OnIntensityEnable(audioEffectPreferenceHandler.isIntensityOn());
+            }
+        });
+    }
+
+    private void switchEqualizer(){
+        if(audioEffectPreferenceHandler.isAudioEffectOn()  && !audioEffectPreferenceHandler.is3DSurroundOn()){
+            setEnableEqualizer(!audioEffectPreferenceHandler.isEqualizerOn());
+            audioEffectPreferenceHandler.setEnableEqualizer(!audioEffectPreferenceHandler.isEqualizerOn());
+        }else if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn() && !audioEffectPreferenceHandler.isEqualizerOn()){
+            setEnableEqualizer(!audioEffectPreferenceHandler.isEqualizerOn());
+            audioEffectPreferenceHandler.setEnableEqualizer(!audioEffectPreferenceHandler.isEqualizerOn());
+        } else if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn() && audioEffectPreferenceHandler.isEqualizerOn()){
+            Toast.makeText(mContext, mContext.getResources().getString(R.string.req_equlaizer), Toast.LENGTH_LONG).show();
+        }
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                aaEffectUIController.OnEqualizerEnable(audioEffectPreferenceHandler.isEqualizerOn());
+            }
+        });
+        MixPanelAnalyticHelper.track(mContext, audioEffectPreferenceHandler.isEqualizerOn() ? AnalyticsHelper.EVENT_EQ_TURNED_ON : AnalyticsHelper.EVENT_EQ_TURNED_OFF);
+    }
+
+    private void setEffectIntensity() {
+        mIntensitySeek.setOnSeekBarChangeListener(new NegativeSeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, final int progress, boolean isUser) {
+                if((progress/(double)100 - mOldIntensity >= .1 || mOldIntensity - progress/(double)100 >= .1) || progress == 100  || progress == 0) {
+                    mOldIntensity = progress / (double) 100;
+                    audioEffectPreferenceHandler.setIntensity(progress);
+
+                    if (isUser)
+                        postMessage.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                aaEffectUIController.OnIntensityChange(progress);
+                            }
+                        });
+                    try {
+                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_INTENSITY_STATE_CHANGED);
+                    }catch (Exception e){}
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onChangeEqualizerValue(final int position) {
+        setChangeEqualizerValue(position);
+    }
+
+    public void setChangeEqualizerValue(final int position) {
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                mSelectedEqImg.setImageDrawable(eq_active_off.getDrawable(position));
+                mSelectedEqTxt.setText(eq_names.get(position));
+                audioEffectPreferenceHandler.setSelectedEqualizerPosition(position);
+                postMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        aaEffectUIController.OnEqualizerChange(position);
+                    }
+                });
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_EQ_STATE_CHANGED);
+            }
+        });
+    }
+
+    private void updateSpeakers(final AudioEffect.Speaker speakerType){
+        boolean enable = false;
+        if(speakerType.ordinal() == AudioEffect.Speaker.FrontLeft.ordinal()){
+            enable = !audioEffectPreferenceHandler.isLeftFrontSpeakerOn();
+            audioEffectPreferenceHandler.setEnableLeftFrontSpeaker(enable);
+            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FRONT_LEFT_SPEAKER, enable);
+        }else if(speakerType.ordinal() == AudioEffect.Speaker.FrontRight.ordinal()){
+            enable = !audioEffectPreferenceHandler.isRightFrontSpeakerOn();
+            audioEffectPreferenceHandler.setEnableRightFrontSpeaker(enable);
+            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FRONT_RIGHT_SPEAKER, enable);
+        }else if(speakerType.ordinal() == AudioEffect.Speaker.RearLeft.ordinal()){
+            enable = !audioEffectPreferenceHandler.isLeftSurroundSpeakerOn();
+            audioEffectPreferenceHandler.setEnableLeftSurroundSpeaker(enable);
+            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_REAR_LEFT_SPEAKER, enable);
+        }else if(speakerType.ordinal() == AudioEffect.Speaker.RearRight.ordinal()){
+            enable = !audioEffectPreferenceHandler.isRightSurroundSpeakerOn();
+            audioEffectPreferenceHandler.setEnableRightSurroundSpeaker(enable);
+            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_REAR_RIGHT_SPEAKER, enable);
+        }else if(speakerType.ordinal() == AudioEffect.Speaker.Tweeter.ordinal()){
+            enable = !audioEffectPreferenceHandler.isTweeterOn();
+            audioEffectPreferenceHandler.setEnableTweeter(enable);
+            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_TWEETER, enable);
+        }else if(speakerType.ordinal() == AudioEffect.Speaker.Woofer.ordinal()){
+            enable = !audioEffectPreferenceHandler.isWooferOn();
+            audioEffectPreferenceHandler.setEnableWoofer(enable);
+            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_SUBWOOFER, enable);
+        }
+
+        updateSpeakers(mSpeakerDialogPanel);
+        final boolean finalEnable = enable;
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                aaEffectUIController.OnSpeakerEnable(speakerType, finalEnable);
+            }
+        });
+    }
+}

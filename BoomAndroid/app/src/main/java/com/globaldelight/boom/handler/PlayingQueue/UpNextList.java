@@ -1,7 +1,9 @@
 package com.globaldelight.boom.handler.PlayingQueue;
 
+import android.Manifest;
 import android.content.Context;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.globaldelight.boom.R;
@@ -20,9 +22,10 @@ import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 /**
  * Created by Rahul Agarwal on 15-11-16.
@@ -105,7 +108,7 @@ public class UpNextList {
         return mCurrentList;
     }
 
-    public IMediaItemBase getPlayingItem() {
+    public IMediaItem getPlayingItem() {
         return mCurrentList.size() > 0 ? mCurrentList.get(0).getUpNextItem() : null;
     }
 
@@ -196,7 +199,7 @@ public class UpNextList {
         }else{
             if(mAutoNextList.size() > 0)
             for (int i = 0; i < PlayItemIndex; PlayItemIndex--) {
-                addItemAsPrevious(new UpNextItem(mAutoNextList.remove(i), QueueType.Auto_UpNext));
+                addItemAsPrevious(new UpNextItem((IMediaItem) mAutoNextList.remove(i), QueueType.Auto_UpNext));
             }
             if(PlayItemIndex == -1){
                 PlayItemIndex = 0;
@@ -258,11 +261,11 @@ public class UpNextList {
         none,
     }
 
-    public void addUpNextItem(IMediaItemBase song, QueueType queueType) {
+    public void addUpNextItemToDB(IMediaItemBase song, QueueType queueType) {
         MediaController.getInstance(context).addUpNextItem(song, queueType);
     }
 
-    public void addUpNextItem(ArrayList<? extends IMediaItemBase> songs, QueueType queueType) {
+    public void addUpNextItemToDB(ArrayList<? extends IMediaItemBase> songs, QueueType queueType) {
         MediaController.getInstance(context).addUpNextItem(songs, queueType);
     }
 
@@ -297,16 +300,17 @@ public class UpNextList {
                 Log.d("Add_to_Manual", "in UP_NEXT");
             }else if(mCurrentList.get(0).getUpNextItemType() == QueueType.Auto_UpNext){
                 mAutoNextList.add(0 ,mCurrentList.get(0).getUpNextItem());
-                Log.d("Add_to_Auto", "in UP_NEXT");
+                Log.d("Add_to_Auto", "in_UP_NEXT");
             }
         }
         if(mUpNextList.size() > 0)
-            addUpNextItem(mUpNextList, QueueType.Manual_UpNext);
+            addUpNextItemToDB(mUpNextList, QueueType.Manual_UpNext);
         if(mAutoNextList.size() > 0)
-            addUpNextItem(mAutoNextList, QueueType.Auto_UpNext);
+            addUpNextItemToDB(mAutoNextList, QueueType.Auto_UpNext);
         if(mGhostList.size() > 0)
-            addUpNextItem(mGhostList, QueueType.Previous);
+            addUpNextItemToDB(mGhostList, QueueType.Previous);
 
+        Log.d("Add_to_DB", "in_UP_NEXT");
         /*If service is not destroyed remove current item from upnext*/
         if (mUpNextList.size() > 0) {
             mUpNextList.remove(0);
@@ -315,26 +319,28 @@ public class UpNextList {
         }
     }
 
-    public void fetchUpNextItemsToDB(){
+    public void fetchUpNextItemsToDB(Context context){
         mUpNextList.clear();
-        mUpNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Manual_UpNext);
-
         mAutoNextList.clear();
-        mAutoNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Auto_UpNext);
-
         mGhostList.clear();
-        mGhostList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Previous);
 
-        /*Fetch Now Playing Item from relevant up-next list*/
-        mCurrentList.clear();
-        if (mUpNextList.size() > 0) {
-            mCurrentList.add(new UpNextItem(mUpNextList.remove(0), QueueType.Manual_UpNext));
-            Log.d("Add_to_Manual", "out UP_NEXT");
-        } else if (mAutoNextList.size() > 0) {
-            mCurrentList.add(new UpNextItem(mAutoNextList.remove(0), QueueType.Auto_UpNext));
-            Log.d("Add_to_Auto", "out UP_NEXT");
-        }
+        int permissionCheck = ContextCompat.checkSelfPermission(context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(PERMISSION_GRANTED == permissionCheck){
+            mUpNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Manual_UpNext);
+            mAutoNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Auto_UpNext);
+            mGhostList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Previous);
+            /*Fetch Now Playing Item from relevant up-next list*/
+            mCurrentList.clear();
+            if (mUpNextList.size() > 0) {
+                mCurrentList.add(new UpNextItem((IMediaItem) mUpNextList.remove(0), QueueType.Manual_UpNext));
+                Log.d("Add_to_Manual", "out UP_NEXT");
+            } else if (mAutoNextList.size() > 0) {
+                mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.remove(0), QueueType.Auto_UpNext));
+                Log.d("Add_to_Auto", "out_UP_NEXT");
+            }
 //                overFillingPlayingItem();
+        }
     }
 
     private void overFillingPlayingItem(){
@@ -419,12 +425,16 @@ public class UpNextList {
         }).start();
     }
 
-    public void addToPlay(final ArrayList<MediaItem> itemList, final int position, boolean isPlayAll) {
+    public void addToPlay(final ArrayList<IMediaItem> itemList, final int position, boolean isPlayAll) {
         long mTime = System.currentTimeMillis();
         boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
-        if(null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
+        if(itemList.get(position).getMediaType() == MediaType.DEVICE_MEDIA_LIB && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
             PlayPause();
-        }else  if(mTime - mShiftingTime > 500) {
+        }else if(itemList.get(position).getMediaType() == MediaType.GOOGLE_DRIVE && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
+            PlayPause();
+        } else if(itemList.get(position).getMediaType() == MediaType.DROP_BOX && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
+            PlayPause();
+        }else if(mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -454,10 +464,15 @@ public class UpNextList {
 
     //    itemList -> list of collection
 //    position -> Now Playing Item position in item list.
-    public void addToPlay(final ArrayList<MediaItem> itemList, final int position, final boolean fromSongList, boolean isPlayAll) {
+    public void addToPlay(final ArrayList<IMediaItem> itemList, final int position, final boolean fromSongList, boolean isPlayAll) {
         long mTime = System.currentTimeMillis();
         boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
-        if(null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
+        Log.d("Media_Type : ", itemList.get(position).getMediaType().name());
+        if(itemList.get(position).getMediaType() == MediaType.DEVICE_MEDIA_LIB && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
+            PlayPause();
+        }else if(itemList.get(position).getMediaType() == MediaType.GOOGLE_DRIVE && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
+            PlayPause();
+        } else if(itemList.get(position).getMediaType() == MediaType.DROP_BOX && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
             PlayPause();
         }else if(mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
@@ -524,7 +539,7 @@ public class UpNextList {
                         PlayingItemChanged();
                     }
                 }
-            }, 100);
+            }, 300);
         }
     }
 
@@ -537,7 +552,7 @@ public class UpNextList {
                 public void run() {
                     switch (queueType) {
                         case History:
-                            UpNextItem item = new UpNextItem(mHistoryList.remove(position), queueType);
+                            UpNextItem item = new UpNextItem((IMediaItem) mHistoryList.remove(position), queueType);
                             managePlayedItem(true);
                             mCurrentList.add(item);
                             overFillingPlayingItem();
@@ -552,7 +567,7 @@ public class UpNextList {
                             break;
                         case Manual_UpNext:
                             managePlayedItem(true);
-                            mCurrentList.add(new UpNextItem(mUpNextList.remove(position), queueType));
+                            mCurrentList.add(new UpNextItem((IMediaItem) mUpNextList.remove(position), queueType));
                             overFillingPlayingItem();
                             PlayingItemChanged();
                             break;
@@ -566,9 +581,9 @@ public class UpNextList {
                                 }
                                 PlayItemIndex = 0;
 //                selected item comes on top, so remove only top (0) item
-                                mCurrentList.add(new UpNextItem(mAutoNextList.remove(0), queueType));
+                                mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.remove(0), queueType));
                             } else if (mRepeat == REPEAT.all/* && mShuffle == SHUFFLE.none*/) {
-                                mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), queueType));
+                                mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.get(PlayItemIndex), queueType));
                             }
                             overFillingPlayingItem();
                             PlayingItemChanged();
@@ -586,7 +601,7 @@ public class UpNextList {
         }
     }
 
-    public void addItemListToUpNext(MediaItem item) {
+    public void addItemListToUpNext(IMediaItem item) {
         if(null != item) {
             mUpNextList.add(item);
             QueueUpdated();
@@ -598,16 +613,16 @@ public class UpNextList {
         if (mRepeat == REPEAT.none || (mRepeat == REPEAT.one && isUser)) {
             if (mUpNextList.size() > 0) {
                 managePlayedItem(true);
-                mCurrentList.add(new UpNextItem(mUpNextList.remove(0), QueueType.Manual_UpNext));
+                mCurrentList.add(new UpNextItem((IMediaItem) mUpNextList.remove(0), QueueType.Manual_UpNext));
             } else if (mAutoNextList.size() > 0) {
                 for (int i = 0; i < PlayItemIndex; PlayItemIndex--) {
-                    addItemAsPrevious(new UpNextItem(mAutoNextList.remove(i), QueueType.Auto_UpNext));
+                    addItemAsPrevious(new UpNextItem((IMediaItem) mAutoNextList.remove(i), QueueType.Auto_UpNext));
                 }
                 managePlayedItem(true);
                 if (PlayItemIndex < 0) {
                     PlayItemIndex = 0;
                 }
-                mCurrentList.add(new UpNextItem(mAutoNextList.remove(PlayItemIndex), QueueType.Auto_UpNext));
+                mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.remove(PlayItemIndex), QueueType.Auto_UpNext));
             } else {
                 managePlayedItem(true);
             }
@@ -622,7 +637,7 @@ public class UpNextList {
             managePlayedItem(false);
 
             if (mUpNextList.size() > 0) {
-                mCurrentList.add(new UpNextItem(mUpNextList.remove(0), QueueType.Manual_UpNext));
+                mCurrentList.add(new UpNextItem((IMediaItem) mUpNextList.remove(0), QueueType.Manual_UpNext));
             } else if (mAutoNextList.size() > 0 && (mAutoNextList.size() - 1) > PlayItemIndex) {
                 boolean isContain = false;
                 for(int i = 0; i< mAutoNextList.size() ; i++){
@@ -637,15 +652,15 @@ public class UpNextList {
                 }
                 mCurrentList.clear();
                 if((mAutoNextList.size() - 1) >= PlayItemIndex) {
-                    mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
+                    mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
                 }else {
                     PlayItemIndex = 0;
-                    mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
+                    mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
                 }
             } else if (mAutoNextList.size() > 0){
                 PlayItemIndex = 0;
                 mCurrentList.clear();
-                mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
+                mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
             }
 
         }
@@ -664,7 +679,7 @@ public class UpNextList {
                 } else {
                     PlayItemIndex--;
                 }
-                mCurrentList.add(new UpNextItem(mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
+                mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.get(PlayItemIndex), QueueType.Auto_UpNext));
             } else /*if (((mRepeat == REPEAT.all && mShuffle == SHUFFLE.all) || mRepeat != REPEAT.all) && mAutoNextList.size() != -1)*/ {
                 int prevSize = mGhostList.size();
                 MediaItem playingItem = null;
@@ -740,7 +755,7 @@ public class UpNextList {
             addItemToHistory(mCurrentList.remove(0).getUpNextItem());
 
         if(null != item) {
-            mCurrentList.add(new UpNextItem(item, queueType));
+            mCurrentList.add(new UpNextItem((IMediaItem) item, queueType));
             overFillingPlayingItem();
         }
     }
@@ -780,7 +795,7 @@ public class UpNextList {
 
     private void addItemToHistory(IMediaItemBase item) {
         if(null != item) {
-            addUpNextItem(item, QueueType.History);
+            addUpNextItemToDB(item, QueueType.History);
             invalidateHistory();
             QueueUpdated();
         }
@@ -792,15 +807,15 @@ public class UpNextList {
     }
 
     public class UpNextItem {
-        private IMediaItemBase item;
+        private IMediaItem item;
         private QueueType type;
 
-        public UpNextItem(IMediaItemBase item, QueueType type) {
+        public UpNextItem(IMediaItem item, QueueType type) {
             this.item = item;
             this.type = type;
         }
 
-        public IMediaItemBase getUpNextItem() {
+        public IMediaItem getUpNextItem() {
             return item;
         }
 

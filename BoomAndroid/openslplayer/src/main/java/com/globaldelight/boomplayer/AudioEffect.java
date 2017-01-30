@@ -53,39 +53,12 @@ public class AudioEffect {
 
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
-    private boolean isLowEndDevice = false;
+    private Context context;
 
     private AudioEffect(Context context) {
+        this.context = context;
         shp = context.getSharedPreferences(AUDIO_EFFECT_SETTING, Context.MODE_PRIVATE);
         editor = shp.edit();
-        isLowEndDevice = checkLowEndDevice(context);
-    }
-
-
-    // Devices listed under high_end_devices.csv are not low end devices, rest are low end.
-    private boolean checkLowEndDevice(Context context) {
-        try {
-            InputStreamReader is = new InputStreamReader(context.getAssets().open("high_end_devices.csv"));
-
-            BufferedReader reader = new BufferedReader(is);
-            reader.readLine();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] fields = line.split(",");
-                if ( fields.length == 4 ) {
-                    final String manufacturer = fields[0];
-                    final String model = fields[3];
-
-                    if ( manufacturer.equalsIgnoreCase(Build.MANUFACTURER) && model.equalsIgnoreCase(Build.MODEL) ) {
-                        return false;
-                    }
-                }
-            }
-        }
-        catch (Exception e) {
-        }
-
-        return true;
     }
 
     public static AudioEffect getAudioEffectInstance(Context context) {
@@ -131,7 +104,8 @@ public class AudioEffect {
     }
 
     public boolean isFullBassOn(){
-        return shp.getBoolean(FULL_BASS, !isLowEndDevice);
+        boolean isOn = AudioConfiguration.getInstance(context).getQuality() == AudioConfiguration.QUALITY_HIGH;
+        return shp.getBoolean(FULL_BASS, isOn);
     }
 
     public void setEnableFullBass(boolean enableBass) {
@@ -253,15 +227,6 @@ public class AudioEffect {
         editor.commit();
     }
 
-
-    public static int LOW_QUALITY_AUDIO = 1;
-    public static int MID_QUALITY_AUDIO = 2;
-    public static int HIGH_QUALITY_AUDIO = 3;
-
-    public int getAudioQuality() {
-        if ( isLowEndDevice ) return MID_QUALITY_AUDIO;
-        return HIGH_QUALITY_AUDIO;
-    }
 
     public enum headphone {
         OVER_EAR,

@@ -5,16 +5,11 @@ import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioDeviceCallback;
-import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.globaldelight.boom.App;
-import com.globaldelight.boom.task.PlayerService;
 
 /**
  * Created by Rahul Agarwal on 05-10-16.
@@ -23,7 +18,7 @@ import com.globaldelight.boom.task.PlayerService;
 public class MusicReceiver extends BroadcastReceiver {
     public static boolean isPlugged = false;
     private Handler handler;
-    private updateMusic listener=null;
+    private IUpdateMusic listener=null;
     private AudioManager mAudioManager;
     public static boolean HEADSET_PLUGGED = true;
     public static boolean HEADSET_UNPLUGGED = false;
@@ -76,7 +71,7 @@ public class MusicReceiver extends BroadcastReceiver {
         switch (state) {
             case 0:
                 if( App.getPlayerEventHandler().isPlaying() )
-                    context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_PAUSE_SONG));
+                    context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
 
                 handler.post(new Runnable() {
                     @Override
@@ -103,7 +98,7 @@ public class MusicReceiver extends BroadcastReceiver {
         isPlugged = isHeadsetConnected();
     }
 
-    public MusicReceiver(Context context, updateMusic listener){
+    public MusicReceiver(Context context, IUpdateMusic listener){
         handler = new Handler();
         this.listener = listener;
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -116,7 +111,7 @@ public class MusicReceiver extends BroadcastReceiver {
         return isWiredHeadsetConnected || isBluetoothHeadsetConnected;
     }
 
-    public interface updateMusic{
+    public interface IUpdateMusic {
         public void onHeadsetUnplugged();
         public void onHeadsetPlugged();
     }

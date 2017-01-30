@@ -7,14 +7,12 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Toast;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -39,10 +37,6 @@ public class SplashActivity extends AppCompatActivity {
     JSONObject propsFirst, propsLast;
     String currentDate;
     private AudioEffect audioEffectPreferenceHandler;
-    public static String getToday(String format) {
-        Date date = new Date();
-        return new SimpleDateFormat(format).format(date);
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,7 +58,24 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 // This method will be executed once the timer is over
                 // Start your app main activity
-                startPlayer();
+                startBoomLibrary();
+                // close this activity
+                //finish();
+            }
+        }, SPLASH_TIME_OUT);
+        App.startPlayerService();
+        new Handler().postDelayed(new Runnable() {
+
+            /*
+             * Showing splash screen with a timer. This will be useful when you
+             * want to show case your app logo / company
+             */
+
+            @Override
+            public void run() {
+                // This method will be executed once the timer is over
+                // Start your app main activity
+                startBoomLibrary();
                 // close this activity
                 //finish();
             }
@@ -106,11 +117,15 @@ public class SplashActivity extends AppCompatActivity {
         MixPanelAnalyticHelper.initPushNotification(this);
         MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
         MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_APP_OPEN, currentDate);
+          /*  String android_id = Settings.Secure.getString(this.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+            MixPanelAnalyticHelper.getInstance(this).getPeople().set("Device_ID", android_id);*/
+
         Preferences.writeString(this, Preferences.APP_LAST_OPEN, currentDate);
     }
 
-    private void startPlayer(){
-        Intent i = new Intent(SplashActivity.this, BoomPlayerActivity.class);
+    private void startBoomLibrary(){
+        Intent i = new Intent(SplashActivity.this, MainActivity.class);
         startActivity(i);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         finish();

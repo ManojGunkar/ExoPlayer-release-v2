@@ -10,12 +10,8 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
-import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
-import com.globaldelight.boom.ui.musiclist.activity.CollectionListActivity;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -89,6 +85,10 @@ public class MediaController implements IMediaController{
         return MediaLibraryHandler.getInstance(context).isFavouriteItems(itemId);
     }
 
+    public boolean isFavouriteItems(String itemTitle) {
+        return MediaLibraryHandler.getInstance(context).isFavouriteItems(itemTitle);
+    }
+
     public void clearFavoriteList() {
         MediaLibraryHandler.getInstance(context).clearFavoriteList();
     }
@@ -99,6 +99,10 @@ public class MediaController implements IMediaController{
 
     public void removeItemToFavoriteList(long itemId) {
         MediaLibraryHandler.getInstance(context).removeItemToFavoriteList(itemId);
+    }
+
+    public void removeItemToFavoriteList(String itemTitle) {
+        MediaLibraryHandler.getInstance(context).removeItemToFavoriteList(itemTitle);
     }
 
     public void addUpNextItem(IMediaItemBase song, QueueType queueType) {

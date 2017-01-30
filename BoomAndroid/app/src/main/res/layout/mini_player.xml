@@ -1,78 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge  xmlns:android="http://schemas.android.com/apk/res/android">
-<LinearLayout
-    android:orientation="vertical"
-    android:id="@+id/mini_player_container"
-    android:background="@color/dialog_background"
-    android:elevation="12dp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/small_panel"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/mini_player_height">
-
-    <ProgressBar
-        style="?android:attr/progressBarStyleHorizontal"
+    android:layout_height="@dimen/player_mini_height"
+    android:orientation="vertical">
+    <android.support.v7.widget.AppCompatSeekBar
+        android:id="@+id/mini_player_progress"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/mini_player_progress_height"
-        android:id="@+id/mini_player_track_progress" />
-
+        android:layout_height="@dimen/eight_pt"
+        android:thumb="@null"
+        android:layout_weight="0"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/mini_player_content_height"
+        android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:weightSum="100">
+        android:layout_weight="1"
+        android:gravity="center_vertical">
         <LinearLayout
-            android:id="@+id/mini_touch_panel"
-            android:layout_width="0dp"
+            android:id="@+id/mini_player_boom_effect"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="85.7"
-            android:weightSum="100"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:layout_weight="19.49">
-                <ImageView
-                    android:id="@+id/mini_player_album_art"
-                    android:layout_width="@dimen/one_hundred_eighty_pt"
-                    android:layout_height="@dimen/one_hundred_eighty_pt"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_default_list"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="80.51"
-                android:orientation="vertical"
-                android:gravity="center">
-                <com.globaldelight.boom.ui.widgets.RegularTextView
-                    android:id="@+id/mini_player_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:textStyle="normal"
-                    android:textColor="@color/boom_yellow"/>
-                <com.globaldelight.boom.ui.widgets.RegularTextView
-                    android:id="@+id/mini_player_sub_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:gravity="top"
-                    android:textStyle="normal"
-                    android:textColor="@color/white"/>
-            </LinearLayout>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_weight="14.3">
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center_vertical"
+            android:layout_weight="0">
             <ImageView
-                android:id="@+id/mini_player_play_pause"
+                android:id="@+id/mini_player_effect_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_play_mini_player"/>
+                android:background="@drawable/unbounded_ripple"
+                android:src="@drawable/ic_miniplayer_effects" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/mini_player_title_panel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/mini_player_song_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:maxLines="1"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/mini_player_song_sub_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center_vertical"
+            android:layout_weight="0">
+            <ImageView
+                android:id="@+id/mini_player_play_pause_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/unbounded_ripple"
+                android:src="@drawable/ic_miniplayer_play" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
-</merge>

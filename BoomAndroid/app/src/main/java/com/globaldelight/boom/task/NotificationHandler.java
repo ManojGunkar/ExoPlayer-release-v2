@@ -12,15 +12,16 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.globaldelight.boom.App;
-import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
+import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.File;
 
-import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
@@ -44,10 +45,10 @@ public class NotificationHandler {
 
     private Notification.Builder createBuiderNotification(boolean removable) {
         Intent notificationIntent = new Intent();
-        notificationIntent.setAction(PlayerService.ACTION_NOTI_CLICK);
+        notificationIntent.setAction(PlayerServiceReceiver.ACTION_NOTI_CLICK);
         PendingIntent contentIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, 0);
         Intent deleteIntent = new Intent();
-        deleteIntent.setAction(PlayerService.ACTION_NOTI_REMOVE);
+        deleteIntent.setAction(PlayerServiceReceiver.ACTION_NOTI_REMOVE);
         PendingIntent deletePendingIntent = PendingIntent.getBroadcast(context, 0, deleteIntent, 0);
         if (removable)
             return new Notification.Builder(context)
@@ -81,20 +82,9 @@ public class NotificationHandler {
         notificationActive = true;
     }
 
-    public void changeNotificationDetails(MediaItem item, boolean playing, boolean isLastPlayed) {
+    public void changeNotificationDetails(IMediaItem item, boolean playing, boolean isLastPlayed) {
         if(item == null && !isLastPlayed){
-//            notificationCompat.bigContentView.setViewVisibility(R.id.noti_name, GONE);
-//            notificationCompat.bigContentView.setViewVisibility(R.id.noti_artist, GONE);
-//
-//            notificationCompat.contentView.setViewVisibility(R.id.noti_name, GONE);
-//            notificationCompat.contentView.setViewVisibility(R.id.noti_artist, GONE);
-//
-//            notificationCompat.bigContentView.setViewVisibility(R.id.noti_play_button, GONE);
-//            notificationCompat.contentView.setViewVisibility(R.id.noti_play_button, GONE);
-
-//            setNoTrackImageView();
-//            notificationManager.notify(NOTIFICATION_ID, notificationCompat);
-            notificationManager.cancel(NOTIFICATION_ID);
+            removeNotification();
             return;
         }else if (isLastPlayed){
             notificationCompat.bigContentView
@@ -115,7 +105,7 @@ public class NotificationHandler {
             notificationCompat.bigContentView.setViewVisibility(R.id.noti_play_button, VISIBLE);
             notificationCompat.contentView.setViewVisibility(R.id.noti_play_button, VISIBLE);
             Intent playClick = new Intent();
-            playClick.setAction(PlayerService.ACTION_PLAY_PAUSE_SONG);
+            playClick.setAction(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG);
             PendingIntent playClickIntent = PendingIntent.getBroadcast(context, 10101, playClick, 0);
             notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
             notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
@@ -133,34 +123,24 @@ public class NotificationHandler {
             }
 
             Intent nextClick = new Intent();
-            nextClick.setAction(PlayerService.ACTION_NEXT_SONG);
+            nextClick.setAction(PlayerServiceReceiver.ACTION_NEXT_SONG);
             PendingIntent nextClickIntent = PendingIntent.getBroadcast(context, 10102, nextClick, 0);
             notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
             notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
 
             Intent prevClick = new Intent();
-            prevClick.setAction(PlayerService.ACTION_PREV_SONG);
+            prevClick.setAction(PlayerServiceReceiver.ACTION_PREV_SONG);
             PendingIntent prevClickIntent = PendingIntent.getBroadcast(context, 10103, prevClick, 0);
             notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
             notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
 
-            if (isPathValid(item.getItemArtUrl())) {
+            if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
                 Picasso.with(context).load(new File(item.getItemArtUrl())).into(new Target() {
                     @Override
                     public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
                         notificationCompat.bigContentView.setImageViewBitmap(R.id.noti_album_art, bitmap);
                         notificationCompat.contentView.setImageViewBitmap(R.id.noti_album_art, bitmap);
                         notificationManager.notify(NOTIFICATION_ID, notificationCompat);
-
-//                        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-//                            @Override
-//                            public void onGenerated(Palette palette) {
-//                                notificationCompat.color = palette.getDarkVibrantColor(
-//                                        palette.getDarkMutedColor(
-//                                                palette.getMutedColor(0xffffffff)));
-////                                notificationManager.notify(NOTIFICATION_ID, notificationCompat);
-//                            }
-//                        });
                     }
 
                     @Override
@@ -196,13 +176,12 @@ public class NotificationHandler {
         notificationManager.notify(NOTIFICATION_ID, notificationCompat);
     }
 
-    private boolean fileExist(String albumArtPath) {
-        File imgFile = new File(albumArtPath);
-        return imgFile.exists();
+    public void removeNotification(){
+        notificationManager.cancel(NOTIFICATION_ID);
     }
 
-    public boolean isPathValid(String path) {
-        return path != null && fileExist(path);
+    public void hideNotification(){
+        notificationManager.cancel(NOTIFICATION_ID);
     }
 
     private void setNoTrackImageView() {
@@ -224,15 +203,10 @@ public class NotificationHandler {
         notificationCompat.contentView.setImageViewBitmap(R.id.noti_album_art,
                 utils.getBitmapOfVector(context, R.drawable.ic_default_list,
                         utils.dpToPx(context, 50), utils.dpToPx(context, 50)));
-//        notificationManager.notify(NOTIFICATION_ID, notificationCompat);
     }
 
     public void updateNotificationView() {
         notificationManager.notify(NOTIFICATION_ID, notificationCompat);
-    }
-
-    public void stopNotification(){
-//       need to stop
     }
 
     public boolean isNotificationActive() {

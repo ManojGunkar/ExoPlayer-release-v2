@@ -1,69 +1,33 @@
 package com.globaldelight.boom.task;
 
-import android.Manifest;
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothHeadset;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.dropbox.client2.DropboxAPI;
+import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.App;
-import com.globaldelight.boom.R;
+import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
+import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.manager.MusicReceiver;
-import com.globaldelight.boom.ui.musiclist.activity.BoomPlayerActivity;
-import com.globaldelight.boom.ui.musiclist.activity.PlayingQueueActivity;
-import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
+import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.globaldelight.boomplayer.AudioConfiguration;
 
-import java.io.IOException;
-import java.security.SecurityPermission;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-
-public class PlayerService extends Service implements MusicReceiver.updateMusic{
-
-    SharedPreferences shp;
-    public static final String STORAGE_PERMISSION = "Permission_granted";
-    public static final String ACTION_NOTI_CLICK = "ACTION_NOTI_CLICK";
-    public static final String ACTION_NOTI_REMOVE = "ACTION_NOTI_REMOVE";
-
-    public static final String ACTION_REPEAT_SONG = "ACTION_REPEAT_SONG";
-    public static final String ACTION_SHUFFLE_SONG = "ACTION_SHUFFLE_SONG";
-
-    public static final String ACTION_GET_SONG = "ACTION_GET_SONG";
-    public static final String ACTION_CHANGE_SONG = "ACTION_CHANGE_SONG";
-    public static final String ACTION_SEEK_SONG = "ACTION_SEEK_SONG";
-    public static final String ACTION_NEXT_SONG = "ACTION_NEXT_SONG";
-    public static final String ACTION_PREV_SONG = "ACTION_PREV_SONG";
-    public static final String ACTION_PLAY_PAUSE_SONG = "ACTION_PLAY_PAUSE_SONG";
-    public static final String ACTION_ADD_QUEUE = "ACTION_ADD_QUEUE";
-    public static final String ACTION_LAST_PLAYED_SONG = "ACTION_LAST_PLAYED_SONG";
-
-    public static final String ACTION_PLAY_STOP = "ACTION_PLAY_STOP";
-    public static final String ACTION_TRACK_POSITION_UPDATE = "ACTION_TRACK_POSITION_UPDATE";
-    public static final String ACTION_UPNEXT_UPDATE = "ACTION_UPNEXT_UPDATE";
-    public static final String ACTION_PLAYING_ITEM_CLICKED ="ACTION_PLAYING_ITEM_CLICKED";
-
-    public static final String ACTION_UPDATE_BOOM_PLAYLIST ="ACTION_UPDATE_BOOM_PLAYLIST";
-    public static final String ACTION_UPDATE_BOOM_PLAYLIST_LIST ="ACTION_UPDATE_BOOM_PLAYLIST_LIST";
-    public static final String ACTION_CREATE_PLAYER_SCREEN = "ACTION_CREATE_PLAYER_SCREEN";
-    public static final String ACTION_DESTROY_PLAYER_SCREEN ="ACTION_DESTROY_PLAYER_SCREEN";
-    public static final String ACTION_READ_WRITE_STORAGE_PERMISSION_GRANTED ="ACTION_READ_WRITE_STORAGE_PERMISSION_GRANTED";
+public class PlayerService extends Service implements MusicReceiver.IUpdateMusic, PlayerServiceReceiver.IPlayerService{
 
     private long mServiceStartTime = 0;
     private long mServiceStopTime = 0;
@@ -73,222 +37,61 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
     private NotificationHandler notificationHandler;
     private static boolean isPlayerScreenResume = false;
     private MusicReceiver musicReceiver;
-    private MusicSearchHelper musicSearchHelper;
-    private boolean isSearch = false;
-
-    private BroadcastReceiver playerServiceBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                handleBroadcastReceived(context, intent);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(PlayerService.this, R.string.cant_play_song, Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
+    private DropboxAPI<AndroidAuthSession> dropboxAPI;
+    PlayerServiceReceiver serviceReceiver;
 
     @Override
     public void onCreate() {
         super.onCreate();
         context = this;
         App.setService(this);
+        AudioConfiguration.getInstance(this).load();
+
+        serviceReceiver = new PlayerServiceReceiver();
+        serviceReceiver.registerPlayerServiceReceiver(this, serviceReceiver, this);
 
         try {
-            App.getPlayingQueueHandler().getUpNextList().fetchUpNextItemsToDB();
-            Log.d("Add_to_Fetch", "out UP_NEXT");
+            App.getPlayingQueueHandler().getUpNextList().fetchUpNextItemsToDB(this);
         }catch (Exception e){
 
         }
-        if (musicPlayerHandler == null)
+
+        if (musicPlayerHandler == null) {
             musicPlayerHandler = App.getPlayerEventHandler();
-
-        String[] actions = new String[] {
-                Intent.ACTION_HEADSET_PLUG,
-                BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED,
-                BluetoothAdapter.ACTION_STATE_CHANGED
-        };
-
-        musicReceiver = new MusicReceiver(context, this);
-        IntentFilter filter = new IntentFilter();
-        for ( String anAction: actions) {
-            filter.addAction(anAction);
+            Log.d("Service : ", "onCreate");
         }
+
+        musicReceiver = new MusicReceiver(this, this);
+
+        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(musicReceiver, filter);
 
         try {
             mServiceStartTime = SystemClock.currentThreadTimeMillis();
         }catch (Exception e){}
 
-        shp = getSharedPreferences("STORAGE_PERMISSION", Context.MODE_PRIVATE);
-        // Assume thisActivity is the current activity
-        int permissionCheck = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if(PERMISSION_GRANTED == permissionCheck){
-            if (!isSearch) {
-                isSearch = true;
-                musicSearchHelper = new MusicSearchHelper(App.getApplication());
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        initSearchAndArt();
-                    }
-                }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AndroidAuthSession session = DropBoxUtills.buildSession(App.getApplication());
+                dropboxAPI = new DropboxAPI<AndroidAuthSession>(session);
+                App.setDropboxAPI(dropboxAPI);
+                DropBoxUtills.checkAppKeySetup(App.getApplication());
             }
-            shp.edit().putBoolean(STORAGE_PERMISSION, true).apply();
-        }else{
-            shp.edit().putBoolean(STORAGE_PERMISSION, false).apply();
-        }
+        }).start();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        if (musicPlayerHandler == null)
+            musicPlayerHandler = App.getPlayerEventHandler();
+
         App.getPlayingQueueHandler().getUpNextList().updateRepeatShuffleOnAppStart();
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_REPEAT_SONG);
-        filter.addAction(ACTION_SHUFFLE_SONG);
-        filter.addAction(ACTION_GET_SONG);
-        filter.addAction(ACTION_NEXT_SONG);
-        filter.addAction(ACTION_PREV_SONG);
-        filter.addAction(ACTION_PLAY_PAUSE_SONG);
-        filter.addAction(ACTION_SEEK_SONG);
-        filter.addAction(ACTION_CHANGE_SONG);
-        filter.addAction(ACTION_NOTI_CLICK);
-        filter.addAction(ACTION_NOTI_REMOVE);
-        filter.addAction(ACTION_ADD_QUEUE);
-        filter.addAction(ACTION_PLAY_STOP);
-        filter.addAction(ACTION_TRACK_POSITION_UPDATE);
-        filter.addAction(ACTION_UPNEXT_UPDATE);
-        filter.addAction(ACTION_PLAYING_ITEM_CLICKED);
-        filter.addAction(ACTION_LAST_PLAYED_SONG);
-        filter.addAction(ACTION_CREATE_PLAYER_SCREEN);
-        filter.addAction(ACTION_DESTROY_PLAYER_SCREEN);
-        filter.addAction(ACTION_READ_WRITE_STORAGE_PERMISSION_GRANTED);
-        registerReceiver(playerServiceBroadcastReceiver, filter);
         notificationHandler = new NotificationHandler(context, this);
+//        App.setNotifica
         return START_NOT_STICKY;
-    }
-
-//    Call by Player Fragment
-    private void handleBroadcastReceived(Context context, final Intent intent) throws IOException {
-        switch (intent.getAction()) {
-            case ACTION_GET_SONG:
-                try {
-                    updatePlayer(false);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    e.printStackTrace();
-                }
-                updatePlayingQueue();
-                sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
-                break;
-            case ACTION_PLAYING_ITEM_CLICKED:
-                updatePlayPause(intent.getBooleanExtra("play_pause", false));
-                break;
-            case ACTION_PLAY_PAUSE_SONG:
-                if(!musicPlayerHandler.isPaused() && !musicPlayerHandler.isPlaying()){
-                    musicPlayerHandler.onPlayingItemChanged();
-                }else {
-                    PlayerEventHandler.PlayState state = musicPlayerHandler.PlayPause();
-                    updatePlayPause(state == PlayerEventHandler.PlayState.play ? true : false);
-                }
-                break;
-            case ACTION_UPNEXT_UPDATE:
-                updatePlayingQueue();
-                break;
-            case ACTION_TRACK_POSITION_UPDATE:
-                trackSeekUpdate(true, intent);
-                break;
-            case ACTION_SEEK_SONG:
-                trackSeekUpdate(false, intent);
-                break;
-            case ACTION_PLAY_STOP:
-                sendBroadcast(new Intent(PlayerEvents.ACTION_TRACK_STOPPED));
-                updateNotificationPlayer(null, false, false);
-                break;
-            case ACTION_SHUFFLE_SONG:
-                musicPlayerHandler.resetShuffle();
-                sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_SHUFFLE));
-                break;
-            case ACTION_REPEAT_SONG :
-                musicPlayerHandler.resetRepeat();
-                sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_REPEAT));
-                updateNotificationPlayer((MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isPlaying(), false);
-                break;
-            case ACTION_NEXT_SONG :
-                if(System.currentTimeMillis() - mShiftingTime > 1000) {
-                    mShiftingTime = System.currentTimeMillis();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            musicPlayerHandler.playNextSong(true);
-                        }
-                    }, 500);
-                }
-                break;
-            case ACTION_PREV_SONG:
-                if(System.currentTimeMillis() - mShiftingTime > 1000) {
-                    mShiftingTime = System.currentTimeMillis();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            musicPlayerHandler.playPrevSong();
-                        }
-                    }, 500);
-                }
-                break;
-            case ACTION_LAST_PLAYED_SONG:
-                updatePlayerToLastPlayedSong();
-                break;
-            case ACTION_NOTI_CLICK:
-                sendBroadcast(new Intent(PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB));
-                final Intent i = new Intent();
-                    i.setClass(context, BoomPlayerActivity.class);
-                if(!App.getPlayerEventHandler().isPlayerResume) {
-                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
-                }
-                break;
-            case ACTION_NOTI_REMOVE:
-                notificationHandler.setNotificationActive(false);
-                if(!isPlayerScreenResume) {
-                    updateUpNextDB();
-                    stopSelf();
-                }
-                break;
-            /*case ACTION_ADD_QUEUE:
-                musicPlayerHandler.addSongToQueue();
-                break;
-                */
-            case ACTION_CREATE_PLAYER_SCREEN:
-                isPlayerScreenResume = true;
-                break;
-            case ACTION_DESTROY_PLAYER_SCREEN:
-                isPlayerScreenResume = false;
-                break;
-            case ACTION_READ_WRITE_STORAGE_PERMISSION_GRANTED:
-                if(false == shp.getBoolean(STORAGE_PERMISSION, false)) {
-                    if (!isSearch) {
-                        isSearch = true;
-                        musicSearchHelper = new MusicSearchHelper(App.getApplication());
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                initSearchAndArt();
-                            }
-                        }).start();
-                    }
-                }
-                shp.edit().putBoolean(STORAGE_PERMISSION, true).apply();
-                break;
-        }
-    }
-
-    private void initSearchAndArt(){
-        musicSearchHelper.getAlbumList(App.getApplication());
-        musicSearchHelper.getArtistList(App.getApplication());
-        musicSearchHelper.setSearchContent();
     }
 
     private void updatePlayerToLastPlayedSong() {
@@ -317,12 +120,12 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
         i.putExtra("play_pause", play_pause);
         sendBroadcast(i);
 
-        updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), play_pause, false);
+        updateNotificationPlayer((IMediaItem) musicPlayerHandler.getPlayingItem(), play_pause, false);
     }
 
     private void updatePlayingQueue() {
         Intent i = new Intent();
-        i.setAction(PlayingQueueActivity.ACTION_UPDATE_QUEUE);
+        i.setAction(PlayerEvents.ACTION_UPDATE_QUEUE);
         sendBroadcast(i);
     }
 
@@ -336,13 +139,13 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
             i.putExtra("is_next", musicPlayerHandler.isNext());
 
             sendBroadcast(i);
-            updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), true, false);
+            updateNotificationPlayer(musicPlayerHandler.getPlayingItem(), true, false);
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), true, false);
+            updateNotificationPlayer(musicPlayerHandler.getPlayingItem(), true, false);
         }else{
             Intent i = new Intent();
             i.setAction(PlayerEvents.ACTION_LAST_PLAYED_SONG);
@@ -356,14 +159,13 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            updateNotificationPlayer((MediaItem) musicPlayerHandler.getPlayingItem(), false, true);
+            updateNotificationPlayer((IMediaItem) musicPlayerHandler.getPlayingItem(), false, true);
         }
     }
 
-    private void updateNotificationPlayer(MediaItem playingItem, boolean playing, boolean isLastPlayed) {
-//        notificationHandler.setNotificationPlayer(false);
+    private void updateNotificationPlayer(IMediaItem playingItem, boolean playing, boolean isLastPlayed) {
         if(!playing){
-            stopForeground(false);
+            stopForeground(true);
             notificationHandler.setNotificationPlayer(true);
         }else{
             notificationHandler.setNotificationPlayer(false);
@@ -371,7 +173,6 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
         notificationHandler.changeNotificationDetails(playingItem, playing, isLastPlayed);
         if(playingItem == null && !isLastPlayed){
             updateUpNextDB();
-            stopSelf();
         }
     }
 
@@ -382,8 +183,159 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
     }
 
     @Override
+    public void onHeadsetUnplugged() {
+
+    }
+
+    @Override
+    public void onHeadsetPlugged() {
+        sendBroadcast(new Intent(PlayerEvents.ACTION_HEADSET_PLUGGED));
+    }
+
+    @Override
+    public void onNotificationClick() {
+        sendBroadcast(new Intent(PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB));
+        final Intent i = new Intent();
+        i.setClass(context, MainActivity.class);
+        if(!App.getPlayerEventHandler().isPlayerResume) {
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+        }
+    }
+
+    @Override
+    public void onNotificationRemove() {
+        notificationHandler.setNotificationActive(false);
+        if(!isPlayerScreenResume) {
+            updateUpNextDB();
+        }
+    }
+
+    @Override
+    public void onRepeatSongList() {
+        musicPlayerHandler.resetRepeat();
+        sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_REPEAT));
+        updateNotificationPlayer((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isPlaying(), false);
+    }
+
+    @Override
+    public void onShuffleSongList() {
+        musicPlayerHandler.resetShuffle();
+        sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_SHUFFLE));
+    }
+
+    @Override
+    public void onSongReceived() {
+        try {
+            updatePlayer(false);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+        updatePlayingQueue();
+        sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
+    }
+
+    @Override
+    public void onSongChanged() {
+
+    }
+
+    @Override
+    public void onSeekSongTrack(Intent intent) {
+        trackSeekUpdate(false, intent);
+    }
+
+    @Override
+    public void onNextTrack() {
+        if(System.currentTimeMillis() - mShiftingTime > 1000) {
+            mShiftingTime = System.currentTimeMillis();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    musicPlayerHandler.playNextSong(true);
+                }
+            }, 500);
+        }
+    }
+
+    @Override
+    public void onPreviousTrack() {
+        if(System.currentTimeMillis() - mShiftingTime > 1000) {
+            mShiftingTime = System.currentTimeMillis();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    musicPlayerHandler.playPrevSong();
+                }
+            }, 500);
+        }
+    }
+
+    @Override
+    public void onPlayPauseTrack() {
+        if(!musicPlayerHandler.isPaused() && !musicPlayerHandler.isPlaying()){
+            musicPlayerHandler.onPlayingItemChanged();
+        }else {
+            PlayerEventHandler.PlayState state = musicPlayerHandler.PlayPause();
+            if (state != PlayerEventHandler.PlayState.play && !isPlayerScreenResume) {
+                updateUpNextDB();
+            } else{
+                updatePlayPause(state == PlayerEventHandler.PlayState.play ? true : false);
+            }
+        }
+    }
+
+    @Override
+    public void onAddToUpNext() {
+//        musicPlayerHandler.addSongToQueue();
+    }
+
+    @Override
+    public void onLastPlayedTrack() {
+        updatePlayerToLastPlayedSong();
+    }
+
+    @Override
+    public void onStopPlaying() {
+        sendBroadcast(new Intent(PlayerEvents.ACTION_TRACK_STOPPED));
+        updateNotificationPlayer(null, false, false);
+    }
+
+    @Override
+    public void onTrackPositionUpdate(Intent intent) {
+        trackSeekUpdate(true, intent);
+    }
+
+    @Override
+    public void onUpNextListUpdate() {
+        updatePlayingQueue();
+    }
+
+    @Override
+    public void onPlayingItemClicked(Intent intent) {
+        updatePlayPause(intent.getBooleanExtra("play_pause", false));
+    }
+
+    @Override
+    public void onCreateLibrary() {
+        isPlayerScreenResume = true;
+    }
+
+    @Override
+    public void onDestroyLibrary() {
+        isPlayerScreenResume = false;
+        if(notificationHandler.isNotificationActive() && !App.getPlayerEventHandler().isPlaying()) {
+            stopForeground(true);
+            notificationHandler.setNotificationPlayer(true);
+            notificationHandler.changeNotificationDetails(null, false , false);
+            App.getPlayingQueueHandler().getUpNextList().addUpNextItemsToDB();
+        }
+    }
+
+    @Override
     public void onDestroy() {
         unregisterReceiver(musicReceiver);
+        serviceReceiver.unregisterPlayerServiceReceiver(this);
         try {
             mServiceStopTime = SystemClock.currentThreadTimeMillis();
             mServiceStartTime = mServiceStopTime - mServiceStartTime;
@@ -399,20 +351,15 @@ public class PlayerService extends Service implements MusicReceiver.updateMusic{
     }
 
     private void updateUpNextDB() {
+        if(notificationHandler.isNotificationActive()) {
+            notificationHandler.removeNotification();
+            stopForeground(true);
+        }
         App.getPlayingQueueHandler().getUpNextList().addUpNextItemsToDB();
         if (musicPlayerHandler.getPlayer() != null) {
             musicPlayerHandler.stop();
-            musicPlayerHandler.release();
+//            musicPlayerHandler.release();
         }
-    }
-
-    @Override
-    public void onHeadsetUnplugged() {
-
-    }
-
-    @Override
-    public void onHeadsetPlugged() {
-        sendBroadcast(new Intent(PlayerEvents.ACTION_HEADSET_PLUGGED));
+        App.getService().stopSelf();
     }
 }

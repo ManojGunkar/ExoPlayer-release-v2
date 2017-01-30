@@ -14,14 +14,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,18 +29,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.ui.musiclist.activity.AlbumDetailActivity;
+import com.globaldelight.boom.ui.musiclist.activity.AlbumDetailItemActivity;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
-import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.handler.search.SearchResult;
-import com.globaldelight.boom.ui.musiclist.activity.AlbumActivity;
-import com.globaldelight.boom.ui.musiclist.activity.DetailAlbumActivity;
-import com.globaldelight.boom.ui.musiclist.activity.SearchDetailListActivity;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
@@ -67,7 +64,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
     public static final int TYPE_GRID = 222;
     private boolean isPhone;
 
-    public SearchDetailListAdapter(SearchDetailListActivity searchDetailListActivity, ArrayList<? extends IMediaItemBase> resultItemList, String mResultType, boolean isPhone) {
+    public SearchDetailListAdapter(Activity searchDetailListActivity, ArrayList<? extends IMediaItemBase> resultItemList, String mResultType, boolean isPhone) {
         this.context = searchDetailListActivity;
         activity = searchDetailListActivity;
         this.resultItemList = resultItemList;
@@ -119,7 +116,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                     public void onClick(View view) {
                         animate(holder);
                         if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<MediaItem>) resultItemList, position, false, false);
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) resultItemList, position, false, false);
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -210,7 +207,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Intent i = new Intent(context, AlbumActivity.class);
+                            Intent i = new Intent(context, AlbumDetailActivity.class);
                             i.putExtra("mediaItemCollection", (MediaItemCollection)resultItemList.get(position));
                             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                                     (Activity) context,
@@ -292,7 +289,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Intent i = new Intent(context, DetailAlbumActivity.class);
+                            Intent i = new Intent(context, AlbumDetailItemActivity.class);
                             i.putExtra("mediaItemCollection", (MediaItemCollection)resultItemList.get(position));
                             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                                     (Activity) context,

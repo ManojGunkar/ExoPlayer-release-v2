@@ -67,11 +67,6 @@
         <item name="searchHintIcon">@null</item>
     </style>
 
-    <style name="ExpandedTransparent">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">24sp</item>
-    </style>
-
     <style name="ToolbarSearchTheme">
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
@@ -89,36 +84,6 @@
     </style>
 
     <!--<color name="theme_primary">#607D8B</color>-->
-
-    <declare-styleable name="CircularSeekBar">
-        <attr name="thumb" format="reference" />
-        <attr name="thumbOffset" format="dimension" />
-        <attr name="maximum" format="integer" />
-        <attr name="progressWidth" format="dimension" />
-        <attr name="arcWidth" format="dimension" />
-        <attr name="progresses" format="integer" />
-        <attr name="rotation" format="integer" />
-        <attr name="startAngle" format="integer" />
-        <attr name="sweepAngle" format="integer" />
-        <attr name="arcColor" format="color" />
-        <attr name="progressColor" format="color" />
-        <attr name="roundEdges" format="boolean" />
-        <attr name="touchInside" format="boolean" />
-        <attr name="clockwise" format="boolean" />
-        <attr name="enabled" format="boolean" />
-    </declare-styleable>
-
-    <declare-styleable name="CircularSeekBarTheme">
-        <attr name="circularSeekBarStyle" format="reference"></attr>
-    </declare-styleable>
-
-    <declare-styleable name="CircleImageView">
-        <attr name="border_width" format="dimension" />
-        <attr name="border_color" format="color" />
-        <attr name="border_overlay" format="boolean" />
-        <attr name="fill_color" format="color" />
-    </declare-styleable>
-
 
     <style name="AppTheme.Player" parent="AppTheme">
         <item name="windowActionBar">false</item>
@@ -158,17 +123,6 @@
         <item name="android:background">@color/colorPrimary</item>
     </style>
 
-    <style name="RedSwitch" parent="Theme.AppCompat.Light">
-        <!-- active thumb & track color (30% transparency) -->
-        <item name="colorControlActivated">@color/colorPrimary</item>
-
-        <!-- inactive thumb color -->
-        <item name="colorSwitchThumbNormal">#f1f1f1</item>
-
-        <!-- inactive track color (30% transparency) -->
-        <item name="android:colorForeground">#ffffff</item>
-    </style>
-
     <style name="GenericProgressBackground" parent="android:Theme">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">fill_parent</item>
@@ -191,13 +145,95 @@
 
     </style>
 
-    <style name="MyCheckBox" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">@color/card_grid_item_bottom_line</item>
-        <item name="colorControlActivated">@color/colorPrimary</item>
-    </style>
-
     <style name="myDropDownListViewStyle" parent="Widget.AppCompat.ListView.DropDown">
         <item name="android:background">@color/dialog_background</item>
     </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:displayOptions">homeAsUp</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_shade</item>
+    </style>
+
+    <style name="MySearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="queryBackground">@android:color/white</item>
+        <item name="submitBackground">@color/colorAccent</item>
+        <item name="closeIcon">@android:drawable/ic_menu_close_clear_cancel</item>
+        <item name="goIcon">@android:drawable/ic_menu_search</item>
+        <item name="searchHintIcon">@android:drawable/ic_menu_search</item>
+        <item name="android:width">10000dp</item>
+    </style>
+
+    <style name="ThemeToolbar" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@color/colorAccent</item>
+        <item name="searchViewStyle">@style/MySearchViewStyle</item>
+    </style>
+
+    <style name="ExpandedTransparent">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="AppTheme.FullScreen" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
+    </style>
+
+    <style name="RedSwitch" parent="Theme.AppCompat.Light">
+        <!-- active thumb & track color (30% transparency) -->
+        <item name="colorControlActivated">@color/colorAccent</item>
+
+        <!-- inactive thumb color -->
+        <item name="colorSwitchThumbNormal">#f1f1f1</item>
+
+        <!-- inactive track color (30% transparency) -->
+        <item name="android:colorForeground">#ffffff</item>
+    </style>
+
+    <style name="MyCheckBox" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+
 
 </resources>
