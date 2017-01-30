@@ -32,7 +32,7 @@ public class OpenSLPlayer implements Runnable {
     AudioEffect audioEffectPreferenceHandler;
     private MediaExtractor extractor;
     private MediaCodec codec;
-    private PlayerEvents events = null;
+    private IPlayerEvents events = null;
     private PlayerStates state = new PlayerStates();
     private String sourcePath = null;
     private int sourceRawResId = -1;
@@ -47,11 +47,11 @@ public class OpenSLPlayer implements Runnable {
     int sampleRate = 0, channels = 0, bitrate = 0;
     long presentationTimeUs = 0, duration = 0;
 
-    public void setEventsListener(PlayerEvents events) {
+    public void setEventsListener(IPlayerEvents events) {
         this.events = events;
     }
 
-    public OpenSLPlayer(Context context, PlayerEvents events) {
+    public OpenSLPlayer(Context context, IPlayerEvents events) {
         setEventsListener(events);
         mContext = context;
         audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(context);

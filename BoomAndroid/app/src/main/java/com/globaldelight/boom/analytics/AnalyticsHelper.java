@@ -31,21 +31,22 @@ public class AnalyticsHelper {
 
 
     /* Effect screen*/
-    public static final String EVENT_OPEN_EFFECTS = "open_effects";
-    public static final String EVENT_FRONT_LEFT_SPEAKER_ON = "front_left_speaker_on";
+    public static final String EVENT_OPEN_EFFECT_TAB = "open_effects";
+    public static final String EVENT_OPEN_PLAYER_TAB = "open_player";
+    public static final String EVENT_FRONT_LEFT_SPEAKER = "front_left_speaker";
     public static final String EVENT_FRONT_LEFT_SPEAKER_OFF = "front_left_speaker_off";
-    public static final String EVENT_FRONT_RIGHT_SPEAKER_ON = "front_right_speaker_on";
+    public static final String EVENT_FRONT_RIGHT_SPEAKER = "front_right_speaker";
     public static final String EVENT_FRONT_RIGHT_SPEAKER_OFF = "front_right_speaker_off";
 
-    public static final String EVENT_REAR_LEFT_SPEAKER_ON = "rear_left_speaker_on";
+    public static final String EVENT_REAR_LEFT_SPEAKER = "rear_left_speaker";
     public static final String EVENT_REAR_LEFT_SPEAKER_OFF = "rear_left_speaker_off";
-    public static final String EVENT_REAR_RIGHT_SPEAKER_ON = "rear_right_speaker_on";
+    public static final String EVENT_REAR_RIGHT_SPEAKER = "rear_right_speaker";
     public static final String EVENT_REAR_RIGHT_SPEAKER_OFF = "rear_right_speaker_off";
 
-    public static final String EVENT_SUBWOOFER_ON = "subwoofer_on";
+    public static final String EVENT_SUBWOOFER = "subwoofer";
     public static final String EVENT_SUBWOOFER_OFF = "subwoofer_off";
 
-    public static final String EVENT_TWEETER_ON = "tweeter_on";
+    public static final String EVENT_TWEETER = "tweeter";
     public static final String EVENT_TWEETER_OFF = "tweeter_off";
 
     public static final String EVENT_FULL_BASS_ENABLED = "full_bass_enabled";

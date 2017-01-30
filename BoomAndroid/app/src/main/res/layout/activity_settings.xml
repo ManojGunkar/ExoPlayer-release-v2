@@ -14,7 +14,6 @@
         app:theme="@style/ToolbarSearchTheme">
 
         <com.globaldelight.boom.ui.widgets.RegularTextView
-            android:id="@+id/toolbr_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical|start"
@@ -44,7 +43,6 @@
                 android:orientation="vertical">
 
                 <com.globaldelight.boom.ui.widgets.RegularTextView
-                    android:id="@+id/title_headphone_select"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/sixty_eight_pt"
@@ -78,7 +76,6 @@
                 android:orientation="vertical">
 
                 <com.globaldelight.boom.ui.widgets.RegularTextView
-                    android:id="@+id/title_sort_albums"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/sixty_eight_pt"
@@ -132,7 +129,6 @@
                 android:visibility="gone">
 
                 <com.globaldelight.boom.ui.widgets.RegularTextView
-                    android:id="@+id/title_shake_config"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
@@ -145,7 +141,6 @@
 
 
                 <com.globaldelight.boom.ui.widgets.RegularTextView
-                    android:id="@+id/textView4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/sixty_eight_pt"
@@ -170,7 +165,6 @@
                         android:layout_weight="0.5">
 
                         <ImageView
-                            android:id="@+id/imageView"
                             android:layout_width="@dimen/five_hundred_eighty_eight_pt"
                             android:layout_height="@dimen/six_hundred_seventy_eight_pt"
                             android:layout_weight="0.5"
@@ -257,7 +251,6 @@
                         />
 
                     <com.globaldelight.boom.ui.widgets.RegularTextView
-                        android:id="@+id/textView14"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
@@ -343,7 +336,6 @@
                         android:textStyle="normal" />
 
                     <com.globaldelight.boom.ui.widgets.RegularTextView
-                        android:id="@+id/textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignTop="@+id/seekBar"
@@ -358,7 +350,6 @@
                 </RelativeLayout>
 
                 <com.globaldelight.boom.ui.widgets.RegularTextView
-                    android:id="@+id/textView6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
@@ -479,7 +470,6 @@
 
 
             <com.globaldelight.boom.ui.widgets.RegularButton
-                android:id="@+id/buyButton"
                 android:visibility="gone"
                 android:layout_width="@dimen/one_thousand_twenty_eight"
                 android:layout_height="@dimen/two_hundred_eight"

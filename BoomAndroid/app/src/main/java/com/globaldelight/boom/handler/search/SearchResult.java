@@ -1,5 +1,7 @@
 package com.globaldelight.boom.handler.search;
 
+import com.globaldelight.boom.App;
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 
 import java.util.ArrayList;
@@ -11,9 +13,9 @@ import java.util.ArrayList;
 public class SearchResult {
     private ArrayList<? extends IMediaItemBase> itemList;
     private int count;
-    public static String SONGS = "Songs";
-    public static String ALBUMS = "Albums";
-    public static String ARTISTS = "Artists";
+    public static String SONGS = App.getApplication().getString(R.string.song);
+    public static String ALBUMS = App.getApplication().getString(R.string.albums);
+    public static String ARTISTS = App.getApplication().getString(R.string.artists);
 
     public SearchResult(ArrayList<? extends IMediaItemBase> itemList, int count){
         this.itemList = itemList;

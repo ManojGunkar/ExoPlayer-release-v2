@@ -2,6 +2,11 @@ package com.globaldelight.boom.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
+import android.support.v4.app.FragmentActivity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -16,6 +21,8 @@ import com.dropbox.client2.session.Session.AccessType;
  */
 
 public class PlayerUtils {
+    private static final float BITMAP_SCALE = 1.0f;
+    private static final float BLUR_RADIUS = 25.0f;
 
     public static void ImageViewAnimatedChange(Context context, final ImageView v, final Bitmap new_image) {
         final Animation anim_out = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
@@ -58,5 +65,24 @@ public class PlayerUtils {
     private static boolean fileExist(String albumArtPath) {
         File imgFile = new File(albumArtPath);
         return imgFile.exists();
+    }
+
+    public static Bitmap blur(Context activity, Bitmap bitmap) {
+        int width = Math.round(bitmap.getWidth() * BITMAP_SCALE);
+        int height = Math.round(bitmap.getHeight() * BITMAP_SCALE);
+
+        Bitmap inputBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
+        Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
+
+        RenderScript rs = RenderScript.create(activity);
+        ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+        Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
+        Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
+        theIntrinsic.setRadius(BLUR_RADIUS);
+        theIntrinsic.setInput(tmpIn);
+        theIntrinsic.forEach(tmpOut);
+        tmpOut.copyTo(outputBitmap);
+
+        return outputBitmap;
     }
 }

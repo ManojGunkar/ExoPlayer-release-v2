@@ -10,12 +10,8 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
-import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
-import com.globaldelight.boom.ui.musiclist.activity.CollectionListActivity;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 /**

@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.PowerManager;
 
 import com.globaldelight.boom.App;
-import com.globaldelight.boom.task.PlayerService;
+import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.utils.handlers.Preferences;
 
 public class SleepAlarm extends BroadcastReceiver {
@@ -25,6 +25,6 @@ public class SleepAlarm extends BroadcastReceiver {
 
     public void sendMessagePlayerStop(Context mContext) {
         if(App.getPlayerEventHandler().isPlaying())
-            mContext.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_PAUSE_SONG));
+            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
     }
 }

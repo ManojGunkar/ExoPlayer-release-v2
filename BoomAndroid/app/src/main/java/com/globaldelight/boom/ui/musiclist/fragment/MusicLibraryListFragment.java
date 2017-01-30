@@ -170,6 +170,10 @@ public class MusicLibraryListFragment extends Fragment {
         return view;
     }
 
+    public void killActivity() {
+        getActivity().finish();
+    }
+
 
     private class LoadCollectionList extends AsyncTask<Integer, Integer, ArrayList<? extends IMediaItemBase>> {
         Integer param;
@@ -261,7 +265,7 @@ public class MusicLibraryListFragment extends Fragment {
                     }
                 }
             });
-            songListAdapter = new SongListAdapter(context, MusicLibraryListFragment.this.getActivity(), iMediaItemList);
+            songListAdapter = new SongListAdapter(getActivity(), MusicLibraryListFragment.this, iMediaItemList);
             recyclerView.setAdapter(songListAdapter);
             if (iMediaItemList.size() < 1) {
                 listIsEmpty(false);

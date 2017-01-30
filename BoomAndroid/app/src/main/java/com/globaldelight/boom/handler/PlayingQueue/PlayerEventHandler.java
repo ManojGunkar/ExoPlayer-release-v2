@@ -7,9 +7,11 @@ import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
@@ -17,10 +19,9 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
-import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.globaldelight.boomplayer.OpenSLPlayer;
-import com.globaldelight.boomplayer.PlayerEvents;
+import com.globaldelight.boomplayer.IPlayerEvents;
 
 import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.pause;
@@ -45,11 +46,11 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     private AudioManager audioManager;
     private AudioManager.OnAudioFocusChangeListener focusChangeListener;
     private MediaSession session;
-    PlayerEvents playerEvents = new PlayerEvents() {
+    IPlayerEvents IPlayerEvents = new IPlayerEvents() {
         @Override
         public void onStop() {
             playingItem = null;
-            context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
+            context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_STOP));
         }
 
         @Override
@@ -60,7 +61,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         @Override
         public void onPlayUpdate(final int percent, final long currentms, final long totalms) {
             Intent intent = new Intent();
-            intent.setAction(PlayerService.ACTION_TRACK_POSITION_UPDATE);
+            intent.setAction(PlayerServiceReceiver.ACTION_TRACK_POSITION_UPDATE);
             intent.putExtra("percent", percent);
             intent.putExtra("currentms", currentms);
             intent.putExtra("totalms", totalms);
@@ -85,7 +86,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
                 playPrevSong();
             }else {
                 App.getPlayingQueueHandler().getUpNextList().managePlayedItem(true);
-                context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
+                context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_STOP));
             }
             Toast.makeText(context, "Error in playing Song", Toast.LENGTH_SHORT).show();
         }
@@ -101,7 +102,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
             setSessionState(PlaybackState.STATE_PLAYING);
 
             Intent intent = new Intent();
-            intent.setAction(PlayerService.ACTION_PLAYING_ITEM_CLICKED);
+            intent.setAction(PlayerServiceReceiver.ACTION_PLAYING_ITEM_CLICKED);
             intent.putExtra("play_pause", true );
             context.sendBroadcast(intent);
         }
@@ -111,7 +112,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
             setSessionState(PlaybackState.STATE_PAUSED);
 
             Intent intent = new Intent();
-            intent.setAction(PlayerService.ACTION_PLAYING_ITEM_CLICKED);
+            intent.setAction(PlayerServiceReceiver.ACTION_PLAYING_ITEM_CLICKED);
             intent.putExtra("play_pause", false );
             context.sendBroadcast(intent);
         }
@@ -134,10 +135,13 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
 
     private PlayerEventHandler(Context context, PlayerService service){
         this.context = context;
-        mPlayer = new OpenSLPlayer(context, playerEvents);
-        audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        if(null == mPlayer)
+            mPlayer = new OpenSLPlayer(context, IPlayerEvents);
+        if(null == audioManager)
+            audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
         focusChangeListener = this;
-        this.service = service;
+        if(null == this.service)
+            this.service = service;
         App.getPlayingQueueHandler().getUpNextList().setQueueEvent(this);
         uiHandler = new Handler();
         registerSession();
@@ -212,11 +216,11 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
                 if ( requestAudioFocus() ) {
                     mPlayer.setDataSource(dataSource);
                     setSessionState(PlaybackState.STATE_PLAYING);
-                    context.sendBroadcast(new Intent(PlayerService.ACTION_GET_SONG));
+                    context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_GET_SONG));
                     AnalyticsHelper.songSelectionChanged(context, mediaItemBase);
                 }
             }else{
-                context.sendBroadcast(new Intent(PlayerService.ACTION_PLAY_STOP));
+                context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_STOP));
             }
         }
     }
@@ -232,7 +236,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
             PLAYER_DIRECTION = NEXT;
             App.getPlayingQueueHandler().getUpNextList().setNextPlayingItem(isUser);
         }else{
-            context.sendBroadcast(new Intent(PlayerService.ACTION_LAST_PLAYED_SONG));
+            context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_LAST_PLAYED_SONG));
         }
         FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MOVE_TO_NEXT_SONG);
     }
@@ -254,7 +258,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         PlayState state = PlayPause();
 
         Intent intent = new Intent();
-        intent.setAction(PlayerService.ACTION_PLAYING_ITEM_CLICKED);
+        intent.setAction(PlayerServiceReceiver.ACTION_PLAYING_ITEM_CLICKED);
         intent.putExtra("play_pause", state == play ? true : false );
         context.sendBroadcast(intent);
     }
@@ -262,7 +266,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
     @Override
     public void onQueueUpdated() {
         Intent intent = new Intent();
-        intent.setAction(PlayerService.ACTION_UPNEXT_UPDATE);
+        intent.setAction(PlayerServiceReceiver.ACTION_UPNEXT_UPDATE);
         context.sendBroadcast(intent);
     }
 
@@ -434,7 +438,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         if(null == mPlayer)
             return;
         Intent intent = new Intent();
-        intent.setAction(PlayerService.ACTION_PLAYING_ITEM_CLICKED);
+        intent.setAction(PlayerServiceReceiver.ACTION_PLAYING_ITEM_CLICKED);
         if (focusChange == AUDIOFOCUS_LOSS_TRANSIENT) {
             intent.putExtra("play_pause", false );
             mPlayer.pause();

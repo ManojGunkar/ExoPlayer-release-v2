@@ -1,8 +1,13 @@
 package com.globaldelight.boom.ui.musiclist.fragment;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,11 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globaldelight.boom.handler.search.Search;
-import com.globaldelight.boom.ui.musiclist.activity.BoomMasterActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.SearchListAdapter;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.decorations.SearchListSpacesItemDecoration;
 import com.globaldelight.boom.R;
+
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
 /**
  * Created by Rahul Agarwal on 14-11-16.
@@ -24,24 +30,54 @@ public class SearchViewFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private Context context;
-    private BoomMasterActivity activity;
+    private Activity activity;
     private View mainView, emptyView;
     private SearchListAdapter adapter;
     private GridLayoutManager gridLayoutManager;
+
+
+
+    public SearchViewFragment(){}
+
+    private BroadcastReceiver mUpdatePlayingItem = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()){
+                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                    if(null != adapter)
+                        adapter.notifyDataSetChanged();
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        getActivity().registerReceiver(mUpdatePlayingItem, intentFilter);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search,
                 container, false);
         mainView = view;
-        context = view.getContext();
-        activity = (BoomMasterActivity) getActivity();
-        recyclerView = (RecyclerView) mainView.findViewById(R.id.search_view_results);
-        emptyView = mainView.findViewById(R.id.search_empty_view);
+
         return view;
     }
 
     private class LoadSearchResult extends AsyncTask<String, Void, Search> {
+
+        @Override
+        protected void onPreExecute() {
+            context = mainView.getContext();
+            activity = getActivity();
+            recyclerView = (RecyclerView) mainView.findViewById(R.id.search_view_results);
+            emptyView = mainView.findViewById(R.id.search_empty_view);
+            super.onPreExecute();
+        }
 
         @Override
         protected Search doInBackground(String... params) {
@@ -53,8 +89,8 @@ public class SearchViewFragment extends Fragment {
         @Override
         protected void onPostExecute(Search search) {
             super.onPostExecute(search);
-            if (null != getActivity()) {
-                final boolean isPhone = Utils.isPhone(getActivity());
+            if (null != activity) {
+                final boolean isPhone = Utils.isPhone(activity);
                 if (isPhone) {
                     gridLayoutManager =
                             new GridLayoutManager(mainView.getContext(), 2);
@@ -77,20 +113,33 @@ public class SearchViewFragment extends Fragment {
                     }
                 });
                 recyclerView.setLayoutManager(gridLayoutManager);
-                adapter = new SearchListAdapter(context, getActivity(), search, recyclerView, isPhone);
+                adapter = new SearchListAdapter(context, activity, search, recyclerView, isPhone);
                 recyclerView.addItemDecoration(new SearchListSpacesItemDecoration(2, adapter));
                 recyclerView.setAdapter(adapter);
+                if(search.getSongCount() + search.getAlbumCount() + search.getArtistCount() > 0){
+                    showEmpty(false);
+                }else{
+                    showEmpty(true);
+                }
+
             }
         }
     }
 
     public void updateSearchResult(String query) {
         new LoadSearchResult().execute(query);
-        showEmpty(false);
     }
 
     public void showEmpty(boolean isEmpty) {
-        recyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
-        emptyView.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        if(null != recyclerView)
+            recyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        if(null != emptyView)
+            emptyView.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onDestroy() {
+        getActivity().unregisterReceiver(mUpdatePlayingItem);
+        super.onDestroy();
     }
 }

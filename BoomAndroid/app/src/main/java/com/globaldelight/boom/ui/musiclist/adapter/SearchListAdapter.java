@@ -12,11 +12,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,13 +26,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.globaldelight.boom.ui.musiclist.activity.AlbumDetailActivity;
+import com.globaldelight.boom.ui.musiclist.activity.AlbumDetailItemActivity;
+import com.globaldelight.boom.ui.musiclist.activity.SearchDetailActivity;
+import com.globaldelight.boom.ui.musiclist.fragment.SearchDetailFragment;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
-import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -49,9 +49,6 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.handler.search.Search;
-import com.globaldelight.boom.ui.musiclist.activity.AlbumActivity;
-import com.globaldelight.boom.ui.musiclist.activity.DetailAlbumActivity;
-import com.globaldelight.boom.ui.musiclist.activity.SearchDetailListActivity;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
@@ -78,8 +75,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
     private RecyclerView recyclerView;
     private Search searchRes;
     private boolean isPhone;
-
-    public SearchListAdapter(Context context, FragmentActivity activity, Search searchRes, RecyclerView recyclerView, boolean isPhone) {
+    public SearchListAdapter(Context context, Activity activity, Search searchRes, RecyclerView recyclerView, boolean isPhone) {
         this.context = context;
         this.activity = activity;
         this.searchRes = searchRes;
@@ -193,6 +189,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
 
     @Override
     public void onBindViewHolder(final SearchListAdapter.SimpleItemViewHolder holder, final int position) {
+
         if (whatView(position) == ITEM_VIEW_TYPE_HEADER_ARTISTS) {
             if(artists.size() > 0) {
                 setHeaderBg(holder);
@@ -205,10 +202,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                 holder.headerCount.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(context, SearchDetailListActivity.class);
-                        i.putExtra("list_type", SearchResult.ARTISTS);
-                        i.putExtra("query", searchRes.getQuery());
-                        context.startActivity(i);
+                        startSearchDetailActivity(SearchResult.ARTISTS, searchRes.getQuery());
                     }
                 });
             }
@@ -225,10 +219,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                 holder.headerCount.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(context, SearchDetailListActivity.class);
-                        i.putExtra("list_type", SearchResult.ALBUMS);
-                        i.putExtra("query", searchRes.getQuery());
-                        context.startActivity(i);
+                        startSearchDetailActivity(SearchResult.ALBUMS, searchRes.getQuery());
                     }
                 });
             }
@@ -245,10 +236,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                 holder.headerCount.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(context, SearchDetailListActivity.class);
-                        i.putExtra("list_type", SearchResult.SONGS);
-                        i.putExtra("query", searchRes.getQuery());
-                        context.startActivity(i);
+                        startSearchDetailActivity(SearchResult.SONGS, searchRes.getQuery());
                     }
                 });
             }
@@ -287,7 +275,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Intent i = new Intent(context, DetailAlbumActivity.class);
+                            Intent i = new Intent(context, AlbumDetailItemActivity.class);
                             i.putExtra("mediaItemCollection", (MediaItemCollection)artists.get(getPosition(position)));
                             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                                     (Activity) context,
@@ -361,7 +349,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Intent i = new Intent(context, AlbumActivity.class);
+                            Intent i = new Intent(context, AlbumDetailActivity.class);
                             i.putExtra("mediaItemCollection", (MediaItemCollection)albums.get(getPosition(position)));
                             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                                     (Activity) context,
@@ -513,6 +501,13 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             });
         }
         holder.mainView.setElevation(Utils.dpToPx(context, 2));
+    }
+
+    private void startSearchDetailActivity(String listType, String query){
+        Intent intent = new Intent(activity, SearchDetailActivity.class);
+        intent.putExtra(SearchDetailFragment.ARG_LIST_TYPE, listType);
+        intent.putExtra(SearchDetailFragment.ARG_MEDIA_QUERY, query);
+        activity.startActivity(intent);
     }
 
     public void animate(final SimpleItemViewHolder holder) {

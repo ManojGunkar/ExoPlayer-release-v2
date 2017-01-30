@@ -1,21 +1,15 @@
 package com.globaldelight.boom.ui.musiclist.adapter;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,6 +20,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.ui.musiclist.activity.AlbumSongListActivity;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
@@ -34,18 +29,14 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
-import com.globaldelight.boom.ui.musiclist.activity.BoomPlaylistActivity;
-import com.globaldelight.boom.ui.musiclist.activity.DeviceMusicActivity;
-import com.globaldelight.boom.ui.musiclist.activity.SongsDetailListActivity;
+import com.globaldelight.boom.ui.musiclist.fragment.BoomPlaylistFragment;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
-import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.PipedOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -58,13 +49,15 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     ArrayList<? extends IMediaItemBase> items;
     public static final int ITEM_VIEW_TYPE_ITEM_LIST = 0;
     public static final int ITEM_VIEW_TYPE_ITEM_LIST_FOOTER = 1;
-    private Activity context;
+    private Activity activity;
     private  RecyclerView recyclerView;
     private boolean isPhone;
+    private BoomPlaylistFragment fragment;
 
-    public BoomPlayListAdapter(Activity context, RecyclerView recyclerView,
-                                  ArrayList<? extends IMediaItemBase> items, boolean isPhone) {
-        this.context = context;
+    public BoomPlayListAdapter(Activity activity, BoomPlaylistFragment fragment, RecyclerView recyclerView,
+                               ArrayList<? extends IMediaItemBase> items, boolean isPhone) {
+        this.activity = activity;
+        this.fragment = fragment;
         this.recyclerView = recyclerView;
         this.items = items;
         this.isPhone = isPhone;
@@ -107,7 +100,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
 
             holder.title.setText(getItem(position).getItemTitle());
             int itemcount = ((IMediaItemCollection) getItem(position)).getItemCount();
-            holder.subTitle.setText((itemcount > 1 ? context.getResources().getString(R.string.songs) : context.getResources().getString(R.string.song)) + " " + itemcount);
+            holder.subTitle.setText((itemcount > 1 ? activity.getResources().getString(R.string.songs) : activity.getResources().getString(R.string.song)) + " " + itemcount);
 
             if (App.getUserPreferenceHandler().isLibFromHome()) {
                 holder.grid_menu.setVisibility(View.VISIBLE);
@@ -115,7 +108,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                 holder.grid_menu.setVisibility(View.INVISIBLE);
             }
             if (((IMediaItemCollection) items.get(position)).getArtUrlList().isEmpty())
-                ((IMediaItemCollection) items.get(position)).setArtUrlList(MediaController.getInstance(context).getArtUrlList((MediaItemCollection) items.get(position)));
+                ((IMediaItemCollection) items.get(position)).setArtUrlList(MediaController.getInstance(activity).getArtUrlList((MediaItemCollection) items.get(position)));
 
             if (((IMediaItemCollection) items.get(position)).getArtUrlList().isEmpty()) {
                 ArrayList list = new ArrayList();
@@ -136,9 +129,9 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     }
 
     private int setSize(SimpleItemViewHolder holder) {
-        Utils utils = new Utils(context);
-        int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
-                - (int)(context.getResources().getDimension(R.dimen.twenty_four_pt)*2);
+        Utils utils = new Utils(activity);
+        int size = (utils.getWindowWidth(activity) / (isPhone ? 2 : 3))
+                - (int)(activity.getResources().getDimension(R.dimen.twenty_four_pt)*2);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
         holder.gridBottomBg.setLayoutParams(params);
@@ -173,43 +166,43 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
             try {
                 switch (count) {
                     case 1:
-                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
                         break;
                     case 2:
-                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                        Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                        Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
                         break;
                     case 3:
-                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                        Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                        Picasso.with(context).load(new File(Urls.get(2))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(2))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
                         break;
                     case 4:
-                        Picasso.with(context).load(new File(Urls.get(0))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                        Picasso.with(context).load(new File(Urls.get(1))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                        Picasso.with(context).load(new File(Urls.get(2))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(2))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                        Picasso.with(context).load(new File(Urls.get(3))).error(context.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
+                        Picasso.with(activity).load(new File(Urls.get(3))).error(activity.getResources().getDrawable(R.drawable.ic_default_small_grid_song, null))
                                 /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
                         break;
                 }
@@ -223,7 +216,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     }
 
     private void setDefaultImage(SimpleItemViewHolder holder, int width, int height){
-        holder.defaultImg.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_album_grid ));
+        holder.defaultImg.setImageDrawable(activity.getResources().getDrawable( R.drawable.ic_default_album_grid ));
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {
@@ -235,13 +228,9 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Intent i = new Intent(context, SongsDetailListActivity.class);
+                        Intent i = new Intent(activity, AlbumSongListActivity.class);
                         i.putExtra("mediaItemCollection", (MediaItemCollection)getItem(position));
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                (Activity) context,
-                                new Pair<View, String>(holder.imgPanel, "transition:imgholder")
-                        );
-                        context.startActivity(i, options.toBundle());
+                        activity.startActivity(i);
                     }
                 }, 100);
             }
@@ -250,7 +239,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
         holder.grid_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu pm = new PopupMenu(context, view);
+                PopupMenu pm = new PopupMenu(activity, view);
                 pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
@@ -258,13 +247,13 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                             switch (menuItem.getItemId()) {
                                 case R.id.popup_play_next:
                                     if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                                        ((MediaItemCollection) items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
+                                        ((MediaItemCollection) items.get(position)).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
                                         App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(items.get(position));
                                     }
                                     break;
                                 case R.id.popup_add_queue:
                                     if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                                        ((MediaItemCollection) items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
+                                        ((MediaItemCollection) items.get(position)).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
                                         App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(items.get(position));
                                     }
                                     break;
@@ -272,26 +261,26 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                                     renameDialog(position, items.get(position).getItemTitle());
                                     break;
                                 case R.id.popup_add_playlist:
-                                    ((MediaItemCollection) items.get(position)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
-                                    Utils util = new Utils(context);
-                                    util.addToPlaylist((BoomPlaylistActivity) context, ((MediaItemCollection) items.get(position)).getMediaElement(), ((MediaItemCollection) items.get(position)).getItemTitle());
+                                    ((MediaItemCollection) items.get(position)).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
+                                    Utils util = new Utils(activity);
+                                    util.addToPlaylist(activity, ((MediaItemCollection) items.get(position)).getMediaElement(), ((MediaItemCollection) items.get(position)).getItemTitle());
                                     break;
                                 case R.id.popup_playlist_delete:
-                                    MediaController.getInstance(context).deleteBoomPlaylist(items.get(position).getItemId());
+                                    MediaController.getInstance(activity).deleteBoomPlaylist(items.get(position).getItemId());
                                     items.clear();
-                                    items = MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB);
+                                    items = MediaController.getInstance(activity).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB);
                                     notifyItemRemoved(position);
                                     notifyDataSetChanged();
                                     if(items.size() == 0){
-                                        ((BoomPlaylistActivity)context).listIsEmpty();
+                                        fragment.listIsEmpty();
                                     }
-                                    Toast.makeText(context, context.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(activity, activity.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
                                     break;
                                 case R.id.popup_add_song:
                                     App.getUserPreferenceHandler().setBoomPlayListId(items.get(position).getItemId());
                                     App.getUserPreferenceHandler().setLibraryStartFromHome(false);
-                                    Intent i = new Intent(context, DeviceMusicActivity.class);
-                                    context.startActivity(i);
+//                                    Intent i = new Intent(activity, DeviceMusicActivity.class);
+//                                    activity.startActivity(i);
                                     break;
                             }
                         }catch (Exception e){}
@@ -306,7 +295,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     }
 
     private void renameDialog(final int position, String itemTitle) {
-        new MaterialDialog.Builder(context)
+        new MaterialDialog.Builder(activity)
                 .title(R.string.dialog_txt_rename)
                 .backgroundColor(Color.parseColor("#171921"))
                 .titleColor(Color.parseColor("#ffffff"))
@@ -315,17 +304,17 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                 .widgetColor(Color.parseColor("#ffffff"))
                 .contentColor(Color.parseColor("#ffffff"))
                 .cancelable(true)
-                .positiveText(context.getResources().getString(R.string.dialog_txt_done))
-                .negativeText(context.getResources().getString(R.string.dialog_txt_cancel))
+                .positiveText(activity.getResources().getString(R.string.dialog_txt_done))
+                .negativeText(activity.getResources().getString(R.string.dialog_txt_cancel))
                 .input(null, itemTitle, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
                         if (input.toString().matches("")) {
                             renameDialog(position, items.get(position).getItemTitle());
                         } else {
-                            MediaController.getInstance(context).renameBoomPlaylist(input.toString(),
+                            MediaController.getInstance(activity).renameBoomPlaylist(input.toString(),
                                     items.get(position).getItemId());
-                            updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                            updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(activity).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
                             notifyDataSetChanged();
                         }
                     }
@@ -342,7 +331,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     }
 
     public int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 

@@ -1,7 +1,9 @@
 package com.globaldelight.boom.handler.PlayingQueue;
 
+import android.Manifest;
 import android.content.Context;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.globaldelight.boom.R;
@@ -20,9 +22,10 @@ import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 /**
  * Created by Rahul Agarwal on 15-11-16.
@@ -258,11 +261,11 @@ public class UpNextList {
         none,
     }
 
-    public void addUpNextItem(IMediaItemBase song, QueueType queueType) {
+    public void addUpNextItemToDB(IMediaItemBase song, QueueType queueType) {
         MediaController.getInstance(context).addUpNextItem(song, queueType);
     }
 
-    public void addUpNextItem(ArrayList<? extends IMediaItemBase> songs, QueueType queueType) {
+    public void addUpNextItemToDB(ArrayList<? extends IMediaItemBase> songs, QueueType queueType) {
         MediaController.getInstance(context).addUpNextItem(songs, queueType);
     }
 
@@ -297,16 +300,17 @@ public class UpNextList {
                 Log.d("Add_to_Manual", "in UP_NEXT");
             }else if(mCurrentList.get(0).getUpNextItemType() == QueueType.Auto_UpNext){
                 mAutoNextList.add(0 ,mCurrentList.get(0).getUpNextItem());
-                Log.d("Add_to_Auto", "in UP_NEXT");
+                Log.d("Add_to_Auto", "in_UP_NEXT");
             }
         }
         if(mUpNextList.size() > 0)
-            addUpNextItem(mUpNextList, QueueType.Manual_UpNext);
+            addUpNextItemToDB(mUpNextList, QueueType.Manual_UpNext);
         if(mAutoNextList.size() > 0)
-            addUpNextItem(mAutoNextList, QueueType.Auto_UpNext);
+            addUpNextItemToDB(mAutoNextList, QueueType.Auto_UpNext);
         if(mGhostList.size() > 0)
-            addUpNextItem(mGhostList, QueueType.Previous);
+            addUpNextItemToDB(mGhostList, QueueType.Previous);
 
+        Log.d("Add_to_DB", "in_UP_NEXT");
         /*If service is not destroyed remove current item from upnext*/
         if (mUpNextList.size() > 0) {
             mUpNextList.remove(0);
@@ -315,26 +319,28 @@ public class UpNextList {
         }
     }
 
-    public void fetchUpNextItemsToDB(){
+    public void fetchUpNextItemsToDB(Context context){
         mUpNextList.clear();
-        mUpNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Manual_UpNext);
-
         mAutoNextList.clear();
-        mAutoNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Auto_UpNext);
-
         mGhostList.clear();
-        mGhostList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Previous);
 
-        /*Fetch Now Playing Item from relevant up-next list*/
-        mCurrentList.clear();
-        if (mUpNextList.size() > 0) {
-            mCurrentList.add(new UpNextItem((IMediaItem) mUpNextList.remove(0), QueueType.Manual_UpNext));
-            Log.d("Add_to_Manual", "out UP_NEXT");
-        } else if (mAutoNextList.size() > 0) {
-            mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.remove(0), QueueType.Auto_UpNext));
-            Log.d("Add_to_Auto", "out UP_NEXT");
-        }
+        int permissionCheck = ContextCompat.checkSelfPermission(context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(PERMISSION_GRANTED == permissionCheck){
+            mUpNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Manual_UpNext);
+            mAutoNextList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Auto_UpNext);
+            mGhostList = (ArrayList<IMediaItemBase>) getUpNextItemList(QueueType.Previous);
+            /*Fetch Now Playing Item from relevant up-next list*/
+            mCurrentList.clear();
+            if (mUpNextList.size() > 0) {
+                mCurrentList.add(new UpNextItem((IMediaItem) mUpNextList.remove(0), QueueType.Manual_UpNext));
+                Log.d("Add_to_Manual", "out UP_NEXT");
+            } else if (mAutoNextList.size() > 0) {
+                mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.remove(0), QueueType.Auto_UpNext));
+                Log.d("Add_to_Auto", "out_UP_NEXT");
+            }
 //                overFillingPlayingItem();
+        }
     }
 
     private void overFillingPlayingItem(){
@@ -789,7 +795,7 @@ public class UpNextList {
 
     private void addItemToHistory(IMediaItemBase item) {
         if(null != item) {
-            addUpNextItem(item, QueueType.History);
+            addUpNextItemToDB(item, QueueType.History);
             invalidateHistory();
             QueueUpdated();
         }

@@ -101,7 +101,7 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
 
     @Override
     protected void onPostExecute(List<String> output) {
-        if ((output == null || output.size() == 0) && mediaListInstance.getFileList().isEmpty()) {
+        if ((output == null || output.size() == 0) && mediaListInstance.getGoogleDriveMediaList().isEmpty()) {
             mediaListInstance.onEmptyList();
         } else {
             mediaListInstance.finishGoogleDriveMediaLoading();

@@ -12,7 +12,6 @@
 
         android:orientation="horizontal">
     <com.globaldelight.boom.ui.widgets.RegularTextView
-        android:id="@+id/textView5"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -25,7 +24,6 @@
         android:textSize="15sp" />
 
         <com.globaldelight.boom.ui.widgets.RegularTextView
-            android:id="@+id/textView6"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

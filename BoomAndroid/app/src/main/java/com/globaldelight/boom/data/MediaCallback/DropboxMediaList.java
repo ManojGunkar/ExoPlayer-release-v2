@@ -59,7 +59,7 @@ public class DropboxMediaList {
         });
     }
 
-    public ArrayList<IMediaItemBase> getFileList(){
+    public ArrayList<IMediaItemBase> getDropboxMediaList(){
         return fileList;
     }
 

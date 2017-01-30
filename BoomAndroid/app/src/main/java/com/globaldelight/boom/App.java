@@ -8,11 +8,11 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
+import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
@@ -98,8 +98,9 @@ public class App extends Application implements SensorEventListener {
     @Override
     public void onCreate() {
         super.onCreate();
-        Fabric.with(this, new Crashlytics());
-
+        try {
+            Fabric.with(this, new Crashlytics());
+        }catch (Exception e){}
         application = this;
 
         playingQueueHandler = PlayingQueueHandler.getHandlerInstance(application);
@@ -173,7 +174,7 @@ public class App extends Application implements SensorEventListener {
                     @Override
                     public void run() {
                         if(null != service) {
-                            sendBroadcast(new Intent(PlayerService.ACTION_NEXT_SONG));
+                            sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_NEXT_SONG));
                         }
                     }
                 }, 1000);
@@ -183,7 +184,7 @@ public class App extends Application implements SensorEventListener {
                     @Override
                     public void run() {
                         if(null != service) {
-                            sendBroadcast(new Intent(PlayerService.ACTION_PLAY_PAUSE_SONG));
+                            sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
                         }
                     }
                 }, 1000);

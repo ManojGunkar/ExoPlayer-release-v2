@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
 import android.widget.SeekBar;
 
@@ -15,7 +16,7 @@ import com.globaldelight.boom.R;
  * Created by Rahul Agarwal on 05-10-16.
  */
 
-public class NegativeSeekBar extends SeekBar {
+public class NegativeSeekBar extends AppCompatSeekBar {
     private Rect rect;
     private Paint paint ;
     private Context mContext;
@@ -43,7 +44,7 @@ public class NegativeSeekBar extends SeekBar {
 
     public void setDisable(boolean b){
         isDisable = b;
-        setEnabled(!isDisable);
+        setActivated(!isDisable);
         if(isDisable){
             this.getThumb().setColorFilter(mContext.getResources().getColor(R.color.card_grid_artist), PorterDuff.Mode.SRC_IN);
 
@@ -54,7 +55,7 @@ public class NegativeSeekBar extends SeekBar {
 
     public NegativeSeekBar(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        setEnabled(!isDisable);
+        setActivated(!isDisable);
         if(isDisable){
             this.getThumb().setColorFilter(mContext.getResources().getColor(R.color.card_grid_artist), PorterDuff.Mode.SRC_IN);
         }else{

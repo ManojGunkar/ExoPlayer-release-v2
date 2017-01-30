@@ -58,7 +58,7 @@ public class GoogleDriveMediaList {
         });
     }
 
-    public ArrayList<IMediaItemBase> getFileList(){
+    public ArrayList<IMediaItemBase> getGoogleDriveMediaList(){
         return fileList;
     }
 

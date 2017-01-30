@@ -41,9 +41,8 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
-import com.globaldelight.boom.task.PlayerService;
-import com.globaldelight.boom.ui.musiclist.adapter.AddToPlaylistDialogListAdapter;
-import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
+import com.globaldelight.boom.task.PlayerEvents;
+import com.globaldelight.boom.ui.musiclist.adapter.AddToPlaylistAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -132,7 +131,7 @@ public class Utils {
             }
         }
 
-        final AddToPlaylistDialogListAdapter adapter = new AddToPlaylistDialogListAdapter(context,
+        final AddToPlaylistAdapter adapter = new AddToPlaylistAdapter(context,
                 playList, songList);
         RecyclerView rv = (RecyclerView) activity.getLayoutInflater()
                 .inflate(R.layout.addtoplaylist, null);
@@ -183,7 +182,7 @@ public class Utils {
                         if (!input.toString().matches("")) {
                             MediaController.getInstance(context).createBoomPlaylist(input.toString());
                             addToPlaylist(activity, song, fromPlaylist);
-                            context.sendBroadcast(new Intent(PlayerService.ACTION_UPDATE_BOOM_PLAYLIST));
+                            context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_BOOM_PLAYLIST));
                             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
                             MixPanelAnalyticHelper.getInstance(context).getPeople().set(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST, input.toString());
                         }
@@ -267,5 +266,13 @@ public class Utils {
             }
         });
         builder.show();
+    }
+
+    public int getStatusBarHeight(Context context){
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return 0;
     }
 }

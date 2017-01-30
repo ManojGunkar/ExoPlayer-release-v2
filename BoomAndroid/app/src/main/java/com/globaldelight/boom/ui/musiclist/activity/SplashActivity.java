@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -15,7 +14,6 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -53,7 +51,7 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         super.onCreate(savedInstanceState);
 
-        if(!isExpire("JAN-20-2017")) {
+        if(/*!isExpire("JAN-30-2017")*/ true) {
             App.startPlayerService();
             new Handler().postDelayed(new Runnable() {
 
@@ -122,7 +120,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void startPlayer(){
-        Intent i = new Intent(SplashActivity.this, BoomPlayerActivity.class);
+        Intent i = new Intent(SplashActivity.this, MainActivity.class);
         startActivity(i);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         finish();

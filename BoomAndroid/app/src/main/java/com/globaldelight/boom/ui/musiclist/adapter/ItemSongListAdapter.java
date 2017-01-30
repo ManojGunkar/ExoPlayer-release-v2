@@ -27,24 +27,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
-import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
-import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
-import com.globaldelight.boom.ui.musiclist.activity.DeviceMusicActivity;
-import com.globaldelight.boom.ui.musiclist.activity.SongsDetailListActivity;
+import com.globaldelight.boom.ui.musiclist.activity.AlbumSongListActivity;
+import com.globaldelight.boom.ui.musiclist.fragment.AlbumSongListFragment;
 import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.OnStartDragListener;
-import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
@@ -70,9 +68,11 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     private Activity activity;
     private IMediaItem currentItem;
     private ListDetail listDetail;
+    private AlbumSongListFragment fragment;
 
-    public ItemSongListAdapter(Activity activity, IMediaItemCollection collection, ListDetail listDetail, OnStartDragListener dragListener) {
+    public ItemSongListAdapter(Activity activity, AlbumSongListFragment fragment, IMediaItemCollection collection, ListDetail listDetail, OnStartDragListener dragListener) {
         this.activity = activity;
+        this.fragment = fragment;
         this.collection = (MediaItemCollection) collection;
         this.listDetail = listDetail;
         this.mOnStartDragListener = dragListener;
@@ -299,15 +299,15 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                                                 App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, false, true);
                                         }
 //                                    }
-                                        activity.sendBroadcast(new Intent(PlayerService.ACTION_SHUFFLE_SONG));
+                                        activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
                                     }
                                     break;
                                 case R.id.boom_header_add_songs:
                                     if (collection.getItemType() == BOOM_PLAYLIST) {
                                         App.getUserPreferenceHandler().setBoomPlayListId(collection.getItemId());
                                         App.getUserPreferenceHandler().setLibraryStartFromHome(false);
-                                        Intent i = new Intent(activity, DeviceMusicActivity.class);
-                                        activity.startActivity(i);
+//                                        Intent i = new Intent(activity, DeviceMusicActivity.class);
+//                                        activity.startActivity(i);
                                     }
                                     break;
                             }
@@ -423,7 +423,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                                             notifyItemRemoved(position);
                                             setDetail(collection.getItemTitle(), collection.getItemCount());
                                             notifyDataSetChanged();
-                                            ((SongsDetailListActivity)activity).updateAlbumArt(collection);
+                                            ((AlbumSongListActivity)activity).updateAlbumArt(collection);
                                         }
                                         break;
                                 }
@@ -588,7 +588,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             selectedHolder = null;
         } else {
             if (activity != null && collection.getItemType() == SONGS)
-                ((DeviceMusicActivity) activity).killActivity();
+                fragment.killActivity();
         }
     }
 

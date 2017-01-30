@@ -34,7 +34,7 @@ public class FavouriteMediaList {
         fileList.addAll(entries);
     }
 
-    public ArrayList<IMediaItemBase> getFileList(){
+    public ArrayList<IMediaItemBase> getFavouriteMediaList(){
         return fileList;
     }
 
