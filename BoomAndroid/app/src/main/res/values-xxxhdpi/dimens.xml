@@ -157,4 +157,5 @@
 
     <dimen name="fourty_px">10dp</dimen>
     <dimen name="three_thirty_px">82.5dp</dimen>
+    <dimen name="one_twenty_px">30dp</dimen>
 </resources>

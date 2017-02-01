@@ -7,8 +7,7 @@
     <LinearLayout
         android:id="@+id/progress_panel"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-
+        android:layout_height="@dimen/one_twenty_px"
         android:layout_marginLeft="@dimen/player_seek_margin"
         android:layout_marginRight="@dimen/player_seek_margin"
         android:gravity="center_vertical"

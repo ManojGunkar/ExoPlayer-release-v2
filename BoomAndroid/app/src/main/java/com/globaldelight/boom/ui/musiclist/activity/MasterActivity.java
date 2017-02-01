@@ -121,7 +121,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
                             iPlayerSliderControl.onVolumeUp();
                         }
                     });
-                    return true;
+                    return false;
                 }
                 break;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
@@ -132,7 +132,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
                             iPlayerSliderControl.onVolumeDown();
                         }
                     });
-                    return true;
+                    return false;
                 }
                 break;
         }
