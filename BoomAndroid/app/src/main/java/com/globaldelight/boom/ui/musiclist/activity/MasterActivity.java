@@ -51,6 +51,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
+        setTheme(R.style.MyTheme);
         activity = (FrameLayout) getLayoutInflater().inflate(R.layout.activity_master, null);
         handler = new Handler();
         mSlidingPaneLayout = (SlidingUpPanelLayout) activity.findViewById(R.id.sliding_layout);

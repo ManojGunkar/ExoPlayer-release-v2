@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -141,12 +142,13 @@ public class BoomPlaylistFragment extends Fragment {
     public void newPlaylistDialog() {
         new MaterialDialog.Builder(getContext())
                 .title(R.string.new_playlist)
-                .backgroundColor(Color.parseColor("#171921"))
-                .titleColor(Color.parseColor("#ffffff"))
-                .positiveColor(Color.parseColor("#81cbc4"))
-                .negativeColor(Color.parseColor("#81cbc4"))
-                .widgetColor(Color.parseColor("#ffffff"))
-                .contentColor(Color.parseColor("#ffffff"))
+                .backgroundColor(ContextCompat.getColor(getActivity(), R.color.dialog_background))
+                .titleColor(ContextCompat.getColor(getActivity(), R.color.dialog_title))
+                .positiveColor(ContextCompat.getColor(getActivity(), R.color.dialog_submit_positive))
+                .negativeColor(ContextCompat.getColor(getActivity(), R.color.dialog_submit_negative))
+                .neutralColor(ContextCompat.getColor(getActivity(), R.color.dialog_submit_negative))
+                .widgetColor(ContextCompat.getColor(getActivity(), R.color.dialog_widget))
+                .contentColor(ContextCompat.getColor(getActivity(), R.color.dialog_content))
                 .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .input(getResources().getString(R.string.new_playlist), null, new MaterialDialog.InputCallback() {
                     @Override

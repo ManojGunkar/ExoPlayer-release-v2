@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <dimen name="track_list_album_art_size">52dp</dimen>
+    <dimen name="track_list_item_height">72dp</dimen>
+
+
+
+
+
+
     <dimen name="grid_item_desc_size">16sp</dimen>
     <dimen name="rate_btn_size">20sp</dimen>
     <dimen name="about_copyright_txt_size">11sp</dimen>
@@ -30,6 +39,7 @@
 
     <dimen name="twenty_four_pt">6dp</dimen>
     <dimen name="seventy_four_pt">19dp</dimen>
+    <dimen name="seventy_eight_pt">19.5dp</dimen>
 
     <dimen name="ninety_two_pt">23dp</dimen>
     <dimen name="ninety_six_pt">24dp</dimen>
@@ -48,6 +58,7 @@
     <dimen name="eighty_two_pt">21dp</dimen>
     <dimen name="five_hundred_eighty_eight_pt">147dp</dimen>
     <dimen name="six_hundred_seventy_eight_pt">170dp</dimen>
+    <dimen name="one_hundred_pt">25dp</dimen>
     <dimen name="one_hundred__eight_pt">27dp</dimen>
     <dimen name="one_hundred_thirty_six_pt">34dp</dimen>
     <dimen name="one_hundred_eighty_two_pt">46dp</dimen>
@@ -71,6 +82,7 @@
     <dimen name="one_hundred_sixteen_px">29dp</dimen>
     <dimen name="thirty_two_px">8dp</dimen>
     <dimen name="two_hunderd_twenty_px">60dp</dimen>
+    <dimen name="two_hunderd_px">50dp</dimen>
     <dimen name="home_album_art_size">180dp</dimen>
     <dimen name="one_thousand_twenty_eight">257dp</dimen>
     <dimen name="two_hundred_eight">52dp</dimen>
@@ -83,7 +95,7 @@
     <dimen name="player_seek_time_size">12sp</dimen>
     <dimen name="player_seek_margin">26dp</dimen>
 
-    <dimen name="player_control_height">62dp</dimen>
+    <dimen name="player_control_height">93.5dp</dimen>
     <dimen name="player_control_margin_top">21.5dp</dimen>
     <dimen name="player_control_margin_bottom">33dp</dimen>
     <dimen name="player_control_margin_left">23.5dp</dimen>
@@ -138,4 +150,11 @@
     <dimen name="sixty_pt">15sp</dimen>
     <dimen name="four_px">1dp</dimen>
     <dimen name="twenty_px">20dp</dimen>
+    <dimen name="twelve_px">3dp</dimen>
+    <dimen name="three_fourty_px">85dp</dimen>
+
+
+
+    <dimen name="fourty_px">10dp</dimen>
+    <dimen name="three_thirty_px">82.5dp</dimen>
 </resources>

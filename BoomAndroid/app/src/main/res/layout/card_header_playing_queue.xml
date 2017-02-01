@@ -7,7 +7,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/one_hundred__eight_pt"
-        android:background="@color/play_que_header_bg"
         android:orientation="vertical">
 
 
@@ -18,8 +17,8 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:paddingLeft="@dimen/sixty_four_pt"
-            android:text="header"
-            android:textColor="@color/white"
+            android:maxLines="1"
+            android:textColor="@color/upnext_header_title"
             android:textSize="@dimen/play_queue_header_txt"
             android:textStyle="normal" />
 
@@ -30,8 +29,8 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/sixty_four_pt"
-            android:text="Clear"
-            android:textColor="@color/white"
+            android:maxLines="1"
+            android:textColor="@color/upnext_header_clear"
             android:textSize="@dimen/play_queue_header_txt"
             android:typeface="normal"/>
 
@@ -39,5 +38,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/card_grid_item_bottom_line"/>
+        android:background="@color/upnext_header_separator"/>
 </LinearLayout>

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dialog_background"
+    android:background="@color/noti_background"
     android:orientation="horizontal"
     android:gravity="center_vertical"
     android:padding="@dimen/thirty_two_px">
@@ -25,8 +25,9 @@
             android:id="@+id/noti_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textColor="@color/white"
+            android:maxLines="1"
+            android:textStyle="normal"
+            android:textColor="@color/noti_track_title"
             android:textSize="@dimen/sixty_eight_pt" />
 
         <TextView
@@ -34,8 +35,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            android:singleLine="true"
-            android:textColor="@color/white"
+            android:maxLines="1"
+            android:textStyle="normal"
+            android:textColor="@color/noti_track_sub_title"
             android:textSize="@dimen/sixty_pt" />
     </LinearLayout>
 

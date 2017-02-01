@@ -12,22 +12,22 @@
         android:gravity="center_vertical"
         android:orientation="vertical">
 
-        <TextView
+        <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/playlist_dialog_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
+            android:maxLines="1"
             android:textStyle="normal"
-            android:textColor="@color/white"
+            android:textColor="@color/dialog_txt"
             android:textSize="@dimen/sixty_four_pt" />
 
-        <TextView
+        <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/playlist_dialog_song_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="normal"
-            android:singleLine="true"
-            android:textColor="@color/white"
+            android:maxLines="1"
+            android:textColor="@color/dialog_txt"
             android:textSize="@dimen/sixty_four_pt" />
     </LinearLayout>
 
@@ -36,5 +36,5 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_weight="0"
-        android:background="#090a0d" />
+        android:background="@color/dialog_list_separator" />
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
 
 /**
@@ -26,7 +27,7 @@ public class SearchSuggestionAdapter extends SimpleCursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView textView=(TextView)view.findViewById(R.id.searchItem);
+        RegularTextView textView=(RegularTextView) view.findViewById(R.id.searchItem);
         String title = cursor.getString(1);
         textView.setText(title);
     }

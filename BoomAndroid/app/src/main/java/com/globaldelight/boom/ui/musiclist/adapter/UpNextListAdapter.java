@@ -20,6 +20,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
 import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
+import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.PlayerUtils;
@@ -547,7 +548,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
         public ImageView img;
 
         public LinearLayout imgHandle;
-        public Button undoButton;
+        public RegularButton undoButton;
         /*functions to implement swipe delete action-made for multi delete*/
         public LinearLayout layout;
 
@@ -562,7 +563,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
             imgHandle = (LinearLayout) itemView.findViewById(R.id.queue_item_handle);
             name = (RegularTextView) itemView.findViewById(R.id.queue_item_name);
             artistName = (RegularTextView) itemView.findViewById(R.id.queue_item_artist);
-            undoButton = (Button) itemView.findViewById(R.id.undo_button);
+            undoButton = (RegularButton) itemView.findViewById(R.id.undo_button);
         }
     }
 

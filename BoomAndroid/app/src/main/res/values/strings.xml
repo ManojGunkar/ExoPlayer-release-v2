@@ -170,7 +170,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="dialog_title">Choose Equalizer</string>
+    <string name="eq_dialog_title">Choose Equalizer</string>
+    <string name="speaker_dialog_title">Speaker</string>
     <string name="done">Done</string>
     <string name="on">ON</string>
     <string name="off">OFF</string>

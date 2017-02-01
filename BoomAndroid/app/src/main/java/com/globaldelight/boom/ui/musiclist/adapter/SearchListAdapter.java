@@ -416,7 +416,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             MediaItem nowPlayingItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
             if(null != nowPlayingItem /*&& nowPlayingItem.getParentType() == ItemType.SONGS*/ /*&& (App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused())*/){
                 if(songs.get(getPosition(position)).getItemId() == nowPlayingItem.getItemId()){
-                    holder.name.setTextColor(context.getResources().getColor(R.color.boom_yellow));
+                    holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                 }else{
                     holder.name.setTextColor(context.getResources().getColor(R.color.white));
                 }
@@ -613,17 +613,15 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
 
         //For Header View
         public View headerHolder;
-        public TextView headerText, headerCount;
+        public RegularTextView headerText, headerCount;
 
         //For Song Lists
-        public RegularTextView name;
-        public CoachMarkTextView artistName;
+        public RegularTextView name, artistName;
         public ImageView img, menu;
         public CheckBox songChk;
 
 //        For Album grid
-        public RegularTextView title;
-        public CoachMarkTextView subTitle;
+        public RegularTextView title, subTitle;
         public ImageView defaultImg;
         public View gridBottomBg, grid_menu;
         public TableLayout artTable;
@@ -634,17 +632,17 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             mainView = itemView;
 
             headerHolder = itemView.findViewById(R.id.search_header_holder);
-            headerText = (TextView) itemView.findViewById(R.id.search_header_text);
-            headerCount = (TextView) itemView.findViewById(R.id.search_header_count);
+            headerText = (RegularTextView) itemView.findViewById(R.id.search_header_text);
+            headerCount = (RegularTextView) itemView.findViewById(R.id.search_header_count);
 
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
             name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
             menu = (ImageView)itemView.findViewById(R.id.song_item_menu);
-            artistName = (CoachMarkTextView) itemView.findViewById(R.id.song_item_artist);
+            artistName = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
             songChk = (CheckBox) itemView.findViewById(R.id.song_chk);
 
             title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
-            subTitle = (CoachMarkTextView) itemView.findViewById(R.id.card_grid_sub_title);
+            subTitle = (RegularTextView) itemView.findViewById(R.id.card_grid_sub_title);
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
             gridBottomBg = itemView.findViewById(R.id.card_grid_bottom);

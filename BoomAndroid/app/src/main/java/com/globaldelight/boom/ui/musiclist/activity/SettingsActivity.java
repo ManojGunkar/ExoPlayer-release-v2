@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -725,13 +726,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     public void customMaterialTimepicker(boolean running) {
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .customView(R.layout.custom_time_picker, false)
-                .backgroundColor(Color.parseColor("#171921"))
-                .titleColor(Color.parseColor("#ffffff"))
-                .positiveColor(Color.parseColor("#81cbc4"))
-                .negativeColor(Color.parseColor("#81cbc4"))
-                .neutralColor(Color.parseColor("#81cbc4"))
-                .widgetColor(Color.parseColor("#ffffff"))
-                .contentColor(Color.parseColor("#ffffff"))
+                .backgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background))
+                .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
+                .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
+                .negativeColor(ContextCompat.getColor(mContext, R.color.dialog_submit_negative))
+                .neutralColor(ContextCompat.getColor(mContext, R.color.dialog_submit_negative))
+                .widgetColor(ContextCompat.getColor(mContext, R.color.dialog_widget))
+                .contentColor(ContextCompat.getColor(mContext, R.color.dialog_content))
                 .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .positiveText(R.string.timer_start)
                 .negativeText(R.string.timer_cancel)

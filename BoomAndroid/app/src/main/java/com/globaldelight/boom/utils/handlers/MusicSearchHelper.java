@@ -75,17 +75,18 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
         if (songListCursor != null) {
             songListCursor.close();
         }
-
     }
 
     private synchronized void addSong(String title) {
         removeSong(title);
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.putNull(ITEM_KEY_ID);
-        values.put(SEARCH_KEY, title);
-        db.insert(TABLE_SEARCH, null, values);
-        db.close();
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.putNull(ITEM_KEY_ID);
+            values.put(SEARCH_KEY, title);
+            db.insert(TABLE_SEARCH, null, values);
+            db.close();
+        }catch (Exception e){}
     }
 
     public void removeSong(String title) {

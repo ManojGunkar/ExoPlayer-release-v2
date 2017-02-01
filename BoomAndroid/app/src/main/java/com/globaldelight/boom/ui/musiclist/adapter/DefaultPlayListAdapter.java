@@ -261,8 +261,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public RegularTextView title;
-        public CoachMarkTextView subTitle;
+        public RegularTextView title, subTitle;
         public ImageView defaultImg, artImg1, artImg2, artImg3, artImg4;
         public View gridBottomBg, grid_menu, mainView;
         public TableLayout artTable;
@@ -273,7 +272,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
             mainView = itemView;
 
             title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
-            subTitle = (CoachMarkTextView) itemView.findViewById(R.id.card_grid_sub_title);
+            subTitle = (RegularTextView) itemView.findViewById(R.id.card_grid_sub_title);
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artImg1 = (ImageView) itemView.findViewById(R.id.card_grid_art_img1);
             artImg2 = (ImageView) itemView.findViewById(R.id.card_grid_art_img2);

@@ -4,7 +4,7 @@
     <item>
         <color
             android:gravity="fill"
-            android:color="@color/black_color" />
+            android:color="@color/black" />
     </item>
     <item>
         <bitmap

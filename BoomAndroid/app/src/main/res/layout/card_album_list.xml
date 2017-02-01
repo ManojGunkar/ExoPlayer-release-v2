@@ -23,8 +23,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/one_fifty_six_pt"
-                android:text="1"
-                android:textColor="@color/white"
+                android:maxLines="1"
+                android:textColor="@color/track_title"
                 android:textSize="@dimen/seventy_two_pt_txt" />
 
             <LinearLayout
@@ -37,17 +37,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Ahbjhdjsndskjcnkjs kckckdc kjcnkd"
-                    android:singleLine="true"
-                    android:textColor="@color/white"
+                    android:maxLines="1"
+                    android:textColor="@color/track_sub_title"
                     android:textSize="@dimen/seventy_two_pt_txt"  />
 
-                <com.globaldelight.boom.ui.widgets.CoachMarkTextView
+                <com.globaldelight.boom.ui.widgets.RegularTextView
                     android:id="@+id/album_item_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="jdjcnkjdnckml"
-                    android:textColor="#8d8f91"
+                    android:maxLines="1"
+                    android:textColor="@color/track_sub_title"
                     android:textSize="@dimen/fifty_six_pt_txt"/>
             </LinearLayout>
 
@@ -83,5 +82,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#313232"/>
+        android:background="@color/library_separator"/>
 </LinearLayout>

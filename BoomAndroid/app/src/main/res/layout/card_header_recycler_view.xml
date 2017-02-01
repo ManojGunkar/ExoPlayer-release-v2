@@ -13,7 +13,7 @@
                     android:id="@+id/header_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/library_header_title"
                     android:layout_marginLeft="@dimen/seventy_six_px"
                     android:layout_marginRight="@dimen/seventy_six_px"
                     android:maxLines="1"
@@ -55,17 +55,17 @@
                                             android:layout_height="wrap_content"
                                             android:maxLines="1"
                                             android:textSize="@dimen/seventy_two_pt"
-                                            android:textColor="@color/white"
+                                            android:textColor="@color/library_header_title"
                                             android:textStyle="normal"/>
 
                                         <!-- Detail -->
-                                        <com.globaldelight.boom.ui.widgets.CoachMarkTextView
+                                        <com.globaldelight.boom.ui.widgets.RegularTextView
                                             android:id="@+id/header_detail"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:layout_marginTop="@dimen/twenty_pt"
                                             android:maxLines="1"
-                                            android:textColor="@color/white"
+                                            android:textColor="@color/library_header_sub_title"
                                             android:textSize="@dimen/fifty_six_pt"
                                             android:textStyle="normal"/>
                                 </LinearLayout>

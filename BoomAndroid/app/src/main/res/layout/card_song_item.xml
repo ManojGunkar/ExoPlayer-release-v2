@@ -2,12 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardBackgroundColor="@color/appBackground"
     android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/two_hunderd_twenty_px"
+        android:layout_height="@dimen/track_list_item_height"
         android:foreground="?android:attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -16,36 +14,38 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="21.80"
+            android:layout_weight="22.80"
             android:gravity="center"
             android:orientation="vertical">
             <ImageView
                 android:id="@+id/song_item_img"
-                android:layout_width="@dimen/one_eighty_six_pt"
-                android:layout_height="@dimen/one_eighty_six_pt"
+                android:layout_width="@dimen/track_list_album_art_size"
+                android:layout_height="@dimen/track_list_album_art_size"
                 android:scaleType="centerCrop"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="67.2"
+            android:layout_weight="66.2"
             android:orientation="vertical">
 
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/song_item_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:textColor="@color/white"
+                android:textStyle="normal"
+                android:maxLines="1"
+                android:textColor="@color/track_title"
                 android:textSize="@dimen/seventy_two_pt_txt" />
 
-            <com.globaldelight.boom.ui.widgets.CoachMarkTextView
+            <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/song_item_artist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:textColor="@color/card_grid_artist"
+                android:textStyle="normal"
+                android:maxLines="1"
+                android:textColor="@color/track_sub_title"
                 android:textSize="@dimen/fifty_six_pt_txt" />
         </LinearLayout>
 
@@ -82,5 +82,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/card_grid_item_bottom_line" />
+        android:background="@color/library_separator" />
 </LinearLayout>

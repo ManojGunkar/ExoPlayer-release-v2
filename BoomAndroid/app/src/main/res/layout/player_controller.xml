@@ -5,40 +5,43 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/player_seek_top_panel_height"
-        android:orientation="horizontal" />
-
-    <LinearLayout
         android:id="@+id/progress_panel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/player_seek_margin_top"
+        android:layout_height="30dp"
+
         android:layout_marginLeft="@dimen/player_seek_margin"
         android:layout_marginRight="@dimen/player_seek_margin"
         android:gravity="center_vertical"
         android:orientation="horizontal">
-        <TextView
+        <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/played_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
+            android:textColor="@color/large_player_seek_time"
+            android:maxLines="1"
+            android:textStyle="normal"
             android:textSize="@dimen/player_seek_time_size"
             android:layout_weight="0"/>
 
-        <android.support.v7.widget.AppCompatSeekBar
-            android:id="@+id/control_seek_bar"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layoutDirection="inherit"
-            android:layout_weight="1"
-            android:progress="100"/>
+            android:layout_weight="1">
+            <android.support.v7.widget.AppCompatSeekBar
+                android:id="@+id/control_seek_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layoutDirection="inherit"
+                android:progress="100"/>
+        </LinearLayout>
 
-        <TextView
+        <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/remain_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
+            android:maxLines="1"
+            android:textStyle="normal"
+            android:textColor="@color/large_player_seek_time"
             android:textSize="@dimen/player_seek_time_size"
             android:layout_weight="0"/>
 
@@ -46,15 +49,13 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/player_control_top_panel_height"
+        android:layout_height="@dimen/sixty_px"
         android:orientation="horizontal" />
 
     <LinearLayout
         android:id="@+id/player_controller_holder"
         android:layout_width="match_parent"
         android:layout_height="@dimen/player_control_height"
-        android:layout_marginTop="@dimen/player_control_margin_top"
-        android:layout_marginBottom="@dimen/player_control_margin_bottom"
         android:layout_marginLeft="@dimen/player_control_margin_left"
         android:layout_marginRight="@dimen/player_control_margin_right"
         android:gravity="center"
@@ -130,7 +131,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/player_control_bottom_panel_height"
+        android:layout_height="@dimen/sixty_px"
         android:orientation="horizontal" />
 
 </LinearLayout>

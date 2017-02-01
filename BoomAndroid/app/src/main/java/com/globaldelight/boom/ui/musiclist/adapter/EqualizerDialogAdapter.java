@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 
 import java.util.List;
 
@@ -50,13 +51,13 @@ public class EqualizerDialogAdapter extends RecyclerView.Adapter<EqualizerDialog
         holder.mEqName.setText(eqNames.get(position));
 
         if(position == eqPosition){
-            holder.mainView.setBackgroundColor(Color.parseColor("#b6b6b6"));
+            holder.mainView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.dialog_selection));
             holder.mEqIcon.setImageDrawable(eq_active_on.getDrawable(position));
-            holder.mEqName.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark));
+            holder.mEqName.setTextColor(ContextCompat.getColor(mContext, R.color.dialog_selected_txt));
         }else{
-            holder.mainView.setBackgroundColor(Color.parseColor("#171921"));
+            holder.mainView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.transparent));
             holder.mEqIcon.setImageDrawable(eq_active_off.getDrawable(position));
-            holder.mEqName.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            holder.mEqName.setTextColor(ContextCompat.getColor(mContext, R.color.dialog_txt));
         }
 
         holder.mainView.setOnClickListener(new View.OnClickListener() {
@@ -89,13 +90,13 @@ public class EqualizerDialogAdapter extends RecyclerView.Adapter<EqualizerDialog
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         public View mainView;
-        public TextView mEqName;
+        public RegularTextView mEqName;
         public ImageView mEqIcon;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            mEqName = (TextView) itemView.findViewById(R.id.eq_name);
+            mEqName = (RegularTextView) itemView.findViewById(R.id.eq_name);
             mEqIcon = (ImageView) itemView.findViewById(R.id.eq_icon);
         }
     }

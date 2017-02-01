@@ -3,6 +3,7 @@ package com.globaldelight.boom.ui.musiclist.adapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -95,8 +96,8 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                 title = item.getMediaElement().get(pos).getItemTitle();
                 duration = ((MediaItem) item.getMediaElement().get(pos)).getDuration();
                 if(null != nowPlayingItem && item.getMediaElement().get(pos).getItemId() == nowPlayingItem.getItemId()){
-                    holder.name.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
-                    holder.count.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
+                    holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
+                    holder.count.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                 }else if(null != nowPlayingItem){
                     holder.name.setTextColor(activity.getResources().getColor(R.color.white));
                     holder.count.setTextColor(activity.getResources().getColor(R.color.white));
@@ -105,8 +106,8 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                 title = ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(pos).getItemTitle();
                 duration = ((MediaItem) ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(pos)).getDuration();
                 if(null != nowPlayingItem && ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(pos).getItemId() == nowPlayingItem.getItemId()){
-                    holder.name.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
-                    holder.count.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
+                    holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
+                    holder.count.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                 }else if(null != nowPlayingItem){
                     holder.name.setTextColor(activity.getResources().getColor(R.color.white));
                     holder.count.setTextColor(activity.getResources().getColor(R.color.white));
@@ -115,8 +116,8 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                 title = item.getMediaElement().get(item.getCurrentIndex()).getItemTitle();
                 duration = ((MediaItem) ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(pos)).getDuration();
                 if(null != nowPlayingItem && item.getMediaElement().get(item.getCurrentIndex()).getItemId() == nowPlayingItem.getItemId()){
-                    holder.name.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
-                    holder.count.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
+                    holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
+                    holder.count.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                 }else if(null != nowPlayingItem){
                     holder.name.setTextColor(activity.getResources().getColor(R.color.white));
                     holder.count.setTextColor(activity.getResources().getColor(R.color.white));
@@ -344,27 +345,26 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView name, count, duration;
+        public RegularTextView name, count, duration;
         public View mainView;
         public ImageView menu;
         public CheckBox songChk;
 
-        public RegularTextView headerTitle, headerSubTitle;
-        public CoachMarkTextView headerDetail;
+        public RegularTextView headerTitle, headerSubTitle, headerDetail;
         ImageView mShuffle, mMore;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            name = (TextView) itemView.findViewById(R.id.album_item_name);
-            duration = (TextView) itemView.findViewById(R.id.album_item_duration);
-            count = (TextView) itemView.findViewById(R.id.album_item_count);
+            name = (RegularTextView) itemView.findViewById(R.id.album_item_name);
+            duration = (RegularTextView) itemView.findViewById(R.id.album_item_duration);
+            count = (RegularTextView) itemView.findViewById(R.id.album_item_count);
             menu = (ImageView) itemView.findViewById(R.id.album_item_menu);
             songChk = (CheckBox) itemView.findViewById(R.id.song_chk);
 
             headerTitle = (RegularTextView) itemView.findViewById(R.id.header_title);
             headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
-            headerDetail = (CoachMarkTextView) itemView.findViewById(R.id.header_detail);
+            headerDetail = (RegularTextView) itemView.findViewById(R.id.header_detail);
             mMore = (ImageView) itemView.findViewById(R.id.recycler_header_menu);
         }
     }

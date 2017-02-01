@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/appBackground"
+    android:background="@color/app_background"
     xmlns:android="http://schemas.android.com/apk/res/android" >
     <LinearLayout
         android:id="@+id/lib_progress"
@@ -19,8 +19,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/albumsListContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/appBackground"/>
+            android:layout_height="match_parent"/>
 
         <LinearLayout
             android:id="@+id/album_empty_view"

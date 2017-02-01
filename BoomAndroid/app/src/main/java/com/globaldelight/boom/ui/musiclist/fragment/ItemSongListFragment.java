@@ -34,6 +34,7 @@ import com.globaldelight.boom.ui.musiclist.adapter.CloudItemListAdapter;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.ArrayList;
 
@@ -94,20 +95,13 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
 
         initViews();
-        if(mediaType == MediaType.GOOGLE_DRIVE) {
-            if (googleDriveMediaList.getGoogleDriveMediaList().isEmpty()) {
-                googleDriveHandler.getResultsFromApi();
-            } else {
-                notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
-                setForAnimation();
-            }
-        }
+
+        initLibrary();
+
         return rootView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void initLibrary() {
         if(mediaType == MediaType.DROP_BOX && null != App.getDropboxAPI()) {
             AndroidAuthSession session = App.getDropboxAPI().getSession();
             if (session.authenticationSuccessful()) {
@@ -121,8 +115,37 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
                 }
             }
         }
-        checkPermissions();
+
+        if(mediaType == MediaType.GOOGLE_DRIVE) {
+            if (googleDriveMediaList.getGoogleDriveMediaList().isEmpty()) {
+                googleDriveHandler.getResultsFromApi();
+            } else {
+                notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
+                setForAnimation();
+            }
+        }
+        if(itemType == ItemType.FAVOURITE) {
+            checkPermissions();
+        }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LoadDropboxList();
+    }
+
+    private void LoadDropboxList(){
+        if(mediaType == MediaType.DROP_BOX) {
+            if (dropboxMediaList.getDropboxMediaList().isEmpty()) {
+                new LoadDropBoxList(getActivity()).execute();
+            } else {
+                notifyAdapter(dropboxMediaList.getDropboxMediaList());
+            }
+            setForAnimation();
+        }
+    }
+
 
     private void initViews() {
         IntentFilter intentFilter = new IntentFilter();
@@ -145,7 +168,7 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
         }else if(mediaType == MediaType.GOOGLE_DRIVE && itemType == ItemType.SONGS){
             googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(getActivity());
             googleDriveMediaList.setGoogleDriveMediaUpdater(this);
-            googleDriveHandler = GoogleDriveHandler.getGoogleDriveInstance(getActivity());
+            googleDriveHandler = GoogleDriveHandler.getGoogleDriveInstance(ItemSongListFragment.this);
             googleDriveHandler.getGoogleAccountCredential();
             googleDriveHandler.getGoogleApiClient();
             googleDriveHandler.connectGoogleAccount();
@@ -208,21 +231,12 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
-                        if(itemType == ItemType.FAVOURITE) {
-                            if (favouriteMediaList.getFavouriteMediaList().isEmpty()) {
-                                new LoadFavouriteList(getActivity()).execute();
-                            } else {
-                                notifyAdapter(favouriteMediaList.getFavouriteMediaList());
-                            }
-                            setForAnimation();
-                        } else if(mediaType == MediaType.DROP_BOX) {
-                            if (dropboxMediaList.getDropboxMediaList().isEmpty()) {
-                                new LoadDropBoxList(getActivity()).execute();
-                            } else {
-                                notifyAdapter(dropboxMediaList.getDropboxMediaList());
-                            }
-                            setForAnimation();
+                        if (favouriteMediaList.getFavouriteMediaList().isEmpty()) {
+                            new LoadFavouriteList(getActivity()).execute();
+                        } else {
+                            notifyAdapter(favouriteMediaList.getFavouriteMediaList());
                         }
+                        setForAnimation();
                     }
 
                     @Override
@@ -257,6 +271,7 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
                 } else {
                     googleDriveHandler.getResultsFromApi();
                 }
+                progressLoader.dismiss();
                 break;
             case GoogleDriveHandler.REQUEST_ACCOUNT_PICKER:
                 if (resultCode == RESULT_OK && data != null &&
@@ -272,12 +287,15 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
                         googleDriveHandler.setSelectedGoogleAccountName(accountName);
                         googleDriveHandler.getResultsFromApi();
                     }
+                }else{
+                    progressLoader.dismiss();
                 }
                 break;
             case GoogleDriveHandler.REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
                     googleDriveHandler.getResultsFromApi();
                 }
+                progressLoader.dismiss();
                 break;
         }
     }

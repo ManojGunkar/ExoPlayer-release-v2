@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
@@ -19,6 +20,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.globaldelight.boomplayer.AudioPlayer;
 import com.globaldelight.boomplayer.OpenSLPlayer;
@@ -205,7 +207,13 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
                     Toast.makeText(context, "not logged in Dropbox", Toast.LENGTH_SHORT).show();
                 }
             }else if(mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){
-                dataSource = mediaItemBase.getItemUrl();
+
+                String access_token = GoogleDriveHandler.getGoogleDriveInstance(context).getAccessTokenApi();
+                if(null != access_token) {
+                    dataSource = mediaItemBase.getItemUrl() + access_token;
+                }else{
+                    return null;
+                }
             }
             return dataSource;
         }
@@ -213,7 +221,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         @Override
         protected void onPostExecute(String dataSource) {
             super.onPostExecute(dataSource);
-            if(null != mPlayer && null != mediaItemBase) {
+            if(null != mPlayer && null != mediaItemBase && null != dataSource) {
                 if ( requestAudioFocus() ) {
                     mPlayer.setDataSource(dataSource);
                     setSessionState(PlaybackState.STATE_PLAYING);

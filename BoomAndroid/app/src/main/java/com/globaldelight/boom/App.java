@@ -246,15 +246,16 @@ public class App extends Application implements SensorEventListener, Application
 
 
     private boolean isExpired(){
-        String expiryDateString = "FEB-10-2017";
-        try {
-            SimpleDateFormat sdf =  new SimpleDateFormat("MMM-dd-yyyy");
-            Date expiryDate = sdf.parse(expiryDateString);
-            Date today= new Date();
-            return today.after(expiryDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return false;
-        }
+//        String expiryDateString = "FEB-10-2017";
+//        try {
+//            SimpleDateFormat sdf =  new SimpleDateFormat("MMM-dd-yyyy");
+//            Date expiryDate = sdf.parse(expiryDateString);
+//            Date today= new Date();
+//            return today.after(expiryDate);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+        return false;
     }
 }

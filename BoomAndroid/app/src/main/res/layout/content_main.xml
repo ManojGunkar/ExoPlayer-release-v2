@@ -14,8 +14,9 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:elevation="10dp"
-            android:background="?attr/colorPrimary"
+            android:background="@color/colorPrimary"
             android:minHeight="?attr/actionBarSize"
+            app:tabIndicatorHeight="@dimen/twelve_px"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
         <android.support.v4.view.ViewPager

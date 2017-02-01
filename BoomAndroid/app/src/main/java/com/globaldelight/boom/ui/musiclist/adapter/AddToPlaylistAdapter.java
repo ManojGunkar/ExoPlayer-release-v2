@@ -16,6 +16,7 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerEvents;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 
 import java.util.ArrayList;
 import static android.view.LayoutInflater.from;
@@ -74,13 +75,13 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public View mainView;
-        public TextView name, count;
+        public RegularTextView name, count;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            name = (TextView) itemView.findViewById(R.id.playlist_dialog_name);
-            count = (TextView) itemView.findViewById(R.id.playlist_dialog_song_count);
+            name = (RegularTextView) itemView.findViewById(R.id.playlist_dialog_name);
+            count = (RegularTextView) itemView.findViewById(R.id.playlist_dialog_song_count);
         }
     }
 

@@ -28,22 +28,24 @@
         android:orientation="vertical"
         android:layout_weight="5"
         android:gravity="center">
-        <TextView
+        <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/large_player_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
+            android:textColor="@color/player_track_title"
+            android:textStyle="normal"
             android:maxLines="1"
             android:ellipsize="marquee"
             android:layout_weight="1"
             android:textSize="@dimen/player_title_size"
             android:gravity="center"/>
 
-        <TextView
+        <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/large_player_sub_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
+            android:textColor="@color/player_track_sub_title"
+            android:textStyle="normal"
             android:maxLines="1"
             android:ellipsize="marquee"
             android:layout_weight="1"
@@ -68,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/unbounded_ripple"
-                android:src="@drawable/ic_queue_music_white_24dp"/>
+                android:src="@drawable/ic_upnext"/>
         </LinearLayout>
 
         <LinearLayout
@@ -81,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/unbounded_ripple"
-                android:src="@drawable/ic_more_button_playlists"/>
+                android:src="@drawable/ic_player_more_button"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

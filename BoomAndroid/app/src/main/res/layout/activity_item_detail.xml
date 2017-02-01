@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/app_background"
     tools:context=".ui.musiclist.activity.AlbumDetailItemActivity"
     tools:ignore="MergeRootFrame">
 
@@ -43,7 +44,6 @@
                     android:layout_height="100dp"
                     android:layout_gravity="bottom"
                     android:layout_weight="0"
-                    android:background="#0D000000"
                     android:orientation="horizontal"/>
             </FrameLayout>
 

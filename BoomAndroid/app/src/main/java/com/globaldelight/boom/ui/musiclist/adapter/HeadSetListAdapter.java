@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.HeadSetType;
 import com.globaldelight.boom.utils.Logger;
 
@@ -77,12 +78,12 @@ public class HeadSetListAdapter extends RecyclerView
     public static class DataObjectHolder extends RecyclerView.ViewHolder
             implements View
             .OnClickListener {
-        TextView label;
+        RegularTextView label;
         ImageView imgView;
 
         public DataObjectHolder(View itemView) {
             super(itemView);
-            label = (TextView) itemView.findViewById(R.id.img_pager_item_title);
+            label = (RegularTextView) itemView.findViewById(R.id.img_pager_item_title);
             imgView = (ImageView) itemView.findViewById(R.id.img_pager_item);
             Logger.LOGI(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);

@@ -6,6 +6,7 @@ package com.globaldelight.boom.task.MediaLoader;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
@@ -13,6 +14,7 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
+import com.google.android.gms.auth.GoogleAuthException;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
@@ -32,7 +34,7 @@ import java.util.List;
 public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
     private com.google.api.services.drive.Drive mService = null;
     private Exception mLastError = null;
-    private Activity activity;
+    private Fragment fragment;
     private GoogleDriveHandler googleDriveHandler;
     private GoogleDriveMediaList mediaListInstance;
     String access_token = null;
@@ -40,16 +42,16 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
     private String mediaUrl_1 = "https://www.googleapis.com/drive/v3/files/";
     private String mediaUrl_2 = "?alt=media&access_token=";
 
-    public LoadGoogleDriveList(Activity activity, GoogleDriveHandler googleDriveHandler) {
-        this.activity = activity;
+    public LoadGoogleDriveList(Fragment fragment, GoogleDriveHandler googleDriveHandler) {
+        this.fragment = fragment;
         this.googleDriveHandler = googleDriveHandler;
         HttpTransport transport = AndroidHttp.newCompatibleTransport();
         JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
         mService = new com.google.api.services.drive.Drive.Builder(
                 transport, jsonFactory, googleDriveHandler.getGoogleAccountCredential())
-                .setApplicationName(activity.getResources().getString(R.string.app_name))
+                .setApplicationName(fragment.getResources().getString(R.string.app_name))
                 .build();
-        mediaListInstance = GoogleDriveMediaList.geGoogleDriveMediaListInstance(activity);
+        mediaListInstance = GoogleDriveMediaList.geGoogleDriveMediaListInstance(fragment.getContext());
     }
 
     /**
@@ -81,22 +83,21 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
         FileList result = mService.files().list()
                 .execute();
         googleDriveHandler.retrieveNextPage();
-        access_token = googleDriveHandler.getGoogleAccessToken();
+        try {
+            access_token = googleDriveHandler.mCredential.getToken();
+        } catch (GoogleAuthException e) {
+            e.printStackTrace();
+        }
         List<File> files = result.getFiles();
         if (files != null) {
             for (File file : files) {
                 if (file.get("mimeType").toString().startsWith("audio")) {
                     mediaListInstance.addFileInGoogleDriveMediaList(new MediaItem(file.getName(),
-                            mediaUrl_1+file.getId()+mediaUrl_2+access_token, ItemType.SONGS, MediaType.GOOGLE_DRIVE, ItemType.SONGS));
+                            mediaUrl_1+file.getId()+mediaUrl_2, ItemType.SONGS, MediaType.GOOGLE_DRIVE, ItemType.SONGS));
                 }
             }
         }
         return fileInfo;
-    }
-
-    @Override
-    protected void onPreExecute() {
-//    TODO
     }
 
     @Override
@@ -106,7 +107,7 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
         } else {
             mediaListInstance.finishGoogleDriveMediaLoading();
 //            output.add(0, "Data retrieved using the Drive API:");
-//            Toast.makeText(activity, TextUtils.join("\n", output), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(fragment, TextUtils.join("\n", output), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -117,11 +118,11 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
                 googleDriveHandler.showGooglePlayServicesAvailabilityErrorDialog(((GooglePlayServicesAvailabilityIOException) mLastError)
                         .getConnectionStatusCode());
             } else if (mLastError instanceof UserRecoverableAuthIOException) {
-                activity.startActivityForResult(
+                fragment.startActivityForResult(
                         ((UserRecoverableAuthIOException) mLastError).getIntent(),
                         GoogleDriveHandler.REQUEST_AUTHORIZATION);
             } else {
-                mediaListInstance.onErrorOccurred(null == mLastError.getMessage() ? activity.getResources().getString(R.string.error_fetch_data) : mLastError.getMessage());
+                mediaListInstance.onErrorOccurred(null == mLastError.getMessage() ? fragment.getResources().getString(R.string.error_fetch_data) : mLastError.getMessage());
             }
         } else {
             mediaListInstance.onRequestCancelled();

@@ -40,22 +40,24 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:orientation="vertical">
-            <TextView
+            <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/mini_player_song_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
+                android:textStyle="normal"
                 android:maxLines="1"
-                android:textColor="@android:color/white"
+                android:textColor="@color/player_track_title"
                 android:textSize="16sp" />
 
-            <TextView
+            <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/mini_player_song_sub_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
+                android:textStyle="normal"
                 android:gravity="center_horizontal"
-                android:textColor="@android:color/white"
+                android:textColor="@color/player_track_sub_title"
                 android:textSize="16sp"/>
         </LinearLayout>
         <LinearLayout

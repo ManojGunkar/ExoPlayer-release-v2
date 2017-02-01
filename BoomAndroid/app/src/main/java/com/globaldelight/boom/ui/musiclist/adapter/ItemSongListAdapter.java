@@ -194,13 +194,13 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             MediaItem nowPlayingItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
             if(nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB) {
                 if(currentItem.getItemId() == nowPlayingItem.getItemId()){
-                    holder.name.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
+                    holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                 }else{
                     holder.name.setTextColor(activity.getResources().getColor(R.color.white));
                 }
             }else{
                 if(currentItem.getItemTitle().equals(nowPlayingItem.getItemTitle())) {
-                    holder.name.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
+                    holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                 }else{
                     holder.name.setTextColor(activity.getResources().getColor(R.color.white));
                 }
@@ -594,13 +594,12 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView name, artistName;
+        public RegularTextView name, artistName;
         public View mainView;
         public ImageView img, menu;
 
         public CheckBox songChk;
-        public RegularTextView headerTitle, headerSubTitle;
-        public CoachMarkTextView headerDetail;
+        public RegularTextView headerTitle, headerSubTitle, headerDetail;
         public Button undoButton;
         public ImageView imgHandle;
         ImageView mShuffle, mMore;
@@ -609,14 +608,14 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             super(itemView);
             mainView = itemView;
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
-            name = (TextView) itemView.findViewById(R.id.song_item_name);
+            name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
             menu = (ImageView) itemView.findViewById(R.id.song_item_menu);
-            artistName = (TextView) itemView.findViewById(R.id.song_item_artist);
+            artistName = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
             undoButton = (Button) itemView.findViewById(R.id.undo_button);
             imgHandle = (ImageView) itemView.findViewById(R.id.song_item_handle);
             headerTitle = (RegularTextView) itemView.findViewById(R.id.header_title);
             headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
-            headerDetail = (CoachMarkTextView) itemView.findViewById(R.id.header_detail);
+            headerDetail = (RegularTextView) itemView.findViewById(R.id.header_detail);
             mMore = (ImageView) itemView.findViewById(R.id.recycler_header_menu);
             songChk = (CheckBox) itemView.findViewById(R.id.song_chk);
         }

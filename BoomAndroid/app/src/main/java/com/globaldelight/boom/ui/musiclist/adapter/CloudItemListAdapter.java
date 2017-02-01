@@ -31,7 +31,6 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.ui.musiclist.fragment.ItemSongListFragment;
-import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
@@ -132,13 +131,13 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
         if (null != nowPlayingItem /*&& nowPlayingItem.getParentType() == ItemType.SONGS*/ /*&& (App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused())*/) {
             if(nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB) {
                 if (itemList.get(position).getItemId() == nowPlayingItem.getItemId()) {
-                    holder.name.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
+                    holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                 } else {
                     holder.name.setTextColor(activity.getResources().getColor(R.color.white));
                 }
             }else{
                 if (itemList.get(position).getItemTitle().equals(nowPlayingItem.getItemTitle())) {
-                    holder.name.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
+                    holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                 } else {
                     holder.name.setTextColor(activity.getResources().getColor(R.color.white));
                 }
@@ -345,8 +344,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public RegularTextView name;
-        public CoachMarkTextView artistName;
+        public RegularTextView name, artistName;
         public View mainView;
         public ImageView img, menu;
         public CheckBox songChk;
@@ -357,7 +355,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
             name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
             menu = (ImageView) itemView.findViewById(R.id.song_item_menu);
-            artistName = (CoachMarkTextView) itemView.findViewById(R.id.song_item_artist);
+            artistName = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
             songChk = (CheckBox) itemView.findViewById(R.id.song_chk);
         }
     }

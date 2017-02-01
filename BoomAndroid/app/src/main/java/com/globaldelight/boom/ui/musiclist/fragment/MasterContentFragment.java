@@ -10,12 +10,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatSeekBar;
@@ -31,7 +33,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -50,6 +51,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.widgets.NegativeSeekBar;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boomplayer.AudioEffect;
@@ -91,22 +93,22 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     public View miniController, mPlayerActionPanel;
 
-    private TextView mMiniSongTitle, mMiniSongSubTitle, mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
+    private RegularTextView mMiniSongTitle, mMiniSongSubTitle, mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
     private Activity mContext;
     private View mInflater, revealView;
     private ImageView mMiniPlayerPlayPause;
-    private int size, colorLight, colorTo = 0xffffffff, colorDark;
+    private int size, colorLight, colorTo , colorFrom;
     private AppCompatSeekBar mTrackSeek, mMiniPlayerSeek;
     private ImageView mPlayerFav, mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mEffectTab, mPlayerTab, mPlayerBackBtn, mLargeAlbumArt;
     private LinearLayout mEffectContent, mPlayerSwitcherPanel, mSeekbarPanel, mPlayerControllerHolder, mPlayerLarge, mPlayerTitlePanel, mMiniTitlePanel, mMiniPlayerEffectPanel, mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
     private FrameLayout mPlayerContent;
     private FrameLayout mPlayerBackground;
 
-    private TextView mDisableIntensity;
+    private RegularTextView mDisableIntensity;
     private NegativeSeekBar mIntensitySeek;
     private SwitchCompat mEffectSwitch;
     private AppCompatCheckBox mFullBassCheck;
-    private TextView mEffectSwitchTxt, m3DSurroundTxt, mIntensityTxt, mEqualizerTxt, mSelectedEqTxt;
+    private RegularTextView mEffectSwitchTxt, m3DSurroundTxt, mIntensityTxt, mEqualizerTxt, mSelectedEqTxt;
     private ImageView m3DSurroundBtn, mIntensityBtn, mEqualizerBtn, mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
     private LinearLayout mEqDialogPanel, mSpeakerDialogPanel;
     private double mOldIntensity;
@@ -196,6 +198,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mInflater = inflater.inflate(R.layout.fragment_content_master, container, false);
         mContext = getActivity();
+
+        colorTo = ContextCompat.getColor(mContext, R.color.effect_inactive);
+        colorFrom = ContextCompat.getColor(mContext, R.color.effect_active);
 
         Point point = new Point();
         getActivity().getWindowManager().getDefaultDisplay().getSize(point);
@@ -424,8 +429,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mPlayerBackBtn.setOnClickListener(this);
         mPlayerTitlePanel = (LinearLayout) mInflater.findViewById(R.id.player_title_panel);
         mPlayerTitlePanel.setOnClickListener(this);
-        mLargeSongTitle = (TextView) mInflater.findViewById(R.id.large_player_title);
-        mLargeSongSubTitle = (TextView) mInflater.findViewById(R.id.large_player_sub_title);
+        mLargeSongTitle = (RegularTextView) mInflater.findViewById(R.id.large_player_title);
+        mLargeSongSubTitle = (RegularTextView) mInflater.findViewById(R.id.large_player_sub_title);
         mUpNextBtnPanel = (LinearLayout) mInflater.findViewById(R.id.player_upnext_button);
         mUpNextBtnPanel.setOnClickListener(this);
         mPlayerOverFlowMenuPanel = (LinearLayout) mInflater.findViewById(R.id.player_overflow_button);
@@ -436,8 +441,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         mLargeAlbumArt = (ImageView) mInflater.findViewById(R.id.player_album_art);
 
-        LinearLayout.LayoutParams artParam = new LinearLayout.LayoutParams((ScreenWidth*85)/100, (ScreenWidth*85)/100);
-        artParam.setMargins((int) ((ScreenWidth*7.5)/100), 0, (int) ((ScreenWidth*7.5)/100), 0);
+        LinearLayout.LayoutParams artParam = new LinearLayout.LayoutParams((int)(ScreenHeight * 47.656) / 100, (int)(ScreenHeight * 47.656) / 100);
+        artParam.setMargins((int) ((ScreenWidth * 7.638) /100), 0, (int) ((ScreenWidth * 7.638)/100), 0);
         mInflater.findViewById(R.id.player_large_header).setLayoutParams(artParam);
         mPlayerContent = (FrameLayout) mInflater.findViewById(R.id.player_content);
 
@@ -481,8 +486,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             }
         });
         revealView = mInflater.findViewById(R.id.player_reveal_view);
-        mCurrentSeekTime = (TextView) mInflater.findViewById(R.id.played_time);
-        mTotalSeekTime = (TextView) mInflater.findViewById(R.id.remain_time);
+        mCurrentSeekTime = (RegularTextView) mInflater.findViewById(R.id.played_time);
+        mTotalSeekTime = (RegularTextView) mInflater.findViewById(R.id.remain_time);
 
         mPlayerControllerHolder = (LinearLayout) mInflater.findViewById(R.id.player_controller_holder);
         mRepeat = (ImageView) mInflater.findViewById(R.id.controller_repeat);
@@ -583,8 +588,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mMiniPlayerPlayPause.setOnClickListener(this);
         mMiniTitlePanel = (LinearLayout) mInflater.findViewById(R.id.mini_player_title_panel);
         mMiniTitlePanel.setOnClickListener(this);
-        mMiniSongTitle = (TextView) mInflater.findViewById(R.id.mini_player_song_title);
-        mMiniSongSubTitle = (TextView) mInflater.findViewById(R.id.mini_player_song_sub_title);
+        mMiniSongTitle = (RegularTextView) mInflater.findViewById(R.id.mini_player_song_title);
+        mMiniSongSubTitle = (RegularTextView) mInflater.findViewById(R.id.mini_player_song_sub_title);
     }
 
     private void updateMiniPlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
@@ -890,13 +895,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mEffectContent = (LinearLayout) mInflater.findViewById(R.id.effect_content);
 //        mEffectContent.setLayoutParams(effectParam);
 
-        mEffectSwitchTxt = (TextView) mInflater.findViewById(R.id.effect_switch_txt);
+        mEffectSwitchTxt = (RegularTextView) mInflater.findViewById(R.id.effect_switch_txt);
         mEffectSwitch = (SwitchCompat) mInflater.findViewById(R.id.effect_switch);
         switchAudioEffect();
 
         m3DSurroundBtn = (ImageView) mInflater.findViewById(R.id.three_surround_btn);
         m3DSurroundBtn.setOnClickListener(this);
-        m3DSurroundTxt = (TextView) mInflater.findViewById(R.id.three_surround_txt);
+        m3DSurroundTxt = (RegularTextView) mInflater.findViewById(R.id.three_surround_txt);
         mSpeakerBtn = (ImageView) mInflater.findViewById(R.id.speaker_btn) ;
         mSpeakerBtn.setOnClickListener(this);
 
@@ -905,22 +910,22 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         mIntensityBtn = (ImageView) mInflater.findViewById(R.id.intensity_btn);
         mIntensityBtn.setOnClickListener(this);
-        mIntensityTxt = (TextView) mInflater.findViewById(R.id.intensity_txt);
+        mIntensityTxt = (RegularTextView) mInflater.findViewById(R.id.intensity_txt);
         mIntensitySeek = (NegativeSeekBar) mInflater.findViewById(R.id.intensity_seek);
         mIntensitySeek.setProgress(audioEffectPreferenceHandler.getIntensity());
         mIntensitySeek.setOnClickListener(this);
 
         mEqualizerBtn = (ImageView) mInflater.findViewById(R.id.equalizer_btn);
         mEqualizerBtn.setOnClickListener(this);
-        mEqualizerTxt = (TextView) mInflater.findViewById(R.id.equalizer_txt);
+        mEqualizerTxt = (RegularTextView) mInflater.findViewById(R.id.equalizer_txt);
         mEqDialogPanel = (LinearLayout) mInflater.findViewById(R.id.eq_dialog_panel);
         mEqDialogPanel.setOnClickListener(this);
 
         mSelectedEqImg = (ImageView) mInflater.findViewById(R.id.selected_eq_img);
-        mSelectedEqTxt = (TextView) mInflater.findViewById(R.id.selected_eq_txt);
+        mSelectedEqTxt = (RegularTextView) mInflater.findViewById(R.id.selected_eq_txt);
         mSelectedEqGoImg = (ImageView) mInflater.findViewById(R.id.selected_eq_go_img);
 
-        mDisableIntensity = (TextView) mInflater.findViewById(R.id.intensity_disable_img);
+        mDisableIntensity = (RegularTextView) mInflater.findViewById(R.id.intensity_disable_img);
         mDisableIntensity.setOnTouchListener(this);
         eq_names = Arrays.asList(mContext.getResources().getStringArray(R.array.eq_names));
         eq_active_on = mContext.getResources().obtainTypedArray(R.array.eq_active_on);
@@ -981,11 +986,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private void setEnable3DEffect(boolean enable){
         if(enable && audioEffectPreferenceHandler.isAudioEffectOn()) {
             m3DSurroundBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_three_d_on, null));
-            m3DSurroundTxt.setTextColor(Color.WHITE);
+            m3DSurroundTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
             mSpeakerBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_three_d_dropdown, null));
         }else{
             m3DSurroundBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_three_d_off, null));
-            m3DSurroundTxt.setTextColor(Color.LTGRAY);
+            m3DSurroundTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_inactive));
             mSpeakerBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_three_d_dropdown_off, null));
         }
 
@@ -995,20 +1000,20 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private void setEnableFullBass(boolean enable){
         mFullBassCheck.setChecked(enable);
         if(enable && audioEffectPreferenceHandler.isAudioEffectOn()){
-            mFullBassCheck.setTextColor(Color.WHITE);
+            mFullBassCheck.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
         }else{
-            mFullBassCheck.setTextColor(Color.LTGRAY);
+            mFullBassCheck.setTextColor(ContextCompat.getColor(mContext, R.color.effect_inactive));
         }
     }
 
     private void setEnableIntensity(boolean enable) {
         if(enable && audioEffectPreferenceHandler.isAudioEffectOn()){
             mIntensityBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_intensity_on, null));
-            mIntensityTxt.setTextColor(Color.WHITE);
+            mIntensityTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
             mIntensitySeek.setDisable(false);
         }else{
             mIntensityBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_intensity_off, null));
-            mIntensityTxt.setTextColor(Color.LTGRAY);
+            mIntensityTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_inactive));
             mIntensitySeek.setDisable(true);
         }
         FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_INTENSITY_STATE_CHANGED);
@@ -1018,23 +1023,23 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         setChangeEqualizerValue(audioEffectPreferenceHandler.getSelectedEqualizerPosition());
         if(enable && audioEffectPreferenceHandler.isAudioEffectOn()){
             mEqualizerBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_equalizer_on, null));
-            mEqualizerTxt.setTextColor(Color.WHITE);
+            mEqualizerTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
             mEqDialogPanel.setBackground(mContext.getResources().getDrawable(R.drawable.equalizer_border_active, null));
 
             try {
-                DrawableCompat.setTint(mSelectedEqImg.getDrawable(), colorTo);
-                mSelectedEqTxt.setTextColor(Color.WHITE);
-                DrawableCompat.setTint(mSelectedEqGoImg.getDrawable(), colorTo);
+                DrawableCompat.setTint(mSelectedEqImg.getDrawable(), colorFrom);
+                mSelectedEqTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
+                mSelectedEqGoImg.setImageDrawable(getResources().getDrawable(R.drawable.ic_eq_dropdown_on, null));
             }catch (Exception e){}
         }else{
             mEqualizerBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_equalizer_off, null));
-            mEqualizerTxt.setTextColor(Color.LTGRAY);
+            mEqualizerTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_inactive));
             mEqDialogPanel.setBackground(mContext.getResources().getDrawable(R.drawable.equalizer_border_inactive, null));
 
             try {
-                DrawableCompat.setTint(mSelectedEqImg.getDrawable(), Color.BLACK);
-                mSelectedEqTxt.setTextColor(Color.LTGRAY);
-                DrawableCompat.setTint(mSelectedEqGoImg.getDrawable(), Color.BLACK);
+                DrawableCompat.setTint(mSelectedEqImg.getDrawable(), colorTo);
+                mSelectedEqTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_inactive));
+                mSelectedEqGoImg.setImageDrawable(getResources().getDrawable(R.drawable.ic_eq_dropdown_off, null));
             }catch (NullPointerException e){}
         }
     }
@@ -1115,13 +1120,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         recyclerView.setAdapter(adapter);
 
         MaterialDialog dialog = new MaterialDialog.Builder(mContext)
-                .title(R.string.dialog_title)
-                .backgroundColor(Color.parseColor("#171921"))
-                .titleColor(Color.parseColor("#ffffff"))
-                .positiveColor(Color.parseColor("#81cbc4"))
-                .negativeColor(Color.parseColor("#81cbc4"))
-                .widgetColor(Color.parseColor("#ffffff"))
-                .contentColor(Color.parseColor("#ffffff"))
+                .title(R.string.eq_dialog_title)
+                .backgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background))
+                .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
+                .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .customView(recyclerView, false)
                 .positiveText(R.string.done)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -1144,13 +1147,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         updateSpeakers(mSpeakerDialogPanel);
 
         MaterialDialog dialog = new MaterialDialog.Builder(mContext)
-                .title(R.string.dialog_title)
-                .backgroundColor(Color.parseColor("#171921"))
-                .titleColor(Color.parseColor("#ffffff"))
-                .positiveColor(Color.parseColor("#81cbc4"))
-                .negativeColor(Color.parseColor("#81cbc4"))
-                .widgetColor(Color.parseColor("#ffffff"))
-                .contentColor(Color.parseColor("#ffffff"))
+                .title(R.string.speaker_dialog_title)
+                .backgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background))
+                .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
+                .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .customView(mSpeakerDialogPanel, false)
                 .positiveText(R.string.done)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {

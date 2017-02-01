@@ -27,7 +27,6 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.fragment.MediaItemListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.MusicLibraryListFragment;
-import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
@@ -98,7 +97,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
         IMediaItem nowPlayingItem = (IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
         if(null != nowPlayingItem /*&& nowPlayingItem.getParentType() == ItemType.SONGS*/ /*&& (App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused())*/){
             if(getMediaItem(position).getItemId() == nowPlayingItem.getItemId()){
-                holder.name.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
+                holder.name.setTextColor(activity.getResources().getColor(R.color.track_selected_title));
             }else{
                 holder.name.setTextColor(activity.getResources().getColor(R.color.white));
             }
@@ -106,10 +105,10 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
     }
 
     private void setAlbumArt(String path, SimpleItemViewHolder holder) {
-        int size = Utils.dpToPx(activity, 90);
+        int size = (int) activity.getResources().getDimension(R.dimen.track_list_album_art_size);
             if (PlayerUtils.isPathValid(path))
-                Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_list, null)).resize(size,
-                        size).centerCrop().into(holder.img);
+                Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_list, null))/*.resize(size,
+                        size).centerCrop()*/.into(holder.img);
             else {
                 setDefaultArt(holder, size);
             }
@@ -198,8 +197,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public RegularTextView name;
-        public CoachMarkTextView artistName;
+        public RegularTextView name, artistName;
         public View mainView;
         public ImageView img, menu;
         public CheckBox songChk;
@@ -210,7 +208,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
             name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
             menu = (ImageView) itemView.findViewById(R.id.song_item_menu);
-            artistName = (CoachMarkTextView) itemView.findViewById(R.id.song_item_artist);
+            artistName = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
             songChk = (CheckBox) itemView.findViewById(R.id.song_chk);
         }
     }

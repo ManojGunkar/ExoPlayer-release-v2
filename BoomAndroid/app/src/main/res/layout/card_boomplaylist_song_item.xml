@@ -37,7 +37,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="58"
-            android:background="@color/colorBackground"
             android:gravity="left|center_vertical"
             android:orientation="vertical"
             android:paddingLeft="@dimen/seventy_four_pt">
@@ -46,9 +45,8 @@
                 android:id="@+id/song_item_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="test"
-                android:textColor="@color/white"
+                android:maxLines="1"
+                android:textColor="@color/track_title"
                 android:textSize="@dimen/play_queue_row_txt"
                 android:typeface="normal" />
 
@@ -56,9 +54,8 @@
                 android:id="@+id/song_item_artist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="test"
-                android:textColor="@color/play_que_decs_txt"
+                android:maxLines="1"
+                android:textColor="@color/track_sub_title"
                 android:textSize="@dimen/play_queue_row_desc_txt"
                 android:typeface="normal" />
 

@@ -30,28 +30,26 @@
         <!--mainView-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="bottom"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/player_switcher_top_panel_height"
+                android:layout_height="@dimen/fourty_px"
                 android:orientation="horizontal" />
 
             <LinearLayout
                 android:id="@+id/player_switcher_panel"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/player_switcher_height"
-                android:layout_marginTop="@dimen/player_switcher_margin_top"
+                android:layout_height="@dimen/three_thirty_px"
                 android:layout_marginLeft="@dimen/player_switcher_margin_left"
                 android:layout_marginRight="@dimen/player_switcher_margin_right"
-                android:gravity="center"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
                     android:layout_weight=".5">
                     <ImageView
@@ -64,7 +62,7 @@
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
                     android:layout_weight=".5">
                     <ImageView
@@ -77,9 +75,23 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fourty_px"
+                android:orientation="horizontal" />
+
             <include layout="@layout/player_controller"/>
 
+
+            <LinearLayout
+                android:id="@+id/add_panel"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/two_hunderd_px"
+                android:visibility="visible"
+                android:orientation="horizontal" />
+
         </LinearLayout>
+
     </LinearLayout>
 
 
