@@ -37,7 +37,6 @@ import static com.globaldelight.boom.business.Utills.nativePlacementId;
 
 public class BusinessHandler {
 
-    private com.facebook.ads.NativeAd fbCustomNativeAdd;
     private NativeExpressAdView mAdView2;
     private LinearLayout adView;
     private com.facebook.ads.InterstitialAd interstitialAd;
@@ -62,14 +61,25 @@ public class BusinessHandler {
         return businessHandler;
     }
 
-    public String getBoomAccessToken(){
-        return businessHandler.getBoomAccessToken();
+    public void getBoomAccessToken(){
+        networkCallHandler.getAccessToken();
     }
 
-//    public void register
+    public void registerAndroidDevice(){
+        networkCallHandler.registerDevice();
+    }
 
+    public void configAppWithBoomServer(){
+        networkCallHandler.configApp();
+    }
 
+    public void saveEmailAddress(Utills.EmailSource emailSource, String emailid, boolean newsletteroptin){
+        networkCallHandler.saveEmailAddress(emailSource, emailid, newsletteroptin);
+    }
 
+    public boolean isAppTrialVersion(){
+        return networkCallHandler.isAppTrailVersion();
+    }
 
     public void setFBNativeAddListener(IFBAddsUpdater ifbAddsUpdater){
         this.ifbAddsUpdater = ifbAddsUpdater;
@@ -77,6 +87,10 @@ public class BusinessHandler {
 
     public void setGoogleNativeAddListener(IGoogleAddsUpdater iGoogleAddsUpdater){
         this.iGoogleAddsUpdater = iGoogleAddsUpdater;
+    }
+
+    public void setBusinessNetworkListener(IBusinessNetworkInit iBusinessNetworkInit){
+        networkCallHandler.setBusinessNetworkListener(iBusinessNetworkInit);
     }
 
     public void loadFbNativeAdds() {

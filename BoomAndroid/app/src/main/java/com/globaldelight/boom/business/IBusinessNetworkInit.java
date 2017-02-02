@@ -5,4 +5,12 @@ package com.globaldelight.boom.business;
  */
 
 public interface IBusinessNetworkInit {
+
+    void onGetAccessToken(boolean success);
+
+    void onRegisterDevice(boolean success);
+
+    void onGetBusinessConfiguration(boolean success);
+
+    void onEmailSubmition(boolean success);
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -33,20 +34,23 @@ public class NetworkCalls {
     private String appaccesstoken;
     private boolean isSuceess;
     private PackageInfo pInfo = null;
-    private String deviceLang;
-    private String version;
-    private String verCode;
-    private String installDate;
+    private static String deviceLang;
+    private static String version;
+    private static String verCode;
+    private static String installDate;
     private static String deviceModel;
-    private String deviceVersion;
-    private String timeZoneOffset;
+    private static String deviceVersion;
+    private static String timeZoneOffset;
     private final long ONE_DAY = 24 * 60 * 60 * 1000;
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     private static NetworkCalls networkCallHandler;
+    private static IBusinessNetworkInit iBusinessNetworkInit;
+    private static Handler postNetworkMessage;
 
 
     private NetworkCalls(Context context){
         this.mContext = context;
+        postNetworkMessage = new Handler();
 
         initDeviceInfo();
     }
@@ -55,6 +59,10 @@ public class NetworkCalls {
         if(null == networkCallHandler)
             networkCallHandler = new NetworkCalls(context);
         return networkCallHandler;
+    }
+
+    public void setBusinessNetworkListener(IBusinessNetworkInit iBusinessNetworkInit){
+        this.iBusinessNetworkInit = iBusinessNetworkInit;
     }
 
     private void initDeviceInfo() {
@@ -111,42 +119,63 @@ public class NetworkCalls {
         return phrase.toString();
     }
 
-    public boolean getAccessToken() {
+    public void getAccessToken() {
 
         PostRequestAccessToken.getInstance(mContext).posttReqAccessToken(Utills.appid, Utills.apptype, Utills.getDeviceID(mContext), Utills.country, Utills.secretkey, new OnServerResponseListener<AcessTokenObject, String>() {
             @Override
             public void onSuccess(AcessTokenObject successParam) {
                 appaccesstoken = successParam.getAppaccesstoken();
-//
-                isSuceess = true;
+                postNetworkMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        iBusinessNetworkInit.onGetAccessToken(true);
+                    }
+                });
                 Toast.makeText(mContext, "AccessToken Successfully Recieved ", Toast.LENGTH_LONG).show();
             }
 
             @Override
-            public void onFailure(String failureParam) {
+            public void onFailure(final String failureParam) {
+                postNetworkMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        iBusinessNetworkInit.onGetAccessToken(false);
+                    }
+                });
                 Toast.makeText(mContext, "Failed to Fetch data  ", Toast.LENGTH_LONG).show();
             }
         });
-        return isSuceess;
     }
 
-    private void registerDevice() {
+    public void registerDevice() {
 
         PostRegisterDeviceData.getInstance(mContext).postRegisterDeviceData(appaccesstoken, Utills.appid, Utills.country, deviceLang, verCode, version, deviceModel, null, null, deviceVersion, timeZoneOffset, new OnServerResponseListener<ResultRegiDeviceObject, String>() {
             @Override
             public void onSuccess(ResultRegiDeviceObject successParam) {
+                postNetworkMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        iBusinessNetworkInit.onRegisterDevice(true);
+                    }
+                });
                 Toast.makeText(mContext, "Successfully Registred Device ", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onFailure(String failureParam) {
+                postNetworkMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        iBusinessNetworkInit.onRegisterDevice(false);
+                    }
+                });
                 Toast.makeText(mContext, "Failed to Fetch data  ", Toast.LENGTH_LONG).show();
             }
 
         });
     }
 
-    private void configAppWithBoomServer() {
+    public void configApp() {
         PostHandleData.getInstance(mContext).postApplication(Utills.appid, Utills.apptype, Utills.country, Utills.getDeviceID(mContext), Utills.country, Utills.secretkey, new OnServerResponseListener<JsonResultObjects, String>() {
             @Override
 
@@ -161,17 +190,30 @@ public class NetworkCalls {
                 Utills.setScreenType(successParam.getAdsSettings().getScreenList());
 
                 Utills.setAskEmailPopupExpire(Integer.parseInt(successParam.getShareSettings().getShouldAskEmailAfterExpiry()) == 1 ? true :  false);
+
+                postNetworkMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        iBusinessNetworkInit.onGetBusinessConfiguration(true);
+                    }
+                });
             }
 
             @Override
             public void onFailure(String failureParam) {
+                postNetworkMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        iBusinessNetworkInit.onGetBusinessConfiguration(false);
+                    }
+                });
                 Toast.makeText(mContext, "Failed to Fetch data  ", Toast.LENGTH_LONG).show();
             }
 
         });
     }
 
-    private boolean isAppTrailVersion() {
+    public boolean isAppTrailVersion() {
         timeZoneOffset = installDate;
         if (installDate == null) {
             try {
@@ -198,22 +240,28 @@ public class NetworkCalls {
         return false;
     }
 
-    private void saveEmailAddress(Utills.EmailSource emailSource, String emailid, boolean newsletteroptin) {
+    public void saveEmailAddress(Utills.EmailSource emailSource, String emailid, boolean newsletteroptin) {
         String source = emailSource.name();
         PostSaveEmailData.getInstance(mContext).PostSaveEmailData(appaccesstoken, Utills.getDeviceID(mContext), newsletteroptin, source, emailid, new OnServerResponseListener<RespSaveEmailObject, String>() {
             @Override
             public void onSuccess(RespSaveEmailObject successParam) {
-//                        if (successParam.getJobId() != null) {
-//                            jobCompanies.remove(position);
-//                            notifyDataSetChanged();
-//                            Toast.makeText(activity, "Successfully Application Submited ", Toast.LENGTH_LONG).show();
-//                appaccesstoken = successParam.getMessage();
-//
+                postNetworkMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        iBusinessNetworkInit.onEmailSubmition(true);
+                    }
+                });
                 Toast.makeText(mContext, "Succesfully saved Eamil Addreess  ", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onFailure(String failureParam) {
+                postNetworkMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        iBusinessNetworkInit.onEmailSubmition(false);
+                    }
+                });
                 Toast.makeText(mContext, "Failed to Fetch data  ", Toast.LENGTH_LONG).show();
             }
 
