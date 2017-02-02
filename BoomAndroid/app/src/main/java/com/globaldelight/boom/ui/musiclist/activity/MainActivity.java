@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.AnimRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -29,8 +28,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.globaldelight.boom.business.BusinessHandler;
+import com.globaldelight.boom.business.IFBAddsUpdater;
+import com.globaldelight.boom.business.IGoogleAddsUpdater;
 import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
 import com.globaldelight.boom.data.MediaCallback.FavouriteMediaList;
 import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
@@ -41,18 +44,19 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.adapter.SearchSuggestionAdapter;
+import com.globaldelight.boom.ui.musiclist.adapter.SectionsPagerAdapter;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.BoomPlaylistFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.ItemSongListFragment;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
-import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.google.android.gms.ads.NativeExpressAdView;
 
 import static android.support.design.widget.TabLayout.MODE_SCROLLABLE;
 import static com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment.isUpdateUpnextDB;
 
 public class MainActivity extends MasterActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener, IFBAddsUpdater, IGoogleAddsUpdater{
 
     private PermissionChecker permissionChecker;
     private DrawerLayout drawerLayout;
@@ -69,10 +73,13 @@ public class MainActivity extends MasterActivity
     private SearchSuggestionAdapter searchSuggestionAdapter;
     public static String[] columns = new String[]{"_id", "FEED_TITLE"};
 
-    private SectionsPagerAdapter mAaSectionsPagerAdapter;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private FloatingActionButton mFloatAddPlayList;
     private TabLayout tabLayout;
+
+    private LinearLayout mAddsContainer;
+    private BusinessHandler mBusinessHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +131,9 @@ public class MainActivity extends MasterActivity
     private void initView() {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
+        mAddsContainer = (LinearLayout) findViewById(R.id.lib_add_container);
+        mBusinessHandler = BusinessHandler.getBusinessHandlerInstance(MainActivity.this);
+
         musicSearchHelper = new MusicSearchHelper(MainActivity.this);
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
@@ -149,11 +159,11 @@ public class MainActivity extends MasterActivity
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         int[] items = {R.string.artists, R.string.albums, R.string.songs, R.string.playlists, R.string.genres};
-        mAaSectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), items);
+        mSectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), items);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mAaSectionsPagerAdapter);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
 
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setTabMode(MODE_SCROLLABLE);
@@ -359,7 +369,7 @@ public class MainActivity extends MasterActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Bundle arguments = new Bundle();
-        if(null != mAaSectionsPagerAdapter) {
+        if(null != mSectionsPagerAdapter) {
             if (id == R.id.music_library) {
                 fragmentSwitcher(null,  0, getResources().getString(R.string.music_library), fade_in, fade_out);
             } else if (id == R.id.boom_palylist) {
@@ -479,5 +489,15 @@ public class MainActivity extends MasterActivity
         if(!App.getPlayerEventHandler().isPlaying()) {
             App.getService().stopSelf();
         }
+    }
+
+    @Override
+    public void onLoadFBNativeAdds(LinearLayout fbNativeAddContainer) {
+        mAddsContainer.addView(fbNativeAddContainer);
+    }
+
+    @Override
+    public void onLoadGoogleNativeAdds(NativeExpressAdView googleAddView) {
+        mAddsContainer.addView(googleAddView);
     }
 }

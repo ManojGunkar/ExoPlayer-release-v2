@@ -77,8 +77,14 @@ public class MediaCollectionActivity extends MasterActivity {
         }
     }
 
-    private void initCollapsingToolBar() {
-        appBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+    private void initToolBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     private void initItemViews(MediaItem mMediaItem) {
@@ -116,14 +122,8 @@ public class MediaCollectionActivity extends MasterActivity {
 
     }
 
-    private void initToolBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+    private void initCollapsingToolBar() {
+        appBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
     }
 
     private void initCollectionViews(MediaItem mMediaItem) {

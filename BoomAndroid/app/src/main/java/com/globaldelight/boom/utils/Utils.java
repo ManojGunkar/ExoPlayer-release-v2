@@ -257,7 +257,7 @@ public class Utils {
 
     public static void showNetworkAlert(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Network Alert");
+        builder.setTitle("NetworkCalls Alert");
         builder.setMessage("Please check your network connection and try again");
         builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
 

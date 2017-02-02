@@ -83,8 +83,8 @@ public class AlbumSongListActivity extends MasterActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        initViews(savedInstanceState);
         initValues();
+        initViews(savedInstanceState);
     }
 
     private void initViews(Bundle savedInstanceState) {

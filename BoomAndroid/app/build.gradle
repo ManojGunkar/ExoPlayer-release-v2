@@ -76,6 +76,7 @@ dependencies {
     compile('com.google.apis:google-api-services-drive:v3-rev52-1.22.0') {
         exclude group: 'org.apache.httpcomponents'
     }
+    compile project(path: ':businessmodel')
 }
 
 // ADD THIS AT THE BOTTOM

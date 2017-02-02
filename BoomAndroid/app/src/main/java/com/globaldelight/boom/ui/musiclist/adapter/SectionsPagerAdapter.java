@@ -1,4 +1,4 @@
-package com.globaldelight.boom.ui.musiclist.activity;
+package com.globaldelight.boom.ui.musiclist.adapter;
 
 /**
  * Created by Rahul Agarwal on 12-01-17.

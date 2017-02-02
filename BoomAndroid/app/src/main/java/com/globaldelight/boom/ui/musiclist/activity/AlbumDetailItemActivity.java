@@ -39,6 +39,16 @@ public class AlbumDetailItemActivity extends MasterActivity {
         initViews(savedInstanceState);
     }
 
+    private void initValues() {
+        currentItem = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
+
+        int width = Utils.getWindowWidth(this);
+        int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
+        int height = Utils.getWindowHeight(this) - panelSize * 4;
+        setAlbumArtSize(width, width);
+        setAlbumArt(currentItem.getItemArtUrl(), width);
+    }
+
     private void initViews(Bundle savedInstanceState) {
         final FloatingActionButton mFloatPlayAlbums = (FloatingActionButton) findViewById(R.id.fab);
         mFloatPlayAlbums.setOnClickListener(new View.OnClickListener() {
@@ -65,16 +75,6 @@ public class AlbumDetailItemActivity extends MasterActivity {
                     .add(R.id.item_detail_container, fragment)
                     .commit();
         }
-    }
-
-    private void initValues() {
-        currentItem = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
-
-        int width = Utils.getWindowWidth(this);
-        int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
-        int height = Utils.getWindowHeight(this) - panelSize * 4;
-        setAlbumArtSize(width, width);
-        setAlbumArt(currentItem.getItemArtUrl(), width);
     }
 
     @Override
