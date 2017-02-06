@@ -8,7 +8,7 @@ import android.os.Handler;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.MediaCollectionActivity;
-import com.globaldelight.boom.ui.musiclist.activity.UpNextActivity;
+import com.globaldelight.boom.ui.musiclist.activity.ActivityContainer;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
@@ -35,7 +35,8 @@ public class PlayerUIController implements IPlayerUIController {
 
     @Override
     public void OnPlayPause() {
-        mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
+        if(null != App.getPlayerEventHandler().getPlayingItem())
+            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
     }
 
     @Override
@@ -57,11 +58,13 @@ public class PlayerUIController implements IPlayerUIController {
 
     @Override
     public void OnNextTrackClick() {
-        mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_NEXT_SONG));
+        if(App.getPlayerEventHandler().isNext())
+            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_NEXT_SONG));
     }
 
     @Override
     public void OnPreviousTrackClick() {
+        if(App.getPlayerEventHandler().isPrevious())
         mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PREV_SONG));
     }
 
@@ -72,7 +75,8 @@ public class PlayerUIController implements IPlayerUIController {
     }
 
     private void startUpNextActivity(Activity activity) {
-        Intent queueIntent = new Intent(activity, UpNextActivity.class);
+        Intent queueIntent = new Intent(activity, ActivityContainer.class);
+        queueIntent.putExtra("container", "upnext");
         activity.startActivity(queueIntent);
     }
 
@@ -83,7 +87,6 @@ public class PlayerUIController implements IPlayerUIController {
     }
 
     private void startCollectionListActivity(final Activity activity, MediaItem item) {
-        App.getUserPreferenceHandler().setLibraryStartFromHome(true);
         final Intent listIntent = new Intent(activity, MediaCollectionActivity.class);
         listIntent.putExtra("media_item", item);
         new Handler().post(new Runnable() {

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/card_header_upnext_height"
+    android:background="@color/upnext_header_background"
+    android:orientation="vertical">
+
+    <com.globaldelight.boom.ui.widgets.RegularTextView
+        android:id="@+id/queue_header_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:paddingLeft="@dimen/card_grid_upnext_header_title"
+        android:maxLines="1"
+        android:textColor="@color/upnext_header_title"
+        android:textSize="@dimen/play_queue_header_txt"
+        android:textStyle="bold" />
+
+    <com.globaldelight.boom.ui.widgets.RegularTextView
+        android:id="@+id/btn_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/card_grid_upnext_header_title"
+        android:text="@string/clear"
+        android:maxLines="1"
+        android:textColor="@color/upnext_header_clear"
+        android:textSize="@dimen/play_queue_header_txt"
+        android:textStyle="bold"/>
+
+</RelativeLayout>

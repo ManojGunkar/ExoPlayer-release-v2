@@ -44,6 +44,22 @@ public class AlbumDetailActivity extends MasterActivity {
         initViews(savedInstanceState);
     }
 
+    private void initValues() {
+        collection = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
+
+        if( collection.getItemType() == ItemType.ALBUM ){
+            currentItem = collection;
+        } else {
+            currentItem = (IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex());
+        }
+
+        int width = Utils.getWindowWidth(this);
+        int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
+        int height = Utils.getWindowHeight(this) - panelSize * 4;
+        setAlbumArtSize(width, width);
+        setAlbumArt(currentItem.getItemArtUrl(), width);
+    }
+
     private void initViews(Bundle savedInstanceState) {
         final FloatingActionButton mFloatPlayAllAlbums = (FloatingActionButton) findViewById(R.id.fab);
         mFloatPlayAllAlbums.setOnClickListener(new View.OnClickListener() {
@@ -70,22 +86,6 @@ public class AlbumDetailActivity extends MasterActivity {
                     .add(R.id.item_detail_container, fragment)
                     .commit();
         }
-    }
-
-    private void initValues() {
-        collection = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
-
-        if( collection.getItemType() == ItemType.ALBUM ){
-            currentItem = collection;
-        } else {
-            currentItem = (IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex());
-        }
-
-        int width = Utils.getWindowWidth(this);
-        int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
-        int height = Utils.getWindowHeight(this) - panelSize * 4;
-        setAlbumArtSize(width, width);
-        setAlbumArt(currentItem.getItemArtUrl(), width);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class AlbumDetailActivity extends MasterActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            navigateUpTo(new Intent(this, MainActivity.class));
+            super.onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);

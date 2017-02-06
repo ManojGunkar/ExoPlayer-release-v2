@@ -63,23 +63,6 @@ public class SplashActivity extends AppCompatActivity {
                 //finish();
             }
         }, SPLASH_TIME_OUT);
-        App.startPlayerService();
-        new Handler().postDelayed(new Runnable() {
-
-            /*
-             * Showing splash screen with a timer. This will be useful when you
-             * want to show case your app logo / company
-             */
-
-            @Override
-            public void run() {
-                // This method will be executed once the timer is over
-                // Start your app main activity
-                startBoomLibrary();
-                // close this activity
-                //finish();
-            }
-        }, SPLASH_TIME_OUT);
         audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
         //flurry
         FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_APP_OPEN);
@@ -99,8 +82,6 @@ public class SplashActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
         }
 
         //get last opened date

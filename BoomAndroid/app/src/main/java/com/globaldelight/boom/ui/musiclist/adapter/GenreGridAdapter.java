@@ -95,11 +95,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
 
         setArtistImg(holder, position, size);
 
-        if(App.getUserPreferenceHandler().isLibFromHome()) {
-            holder.grid_menu.setVisibility(View.VISIBLE);
-        }else{
-            holder.grid_menu.setVisibility(View.INVISIBLE);
-        }
+        holder.grid_menu.setVisibility(View.VISIBLE);
         setOnClicks(holder, position);
     }
 
@@ -123,11 +119,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
                     public void run() {
                         Intent i = new Intent(context, AlbumDetailItemActivity.class);
                         i.putExtra("mediaItemCollection", items.get(position));
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                (Activity) context,
-                                new Pair<View, String>(holder.defaultImg, "transition:imgholder1")
-                        );
-                        ActivityCompat.startActivity((Activity) context, i, options.toBundle());
+                        context.startActivity(i);
                     }
                 }, 100);
             }
@@ -181,7 +173,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
     private int setSize(SimpleItemViewHolder holder) {
         Utils utils = new Utils(context);
         int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
-                - (int)(context.getResources().getDimension(R.dimen.twenty_four_pt)*2);
+                - (int)context.getResources().getDimension(R.dimen.card_grid_img_margin);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
         holder.gridBottomBg.setLayoutParams(params);
@@ -204,8 +196,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public RegularTextView title;
-        public CoachMarkTextView subTitle;
+        public RegularTextView title, subTitle;
         public ImageView defaultImg;
         public View gridBottomBg, grid_menu, mainView;
         public TableLayout artTable;
@@ -215,7 +206,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
             super(itemView);
             mainView = itemView;
             title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
-            subTitle = (CoachMarkTextView) itemView.findViewById(R.id.card_grid_sub_title);
+            subTitle = (RegularTextView) itemView.findViewById(R.id.card_grid_sub_title);
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
             gridBottomBg = itemView.findViewById(R.id.card_grid_bottom);

@@ -104,7 +104,7 @@ public class DropBoxUtills {
     }
 
     public static void checkDropboxAuthentication(Context context){
-        if (DropBoxUtills.getKeys(context) == null){
+        if (null == DropBoxUtills.getKeys(context) && null != App.getDropboxAPI()){
             App.getDropboxAPI().getSession().startAuthentication(context);
         }
     }
@@ -112,23 +112,27 @@ public class DropBoxUtills {
     public static boolean getFiles(String DIR, DropboxMediaList dropboxMediaList) {
         ArrayList<DropboxAPI.Entry> dropboxFolderList = new ArrayList<>();
         com.dropbox.client2.DropboxAPI.Entry dirent;
-        try {
-            dirent = App.getDropboxAPI().metadata(DIR, 10000, null, true, null);
-            for (com.dropbox.client2.DropboxAPI.Entry entry : dirent.contents) {
-                if (entry.isDir) {
+        if(null != App.getDropboxAPI()) {
+            try {
+                dirent = App.getDropboxAPI().metadata(DIR, 10000, null, true, null);
+                for (com.dropbox.client2.DropboxAPI.Entry entry : dirent.contents) {
+                    if (entry.isDir) {
 //                    DIR = entry.path;
-                    dropboxFolderList.add(entry);
-                } else {
-                    if(entry.mimeType.toString().startsWith("audio/")){
-                        dropboxMediaList.addFileInDropboxList(new MediaItem(entry.fileName(), entry.path, ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
+                        dropboxFolderList.add(entry);
+                    } else {
+                        if (entry.mimeType.toString().startsWith("audio/")) {
+                            dropboxMediaList.addFileInDropboxList(new MediaItem(entry.fileName(), entry.path, ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
+                        }
                     }
                 }
+            } catch (DropboxException e) {
+                e.printStackTrace();
             }
-        } catch (DropboxException e) {
-            e.printStackTrace();
+            getFolderDataFiles(dropboxFolderList, dropboxMediaList);
+
+            return true;
         }
-        getFolderDataFiles(dropboxFolderList, dropboxMediaList);
-        return true;
+        return false;
     }
 
     public static void getFolderDataFiles(ArrayList<DropboxAPI.Entry> dropboxFolderList, DropboxMediaList dropboxMediaList) {

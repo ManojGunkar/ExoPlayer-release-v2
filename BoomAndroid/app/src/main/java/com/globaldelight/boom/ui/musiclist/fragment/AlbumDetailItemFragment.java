@@ -24,6 +24,10 @@ import com.globaldelight.boom.utils.Utils;
 
 import java.util.ArrayList;
 
+/**
+ * Created by Rahul Agarwal on 26-01-17.
+ */
+
 public class AlbumDetailItemFragment extends Fragment {
 
     private IMediaItemCollection collection;

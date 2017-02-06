@@ -3,6 +3,10 @@ package com.globaldelight.boom.utils.handlers;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+/**
+ * Created by Rahul Kumar Agrawal on 6/14/2016.
+ */
+
 public class Preferences {
 
     public static final String PREF_NAME = "boom_pref";

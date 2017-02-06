@@ -85,6 +85,10 @@ public class AudioPlayer implements Runnable {
         sourcePath = src;
     }
 
+    public String getDataSource(){
+        return sourcePath;
+    }
+
     public synchronized void play() {
         if (state.get() == PlayerStates.STOPPED) {
             stop = false;
@@ -492,6 +496,9 @@ public class AudioPlayer implements Runnable {
     }
 
     public void setHeadPhone(int type){
-        nativePlayer.setHeadPhoneType(type);
+        try {
+            if(isPlaying() || isPause())
+                nativePlayer.setHeadPhoneType(type);
+        }catch (Exception e){}
     }
 }

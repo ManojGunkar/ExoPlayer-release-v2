@@ -24,7 +24,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
-import com.globaldelight.boom.ui.musiclist.adapter.AlbumItemsListAdapter;
+import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.AlbumItemsListAdapter;
 
 import java.util.ArrayList;
 

@@ -23,6 +23,7 @@ import android.support.annotation.AnyRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -47,6 +48,9 @@ import com.globaldelight.boom.ui.musiclist.adapter.AddToPlaylistAdapter;
 import java.io.File;
 import java.util.ArrayList;
 
+/**
+ * Created by Rahul Kumar Agrawal on 6/14/2016.
+ */
 
 public class Utils {
     private Context context;
@@ -139,12 +143,12 @@ public class Utils {
         rv.setAdapter(adapter);
         MaterialDialog dialog = new MaterialDialog.Builder(context)
                 .title(R.string.add_to_playlist)
-                .backgroundColor(Color.parseColor("#171921"))
-                .titleColor(Color.parseColor("#ffffff"))
-                .positiveColor(Color.parseColor("#81cbc4"))
-                .negativeColor(Color.parseColor("#81cbc4"))
-                .widgetColor(Color.parseColor("#ffffff"))
-                .contentColor(Color.parseColor("#ffffff"))
+                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
+                .titleColor(ContextCompat.getColor(context, R.color.dialog_title))
+                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
+                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
+                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
+                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
                 .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .customView(rv, false)
                 .positiveText(R.string.new_playlist)
@@ -169,12 +173,12 @@ public class Utils {
     public void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
         new MaterialDialog.Builder(context)
                 .title(R.string.new_playlist)
-                .backgroundColor(Color.parseColor("#171921"))
-                .titleColor(Color.parseColor("#ffffff"))
-                .positiveColor(Color.parseColor("#81cbc4"))
-                .negativeColor(Color.parseColor("#81cbc4"))
-                .widgetColor(Color.parseColor("#ffffff"))
-                .contentColor(Color.parseColor("#ffffff"))
+                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
+                .titleColor(ContextCompat.getColor(context, R.color.dialog_title))
+                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
+                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
+                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
+                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
                 .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .input(context.getResources().getString(R.string.new_playlist), null, new MaterialDialog.InputCallback() {
                     @Override
@@ -256,9 +260,9 @@ public class Utils {
 
     public static void showNetworkAlert(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Network Alert");
-        builder.setMessage("Please check your network connection and try again");
-        builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+        builder.setTitle(context.getResources().getString(R.string.network_alart));
+        builder.setMessage(context.getResources().getString(R.string.check_network));
+        builder.setNeutralButton(context.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {

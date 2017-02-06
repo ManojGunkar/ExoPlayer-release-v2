@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
@@ -19,21 +20,22 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.globaldelight.boomplayer.AudioPlayer;
-import com.globaldelight.boomplayer.OpenSLPlayer;
 import com.globaldelight.boomplayer.IPlayerEvents;
 
 import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.pause;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.play;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.stop;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
 /**
  * Created by Rahul Agarwal on 03-10-16.
  */
 
-public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocusChangeListener {
+public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocusChangeListener {
     public static boolean isPlayerResume = false;
     private static IMediaItem playingItem;
     private static AudioPlayer mPlayer;
@@ -56,7 +58,9 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
 
         @Override
         public void onStart(String mime, int sampleRate, int channels, long duration) {
-
+            if(null != getPlayingItem() && getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB){
+                context.sendBroadcast(new Intent(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
+            }
         }
 
         @Override
@@ -76,7 +80,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
 
         @Override
         public void onPlay() {
-
+            Log.d("Start : ","Playing");
         }
 
         @Override
@@ -89,6 +93,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
                 App.getPlayingQueueHandler().getUpNextList().managePlayedItem(true);
                 context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_STOP));
             }
+            context.sendBroadcast(new Intent(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
             Toast.makeText(context, "Error in playing Song", Toast.LENGTH_SHORT).show();
         }
 
@@ -143,7 +148,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         focusChangeListener = this;
         if(null == this.service)
             this.service = service;
-        App.getPlayingQueueHandler().getUpNextList().setQueueEvent(this);
+        App.getPlayingQueueHandler().getUpNextList().setIQueueEvent(this);
         uiHandler = new Handler();
         registerSession();
     }
@@ -202,10 +207,18 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
                 if(null != App.getDropboxAPI().getSession()){
                     dataSource = DropBoxUtills.getDropboxItemUrl(mediaItemBase.getItemUrl());
                 }else{
-                    Toast.makeText(context, "not logged in Dropbox", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getResources().getString(R.string.login_problem_dropbox), Toast.LENGTH_SHORT).show();
+                    return null;
                 }
             }else if(mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){
-                dataSource = mediaItemBase.getItemUrl();
+
+                String access_token = GoogleDriveHandler.getGoogleDriveInstance(context).getAccessTokenApi();
+                if(null != access_token) {
+                    dataSource = mediaItemBase.getItemUrl() + access_token;
+                }else{
+                    Toast.makeText(context, context.getResources().getString(R.string.login_problem_google_drive), Toast.LENGTH_SHORT).show();
+                    return null;
+                }
             }
             return dataSource;
         }
@@ -213,7 +226,7 @@ public class PlayerEventHandler implements QueueEvent, AudioManager.OnAudioFocus
         @Override
         protected void onPostExecute(String dataSource) {
             super.onPostExecute(dataSource);
-            if(null != mPlayer && null != mediaItemBase) {
+            if(null != mPlayer && null != mediaItemBase && null != dataSource) {
                 if ( requestAudioFocus() ) {
                     mPlayer.setDataSource(dataSource);
                     setSessionState(PlaybackState.STATE_PLAYING);

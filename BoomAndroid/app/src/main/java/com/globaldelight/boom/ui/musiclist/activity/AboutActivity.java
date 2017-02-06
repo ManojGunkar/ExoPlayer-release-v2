@@ -14,6 +14,11 @@ import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.ui.widgets.RegularButton;
 
+
+/**
+ * Created by Rahul Agarwal on 26-01-17.
+ */
+
 public class AboutActivity extends AppCompatActivity {
     Context mContext;
     RegularButton rateButton;

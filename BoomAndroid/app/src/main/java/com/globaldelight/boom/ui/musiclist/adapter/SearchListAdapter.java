@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumDetailActivity;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumDetailItemActivity;
 import com.globaldelight.boom.ui.musiclist.activity.SearchDetailActivity;
+import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.SongListAdapter;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchDetailFragment;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
@@ -195,7 +196,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                 setHeaderBg(holder);
                 holder.headerText.setText(R.string.artists);
                 if (searchRes.getArtistCount() > 4) {
-                    holder.headerCount.setText(searchRes.getArtistCount() - 4 + " MORE");
+                    holder.headerCount.setText(searchRes.getArtistCount() - 4 + context.getResources().getString(R.string.more));
                 } else {
                     holder.headerCount.setVisibility(View.GONE);
                 }
@@ -212,7 +213,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                 setHeaderBg(holder);
                 holder.headerText.setText(R.string.albums);
                 if (searchRes.getArtistCount() > 4) {
-                    holder.headerCount.setText(searchRes.getAlbumCount() - 4 + " MORE");
+                    holder.headerCount.setText(searchRes.getAlbumCount() - 4 + context.getResources().getString(R.string.more));
                 } else {
                     holder.headerCount.setVisibility(View.GONE);
                 }
@@ -229,7 +230,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                 setHeaderBg(holder);
                 holder.headerText.setText(R.string.songs);
                 if (searchRes.getArtistCount() > 4) {
-                    holder.headerCount.setText(searchRes.getSongCount() - 4 + " MORE");
+                    holder.headerCount.setText(searchRes.getSongCount() - 4 + context.getResources().getString(R.string.more));
                 } else {
                     holder.headerCount.setVisibility(View.GONE);
                 }
@@ -262,12 +263,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
 
             setArtistImg(holder, ((MediaItemCollection) artists.get(getPosition(position))).getItemArtUrl(), size);
 
-            if(App.getUserPreferenceHandler().isLibFromHome()){
-                holder.grid_menu.setVisibility(View.VISIBLE);
-            }else{
-                holder.grid_menu.setVisibility(View.INVISIBLE);
-            }
-
             holder.mainView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -277,11 +272,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                         public void run() {
                             Intent i = new Intent(context, AlbumDetailItemActivity.class);
                             i.putExtra("mediaItemCollection", (MediaItemCollection)artists.get(getPosition(position)));
-                            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                    (Activity) context,
-                                    new Pair<View, String>(holder.defaultImg, "transition:imgholder1")
-                            );
-                            ActivityCompat.startActivity((Activity) context, i, options.toBundle());
+                            context.startActivity(i);
                         }
                     }, 100);
                 }
@@ -336,12 +327,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             int size = setSize(holder);
             setArtistImg(holder, ((MediaItemCollection) albums.get(getPosition(position))).getItemArtUrl(), size);
 
-            if(App.getUserPreferenceHandler().isLibFromHome()){
-                holder.grid_menu.setVisibility(View.VISIBLE);
-            }else{
-                holder.grid_menu.setVisibility(View.INVISIBLE);
-            }
-
             holder.mainView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -351,11 +336,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                         public void run() {
                             Intent i = new Intent(context, AlbumDetailActivity.class);
                             i.putExtra("mediaItemCollection", (MediaItemCollection)albums.get(getPosition(position)));
-                            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                    (Activity) context,
-                                    new Pair<View, String>(holder.defaultImg, "transition:imgholder")
-                            );
-                            ActivityCompat.startActivity((Activity) context, i, options.toBundle());
+                            context.startActivity(i);
                         }
                     }, 100);
                 }
@@ -413,48 +394,23 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
 
             setSongArt(songs.get(getPosition(position)).getItemArtUrl(), holder);
 
-            MediaItem nowPlayingItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
-            if(null != nowPlayingItem /*&& nowPlayingItem.getParentType() == ItemType.SONGS*/ /*&& (App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused())*/){
-                if(songs.get(getPosition(position)).getItemId() == nowPlayingItem.getItemId()){
-                    holder.name.setTextColor(context.getResources().getColor(R.color.boom_yellow));
-                }else{
-                    holder.name.setTextColor(context.getResources().getColor(R.color.white));
-                }
-            }
+            updatePlayingTrack(songs.get(getPosition(position)).getItemId(), holder, position);
 
-            if(App.getUserPreferenceHandler().isLibFromHome()){
-                holder.menu.setVisibility(View.VISIBLE);
-                holder.songChk.setVisibility(View.GONE);
-                holder.mainView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(App.getPlayingQueueHandler().getUpNextList()!=null) {
-                            animate(holder);
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) songs, getPosition(position), false, false);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    notifyDataSetChanged();
-                                }
-                            }, 500);
-                        }
+            holder.mainView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(App.getPlayingQueueHandler().getUpNextList()!=null) {
+                        animate(holder);
+                        App.getPlayingQueueHandler().getUpNextList().addSearchItemToPlay(songs.get(getPosition(position)));
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                notifyDataSetChanged();
+                            }
+                        }, 300);
                     }
-                });
-            }else{
-                holder.menu.setVisibility(View.GONE);
-                holder.songChk.setVisibility(View.VISIBLE);
-                if(App.getUserPreferenceHandler().getItemIDList().contains(songs.get(getPosition(position)).getItemId())){
-                    holder.songChk.setChecked(true);
-                }else {
-                    holder.songChk.setChecked(false);
                 }
-                holder.songChk.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        App.getUserPreferenceHandler().addItemToPlayList((MediaItem) songs.get(getPosition(position)));
-                    }
-                });
-            }
+            });
 
             holder.menu.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -501,6 +457,26 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             });
         }
         holder.mainView.setElevation(Utils.dpToPx(context, 2));
+    }
+
+    private void updatePlayingTrack(long itemId, SimpleItemViewHolder holder, int position) {
+        IMediaItem nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        if(null != nowPlayingItem){
+            if(itemId == nowPlayingItem.getItemId()){
+                holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
+                holder.art_overlay.setVisibility(View.VISIBLE);
+                holder.art_overlay_play.setVisibility(View.VISIBLE);
+                if(App.getPlayerEventHandler().isPlaying()){
+                    holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
+                }else{
+                    holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
+                }
+            }else{
+                holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_title));
+                holder.art_overlay.setVisibility(View.INVISIBLE);
+                holder.art_overlay_play.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     private void startSearchDetailActivity(String listType, String query){
@@ -568,7 +544,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
     private int setSize(SimpleItemViewHolder holder) {
         Utils utils = new Utils(context);
         int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
-                - (int)(context.getResources().getDimension(R.dimen.twenty_four_pt)*2);
+                - (int)context.getResources().getDimension(R.dimen.card_grid_img_margin);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
         holder.gridBottomBg.setLayoutParams(params);
@@ -609,21 +585,18 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public View mainView;
+        public View mainView, art_overlay;
 
         //For Header View
         public View headerHolder;
-        public TextView headerText, headerCount;
+        public RegularTextView headerText, headerCount;
 
         //For Song Lists
-        public RegularTextView name;
-        public CoachMarkTextView artistName;
-        public ImageView img, menu;
-        public CheckBox songChk;
+        public RegularTextView name, artistName;
+        public ImageView img, menu, art_overlay_play;
 
 //        For Album grid
-        public RegularTextView title;
-        public CoachMarkTextView subTitle;
+        public RegularTextView title, subTitle;
         public ImageView defaultImg;
         public View gridBottomBg, grid_menu;
         public TableLayout artTable;
@@ -634,17 +607,18 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             mainView = itemView;
 
             headerHolder = itemView.findViewById(R.id.search_header_holder);
-            headerText = (TextView) itemView.findViewById(R.id.search_header_text);
-            headerCount = (TextView) itemView.findViewById(R.id.search_header_count);
+            headerText = (RegularTextView) itemView.findViewById(R.id.search_header_text);
+            headerCount = (RegularTextView) itemView.findViewById(R.id.search_header_count);
 
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
             name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
             menu = (ImageView)itemView.findViewById(R.id.song_item_menu);
-            artistName = (CoachMarkTextView) itemView.findViewById(R.id.song_item_artist);
-            songChk = (CheckBox) itemView.findViewById(R.id.song_chk);
+            artistName = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
+            art_overlay_play = (ImageView) itemView.findViewById(R.id.song_item_img_overlay_play);
+            art_overlay = itemView.findViewById(R.id.song_item_img_overlay);
 
             title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
-            subTitle = (CoachMarkTextView) itemView.findViewById(R.id.card_grid_sub_title);
+            subTitle = (RegularTextView) itemView.findViewById(R.id.card_grid_sub_title);
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
             gridBottomBg = itemView.findViewById(R.id.card_grid_bottom);

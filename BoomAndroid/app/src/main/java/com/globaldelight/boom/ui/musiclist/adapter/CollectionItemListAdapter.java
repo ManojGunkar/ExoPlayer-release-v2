@@ -2,6 +2,7 @@ package com.globaldelight.boom.ui.musiclist.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -79,11 +80,7 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                 holder.headerDetail.setVisibility(View.GONE);
             }
 
-            if(App.getUserPreferenceHandler().isLibFromHome()){
-                holder.mMore.setVisibility(View.VISIBLE);
-            }else{
-                holder.mMore.setVisibility(View.INVISIBLE);
-            }
+            holder.mMore.setVisibility(View.VISIBLE);
             setOnMenuClickListener(holder, position);
         }else if(position >= 1) {
             String title;
@@ -95,42 +92,20 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                 title = item.getMediaElement().get(pos).getItemTitle();
                 duration = ((MediaItem) item.getMediaElement().get(pos)).getDuration();
                 if (null != nowPlayingItem && item.getMediaElement().get(pos).getItemId() == nowPlayingItem.getItemId()) {
-                    holder.name.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
-                    holder.count.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
+                    holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
+                    holder.count.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                 } else if (null != nowPlayingItem) {
-                    holder.name.setTextColor(activity.getResources().getColor(R.color.white));
-                    holder.count.setTextColor(activity.getResources().getColor(R.color.white));
+                    holder.name.setTextColor(ContextCompat.getColor(activity, R.color.white));
+                    holder.count.setTextColor(ContextCompat.getColor(activity, R.color.white));
                 }
 
                 holder.name.setText(title);
                 holder.count.setText(String.valueOf(pos + 1));
                 holder.duration.setText(duration);
 
-                if (App.getUserPreferenceHandler().isLibFromHome()) {
-                    holder.menu.setVisibility(View.VISIBLE);
-                    holder.songChk.setVisibility(View.GONE);
-                    setOnClickListeners(holder, pos);
-                } else {
-                    holder.menu.setVisibility(View.GONE);
-                    holder.songChk.setVisibility(View.VISIBLE);
-                    setOnCheckedChanged(holder, pos);
-                }
+                setOnClickListeners(holder, pos);
             }
         }
-    }
-
-    private void setOnCheckedChanged(CollectionItemListAdapter.SimpleItemViewHolder holder, final int pos) {
-            if(App.getUserPreferenceHandler().getItemIDList().contains(item.getMediaElement().get(pos).getItemId())){
-                holder.songChk.setChecked(true);
-            }else {
-                holder.songChk.setChecked(false);
-            }
-        holder.songChk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    App.getUserPreferenceHandler().addItemToPlayList((MediaItem)item.getMediaElement().get(pos));
-            }
-        });
     }
 
     private void setOnMenuClickListener(CollectionItemListAdapter.SimpleItemViewHolder holder, int position) {
@@ -192,8 +167,8 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                     if (item.getMediaElement().size() > 0) {
                         App.getPlayingQueueHandler().getUpNextList().addToPlay(item, position, false);
                     }
-                    holder.name.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
-                    holder.count.setTextColor(activity.getResources().getColor(R.color.boom_yellow));
+                    holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
+                    holder.count.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                     notifyDataSetChanged();
                 }
             }
@@ -279,27 +254,24 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView name, count, duration;
+        public RegularTextView name, count, duration;
         public View mainView;
         public ImageView menu;
-        public CheckBox songChk;
 
-        public RegularTextView headerTitle, headerSubTitle;
-        public CoachMarkTextView headerDetail;
+        public RegularTextView headerTitle, headerSubTitle, headerDetail;
         ImageView mShuffle, mMore;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            name = (TextView) itemView.findViewById(R.id.album_item_name);
-            duration = (TextView) itemView.findViewById(R.id.album_item_duration);
-            count = (TextView) itemView.findViewById(R.id.album_item_count);
+            name = (RegularTextView) itemView.findViewById(R.id.album_item_name);
+            duration = (RegularTextView) itemView.findViewById(R.id.album_item_duration);
+            count = (RegularTextView) itemView.findViewById(R.id.album_item_count);
             menu = (ImageView) itemView.findViewById(R.id.album_item_menu);
-            songChk = (CheckBox) itemView.findViewById(R.id.song_chk);
 
             headerTitle = (RegularTextView) itemView.findViewById(R.id.header_title);
             headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
-            headerDetail = (CoachMarkTextView) itemView.findViewById(R.id.header_detail);
+            headerDetail = (RegularTextView) itemView.findViewById(R.id.header_detail);
             mMore = (ImageView) itemView.findViewById(R.id.recycler_header_menu);
         }
     }

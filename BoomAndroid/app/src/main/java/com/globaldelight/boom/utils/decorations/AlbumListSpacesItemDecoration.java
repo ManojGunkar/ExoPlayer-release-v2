@@ -4,6 +4,10 @@ import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+/**
+ * Created by Rahul Kumar Agrawal on 6/14/2016.
+ */
+
 public class AlbumListSpacesItemDecoration extends RecyclerView.ItemDecoration {
     private int space;
 

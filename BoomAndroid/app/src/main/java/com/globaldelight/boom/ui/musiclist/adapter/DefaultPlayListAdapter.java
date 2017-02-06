@@ -91,18 +91,14 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
         int itemcount = items.get(position).getItemCount();
         holder.subTitle.setText((itemcount > 1 ? context.getResources().getString(R.string.songs):  context.getResources().getString(R.string.song))+" "+ itemcount);
 
-        if(App.getUserPreferenceHandler().isLibFromHome()){
-            holder.grid_menu.setVisibility(View.VISIBLE);
-        }else{
-            holder.grid_menu.setVisibility(View.INVISIBLE);
-        }
+        holder.grid_menu.setVisibility(View.VISIBLE);
         setOnClicks(holder, position);
     }
 
     private int setSize(SimpleItemViewHolder holder) {
         Utils utils = new Utils(context);
         int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
-                - (int)(context.getResources().getDimension(R.dimen.twenty_four_pt)*2);
+                - (int)context.getResources().getDimension(R.dimen.card_grid_img_margin);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
         holder.gridBottomBg.setLayoutParams(params);
@@ -189,11 +185,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
                     public void run() {
                         Intent i = new Intent(context, AlbumSongListActivity.class);
                         i.putExtra("mediaItemCollection", items.get(position));
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                (Activity) context,
-                                new Pair<View, String>(holder.imgPanel, "transition:imgholder")
-                        );
-                        context.startActivity(i, options.toBundle());
+                        context.startActivity(i);
                     }
                 }, 100);
             }
@@ -261,8 +253,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public RegularTextView title;
-        public CoachMarkTextView subTitle;
+        public RegularTextView title, subTitle;
         public ImageView defaultImg, artImg1, artImg2, artImg3, artImg4;
         public View gridBottomBg, grid_menu, mainView;
         public TableLayout artTable;
@@ -273,7 +264,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
             mainView = itemView;
 
             title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
-            subTitle = (CoachMarkTextView) itemView.findViewById(R.id.card_grid_sub_title);
+            subTitle = (RegularTextView) itemView.findViewById(R.id.card_grid_sub_title);
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artImg1 = (ImageView) itemView.findViewById(R.id.card_grid_art_img1);
             artImg2 = (ImageView) itemView.findViewById(R.id.card_grid_art_img2);

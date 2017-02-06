@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -102,11 +103,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
             int itemcount = ((IMediaItemCollection) getItem(position)).getItemCount();
             holder.subTitle.setText((itemcount > 1 ? activity.getResources().getString(R.string.songs) : activity.getResources().getString(R.string.song)) + " " + itemcount);
 
-            if (App.getUserPreferenceHandler().isLibFromHome()) {
-                holder.grid_menu.setVisibility(View.VISIBLE);
-            } else {
-                holder.grid_menu.setVisibility(View.INVISIBLE);
-            }
+            holder.grid_menu.setVisibility(View.VISIBLE);
             if (((IMediaItemCollection) items.get(position)).getArtUrlList().isEmpty())
                 ((IMediaItemCollection) items.get(position)).setArtUrlList(MediaController.getInstance(activity).getArtUrlList((MediaItemCollection) items.get(position)));
 
@@ -131,7 +128,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     private int setSize(SimpleItemViewHolder holder) {
         Utils utils = new Utils(activity);
         int size = (utils.getWindowWidth(activity) / (isPhone ? 2 : 3))
-                - (int)(activity.getResources().getDimension(R.dimen.twenty_four_pt)*2);
+                - (int)activity.getResources().getDimension(R.dimen.card_grid_img_margin);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
         holder.gridBottomBg.setLayoutParams(params);
@@ -276,12 +273,6 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                                     }
                                     Toast.makeText(activity, activity.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
                                     break;
-                                case R.id.popup_add_song:
-                                    App.getUserPreferenceHandler().setBoomPlayListId(items.get(position).getItemId());
-                                    App.getUserPreferenceHandler().setLibraryStartFromHome(false);
-//                                    Intent i = new Intent(activity, DeviceMusicActivity.class);
-//                                    activity.startActivity(i);
-                                    break;
                             }
                         }catch (Exception e){}
                         return false;
@@ -297,12 +288,13 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     private void renameDialog(final int position, String itemTitle) {
         new MaterialDialog.Builder(activity)
                 .title(R.string.dialog_txt_rename)
-                .backgroundColor(Color.parseColor("#171921"))
-                .titleColor(Color.parseColor("#ffffff"))
-                .positiveColor(Color.parseColor("#81cbc4"))
-                .negativeColor(Color.parseColor("#81cbc4"))
-                .widgetColor(Color.parseColor("#ffffff"))
-                .contentColor(Color.parseColor("#ffffff"))
+                .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
+                .titleColor(ContextCompat.getColor(activity, R.color.dialog_title))
+                .positiveColor(ContextCompat.getColor(activity, R.color.dialog_submit_positive))
+                .negativeColor(ContextCompat.getColor(activity, R.color.dialog_submit_negative))
+                .widgetColor(ContextCompat.getColor(activity, R.color.dialog_widget))
+                .contentColor(ContextCompat.getColor(activity, R.color.dialog_content))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .cancelable(true)
                 .positiveText(activity.getResources().getString(R.string.dialog_txt_done))
                 .negativeText(activity.getResources().getString(R.string.dialog_txt_cancel))
@@ -348,8 +340,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public RegularTextView title;
-        public CoachMarkTextView subTitle;
+        public RegularTextView title, subTitle;
         public ImageView defaultImg, artImg1, artImg2, artImg3, artImg4;
         public View gridBottomBg, grid_menu, mainView;
         public TableLayout artTable;
@@ -360,7 +351,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
             mainView = itemView;
 
             title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
-            subTitle = (CoachMarkTextView) itemView.findViewById(R.id.card_grid_sub_title);
+            subTitle = (RegularTextView) itemView.findViewById(R.id.card_grid_sub_title);
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artImg1 = (ImageView) itemView.findViewById(R.id.card_grid_art_img1);
             artImg2 = (ImageView) itemView.findViewById(R.id.card_grid_art_img2);

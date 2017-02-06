@@ -103,21 +103,13 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                 holder.headerDetail.setVisibility(View.GONE);
             }
 
-            if(App.getUserPreferenceHandler().isLibFromHome()) {
-                holder.mMore.setVisibility(View.VISIBLE);
-            }else{
-                holder.mMore.setVisibility(View.INVISIBLE);
-            }
+            holder.mMore.setVisibility(View.VISIBLE);
             setOnMenuClickListener(holder, position);
         }else if(!isHeader(position)) {
             int pos = position - 1;
             int size = setSize(holder);
 
-            if(App.getUserPreferenceHandler().isLibFromHome()) {
-                holder.grid_menu.setVisibility(View.VISIBLE);
-            }else{
-                holder.grid_menu.setVisibility(View.INVISIBLE);
-            }
+            holder.grid_menu.setVisibility(View.VISIBLE);
 
             switch (holder.getItemViewType()) {
 
@@ -331,11 +323,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                             i.putExtra("albumColor", holder.defaultAlbumColor);
                         }
                         i.putExtra("mediaItemCollection", collection);
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                (Activity) activity,
-                                new Pair<View, String>(holder.defaultImg, "transition:imgholder")
-                        );
-                        ActivityCompat.startActivity((Activity) activity, i, options.toBundle());
+                        activity.startActivity(i);
                     }
                 }, 100);
             }
@@ -395,7 +383,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     private int setSize(SimpleItemViewHolder holder) {
         Utils utils = new Utils(activity);
         int size = (utils.getWindowWidth(activity) / (isPhone ? 2 : 3))
-                - (int)(activity.getResources().getDimension(R.dimen.twenty_four_pt)*2);
+                - (int)activity.getResources().getDimension(R.dimen.card_grid_img_margin);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
         holder.gridBottomBg.setLayoutParams(params);
@@ -418,21 +406,19 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public int defaultAlbumColor;
-        public RegularTextView title;
-        public CoachMarkTextView subTitle;
+        public RegularTextView title, subTitle;
         public ImageView defaultImg, artImg1, artImg2, artImg3, artImg4;
         public View gridBottomBg, grid_menu, mainView;
         public TableLayout artTable;
         public FrameLayout imgPanel;
-        public RegularTextView headerTitle, headerSubTitle;
-        public CoachMarkTextView headerDetail;
+        public RegularTextView headerTitle, headerSubTitle, headerDetail;
         ImageView mShuffle, mMore;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
             title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
-            subTitle = (CoachMarkTextView) itemView.findViewById(R.id.card_grid_sub_title);
+            subTitle = (RegularTextView) itemView.findViewById(R.id.card_grid_sub_title);
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artImg1 = (ImageView) itemView.findViewById(R.id.card_grid_art_img1);
             artImg2 = (ImageView) itemView.findViewById(R.id.card_grid_art_img2);
@@ -445,7 +431,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
 
             headerTitle = (RegularTextView) itemView.findViewById(R.id.header_title);
             headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
-            headerDetail = (CoachMarkTextView) itemView.findViewById(R.id.header_detail);
+            headerDetail = (RegularTextView) itemView.findViewById(R.id.header_detail);
             mMore = (ImageView) itemView.findViewById(R.id.recycler_header_menu);
         }
 

@@ -9,10 +9,9 @@
     <dimen name="grid_item_desc_size">13sp</dimen>
 
 
-    <dimen name="toolbar_titile">19sp</dimen>//80
+    //80
     //72
     //52
     //62
-    <dimen name="eq_txt">10sp</dimen>
 
 </resources>

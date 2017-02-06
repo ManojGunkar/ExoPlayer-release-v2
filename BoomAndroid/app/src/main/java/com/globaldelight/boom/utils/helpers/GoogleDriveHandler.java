@@ -5,11 +5,13 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
@@ -51,26 +53,41 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
     public static final int REQUEST_CODE_RESOLUTION = 1;
     private static final String BUTTON_TEXT = "Call Drive API";
     public static final String PREF_ACCOUNT_NAME = "accountName";
+    SharedPreferences shp;
 //    Client ID : 312070820740-he3m1noeh3dggs8gc538qu11in10ifg0.apps.googleusercontent.com
     private static final String[] SCOPES = {DriveScopes.DRIVE_METADATA, DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPDATA, DriveScopes.DRIVE};
-    private Activity mActivity;
+//    private Activity mActivity;
+    private Fragment mFragment;
+    private Context mContext;
     private static GoogleDriveHandler googleDriveHandler;
 
-    private GoogleDriveHandler(Activity activity){
-        this.mActivity = activity;
+    private GoogleDriveHandler(Context context){
+        this.mContext = context;
+        shp = mContext.getSharedPreferences(PREF_ACCOUNT_NAME, mContext.MODE_PRIVATE);
     }
 
-    public static GoogleDriveHandler getGoogleDriveInstance(Activity activity){
+    private GoogleDriveHandler(Fragment mFragment){
+        this.mFragment = mFragment;
+        shp = this.mFragment.getContext().getSharedPreferences(PREF_ACCOUNT_NAME, this.mFragment.getContext().MODE_PRIVATE);
+    }
+
+    public static GoogleDriveHandler getGoogleDriveInstance(Fragment mFragment){
         if(null == googleDriveHandler)
-            googleDriveHandler = new GoogleDriveHandler(activity);
+            googleDriveHandler = new GoogleDriveHandler(mFragment);
+        return googleDriveHandler;
+    }
+
+    public static GoogleDriveHandler getGoogleDriveInstance(Context context){
+        if(null == googleDriveHandler)
+            googleDriveHandler = new GoogleDriveHandler(context);
         return googleDriveHandler;
     }
 
     public GoogleAccountCredential getGoogleAccountCredential(){
         // Initialize credentials and service object.
         if(null == mCredential) {
-            mCredential = GoogleAccountCredential.usingOAuth2(
-                    mActivity, Arrays.asList(SCOPES))
+            mCredential = GoogleAccountCredential.usingOAuth2((null != mContext ? mContext :
+                    mFragment.getContext()), Arrays.asList(SCOPES))
                     .setBackOff(new ExponentialBackOff());
         }
         return mCredential;
@@ -80,7 +97,8 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         if(null == client) {
-            client = new GoogleApiClient.Builder(mActivity).addApi(Drive.API)
+            client = new GoogleApiClient.Builder(null != mContext ? mContext :
+                    mFragment.getContext()).addApi(Drive.API)
                     .addScope(Drive.SCOPE_FILE)
                     .addScope(Drive.SCOPE_APPFOLDER) // required for App Folder sample
                     .addConnectionCallbacks(this)
@@ -108,16 +126,15 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
         }
     }
 
-    public String getGoogleAccessToken(){
-        try {
-            return getGoogleAccountCredential().getToken();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (GoogleAuthException e) {
-            e.printStackTrace();
+    public String getSelectedAccountName(){
+        String accountName = getGoogleAccountCredential().getSelectedAccountName();
+        if(null != accountName){
+            setSelectedGoogleAccountName(accountName);
+            return accountName;
         }
         return null;
     }
+
     /**
      * Attempt to call the API, after verifying that all the preconditions are
      * satisfied. The preconditions are: Google Play Services installed, an
@@ -131,10 +148,27 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (!isDeviceOnline()) {
-            GoogleDriveMediaList.geGoogleDriveMediaListInstance(mActivity).onErrorOccurred(mActivity.getResources().getString(R.string.network_error));
+            GoogleDriveMediaList.geGoogleDriveMediaListInstance(null != mContext ? mContext :
+                    mFragment.getContext()).onErrorOccurred(mFragment.getResources().getString(R.string.network_error));
         } else {
-            new LoadGoogleDriveList(mActivity, googleDriveHandler).execute();
+            new LoadGoogleDriveList(mFragment, googleDriveHandler).execute();
         }
+    }
+
+    public String getAccessTokenApi() {
+        getGoogleAccountCredential();
+        getGoogleApiClient();
+        connectGoogleAccount();
+        if (isGooglePlayServicesAvailable() && mCredential.getSelectedAccountName() != null && isDeviceOnline()) {
+            try {
+                return mCredential.getToken();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (GoogleAuthException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     /**
@@ -144,7 +178,8 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
      */
     private boolean isDeviceOnline() {
         ConnectivityManager connMgr =
-                (ConnectivityManager) mActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) (null != mContext ? mContext :
+                        mFragment.getContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
     }
@@ -159,7 +194,8 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
         GoogleApiAvailability apiAvailability =
                 GoogleApiAvailability.getInstance();
         final int connectionStatusCode =
-                apiAvailability.isGooglePlayServicesAvailable(mActivity);
+                apiAvailability.isGooglePlayServicesAvailable(null != mContext ? mContext :
+                        mFragment.getContext());
         return connectionStatusCode == ConnectionResult.SUCCESS;
     }
 
@@ -171,7 +207,8 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
         GoogleApiAvailability apiAvailability =
                 GoogleApiAvailability.getInstance();
         final int connectionStatusCode =
-                apiAvailability.isGooglePlayServicesAvailable(mActivity);
+                apiAvailability.isGooglePlayServicesAvailable(null != mContext ? mContext :
+                        mFragment.getContext());
         if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
             showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
         }
@@ -187,7 +224,7 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
      */
     public void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode) {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        Dialog dialog = apiAvailability.getErrorDialog(mActivity, connectionStatusCode, REQUEST_GOOGLE_PLAY_SERVICES);
+        Dialog dialog = apiAvailability.getErrorDialog(mFragment.getActivity(), connectionStatusCode, REQUEST_GOOGLE_PLAY_SERVICES);
         dialog.show();
     }
 
@@ -220,22 +257,23 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
     private void chooseAccount() {
         if (EasyPermissions.hasPermissions(
-                mActivity, Manifest.permission.GET_ACCOUNTS)) {
-            String accountName = mActivity.getPreferences(Context.MODE_PRIVATE)
+                (null != mContext ? mContext : mFragment.getContext()),
+                Manifest.permission.GET_ACCOUNTS)) {
+            String accountName = mFragment.getActivity().getPreferences(Context.MODE_PRIVATE)
                     .getString(PREF_ACCOUNT_NAME, null);
             if (accountName != null) {
                 mCredential.setSelectedAccountName(accountName);
                 getResultsFromApi();
             } else {
                 // Start a dialog from which the user can choose an account
-                mActivity.startActivityForResult(
+                mFragment.startActivityForResult(
                         mCredential.newChooseAccountIntent(),
                         REQUEST_ACCOUNT_PICKER);
             }
         } else {
             // Request the GET_ACCOUNTS permission via a user dialog
             EasyPermissions.requestPermissions(
-                    mActivity, "This app needs to access your Google account (via Contacts).",
+                    mFragment, "This app needs to access your Google account (via Contacts).",
                     REQUEST_PERMISSION_GET_ACCOUNTS, Manifest.permission.GET_ACCOUNTS);
         }
     }
@@ -317,15 +355,17 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult result) {
         Log.i(TAG, "GoogleApiClient connection failed: " + result.toString());
-        if (!result.hasResolution()) {
-            // show the localized error dialog.
-            GoogleApiAvailability.getInstance().getErrorDialog(mActivity, result.getErrorCode(), 0).show();
-            return;
-        }
-        try {
-            result.startResolutionForResult(mActivity, GoogleDriveHandler.REQUEST_CODE_RESOLUTION);
-        } catch (IntentSender.SendIntentException e) {
-            Log.e(TAG, "Exception while starting resolution activity", e);
+        if(null != result) {
+            if (!result.hasResolution()) {
+                // show the localized error dialog.
+                GoogleApiAvailability.getInstance().getErrorDialog(mFragment.getActivity(), result.getErrorCode(), 0).show();
+                return;
+            }
+            try {
+                result.startResolutionForResult(mFragment.getActivity(), GoogleDriveHandler.REQUEST_CODE_RESOLUTION);
+            } catch (IntentSender.SendIntentException e) {
+                Log.e(TAG, "Exception while starting resolution activity", e);
+            }
         }
     }
 }

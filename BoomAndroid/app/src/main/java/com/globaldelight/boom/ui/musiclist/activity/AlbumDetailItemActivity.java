@@ -21,6 +21,10 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
+/**
+ * Created by Rahul Agarwal on 26-01-17.
+ */
+
 public class AlbumDetailItemActivity extends MasterActivity {
 
     IMediaItemCollection currentItem;
@@ -37,6 +41,16 @@ public class AlbumDetailItemActivity extends MasterActivity {
         initValues();
 
         initViews(savedInstanceState);
+    }
+
+    private void initValues() {
+        currentItem = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
+
+        int width = Utils.getWindowWidth(this);
+        int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
+        int height = Utils.getWindowHeight(this) - panelSize * 4;
+        setAlbumArtSize(width, width);
+        setAlbumArt(currentItem.getItemArtUrl(), width);
     }
 
     private void initViews(Bundle savedInstanceState) {
@@ -65,16 +79,6 @@ public class AlbumDetailItemActivity extends MasterActivity {
                     .add(R.id.item_detail_container, fragment)
                     .commit();
         }
-    }
-
-    private void initValues() {
-        currentItem = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
-
-        int width = Utils.getWindowWidth(this);
-        int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
-        int height = Utils.getWindowHeight(this) - panelSize * 4;
-        setAlbumArtSize(width, width);
-        setAlbumArt(currentItem.getItemArtUrl(), width);
     }
 
     @Override
@@ -115,7 +119,7 @@ public class AlbumDetailItemActivity extends MasterActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            navigateUpTo(new Intent(this, MainActivity.class));
+            super.onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);

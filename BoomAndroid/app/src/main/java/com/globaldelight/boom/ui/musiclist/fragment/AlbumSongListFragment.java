@@ -24,7 +24,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
-import com.globaldelight.boom.ui.musiclist.adapter.ItemSongListAdapter;
+import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.ItemSongListAdapter;
 import com.globaldelight.boom.utils.OnStartDragListener;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING
 
 public class AlbumSongListFragment extends Fragment implements OnStartDragListener {
 
-    private IMediaItemCollection collection;
+    private static IMediaItemCollection collection;
     private ListDetail listDetail;
     private RecyclerView rootView;
     private ItemSongListAdapter itemSongListAdapter;

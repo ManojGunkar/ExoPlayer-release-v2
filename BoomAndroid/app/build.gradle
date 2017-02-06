@@ -61,7 +61,6 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
     }
-    compile 'com.android.volley:volley:1.0.0'
     compile 'com.surveymonkey:surveymonkey-android-sdk:1.0.5'
 
     /**************Dropbox***************/
@@ -77,6 +76,7 @@ dependencies {
     compile('com.google.apis:google-api-services-drive:v3-rev52-1.22.0') {
         exclude group: 'org.apache.httpcomponents'
     }
+    compile project(path: ':businessmodel')
 }
 
 // ADD THIS AT THE BOTTOM

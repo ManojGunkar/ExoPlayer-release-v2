@@ -13,6 +13,7 @@ import android.util.Log;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.business.client.IBusinessNetworkInit;
 import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
@@ -20,14 +21,21 @@ import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
-import com.globaldelight.boom.manager.MusicReceiver;
+import com.globaldelight.boom.manager.HeadPhonePlugReceiver;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boomplayer.AudioConfiguration;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-public class PlayerService extends Service implements MusicReceiver.IUpdateMusic, PlayerServiceReceiver.IPlayerService{
+import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
+
+/**
+ * Created by Rahul Kumar Agrawal on 6/14/2016.
+ */
+
+public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpdateMusic, PlayerServiceReceiver.IPlayerService,
+        IBusinessNetworkInit {
 
     private long mServiceStartTime = 0;
     private long mServiceStopTime = 0;
@@ -36,7 +44,7 @@ public class PlayerService extends Service implements MusicReceiver.IUpdateMusic
     private Context context;
     private NotificationHandler notificationHandler;
     private static boolean isPlayerScreenResume = false;
-    private MusicReceiver musicReceiver;
+    private HeadPhonePlugReceiver headPhonePlugReceiver;
     private DropboxAPI<AndroidAuthSession> dropboxAPI;
     PlayerServiceReceiver serviceReceiver;
 
@@ -61,10 +69,10 @@ public class PlayerService extends Service implements MusicReceiver.IUpdateMusic
             Log.d("Service : ", "onCreate");
         }
 
-        musicReceiver = new MusicReceiver(this, this);
+        headPhonePlugReceiver = new HeadPhonePlugReceiver(this, this);
 
         IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-        registerReceiver(musicReceiver, filter);
+        registerReceiver(headPhonePlugReceiver, filter);
 
         try {
             mServiceStartTime = SystemClock.currentThreadTimeMillis();
@@ -79,6 +87,8 @@ public class PlayerService extends Service implements MusicReceiver.IUpdateMusic
                 DropBoxUtills.checkAppKeySetup(App.getApplication());
             }
         }).start();
+
+        initBusinessModel();
     }
 
     @Override
@@ -121,6 +131,7 @@ public class PlayerService extends Service implements MusicReceiver.IUpdateMusic
         sendBroadcast(i);
 
         updateNotificationPlayer((IMediaItem) musicPlayerHandler.getPlayingItem(), play_pause, false);
+        sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
     }
 
     private void updatePlayingQueue() {
@@ -161,6 +172,7 @@ public class PlayerService extends Service implements MusicReceiver.IUpdateMusic
             }
             updateNotificationPlayer((IMediaItem) musicPlayerHandler.getPlayingItem(), false, true);
         }
+        sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
     }
 
     private void updateNotificationPlayer(IMediaItem playingItem, boolean playing, boolean isLastPlayed) {
@@ -232,7 +244,6 @@ public class PlayerService extends Service implements MusicReceiver.IUpdateMusic
             e.printStackTrace();
         }
         updatePlayingQueue();
-        sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
     }
 
     @Override
@@ -334,7 +345,7 @@ public class PlayerService extends Service implements MusicReceiver.IUpdateMusic
 
     @Override
     public void onDestroy() {
-        unregisterReceiver(musicReceiver);
+        unregisterReceiver(headPhonePlugReceiver);
         serviceReceiver.unregisterPlayerServiceReceiver(this);
         try {
             mServiceStopTime = SystemClock.currentThreadTimeMillis();
@@ -361,5 +372,52 @@ public class PlayerService extends Service implements MusicReceiver.IUpdateMusic
 //            musicPlayerHandler.release();
         }
         App.getService().stopSelf();
+    }
+
+    private void initBusinessModel() {
+        App.getBusinessHandler().setBusinessNetworkListener(this);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                App.getBusinessHandler().getBoomAccessToken();
+                App.getBusinessHandler().registerAndroidDevice();
+                App.getBusinessHandler().getConfigAppWithBoomServer();
+                App.getBusinessHandler().isAppTrialVersion();
+            }
+        }).start();
+    }
+
+    @Override
+    public void onGetAccessToken(boolean success) {
+
+    }
+
+    @Override
+    public void onRegisterDevice(boolean success) {
+
+    }
+
+    @Override
+    public void onGetBusinessConfiguration(boolean success) {
+        if (success)
+            sendBroadcast(new Intent(ACTION_BUSINESS_CONFIGURATION));
+    }
+
+    @Override
+    public void onAppTrailExpired(boolean expired) {
+        if(expired){
+//            Show dialog and get Email
+        }
+    }
+
+    @Override
+    public void onEmailSubmition(boolean success) {
+
     }
 }

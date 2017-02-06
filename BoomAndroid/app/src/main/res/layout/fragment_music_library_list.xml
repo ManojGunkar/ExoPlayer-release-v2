@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/appBackground"
+    android:background="@color/app_background"
     xmlns:android="http://schemas.android.com/apk/res/android" >
     <LinearLayout
         android:id="@+id/lib_progress"
@@ -19,8 +19,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/albumsListContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/appBackground"/>
+            android:layout_height="match_parent"/>
 
         <LinearLayout
             android:id="@+id/album_empty_view"
@@ -40,8 +39,8 @@
                 android:textColor="#787878"
                 android:gravity="center"
                 android:text="@string/playlist_placeholder_txt"
-                android:textSize="@dimen/eighty_eighty_pt"
-                android:layout_marginTop="@dimen/ninety_six_pt"/>
+                android:textSize="@dimen/empty_list_txt"
+                android:layout_marginTop="@dimen/empty_list_txt_margin"/>
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

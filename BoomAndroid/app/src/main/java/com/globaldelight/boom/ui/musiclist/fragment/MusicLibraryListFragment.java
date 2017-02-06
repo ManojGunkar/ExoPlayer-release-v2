@@ -25,7 +25,7 @@ import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.ui.musiclist.adapter.AlbumsGridAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.ArtistsGridAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.DefaultPlayListAdapter;
-import com.globaldelight.boom.ui.musiclist.adapter.SongListAdapter;
+import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.SongListAdapter;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
@@ -40,6 +40,9 @@ import java.util.ArrayList;
 
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
+/**
+ * Created by Rahul Agarwal on 26-01-17.
+ */
 
 public class MusicLibraryListFragment extends Fragment {
     private boolean isOrderByAlbum=true;

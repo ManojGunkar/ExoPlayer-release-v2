@@ -16,12 +16,17 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerEvents;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 
 import java.util.ArrayList;
 import static android.view.LayoutInflater.from;
 import static android.view.View.OnClickListener;
 import static android.widget.Toast.LENGTH_SHORT;
 import static android.widget.Toast.makeText;
+
+/**
+ * Created by Rahul Agarwal on 26-01-17.
+ */
 
 public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdapter.SimpleItemViewHolder> {
 
@@ -45,7 +50,6 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
 
     @Override
     public void onBindViewHolder(final SimpleItemViewHolder holder, final int position) {
-        holder.mainView.setBackgroundColor(Color.parseColor("#171921"));
         holder.name.setText(playList.get(position).getItemTitle());
         holder.count.setText(context.getResources().getString(R.string.songs)
                 + " " + ((MediaItemCollection) playList.get(position)).getItemCount());
@@ -74,13 +78,13 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public View mainView;
-        public TextView name, count;
+        public RegularTextView name, count;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            name = (TextView) itemView.findViewById(R.id.playlist_dialog_name);
-            count = (TextView) itemView.findViewById(R.id.playlist_dialog_song_count);
+            name = (RegularTextView) itemView.findViewById(R.id.playlist_dialog_name);
+            count = (RegularTextView) itemView.findViewById(R.id.playlist_dialog_song_count);
         }
     }
 

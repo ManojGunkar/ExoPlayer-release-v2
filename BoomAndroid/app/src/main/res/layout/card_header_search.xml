@@ -2,12 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/search_header_holder"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/two_fourty_eight_px"
-    android:background="@color/appBackground"
+    android:layout_height="@dimen/card_header_search_height"
     android:orientation="horizontal"
-    android:paddingTop="@dimen/seventy_two_px"
-    android:paddingLeft="@dimen/one_hundred_sixteen_px"
-    android:paddingRight="@dimen/one_hundred_twelve_pt"
+    android:paddingTop="@dimen/card_header_search_margin_top"
+    android:paddingLeft="@dimen/card_header_search_margin_left"
+    android:paddingRight="@dimen/card_header_search_margin_right"
     android:weightSum="1">
 
     <LinearLayout
@@ -20,9 +19,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="normal"
-            android:text="Artists"
-            android:textSize="@dimen/eighty_px"
-            android:textColor="@color/white"/>
+            android:textSize="@dimen/card_header_search_txt"
+            android:textColor="@color/library_search_header_title"/>
     </LinearLayout>
 
     <LinearLayout
@@ -40,10 +38,9 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:textStyle="bold"
-            android:textSize="@dimen/fourty_eight_pt"
-            android:text="32 MORE"
-            android:padding="@dimen/thirty_two_px"
-            android:textColor="@color/white"/>
+            android:textSize="@dimen/card_header_search_count_txt"
+            android:padding="@dimen/card_header_search_count_padding"
+            android:textColor="@color/library_search_header_more"/>
         </LinearLayout>
     </LinearLayout>
 

@@ -10,7 +10,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +29,7 @@ import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.ui.musiclist.fragment.ItemSongListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.MediaCollectionFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.MediaItemListFragment;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
@@ -48,7 +48,7 @@ public class MediaCollectionActivity extends MasterActivity {
     private TableLayout tblAlbumArt;
     private ImageView albumArt,artImg1,artImg2,artImg3,artImg4;
     private static int currentItem = -1;
-    private ActionBar actionBar;
+    private RegularTextView actionBar;
     private CollapsingToolbarLayout appBarLayout;
     MediaCollectionFragment mCollectionFragment;
 
@@ -77,8 +77,15 @@ public class MediaCollectionActivity extends MasterActivity {
         }
     }
 
-    private void initCollapsingToolBar() {
-        appBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+    private void initToolBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (null != getSupportActionBar()) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("");
+        }
+        actionBar = (RegularTextView) findViewById(R.id.toolbar_txt);
+
     }
 
     private void initItemViews(MediaItem mMediaItem) {
@@ -116,14 +123,8 @@ public class MediaCollectionActivity extends MasterActivity {
 
     }
 
-    private void initToolBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+    private void initCollapsingToolBar() {
+        appBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
     }
 
     private void initCollectionViews(MediaItem mMediaItem) {
@@ -168,7 +169,7 @@ public class MediaCollectionActivity extends MasterActivity {
                 appBarLayout.setTitle(title);
         }else{
             if(null != actionBar)
-                actionBar.setTitle(title);
+                actionBar.setText(title);
         }
     }
 
@@ -285,7 +286,7 @@ public class MediaCollectionActivity extends MasterActivity {
 
     private void setDefaultImage(String imagePath) {
         if (imagePath == null || imagePath.equals(MediaItem.UNKNOWN_ART_URL)) {
-            albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_header));
+            albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_header, null));
         }
     }
 

@@ -30,7 +30,7 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.MediaLoader.LoadDropBoxList;
 import com.globaldelight.boom.task.MediaLoader.LoadFavouriteList;
-import com.globaldelight.boom.ui.musiclist.adapter.CloudItemListAdapter;
+import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
@@ -39,6 +39,10 @@ import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+
+/**
+ * Created by Rahul Agarwal on 26-01-17.
+ */
 
 public class ItemSongListFragment extends Fragment  implements FavouriteMediaList.IFavouriteUpdater, DropboxMediaList.IDropboxUpdater, GoogleDriveMediaList.IGoogleDriveMediaUpdater {
 
@@ -94,20 +98,13 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
 
         initViews();
-        if(mediaType == MediaType.GOOGLE_DRIVE) {
-            if (googleDriveMediaList.getGoogleDriveMediaList().isEmpty()) {
-                googleDriveHandler.getResultsFromApi();
-            } else {
-                notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
-                setForAnimation();
-            }
-        }
+
+        initLibrary();
+
         return rootView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void initLibrary() {
         if(mediaType == MediaType.DROP_BOX && null != App.getDropboxAPI()) {
             AndroidAuthSession session = App.getDropboxAPI().getSession();
             if (session.authenticationSuccessful()) {
@@ -116,13 +113,42 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
                     TokenPair tokens = session.getAccessTokenPair();
                     DropBoxUtills.storeKeys(getContext(), tokens.key, tokens.secret);
                 } catch (IllegalStateException e) {
-                    Toast.makeText(getContext(),"Couldn't authenticate with Dropbox:"
+                    Toast.makeText(getContext(),getResources().getString(R.string.dropbox_authenticate_problem)
                             + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         }
-        checkPermissions();
+
+        if(mediaType == MediaType.GOOGLE_DRIVE) {
+            if (googleDriveMediaList.getGoogleDriveMediaList().isEmpty()) {
+                googleDriveHandler.getResultsFromApi();
+            } else {
+                notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
+                setForAnimation();
+            }
+        }
+        if(itemType == ItemType.FAVOURITE) {
+            checkPermissions();
+        }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LoadDropboxList();
+    }
+
+    private void LoadDropboxList(){
+        if(mediaType == MediaType.DROP_BOX) {
+            if (dropboxMediaList.getDropboxMediaList().isEmpty()) {
+                new LoadDropBoxList(getActivity()).execute();
+            } else {
+                notifyAdapter(dropboxMediaList.getDropboxMediaList());
+            }
+            setForAnimation();
+        }
+    }
+
 
     private void initViews() {
         IntentFilter intentFilter = new IntentFilter();
@@ -145,7 +171,7 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
         }else if(mediaType == MediaType.GOOGLE_DRIVE && itemType == ItemType.SONGS){
             googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(getActivity());
             googleDriveMediaList.setGoogleDriveMediaUpdater(this);
-            googleDriveHandler = GoogleDriveHandler.getGoogleDriveInstance(getActivity());
+            googleDriveHandler = GoogleDriveHandler.getGoogleDriveInstance(ItemSongListFragment.this);
             googleDriveHandler.getGoogleAccountCredential();
             googleDriveHandler.getGoogleApiClient();
             googleDriveHandler.connectGoogleAccount();
@@ -180,14 +206,14 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
     @Override
     public void onError(String e) {
         dismissLoader();
-        Toast.makeText(getContext(), "The following error occurred:\n"
+        Toast.makeText(getContext(), getResources().getString(R.string.google_drive_loading_error)
                 + e, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onEmptyList() {
         dismissLoader();
-        Toast.makeText(getContext(), "No results returned.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getResources().getString(R.string.empty_list), Toast.LENGTH_SHORT).show();
     }
 
     private void dismissLoader(){
@@ -208,21 +234,12 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
-                        if(itemType == ItemType.FAVOURITE) {
-                            if (favouriteMediaList.getFavouriteMediaList().isEmpty()) {
-                                new LoadFavouriteList(getActivity()).execute();
-                            } else {
-                                notifyAdapter(favouriteMediaList.getFavouriteMediaList());
-                            }
-                            setForAnimation();
-                        } else if(mediaType == MediaType.DROP_BOX) {
-                            if (dropboxMediaList.getDropboxMediaList().isEmpty()) {
-                                new LoadDropBoxList(getActivity()).execute();
-                            } else {
-                                notifyAdapter(dropboxMediaList.getDropboxMediaList());
-                            }
-                            setForAnimation();
+                        if (favouriteMediaList.getFavouriteMediaList().isEmpty()) {
+                            new LoadFavouriteList(getActivity()).execute();
+                        } else {
+                            notifyAdapter(favouriteMediaList.getFavouriteMediaList());
                         }
+                        setForAnimation();
                     }
 
                     @Override
@@ -251,12 +268,11 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
         switch (requestCode) {
             case GoogleDriveHandler.REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
-                    Toast.makeText(getContext(),
-                            "This app requires Google Play Services. Please install " +
-                                    "Google Play Services on your device and relaunch this app.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getResources().getString(R.string.require_google_play_service), Toast.LENGTH_SHORT).show();
                 } else {
                     googleDriveHandler.getResultsFromApi();
                 }
+                progressLoader.dismiss();
                 break;
             case GoogleDriveHandler.REQUEST_ACCOUNT_PICKER:
                 if (resultCode == RESULT_OK && data != null &&
@@ -272,12 +288,15 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
                         googleDriveHandler.setSelectedGoogleAccountName(accountName);
                         googleDriveHandler.getResultsFromApi();
                     }
+                }else{
+                    progressLoader.dismiss();
                 }
                 break;
             case GoogleDriveHandler.REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
                     googleDriveHandler.getResultsFromApi();
                 }
+                progressLoader.dismiss();
                 break;
         }
     }

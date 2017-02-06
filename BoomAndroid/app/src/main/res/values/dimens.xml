@@ -3,27 +3,24 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="header_view_start_margin_left">16dp</dimen>
-    <dimen name="header_view_end_margin_left">40dp</dimen>
-    <dimen name="header_view_end_margin_right">14dp</dimen>
-    <dimen name="header_view_start_margin_bottom">14dp</dimen>
-
-    <dimen name="grid_item_desc_size">13sp</dimen>
-
-    <dimen name="album_title_height">100dp</dimen>
-    <dimen name="item_margin">0dp</dimen>
-    <!--swipe-->
-
-
     <dimen name="status_bar_height">24dp</dimen>
+
+    <dimen name="toolbar_height">?attr/actionBarSize</dimen>
+
+    <dimen name="recycler_view_header_margin_top">27dp</dimen>
 
     <dimen name="player_mini_height">80dp</dimen>
 
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="nav_header_vertical_spacing">16dp</dimen>
-    <dimen name="nav_header_height">160dp</dimen>
-    <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">160dp</dimen>
+
+
+    <dimen name="album_title_height">100dp</dimen>
+    <dimen name="item_margin">0dp</dimen>
+    <dimen name="selected_eq_txt">15px</dimen>
+    <dimen name="empty_list_txt_margin">24dp</dimen>
+    <dimen name="toolbar_title_txt_size">20dp</dimen>-->
 
 </resources>

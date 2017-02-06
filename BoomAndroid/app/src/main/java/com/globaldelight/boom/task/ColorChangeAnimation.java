@@ -19,8 +19,9 @@ import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.R;
 
 /**
- * Created by architjn on 13/12/15.
+ * Created by Rahul Kumar Agrawal on 6/14/2016.
  */
+
 public abstract class ColorChangeAnimation extends Action {
 
     private Context context;

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
 import android.widget.SeekBar;
@@ -46,10 +47,10 @@ public class NegativeSeekBar extends AppCompatSeekBar {
         isDisable = b;
         setActivated(!isDisable);
         if(isDisable){
-            this.getThumb().setColorFilter(mContext.getResources().getColor(R.color.card_grid_artist), PorterDuff.Mode.SRC_IN);
+            this.getThumb().setColorFilter(ContextCompat.getColor(mContext, R.color.effect_intensity_seek_inactive), PorterDuff.Mode.SRC_IN);
 
         }else{
-            this.getThumb().setColorFilter(Color.parseColor("#bfbfbf"), PorterDuff.Mode.SRC_IN);
+            this.getThumb().setColorFilter(ContextCompat.getColor(mContext, R.color.effect_intensity_seek_active), PorterDuff.Mode.SRC_IN);
         }
     }
 
@@ -57,9 +58,9 @@ public class NegativeSeekBar extends AppCompatSeekBar {
         super(context, attrs, defStyle);
         setActivated(!isDisable);
         if(isDisable){
-            this.getThumb().setColorFilter(mContext.getResources().getColor(R.color.card_grid_artist), PorterDuff.Mode.SRC_IN);
+            this.getThumb().setColorFilter(ContextCompat.getColor(mContext, R.color.effect_intensity_seek_inactive), PorterDuff.Mode.SRC_IN);
         }else{
-            this.getThumb().setColorFilter(Color.parseColor("#bfbfbf"), PorterDuff.Mode.SRC_IN);
+            this.getThumb().setColorFilter(ContextCompat.getColor(mContext, R.color.effect_intensity_seek_active), PorterDuff.Mode.SRC_IN);
         }
     }
 
@@ -71,7 +72,7 @@ public class NegativeSeekBar extends AppCompatSeekBar {
                 getWidth()- getThumbOffset()*2 ,
                 (getHeight() / 2) + (seekbar_height/2));
 
-        paint.setColor(Color.parseColor("#313131"));
+        paint.setColor(ContextCompat.getColor(mContext, R.color.effect_intensity_seek_background));
 
         canvas.drawRect(rect, paint);
 
@@ -81,7 +82,7 @@ public class NegativeSeekBar extends AppCompatSeekBar {
                     /*(getWidth()) / 2 + (getWidth() / 100) * (getProgress() - 50)*/
                     this.getThumb().getBounds().centerX() + 5,
                     getHeight() / 2 + (seekbar_height / 2));
-            paint.setColor(Color.parseColor("#bfbfbf"));
+            paint.setColor(ContextCompat.getColor(mContext, R.color.effect_intensity_seek_active));
             canvas.drawRect(rect, paint);
         }else if (this.getProgress() > 50 && isDisable){
             rect.set(getWidth() / 2,
@@ -90,7 +91,7 @@ public class NegativeSeekBar extends AppCompatSeekBar {
                     this.getThumb().getBounds().centerX() + 5,
                     getHeight() / 2 + (seekbar_height/2));
 
-            paint.setColor(mContext.getResources().getColor(R.color.card_grid_artist));
+            paint.setColor(ContextCompat.getColor(mContext, R.color.effect_intensity_seek_inactive));
             canvas.drawRect(rect, paint);
         }
 
@@ -102,7 +103,7 @@ public class NegativeSeekBar extends AppCompatSeekBar {
                     getWidth() / 2,
                     getHeight() / 2 + (seekbar_height / 2));
 
-            paint.setColor(Color.parseColor("#bfbfbf"));
+            paint.setColor(ContextCompat.getColor(mContext, R.color.effect_intensity_seek_active));
             canvas.drawRect(rect, paint);
         }else if (this.getProgress() < 50 && isDisable) {
             rect.set(/*getWidth() / 2 - ((getWidth() / 100) * (50 - getProgress()))*/
@@ -111,7 +112,7 @@ public class NegativeSeekBar extends AppCompatSeekBar {
                     getWidth() / 2,
                     getHeight() / 2 + (seekbar_height/2));
 
-            paint.setColor(mContext.getResources().getColor(R.color.card_grid_artist));
+            paint.setColor(ContextCompat.getColor(mContext, R.color.effect_intensity_seek_inactive));
             canvas.drawRect(rect, paint);
         }
         /*if (this.getProgress() > 50 && !isDisable) {
