@@ -32,7 +32,6 @@ import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.MediaLoader.LoadDropBoxList;
 import com.globaldelight.boom.task.MediaLoader.LoadFavouriteList;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
-import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 
@@ -60,7 +59,7 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
     private MediaType mediaType;
     private CloudItemListAdapter adapter;
     private RecyclerView rootView;
-    private PermissionChecker permissionChecker;
+    public static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 1010;
 
     public static final String ARG_ITEM_TYPE = "item_type";
 
@@ -112,16 +111,17 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
     private void initLibrary() {
 // Request the GET_ACCOUNTS permission via a user dialog
         if(mediaType == MediaType.GOOGLE_DRIVE) {
+            progressLoader.show();
             EasyPermissions.requestPermissions(
                     ItemSongListFragment.this, "This app needs to access your Google account (via Contacts).",
                     REQUEST_PERMISSION_GET_ACCOUNTS, Manifest.permission.GET_ACCOUNTS);
-        }
-
-        if(itemType == ItemType.FAVOURITE) {
-            checkPermissions();
+        }else if(itemType == ItemType.FAVOURITE) {
+            progressLoader.show();
+            EasyPermissions.requestPermissions(
+                    ItemSongListFragment.this, getResources().getString(R.string.storage_permission),
+                    REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -149,7 +149,6 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
             setForAnimation();
         }
     }
-
 
     private void initViews() {
         IntentFilter intentFilter = new IntentFilter();
@@ -227,29 +226,6 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
         rootView.scrollTo(0, 100);
     }
 
-    private void checkPermissions() {
-        progressLoader.show();
-        permissionChecker = new PermissionChecker(getContext(), getActivity(), rootView);
-        permissionChecker.check(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                getResources().getString(R.string.storage_permission),
-                new PermissionChecker.OnPermissionResponse() {
-                    @Override
-                    public void onAccepted() {
-                        if (favouriteMediaList.getFavouriteMediaList().isEmpty()) {
-                            new LoadFavouriteList(getActivity()).execute();
-                        } else {
-                            notifyAdapter(favouriteMediaList.getFavouriteMediaList());
-                        }
-                        setForAnimation();
-                    }
-
-                    @Override
-                    public void onDecline() {
-                        getActivity().finish();
-                    }
-                });
-    }
-
     private void setSongListAdapter(ArrayList<? extends IMediaItemBase> iMediaItemList, ItemType itemType) {
         final GridLayoutManager gridLayoutManager =
                 new GridLayoutManager(getActivity(), 1);
@@ -323,12 +299,21 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
-        if (googleDriveMediaList.getGoogleDriveMediaList().isEmpty()) {
-            googleDriveHandler.getResultsFromApi();
-        } else {
-            notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
-            setForAnimation();
+        if(requestCode == REQUEST_PERMISSION_GET_ACCOUNTS) {
+            if (googleDriveMediaList.getGoogleDriveMediaList().isEmpty()) {
+                googleDriveHandler.getResultsFromApi();
+            } else {
+                notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
+            }
+        }else if(requestCode == REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE) {
+            if (favouriteMediaList.getFavouriteMediaList().isEmpty()) {
+                new LoadFavouriteList(getActivity()).execute();
+            } else {
+                notifyAdapter(favouriteMediaList.getFavouriteMediaList());
+            }
         }
+        dismissLoader();
+        setForAnimation();
     }
 
     @Override

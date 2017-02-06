@@ -205,13 +205,9 @@ public class MainActivity extends MasterActivity
     @Override
     public void onBackPressed() {
         mFloatAddPlayList.setVisibility(View.GONE);
-        if(!FavouriteMediaList.getFavouriteListInstance(this).getFavouriteMediaList().isEmpty())
-            FavouriteMediaList.getFavouriteListInstance(this).clearFavouriteContent();
-        if(!DropboxMediaList.getDropboxListInstance(this).getDropboxMediaList().isEmpty())
-            DropboxMediaList.getDropboxListInstance(this).clearDropboxContent();
-        if(!GoogleDriveMediaList.geGoogleDriveMediaListInstance(this).getGoogleDriveMediaList().isEmpty())
-            GoogleDriveMediaList.geGoogleDriveMediaListInstance(this).clearGoogleDriveMediaContent();
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if(isPlayerExpended()) {
+            sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+        }else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else
 //            if(fragmentManager.getBackStackEntryCount() >= 0) {
@@ -228,7 +224,6 @@ public class MainActivity extends MasterActivity
 //            }
 //        }
         if(fragmentContainer.getVisibility() == View.VISIBLE){
-            Log.d("fragmentManager : ", "VISIBLE");
             setTitle(getResources().getString(R.string.music_library));
             setVisiblePager(true);
             removeFragment();
@@ -441,15 +436,13 @@ public class MainActivity extends MasterActivity
             setTitle(String.valueOf(fname));
             setVisiblePager(false);
         }
-
+        removeFragment();
         if(currentItem != 0) {
             fragmentManager.beginTransaction()
                     .setCustomAnimations(animationEnter, animationExit)
                     .replace(R.id.fragment_container, fragment)
                    /* .addToBackStack(String.valueOf(fname))*/
                     .commitAllowingStateLoss();
-        }else {
-            removeFragment();
         }
     }
 

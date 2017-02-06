@@ -897,11 +897,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         return false;
     }
 
-
-
-
     /*Audio Effect UI & Functionality*/
-
 
     private void initEffectControl() {
         postMessage = new Handler();
@@ -915,7 +911,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         mEffectSwitchTxt = (RegularTextView) mInflater.findViewById(R.id.effect_switch_txt);
         mEffectSwitch = (SwitchCompat) mInflater.findViewById(R.id.effect_switch);
-        switchAudioEffect();
+        mEffectSwitch.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
         m3DSurroundBtn = (ImageView) mInflater.findViewById(R.id.three_surround_btn);
         m3DSurroundBtn.setOnClickListener(this);
@@ -951,6 +947,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         setEffectIntensity();
 
+        switchAudioEffect();
+
         setEnableEffects(audioEffectPreferenceHandler.isAudioEffectOn());
     }
 
@@ -959,10 +957,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mEffectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
-                audioEffectPreferenceHandler.setEnableAudioEffect(enable);
-                setEnableEffects(enable);
-                MixPanelAnalyticHelper.track(mContext, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
-                FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffectPreferenceHandler.isAudioEffectOn());
+                if(audioEffectPreferenceHandler.isAudioEffectOn() != enable) {
+                    audioEffectPreferenceHandler.setEnableAudioEffect(enable);
+                    setEnableEffects(enable);
+                    MixPanelAnalyticHelper.track(mContext, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
+                    FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffectPreferenceHandler.isAudioEffectOn());
+                }
             }
         });
     }
@@ -1017,7 +1017,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void setEnableFullBass(boolean enable){
         mFullBassCheck.setChecked(enable);
-        if(enable && audioEffectPreferenceHandler.isAudioEffectOn()){
+        if(audioEffectPreferenceHandler.isAudioEffectOn()){
             mFullBassCheck.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
         }else{
             mFullBassCheck.setTextColor(ContextCompat.getColor(mContext, R.color.effect_inactive));
