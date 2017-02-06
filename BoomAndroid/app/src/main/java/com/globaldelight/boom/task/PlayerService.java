@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
@@ -29,6 +30,9 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
+import static com.globaldelight.boom.utils.helpers.DropBoxUtills.ACCESS_KEY_NAME;
+import static com.globaldelight.boom.utils.helpers.DropBoxUtills.ACCESS_SECRET_NAME;
+import static com.globaldelight.boom.utils.helpers.DropBoxUtills.ACCOUNT_PREFS_NAME;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.

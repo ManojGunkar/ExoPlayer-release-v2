@@ -38,7 +38,7 @@ import pub.devrel.easypermissions.EasyPermissions;
  * Created by Rahul Agarwal on 11-01-17.
  */
 
-public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "GoogleDriveHandler";
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -191,11 +191,16 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
      * date on this device; false otherwise.
      */
     private boolean isGooglePlayServicesAvailable() {
-        GoogleApiAvailability apiAvailability =
-                GoogleApiAvailability.getInstance();
-        final int connectionStatusCode =
-                apiAvailability.isGooglePlayServicesAvailable(null != mContext ? mContext :
-                        mFragment.getContext());
+        int connectionStatusCode = 0;
+        try {
+            GoogleApiAvailability apiAvailability =
+                    GoogleApiAvailability.getInstance();
+            connectionStatusCode =
+                    apiAvailability.isGooglePlayServicesAvailable(null != mContext ? mContext :
+                            mFragment.getContext());
+        }catch (Exception e){
+            return connectionStatusCode == ConnectionResult.API_UNAVAILABLE;
+        }
         return connectionStatusCode == ConnectionResult.SUCCESS;
     }
 
@@ -294,50 +299,6 @@ public class GoogleDriveHandler implements EasyPermissions.PermissionCallbacks, 
                     }
                 }
             };
-
-    /**
-     * Callback for when a permission is granted using the EasyPermissions
-     * library.
-     *
-     * @param requestCode The request code associated with the requested
-     *                    permission
-     * @param list        The requested permission list. Never null.
-     */
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> list) {
-        // Do nothing.
-    }
-
-    /**
-     * Callback for when a permission is denied using the EasyPermissions
-     * library.
-     *
-     * @param requestCode The request code associated with the requested
-     *                    permission
-     * @param list        The requested permission list. Never null.
-     */
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> list) {
-        // Do nothing.
-    }
-
-    /**
-     * Respond to requests for permissions at runtime for API 23 and above.
-     *
-     * @param requestCode  The request code passed in
-     *                     requestPermissions(android.app.Activity, String, int, String[])
-     * @param permissions  The requested permissions. Never null.
-     * @param grantResults The grant results for the corresponding permissions
-     *                     which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(
-                requestCode, permissions, grantResults, this);
-    }
 
     @Override
     public void onConnected(Bundle connectionHint) {
