@@ -52,8 +52,6 @@ import com.globaldelight.boom.ui.widgets.MusicListTabs.TabBarStyle;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
-
-import static android.support.design.widget.TabLayout.MODE_SCROLLABLE;
 import static com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment.isUpdateUpnextDB;
 
 /**

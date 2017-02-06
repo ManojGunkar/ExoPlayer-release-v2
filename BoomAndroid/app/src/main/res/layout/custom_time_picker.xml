@@ -17,7 +17,7 @@
         android:layout_weight="0.5"
         android:gravity="right"
         android:paddingRight="23dp"
-        android:text="Hour"
+        android:text="@string/hour"
         android:textColor="@color/white"
 
         android:textSize="15sp" />
@@ -29,7 +29,7 @@
             android:layout_weight="0.5"
             android:gravity="left"
             android:paddingLeft="18dp"
-            android:text="Minute"
+            android:text="@string/minute"
             android:textColor="@color/white"
             android:textSize="15sp" />
 

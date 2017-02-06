@@ -21,6 +21,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
+import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
 import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
 import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
@@ -53,7 +54,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
     public ListPosition itemDelete;
     OnStartDragListener mOnStartDragListener;
     private ArrayList<IMediaItemBase> mHistoryList;
-    ArrayList<UpNextList.UpNextItem> mPlaying;
+    ArrayList<UpNextItem> mPlaying;
 //    private ArrayList<IMediaItemBase> mUpnextManualList;
 //    private ArrayList<IMediaItemBase> mUpnextAutoList;
     private int headerHistoryPos, headerPlayingPos, headerManualPos,
@@ -69,7 +70,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
     }
 
 
-    private void init(ArrayList<IMediaItemBase> history, ArrayList<UpNextList.UpNextItem> playing) {
+    private void init(ArrayList<IMediaItemBase> history, ArrayList<UpNextItem> playing) {
         this.mHistoryList = history;
         this.mPlaying = playing;
         updateHeaderPosition();

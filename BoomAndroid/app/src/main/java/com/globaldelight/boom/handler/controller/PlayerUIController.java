@@ -87,7 +87,6 @@ public class PlayerUIController implements IPlayerUIController {
     }
 
     private void startCollectionListActivity(final Activity activity, MediaItem item) {
-        App.getUserPreferenceHandler().setLibraryStartFromHome(true);
         final Intent listIntent = new Intent(activity, MediaCollectionActivity.class);
         listIntent.putExtra("media_item", item);
         new Handler().post(new Runnable() {

@@ -80,11 +80,7 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                 holder.headerDetail.setVisibility(View.GONE);
             }
 
-            if(App.getUserPreferenceHandler().isLibFromHome()){
-                holder.mMore.setVisibility(View.VISIBLE);
-            }else{
-                holder.mMore.setVisibility(View.INVISIBLE);
-            }
+            holder.mMore.setVisibility(View.VISIBLE);
             setOnMenuClickListener(holder, position);
         }else if(position >= 1) {
             String title;
@@ -99,8 +95,8 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                     holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                     holder.count.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                 } else if (null != nowPlayingItem) {
-                    holder.name.setTextColor(activity.getResources().getColor(R.color.white));
-                    holder.count.setTextColor(activity.getResources().getColor(R.color.white));
+                    holder.name.setTextColor(ContextCompat.getColor(activity, R.color.white));
+                    holder.count.setTextColor(ContextCompat.getColor(activity, R.color.white));
                 }
 
                 holder.name.setText(title);

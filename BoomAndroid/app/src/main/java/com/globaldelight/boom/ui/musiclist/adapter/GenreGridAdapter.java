@@ -95,11 +95,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
 
         setArtistImg(holder, position, size);
 
-        if(App.getUserPreferenceHandler().isLibFromHome()) {
-            holder.grid_menu.setVisibility(View.VISIBLE);
-        }else{
-            holder.grid_menu.setVisibility(View.INVISIBLE);
-        }
+        holder.grid_menu.setVisibility(View.VISIBLE);
         setOnClicks(holder, position);
     }
 

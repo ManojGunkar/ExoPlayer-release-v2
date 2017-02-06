@@ -103,11 +103,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
             int itemcount = ((IMediaItemCollection) getItem(position)).getItemCount();
             holder.subTitle.setText((itemcount > 1 ? activity.getResources().getString(R.string.songs) : activity.getResources().getString(R.string.song)) + " " + itemcount);
 
-            if (App.getUserPreferenceHandler().isLibFromHome()) {
-                holder.grid_menu.setVisibility(View.VISIBLE);
-            } else {
-                holder.grid_menu.setVisibility(View.INVISIBLE);
-            }
+            holder.grid_menu.setVisibility(View.VISIBLE);
             if (((IMediaItemCollection) items.get(position)).getArtUrlList().isEmpty())
                 ((IMediaItemCollection) items.get(position)).setArtUrlList(MediaController.getInstance(activity).getArtUrlList((MediaItemCollection) items.get(position)));
 

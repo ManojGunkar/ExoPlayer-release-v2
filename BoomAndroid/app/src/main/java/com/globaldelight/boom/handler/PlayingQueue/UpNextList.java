@@ -832,22 +832,4 @@ public class UpNextList {
         mHistoryList.addAll(getUpNextItemList(QueueType.History));
     }
 
-    public class UpNextItem {
-        private IMediaItem item;
-        private QueueType type;
-
-        public UpNextItem(IMediaItem item, QueueType type) {
-            this.item = item;
-            this.type = type;
-        }
-
-        public IMediaItem getUpNextItem() {
-            return item;
-        }
-
-        public QueueType getUpNextItemType() {
-            return type;
-        }
-    }
-
 }

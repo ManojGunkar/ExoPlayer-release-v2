@@ -116,8 +116,8 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
 
     private void updatePlayingTrack(SimpleItemViewHolder holder, int position, long itemId, String itemTitle){
         IMediaItem nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
-        boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
         if(null != nowPlayingItem) {
+            boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
             if ((isMediaItem && itemId == nowPlayingItem.getItemId())
                     || (!isMediaItem && itemTitle.equals(nowPlayingItem.getItemTitle()))) {
                 holder.art_overlay.setVisibility(View.VISIBLE );
@@ -151,7 +151,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
     }
 
     private void setDefaultArt(CloudItemListAdapter.SimpleItemViewHolder holder/*, int size*/) {
-        holder.img.setImageDrawable(activity.getResources().getDrawable( R.drawable.ic_default_list ));
+        holder.img.setImageDrawable(activity.getResources().getDrawable( R.drawable.ic_default_list , null));
     }
 
     private void setOnClicks(final CloudItemListAdapter.SimpleItemViewHolder holder, final int position) {

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
@@ -25,20 +26,20 @@ import com.globaldelight.boomplayer.AudioPlayer;
 import com.globaldelight.boomplayer.IPlayerEvents;
 
 import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
-import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandlerI.PlayState.pause;
-import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandlerI.PlayState.play;
-import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandlerI.PlayState.stop;
+import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.pause;
+import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.play;
+import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.stop;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
 /**
  * Created by Rahul Agarwal on 03-10-16.
  */
 
-public class PlayerEventHandlerI implements IQueueEvent, AudioManager.OnAudioFocusChangeListener {
+public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocusChangeListener {
     public static boolean isPlayerResume = false;
     private static IMediaItem playingItem;
     private static AudioPlayer mPlayer;
-    private static PlayerEventHandlerI handler;
+    private static PlayerEventHandler handler;
     private static int NEXT = 0;
     private static int PREVIOUS = 1;
     private static int PLAYER_DIRECTION;
@@ -138,7 +139,7 @@ public class PlayerEventHandlerI implements IQueueEvent, AudioManager.OnAudioFoc
         }
     };
 
-    private PlayerEventHandlerI(Context context, PlayerService service){
+    private PlayerEventHandler(Context context, PlayerService service){
         this.context = context;
         if(null == mPlayer)
             mPlayer = new AudioPlayer(context, IPlayerEvents);
@@ -152,9 +153,9 @@ public class PlayerEventHandlerI implements IQueueEvent, AudioManager.OnAudioFoc
         registerSession();
     }
 
-    public static PlayerEventHandlerI getPlayerEventInstance(Context context, PlayerService service){
+    public static PlayerEventHandler getPlayerEventInstance(Context context, PlayerService service){
         if(handler == null){
-            handler = new PlayerEventHandlerI(context, service);
+            handler = new PlayerEventHandler(context, service);
         }
         return handler;
     }
@@ -206,7 +207,8 @@ public class PlayerEventHandlerI implements IQueueEvent, AudioManager.OnAudioFoc
                 if(null != App.getDropboxAPI().getSession()){
                     dataSource = DropBoxUtills.getDropboxItemUrl(mediaItemBase.getItemUrl());
                 }else{
-                    Toast.makeText(context, "not logged in Dropbox", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getResources().getString(R.string.login_problem_dropbox), Toast.LENGTH_SHORT).show();
+                    return null;
                 }
             }else if(mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){
 
@@ -214,6 +216,7 @@ public class PlayerEventHandlerI implements IQueueEvent, AudioManager.OnAudioFoc
                 if(null != access_token) {
                     dataSource = mediaItemBase.getItemUrl() + access_token;
                 }else{
+                    Toast.makeText(context, context.getResources().getString(R.string.login_problem_google_drive), Toast.LENGTH_SHORT).show();
                     return null;
                 }
             }

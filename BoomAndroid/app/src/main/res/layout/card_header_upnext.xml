@@ -4,7 +4,7 @@
     android:layout_height="@dimen/card_header_upnext_height"
     android:background="@color/upnext_header_background"
     android:orientation="vertical">
-    
+
     <com.globaldelight.boom.ui.widgets.RegularTextView
         android:id="@+id/queue_header_text"
         android:layout_width="wrap_content"

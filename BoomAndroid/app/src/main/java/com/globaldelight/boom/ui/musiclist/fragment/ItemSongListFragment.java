@@ -113,7 +113,7 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
                     TokenPair tokens = session.getAccessTokenPair();
                     DropBoxUtills.storeKeys(getContext(), tokens.key, tokens.secret);
                 } catch (IllegalStateException e) {
-                    Toast.makeText(getContext(),"Couldn't authenticate with Dropbox:"
+                    Toast.makeText(getContext(),getResources().getString(R.string.dropbox_authenticate_problem)
                             + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -206,14 +206,14 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
     @Override
     public void onError(String e) {
         dismissLoader();
-        Toast.makeText(getContext(), "The following error occurred:\n"
+        Toast.makeText(getContext(), getResources().getString(R.string.google_drive_loading_error)
                 + e, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onEmptyList() {
         dismissLoader();
-        Toast.makeText(getContext(), "No results returned.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getResources().getString(R.string.empty_list), Toast.LENGTH_SHORT).show();
     }
 
     private void dismissLoader(){
@@ -268,9 +268,7 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
         switch (requestCode) {
             case GoogleDriveHandler.REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
-                    Toast.makeText(getContext(),
-                            "This app requires Google Play Services. Please install " +
-                                    "Google Play Services on your device and relaunch this app.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getResources().getString(R.string.require_google_play_service), Toast.LENGTH_SHORT).show();
                 } else {
                     googleDriveHandler.getResultsFromApi();
                 }

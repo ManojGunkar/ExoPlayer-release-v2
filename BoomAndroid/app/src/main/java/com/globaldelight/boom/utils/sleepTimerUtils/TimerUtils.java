@@ -225,11 +225,11 @@ public class TimerUtils {
                 String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
-                txtDescTimer.setText(hms + " remaining.");
+                txtDescTimer.setText(hms + mContext.getResources().getString(R.string.remaning));
             }
 
             public void onFinish() {
-                txtDescTimer.setText("00:00:00" + " remaining.");
+                txtDescTimer.setText("00:00:00" + mContext.getResources().getString(R.string.remaning));
                 Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
                 txtDescTimer.setText(mContext.getResources().getString(R.string.sleep_timer_description));
             }
@@ -326,11 +326,11 @@ public class TimerUtils {
                             TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
                             TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
                     // txtTimer.setText(hms);
-                    txtDescTimer.setText(hms + " remaining.");
+                    txtDescTimer.setText(hms + mContext.getResources().getString(R.string.remaning));
                 }
                 public void onFinish() {
                     //txtTimer.setText("00:00:00");
-                    txtDescTimer.setText("00:00:00" + " remaining.");
+                    txtDescTimer.setText("00:00:00" + mContext.getResources().getString(R.string.remaning));
                     Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
                     txtDescTimer.setText(mContext.getResources().getString(R.string.sleep_timer_description));
 

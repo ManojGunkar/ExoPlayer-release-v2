@@ -260,9 +260,9 @@ public class Utils {
 
     public static void showNetworkAlert(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("NetworkCalls Alert");
-        builder.setMessage("Please check your network connection and try again");
-        builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+        builder.setTitle(context.getResources().getString(R.string.network_alart));
+        builder.setMessage(context.getResources().getString(R.string.check_network));
+        builder.setNeutralButton(context.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {

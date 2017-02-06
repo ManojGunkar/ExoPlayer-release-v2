@@ -40,7 +40,6 @@ public class UserPreferenceHandler {
     private static ArrayList<IMediaItem> list = new ArrayList<>();
     private static ArrayList<Long> idList = new ArrayList<>();
     private static long boomPlayListId;
-    private int playerSeekPosition;
 
     public UserPreferenceHandler(Context context) {
         shp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -124,25 +123,6 @@ public class UserPreferenceHandler {
         return shp.getInt(ALBUM_SORTED, ALBUM_SORTED_BY_TITLE);
     }
 
-    /*Boom PlayList*/
-
-    public void setLibraryStartFromHome(boolean isFromHome) {
-        shp.edit().putBoolean(LIBRARY_FROM, isFromHome ? LIB_FROM_HOME : !LIB_FROM_HOME).apply();
-    }
-
-    public boolean isLibFromHome(){
-        return shp.getBoolean(LIBRARY_FROM, LIB_FROM_HOME);
-    }
-
-    public void addItemToPlayList(IMediaItem item) {
-        if(idList.contains(item.getItemId())){
-            list.remove(idList.indexOf(item.getItemId()));
-            idList.remove(item.getItemId());
-        }else {
-            idList.add(item.getItemId());
-            list.add(item);
-        }
-    }
 
     public ArrayList<IMediaItem> getItemList(){
         return list;

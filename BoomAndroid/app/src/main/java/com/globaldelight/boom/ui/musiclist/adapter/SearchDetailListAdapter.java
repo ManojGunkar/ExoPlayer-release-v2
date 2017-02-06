@@ -242,11 +242,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
 
             setArtistImg(holder, ((MediaItemCollection) resultItemList.get(position)).getItemArtUrl(), size);
 
-            if(App.getUserPreferenceHandler().isLibFromHome()){
-                holder.grid_menu.setVisibility(View.VISIBLE);
-            }else{
-                holder.grid_menu.setVisibility(View.INVISIBLE);
-            }
+            holder.grid_menu.setVisibility(View.VISIBLE);
 
             holder.mainView.setOnClickListener(new View.OnClickListener() {
                 @Override

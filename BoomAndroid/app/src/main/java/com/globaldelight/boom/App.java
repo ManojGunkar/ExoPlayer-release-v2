@@ -12,7 +12,7 @@ import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.business.client.BusinessHandler;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandlerI;
+import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.handler.PlayingQueue.PlayingQueueHandler;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.handlers.FavoriteDBHelper;
@@ -87,8 +87,8 @@ public class App extends Application implements Application.ActivityLifecycleCal
         return businessHandler;
     }
 
-    public static PlayerEventHandlerI getPlayerEventHandler() {
-        return PlayerEventHandlerI.getPlayerEventInstance(application, service);
+    public static PlayerEventHandler getPlayerEventHandler() {
+        return PlayerEventHandler.getPlayerEventInstance(application, service);
     }
 
     public static UserPreferenceHandler getUserPreferenceHandler() {
@@ -140,7 +140,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     public void onActivityStarted(Activity activity) {
         if(isExpired()) {
-            Toast.makeText(this, "App Expired...!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, activity.getResources().getString(R.string.app_expire), Toast.LENGTH_LONG).show();
             activity.finishAndRemoveTask();
 
             // Terminate the App process after 2 seconds

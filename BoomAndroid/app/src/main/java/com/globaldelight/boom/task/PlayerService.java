@@ -20,7 +20,7 @@ import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
-import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandlerI;
+import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.manager.HeadPhonePlugReceiver;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boomplayer.AudioConfiguration;
@@ -40,7 +40,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     private long mServiceStartTime = 0;
     private long mServiceStopTime = 0;
     private static long mShiftingTime = 0;
-    private PlayerEventHandlerI musicPlayerHandler;
+    private PlayerEventHandler musicPlayerHandler;
     private Context context;
     private NotificationHandler notificationHandler;
     private static boolean isPlayerScreenResume = false;
@@ -287,11 +287,11 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         if(!musicPlayerHandler.isPaused() && !musicPlayerHandler.isPlaying()){
             musicPlayerHandler.onPlayingItemChanged();
         }else {
-            PlayerEventHandlerI.PlayState state = musicPlayerHandler.PlayPause();
-            if (state != PlayerEventHandlerI.PlayState.play && !isPlayerScreenResume) {
+            PlayerEventHandler.PlayState state = musicPlayerHandler.PlayPause();
+            if (state != PlayerEventHandler.PlayState.play && !isPlayerScreenResume) {
                 updateUpNextDB();
             } else{
-                updatePlayPause(state == PlayerEventHandlerI.PlayState.play ? true : false);
+                updatePlayPause(state == PlayerEventHandler.PlayState.play ? true : false);
             }
         }
     }

@@ -196,7 +196,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                 setHeaderBg(holder);
                 holder.headerText.setText(R.string.artists);
                 if (searchRes.getArtistCount() > 4) {
-                    holder.headerCount.setText(searchRes.getArtistCount() - 4 + " MORE");
+                    holder.headerCount.setText(searchRes.getArtistCount() - 4 + context.getResources().getString(R.string.more));
                 } else {
                     holder.headerCount.setVisibility(View.GONE);
                 }
@@ -213,7 +213,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                 setHeaderBg(holder);
                 holder.headerText.setText(R.string.albums);
                 if (searchRes.getArtistCount() > 4) {
-                    holder.headerCount.setText(searchRes.getAlbumCount() - 4 + " MORE");
+                    holder.headerCount.setText(searchRes.getAlbumCount() - 4 + context.getResources().getString(R.string.more));
                 } else {
                     holder.headerCount.setVisibility(View.GONE);
                 }
@@ -230,7 +230,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                 setHeaderBg(holder);
                 holder.headerText.setText(R.string.songs);
                 if (searchRes.getArtistCount() > 4) {
-                    holder.headerCount.setText(searchRes.getSongCount() - 4 + " MORE");
+                    holder.headerCount.setText(searchRes.getSongCount() - 4 + context.getResources().getString(R.string.more));
                 } else {
                     holder.headerCount.setVisibility(View.GONE);
                 }

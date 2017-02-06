@@ -286,7 +286,7 @@ public class MediaCollectionActivity extends MasterActivity {
 
     private void setDefaultImage(String imagePath) {
         if (imagePath == null || imagePath.equals(MediaItem.UNKNOWN_ART_URL)) {
-            albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_header));
+            albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_header, null));
         }
     }
 

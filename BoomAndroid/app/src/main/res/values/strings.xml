@@ -161,5 +161,18 @@
     <string name="drop_box">Dropbox</string>
     <string name="google_drive">Google Drive</string>
     <string name="request_cancelled">Request Cancelled.</string>
+    <string name="login_problem_dropbox">Not able to login in Dropbox</string>
+    <string name="login_problem_google_drive">Not able to login in Google Drive</string>
+    <string name="more">&#160;MORE</string>
+    <string name="dropbox_authenticate_problem">Couldn\'t authenticate with Dropbox:</string>
+    <string name="google_drive_loading_error">Loading Error in Google Drive:\\n</string>
+    <string name="empty_list">List is Empty</string>
+    <string name="require_google_play_service">This app requires Google Play Services. Please install Google Play Services on your device and relaunch this app.</string>
+    <string name="remaning">&#160;remaining.</string>
+    <string name="network_alart">NetworkCalls Alert</string>
+    <string name="check_network">Please check your network connection and try again</string>
+    <string name="app_expire">App Expired...!</string>
+    <string name="hour">Hour</string>
+    <string name="minute">Minute</string>
 
 </resources>
