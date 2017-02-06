@@ -105,8 +105,6 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
             mediaListInstance.onEmptyList();
         } else {
             mediaListInstance.finishGoogleDriveMediaLoading();
-//            output.add(0, "Data retrieved using the Drive API:");
-//            Toast.makeText(fragment, TextUtils.join("\n", output), Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -6,7 +6,9 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.AnimRes;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -61,6 +63,7 @@ import static com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment
 public class MainActivity extends MasterActivity
         implements NavigationView.OnNavigationItemSelectedListener, MasterActivity.ILibraryAddsUpdater{
 
+    public final static int PERM_REQUEST_CODE_DRAW_OVERLAYS = 1234;
     private PermissionChecker permissionChecker;
     private DrawerLayout drawerLayout;
     private Fragment mSearchResult, mFragment;
@@ -96,12 +99,13 @@ public class MainActivity extends MasterActivity
         setTitle(getResources().getString(R.string.music_library));
         setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
-        checkPermissions();
+        initView();
     }
 
     @Override
     protected void onResume() {
         registerPlayerReceiver(MainActivity.this);
+        checkPermissions();
         super.onResume();
     }
 
@@ -112,7 +116,7 @@ public class MainActivity extends MasterActivity
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
-                        initView();
+                        initFragment();
                         initSearchAndArt();
                     }
 
@@ -153,6 +157,10 @@ public class MainActivity extends MasterActivity
             }
         });
 
+        fragmentContainer = (FrameLayout) findViewById(R.id.fragment_container);
+
+        fragmentManager = getSupportFragmentManager();
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
@@ -161,18 +169,17 @@ public class MainActivity extends MasterActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        mViewPager = (ViewPager) findViewById(R.id.container);
+    }
+
+    private void initFragment(){
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         int[] items = {R.string.artists, R.string.albums, R.string.songs, R.string.playlists, R.string.genres};
         mSectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), items);
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        fragmentContainer = (FrameLayout) findViewById(R.id.fragment_container);
-
-        fragmentManager = getSupportFragmentManager();
 
         isUpdateUpnextDB = true;
         initHandyTabBar();

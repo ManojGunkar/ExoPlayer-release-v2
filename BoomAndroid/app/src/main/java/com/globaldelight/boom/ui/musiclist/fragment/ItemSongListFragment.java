@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,15 +37,19 @@ import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.app.Activity.RESULT_OK;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.utils.helpers.GoogleDriveHandler.REQUEST_PERMISSION_GET_ACCOUNTS;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
  */
 
-public class ItemSongListFragment extends Fragment  implements FavouriteMediaList.IFavouriteUpdater, DropboxMediaList.IDropboxUpdater, GoogleDriveMediaList.IGoogleDriveMediaUpdater {
+public class ItemSongListFragment extends Fragment  implements FavouriteMediaList.IFavouriteUpdater, DropboxMediaList.IDropboxUpdater, GoogleDriveMediaList.IGoogleDriveMediaUpdater, EasyPermissions.PermissionCallbacks {
 
     private DropboxMediaList dropboxMediaList;
     private GoogleDriveMediaList googleDriveMediaList;
@@ -105,28 +110,13 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
     }
 
     private void initLibrary() {
-        if(mediaType == MediaType.DROP_BOX && null != App.getDropboxAPI()) {
-            AndroidAuthSession session = App.getDropboxAPI().getSession();
-            if (session.authenticationSuccessful()) {
-                try {
-                    session.finishAuthentication();
-                    TokenPair tokens = session.getAccessTokenPair();
-                    DropBoxUtills.storeKeys(getContext(), tokens.key, tokens.secret);
-                } catch (IllegalStateException e) {
-                    Toast.makeText(getContext(),getResources().getString(R.string.dropbox_authenticate_problem)
-                            + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
+// Request the GET_ACCOUNTS permission via a user dialog
+        if(mediaType == MediaType.GOOGLE_DRIVE) {
+            EasyPermissions.requestPermissions(
+                    ItemSongListFragment.this, "This app needs to access your Google account (via Contacts).",
+                    REQUEST_PERMISSION_GET_ACCOUNTS, Manifest.permission.GET_ACCOUNTS);
         }
 
-        if(mediaType == MediaType.GOOGLE_DRIVE) {
-            if (googleDriveMediaList.getGoogleDriveMediaList().isEmpty()) {
-                googleDriveHandler.getResultsFromApi();
-            } else {
-                notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
-                setForAnimation();
-            }
-        }
         if(itemType == ItemType.FAVOURITE) {
             checkPermissions();
         }
@@ -139,7 +129,18 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
     }
 
     private void LoadDropboxList(){
-        if(mediaType == MediaType.DROP_BOX) {
+        if(mediaType == MediaType.DROP_BOX && null != App.getDropboxAPI()) {
+            AndroidAuthSession session = App.getDropboxAPI().getSession();
+            if (session.authenticationSuccessful()) {
+                try {
+                    session.finishAuthentication();
+                    TokenPair tokens = session.getAccessTokenPair();
+                    DropBoxUtills.storeKeys(getContext(), tokens.key, tokens.secret);
+                } catch (IllegalStateException e) {
+                    Toast.makeText(getContext(),getResources().getString(R.string.dropbox_authenticate_problem)
+                            + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
             if (dropboxMediaList.getDropboxMediaList().isEmpty()) {
                 new LoadDropBoxList(getActivity()).execute();
             } else {
@@ -318,5 +319,26 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
 //            emptyView.setVisibility(View.GONE);
             rootView.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        if (googleDriveMediaList.getGoogleDriveMediaList().isEmpty()) {
+            googleDriveHandler.getResultsFromApi();
+        } else {
+            notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
+            setForAnimation();
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        dismissLoader();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, ItemSongListFragment.this);
     }
 }
