@@ -47,13 +47,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.musiclist.activity.SettingsActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Effect" />
-
-        <receiver android:name=".utils.SleepAlarm" />
+        <receiver android:name=".utils.sleepTimerUtils.SleepAlarm" />
         <receiver
             android:name="com.mixpanel.android.mpmetrics.GCMReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
@@ -157,7 +151,7 @@
         </activity>
 
         <activity
-            android:name=".ui.musiclist.activity.UpNextActivity"
+            android:name=".ui.musiclist.activity.ActivityContainer"
             android:parentActivityName=".ui.musiclist.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">

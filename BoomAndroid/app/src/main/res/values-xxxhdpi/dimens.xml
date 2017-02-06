@@ -1,127 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="track_list_album_art_size">52dp</dimen>
-    <dimen name="track_list_item_height">72dp</dimen>
-
-
-    <dimen name="add_height">80dp</dimen>
-
-
-
 
     <dimen name="grid_item_desc_size">16sp</dimen>
     <dimen name="rate_btn_size">20sp</dimen>
     <dimen name="about_copyright_txt_size">11sp</dimen>
-    <dimen name="toolbar_titile">21sp</dimen>//80
+    //80
     <dimen name="about_title">29sp</dimen>
     <dimen name="about_title_padding_top">24dp</dimen>
-    //72
-    //52
-    //62
-    <dimen name="eq_txt">10sp</dimen>
     <dimen name="tooltip_txt">17sp</dimen>
-    <dimen name="play_queue_header_txt">14sp</dimen>
+    <dimen name="play_queue_header_txt">15sp</dimen>
     <dimen name="play_queue_row_txt">15sp</dimen>
     <dimen name="play_queue_row_desc_txt">14sp</dimen>
-    <dimen name="purchase_item_button_size">26sp</dimen>
-    <dimen name="two_fourty_eight_px">62dp</dimen>
-    <!--3d surround-->
-    <dimen name="eight_pt">2dp</dimen>
-    <dimen name="eighty_pt">20dp</dimen>
-
-    <dimen name="fourty_pt">8dp</dimen>
-    <dimen name="twenty_pt">5dp</dimen>
-    <dimen name="two_hundred_twenty_four_pt">56dp</dimen>
-    <dimen name="one_ten_pt">28dp</dimen>
-    <dimen name="one_fifty_six_pt">39dp</dimen>
-
-    <dimen name="one_eighty_six_pt">46dp</dimen>
-
-    <dimen name="twenty_four_pt">6dp</dimen>
-    <dimen name="seventy_four_pt">19dp</dimen>
-    <dimen name="seventy_eight_pt">19.5dp</dimen>
-
-    <dimen name="ninety_two_pt">23dp</dimen>
-    <dimen name="ninety_six_pt">24dp</dimen>
-
-    <dimen name="fourty_eight_pt">12sp</dimen>
-    <dimen name="fourty_two_pt">10dp</dimen>
-    <!--setting-->
-    <!-- settings-->
-    <dimen name="settings_item_title_size">17sp</dimen>
-    <dimen name="settings_item_description_size">16sp</dimen>
-    <dimen name="thirty_six_pt">12dp</dimen>
-
-    <dimen name="sixty_eight_pt">17dp</dimen>
-    <dimen name="sixty_four_pt">16dp</dimen>
-    <dimen name="five_hundred_ninety_two_pt">148dp</dimen>
-    <dimen name="eighty_two_pt">21dp</dimen>
-    <dimen name="five_hundred_eighty_eight_pt">147dp</dimen>
-    <dimen name="six_hundred_seventy_eight_pt">170dp</dimen>
-    <dimen name="one_hundred_pt">25dp</dimen>
-    <dimen name="one_hundred__eight_pt">27dp</dimen>
-    <dimen name="one_hundred_thirty_six_pt">34dp</dimen>
-    <dimen name="one_hundred_eighty_two_pt">46dp</dimen>
-    <dimen name="eight_hundred_ninety_two_pt">223dp</dimen>
-    <dimen name="fifty_eight_pt">15dp</dimen>
-    <dimen name="fifty_six_pt">14dp</dimen>
-
+    <dimen name="upnext_item_height">72dp</dimen>
+    <dimen name="settings_item_title_txt">15sp</dimen>
     <dimen name="noti_small_art_size">50dp</dimen>
-    <dimen name="one_hundred_twelve_pt">28dp</dimen>
-    <dimen name="two_hundred_twenty_pt">55dp</dimen>
-    <dimen name="seventy_two_pt">18dp</dimen>
-
-    <dimen name="two_hundred_sixteen_pt">56dp</dimen>
-
-    <dimen name="fifty_six_pt_txt">14dp</dimen>
-    <dimen name="seventy_two_pt_txt">18sp</dimen>
-    <dimen name="one_hundred_four_px">26dp</dimen>
-    <dimen name="four_hundred_fourtee_eight_px">112dp</dimen>
-    <dimen name="seventy_two_px">18dp</dimen>
-    <dimen name="fifty_four_px">14dp</dimen>
-    <dimen name="one_hundred_sixteen_px">29dp</dimen>
-    <dimen name="thirty_two_px">8dp</dimen>
-    <dimen name="two_hunderd_twenty_px">60dp</dimen>
-    <dimen name="two_hunderd_px">50dp</dimen>
+    <dimen name="player_control_margine">22dp</dimen>
     <dimen name="home_album_art_size">180dp</dimen>
-    <dimen name="one_thousand_twenty_eight">257dp</dimen>
-    <dimen name="two_hundred_eight">52dp</dimen>
-    //52
-
-
     <dimen name="player_title_size">16sp</dimen>
     <dimen name="player_sub_title_size">15sp</dimen>
-
     <dimen name="player_seek_time_size">12sp</dimen>
     <dimen name="player_seek_margin">26dp</dimen>
-
-    <dimen name="player_control_height">93.5dp</dimen>
-    <dimen name="player_control_margin_top">21.5dp</dimen>
-    <dimen name="player_control_margin_bottom">33dp</dimen>
+    <dimen name="player_control_height">90dp</dimen>
     <dimen name="player_control_margin_left">23.5dp</dimen>
     <dimen name="player_control_margin_right">23.5dp</dimen>
-    <dimen name="player_control_top_panel_height">15dp</dimen>
-    <dimen name="player_control_bottom_panel_height">47dp</dimen>
-
-    <dimen name="player_seek_margin_top">14dp</dimen>
-    <dimen name="player_seek_top_panel_height">20dp</dimen>
     <dimen name="player_seek_left_right">16dp</dimen>
-
-    <dimen name="player_switcher_height">46.5dp</dimen>
-    <dimen name="player_switcher_margin_top">17dp</dimen>
     <dimen name="player_switcher_margin_left">29dp</dimen>
     <dimen name="player_switcher_margin_right">29dp</dimen>
-    <dimen name="player_switcher_top_panel_height">12.5dp</dimen>
-
-    <dimen name="one_zero_four_px">26dp</dimen>
-    <dimen name="eighty_px">20dp</dimen>
-    <dimen name="one_seventy_two_pz">43dp</dimen>
-    <dimen name="thirty_six_px">9dp</dimen>
-    <dimen name="two_fifty_four_px">63dp</dimen>
-    <dimen name="one_thirty_six_px">34dp</dimen>
-    <dimen name="forty_px">10dp</dimen>
-    <dimen name="sixty_px">15dp</dimen>
 
     <dimen name="divider_height">1dp</dimen>
 
@@ -131,32 +36,92 @@
     <dimen name="effect_title_size">18sp</dimen>
     <dimen name="effect_equalizer_dropdown_height">35dp</dimen>
     <dimen name="effect_equalizer_dropdown_width">121.5dp</dimen>
-    <dimen name="ninty_six_px">24dp</dimen>
-
     <dimen name="effect_eq_title_size">18sp</dimen>
     <dimen name="effect_eq_item_height">59dp</dimen>
 
-    <!--Speaker Panel-->
 
-    <dimen name="one_one_three_four_pt">284dp</dimen>
-    <dimen name="one_one_nine_four_pt">321dp</dimen>
-    <dimen name="eighty_eighty_pt">22dp</dimen>
-    <dimen name="one_hundred_eighty_six_pt">47dp</dimen>
-    <dimen name="twenty_two_pt">5.5dp</dimen>
-    <dimen name="forty_two_px">10.5dp</dimen>
+    <dimen name="track_list_album_art_size">62dp</dimen>
+    <dimen name="track_list_album_art_overlay_padding">10dp</dimen>
 
-    <!--Equalizer Panel-->
-    <dimen name="seventy_six_px">19dp</dimen>
-    <dimen name="twenty_four_px">6dp</dimen>
-    <dimen name="sixty_pt">15sp</dimen>
-    <dimen name="four_px">1dp</dimen>
-    <dimen name="twenty_px">20dp</dimen>
-    <dimen name="twelve_px">3dp</dimen>
-    <dimen name="three_fourty_px">85dp</dimen>
+    <dimen name="track_list_item_height">72dp</dimen>
+    <dimen name="add_height">80dp</dimen>
+    <dimen name="setting_cloud_img_margine_left">20dp</dimen>
+    <dimen name="setting_cloud_img_margine_right">23dp</dimen>
+    <dimen name="setting_item_title_margine_left">17dp</dimen>
+    <dimen name="setting_item_title_margine_top">20dp</dimen>
+    <dimen name="setting_item_margine_header">31dp</dimen>
+    <dimen name="setting_margin_sub_item">25dp</dimen>
+
+    <dimen name="album_track_number_margin">39dp</dimen>
+    <dimen name="album_track_number_size">18sp</dimen>
+    <dimen name="album_track_margin">26dp</dimen>
+    <dimen name="album_track_title_size">18sp</dimen>
+    <dimen name="album_track_sub_title_size">14sp</dimen>
+
+    <dimen name="boom_playlist_track_margin">18dp</dimen>
+
+    <dimen name="boom_playlist_track_nav_margin">23dp</dimen>
+    <dimen name="card_eq_margin_img">24dp</dimen>
+    <dimen name="card_eq_margin_txt">26dp</dimen>
+    <dimen name="card_grid_margin">6dp</dimen>
+    <dimen name="card_grid_item_title">18sp</dimen>
+    <dimen name="card_grid_item_sub_title">14sp</dimen>
+    <dimen name="card_header_upnext_height">27dp</dimen>
+    <dimen name="card_grid_upnext_header_title">16dp</dimen>
+    <dimen name="card_header_recycler_title_margine">19dp</dimen>
+    <dimen name="card_header_recycler_title">20sp</dimen>
+    <dimen name="card_header_recycler_sub_title_margine">8dp</dimen>
+    <dimen name="card_header_recycler_sub_title">18sp</dimen>
+    <dimen name="card_header_recycler_detail_margin">5dp</dimen>
+    <dimen name="card_header_recycler_detail_txt">14sp</dimen>
+    <dimen name="card_header_search_height">62dp</dimen>
+    <dimen name="card_header_search_margin_top">18dp</dimen>
+    <dimen name="card_header_search_margin_left">29dp</dimen>
+    <dimen name="card_header_search_margin_right">28dp</dimen>
+    <dimen name="card_header_search_txt">20sp</dimen>
+    <dimen name="card_header_search_count_txt">12sp</dimen>
+    <dimen name="card_header_search_count_padding">8dp</dimen>
+    <dimen name="card_upnext_item_nav_margin">23dp</dimen>
+    <dimen name="card_upnext_item_margin">18dp</dimen>
+    <dimen name="card_playlist_dialog_item_title_txt">16sp</dimen>
+    <dimen name="card_search_suggestion_item_margin">10dp</dimen>
+    <dimen name="card_search_suggestion_item_txt">15sp</dimen>
+    <dimen name="card_song_item_title_txt">18sp</dimen>
+    <dimen name="card_song_item_sub_title_txt">14sp</dimen>
+    <dimen name="pager_tab_indicator_height">3dp</dimen>
+    <dimen name="effect_content_margin">43dp</dimen>
+    <dimen name="effect_title_margin">9dp</dimen>
+    <dimen name="equalizer_border">1dp</dimen>
+
+    <dimen name="full_bass_margin_bottom">15dp</dimen>
+    <dimen name="effect_eq_dialog_padding">6dp</dimen>
+    <dimen name="selected_eq_img">19dp</dimen>
+    <dimen name="selected_eq_txt_margin">6dp</dimen>
+    <dimen name="selected_eq_go_img_margin">6dp</dimen>
+    <dimen name="empty_list_txt">22sp</dimen>
+    <dimen name="player_back_button_margin_start">26dp</dimen>
+    <dimen name="player_back_button_margin_end">20dp</dimen>
+    <dimen name="mini_player_progress_height">2dp</dimen>
+    <dimen name="large_noti_title_panel_padding">8dp</dimen>
+    <dimen name="noti_title_txt">18sp</dimen>
+    <dimen name="noti_sub_title_txt">15sp</dimen>
+    <dimen name="small_noti_panel_padding">8dp</dimen>
+    <dimen name="small_noti_title_panel_padding">8dp</dimen>
+    <dimen name="equalizer_border_radius">6dp</dimen>
+    <dimen name="speaker_panel_margin_top">10dp</dimen>
 
 
+    <dimen name="album_track_menu_margin">14.5dp</dimen>
+    <dimen name="card_grid_bottom_padding">10.5dp</dimen>
+    <dimen name="card_header_recycler_title_margine_top">18.5dp</dimen>
+    <dimen name="card_playlist_dialog_margin">20.5dp</dimen>
+    <dimen name="selected_eq_go_img">10.5dp</dimen>
+    <dimen name="speaker_panel_width">283.5dp</dimen>
+    <dimen name="speaker_panel_height">298.5dp</dimen>
+    <dimen name="speaker_panel_margin_bottom">46.5dp</dimen>
+    <dimen name="speaker_panel_margin_left">5.5dp</dimen>
+    <dimen name="speaker_panel_margin_right">5.5dp</dimen>
+    <dimen name="card_grid_img_margin">12dp</dimen>
+    <dimen name="music_tab_txt_size">16dp</dimen>
 
-    <dimen name="fourty_px">10dp</dimen>
-    <dimen name="three_thirty_px">82.5dp</dimen>
-    <dimen name="one_twenty_px">30dp</dimen>
 </resources>

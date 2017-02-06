@@ -1,8 +1,9 @@
 package com.globaldelight.boom.utils.helpers;
 
 /**
- * Created by nitesh on 8/6/15.
+ * Created by Rahul Kumar Agrawal on 6/14/2016.
  */
+
 public interface ISwipeRefresh {
 
     void leftSwipe();

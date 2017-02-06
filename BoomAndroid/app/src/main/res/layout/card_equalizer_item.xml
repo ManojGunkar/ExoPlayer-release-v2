@@ -10,7 +10,7 @@
         android:id="@+id/eq_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/ninty_six_px"/>
+        android:layout_marginLeft="@dimen/card_eq_margin_img"/>
 
     <com.globaldelight.boom.ui.widgets.RegularTextView
         android:id="@+id/eq_name"
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:textSize="@dimen/effect_eq_title_size"
-        android:layout_marginLeft="@dimen/one_zero_four_px"
+        android:layout_marginLeft="@dimen/card_eq_margin_txt"
         android:maxLines="1"
         android:textColor="@color/dialog_txt"/>
 </LinearLayout>

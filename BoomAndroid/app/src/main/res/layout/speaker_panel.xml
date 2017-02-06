@@ -3,18 +3,18 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:gravity="center">
-    <FrameLayout android:layout_width="@dimen/one_one_three_four_pt"
-        android:layout_height="@dimen/one_one_nine_four_pt"
+    <FrameLayout android:layout_width="@dimen/speaker_panel_width"
+        android:layout_height="@dimen/speaker_panel_height"
         android:orientation="vertical"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/one_hundred_eighty_six_pt"
-            android:layout_marginLeft="@dimen/twenty_two_pt"
-            android:layout_marginRight="@dimen/twenty_two_pt"
-            android:layout_marginTop="@dimen/forty_px"
+            android:layout_marginBottom="@dimen/speaker_panel_margin_bottom"
+            android:layout_marginLeft="@dimen/speaker_panel_margin_left"
+            android:layout_marginRight="@dimen/speaker_panel_margin_right"
+            android:layout_marginTop="@dimen/speaker_panel_margin_top"
             android:background="@drawable/ic_speaker_background">
 
             <LinearLayout

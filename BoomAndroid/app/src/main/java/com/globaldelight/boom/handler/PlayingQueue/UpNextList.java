@@ -35,7 +35,7 @@ public class UpNextList {
 
     private static Context context;
     public static int PlayItemIndex = 0;
-    private QueueEvent queueEvent = null;
+    private IQueueEvent IQueueEvent = null;
     private long mShiftingTime = 0;
     Handler eventHandler = new Handler();
     private static UpNextList.SHUFFLE mShuffle = UpNextList.SHUFFLE.none;
@@ -77,8 +77,8 @@ public class UpNextList {
         return mArtistArtList;
     }
 
-    public void setQueueEvent(QueueEvent event) {
-        this.queueEvent = event;
+    public void setIQueueEvent(IQueueEvent event) {
+        this.IQueueEvent = event;
     }
 
     private ArrayList<IMediaItemBase> getItemList(QueueType type) {
@@ -359,11 +359,11 @@ public class UpNextList {
     /**************************************************************************************************************************/
 //    Callbacks to update UI
     public void PlayPause() {
-        if (queueEvent != null) {
+        if (IQueueEvent != null) {
             eventHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    queueEvent.onPlayingItemClicked();
+                    IQueueEvent.onPlayingItemClicked();
                 }
             });
         }
@@ -371,11 +371,11 @@ public class UpNextList {
 
     //  Queue and Playing Item Update
     public void PlayingItemChanged() {
-        if (queueEvent != null) {
+        if (IQueueEvent != null) {
             eventHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    queueEvent.onPlayingItemChanged();
+                    IQueueEvent.onPlayingItemChanged();
                 }
             });
         }
@@ -383,11 +383,11 @@ public class UpNextList {
 
     //  Only Queue update
     public void QueueUpdated() {
-        if (queueEvent != null) {
+        if (IQueueEvent != null) {
             eventHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    queueEvent.onQueueUpdated();
+                    IQueueEvent.onQueueUpdated();
                 }
             });
         }
@@ -425,6 +425,29 @@ public class UpNextList {
         }).start();
     }
 
+    public void addSearchItemToPlay(final IMediaItemBase item){
+        if(null != item){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mGhostList.clear();
+                    setItemAsPlayingItem(item, QueueType.Auto_UpNext);
+                    mAutoNextList.clear();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ArrayList list = new ArrayList();
+                            list.add(item);
+                            insertUnShuffledListWithUpdateUpNext(list, false);
+                        }
+                    }).start();
+
+                    PlayingItemChanged();
+                }
+            }, 100);
+        }
+    }
+
     public void addToPlay(final ArrayList<IMediaItem> itemList, final int position, boolean isPlayAll) {
         long mTime = System.currentTimeMillis();
         boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
@@ -440,6 +463,7 @@ public class UpNextList {
                 @Override
                 public void run() {
                     if(null != itemList && itemList.size() > 0) {
+                        mGhostList.clear();
                         if (position > 0) {
                             setItemListAsPrevious(itemList.subList(0, position));
                         }
@@ -480,6 +504,7 @@ public class UpNextList {
                 @Override
                 public void run() {
                     if(null != itemList && itemList.size() > 0) {
+                        mGhostList.clear();
                         if (position > 0) {
                             setItemListAsPrevious(itemList.subList(0, position));
                         }
@@ -521,6 +546,7 @@ public class UpNextList {
                 @Override
                 public void run() {
                     if(null != collection && collection.getMediaElement().size() > 0) {
+                        mGhostList.clear();
                         if (position > 0) {
                             setItemListAsPrevious(collection.getMediaElement().subList(0, position));
                         }

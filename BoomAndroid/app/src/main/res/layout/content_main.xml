@@ -9,20 +9,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <android.support.design.widget.TabLayout
+        <com.globaldelight.boom.ui.widgets.MusicListTabs.MusicTabBar
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:elevation="10dp"
             android:background="@color/colorPrimary"
             android:minHeight="?attr/actionBarSize"
-            app:tabIndicatorHeight="@dimen/twelve_px"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+            app:tabIndicatorHeight="@dimen/pager_tab_indicator_height"/>
 
         <LinearLayout
             android:id="@+id/lib_add_container"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/add_height">
+            android:layout_height="@dimen/add_height"
+            android:visibility="gone">
 
         </LinearLayout>
 

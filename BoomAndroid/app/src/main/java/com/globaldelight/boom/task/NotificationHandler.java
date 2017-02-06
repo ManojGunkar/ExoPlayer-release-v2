@@ -26,8 +26,9 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 /**
- * Created by architjn on 15/12/15.
+ * Created by Rahul Kumar Agrawal on 6/14/2016.
  */
+
 public class NotificationHandler {
 
     private static final int NOTIFICATION_ID = 56565;

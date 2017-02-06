@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.View;
 import com.globaldelight.boom.R;
 
+/**
+ * Created by Rahul Kumar Agrawal on 6/14/2016.
+ */
 
 public class PermissionChecker {
 

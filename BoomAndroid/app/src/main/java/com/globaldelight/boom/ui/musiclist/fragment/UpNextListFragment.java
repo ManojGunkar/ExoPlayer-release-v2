@@ -54,6 +54,10 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
                     if (upNextListAdapter != null)
                         upNextListAdapter.updateList(App.getPlayingQueueHandler().getUpNextList());
                     break;
+                case PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                    if (upNextListAdapter != null)
+                        upNextListAdapter.notifyDataSetChanged();
+                    break;
             }
         }
     };
@@ -73,6 +77,7 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
     private void initViews() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(PlayerEvents.ACTION_UPDATE_QUEUE);
+        filter.addAction(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         getActivity().registerReceiver(upnextBroadcastReceiver, filter);
 
         checkPermissions();
@@ -100,7 +105,7 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
             rootView.setLayoutManager(gridLayoutManager);
             rootView.addItemDecoration(new SimpleDividerItemDecoration(getActivity(), Utils.getWindowWidth(getActivity())));
             rootView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(getActivity(), 0)));
-            upNextListAdapter = new UpNextListAdapter(getActivity(), upNextList, UpNextListFragment.this);
+            upNextListAdapter = new UpNextListAdapter(getActivity(), upNextList, UpNextListFragment.this, rootView);
             rootView.setAdapter(upNextListAdapter);
             gridLayoutManager.scrollToPosition(upNextListAdapter.getPlayingHeaderPosition());
             rootView.setHasFixedSize(true);

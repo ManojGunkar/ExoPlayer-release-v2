@@ -16,8 +16,8 @@
             android:id="@+id/player_back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/one_zero_four_px"
-            android:layout_marginEnd="@dimen/eighty_px"
+            android:layout_marginStart="@dimen/player_back_button_margin_start"
+            android:layout_marginEnd="@dimen/player_back_button_margin_end"
             android:background="@drawable/unbounded_ripple"
             android:src="@drawable/ic_player_title_dropdown"  />
     </LinearLayout>

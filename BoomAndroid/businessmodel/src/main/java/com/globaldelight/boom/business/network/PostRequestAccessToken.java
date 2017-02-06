@@ -19,13 +19,6 @@ import org.json.JSONObject;
 
 public class PostRequestAccessToken extends HandleJsobObject {
     private static PostRequestAccessToken mInstance = null;
-//    String responseServer;
-//    private String apptype = "ios";
-//    private String appid = "com.globaldelight.iBoom";
-//    private String country = "IN";
-//    private String deviceid = "1E183651-4198-4D1F-9D09-C3EF418AEBA6";
-//    private String locale = "en";
-//    private String secretkey = "0adbc1e4481e6839a903ec3509d84ac36af95471c6cf1eb2093165efcf1023be";
 
     private PostRequestAccessToken(Context context) {
         super(context);

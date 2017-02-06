@@ -15,8 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="18"
-        android:layout_marginLeft="@dimen/one_seventy_two_pz"
-        android:layout_marginRight="@dimen/one_seventy_two_pz"
+        android:layout_marginLeft="@dimen/effect_content_margin"
+        android:layout_marginRight="@dimen/effect_content_margin"
         android:layout_gravity="top"
         android:gravity="center_vertical"
         android:orientation="horizontal">
@@ -69,7 +69,7 @@
                 android:id="@+id/three_surround_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/thirty_six_px"
+                android:layout_marginLeft="@dimen/effect_title_margin"
                 android:textSize="@dimen/effect_title_size"
                 android:textStyle="normal"
                 android:textColor="@color/effect_inactive"
@@ -93,7 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/full_bass_margin_left"
-            android:layout_marginBottom="@dimen/sixty_px"
+            android:layout_marginBottom="@dimen/full_bass_margin_bottom"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
@@ -140,7 +140,7 @@
                 android:id="@+id/intensity_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/thirty_six_px"
+                android:layout_marginLeft="@dimen/effect_title_margin"
                 android:textSize="@dimen/effect_title_size"
                 android:textStyle="normal"
                 android:textColor="@color/effect_inactive"
@@ -171,8 +171,7 @@
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/intensity_disable_img"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="@dimen/forty_px"/>
+                android:layout_height="match_parent"/>
 
         </FrameLayout>
 
@@ -204,7 +203,7 @@
             android:textSize="@dimen/effect_title_size"
             android:textStyle="normal"
             android:textColor="@color/effect_inactive"
-            android:layout_marginLeft="@dimen/thirty_six_px"
+            android:layout_marginLeft="@dimen/effect_title_margin"
             android:text="@string/equalizer"/>
 
         <LinearLayout
@@ -217,22 +216,22 @@
                 android:id="@+id/eq_dialog_panel"
                 android:layout_width="@dimen/effect_equalizer_dropdown_width"
                 android:layout_height="@dimen/effect_equalizer_dropdown_height"
-                android:paddingLeft="@dimen/twenty_four_px"
-                android:paddingRight="@dimen/twenty_four_px"
+                android:paddingLeft="@dimen/effect_eq_dialog_padding"
+                android:paddingRight="@dimen/effect_eq_dialog_padding"
                 android:gravity="center_vertical"
                 android:background="@drawable/equalizer_border_inactive">
                 <ImageView
                     android:id="@+id/selected_eq_img"
-                    android:layout_width="@dimen/seventy_six_px"
-                    android:layout_height="@dimen/seventy_six_px"
+                    android:layout_width="@dimen/selected_eq_img"
+                    android:layout_height="@dimen/selected_eq_img"
                     android:layout_weight="0"/>
 
                 <com.globaldelight.boom.ui.widgets.RegularTextView
                     android:id="@+id/selected_eq_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/twenty_four_px"
-                    android:textSize="@dimen/sixty_pt"
+                    android:layout_marginLeft="@dimen/selected_eq_txt_margin"
+                    android:textSize="@dimen/selected_eq_txt"
                     android:textStyle="normal"
                     android:textColor="@color/effect_inactive"
                     android:maxLines="1"
@@ -241,9 +240,9 @@
 
                 <ImageView
                     android:id="@+id/selected_eq_go_img"
-                    android:layout_width="@dimen/forty_two_px"
-                    android:layout_height="@dimen/forty_two_px"
-                    android:layout_marginLeft="@dimen/twenty_four_px"
+                    android:layout_width="@dimen/selected_eq_go_img"
+                    android:layout_height="@dimen/selected_eq_go_img"
+                    android:layout_marginLeft="@dimen/selected_eq_go_img_margin"
                     android:src="@drawable/ic_eq_dropdown_off"
                     android:layout_weight="0"/>
 

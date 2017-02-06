@@ -6,6 +6,10 @@ import android.view.View;
 
 import com.globaldelight.boom.ui.musiclist.adapter.SearchListAdapter;
 
+/**
+ * Created by Rahul Kumar Agrawal on 6/14/2016.
+ */
+
 public class SearchListSpacesItemDecoration extends RecyclerView.ItemDecoration {
     private int space;
     private SearchListAdapter adapter;

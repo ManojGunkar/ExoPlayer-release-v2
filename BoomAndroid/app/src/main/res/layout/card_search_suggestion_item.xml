@@ -10,6 +10,6 @@
         android:textColor="@color/library_search_suggestion"
         android:textStyle="normal"
         android:maxLines="1"
-        android:padding="@dimen/fourty_pt"
-        android:textSize="@dimen/sixty_pt"/>
+        android:padding="@dimen/card_search_suggestion_item_margin"
+        android:textSize="@dimen/card_search_suggestion_item_txt"/>
 </LinearLayout>

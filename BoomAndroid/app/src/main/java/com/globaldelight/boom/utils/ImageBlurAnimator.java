@@ -11,6 +11,9 @@ import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.widget.ImageView;
 
+/**
+ * Created by Rahul Kumar Agrawal on 6/14/2016.
+ */
 
 public class ImageBlurAnimator {
 

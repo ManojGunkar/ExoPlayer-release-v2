@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
+    android:layout_height="wrap_content"
     android:gravity="center_vertical">
 
         <LinearLayout
@@ -14,20 +14,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/library_header_title"
-                    android:layout_marginLeft="@dimen/seventy_six_px"
-                    android:layout_marginRight="@dimen/seventy_six_px"
+                    android:layout_marginLeft="@dimen/card_header_recycler_title_margine"
+                    android:layout_marginRight="@dimen/card_header_recycler_title_margine"
                     android:maxLines="1"
-                    android:textSize="@dimen/eighty_pt"
                     android:visibility="gone"
+                    android:textSize="@dimen/card_header_recycler_title"
                     android:textStyle="bold"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:weightSum="100"
-                    android:layout_marginLeft="@dimen/seventy_four_pt"
-                    android:layout_marginRight="@dimen/seventy_four_pt"
-                    android:layout_marginTop="@dimen/fourty_pt"
+                    android:layout_marginLeft="@dimen/card_header_recycler_title_margine"
+                    android:layout_marginRight="@dimen/card_header_recycler_title_margine"
+                    android:layout_marginTop="@dimen/card_header_recycler_title_margine_top"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -46,7 +46,7 @@
                                 <LinearLayout
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginLeft="@dimen/thirty_two_px"
+                                    android:layout_marginLeft="@dimen/card_header_recycler_sub_title_margine"
                                     android:gravity="center_vertical"
                                     android:orientation="vertical">
                                         <com.globaldelight.boom.ui.widgets.RegularTextView
@@ -54,7 +54,7 @@
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:maxLines="1"
-                                            android:textSize="@dimen/seventy_two_pt"
+                                            android:textSize="@dimen/card_header_recycler_sub_title"
                                             android:textColor="@color/library_header_title"
                                             android:textStyle="normal"/>
 
@@ -63,10 +63,10 @@
                                             android:id="@+id/header_detail"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:layout_marginTop="@dimen/twenty_pt"
+                                            android:layout_marginTop="@dimen/card_header_recycler_detail_margin"
                                             android:maxLines="1"
                                             android:textColor="@color/library_header_sub_title"
-                                            android:textSize="@dimen/fifty_six_pt"
+                                            android:textSize="@dimen/card_header_recycler_detail_txt"
                                             android:textStyle="normal"/>
                                 </LinearLayout>
 

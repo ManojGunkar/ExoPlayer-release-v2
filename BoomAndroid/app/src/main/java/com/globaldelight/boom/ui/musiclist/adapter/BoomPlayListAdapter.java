@@ -132,7 +132,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     private int setSize(SimpleItemViewHolder holder) {
         Utils utils = new Utils(activity);
         int size = (utils.getWindowWidth(activity) / (isPhone ? 2 : 3))
-                - (int)(activity.getResources().getDimension(R.dimen.twenty_four_pt)*2);
+                - (int)activity.getResources().getDimension(R.dimen.card_grid_img_margin);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
         holder.gridBottomBg.setLayoutParams(params);
@@ -276,12 +276,6 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                                         fragment.listIsEmpty();
                                     }
                                     Toast.makeText(activity, activity.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
-                                    break;
-                                case R.id.popup_add_song:
-                                    App.getUserPreferenceHandler().setBoomPlayListId(items.get(position).getItemId());
-                                    App.getUserPreferenceHandler().setLibraryStartFromHome(false);
-//                                    Intent i = new Intent(activity, DeviceMusicActivity.class);
-//                                    activity.startActivity(i);
                                     break;
                             }
                         }catch (Exception e){}

@@ -73,4 +73,20 @@
         <item>@drawable/ic_list_rb_off</item>
         <item>@drawable/ic_list_metal_off</item>
     </integer-array>
+
+    <integer-array name="headphone_active">
+        <item>@drawable/ic_over_ear_active</item>
+        <item>@drawable/ic_in_canal_active</item>
+        <item>@drawable/ic_on_ear_active</item>
+    </integer-array>
+    <integer-array name="headphone_inactive">
+        <item>@drawable/ic_over_ear_normal</item>
+        <item>@drawable/ic_in_canal_normal</item>
+        <item>@drawable/ic_on_ear_normal</item>
+    </integer-array>
+    <integer-array name="headphone_list">
+        <item>@string/over_ear</item>
+        <item>@string/in_canal</item>
+        <item>@string/on_ear</item>
+    </integer-array>
 </resources>

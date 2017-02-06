@@ -102,11 +102,7 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
                     public void run() {
                         Intent i = new Intent(context, AlbumDetailActivity.class);
                         i.putExtra("mediaItemCollection", itemList.get(position));
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                (Activity) context,
-                                new Pair<View, String>(holder.defaultImg, "transition:imgholder")
-                        );
-                        ActivityCompat.startActivity((Activity) context, i, options.toBundle());
+                        context.startActivity(i);
                     }
                 }, 100);
             }
@@ -160,7 +156,7 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
     private int setSize(SimpleItemViewHolder holder) {
         Utils utils = new Utils(context);
         int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
-                - (int)(context.getResources().getDimension(R.dimen.twenty_four_pt)*2);
+                - (int)context.getResources().getDimension(R.dimen.card_grid_img_margin);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
         holder.gridBottomBg.setLayoutParams(params);

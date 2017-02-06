@@ -5,12 +5,10 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-
-
-
 /**
- * Created by nitesh on 14/5/15.
+ * Created by Rahul Kumar Agrawal on 6/14/2016.
  */
+
 public class OnScrollTouchListenerControl implements View.OnTouchListener {
 
     private static final String TAG = OnScrollTouchListenerControl.class.getName();

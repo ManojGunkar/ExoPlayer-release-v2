@@ -13,17 +13,27 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.globaldelight.boom.App;
+import com.globaldelight.boom.business.client.IFBAddsUpdater;
+import com.globaldelight.boom.business.client.IGoogleAddsUpdater;
+import com.globaldelight.boom.business.BusinessUtils;
+import com.globaldelight.boom.business.BusinessUtils.AddSource;
+import com.globaldelight.boom.manager.BusinessRequestReceiver;
 import com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment;
 import com.globaldelight.boom.ui.widgets.slidinguppanel.SlidingUpPanelLayout;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.task.PlayerEvents;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.surveymonkey.surveymonkeyandroidsdk.SurveyMonkey;
+
+import static com.globaldelight.boom.business.BusinessUtils.AddSource.*;
+import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
 
 /**
  * Created by Rahul Agarwal on 12-01-17.
  */
 
-public class MasterActivity extends AppCompatActivity implements SlidingUpPanelLayout.PanelSlideListener{
+public class MasterActivity extends AppCompatActivity implements SlidingUpPanelLayout.PanelSlideListener, BusinessRequestReceiver.IUpdateBusinessRequest, IFBAddsUpdater, IGoogleAddsUpdater {
     private static final String TAG = "MasterActivity";
     private static final float BITMAP_SCALE = 0.4f;
     private static final float BLUR_RADIUS = 25.0f;
@@ -46,6 +56,8 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     private IPlayerSliderControl iPlayerSliderControl;
     private FragmentManager fragmentManager;
     private Handler handler;
+    private static BusinessRequestReceiver businessRequestReceiver;
+    private static ILibraryAddsUpdater iLibraryAddsUpdater;
 
     private static boolean isPlayerExpended = false;
 
@@ -142,7 +154,17 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     @Override
     protected void onResume() {
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
+        App.getBusinessHandler().setFBNativeAddListener(this);
+        App.getBusinessHandler().setGoogleNativeAddListener(this);
+        businessRequestReceiver = new BusinessRequestReceiver(this, businessRequestReceiver);
+        registerReceiver(businessRequestReceiver, new IntentFilter(ACTION_BUSINESS_CONFIGURATION));
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(businessRequestReceiver);
+        super.onPause();
     }
 
     public void initContainer() {
@@ -216,6 +238,44 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         });
     }
 
+    public static void setLibraryAddsUpdater(ILibraryAddsUpdater libraryAddsUpdater){
+        iLibraryAddsUpdater = libraryAddsUpdater;
+    }
+
+    @Override
+    public void onBusinessRequest(AddSource addSources) {
+        if(addSources == google){
+            App.getBusinessHandler().loadGoogleNativeAdd();
+        }else{
+            App.getBusinessHandler().loadFbNativeAdds();
+        }
+    }
+
+    @Override
+    public void onLoadFBNativeAdds(final LinearLayout fbNativeAddContainer) {
+        LoadAdds(fbNativeAddContainer);
+    }
+
+    @Override
+    public void onLoadGoogleNativeAdds(final NativeExpressAdView googleAddView) {
+        LoadAdds(googleAddView);
+    }
+
+    private void LoadAdds(final View addView){
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                iLibraryAddsUpdater.onAddsUpdate(BusinessUtils.getAddSources(), BusinessUtils.isLibraryBannerEnable(), addView);
+            }
+        });
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
+    }
+
     public interface IPlayerSliderControl{
         void onPanelSlide(View panel, float slideOffset);
         void onPanelCollapsed(View panel);
@@ -225,5 +285,9 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         void onResumeFragment(int alfa);
         void onVolumeUp();
         void onVolumeDown();
+    }
+
+    public interface ILibraryAddsUpdater{
+        void onAddsUpdate(AddSource addSources, boolean isLibraryAddsEnable, View addContainer);
     }
 }

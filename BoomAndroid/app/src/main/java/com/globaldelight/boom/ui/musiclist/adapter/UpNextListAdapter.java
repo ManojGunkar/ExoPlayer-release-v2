@@ -4,20 +4,22 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
 import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
 import com.globaldelight.boom.ui.widgets.RegularButton;
@@ -31,6 +33,10 @@ import java.util.ArrayList;
 
 import static android.view.LayoutInflater.from;
 import static com.globaldelight.boom.utils.Utils.dpToPx;
+
+/**
+ * Created by Rahul Agarwal on 8/8/2016.
+ */
 
 public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.SimpleItemViewHolder> {
     public static final int ITEM_VIEW_TYPE_HEADER_HISTORY = 0;
@@ -52,12 +58,14 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
 //    private ArrayList<IMediaItemBase> mUpnextAutoList;
     private int headerHistoryPos, headerPlayingPos, headerManualPos,
             headerAutoPos, totalSize;
+    private RecyclerView recyclerView;
     private Context context;
 
-    public UpNextListAdapter(Context context, UpNextList playingQueue, OnStartDragListener dragListener) {
+    public UpNextListAdapter(Context context, UpNextList playingQueue, OnStartDragListener dragListener, RecyclerView recyclerView) {
         this.context = context;
         init(playingQueue.getHistoryList(), playingQueue.getPlayingList());
         this.mOnStartDragListener = dragListener;
+        this.recyclerView = recyclerView;
     }
 
 
@@ -144,7 +152,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
             case ITEM_VIEW_TYPE_HEADER_HISTORY:
             case ITEM_VIEW_TYPE_HEADER_AUTO:
                 itemView = from(parent.getContext()).
-                        inflate(R.layout.card_header_playing_queue, parent, false);
+                        inflate(R.layout.card_header_upnext, parent, false);
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_LIST_MANUAL:
 
@@ -155,7 +163,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
             case ITEM_VIEW_TYPE_LIST_AUTO:
 
                 itemView = from(parent.getContext()).
-                        inflate(R.layout.card_playing_queue, parent, false);
+                        inflate(R.layout.card_upnext, parent, false);
                 return new SimpleItemViewHolder(itemView);
             case ITEM_VIEW_TYPE_NULL:
                 itemView = from(parent.getContext()).
@@ -183,12 +191,12 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 break;
             case ITEM_VIEW_TYPE_HEADER_PLAYING:
                     setHeaderBg(holder);
-                    holder.headerText.setText(R.string.Playing);
+                    holder.headerText.setText(R.string.now_playing);
                     holder.buttonClrear.setVisibility(View.INVISIBLE);
                 break;
             case ITEM_VIEW_TYPE_HEADER_HISTORY:
                     setHeaderBg(holder);
-                    holder.headerText.setText(R.string.History);
+                    holder.headerText.setText(R.string.recently_played);
                     if (mHistoryList != null && mHistoryList.size() > 0) {
                         holder.buttonClrear.setVisibility(View.VISIBLE);
                         setOnClearBottonClick(holder, QueueType.History, position);
@@ -211,7 +219,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 item = getPositionObject(position);
 
                 if (itemDelete != null && itemDelete.getItemPosition() == item.getItemPosition() && item.getListType() == itemDelete.getListType()) {
-                    holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.upnext_delete_background));
+                    holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.upnext_delete_background));
                     holder.layout.setVisibility(View.GONE);
                     holder.undoButton.setVisibility(View.INVISIBLE);
                     holder.undoButton.setOnClickListener(new View.OnClickListener() {
@@ -237,7 +245,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 } else {
                     try {
                         // we need to show the "normal" state
-                        holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorBackground));
+                        holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.app_background));
                         holder.layout.setVisibility(View.VISIBLE);
                         holder.undoButton.setVisibility(View.GONE);
                         holder.undoButton.setOnClickListener(null);
@@ -267,7 +275,20 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                     mPlaying.get(0).getUpNextItem().setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
 
                 setArt(holder, mPlaying.get(0).getUpNextItem().getItemArtUrl(), whatView(position));
+                holder.art_overlay.setVisibility(View.VISIBLE);
+                holder.art_overlay_play.setVisibility(View.VISIBLE);
+                boolean isMediaItem = mPlaying.get(0).getUpNextItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB;
+                if(App.getPlayerEventHandler().isPlaying()){
+                    holder.art_overlay_play.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_pause, null));
+                    if(!isMediaItem)
+                        holder.loadCloud.setVisibility(View.GONE);
+                } else {
+                    if(!isMediaItem && null != App.getPlayerEventHandler().getPlayer().getDataSource() && !App.getPlayerEventHandler().isPaused())
+                        holder.loadCloud.setVisibility(View.VISIBLE);
+                    holder.art_overlay_play.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_play, null));
+                }
                 holder.name.setText(mPlaying.get(0).getUpNextItem().getItemTitle());
+                holder.name.setTextColor(ContextCompat.getColor(context, R.color.upnext_playing_title));
                 holder.artistName.setText(((MediaItem)mPlaying.get(0).getUpNextItem()).getItemArtist());
                 holder.mainView.setElevation(dpToPx(context, 2));
                 holder.imgHandle.setVisibility(View.INVISIBLE);
@@ -288,7 +309,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 item = getPositionObject(position);
                 if (itemDelete != null && itemDelete.getItemPosition() == item.getItemPosition() && item.getListType() == itemDelete.getListType()) {
                     // we need to show the "undo" state of the row
-                    holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.upnext_delete_background));
+                    holder.itemView.setBackgroundColor(ContextCompat.getColor(context,R.color.upnext_delete_background));
 
                     holder.layout.setVisibility(View.GONE);
                     holder.undoButton.setVisibility(View.INVISIBLE);
@@ -313,7 +334,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                     }, 500);
                 } else {
                     // we need to show the "normal" state
-                    holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorBackground));
+                    holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.app_background));
                     holder.layout.setVisibility(View.VISIBLE);
                     holder.undoButton.setVisibility(View.GONE);
                     holder.undoButton.setOnClickListener(null);
@@ -372,6 +393,15 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                     default:
                         break;
                 }
+                try {
+                    recyclerView.scrollToPosition(headerPlayingPos);
+                }catch (Exception e){}
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyDataSetChanged();
+                    }
+                }, 300);
             }
         });
     }
@@ -382,18 +412,17 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
     }
 
     private void setArt(SimpleItemViewHolder holder, String path, int what) {
-        int size = dpToPx(context, (int) context.getResources().getDimension(R.dimen.one_hundred_eighty_six_pt));
         if (PlayerUtils.isPathValid(path ))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null)).resize(size,
-                    size).centerCrop().into(holder.img);
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null))/*.resize(size,
+                    size).centerCrop()*/.into(holder.img);
         else{
-            setDefaultArt(holder, size);
+            setDefaultArt(holder);
         }
     }
 
-    private void setDefaultArt(SimpleItemViewHolder holder, int size) {
+    private void setDefaultArt(SimpleItemViewHolder holder) {
 
-        holder.img.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_list));
+        holder.img.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_list, null));
     }
 
     @Override
@@ -544,8 +573,9 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
 
         //For Song View
         public RegularTextView name, artistName;//added by nidhin
-        public View mainView;
-        public ImageView img;
+        public View mainView, art_overlay;
+        public ImageView img, art_overlay_play;
+        public ProgressBar loadCloud;
 
         public LinearLayout imgHandle;
         public RegularButton undoButton;
@@ -559,7 +589,10 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
 
             buttonClrear = (RegularTextView) itemView.findViewById(R.id.btn_clear);
             layout = (LinearLayout) itemView.findViewById(R.id.viewcontent);
-            img = (ImageView) itemView.findViewById(R.id.queue_item_img);
+            img = (ImageView) itemView.findViewById(R.id.song_item_img);
+            art_overlay_play = (ImageView) itemView.findViewById(R.id.song_item_img_overlay_play);
+            art_overlay = itemView.findViewById(R.id.song_item_img_overlay);
+            loadCloud = (ProgressBar) itemView.findViewById(R.id.load_cloud );
             imgHandle = (LinearLayout) itemView.findViewById(R.id.queue_item_handle);
             name = (RegularTextView) itemView.findViewById(R.id.queue_item_name);
             artistName = (RegularTextView) itemView.findViewById(R.id.queue_item_artist);

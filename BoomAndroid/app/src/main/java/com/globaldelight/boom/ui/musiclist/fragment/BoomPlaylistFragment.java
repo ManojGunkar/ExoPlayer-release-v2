@@ -33,6 +33,10 @@ import com.globaldelight.boom.utils.decorations.BoomPlayListFooterItemDecoration
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 import java.util.ArrayList;
 
+/**
+ * Created by Rahul Agarwal on 26-01-17.
+ */
+
 public class BoomPlaylistFragment extends Fragment {
 
     private RecyclerView rootView;

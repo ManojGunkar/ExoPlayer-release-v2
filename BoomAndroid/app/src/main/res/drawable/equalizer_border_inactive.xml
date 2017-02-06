@@ -2,9 +2,9 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="@android:color/transparent" />
-    <corners android:radius="6dip" />
+    <corners android:radius="@dimen/equalizer_border_radius" />
     <stroke
         android:color="@color/effect_inactive"
-        android:width="@dimen/four_px" />
+        android:width="@dimen/equalizer_border" />
 
 </shape>

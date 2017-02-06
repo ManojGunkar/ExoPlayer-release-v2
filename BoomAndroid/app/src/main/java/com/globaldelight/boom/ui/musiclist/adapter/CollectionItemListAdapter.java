@@ -107,31 +107,9 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                 holder.count.setText(String.valueOf(pos + 1));
                 holder.duration.setText(duration);
 
-                if (App.getUserPreferenceHandler().isLibFromHome()) {
-                    holder.menu.setVisibility(View.VISIBLE);
-                    holder.songChk.setVisibility(View.GONE);
-                    setOnClickListeners(holder, pos);
-                } else {
-                    holder.menu.setVisibility(View.GONE);
-                    holder.songChk.setVisibility(View.VISIBLE);
-                    setOnCheckedChanged(holder, pos);
-                }
+                setOnClickListeners(holder, pos);
             }
         }
-    }
-
-    private void setOnCheckedChanged(CollectionItemListAdapter.SimpleItemViewHolder holder, final int pos) {
-            if(App.getUserPreferenceHandler().getItemIDList().contains(item.getMediaElement().get(pos).getItemId())){
-                holder.songChk.setChecked(true);
-            }else {
-                holder.songChk.setChecked(false);
-            }
-        holder.songChk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    App.getUserPreferenceHandler().addItemToPlayList((MediaItem)item.getMediaElement().get(pos));
-            }
-        });
     }
 
     private void setOnMenuClickListener(CollectionItemListAdapter.SimpleItemViewHolder holder, int position) {
@@ -283,7 +261,6 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
         public RegularTextView name, count, duration;
         public View mainView;
         public ImageView menu;
-        public CheckBox songChk;
 
         public RegularTextView headerTitle, headerSubTitle, headerDetail;
         ImageView mShuffle, mMore;
@@ -295,7 +272,6 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
             duration = (RegularTextView) itemView.findViewById(R.id.album_item_duration);
             count = (RegularTextView) itemView.findViewById(R.id.album_item_count);
             menu = (ImageView) itemView.findViewById(R.id.album_item_menu);
-            songChk = (CheckBox) itemView.findViewById(R.id.song_chk);
 
             headerTitle = (RegularTextView) itemView.findViewById(R.id.header_title);
             headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);

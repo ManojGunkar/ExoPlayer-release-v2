@@ -11,14 +11,17 @@
 
     <color name="app_background">#0e0e0f</color>
 
+    <color name="player_background">#D9000000</color>
+
+    <color name="toolbar_txt">@color/white</color>
+
+    <color name="music_tab_selected_color">#616161</color>
+    <color name="music_tab_normal_color">@color/white</color>
+    <color name="music_tab_indicator_color">@color/colorAccent</color>
+
     <color name="noti_background">#0e0e0f</color>
     <color name="noti_track_title">@color/white</color>
     <color name="noti_track_sub_title">#5d5d5e</color>
-
-    <color name="player_overlay">#D9000000</color>
-
-    <color name="tab_title_active">@color/white</color>
-    <color name="tab_title_inactive">#616161</color>
 
     <color name="track_title">@color/white</color>
     <color name="track_selected_title">@color/colorAccent</color>
@@ -26,7 +29,6 @@
 
     <color name="library_search_suggestion">@color/white</color>
 
-    <color name="library_background">#0e0e0f</color>
     <color name="library_separator">#1d1e1f</color>
 
     <color name="library_header_title">@color/white</color>
@@ -40,22 +42,18 @@
     <color name="player_track_title">@color/white</color>
     <color name="player_track_sub_title">@color/white</color>
 
-    <color name="large_player_seek_progress">@color/colorAccent</color>
-    <color name="large_player_seek_background">#4a4a4a</color>
     <color name="large_player_seek_time">@color/white</color>
-
-    <color name="mini_player_seek_background">#212122</color>
-    <color name="mini_player_seek_progress">@color/colorAccent</color>
-    <color name="mini_player_background">@color/colorPrimary</color>
 
     <color name="effect_active">@color/white</color>
     <color name="effect_inactive">#5f5d61</color>
+    <color name="effect_intensity_seek_background">#313131</color>
+    <color name="effect_intensity_seek_inactive">#5f5d61</color>
+    <color name="effect_intensity_seek_active">#bfbfbf</color>
 
     <color name="dialog_title">@color/white</color>
     <color name="dialog_background">#1f1f20</color>
     <color name="dialog_submit_positive">@color/colorAccent</color>
     <color name="dialog_submit_negative">#7e7e7e</color>
-    <color name="dialog_submit_natural">#7e7e7e</color>
     <color name="dialog_content">#5d5d5e</color>
     <color name="dialog_widget">@color/white</color>
     <color name="dialog_selection">#1a1a1b</color>
@@ -63,54 +61,30 @@
     <color name="dialog_selected_txt">@color/colorAccent</color>
     <color name="dialog_list_separator">#1a1a1b</color>
 
-    <color name="upnext_header_title">#232629</color>
-    <color name="upnext_header_clear">#232629</color>
+    <color name="upnext_header_title">@color/white</color>
+    <color name="upnext_header_clear">@color/white</color>
     <color name="upnext_header_separator">#313232</color>
-    <color name="upnext_track_title">@color/white</color>
+    <color name="upnext_header_background">@color/black</color>
+    <color name="upnext_track_title">#a6a6a6</color>
+    <color name="upnext_playing_title">@color/colorAccent</color>
     <color name="upnext_track_sub_title">#5d5d5e</color>
-    <color name="upnext_delete_background">#232629</color>
+    <color name="upnext_delete_background">@color/black</color>
     <color name="swipe_delete_undo_btn">#fff084</color>
 
     <color name="coach_mark_background">@color/colorAccent</color>
-    <color name="coach_mark_text">@color/white</color>
-
-
-
-
-
-
-
-
-    <color name="black_overlay">#66000000</color>
-
-    <color name="colorBackground">#020308</color>
-    <color name="white_active">#ffffff</color>
-    <color name="white_shade">#828587</color>
     <color name="coachbubble">#9b002d</color>
-    <color name="coachbubble_bg">#b60035</color>
-    <color name="play_que_header_bg">#061019</color>
-    <color name="play_que_decs_txt">#59595C</color>
 
 
+    <color name="setting_item_header_title">#00b0ff</color>
+    <color name="setting_item_title">@color/white</color>
+    <color name="setting_item_sub_title">#a6a6a6</color>
+    <color name="setting_separator">#1d1e1f</color>
 
-    <!--boomplayer-->
-    <!--cardgrid-->
-    <color name="card_grid_item_title_background">#10141d</color>
-    <color name="card_grid_item_title_background_tint">#434343</color>
-    <color name="card_grid_sub_title">#8d8f91</color>
-    <color name="card_grid_artist">#59595C</color>
-    <color name="card_grid_item_bottom_line">#313232</color>
-    <!--
-    3D activity
-    -->
-    <color name="eq_txt_active">#b8b8b9</color>
-    <color name="eq_txt_inactive">#757677</color>
-    <color name="eq_txt_effectoff_active">#59595c</color>
-    <color name="eq_txt_effectoff_inactive">#37383b</color>
-    <!--
-       store
-       -->
     <!--<color name="about_company_color">#1b221b</color>-->
     <color name="about_company_color">#787979</color>
+
+
+    <color name="card_grid_item_title_background_tint">#434343</color>
+
 </resources><!--
 <color name="colorAccent">#FF4081</color>-->

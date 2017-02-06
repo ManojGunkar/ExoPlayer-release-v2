@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">BusinessModel</string>
+    <string name="app_name">Boom</string>
+
+    <string name="native_adds">ca-app-pub-2462021843550393/9799761460</string>
+    <string name="fb_full_screen_add">218364201905576_218364515238878</string>
+    <string name="test_device">B22A6CC50BA8C5CD32059D24A967BD39</string>
+    <string name="adMob_full_screen_add">ca-app-pub-2462021843550393/9125547464</string>
+    <string name="fb_native_Add">218364201905576_222938014781528</string>
 </resources>

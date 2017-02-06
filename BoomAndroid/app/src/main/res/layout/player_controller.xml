@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_width="match_parent"
+<RelativeLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -7,7 +7,8 @@
     <LinearLayout
         android:id="@+id/progress_panel"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/one_twenty_px"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/player_controller_holder"
         android:layout_marginLeft="@dimen/player_seek_margin"
         android:layout_marginRight="@dimen/player_seek_margin"
         android:gravity="center_vertical"
@@ -46,15 +47,12 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/sixty_px"
-        android:orientation="horizontal" />
 
     <LinearLayout
         android:id="@+id/player_controller_holder"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/player_control_height"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginLeft="@dimen/player_control_margin_left"
         android:layout_marginRight="@dimen/player_control_margin_right"
         android:gravity="center"
@@ -63,7 +61,7 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/player_control_height"
             android:layout_weight="1"
             android:gravity="center">
             <ImageView
@@ -76,7 +74,7 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/player_control_height"
             android:layout_weight="1"
             android:gravity="center">
             <ImageView
@@ -89,7 +87,7 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/player_control_height"
             android:layout_weight="1.8"
             android:gravity="center">
             <ImageView
@@ -102,7 +100,7 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/player_control_height"
             android:layout_weight="1"
             android:gravity="center">
             <ImageView
@@ -115,7 +113,7 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/player_control_height"
             android:layout_weight="1"
             android:gravity="center">
             <ImageView
@@ -128,9 +126,4 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/sixty_px"
-        android:orientation="horizontal" />
-
-</LinearLayout>
+</RelativeLayout>

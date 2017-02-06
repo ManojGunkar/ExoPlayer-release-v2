@@ -8,9 +8,7 @@ import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +36,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.ui.musiclist.activity.MasterActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.EqualizerDialogAdapter;
 import com.globaldelight.boom.handler.controller.EffectUIController;
@@ -68,6 +67,7 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_PLAYER_SCREEN_RESU
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_REPEAT;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_SHUFFLE;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
@@ -93,16 +93,20 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     public View miniController, mPlayerActionPanel;
 
-    private RegularTextView mMiniSongTitle, mMiniSongSubTitle, mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
+    private RegularTextView mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
     private Activity mContext;
     private View mInflater, revealView;
-    private ImageView mMiniPlayerPlayPause;
     private int size, colorLight, colorTo , colorFrom;
-    private AppCompatSeekBar mTrackSeek, mMiniPlayerSeek;
+    private AppCompatSeekBar mTrackSeek;
     private ImageView mPlayerFav, mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mEffectTab, mPlayerTab, mPlayerBackBtn, mLargeAlbumArt;
-    private LinearLayout mEffectContent, mPlayerSwitcherPanel, mSeekbarPanel, mPlayerControllerHolder, mPlayerLarge, mPlayerTitlePanel, mMiniTitlePanel, mMiniPlayerEffectPanel, mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
+    private LinearLayout mEffectContent, mPlayerSwitcherPanel, mSeekbarPanel, mPlayerControllerHolder, mPlayerLarge, mPlayerTitlePanel, mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
     private FrameLayout mPlayerContent;
     private FrameLayout mPlayerBackground;
+
+    private LinearLayout mMiniPlayerEffectPanel, mMiniTitlePanel;
+    private RegularTextView mMiniSongTitle, mMiniSongSubTitle;
+    private ImageView mMiniPlayerPlayPause, mMiniPlayerEffect;
+    private AppCompatSeekBar mMiniPlayerSeek;
 
     private RegularTextView mDisableIntensity;
     private NegativeSeekBar mIntensitySeek;
@@ -188,6 +192,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     break;
                 case ACTION_PLAYER_SCREEN_RESUME:
                     onResumePlayerScreen();
+                    break;
+                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+
+                    updateCloudItemProgress(App.getPlayerEventHandler().getPlayingItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB, App.getPlayerEventHandler().isPlaying());
                     break;
             }
         }
@@ -298,15 +306,15 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void updatePreviousNext(boolean prev_enable, boolean next_enable){
         if(prev_enable){
-            mPrevious.setVisibility(View.VISIBLE);
+            DrawableCompat.setTint(mPrevious.getDrawable(), colorFrom);
         }else{
-            mPrevious.setVisibility(View.INVISIBLE);
+            DrawableCompat.setTint(mPrevious.getDrawable(), colorTo);
         }
 
         if(next_enable){
-            mNext.setVisibility(View.VISIBLE);
+            DrawableCompat.setTint(mNext.getDrawable(), colorFrom);
         }else{
-            mNext.setVisibility(View.INVISIBLE);
+            DrawableCompat.setTint(mNext.getDrawable(), colorTo);
         }
     }
 
@@ -441,8 +449,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         mLargeAlbumArt = (ImageView) mInflater.findViewById(R.id.player_album_art);
 
-        LinearLayout.LayoutParams artParam = new LinearLayout.LayoutParams((int)(ScreenHeight * 47.656) / 100, (int)(ScreenHeight * 47.656) / 100);
-        artParam.setMargins((int) ((ScreenWidth * 7.638) /100), 0, (int) ((ScreenWidth * 7.638)/100), 0);
+        LinearLayout.LayoutParams artParam = new LinearLayout.LayoutParams((int)(ScreenWidth * 80) / 100, (int)(ScreenWidth * 80) / 100);
+        artParam.setMargins((int) ((ScreenWidth * 10) /100), 0, (int) ((ScreenWidth * 10)/100), 0);
         mInflater.findViewById(R.id.player_large_header).setLayoutParams(artParam);
         mPlayerContent = (FrameLayout) mInflater.findViewById(R.id.player_content);
 
@@ -454,6 +462,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         mSeekbarPanel = (LinearLayout) mInflater.findViewById(R.id.progress_panel);
         mTrackSeek = (AppCompatSeekBar) mInflater.findViewById(R.id.control_seek_bar);
+        mTrackSeek.setPadding(mTrackSeek.getPaddingLeft(), 0, mTrackSeek.getPaddingRight(), 0);
         mTrackSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
@@ -514,21 +523,20 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void updateLargePlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
         if(null != item){
-            mRepeat.setVisibility(View.VISIBLE);
-            mShuffle.setVisibility(View.VISIBLE);
+            DrawableCompat.setTint(mRepeat.getDrawable(), colorFrom);
+            DrawableCompat.setTint(mShuffle.getDrawable(), colorFrom);
             mLargeSongTitle.setVisibility(View.VISIBLE);
             mLargeSongSubTitle.setVisibility(View.VISIBLE);
             mTrackSeek.setVisibility(View.VISIBLE);
             mTotalSeekTime.setVisibility(View.VISIBLE);
             mCurrentSeekTime.setVisibility(View.VISIBLE);
-            mNext.setVisibility(View.VISIBLE);
             mPrevious.setVisibility(View.VISIBLE);
             mLargeSongTitle.setSelected(true);
             mLargeSongSubTitle.setSelected(true);
             mPlayerFav.setVisibility(View.VISIBLE);
 
             updateFavoriteTrack(false);
-
+            DrawableCompat.setTint(mPlayPause.getDrawable(), colorFrom);
             mLargeSongTitle.setText(item.getItemTitle());
             mLargeSongSubTitle.setText(item.getItemArtist());
 
@@ -542,24 +550,22 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 updateTrackPlayTime(totalMillis, currentMillis);
 
             }else {
+                boolean isMediaItem = item.getMediaType() == MediaType.DEVICE_MEDIA_LIB;
                 if (isPlaying) {
-                    mPlayPause.setVisibility(View.VISIBLE);
                     mPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_pause, null));
                 } else {
-                    mPlayPause.setVisibility(View.VISIBLE);
                     mPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
+                updateCloudItemProgress(isMediaItem, isPlaying);
             }
         }else if(!isLastPlayedItem){
-            mRepeat.setVisibility(View.INVISIBLE);
-            mShuffle.setVisibility(View.INVISIBLE);
-            mLargeSongTitle.setVisibility(View.GONE);
-            mLargeSongSubTitle.setVisibility(View.GONE);
+            DrawableCompat.setTint(mRepeat.getDrawable(), colorTo);
+            DrawableCompat.setTint(mShuffle.getDrawable(), colorTo);
+            DrawableCompat.setTint(mPlayPause.getDrawable(), colorTo);
+            mLargeSongTitle.setVisibility(View.INVISIBLE);
+            mLargeSongSubTitle.setVisibility(View.INVISIBLE);
             mTrackSeek.setVisibility(View.INVISIBLE);
-            mPlayPause.setVisibility(View.INVISIBLE);
             mLargeAlbumArt.setImageDrawable(mContext.getResources().getDrawable(R.drawable.no_song_selected, null));
-//            ImageViewAnimatedChange(BoomPlayerActivity.this, mAlbumArt, BitmapFactory.decodeResource(getBaseContext().getResources(),
-//                    R.drawable.no_song_selected));
             mTotalSeekTime.setVisibility(View.INVISIBLE);
             mCurrentSeekTime.setVisibility(View.INVISIBLE);
             mPlayerFav.setVisibility(View.INVISIBLE);
@@ -569,6 +575,15 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         updateRepeat();
     }
 
+    private void updateCloudItemProgress(boolean isMediaItem, boolean isPlaying) {
+        if(isPlaying){
+            if(!isMediaItem)
+                mInflater.findViewById(R.id.load_cloud).setVisibility(View.GONE);
+        } else {
+            if (!isMediaItem && null != App.getPlayerEventHandler().getPlayer().getDataSource() && !App.getPlayerEventHandler().isPaused())
+                mInflater.findViewById(R.id.load_cloud).setVisibility(View.VISIBLE);
+        }
+    }
 
 
     /* Mini Player UI & Functionality*/
@@ -584,6 +599,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         mMiniPlayerEffectPanel = (LinearLayout) mInflater.findViewById(R.id.mini_player_boom_effect);
         mMiniPlayerEffectPanel.setOnClickListener(this);
+        mMiniPlayerEffect = (ImageView) mInflater.findViewById(R.id.mini_player_effect_img);
         mMiniPlayerPlayPause = (ImageView) mInflater.findViewById(R.id.mini_player_play_pause_btn);
         mMiniPlayerPlayPause.setOnClickListener(this);
         mMiniTitlePanel = (LinearLayout) mInflater.findViewById(R.id.mini_player_title_panel);
@@ -594,20 +610,21 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void updateMiniPlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
         if(audioEffectPreferenceHandler.isAudioEffectOn()) {
-            ((ImageView) mInflater.findViewById(R.id.mini_player_effect_img)).setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_effects_on, null));
+            mMiniPlayerEffect.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_effects_on, null));
         }else{
-            ((ImageView) mInflater.findViewById(R.id.mini_player_effect_img)).setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_effects, null));
+            mMiniPlayerEffect.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_effects, null));
         }
 
         if(null != item){
+            DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorFrom);
             mMiniSongTitle.setText(item.getItemTitle());
             mMiniSongSubTitle.setText(item.getItemArtist());
-            if(isLastPlayedItem)
-                mMiniPlayerPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_play, null));
-            else if(isPlaying)
+            if(isPlaying)
                 mMiniPlayerPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_pause, null));
             else
                 mMiniPlayerPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_play, null));
+        }else if(!isLastPlayedItem){
+            DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorTo);
         }
     }
 
@@ -696,6 +713,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
+        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         context.registerReceiver(mPlayerBroadcastReceiver, intentFilter);
 
 //        mPlayingMediaItem = (MediaItem) App.getPlayerEventHandler().getPlayingItem();
@@ -726,17 +744,17 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 break;
             case R.id.mini_player_title_panel:
             case R.id.player_title_panel:
-                if(MasterActivity.isPlayerExpended()) {
+               /* if(MasterActivity.isPlayerExpended()) {
                     postMessage.post(new Runnable() {
                         @Override
                         public void run() {
                             playerUIController.OnPlayerTitleClick((MasterActivity) getActivity());
                         }
                     });
-                }else{
+                }else{*/
                     setPlayerEnable(true);
                     getActivity().sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
-                }
+                /*}*/
                 break;
             case R.id.player_upnext_button:
                 if(MasterActivity.isPlayerExpended()) {

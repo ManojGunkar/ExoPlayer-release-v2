@@ -11,18 +11,10 @@
         android:orientation="horizontal"
         android:weightSum="100">
 
-        <LinearLayout
+        <include layout="@layout/list_item_art_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="22.80"
-            android:gravity="center"
-            android:orientation="vertical">
-            <ImageView
-                android:id="@+id/song_item_img"
-                android:layout_width="@dimen/track_list_album_art_size"
-                android:layout_height="@dimen/track_list_album_art_size"
-                android:scaleType="centerCrop"/>
-        </LinearLayout>
+            android:layout_weight="22.80"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -37,7 +29,7 @@
                 android:textStyle="normal"
                 android:maxLines="1"
                 android:textColor="@color/track_title"
-                android:textSize="@dimen/seventy_two_pt_txt" />
+                android:textSize="@dimen/card_song_item_title_txt" />
 
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/song_item_artist"
@@ -46,7 +38,7 @@
                 android:textStyle="normal"
                 android:maxLines="1"
                 android:textColor="@color/track_sub_title"
-                android:textSize="@dimen/fifty_six_pt_txt" />
+                android:textSize="@dimen/card_song_item_sub_title_txt" />
         </LinearLayout>
 
         <LinearLayout
@@ -59,24 +51,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/unbounded_ripple"
-                android:backgroundTint="@color/card_grid_item_title_background_tint"
                 android:foregroundTint="#434343"
-                android:paddingBottom="10dp"
-                android:paddingLeft="15dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp"
+                android:padding="5dp"
+                android:elevation="12dp"
                 android:src="@drawable/over_flow_menu"
                 android:theme="@style/Theme.AppCompat.Light" />
-
-            <CheckBox
-                android:id="@+id/song_chk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:foregroundTint="#434343"
-                android:backgroundTint="#434343"
-                android:elevation="12dp"
-                android:theme="@style/MyCheckBox"
-                android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>
     <View

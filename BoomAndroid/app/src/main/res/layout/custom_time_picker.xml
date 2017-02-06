@@ -18,7 +18,7 @@
         android:gravity="right"
         android:paddingRight="23dp"
         android:text="Hour"
-        android:textColor="@color/white_shade"
+        android:textColor="@color/white"
 
         android:textSize="15sp" />
 
@@ -30,7 +30,7 @@
             android:gravity="left"
             android:paddingLeft="18dp"
             android:text="Minute"
-            android:textColor="@color/white_shade"
+            android:textColor="@color/white"
             android:textSize="15sp" />
 
 
@@ -47,7 +47,7 @@
         android:textColorPrimary="#359875"
         android:textColorSecondary="#897530"
 
-        android:textSize="@dimen/settings_item_title_size"
+        android:textSize="@dimen/settings_item_title_txt"
         android:timePickerMode="spinner" />
 
     <View

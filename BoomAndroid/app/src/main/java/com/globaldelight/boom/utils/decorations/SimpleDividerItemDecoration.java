@@ -8,6 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import com.globaldelight.boom.R;
 
+/**
+ * Created by Rahul Kumar Agrawal on 6/14/2016.
+ */
 
 public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
     private Drawable mDivider;

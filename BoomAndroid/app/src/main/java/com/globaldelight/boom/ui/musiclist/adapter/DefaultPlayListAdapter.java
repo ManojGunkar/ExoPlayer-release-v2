@@ -102,7 +102,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
     private int setSize(SimpleItemViewHolder holder) {
         Utils utils = new Utils(context);
         int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
-                - (int)(context.getResources().getDimension(R.dimen.twenty_four_pt)*2);
+                - (int)context.getResources().getDimension(R.dimen.card_grid_img_margin);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
         holder.gridBottomBg.setLayoutParams(params);
@@ -189,11 +189,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
                     public void run() {
                         Intent i = new Intent(context, AlbumSongListActivity.class);
                         i.putExtra("mediaItemCollection", items.get(position));
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                (Activity) context,
-                                new Pair<View, String>(holder.imgPanel, "transition:imgholder")
-                        );
-                        context.startActivity(i, options.toBundle());
+                        context.startActivity(i);
                     }
                 }, 100);
             }

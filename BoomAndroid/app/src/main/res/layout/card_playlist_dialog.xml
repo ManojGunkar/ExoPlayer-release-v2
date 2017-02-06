@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/eighty_two_pt"
+        android:layout_margin="@dimen/card_playlist_dialog_margin"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
@@ -19,7 +19,7 @@
             android:maxLines="1"
             android:textStyle="normal"
             android:textColor="@color/dialog_txt"
-            android:textSize="@dimen/sixty_four_pt" />
+            android:textSize="@dimen/card_playlist_dialog_item_title_txt" />
 
         <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/playlist_dialog_song_count"
@@ -28,7 +28,7 @@
             android:textStyle="normal"
             android:maxLines="1"
             android:textColor="@color/dialog_txt"
-            android:textSize="@dimen/sixty_four_pt" />
+            android:textSize="@dimen/card_playlist_dialog_item_title_txt" />
     </LinearLayout>
 
 

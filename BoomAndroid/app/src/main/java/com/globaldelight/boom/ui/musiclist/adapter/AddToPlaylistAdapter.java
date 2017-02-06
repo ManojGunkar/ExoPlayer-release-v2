@@ -24,6 +24,10 @@ import static android.view.View.OnClickListener;
 import static android.widget.Toast.LENGTH_SHORT;
 import static android.widget.Toast.makeText;
 
+/**
+ * Created by Rahul Agarwal on 26-01-17.
+ */
+
 public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdapter.SimpleItemViewHolder> {
 
     private ArrayList<? extends IMediaItemBase> playList;
@@ -46,7 +50,6 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
 
     @Override
     public void onBindViewHolder(final SimpleItemViewHolder holder, final int position) {
-        holder.mainView.setBackgroundColor(Color.parseColor("#171921"));
         holder.name.setText(playList.get(position).getItemTitle());
         holder.count.setText(context.getResources().getString(R.string.songs)
                 + " " + ((MediaItemCollection) playList.get(position)).getItemCount());

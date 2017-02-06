@@ -21,6 +21,10 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
+/**
+ * Created by Rahul Agarwal on 26-01-17.
+ */
+
 public class AlbumDetailItemActivity extends MasterActivity {
 
     IMediaItemCollection currentItem;
@@ -115,7 +119,7 @@ public class AlbumDetailItemActivity extends MasterActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            navigateUpTo(new Intent(this, MainActivity.class));
+            super.onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);

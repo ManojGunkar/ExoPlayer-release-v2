@@ -35,6 +35,10 @@ import java.util.ArrayList;
 
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
+/**
+ * Created by Rahul Agarwal on 26-01-17.
+ */
+
 public class AlbumSongListActivity extends MasterActivity {
 
     private AlbumSongListFragment fragment;
@@ -83,8 +87,8 @@ public class AlbumSongListActivity extends MasterActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        initValues();
         initViews(savedInstanceState);
+        initValues();
     }
 
     private void initViews(Bundle savedInstanceState) {
@@ -252,7 +256,7 @@ public class AlbumSongListActivity extends MasterActivity {
         if (id == android.R.id.home) {
             findViewById(R.id.fab).setVisibility(View.GONE);
             fragment.updateOnBackPressed();
-            navigateUpTo(new Intent(this, MainActivity.class));
+            super.onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);

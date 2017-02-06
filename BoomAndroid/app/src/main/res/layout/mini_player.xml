@@ -7,7 +7,7 @@
     <android.support.v7.widget.AppCompatSeekBar
         android:id="@+id/mini_player_progress"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/eight_pt"
+        android:layout_height="@dimen/mini_player_progress_height"
         android:thumb="@null"
         android:layout_weight="0"/>
     <LinearLayout

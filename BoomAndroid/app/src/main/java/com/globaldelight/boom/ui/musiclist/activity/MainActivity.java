@@ -8,9 +8,9 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.support.annotation.AnimRes;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -31,9 +31,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.globaldelight.boom.business.BusinessHandler;
-import com.globaldelight.boom.business.IFBAddsUpdater;
-import com.globaldelight.boom.business.IGoogleAddsUpdater;
+import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
 import com.globaldelight.boom.data.MediaCallback.FavouriteMediaList;
 import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
@@ -48,15 +46,22 @@ import com.globaldelight.boom.ui.musiclist.adapter.SectionsPagerAdapter;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.BoomPlaylistFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.ItemSongListFragment;
+import com.globaldelight.boom.ui.widgets.MusicListTabs.MusicTabBar;
+import com.globaldelight.boom.ui.widgets.MusicListTabs.MusicTabLayout;
+import com.globaldelight.boom.ui.widgets.MusicListTabs.TabBarStyle;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
-import com.google.android.gms.ads.NativeExpressAdView;
 
 import static android.support.design.widget.TabLayout.MODE_SCROLLABLE;
 import static com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment.isUpdateUpnextDB;
 
+/**
+ * Created by Rahul Agarwal on 26-01-17.
+ */
+
 public class MainActivity extends MasterActivity
-        implements NavigationView.OnNavigationItemSelectedListener, IFBAddsUpdater, IGoogleAddsUpdater{
+        implements NavigationView.OnNavigationItemSelectedListener, MasterActivity.ILibraryAddsUpdater{
 
     private PermissionChecker permissionChecker;
     private DrawerLayout drawerLayout;
@@ -66,6 +71,7 @@ public class MainActivity extends MasterActivity
     private int fade_in = android.R.anim.fade_in;
     private int fade_out = android.R.anim.fade_out;
     private FragmentManager fragmentManager;
+    private RegularTextView toolbarTitle;
     private Toolbar toolbar;
     public SearchView searchView;
     public MenuItem searchMenuItem;
@@ -76,18 +82,20 @@ public class MainActivity extends MasterActivity
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private FloatingActionButton mFloatAddPlayList;
-    private TabLayout tabLayout;
+    private MusicTabBar mTabBar;
+    private TabBarStyle mTabBarStyle;
 
     private LinearLayout mAddsContainer;
-    private BusinessHandler mBusinessHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_CREATE_PLAYER_SCREEN));
+        setLibraryAddsUpdater(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(getResources().getString(R.string.music_library));
+        toolbarTitle = (RegularTextView) findViewById(R.id.toolbar_txt);
+        setTitle(getResources().getString(R.string.music_library));
         setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
         checkPermissions();
@@ -132,11 +140,10 @@ public class MainActivity extends MasterActivity
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         mAddsContainer = (LinearLayout) findViewById(R.id.lib_add_container);
-        mBusinessHandler = BusinessHandler.getBusinessHandlerInstance(MainActivity.this);
 
         musicSearchHelper = new MusicSearchHelper(MainActivity.this);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        mTabBar= (MusicTabBar)  findViewById(R.id.tabLayout);
 
         mFloatAddPlayList = (FloatingActionButton) findViewById(R.id.fab);
         mFloatAddPlayList.setVisibility(View.GONE);
@@ -165,38 +172,29 @@ public class MainActivity extends MasterActivity
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.setTabMode(MODE_SCROLLABLE);
-        tabLayout.setTabGravity(MODE_SCROLLABLE);
-        for (int i = 0 ; i < 5; i++){
-            ViewGroup vg = (ViewGroup) tabLayout.getChildAt(0);
-            ViewGroup vgTab = (ViewGroup) vg.getChildAt(i);
-            View tabViewChild = vgTab.getChildAt(1);
-            if (tabViewChild instanceof TextView) {
-//                ((TextView) tabViewChild).setTextColor(Color.RED);
-            }
-        }
-
         fragmentContainer = (FrameLayout) findViewById(R.id.fragment_container);
 
         fragmentManager = getSupportFragmentManager();
 
         isUpdateUpnextDB = true;
+        initHandyTabBar();
+    }
+
+    private void initHandyTabBar() {
+        mTabBarStyle=new TabBarStyle.Builder(this)
+                .setDrawIndicator(TabBarStyle.INDICATOR_LINE)
+                .setIndicatorHeight((int) getResources().getDimension(R.dimen.pager_tab_indicator_height))
+                .setIndicatorColorResource(R.color.music_tab_indicator_color)
+                .setScrollOffset(100)
+                .build();
+        MusicTabLayout customTabLayout=new MusicTabLayout(this);
+        mTabBar.attachToViewPager(mViewPager,customTabLayout,mTabBarStyle);
     }
 
     @Override
     protected void onResumeFragments() {
         sendBroadcast(new Intent(PlayerEvents.ACTION_PLAYER_SCREEN_RESUME));
         super.onResumeFragments();
-    }
-
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
     }
 
     @Override
@@ -210,19 +208,21 @@ public class MainActivity extends MasterActivity
             GoogleDriveMediaList.geGoogleDriveMediaListInstance(this).clearGoogleDriveMediaContent();
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else /*if(fragmentManager.getBackStackEntryCount() >= 0) {
-            Log.d("fragmentManager : ", "backstack");
-            super.onBackPressed();
-            int count;
-            if ((count = fragmentManager.getBackStackEntryCount()) >= 0){
-                if(count > 0)
-                    setTitle(fragmentManager.getBackStackEntryAt(count -1 ).getName());
-                if(count == 0) {
-                    setTitle(getResources().getString(R.string.music_library));
-                    setVisiblePager(true);
-                }
-            }
-        }*/ if(fragmentContainer.getVisibility() == View.VISIBLE){
+        } else
+//            if(fragmentManager.getBackStackEntryCount() >= 0) {
+//            Log.d("fragmentManager : ", "backstack");
+//            super.onBackPressed();
+//            int count;
+//            if ((count = fragmentManager.getBackStackEntryCount()) >= 0){
+//                if(count > 0)
+//                    setTitle(fragmentManager.getBackStackEntryAt(count -1 ).getName());
+//                if(count == 0) {
+//                    setTitle(getResources().getString(R.string.music_library));
+//                    setVisiblePager(true);
+//                }
+//            }
+//        }
+        if(fragmentContainer.getVisibility() == View.VISIBLE){
             Log.d("fragmentManager : ", "VISIBLE");
             setTitle(getResources().getString(R.string.music_library));
             setVisiblePager(true);
@@ -238,7 +238,6 @@ public class MainActivity extends MasterActivity
         getMenuInflater().inflate(R.menu.main, menu);
 
         searchMenuItem = menu.findItem(R.id.action_search);
-
         searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
         // Get the SearchView and set the searchable configuration
@@ -248,6 +247,7 @@ public class MainActivity extends MasterActivity
 
         ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
         searchView.setLayoutParams(params);
+        searchView.setDrawingCacheBackgroundColor(ContextCompat.getColor(this, R.color.transparent));
         searchView.setMaxWidth(2000);
         searchView.setIconified(true);
 
@@ -393,8 +393,8 @@ public class MainActivity extends MasterActivity
                 mFragment = new ItemSongListFragment();
                 mFragment.setArguments(arguments);
                 fragmentSwitcher(mFragment,  4, getResources().getString(R.string.drop_box), fade_in, fade_out);
-            } else if (id == R.id.nav_share) {
-
+            } else if (id == R.id.nav_setting) {
+                startSetting();
             } else if (id == R.id.nav_send) {
 
             }
@@ -407,6 +407,12 @@ public class MainActivity extends MasterActivity
             drawerLayout.closeDrawer(GravityCompat.START);
         }
         return true;
+    }
+
+    private void startSetting() {
+        Intent intent = new Intent(this, ActivityContainer.class);
+        intent.putExtra("container","setting");
+        startActivity(intent);
     }
 
     private void removeFragment() {
@@ -443,8 +449,7 @@ public class MainActivity extends MasterActivity
     }
 
     public void setTitle(String title){
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setTitle(title);
+        toolbarTitle.setText(title);
     }
 
     public void setVisiblePager(boolean visible){
@@ -492,12 +497,9 @@ public class MainActivity extends MasterActivity
     }
 
     @Override
-    public void onLoadFBNativeAdds(LinearLayout fbNativeAddContainer) {
-        mAddsContainer.addView(fbNativeAddContainer);
-    }
-
-    @Override
-    public void onLoadGoogleNativeAdds(NativeExpressAdView googleAddView) {
-        mAddsContainer.addView(googleAddView);
+    public void onAddsUpdate(BusinessUtils.AddSource addSources, boolean isAddEnable, View addContainer) {
+        mAddsContainer.removeAllViews();
+        mAddsContainer.addView(addContainer);
+        mAddsContainer.setVisibility(isAddEnable ? View.VISIBLE : View.GONE);
     }
 }
