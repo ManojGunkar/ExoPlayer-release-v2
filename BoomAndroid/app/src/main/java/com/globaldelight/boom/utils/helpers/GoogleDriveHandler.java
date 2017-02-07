@@ -199,7 +199,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
                     apiAvailability.isGooglePlayServicesAvailable(null != mContext ? mContext :
                             mFragment.getContext());
         }catch (Exception e){
-            return connectionStatusCode == ConnectionResult.API_UNAVAILABLE;
+            return connectionStatusCode != ConnectionResult.SUCCESS;
         }
         return connectionStatusCode == ConnectionResult.SUCCESS;
     }
@@ -211,11 +211,13 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     private void acquireGooglePlayServices() {
         GoogleApiAvailability apiAvailability =
                 GoogleApiAvailability.getInstance();
-        final int connectionStatusCode =
-                apiAvailability.isGooglePlayServicesAvailable(null != mContext ? mContext :
-                        mFragment.getContext());
-        if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
-            showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
+        if(null != apiAvailability && (null != mContext || null != mFragment.getContext())) {
+            final int connectionStatusCode =
+                    apiAvailability.isGooglePlayServicesAvailable(null != mContext ? mContext :
+                            mFragment.getContext());
+            if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
+                showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
+            }
         }
     }
 

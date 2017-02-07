@@ -22,6 +22,7 @@ import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -512,11 +513,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updatePlayerUI(){
-        if(MasterActivity.isPlayerExpended()){
+//        if(MasterActivity.isPlayerExpended()){
             updateLargePlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
-        }else {
+//        }else {
             updateMiniPlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
-        }
+//        }
         if(null != mPlayingMediaItem)
             updateAlbumArt(mPlayingMediaItem);
     }
@@ -617,6 +618,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         if(null != item){
             DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorFrom);
+            mMiniSongTitle.setSelected(true);
+            mMiniSongSubTitle.setSelected(true);
             mMiniSongTitle.setText(item.getItemTitle());
             mMiniSongSubTitle.setText(item.getItemArtist());
             if(isPlaying)
@@ -648,13 +651,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     @Override
     public void onPanelSlide(View panel, float slideOffset) {
-//        if (slideOffset == 1 && colorLight != 0 && isVisible()) {
-//            setStatusBarColor(getActivity(), colorDark);
-//        }else if (isVisible()) {
-//            setStatusBarColor(getActivity(), ContextCompat.getColor(mContext, R.color.colorPrimaryDark));
-//        }
-        setMiniPlayerAlpha(1 - slideOffset);
-        mPlayerActionPanel.setAlpha(0 + slideOffset);
+        if(slideOffset < 0.1){
+            setMiniPlayerAlpha(1);
+            mPlayerActionPanel.setAlpha(0);
+        }else {
+            setMiniPlayerAlpha(0);
+            mPlayerActionPanel.setAlpha(1);
+        }
     }
 
     @Override
@@ -698,9 +701,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
 
-
 /*Player Screen Utils*/
-
 
     public void registerPlayerReceiver(Context context){
         IntentFilter intentFilter = new IntentFilter();
@@ -897,11 +898,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         return false;
     }
 
-
-
-
     /*Audio Effect UI & Functionality*/
-
 
     private void initEffectControl() {
         postMessage = new Handler();
@@ -915,7 +912,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         mEffectSwitchTxt = (RegularTextView) mInflater.findViewById(R.id.effect_switch_txt);
         mEffectSwitch = (SwitchCompat) mInflater.findViewById(R.id.effect_switch);
-        switchAudioEffect();
+        mEffectSwitch.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
         m3DSurroundBtn = (ImageView) mInflater.findViewById(R.id.three_surround_btn);
         m3DSurroundBtn.setOnClickListener(this);
@@ -951,6 +948,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         setEffectIntensity();
 
+        switchAudioEffect();
+
         setEnableEffects(audioEffectPreferenceHandler.isAudioEffectOn());
     }
 
@@ -959,10 +958,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mEffectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
-                audioEffectPreferenceHandler.setEnableAudioEffect(enable);
-                setEnableEffects(enable);
-                MixPanelAnalyticHelper.track(mContext, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
-                FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffectPreferenceHandler.isAudioEffectOn());
+                if(audioEffectPreferenceHandler.isAudioEffectOn() != enable) {
+                    audioEffectPreferenceHandler.setEnableAudioEffect(enable);
+                    setEnableEffects(enable);
+                    MixPanelAnalyticHelper.track(mContext, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
+                    FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffectPreferenceHandler.isAudioEffectOn());
+                }
             }
         });
     }
@@ -1017,7 +1018,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void setEnableFullBass(boolean enable){
         mFullBassCheck.setChecked(enable);
-        if(enable && audioEffectPreferenceHandler.isAudioEffectOn()){
+        if(audioEffectPreferenceHandler.isAudioEffectOn()){
             mFullBassCheck.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
         }else{
             mFullBassCheck.setTextColor(ContextCompat.getColor(mContext, R.color.effect_inactive));

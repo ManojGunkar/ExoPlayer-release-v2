@@ -100,11 +100,6 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     public void onBindViewHolder(final ItemSongListAdapter.SimpleItemViewHolder holder, final int position) {
 
         if(position < 1){
-            if(listDetail.getmTitle() != null) {
-                holder.headerTitle.setText(listDetail.getmTitle());
-            }else{
-                holder.headerTitle.setVisibility(View.GONE);
-            }
             if(listDetail.getmSubTitle() != null) {
                 holder.headerSubTitle.setText(listDetail.getmSubTitle());
             }else{
@@ -177,8 +172,8 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
     private void updatePlayingTrack(SimpleItemViewHolder holder, int position){
         IMediaItem nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
-        boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
         if(null != nowPlayingItem ){
+            boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
             if((isMediaItem && currentItem.getItemId() == nowPlayingItem.getItemId() )
                     || (!isMediaItem && currentItem.getItemTitle().equals(nowPlayingItem.getItemTitle()))){
                 holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
@@ -558,7 +553,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         public ImageView img, menu, art_overlay_play;
         public ProgressBar loadCloud;
 
-        public RegularTextView headerTitle, headerSubTitle, headerDetail;
+        public RegularTextView headerSubTitle, headerDetail;
         public Button undoButton;
         public ImageView imgHandle;
         ImageView mShuffle, mMore;
@@ -575,7 +570,6 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             artistName = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
             undoButton = (Button) itemView.findViewById(R.id.undo_button);
             imgHandle = (ImageView) itemView.findViewById(R.id.song_item_handle);
-            headerTitle = (RegularTextView) itemView.findViewById(R.id.header_title);
             headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
             headerDetail = (RegularTextView) itemView.findViewById(R.id.header_detail);
             mMore = (ImageView) itemView.findViewById(R.id.recycler_header_menu);

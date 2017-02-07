@@ -1,107 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical">
+    android:layout_height="@dimen/recycler_view_header_height"
+    android:layout_marginLeft="@dimen/card_header_recycler_title_margine"
+    android:layout_marginRight="@dimen/card_header_recycler_title_margine"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-                <com.globaldelight.boom.ui.widgets.RegularTextView
-                    android:id="@+id/header_title"
+            android:layout_weight="0">
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/library_header_title"
-                    android:layout_marginLeft="@dimen/card_header_recycler_title_margine"
-                    android:layout_marginRight="@dimen/card_header_recycler_title_margine"
-                    android:maxLines="1"
-                    android:visibility="gone"
-                    android:textSize="@dimen/card_header_recycler_title"
-                    android:textStyle="bold"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:weightSum="100"
-                    android:layout_marginLeft="@dimen/card_header_recycler_title_margine"
-                    android:layout_marginRight="@dimen/card_header_recycler_title_margine"
-                    android:layout_marginTop="@dimen/card_header_recycler_title_margine_top"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="75.389"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                                <ImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/ic_playlist"/>
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="@dimen/card_header_recycler_sub_title_margine"
-                                    android:gravity="center_vertical"
-                                    android:orientation="vertical">
-                                        <com.globaldelight.boom.ui.widgets.RegularTextView
-                                            android:id="@+id/header_sub_title"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:maxLines="1"
-                                            android:textSize="@dimen/card_header_recycler_sub_title"
-                                            android:textColor="@color/library_header_title"
-                                            android:textStyle="normal"/>
-
-                                        <!-- Detail -->
-                                        <com.globaldelight.boom.ui.widgets.RegularTextView
-                                            android:id="@+id/header_detail"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_marginTop="@dimen/card_header_recycler_detail_margin"
-                                            android:maxLines="1"
-                                            android:textColor="@color/library_header_sub_title"
-                                            android:textSize="@dimen/card_header_recycler_detail_txt"
-                                            android:textStyle="normal"/>
-                                </LinearLayout>
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="14"
-                            android:gravity="center">
-                                <ImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/ic_shuffle_on"
-                                    android:visibility="invisible"/>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="3.611"/>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="7"
-                            android:gravity="center">
-                                <ImageView
-                                    android:id="@+id/recycler_header_menu"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/ic_player_more_button"/>
-                        </LinearLayout>
-
-                </LinearLayout>
-
+                    android:src="@drawable/ic_playlist"/>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/card_header_recycler_sub_title_margine"
+            android:layout_marginRight="@dimen/card_header_recycler_sub_title_margine"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/header_sub_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:textSize="@dimen/card_header_recycler_sub_title"
+                    android:textColor="@color/library_header_title"
+                    android:textStyle="normal"/>
+
+                <!-- Detail -->
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:id="@+id/header_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/card_header_recycler_detail_margin"
+                    android:maxLines="1"
+                    android:textColor="@color/library_header_sub_title"
+                    android:textSize="@dimen/card_header_recycler_detail_txt"
+                    android:textStyle="normal"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:gravity="center">
+                <ImageView
+                    android:id="@+id/recycler_header_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_player_more_button"/>
+        </LinearLayout>
+
 </LinearLayout>

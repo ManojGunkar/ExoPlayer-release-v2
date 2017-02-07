@@ -48,12 +48,14 @@ public class PlayerUIController implements IPlayerUIController {
 
     @Override
     public void OnRepeatClick() {
-        mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_REPEAT_SONG));
+        if(null != App.getPlayerEventHandler().getPlayingItem())
+            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_REPEAT_SONG));
     }
 
     @Override
     public void OnShuffleClick() {
-        mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
+        if(null != App.getPlayerEventHandler().getPlayingItem())
+            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
     }
 
     @Override

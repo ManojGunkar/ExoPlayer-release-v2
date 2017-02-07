@@ -165,7 +165,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
                     android:text="@string/sleep_timer_description"
-                    android:layout_marginTop="@dimen/setting_item_margine_header"
+                    android:layout_marginTop="@dimen/setting_item_title_margine_top"
                     android:textColor="@color/setting_item_title"
                     android:textSize="@dimen/settings_item_title_txt"
                     android:textStyle="normal" />

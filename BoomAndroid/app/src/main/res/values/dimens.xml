@@ -19,7 +19,7 @@
 
     <dimen name="album_title_height">100dp</dimen>
     <dimen name="item_margin">0dp</dimen>
-    <dimen name="selected_eq_txt">15px</dimen>
+    <dimen name="selected_eq_txt">15sp</dimen>
     <dimen name="empty_list_txt_margin">24dp</dimen>
     <dimen name="toolbar_title_txt_size">20dp</dimen>-->
 

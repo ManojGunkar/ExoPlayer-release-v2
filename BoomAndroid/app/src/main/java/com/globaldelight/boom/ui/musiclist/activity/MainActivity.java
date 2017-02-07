@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.AnimRes;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -100,12 +101,12 @@ public class MainActivity extends MasterActivity
         setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
         initView();
+        checkPermissions();
     }
 
     @Override
     protected void onResume() {
         registerPlayerReceiver(MainActivity.this);
-        checkPermissions();
         super.onResume();
     }
 
@@ -125,6 +126,11 @@ public class MainActivity extends MasterActivity
                         finish();
                     }
                 });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void initSearchAndArt(){
@@ -205,38 +211,22 @@ public class MainActivity extends MasterActivity
     @Override
     public void onBackPressed() {
         mFloatAddPlayList.setVisibility(View.GONE);
-        if(!FavouriteMediaList.getFavouriteListInstance(this).getFavouriteMediaList().isEmpty())
-            FavouriteMediaList.getFavouriteListInstance(this).clearFavouriteContent();
-        if(!DropboxMediaList.getDropboxListInstance(this).getDropboxMediaList().isEmpty())
-            DropboxMediaList.getDropboxListInstance(this).clearDropboxContent();
-        if(!GoogleDriveMediaList.geGoogleDriveMediaListInstance(this).getGoogleDriveMediaList().isEmpty())
-            GoogleDriveMediaList.geGoogleDriveMediaListInstance(this).clearGoogleDriveMediaContent();
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if(isPlayerExpended()) {
+            sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+        }else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else
-//            if(fragmentManager.getBackStackEntryCount() >= 0) {
-//            Log.d("fragmentManager : ", "backstack");
-//            super.onBackPressed();
-//            int count;
-//            if ((count = fragmentManager.getBackStackEntryCount()) >= 0){
-//                if(count > 0)
-//                    setTitle(fragmentManager.getBackStackEntryAt(count -1 ).getName());
-//                if(count == 0) {
-//                    setTitle(getResources().getString(R.string.music_library));
-//                    setVisiblePager(true);
-//                }
-//            }
-//        }
-        if(fragmentContainer.getVisibility() == View.VISIBLE){
-            Log.d("fragmentManager : ", "VISIBLE");
-            setTitle(getResources().getString(R.string.music_library));
-            setVisiblePager(true);
-            removeFragment();
+        } else if(null != mSearchResult || null != mFragment){
+            viewMainActivity();
+            mSearchResult = null;
+            mFragment = null;
         }else{
             super.onBackPressed();
         }
     }
 
+    private void viewMainActivity(){
+        fragmentSwitcher(null, 0, getResources().getString(R.string.music_library), fade_in, fade_out);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -280,19 +270,18 @@ public class MainActivity extends MasterActivity
         searchView.setSuggestionsAdapter(searchSuggestionAdapter);
         registerSearchListeners();
 
-        mSearchResult = new SearchViewFragment();
         MenuItemCompat.setOnActionExpandListener(searchMenuItem, new MenuItemCompat.OnActionExpandListener() {
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
+                mSearchResult = new SearchViewFragment();
                 fragmentSwitcher(mSearchResult,  -1, getResources().getString(R.string.search_hint), fade_in, fade_out);
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                setVisiblePager(true);
-                getSupportFragmentManager().popBackStack();
+                viewMainActivity();
                 searchSuggestionAdapter.changeCursor(null);
                 return true;
             }
@@ -372,42 +361,42 @@ public class MainActivity extends MasterActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        mFloatAddPlayList.setVisibility(View.GONE);
         Bundle arguments = new Bundle();
         if(null != mSectionsPagerAdapter) {
-            if (id == R.id.music_library) {
-                fragmentSwitcher(null,  0, getResources().getString(R.string.music_library), fade_in, fade_out);
-            } else if (id == R.id.boom_palylist) {
-                mFragment = new BoomPlaylistFragment();
-                fragmentSwitcher(mFragment,  1, getResources().getString(R.string.boom_playlist), fade_in, fade_out);
-            } else if (id == R.id.favourite_list) {
-                arguments.putInt(ItemSongListFragment.ARG_ITEM_TYPE, ItemType.FAVOURITE.ordinal());
-                arguments.putInt(ItemSongListFragment.ARG_MEDIA_TYPE, MediaType.DEVICE_MEDIA_LIB.ordinal());
-                mFragment = new ItemSongListFragment();
-                mFragment.setArguments(arguments);
-                fragmentSwitcher(mFragment,  2, getResources().getString(R.string.favourite_list), fade_in, fade_out);
-            }else if (id == R.id.google_drive) {
-                arguments.putInt(ItemSongListFragment.ARG_ITEM_TYPE, ItemType.SONGS.ordinal());
-                arguments.putInt(ItemSongListFragment.ARG_MEDIA_TYPE, MediaType.GOOGLE_DRIVE.ordinal());
-                mFragment = new ItemSongListFragment();
-                mFragment.setArguments(arguments);
-                fragmentSwitcher(mFragment,  3, getResources().getString(R.string.google_drive), fade_in, fade_out);
-            } else if (id == R.id.drop_box) {
-                arguments.putInt(ItemSongListFragment.ARG_ITEM_TYPE, ItemType.SONGS.ordinal());
-                arguments.putInt(ItemSongListFragment.ARG_MEDIA_TYPE, MediaType.DROP_BOX.ordinal());
-                mFragment = new ItemSongListFragment();
-                mFragment.setArguments(arguments);
-                fragmentSwitcher(mFragment,  4, getResources().getString(R.string.drop_box), fade_in, fade_out);
-            } else if (id == R.id.nav_setting) {
-                startSetting();
-            } else if (id == R.id.nav_send) {
-
-            }
-
-            if(id == R.id.boom_palylist){
-                mFloatAddPlayList.setVisibility(View.VISIBLE);
-            }else{
-                mFloatAddPlayList.setVisibility(View.GONE);
+            switch (item.getItemId()){
+                case R.id.music_library:
+                    viewMainActivity();
+                    break;
+                case R.id.boom_palylist:
+                    mFloatAddPlayList.setVisibility(View.VISIBLE);
+                    mFragment = new BoomPlaylistFragment();
+                    fragmentSwitcher(mFragment,  1, getResources().getString(R.string.boom_playlist), fade_in, fade_out);
+                    break;
+                case R.id.favourite_list:
+                    arguments.putInt(ItemSongListFragment.ARG_ITEM_TYPE, ItemType.FAVOURITE.ordinal());
+                    arguments.putInt(ItemSongListFragment.ARG_MEDIA_TYPE, MediaType.DEVICE_MEDIA_LIB.ordinal());
+                    mFragment = new ItemSongListFragment();
+                    mFragment.setArguments(arguments);
+                    fragmentSwitcher(mFragment,  2, getResources().getString(R.string.favourite_list), fade_in, fade_out);
+                    break;
+                case R.id.google_drive:
+                    arguments.putInt(ItemSongListFragment.ARG_ITEM_TYPE, ItemType.SONGS.ordinal());
+                    arguments.putInt(ItemSongListFragment.ARG_MEDIA_TYPE, MediaType.GOOGLE_DRIVE.ordinal());
+                    mFragment = new ItemSongListFragment();
+                    mFragment.setArguments(arguments);
+                    fragmentSwitcher(mFragment,  3, getResources().getString(R.string.google_drive), fade_in, fade_out);
+                    break;
+                case R.id.drop_box:
+                    arguments.putInt(ItemSongListFragment.ARG_ITEM_TYPE, ItemType.SONGS.ordinal());
+                    arguments.putInt(ItemSongListFragment.ARG_MEDIA_TYPE, MediaType.DROP_BOX.ordinal());
+                    mFragment = new ItemSongListFragment();
+                    mFragment.setArguments(arguments);
+                    fragmentSwitcher(mFragment,  4, getResources().getString(R.string.drop_box), fade_in, fade_out);
+                    break;
+                case R.id.nav_setting:
+                    startSetting();
+                    break;
             }
             drawerLayout.closeDrawer(GravityCompat.START);
         }
@@ -438,18 +427,16 @@ public class MainActivity extends MasterActivity
         }else if(currentItem == 0){
             setVisiblePager(true);
         }else {
-            setTitle(String.valueOf(fname));
             setVisiblePager(false);
         }
-
+        setTitle(String.valueOf(fname));
+        removeFragment();
         if(currentItem != 0) {
             fragmentManager.beginTransaction()
                     .setCustomAnimations(animationEnter, animationExit)
                     .replace(R.id.fragment_container, fragment)
                    /* .addToBackStack(String.valueOf(fname))*/
                     .commitAllowingStateLoss();
-        }else {
-            removeFragment();
         }
     }
 
