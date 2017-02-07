@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.business.client.IFBAddsUpdater;
 import com.globaldelight.boom.business.client.IGoogleAddsUpdater;
@@ -24,8 +26,8 @@ import com.globaldelight.boom.ui.widgets.slidinguppanel.SlidingUpPanelLayout;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.google.android.gms.ads.NativeExpressAdView;
-import com.surveymonkey.surveymonkeyandroidsdk.SurveyMonkey;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.globaldelight.boom.business.BusinessUtils.AddSource.*;
 import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
 
@@ -35,19 +37,6 @@ import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSI
 
 public class MasterActivity extends AppCompatActivity implements SlidingUpPanelLayout.PanelSlideListener, BusinessRequestReceiver.IUpdateBusinessRequest, IFBAddsUpdater, IGoogleAddsUpdater {
     private static final String TAG = "MasterActivity";
-    private static final float BITMAP_SCALE = 0.4f;
-    private static final float BLUR_RADIUS = 25.0f;
-    final static String SURVEY_HASH = "PTXJR5S";
-    final static int SURVEY_REQUEST_CODE = 2000;
-
-    private final static long MINS = 60 * 1000;
-    private final static long DAYS = 24 * 60 * MINS;
-    private final static long FEEDBACK_TIME_LIMIT = 1 * 60 * MINS;
-    private final static long DECLINE_TIME_LIMIT = 2 * 60 *  MINS;
-    private final static long ACCEPT_TIME_LIMIT = 3 * 60 *  MINS;
-
-    private SurveyMonkey surveyInstance = new SurveyMonkey();
-    private boolean surveyInProgress = false;
 
     private FrameLayout activity;
     private LinearLayout activityContainer;
@@ -243,35 +232,40 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     }
 
     @Override
-    public void onBusinessRequest(AddSource addSources) {
-        if(addSources == google){
-            App.getBusinessHandler().loadGoogleNativeAdd();
-        }else{
-            App.getBusinessHandler().loadFbNativeAdds();
+    public void onBusinessRequest(AddSource addSources, boolean libraryBannerEnable, boolean libraryVideoEnable) {
+        if(libraryBannerEnable) {
+            if (addSources == google) {
+                App.getBusinessHandler().loadGoogleNativeAdd(addSources, libraryBannerEnable);
+            } else {
+                App.getBusinessHandler().loadFbNativeAdds(addSources, libraryBannerEnable);
+            }
+        }
+        if(libraryVideoEnable){
+            FacebookSdk.sdkInitialize(getApplicationContext());
+            AppEventsLogger.activateApp(getApplicationContext());
+            if (addSources == google) {
+                App.getBusinessHandler().loadGoogleFullScreenAdds();
+            } else {
+                App.getBusinessHandler().loadFullScreenFbAdds();
+            }
         }
     }
 
     @Override
-    public void onLoadFBNativeAdds(final LinearLayout fbNativeAddContainer) {
-        LoadAdds(fbNativeAddContainer);
+    public void onLoadFBNativeAdds(BusinessUtils.AddSource addSources, boolean libraryBannerEnable, final LinearLayout fbNativeAddContainer) {
+        LoadAdds(addSources, libraryBannerEnable, fbNativeAddContainer);
     }
 
     @Override
-    public void onLoadGoogleNativeAdds(final NativeExpressAdView googleAddView) {
-        LoadAdds(googleAddView);
+    public void onLoadGoogleNativeAdds(BusinessUtils.AddSource addSources, boolean libraryBannerEnable, final NativeExpressAdView googleAddView) {
+        LoadAdds(addSources, libraryBannerEnable, googleAddView);
     }
 
-    private void LoadAdds(final View addView){
+    private void LoadAdds(final AddSource addSources, final boolean libraryBannerEnable, final View addView){
         handler.post(new Runnable() {
             @Override
             public void run() {
-                iLibraryAddsUpdater.onAddsUpdate(BusinessUtils.getAddSources(), BusinessUtils.isLibraryBannerEnable(), addView);
-            }
-        });
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-
+                iLibraryAddsUpdater.onAddsUpdate(addSources, libraryBannerEnable, addView);
             }
         });
     }

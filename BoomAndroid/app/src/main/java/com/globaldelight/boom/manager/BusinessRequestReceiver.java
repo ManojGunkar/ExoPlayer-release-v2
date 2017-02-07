@@ -31,7 +31,7 @@ public class BusinessRequestReceiver extends BroadcastReceiver {
                     @Override
                     public void run() {
                         if(BusinessUtils.getAddEnable()){
-                            requestReceiverListener.onBusinessRequest(BusinessUtils.getAddSources());
+                            requestReceiverListener.onBusinessRequest(BusinessUtils.getAddSources(), BusinessUtils.isLibraryBannerEnable(), (BusinessUtils.isEffectVideoEnable()|| BusinessUtils.isPlayerVideoEnable() || BusinessUtils.isLibraryVideoEnable()));
                         }
                     }
                 }, BusinessUtils.getAddsDisplayIntervals());
@@ -42,6 +42,6 @@ public class BusinessRequestReceiver extends BroadcastReceiver {
 
 
     public interface IUpdateBusinessRequest{
-        void onBusinessRequest(BusinessUtils.AddSource addSources);
+        void onBusinessRequest(BusinessUtils.AddSource addSources, boolean libraryBannerEnable, boolean libraryVideoEnable);
     }
 }
