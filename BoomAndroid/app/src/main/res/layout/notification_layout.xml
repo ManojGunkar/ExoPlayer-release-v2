@@ -9,9 +9,9 @@
         android:id="@+id/noti_album_art"
         android:layout_width="@dimen/noti_big_img"
         android:layout_height="@dimen/noti_big_height"
-        android:src="@drawable/ic_default_album_grid"
+        android:src="@drawable/ic_default_art_grid"
         android:layout_weight="0"
-        android:scaleType="centerCrop"/>
+        android:scaleType="fitXY"/>
 
     <LinearLayout
         android:layout_width="match_parent"

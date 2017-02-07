@@ -200,7 +200,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     break;
                 case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
                     updateCloudItemProgress(App.getPlayerEventHandler().getPlayingItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB, App.getPlayerEventHandler().isPlaying());
-                    updatePlayerUI();
+//                    updatePlayerUI();
                     break;
             }
         }
@@ -341,7 +341,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         return null;
                     } else {
                         return img = BitmapFactory.decodeResource(mContext.getResources(),
-                                R.drawable.ic_default_art_player);
+                                R.drawable.ic_default_art_player_header);
                     }
                 }
 
@@ -364,7 +364,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                                 mPlayerBackground.setBackground(new BitmapDrawable(mContext.getResources(), blurredBitmap));
                             }catch (NullPointerException e){
                                 Bitmap albumArt = BitmapFactory.decodeResource(mContext.getResources(),
-                                        R.drawable.ic_default_art_player);
+                                        R.drawable.ic_default_art_player_header);
                                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
                                     PlayerUtils.ImageViewAnimatedChange(mContext, mLargeAlbumArt, albumArt);
                                 }else{
@@ -380,7 +380,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         } else {
             if(item != null) {
                 Bitmap albumArt = BitmapFactory.decodeResource(mContext.getResources(),
-                        R.drawable.ic_default_art_player);
+                        R.drawable.ic_default_art_player_header);
                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
                     PlayerUtils.ImageViewAnimatedChange(mContext, mLargeAlbumArt, albumArt);
                     mItemId = item.getItemId();
@@ -489,11 +489,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updatePlayerUI(){
-//        if(MasterActivity.isPlayerExpended()){
+        if(MasterActivity.isPlayerExpended()){
             updateLargePlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
-//        }else {
+        }else {
             updateMiniPlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
-//        }
+        }
         if(null != mPlayingMediaItem)
             updateAlbumArt(mPlayingMediaItem);
     }
@@ -540,7 +540,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mLargeSongTitle.setVisibility(View.INVISIBLE);
             mLargeSongSubTitle.setVisibility(View.INVISIBLE);
             mTrackSeek.setVisibility(View.INVISIBLE);
-            mLargeAlbumArt.setImageDrawable(mContext.getResources().getDrawable(R.drawable.no_song_selected, null));
+            mLargeAlbumArt.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_no_music_selected, null));
             mTotalSeekTime.setVisibility(View.INVISIBLE);
             mCurrentSeekTime.setVisibility(View.INVISIBLE);
         }

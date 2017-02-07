@@ -392,19 +392,19 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
 
     private void setArtistImg(final SearchDetailListAdapter.SimpleItemViewHolder holder, final String path, final int size) {
         if (PlayerUtils.isPathValid(path))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                     /*.centerCrop().resize(size, size)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else {
-            holder.defaultImg.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_album_grid, null));
+            holder.defaultImg.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_art_grid, null));
         }
     }
 
     private void setSongArt(String path, SearchDetailListAdapter.SimpleItemViewHolder holder) {
         if (PlayerUtils.isPathValid(path))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_list, null))
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                     /*.resize(dpToPx(90), dpToPx(90)).centerCrop()*/.into(holder.img);
         else{
-            holder.img.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_default_list, null));
+            holder.img.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_default_art_grid, null));
         }
     }
 
