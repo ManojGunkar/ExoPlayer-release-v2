@@ -24,6 +24,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -53,10 +55,12 @@ import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.widgets.NegativeSeekBar;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
+import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boomplayer.AudioEffect;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -99,7 +103,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private View mInflater, revealView;
     private int size, colorLight, colorTo , colorFrom;
     private AppCompatSeekBar mTrackSeek;
-    private ImageView mPlayerFav, mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mEffectTab, mPlayerTab, mPlayerBackBtn, mLargeAlbumArt;
+    private ImageView mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mEffectTab, mPlayerTab, mPlayerBackBtn, mLargeAlbumArt;
     private LinearLayout mEffectContent, mPlayerSwitcherPanel, mSeekbarPanel, mPlayerControllerHolder, mPlayerLarge, mPlayerTitlePanel, mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
     private FrameLayout mPlayerContent;
     private FrameLayout mPlayerBackground;
@@ -195,8 +199,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     onResumePlayerScreen();
                     break;
                 case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
-
                     updateCloudItemProgress(App.getPlayerEventHandler().getPlayingItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB, App.getPlayerEventHandler().isPlaying());
+                    updatePlayerUI();
                     break;
             }
         }
@@ -403,31 +407,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis))));
     }
 
-    private void updateFavoriteTrack(boolean isUser) {
-        if(App.getPlayerEventHandler().getPlayingItem() != null) {
-            boolean isCurrentTrackFav = MediaController.getInstance(mContext).isFavouriteItems(App.getPlayerEventHandler().getPlayingItem().getItemId());
-            if (isCurrentTrackFav) {
-                if(isUser){
-                    MediaController.getInstance(mContext).removeItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem().getItemId());
-                    Toast.makeText(mContext, mContext.getResources().getString(R.string.playing_removed_from_favorite), Toast.LENGTH_SHORT).show();
-                    mPlayerFav.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favourites_normal, null));
-                }else {
-                    mPlayerFav.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favourites_selected, null));
-                }
-            } else {
-                if(isUser){
-                    MediaController.getInstance(mContext).addSongsToFavoriteList(App.getPlayerEventHandler().getPlayingItem());
-                    Toast.makeText(mContext, mContext.getResources().getString(R.string.playing_added_to_favorite), Toast.LENGTH_SHORT).show();
-                    mPlayerFav.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favourites_selected, null));
-                }else{
-                    mPlayerFav.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_favourites_normal, null));
-                }
-            }
-        }else{
-            Toast.makeText(mContext, mContext.getResources().getString(R.string.no_song), Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void initLargePlayer() {
         mPlayerLarge = (LinearLayout) mInflater.findViewById(R.id.player_large);
         mPlayerLarge.setOnTouchListener(this);
@@ -444,9 +423,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mUpNextBtnPanel.setOnClickListener(this);
         mPlayerOverFlowMenuPanel = (LinearLayout) mInflater.findViewById(R.id.player_overflow_button);
         mPlayerOverFlowMenuPanel.setOnClickListener(this);
-
-        mPlayerFav = (ImageView) mInflater.findViewById(R.id.player_fav);
-        mPlayerFav.setOnClickListener(this);
 
         mLargeAlbumArt = (ImageView) mInflater.findViewById(R.id.player_album_art);
 
@@ -534,9 +510,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mPrevious.setVisibility(View.VISIBLE);
             mLargeSongTitle.setSelected(true);
             mLargeSongSubTitle.setSelected(true);
-            mPlayerFav.setVisibility(View.VISIBLE);
 
-            updateFavoriteTrack(false);
             DrawableCompat.setTint(mPlayPause.getDrawable(), colorFrom);
             mLargeSongTitle.setText(item.getItemTitle());
             mLargeSongSubTitle.setText(item.getItemArtist());
@@ -569,7 +543,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mLargeAlbumArt.setImageDrawable(mContext.getResources().getDrawable(R.drawable.no_song_selected, null));
             mTotalSeekTime.setVisibility(View.INVISIBLE);
             mCurrentSeekTime.setVisibility(View.INVISIBLE);
-            mPlayerFav.setVisibility(View.INVISIBLE);
         }
         updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
         updateShuffle();
@@ -776,7 +749,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 break;
             case R.id.player_overflow_button:
                 if(MasterActivity.isPlayerExpended()) {
-
+                    overFlowMenu(getContext(), view);
                 }else{
                     postMessage.post(new Runnable() {
                         @Override
@@ -827,9 +800,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     }
                 });
                 break;
-            case R.id.player_fav:
-                updateFavoriteTrack(true);
-                break;
             case R.id.player_tab:
                 setPlayerEnable(true);
                 break;
@@ -878,6 +848,55 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 updateSpeakers(AudioEffect.Speaker.Woofer);
                 break;
         }
+    }
+
+    private void overFlowMenu(Context context, View view) {
+        PopupMenu pm = new PopupMenu(context, view);
+        boolean isCurrentTrackFav= false;
+        if(App.getPlayerEventHandler().getPlayingItem() != null) {
+            if(App.getPlayerEventHandler().getPlayingItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB)
+                isCurrentTrackFav = MediaController.getInstance(mContext).isFavouriteItems(App.getPlayerEventHandler().getPlayingItem().getItemId());
+            else{
+                isCurrentTrackFav = MediaController.getInstance(mContext).isFavouriteItems(App.getPlayerEventHandler().getPlayingItem().getItemTitle());
+            }
+        }
+        final boolean isFav = isCurrentTrackFav;
+        pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                try {
+                    switch (item.getItemId()) {
+                        case R.id.popup_song_add_fav:
+                            if(isFav){
+                                if(App.getPlayerEventHandler().getPlayingItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB)
+                                    MediaController.getInstance(mContext).removeItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem().getItemId());
+                                else{
+                                    MediaController.getInstance(mContext).removeItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem().getItemTitle());
+                                }
+                                Toast.makeText(mContext, mContext.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
+                            }else{
+                                MediaController.getInstance(mContext).addSongsToFavoriteList(App.getPlayerEventHandler().getPlayingItem());
+                                Toast.makeText(mContext, mContext.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
+                            }
+                            break;
+                        case R.id.popup_song_add_playlist:
+                            Utils util = new Utils(getContext());
+                            ArrayList list = new ArrayList();
+                            list.add(App.getPlayerEventHandler().getPlayingItem());
+                            util.addToPlaylist(getActivity(), list, null);
+                            break;
+                    }
+                }catch (Exception e){
+                }
+                return false;
+            }
+        });
+        if(isCurrentTrackFav){
+            pm.inflate(R.menu.player_remove_menu);
+        }else{
+            pm.inflate(R.menu.player_add_menu);
+        }
+        pm.show();
     }
 
     @Override
