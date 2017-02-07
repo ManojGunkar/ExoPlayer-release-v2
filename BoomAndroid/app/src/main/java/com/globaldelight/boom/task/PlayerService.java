@@ -384,11 +384,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 App.getBusinessHandler().getBoomAccessToken();
                 App.getBusinessHandler().registerAndroidDevice();
                 App.getBusinessHandler().getConfigAppWithBoomServer();

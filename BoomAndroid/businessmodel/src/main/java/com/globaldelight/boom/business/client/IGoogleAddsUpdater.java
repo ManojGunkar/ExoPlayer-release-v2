@@ -2,6 +2,7 @@ package com.globaldelight.boom.business.client;
 
 import android.widget.LinearLayout;
 
+import com.globaldelight.boom.business.BusinessUtils;
 import com.google.android.gms.ads.NativeExpressAdView;
 
 /**
@@ -9,5 +10,5 @@ import com.google.android.gms.ads.NativeExpressAdView;
  */
 
 public interface IGoogleAddsUpdater {
-    void onLoadGoogleNativeAdds(NativeExpressAdView googleAddView);
+    void onLoadGoogleNativeAdds(BusinessUtils.AddSource addSources, boolean libraryBannerEnable, NativeExpressAdView googleAddView);
 }

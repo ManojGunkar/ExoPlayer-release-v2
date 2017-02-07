@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdChoicesView;
 import com.facebook.ads.AdError;
@@ -19,6 +20,7 @@ import com.facebook.ads.AdListener;
 import com.facebook.ads.AdSettings;
 import com.facebook.ads.InterstitialAdListener;
 import com.facebook.ads.NativeAd;
+import com.facebook.appevents.AppEventsLogger;
 import com.globaldelight.boom.business.R;
 import com.globaldelight.boom.business.BusinessUtils;
 import com.google.android.gms.ads.AdRequest;
@@ -98,7 +100,7 @@ public class BusinessHandler {
         networkCallHandler.setBusinessNetworkListener(iBusinessNetworkInit);
     }
 
-    public void loadFbNativeAdds() {
+    public void loadFbNativeAdds(final BusinessUtils.AddSource addSources, final boolean libraryBannerEnable) {
         nativeAd = new NativeAd(mContext,mContext.getResources().getString(R.string.fb_native_Add));
         nativeAd.setAdListener(new AdListener() {
 
@@ -147,7 +149,7 @@ public class BusinessHandler {
                 postAdds.post(new Runnable() {
                     @Override
                     public void run() {
-                        ifbAddsUpdater.onLoadFBNativeAdds(adView);
+                        ifbAddsUpdater.onLoadFBNativeAdds(addSources, libraryBannerEnable, adView);
                     }
                 });
                 // Ad loaded callback
@@ -166,7 +168,7 @@ public class BusinessHandler {
         nativeAd.loadAd();
     }
 
-    public void loadGoogleNativeAdd() {
+    public void loadGoogleNativeAdd(final BusinessUtils.AddSource addSources, final boolean libraryBannerEnable) {
         mAdView2 = new NativeExpressAdView(mContext);
         mAdView2.setAdSize(new AdSize(AdSize.FULL_WIDTH, 80));
         mAdView2.setAdUnitId(mContext.getResources().getString(R.string.native_adds));
@@ -175,7 +177,7 @@ public class BusinessHandler {
         postAdds.post(new Runnable() {
             @Override
             public void run() {
-                iGoogleAddsUpdater.onLoadGoogleNativeAdds(mAdView2);
+                iGoogleAddsUpdater.onLoadGoogleNativeAdds(addSources, libraryBannerEnable, mAdView2);
             }
         });
     }

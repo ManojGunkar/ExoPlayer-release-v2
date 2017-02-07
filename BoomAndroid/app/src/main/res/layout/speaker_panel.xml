@@ -3,8 +3,8 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:gravity="center">
-    <FrameLayout android:layout_width="280dp"
-        android:layout_height="298dp"
+    <FrameLayout android:layout_width="284dp"
+        android:layout_height="320dp"
         android:layout_marginTop="10dp"
         android:orientation="vertical"
         xmlns:android="http://schemas.android.com/apk/res/android">
