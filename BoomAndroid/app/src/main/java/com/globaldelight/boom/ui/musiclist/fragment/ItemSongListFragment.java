@@ -42,6 +42,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.app.Activity.RESULT_OK;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.task.PlayerEvents.REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE;
 import static com.globaldelight.boom.utils.helpers.GoogleDriveHandler.REQUEST_PERMISSION_GET_ACCOUNTS;
 
 /**
@@ -59,7 +60,6 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
     private MediaType mediaType;
     private CloudItemListAdapter adapter;
     private RecyclerView rootView;
-    public static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 1010;
 
     public static final String ARG_ITEM_TYPE = "item_type";
 
@@ -319,6 +319,7 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
         dismissLoader();
+        getActivity().onBackPressed();
     }
 
     @Override

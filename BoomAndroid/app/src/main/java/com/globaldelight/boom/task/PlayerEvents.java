@@ -5,7 +5,7 @@ package com.globaldelight.boom.task;
  */
 
 public class PlayerEvents {
-
+    public static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 1010;
     public static final String ACTION_RECEIVE_SONG = "ACTION_RECEIVE_SONG";
     public static final String ACTION_ITEM_CLICKED = "ACTION_ITEM_CLICKED";
     public static final String ACTION_TRACK_STOPPED = "ACTION_TRACK_STOPPED";

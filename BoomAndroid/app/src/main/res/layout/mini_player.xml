@@ -46,7 +46,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:textStyle="normal"
-                android:maxLines="1"
+                android:singleLine="true"
+                android:ellipsize="marquee"
                 android:textColor="@color/player_track_title"
                 android:textSize="16sp" />
 
@@ -54,7 +55,8 @@
                 android:id="@+id/mini_player_song_sub_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
+                android:singleLine="true"
+                android:ellipsize="marquee"
                 android:textStyle="normal"
                 android:gravity="center_horizontal"
                 android:textColor="@color/player_track_sub_title"

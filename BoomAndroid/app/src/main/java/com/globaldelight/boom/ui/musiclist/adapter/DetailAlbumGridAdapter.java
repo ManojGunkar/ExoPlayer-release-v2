@@ -87,11 +87,6 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     @Override
     public void onBindViewHolder(final DetailAlbumGridAdapter.SimpleItemViewHolder holder, final int position) {
         if(isHeader(position)){
-            if(listDetail.getmTitle() != null) {
-                holder.headerTitle.setText(listDetail.getmTitle());
-            }else{
-                holder.headerTitle.setVisibility(View.GONE);
-            }
             if(listDetail.getmSubTitle() != null) {
                 holder.headerSubTitle.setText(listDetail.getmSubTitle());
             }else{
@@ -411,7 +406,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
         public View gridBottomBg, grid_menu, mainView;
         public TableLayout artTable;
         public FrameLayout imgPanel;
-        public RegularTextView headerTitle, headerSubTitle, headerDetail;
+        public RegularTextView headerSubTitle, headerDetail;
         ImageView mShuffle, mMore;
 
         public SimpleItemViewHolder(View itemView) {
@@ -429,7 +424,6 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
             grid_menu = itemView.findViewById(R.id.card_grid_menu);
             imgPanel = (FrameLayout) itemView.findViewById(R.id.card_grid_img_panel);
 
-            headerTitle = (RegularTextView) itemView.findViewById(R.id.header_title);
             headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
             headerDetail = (RegularTextView) itemView.findViewById(R.id.header_detail);
             mMore = (ImageView) itemView.findViewById(R.id.recycler_header_menu);

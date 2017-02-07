@@ -71,6 +71,7 @@
     <dimen name="card_header_recycler_title_margine">19dp</dimen>
     <dimen name="card_header_recycler_title">20sp</dimen>
     <dimen name="card_header_recycler_sub_title_margine">8dp</dimen>
+    <dimen name="recycler_view_header_height">80dp</dimen>
     <dimen name="card_header_recycler_sub_title">18sp</dimen>
     <dimen name="card_header_recycler_detail_margin">5dp</dimen>
     <dimen name="card_header_recycler_detail_txt">14sp</dimen>

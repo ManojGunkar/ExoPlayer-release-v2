@@ -64,11 +64,6 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
     public void onBindViewHolder(final CollectionItemListAdapter.SimpleItemViewHolder holder, final int position) {
 
         if(position < 1){
-            if(listDetail.getmTitle() != null) {
-                holder.headerTitle.setText(listDetail.getmTitle());
-            }else{
-                holder.headerTitle.setVisibility(View.GONE);
-            }
             if(listDetail.getmSubTitle() != null) {
                 holder.headerSubTitle.setText(listDetail.getmSubTitle());
             }else{
@@ -258,7 +253,7 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
         public View mainView;
         public ImageView menu;
 
-        public RegularTextView headerTitle, headerSubTitle, headerDetail;
+        public RegularTextView headerSubTitle, headerDetail;
         ImageView mShuffle, mMore;
 
         public SimpleItemViewHolder(View itemView) {
@@ -269,7 +264,6 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
             count = (RegularTextView) itemView.findViewById(R.id.album_item_count);
             menu = (ImageView) itemView.findViewById(R.id.album_item_menu);
 
-            headerTitle = (RegularTextView) itemView.findViewById(R.id.header_title);
             headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
             headerDetail = (RegularTextView) itemView.findViewById(R.id.header_detail);
             mMore = (ImageView) itemView.findViewById(R.id.recycler_header_menu);
