@@ -67,7 +67,7 @@ public class ActivityContainer extends AppCompatActivity {
                 break;
         }
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.item_detail_container, mFragment)
+                .replace(R.id.item_detail_container, mFragment)
                 .commitAllowingStateLoss();
     }
 
