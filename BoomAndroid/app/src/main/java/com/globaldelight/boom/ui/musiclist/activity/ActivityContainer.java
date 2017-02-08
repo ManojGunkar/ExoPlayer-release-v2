@@ -1,6 +1,7 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -8,8 +9,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.ui.musiclist.fragment.SearchDetailFragment;
+import com.globaldelight.boom.ui.musiclist.fragment.AboutFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.SettingFragment;
+import com.globaldelight.boom.ui.musiclist.fragment.StoreFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.UpNextListFragment;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 
@@ -18,7 +20,7 @@ import com.globaldelight.boom.ui.widgets.RegularTextView;
  */
 
 public class ActivityContainer extends AppCompatActivity {
-
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,15 +28,14 @@ public class ActivityContainer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
 
-        String container = getIntent().getStringExtra("container");
+        int container = getIntent().getIntExtra("container", R.string.title_about);
         initViews(savedInstanceState, container);
     }
 
-    private void initViews(Bundle savedInstanceState, String container) {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    private void initViews(Bundle savedInstanceState, int container) {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ((RegularTextView) findViewById(R.id.toolbar_txt)).setText(container.equals("upnext") ?
-                getResources().getString(R.string.title_playingque) : getResources().getString(R.string.title_settings));
+        ((RegularTextView) findViewById(R.id.toolbar_txt)).setText(getResources().getString(container));
 
         findViewById(R.id.fab).setVisibility(View.GONE);
 
@@ -44,21 +45,30 @@ public class ActivityContainer extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("");
         }
-        addFragment(savedInstanceState, container);
+        addFragment(container);
     }
 
-    private void addFragment(Bundle savedInstanceState, String container) {
-        if (savedInstanceState == null) {
-            if(container.equals("upnext")) {
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.item_detail_container, new UpNextListFragment())
-                        .commit();
-            }else{
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.item_detail_container, new SettingFragment())
-                        .commitAllowingStateLoss();
-            }
+    private void addFragment(int container) {
+        Fragment mFragment = null;
+        toolbar.setVisibility(View.VISIBLE);
+        switch (container){
+            case R.string.title_upnext:
+                mFragment =  new UpNextListFragment();
+                break;
+            case R.string.title_settings:
+                mFragment =  new SettingFragment();
+                break;
+            case R.string.store_title:
+                mFragment =  new StoreFragment();
+                break;
+            case R.string.header_about:
+                toolbar.setVisibility(View.GONE);
+                mFragment =  new AboutFragment();
+                break;
         }
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.item_detail_container, mFragment)
+                .commitAllowingStateLoss();
     }
 
     @Override

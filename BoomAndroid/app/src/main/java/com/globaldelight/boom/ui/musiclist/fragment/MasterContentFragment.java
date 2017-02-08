@@ -265,9 +265,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mIsLastPlayed = (null != App.getPlayerEventHandler().getPlayingItem() ?
                 (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false) :
                 false);
-        updatePlayerUI();
+        try {
+            updatePlayerUI();
+        }catch (Exception e){
 
-        updateUpNextButton();
+        }
     }
 
     /* Large Player UI and Functionality*/
@@ -352,8 +354,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         public void run() {
                             try {
                                 Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
-                                bitmap = Bitmap.createScaledBitmap(bitmap, (int) mContext.getResources().getDimension(R.dimen.home_album_art_size),
-                                        (int) mContext.getResources().getDimension(R.dimen.home_album_art_size), false);
+                                bitmap = Bitmap.createScaledBitmap(bitmap, ScreenWidth,
+                                        ScreenWidth, false);
                                 Bitmap blurredBitmap = PlayerUtils.blur(mContext, bitmap);
                                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
                                     PlayerUtils.ImageViewAnimatedChange(mContext, mLargeAlbumArt, bitmap);
@@ -362,7 +364,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                                     mLargeAlbumArt.setImageBitmap(bitmap);
                                 }
                                 mPlayerBackground.setBackground(new BitmapDrawable(mContext.getResources(), blurredBitmap));
-                            }catch (NullPointerException e){
+                            }catch (Exception e){
                                 Bitmap albumArt = BitmapFactory.decodeResource(mContext.getResources(),
                                         R.drawable.ic_default_art_player_header);
                                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
@@ -379,8 +381,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             }.execute();
         } else {
             if(item != null) {
-                Bitmap albumArt = BitmapFactory.decodeResource(mContext.getResources(),
-                        R.drawable.ic_default_art_player_header);
+                Bitmap albumArt = Utils.getBitmapOfVector(mContext, R.drawable.ic_default_art_player_header, ScreenWidth, ScreenWidth);
                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
                     PlayerUtils.ImageViewAnimatedChange(mContext, mLargeAlbumArt, albumArt);
                     mItemId = item.getItemId();
@@ -489,13 +490,15 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updatePlayerUI(){
-        if(MasterActivity.isPlayerExpended()){
+//        if(MasterActivity.isPlayerExpended()){
             updateLargePlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
-        }else {
+//        }else {
             updateMiniPlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
-        }
+//        }
         if(null != mPlayingMediaItem)
             updateAlbumArt(mPlayingMediaItem);
+
+        updateUpNextButton();
     }
 
     private void updateLargePlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
@@ -635,7 +638,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     @Override
     public void onPanelCollapsed(View panel) {
-        updatePlayerUI();
         setMiniPlayerVisible(true);
         if (revealView.getVisibility() == View.VISIBLE) {
             revealView.setVisibility(View.INVISIBLE);
@@ -644,10 +646,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     @Override
     public void onPanelExpanded(View panel) {
-        updatePlayerUI();
         setMiniPlayerVisible(false);
-        setPlayerInfo();
-        setEnableEffects(audioEffectPreferenceHandler.isAudioEffectOn());
+//        setPlayerInfo();
+//        setEnableEffects(audioEffectPreferenceHandler.isAudioEffectOn());
     }
 
     @Override
@@ -663,6 +664,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onResumeFragment(int alfa) {
         mPlayerActionPanel.setAlpha(alfa);
+    }
+
+    @Override
+    public void onStart() {
+        setPlayerInfo();
+        super.onStart();
     }
 
     @Override
@@ -690,12 +697,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         context.registerReceiver(mPlayerBroadcastReceiver, intentFilter);
 
-//        mPlayingMediaItem = (MediaItem) App.getPlayerEventHandler().getPlayingItem();
-//        mIsPlaying = App.getPlayerEventHandler().isPlaying();
-//        mIsLastPlayed = !(App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused());
-        try {
-            updatePlayerUI();
-        }catch (Exception e){}
+        setPlayerInfo();
     }
 
     public void unregisterPlayerReceiver(Context context){

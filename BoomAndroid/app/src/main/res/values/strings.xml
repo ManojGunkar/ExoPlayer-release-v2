@@ -59,7 +59,7 @@
     <string name="tutorial_use_headphones">Use Headphones for the \n best experience</string>
 
     <!-- playing queue-->
-    <string name="title_playingque">Up Next</string>
+    <string name="title_upnext">Up Next</string>
     <string name="clear">Clear</string>
 
     <!-- Menu-->
@@ -155,5 +155,6 @@
     <string name="store_page_button_text">Buy Now @ $3.99</string>
     <string name="share_text">Share Boom</string>
     <string name="menu_restore">Restore Purchases</string>
+    <string name="store_title">Store</string>
 
 </resources>

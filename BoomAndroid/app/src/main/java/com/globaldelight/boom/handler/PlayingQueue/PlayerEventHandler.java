@@ -205,20 +205,16 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
                 mediaItemBase.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem) mediaItemBase).getItemAlbum()));
             }else if(mediaItemBase.getMediaType() == MediaType.DROP_BOX){
                 if(null != App.getDropboxAPI().getSession()){
-                    dataSource = DropBoxUtills.getDropboxItemUrl(mediaItemBase.getItemUrl());
-                }else{
-                    Toast.makeText(context, context.getResources().getString(R.string.login_problem_dropbox), Toast.LENGTH_SHORT).show();
-                    return null;
+                    return DropBoxUtills.getDropboxItemUrl(mediaItemBase.getItemUrl());
                 }
+                return null;
             }else if(mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){
 
                 String access_token = GoogleDriveHandler.getGoogleDriveInstance(context).getAccessTokenApi();
                 if(null != access_token) {
-                    dataSource = mediaItemBase.getItemUrl() + access_token;
-                }else{
-                    Toast.makeText(context, context.getResources().getString(R.string.login_problem_google_drive), Toast.LENGTH_SHORT).show();
-                    return null;
+                    return mediaItemBase.getItemUrl() + access_token;
                 }
+                return null;
             }
             return dataSource;
         }
@@ -234,6 +230,11 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
                     AnalyticsHelper.songSelectionChanged(context, mediaItemBase);
                 }
             }else{
+                if(null == dataSource && mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){
+                    Toast.makeText(context, context.getResources().getString(R.string.login_problem_google_drive), Toast.LENGTH_SHORT).show();
+                }else if(null == dataSource && mediaItemBase.getMediaType() == MediaType.DROP_BOX){
+                    Toast.makeText(context, context.getResources().getString(R.string.login_problem_dropbox), Toast.LENGTH_SHORT).show();
+                }
                 context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_STOP));
             }
         }

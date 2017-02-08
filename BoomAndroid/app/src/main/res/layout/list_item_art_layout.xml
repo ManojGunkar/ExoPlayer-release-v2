@@ -7,13 +7,13 @@
         android:id="@+id/song_item_img"
         android:layout_width="@dimen/track_list_album_art_size"
         android:layout_height="@dimen/track_list_album_art_size"
-        android:scaleType="centerCrop"/>
+        android:scaleType="fitXY"/>
 
     <View
         android:id="@+id/song_item_img_overlay"
         android:layout_width="@dimen/track_list_album_art_size"
         android:layout_height="@dimen/track_list_album_art_size"
-        android:background="@color/player_background"
+        android:background="#4D000000"
         android:visibility="invisible"/>
 
     <ImageView
