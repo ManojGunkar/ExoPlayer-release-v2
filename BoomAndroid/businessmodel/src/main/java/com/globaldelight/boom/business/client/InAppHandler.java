@@ -3,6 +3,7 @@ package com.globaldelight.boom.business.client;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ public class InAppHandler implements IabHelper.QueryInventoryFinishedListener, I
     private IabHelper mHelper;
     private Context mContext;
     private Activity mActivity;
+    public static final String ACTION_IN_APP_PURCHASE_SUCCESSFUL = "ACTION_INAPP_PURCHASE_SUCCESSFUL";
 
     public InAppHandler(Context context, Activity activity){
         this.mContext = context;
@@ -98,6 +100,7 @@ public class InAppHandler implements IabHelper.QueryInventoryFinishedListener, I
             Log.d(TAG,
                     "removeAdsPurchase was succesful.. starting consumption.");
             mHelper.consumeAsync(purchase, this);
+            mContext.sendBroadcast(new Intent(ACTION_IN_APP_PURCHASE_SUCCESSFUL));
         }
     }
 

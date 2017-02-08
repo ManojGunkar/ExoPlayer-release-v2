@@ -8,8 +8,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -32,7 +32,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
-import com.globaldelight.boom.ui.musiclist.fragment.ItemSongListFragment;
+import com.globaldelight.boom.ui.musiclist.fragment.FavouriteListFragment;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
@@ -56,9 +56,9 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
     private CloudItemListAdapter.SimpleItemViewHolder selectedHolder;
     private Activity activity;
     private ItemType listItemType;
-    ItemSongListFragment fragment;
+    Fragment fragment;
 
-    public CloudItemListAdapter(Activity activity, ItemSongListFragment fragment, ArrayList<? extends IMediaItemBase> itemList, ItemType listItemType) {
+    public CloudItemListAdapter(Activity activity, Fragment fragment, ArrayList<? extends IMediaItemBase> itemList, ItemType listItemType) {
         this.activity = activity;
         this.fragment = fragment;
         this.itemList = itemList;
@@ -233,7 +233,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
             itemList = newList;
             notifyDataSetChanged();
             if (itemList.size() == 0) {
-                fragment.listIsEmpty(itemList.size());
+                ((FavouriteListFragment)fragment).listIsEmpty(itemList.size());
             }
         }
     }

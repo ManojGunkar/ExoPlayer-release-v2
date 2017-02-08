@@ -26,7 +26,8 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
-import com.globaldelight.boom.ui.musiclist.fragment.ItemSongListFragment;
+import com.globaldelight.boom.ui.musiclist.fragment.DropBoxListFragment;
+import com.globaldelight.boom.ui.musiclist.fragment.GoogleDriveListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.MediaCollectionFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.MediaItemListFragment;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
@@ -90,37 +91,20 @@ public class MediaCollectionActivity extends MasterActivity {
 
     private void initItemViews(MediaItem mMediaItem) {
         findViewById(R.id.fab).setVisibility(View.GONE);
-        Bundle arguments = new Bundle();
-        ItemSongListFragment mFragment;
         switch (mMediaItem.getParentType()){
             case SONGS:
                 if (mMediaItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB) {
                     fragmentSwitcher(new MediaItemListFragment(),  0, getResources().getString(R.string.songs), fade_in, fade_out);
                 }else if (mMediaItem.getMediaType() == MediaType.DROP_BOX) {
-                    arguments.putInt(ItemSongListFragment.ARG_ITEM_TYPE, ItemType.SONGS.ordinal());
-                    arguments.putInt(ItemSongListFragment.ARG_MEDIA_TYPE, MediaType.DROP_BOX.ordinal());
-                    mFragment = new ItemSongListFragment();
-                    mFragment.setArguments(arguments);
-                    fragmentSwitcher(mFragment,  1, getResources().getString(R.string.drop_box), fade_in, fade_out);
+                    fragmentSwitcher(new DropBoxListFragment(),  1, getResources().getString(R.string.drop_box), fade_in, fade_out);
                 }else {
-                    arguments.putInt(ItemSongListFragment.ARG_ITEM_TYPE, ItemType.SONGS.ordinal());
-                    arguments.putInt(ItemSongListFragment.ARG_MEDIA_TYPE, MediaType.GOOGLE_DRIVE.ordinal());
-                    mFragment = new ItemSongListFragment();
-                    mFragment.setArguments(arguments);
-                    fragmentSwitcher(mFragment,  2, getResources().getString(R.string.google_drive), fade_in, fade_out);
+                    fragmentSwitcher(new GoogleDriveListFragment(),  2, getResources().getString(R.string.google_drive), fade_in, fade_out);
                 }
                 break;
             case FAVOURITE:
-                arguments.putInt(ItemSongListFragment.ARG_ITEM_TYPE, ItemType.FAVOURITE.ordinal());
-                arguments.putInt(ItemSongListFragment.ARG_MEDIA_TYPE, MediaType.DEVICE_MEDIA_LIB.ordinal());
-                mFragment = new ItemSongListFragment();
-                mFragment.setArguments(arguments);
-                fragmentSwitcher(mFragment,  3, getResources().getString(R.string.favourite_list), fade_in, fade_out);
+                fragmentSwitcher(new GoogleDriveListFragment(),  3, getResources().getString(R.string.favourite_list), fade_in, fade_out);
                 break;
         }
-
-
-
     }
 
     private void initCollapsingToolBar() {

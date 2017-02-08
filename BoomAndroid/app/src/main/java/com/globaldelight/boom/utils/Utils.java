@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -42,11 +43,13 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.adapter.AddToPlaylistAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
@@ -278,5 +281,33 @@ public class Utils {
             return context.getResources().getDimensionPixelSize(resourceId);
         }
         return 0;
+    }
+
+    public static void shareStart(Context context) {
+        if(ConnectivityReceiver.isNetworkAvailable(context)) {
+            try {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                List<ResolveInfo> resInfo = context.getPackageManager().queryIntentActivities(shareIntent, 0);
+                if (!resInfo.isEmpty()) {
+                    for (ResolveInfo resolveInfo : resInfo) {
+                        String packageName = resolveInfo.activityInfo.packageName;
+                        if (packageName.equals("com.instagram.android")) {
+                            shareIntent.setType("image/*");
+                            shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("android.resource://" + context.getPackageName() + "/" + R.drawable.share_image));
+                        } else {
+                            shareIntent.setType("text/plain");
+                            shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getResources().getString(R.string.app_name));
+                            String sAux = context.getResources().getString(R.string.share_desc);
+                            sAux = sAux + context.getResources().getString(R.string.playstore_link);
+                            shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
+
+                        }
+                    }
+                }
+                context.startActivity(Intent.createChooser(shareIntent, context.getResources().getString(R.string.choose_share)));
+            } catch (Exception e) {
+            }
+        }
     }
 }

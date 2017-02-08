@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
@@ -15,6 +14,7 @@ import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.business.client.IBusinessNetworkInit;
+import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
@@ -30,16 +30,13 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
-import static com.globaldelight.boom.utils.helpers.DropBoxUtills.ACCESS_KEY_NAME;
-import static com.globaldelight.boom.utils.helpers.DropBoxUtills.ACCESS_SECRET_NAME;
-import static com.globaldelight.boom.utils.helpers.DropBoxUtills.ACCOUNT_PREFS_NAME;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
  */
 
 public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpdateMusic, PlayerServiceReceiver.IPlayerService,
-        IBusinessNetworkInit {
+        IBusinessNetworkInit, ConnectivityReceiver.ConnectivityReceiverListener {
 
     private long mServiceStartTime = 0;
     private long mServiceStopTime = 0;
@@ -50,7 +47,8 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     private static boolean isPlayerScreenResume = false;
     private HeadPhonePlugReceiver headPhonePlugReceiver;
     private DropboxAPI<AndroidAuthSession> dropboxAPI;
-    PlayerServiceReceiver serviceReceiver;
+    private PlayerServiceReceiver serviceReceiver;
+    private ConnectivityReceiver connectivityReceiver;
 
     @Override
     public void onCreate() {
@@ -82,6 +80,14 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             mServiceStartTime = SystemClock.currentThreadTimeMillis();
         }catch (Exception e){}
 
+        connectivityReceiver = new ConnectivityReceiver(this);
+
+        if(connectivityReceiver.isNetworkAvailable(this)){
+            LoadNetworkCalls();
+        }
+    }
+
+    private void LoadNetworkCalls() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -418,5 +424,11 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     @Override
     public void onEmailSubmition(boolean success) {
 
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        if(isConnected)
+            LoadNetworkCalls();
     }
 }
