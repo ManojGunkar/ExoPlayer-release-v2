@@ -982,6 +982,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 if(audioEffectPreferenceHandler.isAudioEffectOn() != enable) {
                     audioEffectPreferenceHandler.setEnableAudioEffect(enable);
                     setEnableEffects(enable);
+                    postMessage.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            aaEffectUIController.OnEffectEnable(isEffectOn);
+                        }
+                    });
                     MixPanelAnalyticHelper.track(mContext, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
                     FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffectPreferenceHandler.isAudioEffectOn());
                 }
@@ -991,16 +997,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void setEnableEffects(boolean enable){
         isEffectOn =enable;
-
         mOldIntensity = audioEffectPreferenceHandler.getIntensity()/(double)100;
-
-        postMessage.post(new Runnable() {
-            @Override
-            public void run() {
-                aaEffectUIController.OnEffectEnable(isEffectOn);
-            }
-        });
-
         if(isEffectOn){
             mEffectSwitchTxt.setText(mContext.getString(R.string.on));
 
@@ -1319,6 +1316,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onChangeEqualizerValue(final int position) {
         setChangeEqualizerValue(position);
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                aaEffectUIController.OnEqualizerChange(position);
+                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_EQ_STATE_CHANGED);
+            }
+        });
     }
 
     public void setChangeEqualizerValue(final int position) {
@@ -1328,13 +1332,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 mSelectedEqImg.setImageDrawable(eq_active_off.getDrawable(position));
                 mSelectedEqTxt.setText(eq_names.get(position));
                 audioEffectPreferenceHandler.setSelectedEqualizerPosition(position);
-                postMessage.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        aaEffectUIController.OnEqualizerChange(position);
-                    }
-                });
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_EQ_STATE_CHANGED);
             }
         });
     }
