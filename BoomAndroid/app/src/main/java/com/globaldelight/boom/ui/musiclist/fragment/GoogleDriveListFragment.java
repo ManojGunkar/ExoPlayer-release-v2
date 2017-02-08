@@ -92,7 +92,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     }
 
     private void initLibrary() {
-// Request the GET_ACCOUNTS permission via a user dialog
         progressLoader.show();
         if (EasyPermissions.hasPermissions(getContext(), Manifest.permission.GET_ACCOUNTS)) {
             LoadGoogleDriveList();
