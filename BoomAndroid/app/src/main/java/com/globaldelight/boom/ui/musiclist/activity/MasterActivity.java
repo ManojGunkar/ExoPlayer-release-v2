@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.support.annotation.LayoutRes;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -38,7 +39,7 @@ import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSI
 public class MasterActivity extends AppCompatActivity implements SlidingUpPanelLayout.PanelSlideListener, BusinessRequestReceiver.IUpdateBusinessRequest, IFBAddsUpdater, IGoogleAddsUpdater {
     private static final String TAG = "MasterActivity";
 
-    private FrameLayout activity;
+    private CoordinatorLayout activity;
     private LinearLayout activityContainer;
     private SlidingUpPanelLayout mSlidingPaneLayout;
     private MasterContentFragment contentFragment;
@@ -53,7 +54,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         setTheme(R.style.MyTheme);
-        activity = (FrameLayout) getLayoutInflater().inflate(R.layout.activity_master, null);
+        activity = (CoordinatorLayout) getLayoutInflater().inflate(R.layout.activity_master, null);
         handler = new Handler();
         mSlidingPaneLayout = (SlidingUpPanelLayout) activity.findViewById(R.id.sliding_layout);
         activityContainer = (LinearLayout) activity.findViewById(R.id.activity_holder);

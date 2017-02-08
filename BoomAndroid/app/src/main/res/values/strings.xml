@@ -7,7 +7,6 @@
     <string name="artists">Artists</string>
     <string name="playlists">Playlists</string>
     <string name="genres">Genres</string>
-    <string name="add_to_playlist">Add to playlist</string>
     <string name="new_playlist">New Playlist</string>
 
     <string name="recently_played">Recently Played</string>
@@ -60,7 +59,7 @@
     <string name="tutorial_use_headphones">Use Headphones for the \n best experience</string>
 
     <!-- playing queue-->
-    <string name="title_playingque">Up Next</string>
+    <string name="title_upnext">Up Next</string>
     <string name="clear">Clear</string>
 
     <!-- Menu-->
@@ -103,10 +102,10 @@
     <string name="menu_play_next">Play Next</string>
     <string name="menu_shuffle">Shuffle</string>
     <string name="menu_add_upnext">Add to Up Next</string>
-    <string name="menu_add_boom_playlist">Add to Boom Playlist</string>
+    <string name="menu_add_boom_playlist">Add to Playlist</string>
     <string name="menu_add_songs">Add Songs</string>
-    <string name="menu_add_boom_fav">Add to Boom Favourites</string>
-    <string name="menu_remove_boom_fav">Remove from Boom Favourites</string>
+    <string name="menu_add_boom_fav">Add Favourites</string>
+    <string name="menu_remove_boom_fav">Remove Favourites</string>
     <string name="unknown_artist">Unknown Artist</string>
 
 
@@ -115,33 +114,6 @@
     <string name="error_fetch_data">Error to fetch Data</string>
     <string name="title_item_detail">Item Title Detail</string>
     <string name="title_activity_child">Title Activity Child</string>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -174,5 +146,15 @@
     <string name="app_expire">App Expired...!</string>
     <string name="hour">Hour</string>
     <string name="minute">Minute</string>
+
+
+
+    <string name="store_page_header">Hassle free Boomin\'</string>
+    <string name="store_page_buy_description">Buy now to #FeelYourMusic \n withoutany hassle,Without any ad.</string>
+    <string name="store_page_share_description">You may also share Boom to discontinue ads \n for 5 days.</string>
+    <string name="store_page_button_text">Buy Now @ $3.99</string>
+    <string name="share_text">Share Boom</string>
+    <string name="menu_restore">Restore Purchases</string>
+    <string name="store_title">Store</string>
 
 </resources>

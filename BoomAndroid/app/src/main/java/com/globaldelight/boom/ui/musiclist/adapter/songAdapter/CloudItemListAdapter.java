@@ -143,7 +143,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
 
     private void setAlbumArt(String path, CloudItemListAdapter.SimpleItemViewHolder holder) {
         if (PlayerUtils.isPathValid(path ))
-            Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_list, null))/*.resize(dpToPx(90),
+            Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))/*.resize(dpToPx(90),
                     dpToPx(90)).centerCrop()*/.into(holder.img);
         else{
             setDefaultArt(holder);
@@ -151,7 +151,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
     }
 
     private void setDefaultArt(CloudItemListAdapter.SimpleItemViewHolder holder/*, int size*/) {
-        holder.img.setImageDrawable(activity.getResources().getDrawable( R.drawable.ic_default_list , null));
+        holder.img.setImageDrawable(activity.getResources().getDrawable( R.drawable.ic_default_art_grid , null));
     }
 
     private void setOnClicks(final CloudItemListAdapter.SimpleItemViewHolder holder, final int position) {

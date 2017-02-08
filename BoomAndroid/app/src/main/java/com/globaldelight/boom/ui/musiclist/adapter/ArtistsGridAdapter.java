@@ -92,10 +92,10 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
     private void setArtistImg(final SimpleItemViewHolder holder, final int position, final int size) {
         String path = itemList.get(position).getItemArtUrl();
         if (PlayerUtils.isPathValid(path))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                    /* .centerCrop().resize(size, size)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
         else {
-            holder.defaultImg.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_default_album_grid));
+            holder.defaultImg.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_default_art_grid, null));
         }
     }
 

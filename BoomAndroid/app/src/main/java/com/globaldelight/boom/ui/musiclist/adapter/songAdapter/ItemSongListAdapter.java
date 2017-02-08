@@ -198,7 +198,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
     private void setAlbumArt(String path, SimpleItemViewHolder holder) {
         if (PlayerUtils.isPathValid(path ))
-            Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_list, null))
+            Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                     .noFade().into(holder.img);
         else{
             setDefaultArt(holder);
@@ -207,7 +207,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
     private void setDefaultArt(SimpleItemViewHolder holder) {
 
-        holder.img.setImageDrawable(activity.getResources().getDrawable( R.drawable.ic_default_list, null));
+        holder.img.setImageDrawable(activity.getResources().getDrawable( R.drawable.ic_default_art_grid, null));
     }
 
     private void setOnMenuClickListener(SimpleItemViewHolder holder, final int position) {

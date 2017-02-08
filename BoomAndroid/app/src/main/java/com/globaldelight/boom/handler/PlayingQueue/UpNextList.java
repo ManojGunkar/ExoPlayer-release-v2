@@ -744,7 +744,7 @@ public class UpNextList {
             ArrayList list = new ArrayList();
             list.add(item);
             insertUnShuffledList(list, true);
-            mAutoNextList.add(item);
+            mAutoNextList.add(0, item);
             QueueUpdated();
         }
     }
@@ -755,7 +755,7 @@ public class UpNextList {
             if(mShuffle == SHUFFLE.all){
                 Collections.shuffle(((MediaItemCollection) itemList).getMediaElement());
             }
-            mAutoNextList.addAll(((MediaItemCollection) itemList).getMediaElement());
+            mAutoNextList.addAll(0, ((MediaItemCollection) itemList).getMediaElement());
             QueueUpdated();
         }
     }

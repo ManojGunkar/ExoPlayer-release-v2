@@ -12,7 +12,7 @@ public class Preferences {
     public static final String PREF_NAME = "boom_pref";
 
 
-    public static final int MODE = Context.MODE_WORLD_WRITEABLE;
+    public static final int MODE = Context.MODE_PRIVATE;
 
 
     public static final String SHAKE_GESTURE_PREF = "SHAKE_GESTURE_PREF";

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/popup_store_restore"
+        android:icon="@drawable/ic_menu_selected"
+        android:title="@string/menu_restore"
+        android:showAsAction="always" />
+</menu>

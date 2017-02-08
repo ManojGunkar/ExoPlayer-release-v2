@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Handler;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.MediaCollectionActivity;
 import com.globaldelight.boom.ui.musiclist.activity.ActivityContainer;
@@ -78,7 +79,7 @@ public class PlayerUIController implements IPlayerUIController {
 
     private void startUpNextActivity(Activity activity) {
         Intent queueIntent = new Intent(activity, ActivityContainer.class);
-        queueIntent.putExtra("container", "upnext");
+        queueIntent.putExtra("container", R.string.title_upnext);
         activity.startActivity(queueIntent);
     }
 

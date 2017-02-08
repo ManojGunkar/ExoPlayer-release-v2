@@ -108,10 +108,10 @@ public class AlbumDetailItemActivity extends MasterActivity {
                 if (PlayerUtils.isPathValid(albumArt )) {
                     Picasso.with(AlbumDetailItemActivity.this)
                             .load(new File(albumArt)).resize(height, height)
-                            .error(getResources().getDrawable(R.drawable.ic_default_album_header, null)).noFade()
+                            .error(getResources().getDrawable(R.drawable.ic_default_art_player_header, null)).noFade()
                             .into(((ImageView) findViewById(R.id.activity_album_art)));
                 }else {
-                    ((ImageView) findViewById(R.id.activity_album_art)).setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_header, null));
+                    ((ImageView) findViewById(R.id.activity_album_art)).setImageDrawable(getResources().getDrawable(R.drawable.ic_default_art_player_header, null));
                 }
     }
 

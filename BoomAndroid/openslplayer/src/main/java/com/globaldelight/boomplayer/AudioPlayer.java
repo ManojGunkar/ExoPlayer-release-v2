@@ -181,9 +181,8 @@ public class AudioPlayer implements Runnable {
             MediaFormat inputFormat = reader.getInputFormat();
             duration = inputFormat.getLong(MediaFormat.KEY_DURATION);
 
-            startPlayer(reader.getOutputFormat(), true);
-
             state.set(PlayerStates.PLAYING);
+            startPlayer(reader.getOutputFormat(), true);
 
             postOnStart(inputFormat.getString(MediaFormat.KEY_MIME),
                     inputFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE),

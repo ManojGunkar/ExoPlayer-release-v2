@@ -9,13 +9,6 @@
         android:layout_height="match_parent"
         android:scaleType="fitXY"/>
 
-    <ImageView
-        android:id="@+id/player_fav"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|right"
-        android:src="@drawable/ic_favourites_normal"/>
-
     <ProgressBar
         android:id="@+id/load_cloud"
         android:layout_width="wrap_content"

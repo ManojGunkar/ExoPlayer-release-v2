@@ -29,6 +29,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
                 android:orientation="vertical">
 
                 <FrameLayout
@@ -96,8 +97,8 @@
                     android:layout_height="100dp"
                     android:layout_gravity="bottom"
                     android:layout_weight="0"
-                    android:orientation="horizontal"
-                    android:transitionName="transition:nameholder" />
+                    android:background="#4D000000"
+                    android:orientation="horizontal" />
             </FrameLayout>
 
             <android.support.v7.widget.Toolbar

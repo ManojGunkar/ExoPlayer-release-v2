@@ -6,12 +6,9 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.AnimRes;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -25,19 +22,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.globaldelight.boom.business.BusinessUtils;
-import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
-import com.globaldelight.boom.data.MediaCallback.FavouriteMediaList;
-import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -395,7 +386,15 @@ public class MainActivity extends MasterActivity
                     fragmentSwitcher(mFragment,  4, getResources().getString(R.string.drop_box), fade_in, fade_out);
                     break;
                 case R.id.nav_setting:
-                    startSetting();
+                    startCompoundActivities(R.string.title_settings);
+                    break;
+                case R.id.nav_store:
+                    startCompoundActivities(R.string.store_title);
+                    break;
+                case R.id.nav_about:
+                    startCompoundActivities(R.string.header_about);
+                    break;
+                case R.id.nav_share:
                     break;
             }
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -403,9 +402,9 @@ public class MainActivity extends MasterActivity
         return true;
     }
 
-    private void startSetting() {
+    private void startCompoundActivities(int activityName) {
         Intent intent = new Intent(this, ActivityContainer.class);
-        intent.putExtra("container","setting");
+        intent.putExtra("container",activityName);
         startActivity(intent);
     }
 
@@ -424,6 +423,7 @@ public class MainActivity extends MasterActivity
 
         if(currentItem < 0){
             setVisiblePager(false);
+
         }else if(currentItem == 0){
             setVisiblePager(true);
         }else {
@@ -440,6 +440,10 @@ public class MainActivity extends MasterActivity
         }
     }
 
+    private void setVisibleSearch(boolean enable){
+        searchMenuItem.setVisible(enable);
+    }
+
     public void setTitle(String title){
         toolbarTitle.setText(title);
     }
@@ -448,9 +452,11 @@ public class MainActivity extends MasterActivity
         if(visible){
             currentItem = 0;
             findViewById(R.id.library_tab_panel).setVisibility(View.VISIBLE);
+            setVisibleSearch(true);
             fragmentContainer.setVisibility(View.GONE);
         }else{
             findViewById(R.id.library_tab_panel).setVisibility(View.GONE);
+            setVisibleSearch(false);
             fragmentContainer.setVisibility(View.VISIBLE);
         }
     }
@@ -483,7 +489,7 @@ public class MainActivity extends MasterActivity
 
     private void updateUpNextDB() {
         sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_DESTROY_PLAYER_SCREEN));
-        if(!App.getPlayerEventHandler().isPlaying()) {
+        if(!App.getPlayerEventHandler().isPlaying() && null != App.getService()) {
             App.getService().stopSelf();
         }
     }

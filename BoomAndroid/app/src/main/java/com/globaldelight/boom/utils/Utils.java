@@ -142,7 +142,7 @@ public class Utils {
         rv.setLayoutManager(new LinearLayoutManager(context));
         rv.setAdapter(adapter);
         MaterialDialog dialog = new MaterialDialog.Builder(context)
-                .title(R.string.add_to_playlist)
+                .title(R.string.menu_add_boom_playlist)
                 .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
                 .titleColor(ContextCompat.getColor(context, R.color.dialog_title))
                 .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))

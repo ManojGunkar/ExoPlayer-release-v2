@@ -23,7 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/boom_playlist_track_nav_margin"
-                android:scaleType="centerCrop"
+                android:scaleType="fitXY"
                 android:src="@drawable/rearange" />
         </LinearLayout>
 

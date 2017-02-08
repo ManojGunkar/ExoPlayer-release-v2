@@ -269,7 +269,7 @@ public class MediaCollectionActivity extends MasterActivity {
             if (PlayerUtils.isPathValid(imagePath)) {
                 Picasso.with(this)
                         .load(new File(imagePath)).resize(width, width)
-                        .error(getResources().getDrawable(R.drawable.ic_default_album_header, null)).noFade()
+                        .error(getResources().getDrawable(R.drawable.ic_default_art_player_header, null)).noFade()
                         .into(albumArt);
             } else {
                 setDefaultImage(imagePath);
@@ -286,7 +286,7 @@ public class MediaCollectionActivity extends MasterActivity {
 
     private void setDefaultImage(String imagePath) {
         if (imagePath == null || imagePath.equals(MediaItem.UNKNOWN_ART_URL)) {
-            albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_album_header, null));
+            albumArt.setImageDrawable(getResources().getDrawable(R.drawable.ic_default_art_player_header, null));
         }
     }
 
@@ -302,43 +302,43 @@ public class MediaCollectionActivity extends MasterActivity {
 
         switch (count){
             case 1:
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
                 break;
             case 2:
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
                 break;
             case 3:
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Picasso.with(this).load(new File(Urls.get(2))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(2))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
                 break;
             default:
-                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(0))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(1))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Picasso.with(this).load(new File(Urls.get(2))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(2))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Picasso.with(this).load(new File(Urls.get(3))).error(getResources().getDrawable(R.drawable.ic_default_album_grid, null))
+                Picasso.with(this).load(new File(Urls.get(3))).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                         /*.centerCrop().resize(size/2, size/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
                 break;
         }

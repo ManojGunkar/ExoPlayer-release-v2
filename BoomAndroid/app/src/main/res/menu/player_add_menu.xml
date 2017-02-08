@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/popup_song_add_fav"
+        android:title="@string/menu_add_boom_fav"
+        android:showAsAction="always" />
+
+    <item
+        android:id="@+id/popup_song_add_playlist"
+        android:title="@string/menu_add_boom_playlist"
+        android:showAsAction="always" />
+</menu>
