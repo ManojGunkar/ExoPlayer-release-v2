@@ -218,7 +218,7 @@ public class MainActivity extends MasterActivity
             fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             viewMainActivity();
         }else{
-            super.onBackPressed();
+            moveTaskToBack(true);
         }
     }
 

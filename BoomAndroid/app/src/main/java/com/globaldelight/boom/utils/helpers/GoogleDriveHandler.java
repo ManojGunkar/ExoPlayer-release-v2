@@ -59,19 +59,18 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
 //    private Activity mActivity;
     private Fragment mFragment;
     private Context mContext;
-    private static GoogleDriveHandler googleDriveHandler;
 
-    private GoogleDriveHandler(Context context){
+    public GoogleDriveHandler(Context context){
         this.mContext = context;
         shp = mContext.getSharedPreferences(PREF_ACCOUNT_NAME, mContext.MODE_PRIVATE);
     }
 
-    private GoogleDriveHandler(Fragment mFragment){
+    public GoogleDriveHandler(Fragment mFragment){
         this.mFragment = mFragment;
         shp = this.mFragment.getContext().getSharedPreferences(PREF_ACCOUNT_NAME, this.mFragment.getContext().MODE_PRIVATE);
     }
 
-    public static GoogleDriveHandler getGoogleDriveInstance(Fragment mFragment){
+   /* public static GoogleDriveHandler getGoogleDriveInstance(Fragment mFragment){
         if(null == googleDriveHandler)
             googleDriveHandler = new GoogleDriveHandler(mFragment);
         return googleDriveHandler;
@@ -81,7 +80,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
         if(null == googleDriveHandler)
             googleDriveHandler = new GoogleDriveHandler(context);
         return googleDriveHandler;
-    }
+    }*/
 
     public GoogleAccountCredential getGoogleAccountCredential(){
         // Initialize credentials and service object.
@@ -126,6 +125,13 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
         }
     }
 
+    public void resetKeys(Context context){
+        mFragment.getActivity().getPreferences(Context.MODE_PRIVATE).edit()
+                .putString(PREF_ACCOUNT_NAME, null).apply();
+        GoogleDriveMediaList.geGoogleDriveMediaListInstance(context).clearGoogleDriveMediaContent();
+        chooseAccount();
+    }
+
     public String getSelectedAccountName(){
         String accountName = getGoogleAccountCredential().getSelectedAccountName();
         if(null != accountName){
@@ -151,7 +157,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
             GoogleDriveMediaList.geGoogleDriveMediaListInstance(null != mContext ? mContext :
                     mFragment.getContext()).onErrorOccurred(mFragment.getResources().getString(R.string.network_error));
         } else {
-            new LoadGoogleDriveList(mFragment, googleDriveHandler).execute();
+            new LoadGoogleDriveList(mFragment, mCredential).execute();
         }
     }
 
@@ -262,7 +268,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
      * is granted.
      */
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
-    private void chooseAccount() {
+    public void chooseAccount() {
         if (EasyPermissions.hasPermissions(
                 (null != mContext ? mContext : mFragment.getContext()),
                 Manifest.permission.GET_ACCOUNTS)) {

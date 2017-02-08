@@ -84,7 +84,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-
     private void updateInApp(){
         rootView.findViewById(R.id.store_buyButton).setVisibility(View.GONE);
     }

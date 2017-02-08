@@ -88,6 +88,16 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     private void LoadDropboxList(){
+        resetAuthentication();
+        if (dropboxMediaList.getDropboxMediaList().isEmpty()) {
+            new LoadDropBoxList(getActivity()).execute();
+        } else {
+            notifyAdapter(dropboxMediaList.getDropboxMediaList());
+        }
+        setForAnimation();
+    }
+
+    private void resetAuthentication(){
         AndroidAuthSession session = App.getDropboxAPI().getSession();
         if (session.authenticationSuccessful()) {
             try {
@@ -99,12 +109,6 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                         + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         }
-        if (dropboxMediaList.getDropboxMediaList().isEmpty()) {
-            new LoadDropBoxList(getActivity()).execute();
-        } else {
-            notifyAdapter(dropboxMediaList.getDropboxMediaList());
-        }
-        setForAnimation();
     }
 
     private void setForAnimation() {

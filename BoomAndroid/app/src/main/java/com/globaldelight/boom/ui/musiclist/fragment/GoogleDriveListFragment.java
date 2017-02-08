@@ -82,9 +82,13 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
         initViews();
 
-        initLibrary();
-
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        initLibrary();
+        super.onResume();
     }
 
     private void initLibrary() {
@@ -118,7 +122,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
         googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(getActivity());
         googleDriveMediaList.setGoogleDriveMediaUpdater(this);
-        googleDriveHandler = GoogleDriveHandler.getGoogleDriveInstance(GoogleDriveListFragment.this);
+        googleDriveHandler = new GoogleDriveHandler(GoogleDriveListFragment.this);
+        googleDriveMediaList.setGoogleDriveHandler(googleDriveHandler);
         googleDriveHandler.getGoogleAccountCredential();
         googleDriveHandler.getGoogleApiClient();
         googleDriveHandler.connectGoogleAccount();

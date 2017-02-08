@@ -44,6 +44,10 @@ public class SplashActivity extends AppCompatActivity {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
+        if (!isTaskRoot()){
+            finish();
+            return;
+        }
         super.onCreate(savedInstanceState);
 
         App.startPlayerService();

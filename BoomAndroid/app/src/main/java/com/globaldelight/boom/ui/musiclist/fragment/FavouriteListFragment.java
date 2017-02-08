@@ -29,7 +29,6 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 import static com.globaldelight.boom.task.PlayerEvents.REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE;
-import static com.globaldelight.boom.utils.helpers.GoogleDriveHandler.REQUEST_PERMISSION_GET_ACCOUNTS;
 
 /**
  * Created by Rahul Agarwal on 08-02-17.

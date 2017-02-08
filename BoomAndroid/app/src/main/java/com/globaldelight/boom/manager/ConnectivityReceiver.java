@@ -39,7 +39,7 @@ public class ConnectivityReceiver
     }
 
     public static boolean isNetworkAvailable(Context context) {
-        boolean isConnect = false;
+        boolean isConnect;
         ConnectivityManager
                 cm = (ConnectivityManager) context.getApplicationContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
