@@ -14,7 +14,9 @@ import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session;
+import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
@@ -147,5 +149,16 @@ public class DropBoxUtills {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public  static void clearKeys(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(
+                ACCOUNT_PREFS_NAME, 0);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.clear();
+        edit.commit();
+        if(null != DropboxMediaList.getDropboxListInstance(context)){
+            DropboxMediaList.getDropboxListInstance(context).clearDropboxContent();
+        }
     }
 }

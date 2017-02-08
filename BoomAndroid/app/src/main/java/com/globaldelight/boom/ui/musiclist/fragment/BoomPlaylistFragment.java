@@ -56,8 +56,11 @@ public class BoomPlaylistFragment extends Fragment {
             switch (intent.getAction()){
                 case PlayerEvents.ACTION_UPDATE_BOOM_PLAYLIST:
                     if (boomPlayListAdapter != null) {
-                        boomPlayListAdapter.updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                        boomPlayListAdapter.updateNewList(MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
                     }
+                    break;
+                case PlayerEvents.ACTION_ADD_NEW_BOOM_PLAYLIST:
+                    newPlaylistDialog();
                     break;
             }
         }
@@ -69,6 +72,7 @@ public class BoomPlaylistFragment extends Fragment {
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PlayerEvents.ACTION_UPDATE_BOOM_PLAYLIST);
+        intentFilter.addAction(PlayerEvents.ACTION_ADD_NEW_BOOM_PLAYLIST);
         getActivity().registerReceiver(mUpdateBoomPlaylistReceiver, intentFilter);
     }
 

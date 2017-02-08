@@ -157,4 +157,10 @@
     <string name="menu_restore">Restore Purchases</string>
     <string name="store_title">Store</string>
 
+    <string name="title_share">Share</string>
+    <string name="playstore_link">https://play.google.com/store/apps/details?id=com.globaldelight.boom  \n\n</string>
+    <string name="share_desc">\nLet me recommend you this application\n\n</string>
+    <string name="choose_share">choose one</string>
+
+
 </resources>

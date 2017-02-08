@@ -4,8 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.AnimRes;
 import android.support.annotation.NonNull;
@@ -29,6 +31,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.globaldelight.boom.business.BusinessUtils;
+import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -37,15 +40,21 @@ import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.adapter.SearchSuggestionAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.SectionsPagerAdapter;
+import com.globaldelight.boom.ui.musiclist.fragment.DropBoxListFragment;
+import com.globaldelight.boom.ui.musiclist.fragment.FavouriteListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.BoomPlaylistFragment;
-import com.globaldelight.boom.ui.musiclist.fragment.ItemSongListFragment;
+import com.globaldelight.boom.ui.musiclist.fragment.GoogleDriveListFragment;
 import com.globaldelight.boom.ui.widgets.MusicListTabs.MusicTabBar;
 import com.globaldelight.boom.ui.widgets.MusicListTabs.MusicTabLayout;
 import com.globaldelight.boom.ui.widgets.MusicListTabs.TabBarStyle;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
+import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
+
+import java.util.List;
+
 import static com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment.isUpdateUpnextDB;
 
 /**
@@ -55,10 +64,9 @@ import static com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment
 public class MainActivity extends MasterActivity
         implements NavigationView.OnNavigationItemSelectedListener, MasterActivity.ILibraryAddsUpdater{
 
-    public final static int PERM_REQUEST_CODE_DRAW_OVERLAYS = 1234;
     private PermissionChecker permissionChecker;
     private DrawerLayout drawerLayout;
-    private Fragment mSearchResult, mFragment;
+    private Fragment mSearchResult;
     private FrameLayout fragmentContainer;
     private int currentItem = 0;
     private int fade_in = android.R.anim.fade_in;
@@ -149,8 +157,7 @@ public class MainActivity extends MasterActivity
         mFloatAddPlayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mFragment instanceof BoomPlaylistFragment)
-                    ((BoomPlaylistFragment)mFragment).newPlaylistDialog();
+                sendBroadcast(new Intent(PlayerEvents.ACTION_ADD_NEW_BOOM_PLAYLIST));
             }
         });
 
@@ -173,7 +180,7 @@ public class MainActivity extends MasterActivity
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         int[] items = {R.string.artists, R.string.albums, R.string.songs, R.string.playlists, R.string.genres};
-        mSectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), items);
+        mSectionsPagerAdapter = new SectionsPagerAdapter(this, fragmentManager, items);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -201,17 +208,17 @@ public class MainActivity extends MasterActivity
 
     @Override
     public void onBackPressed() {
-        mFloatAddPlayList.setVisibility(View.GONE);
+        if(null != mFloatAddPlayList && mFloatAddPlayList.getVisibility() == View.VISIBLE)
+            mFloatAddPlayList.setVisibility(View.GONE);
         if(isPlayerExpended()) {
             sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
         }else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else if(null != mSearchResult || null != mFragment){
+        }else if(fragmentManager.getBackStackEntryCount() > 0){
+            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             viewMainActivity();
-            mSearchResult = null;
-            mFragment = null;
         }else{
-            super.onBackPressed();
+            moveTaskToBack(true);
         }
     }
 
@@ -361,29 +368,16 @@ public class MainActivity extends MasterActivity
                     break;
                 case R.id.boom_palylist:
                     mFloatAddPlayList.setVisibility(View.VISIBLE);
-                    mFragment = new BoomPlaylistFragment();
-                    fragmentSwitcher(mFragment,  1, getResources().getString(R.string.boom_playlist), fade_in, fade_out);
+                    fragmentSwitcher(new BoomPlaylistFragment(),  1, getResources().getString(R.string.boom_playlist), fade_in, fade_out);
                     break;
                 case R.id.favourite_list:
-                    arguments.putInt(ItemSongListFragment.ARG_ITEM_TYPE, ItemType.FAVOURITE.ordinal());
-                    arguments.putInt(ItemSongListFragment.ARG_MEDIA_TYPE, MediaType.DEVICE_MEDIA_LIB.ordinal());
-                    mFragment = new ItemSongListFragment();
-                    mFragment.setArguments(arguments);
-                    fragmentSwitcher(mFragment,  2, getResources().getString(R.string.favourite_list), fade_in, fade_out);
+                    fragmentSwitcher(new FavouriteListFragment(),  2, getResources().getString(R.string.favourite_list), fade_in, fade_out);
                     break;
                 case R.id.google_drive:
-                    arguments.putInt(ItemSongListFragment.ARG_ITEM_TYPE, ItemType.SONGS.ordinal());
-                    arguments.putInt(ItemSongListFragment.ARG_MEDIA_TYPE, MediaType.GOOGLE_DRIVE.ordinal());
-                    mFragment = new ItemSongListFragment();
-                    mFragment.setArguments(arguments);
-                    fragmentSwitcher(mFragment,  3, getResources().getString(R.string.google_drive), fade_in, fade_out);
+                    fragmentSwitcher(new GoogleDriveListFragment(),  3, getResources().getString(R.string.google_drive), fade_in, fade_out);
                     break;
                 case R.id.drop_box:
-                    arguments.putInt(ItemSongListFragment.ARG_ITEM_TYPE, ItemType.SONGS.ordinal());
-                    arguments.putInt(ItemSongListFragment.ARG_MEDIA_TYPE, MediaType.DROP_BOX.ordinal());
-                    mFragment = new ItemSongListFragment();
-                    mFragment.setArguments(arguments);
-                    fragmentSwitcher(mFragment,  4, getResources().getString(R.string.drop_box), fade_in, fade_out);
+                    fragmentSwitcher(new DropBoxListFragment(),  4, getResources().getString(R.string.drop_box), fade_in, fade_out);
                     break;
                 case R.id.nav_setting:
                     startCompoundActivities(R.string.title_settings);
@@ -395,6 +389,7 @@ public class MainActivity extends MasterActivity
                     startCompoundActivities(R.string.header_about);
                     break;
                 case R.id.nav_share:
+                    Utils.shareStart(this);
                     break;
             }
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -430,12 +425,12 @@ public class MainActivity extends MasterActivity
             setVisiblePager(false);
         }
         setTitle(String.valueOf(fname));
-        removeFragment();
+//        removeFragment();
         if(currentItem != 0) {
             fragmentManager.beginTransaction()
                     .setCustomAnimations(animationEnter, animationExit)
                     .replace(R.id.fragment_container, fragment)
-                   /* .addToBackStack(String.valueOf(fname))*/
+                    .addToBackStack(String.valueOf(fname))
                     .commitAllowingStateLoss();
         }
     }
@@ -452,12 +447,12 @@ public class MainActivity extends MasterActivity
         if(visible){
             currentItem = 0;
             findViewById(R.id.library_tab_panel).setVisibility(View.VISIBLE);
-            setVisibleSearch(true);
             fragmentContainer.setVisibility(View.GONE);
+            setVisibleSearch(true);
         }else{
             findViewById(R.id.library_tab_panel).setVisibility(View.GONE);
-            setVisibleSearch(false);
             fragmentContainer.setVisibility(View.VISIBLE);
+            setVisibleSearch(false);
         }
     }
 

@@ -49,6 +49,8 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
     private AudioManager audioManager;
     private AudioManager.OnAudioFocusChangeListener focusChangeListener;
     private MediaSession session;
+    private GoogleDriveHandler googleDriveHandler;
+
     IPlayerEvents IPlayerEvents = new IPlayerEvents() {
         @Override
         public void onStop() {
@@ -197,6 +199,12 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
         IMediaItem mediaItemBase;
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            googleDriveHandler = new GoogleDriveHandler(context);
+        }
+
+        @Override
         protected String doInBackground(IMediaItem... params) {
             String dataSource = null;
             mediaItemBase = params[0];
@@ -210,7 +218,7 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
                 return null;
             }else if(mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){
 
-                String access_token = GoogleDriveHandler.getGoogleDriveInstance(context).getAccessTokenApi();
+                String access_token = googleDriveHandler.getAccessTokenApi();
                 if(null != access_token) {
                     return mediaItemBase.getItemUrl() + access_token;
                 }

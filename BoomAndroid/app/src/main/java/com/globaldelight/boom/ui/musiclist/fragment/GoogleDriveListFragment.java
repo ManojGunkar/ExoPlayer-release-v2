@@ -49,27 +49,19 @@ import static com.globaldelight.boom.utils.helpers.GoogleDriveHandler.REQUEST_PE
  * Created by Rahul Agarwal on 26-01-17.
  */
 
-public class ItemSongListFragment extends Fragment  implements FavouriteMediaList.IFavouriteUpdater, DropboxMediaList.IDropboxUpdater, GoogleDriveMediaList.IGoogleDriveMediaUpdater, EasyPermissions.PermissionCallbacks {
+public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMediaList.IGoogleDriveMediaUpdater, EasyPermissions.PermissionCallbacks {
 
-    private DropboxMediaList dropboxMediaList;
     private GoogleDriveMediaList googleDriveMediaList;
-    private FavouriteMediaList favouriteMediaList;
     private GoogleDriveHandler googleDriveHandler;
     private ProgressDialog progressLoader;
-    private ItemType itemType;
-    private MediaType mediaType;
     private CloudItemListAdapter adapter;
     private RecyclerView rootView;
-
-    public static final String ARG_ITEM_TYPE = "item_type";
-
-    public static final String ARG_MEDIA_TYPE = "media_type";
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ItemSongListFragment() {
+    public GoogleDriveListFragment() {
     }
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
@@ -84,65 +76,31 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
     };
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getArguments().containsKey(ARG_ITEM_TYPE)) {
-            itemType = ItemType.fromOrdinal(getArguments().getInt(ARG_ITEM_TYPE, ItemType.FAVOURITE.ordinal()));
-        }
-
-        if (getArguments().containsKey(ARG_MEDIA_TYPE)) {
-            mediaType = MediaType.fromOrdinal(getArguments().getInt(ARG_MEDIA_TYPE, MediaType.DEVICE_MEDIA_LIB.ordinal()));
-        }
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
 
         initViews();
 
-        initLibrary();
-
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        initLibrary();
+        super.onResume();
     }
 
     private void initLibrary() {
 // Request the GET_ACCOUNTS permission via a user dialog
-        if(mediaType == MediaType.GOOGLE_DRIVE) {
-            progressLoader.show();
-            if(EasyPermissions.hasPermissions(getContext(), Manifest.permission.GET_ACCOUNTS)){
-                LoadGoogleDriveList();
-            }else {
-                EasyPermissions.requestPermissions(
-                        ItemSongListFragment.this, "This app needs to access your Google account (via Contacts).",
-                        REQUEST_PERMISSION_GET_ACCOUNTS, Manifest.permission.GET_ACCOUNTS);
-            }
-        }else if(itemType == ItemType.FAVOURITE) {
-            progressLoader.show();
-            if(EasyPermissions.hasPermissions(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-                LoadFavouriteList();
-            }else {
-                EasyPermissions.requestPermissions(
-                        ItemSongListFragment.this, getResources().getString(R.string.storage_permission),
-                        REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            }
-        }
-    }
-    @Override
-    public void onResume() {
-        super.onResume();
-        LoadDropboxList();
-    }
-
-    private void LoadFavouriteList(){
-        if (favouriteMediaList.getFavouriteMediaList().isEmpty()) {
-            new LoadFavouriteList(getActivity()).execute();
+        progressLoader.show();
+        if (EasyPermissions.hasPermissions(getContext(), Manifest.permission.GET_ACCOUNTS)) {
+            LoadGoogleDriveList();
         } else {
-            notifyAdapter(favouriteMediaList.getFavouriteMediaList());
+            EasyPermissions.requestPermissions(
+                    GoogleDriveListFragment.this, "This app needs to access your Google account (via Contacts).",
+                    REQUEST_PERMISSION_GET_ACCOUNTS, Manifest.permission.GET_ACCOUNTS);
         }
-        dismissLoader();
     }
 
     private void LoadGoogleDriveList(){
@@ -153,27 +111,6 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
         }
     }
 
-    private void LoadDropboxList(){
-        if(mediaType == MediaType.DROP_BOX && null != App.getDropboxAPI()) {
-            AndroidAuthSession session = App.getDropboxAPI().getSession();
-            if (session.authenticationSuccessful()) {
-                try {
-                    session.finishAuthentication();
-                    TokenPair tokens = session.getAccessTokenPair();
-                    DropBoxUtills.storeKeys(getContext(), tokens.key, tokens.secret);
-                } catch (IllegalStateException e) {
-                    Toast.makeText(getContext(),getResources().getString(R.string.dropbox_authenticate_problem)
-                            + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-            if (dropboxMediaList.getDropboxMediaList().isEmpty()) {
-                new LoadDropBoxList(getActivity()).execute();
-            } else {
-                notifyAdapter(dropboxMediaList.getDropboxMediaList());
-            }
-            setForAnimation();
-        }
-    }
 
     private void initViews() {
         IntentFilter intentFilter = new IntentFilter();
@@ -183,37 +120,14 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
         progressLoader = new ProgressDialog(getActivity());
         progressLoader.show();
 
-        if(itemType == ItemType.FAVOURITE){
-            favouriteMediaList = FavouriteMediaList.getFavouriteListInstance(getActivity());
-            favouriteMediaList.setFavouriteUpdater(this);
-            favouriteMediaList.clearFavouriteContent();
-            setSongListAdapter(favouriteMediaList.getFavouriteMediaList(), itemType);
-        }else if(mediaType == MediaType.DROP_BOX && itemType == ItemType.SONGS){
-            dropboxMediaList = DropboxMediaList.getDropboxListInstance(getActivity());
-            dropboxMediaList.setDropboxUpdater(this);
-            DropBoxUtills.checkDropboxAuthentication(getActivity());
-            setSongListAdapter(dropboxMediaList.getDropboxMediaList(), itemType);
-        }else if(mediaType == MediaType.GOOGLE_DRIVE && itemType == ItemType.SONGS){
-            googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(getActivity());
-            googleDriveMediaList.setGoogleDriveMediaUpdater(this);
-            googleDriveHandler = GoogleDriveHandler.getGoogleDriveInstance(ItemSongListFragment.this);
-            googleDriveHandler.getGoogleAccountCredential();
-            googleDriveHandler.getGoogleApiClient();
-            googleDriveHandler.connectGoogleAccount();
-            setSongListAdapter(googleDriveMediaList.getGoogleDriveMediaList(), itemType);
-        }
-    }
-
-    @Override
-    public void onUpdateFavouriteList() {
-        dismissLoader();
-        notifyAdapter(favouriteMediaList.getFavouriteMediaList());
-    }
-
-    @Override
-    public void UpdateDropboxEntryList() {
-        dismissLoader();
-        notifyAdapter(dropboxMediaList.getDropboxMediaList());
+        googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(getActivity());
+        googleDriveMediaList.setGoogleDriveMediaUpdater(this);
+        googleDriveHandler = new GoogleDriveHandler(GoogleDriveListFragment.this);
+        googleDriveMediaList.setGoogleDriveHandler(googleDriveHandler);
+        googleDriveHandler.getGoogleAccountCredential();
+        googleDriveHandler.getGoogleApiClient();
+        googleDriveHandler.connectGoogleAccount();
+        setSongListAdapter(googleDriveMediaList.getGoogleDriveMediaList());
     }
 
     @Override
@@ -251,17 +165,16 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
         rootView.scrollTo(0, 100);
     }
 
-    private void setSongListAdapter(ArrayList<? extends IMediaItemBase> iMediaItemList, ItemType itemType) {
+    private void setSongListAdapter(ArrayList<? extends IMediaItemBase> iMediaItemList) {
         final GridLayoutManager gridLayoutManager =
                 new GridLayoutManager(getActivity(), 1);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         gridLayoutManager.scrollToPosition(0);
         rootView.setLayoutManager(gridLayoutManager);
-        adapter = new CloudItemListAdapter(getActivity(), ItemSongListFragment.this, iMediaItemList, itemType);
+        adapter = new CloudItemListAdapter(getActivity(), GoogleDriveListFragment.this, iMediaItemList, ItemType.SONGS);
         rootView.setAdapter(adapter);
         rootView.setHasFixedSize(true);
-        if(itemType == ItemType.FAVOURITE)
-            listIsEmpty(iMediaItemList.size());
+        listIsEmpty(iMediaItemList.size());
     }
 
     @Override
@@ -313,7 +226,6 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
 
     public void listIsEmpty(int size) {
         if (size < 1) {
-            if(itemType == ItemType.FAVOURITE)
 //                emptyView.setVisibility(View.VISIBLE);
             rootView.setVisibility(View.GONE);
         }else{
@@ -326,8 +238,6 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
     public void onPermissionsGranted(int requestCode, List<String> perms) {
         if(requestCode == REQUEST_PERMISSION_GET_ACCOUNTS) {
             LoadGoogleDriveList();
-        }else if(requestCode == REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE) {
-            LoadFavouriteList();
         }
         setForAnimation();
     }
@@ -341,6 +251,6 @@ public class ItemSongListFragment extends Fragment  implements FavouriteMediaLis
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, ItemSongListFragment.this);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, GoogleDriveListFragment.this);
     }
 }
