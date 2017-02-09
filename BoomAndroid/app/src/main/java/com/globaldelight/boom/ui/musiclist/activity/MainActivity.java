@@ -66,6 +66,7 @@ public class MainActivity extends MasterActivity
 
     private PermissionChecker permissionChecker;
     private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
     private Fragment mSearchResult;
     private FrameLayout fragmentContainer;
     private int currentItem = 0;
@@ -170,7 +171,9 @@ public class MainActivity extends MasterActivity
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setItemIconTintList(null);
+        navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
 
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -215,6 +218,7 @@ public class MainActivity extends MasterActivity
         }else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         }else if(fragmentManager.getBackStackEntryCount() > 0){
+            navigationView.getMenu().getItem(0).setChecked(true);
             fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             viewMainActivity();
         }else{
@@ -385,9 +389,9 @@ public class MainActivity extends MasterActivity
                 case R.id.nav_store:
                     startCompoundActivities(R.string.store_title);
                     break;
-                case R.id.nav_about:
+                /*case R.id.nav_about:
                     startCompoundActivities(R.string.header_about);
-                    break;
+                    break;*/
                 case R.id.nav_share:
                     Utils.shareStart(this);
                     break;

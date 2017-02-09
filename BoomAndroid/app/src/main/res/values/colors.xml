@@ -15,6 +15,9 @@
 
     <color name="toolbar_txt">@color/white</color>
 
+    <color name="drawer_background">#101011</color>
+    <color name="drawer_item_txt">#79797a</color>
+
     <color name="music_tab_selected_color">#616161</color>
     <color name="music_tab_normal_color">@color/white</color>
     <color name="music_tab_indicator_color">@color/colorAccent</color>

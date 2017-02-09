@@ -334,7 +334,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
                 result.startResolutionForResult(mFragment.getActivity(), GoogleDriveHandler.REQUEST_CODE_RESOLUTION);
             } catch (IntentSender.SendIntentException e) {
                 Log.e(TAG, "Exception while starting resolution activity", e);
-            }
+            } catch (Exception e){}
         }
     }
 }
