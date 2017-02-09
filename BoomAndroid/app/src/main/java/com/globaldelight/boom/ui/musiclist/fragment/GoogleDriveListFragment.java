@@ -17,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.dropbox.client2.android.AndroidAuthSession;
@@ -53,7 +54,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     private GoogleDriveMediaList googleDriveMediaList;
     private GoogleDriveHandler googleDriveHandler;
-    private ProgressDialog progressLoader;
+    private ProgressBar progressLoader;
     private CloudItemListAdapter adapter;
     private RecyclerView rootView;
 
@@ -82,18 +83,18 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
         initViews();
 
+        initLibrary();
+
         return rootView;
     }
 
     @Override
     public void onResume() {
-        initLibrary();
         super.onResume();
     }
 
     private void initLibrary() {
 // Request the GET_ACCOUNTS permission via a user dialog
-        progressLoader.show();
         if (EasyPermissions.hasPermissions(getContext(), Manifest.permission.GET_ACCOUNTS)) {
             LoadGoogleDriveList();
         } else {
@@ -117,8 +118,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
 
-        progressLoader = new ProgressDialog(getActivity());
-        progressLoader.show();
+        progressLoader = new ProgressBar(getActivity());
 
         googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(getActivity());
         googleDriveMediaList.setGoogleDriveMediaUpdater(this);
@@ -156,8 +156,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     }
 
     private void dismissLoader(){
-        if(progressLoader.isShowing()){
-            progressLoader.dismiss();
+        if(progressLoader.isShown()){
+            progressLoader.setVisibility(View.GONE);
         }
     }
 
@@ -187,7 +187,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                 } else {
                     googleDriveHandler.getResultsFromApi();
                 }
-                progressLoader.dismiss();
+                dismissLoader();
                 break;
             case GoogleDriveHandler.REQUEST_ACCOUNT_PICKER:
                 if (resultCode == RESULT_OK && data != null &&
@@ -204,14 +204,14 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                         googleDriveHandler.getResultsFromApi();
                     }
                 }else{
-                    progressLoader.dismiss();
+                    dismissLoader();
                 }
                 break;
             case GoogleDriveHandler.REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
                     googleDriveHandler.getResultsFromApi();
                 }
-                progressLoader.dismiss();
+                dismissLoader();
                 break;
         }
     }
