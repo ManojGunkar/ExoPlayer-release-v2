@@ -19,6 +19,7 @@
     <string name="delete">Delete</string>
     <string name="search_hint">Search</string>
     <string name="storage_permission">SD Card Read/Write Permission</string>
+    <string name="account_permission">"This app needs to access your Google account (via Contacts)."</string>
     <string name="ok">OK</string>
 
     <!--3d surround-->

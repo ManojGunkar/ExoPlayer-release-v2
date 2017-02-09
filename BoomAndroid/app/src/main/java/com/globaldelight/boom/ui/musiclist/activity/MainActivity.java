@@ -197,7 +197,6 @@ public class MainActivity extends MasterActivity
                 .setDrawIndicator(TabBarStyle.INDICATOR_LINE)
                 .setIndicatorHeight((int) getResources().getDimension(R.dimen.pager_tab_indicator_height))
                 .setIndicatorColorResource(R.color.music_tab_indicator_color)
-                .setScrollOffset(100)
                 .build();
         MusicTabLayout customTabLayout=new MusicTabLayout(this);
         mTabBar.attachToViewPager(mViewPager,customTabLayout,mTabBarStyle);
@@ -371,7 +370,7 @@ public class MainActivity extends MasterActivity
                     viewMainActivity();
                     break;
                 case R.id.boom_palylist:
-                    mFloatAddPlayList.setVisibility(View.VISIBLE);
+//                    mFloatAddPlayList.setVisibility(View.VISIBLE);
                     fragmentSwitcher(new BoomPlaylistFragment(),  1, getResources().getString(R.string.boom_playlist), fade_in, fade_out);
                     break;
                 case R.id.favourite_list:

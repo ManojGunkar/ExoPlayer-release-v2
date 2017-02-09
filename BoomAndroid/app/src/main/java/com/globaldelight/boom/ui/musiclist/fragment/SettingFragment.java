@@ -26,6 +26,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.adapter.HeadPhoneItemAdapter;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
+import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
@@ -36,16 +37,18 @@ import java.util.List;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.app.Activity.RESULT_OK;
+import static com.globaldelight.boom.utils.helpers.GoogleDriveHandler.PREF_ACCOUNT_NAME;
 import static com.globaldelight.boom.utils.helpers.GoogleDriveHandler.REQUEST_PERMISSION_GET_ACCOUNTS;
 
 /**
  * Created by Rahul Agarwal on 03-02-17.
  */
 
-public class SettingFragment extends Fragment implements View.OnClickListener, EasyPermissions.PermissionCallbacks {
+public class SettingFragment extends Fragment implements View.OnClickListener {
     ScrollView rootView;
     RegularTextView sleepTimerTxt;
     private GoogleDriveHandler googleDriveHandler;
+    private PermissionChecker permissionChecker;
 
     public SettingFragment(){}
 
@@ -92,13 +95,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, E
                 }
                 break;
             case R.id.setting_google_drive_panel:
-                if(EasyPermissions.hasPermissions(getContext(), Manifest.permission.GET_ACCOUNTS)){
-                    resetGoogleDriveAuth();
-                }else{
-                    EasyPermissions.requestPermissions(
-                            SettingFragment.this, "This app needs to access your Google account (via Contacts).",
-                            REQUEST_PERMISSION_GET_ACCOUNTS, Manifest.permission.GET_ACCOUNTS);
-                }
+                checkPermissions();
                 break;
             case R.id.seeting_sleep_timer:
             case R.id.seeting_sleep_timer_panel:
@@ -130,11 +127,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener, E
                     String accountName =
                             data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     if (accountName != null) {
-                        SharedPreferences settings =
-                                getActivity().getPreferences(Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = settings.edit();
-                        editor.putString(GoogleDriveHandler.PREF_ACCOUNT_NAME, accountName);
-                        editor.apply();
+                        getActivity().getPreferences(Context.MODE_PRIVATE).edit()
+                                .putString(PREF_ACCOUNT_NAME, accountName).apply();
+                        googleDriveHandler.setSelectedGoogleAccountName(accountName);
                     }
                 }
                 break;
@@ -175,21 +170,25 @@ public class SettingFragment extends Fragment implements View.OnClickListener, E
         }
     }
 
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
-        if(requestCode == REQUEST_PERMISSION_GET_ACCOUNTS) {
-            resetGoogleDriveAuth();
-        }
-    }
+    public void checkPermissions() {
+        permissionChecker = new PermissionChecker(getContext(), getActivity(), rootView);
+        permissionChecker.check(Manifest.permission.GET_ACCOUNTS,
+                getResources().getString(R.string.account_permission),
+                new PermissionChecker.OnPermissionResponse() {
+                    @Override
+                    public void onAccepted() {
+                        resetGoogleDriveAuth();
+                    }
 
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
+                    @Override
+                    public void onDecline() {
 
+                    }
+                });
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, SettingFragment.this);
+        permissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

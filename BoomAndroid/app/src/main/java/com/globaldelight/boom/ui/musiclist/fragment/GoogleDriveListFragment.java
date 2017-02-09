@@ -19,45 +19,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import com.dropbox.client2.android.AndroidAuthSession;
-import com.dropbox.client2.session.TokenPair;
-import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
-import com.globaldelight.boom.data.MediaCallback.FavouriteMediaList;
 import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
-import com.globaldelight.boom.task.MediaLoader.LoadDropBoxList;
-import com.globaldelight.boom.task.MediaLoader.LoadFavouriteList;
+import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
-import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
-
 import java.util.ArrayList;
-import java.util.List;
-
-import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.app.Activity.RESULT_OK;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
-import static com.globaldelight.boom.task.PlayerEvents.REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE;
-import static com.globaldelight.boom.utils.helpers.GoogleDriveHandler.REQUEST_PERMISSION_GET_ACCOUNTS;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
  */
 
-public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMediaList.IGoogleDriveMediaUpdater, EasyPermissions.PermissionCallbacks {
+public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMediaList.IGoogleDriveMediaUpdater, PermissionChecker.OnPermissionResponse {
 
     private GoogleDriveMediaList googleDriveMediaList;
     private GoogleDriveHandler googleDriveHandler;
-    private ProgressBar progressLoader;
+    private ProgressDialog progressLoader;
     private CloudItemListAdapter adapter;
     private RecyclerView rootView;
-
+    private PermissionChecker permissionChecker;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -83,29 +69,30 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
         initViews();
 
-        initLibrary();
+        checkPermissions();
 
         return rootView;
     }
 
     @Override
     public void onResume() {
+        notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
         super.onResume();
     }
 
-    private void initLibrary() {
-// Request the GET_ACCOUNTS permission via a user dialog
-        if (EasyPermissions.hasPermissions(getContext(), Manifest.permission.GET_ACCOUNTS)) {
-            LoadGoogleDriveList();
-        } else {
-            EasyPermissions.requestPermissions(
-                    GoogleDriveListFragment.this, "This app needs to access your Google account (via Contacts).",
-                    REQUEST_PERMISSION_GET_ACCOUNTS, Manifest.permission.GET_ACCOUNTS);
-        }
+    public void checkPermissions() {
+        permissionChecker = new PermissionChecker(getContext(), getActivity(), rootView);
+        permissionChecker.check(Manifest.permission.GET_ACCOUNTS, getResources().getString(R.string.account_permission), this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void LoadGoogleDriveList(){
-        if (googleDriveMediaList.getGoogleDriveMediaList().isEmpty()) {
+        if (googleDriveMediaList.getGoogleDriveMediaList().size() <= 0 &&
+                ConnectivityReceiver.isNetworkAvailable(getContext())) {
             googleDriveHandler.getResultsFromApi();
         } else {
             notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
@@ -118,7 +105,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
 
-        progressLoader = new ProgressBar(getActivity());
+        progressLoader = new ProgressDialog(getActivity());
+        progressLoader.show();
 
         googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(getActivity());
         googleDriveMediaList.setGoogleDriveMediaUpdater(this);
@@ -134,6 +122,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     public void onGoogleDriveMediaListUpdate() {
         dismissLoader();
         notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
+        setForAnimation();
     }
 
     @Override
@@ -156,8 +145,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     }
 
     private void dismissLoader(){
-        if(progressLoader.isShown()){
-            progressLoader.setVisibility(View.GONE);
+        if(progressLoader.isShowing()){
+            progressLoader.dismiss();
         }
     }
 
@@ -185,7 +174,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                 if (resultCode != RESULT_OK) {
                     Toast.makeText(getContext(), getResources().getString(R.string.require_google_play_service), Toast.LENGTH_SHORT).show();
                 } else {
-                    googleDriveHandler.getResultsFromApi();
+                    LoadGoogleDriveList();
                 }
                 dismissLoader();
                 break;
@@ -201,7 +190,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                         editor.putString(GoogleDriveHandler.PREF_ACCOUNT_NAME, accountName);
                         editor.apply();
                         googleDriveHandler.setSelectedGoogleAccountName(accountName);
-                        googleDriveHandler.getResultsFromApi();
+                        LoadGoogleDriveList();
                     }
                 }else{
                     dismissLoader();
@@ -209,7 +198,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                 break;
             case GoogleDriveHandler.REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
-                    googleDriveHandler.getResultsFromApi();
+                    LoadGoogleDriveList();
                 }
                 dismissLoader();
                 break;
@@ -235,22 +224,13 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     }
 
     @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
-        if(requestCode == REQUEST_PERMISSION_GET_ACCOUNTS) {
-            LoadGoogleDriveList();
-        }
-        setForAnimation();
+    public void onAccepted() {
+        LoadGoogleDriveList();
     }
 
     @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
+    public void onDecline() {
         dismissLoader();
         getActivity().onBackPressed();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, GoogleDriveListFragment.this);
     }
 }

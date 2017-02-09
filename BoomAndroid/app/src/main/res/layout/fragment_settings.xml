@@ -49,7 +49,7 @@
             <LinearLayout
                 android:id="@+id/setting_dropbox_panel"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/setting_cloud_item_height"
                 android:layout_marginTop="@dimen/setting_item_margine_header"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
@@ -59,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:scaleType="fitXY"
                     android:layout_weight="0"
-                    android:src="@drawable/ic_dropbox"
+                    android:src="@drawable/ic_drop_box"
                     android:layout_marginLeft="@dimen/setting_cloud_img_margine_left"
                     android:layout_marginRight="@dimen/setting_cloud_img_margine_right"/>
 
@@ -94,7 +94,7 @@
             <LinearLayout
                 android:id="@+id/setting_google_drive_panel"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="@dimen/setting_cloud_item_height"
                 android:layout_marginTop="@dimen/setting_margin_sub_item"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">

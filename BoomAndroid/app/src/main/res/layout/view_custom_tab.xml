@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:maxLines="1"
         android:textStyle="bold"
         android:textSize="@dimen/music_tab_txt_size" />
 

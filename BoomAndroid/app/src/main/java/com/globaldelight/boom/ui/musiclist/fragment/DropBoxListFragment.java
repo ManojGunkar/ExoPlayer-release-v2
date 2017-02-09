@@ -22,10 +22,13 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.task.MediaLoader.LoadDropBoxList;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import java.util.ArrayList;
+
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
 /**
@@ -53,6 +56,9 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                 case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
                     notifyAdapter(null);
                     break;
+                case ACTION_ON_NETWORK_CONNECTED:
+                    LoadDropboxList();
+                    break;
             }
         }
     };
@@ -70,6 +76,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     private void initViews() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(ACTION_ON_NETWORK_CONNECTED);
         getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
 
         progressLoader = new ProgressDialog(getActivity());
@@ -88,8 +95,9 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     private void LoadDropboxList(){
-        resetAuthentication();
-        if (dropboxMediaList.getDropboxMediaList().isEmpty()) {
+        if (dropboxMediaList.getDropboxMediaList().isEmpty() &&
+                ConnectivityReceiver.isNetworkAvailable(getContext())) {
+            resetAuthentication();
             new LoadDropBoxList(getActivity()).execute();
         } else {
             notifyAdapter(dropboxMediaList.getDropboxMediaList());

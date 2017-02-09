@@ -30,4 +30,6 @@ public class PlayerEvents {
     public static final String ACTION_ADD_NEW_BOOM_PLAYLIST ="ACTION_ADD_NEW_BOOM_PLAYLIST";
     public static final String ACTION_UPDATE_BOOM_PLAYLIST ="ACTION_UPDATE_BOOM_PLAYLIST";
     public static final String ACTION_UPDATE_BOOM_PLAYLIST_LIST ="ACTION_UPDATE_BOOM_PLAYLIST_LIST";
+
+    public static final String ACTION_ON_NETWORK_CONNECTED="ACTION_ON_NETWORK_CONNECTED";
 }
