@@ -28,6 +28,7 @@ public class SearchDetailActivity extends MasterActivity {
     }
 
     private void initViews(Bundle savedInstanceState) {
+        setDrawerLocked(true);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

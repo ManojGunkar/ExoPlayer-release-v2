@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.AnimRes;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -65,7 +66,7 @@ public class MainActivity extends MasterActivity
         implements NavigationView.OnNavigationItemSelectedListener, MasterActivity.ILibraryAddsUpdater{
 
     private PermissionChecker permissionChecker;
-    private DrawerLayout drawerLayout;
+    private CoordinatorLayout mainContainer;
     private NavigationView navigationView;
     private Fragment mSearchResult;
     private FrameLayout fragmentContainer;
@@ -92,7 +93,7 @@ public class MainActivity extends MasterActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.app_bar_main);
         sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_CREATE_PLAYER_SCREEN));
         setLibraryAddsUpdater(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -111,7 +112,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void checkPermissions() {
-        permissionChecker = new PermissionChecker(this, MainActivity.this, drawerLayout);
+        permissionChecker = new PermissionChecker(this, MainActivity.this, mainContainer);
         permissionChecker.check(Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 getResources().getString(R.string.storage_permission),
                 new PermissionChecker.OnPermissionResponse() {
@@ -145,7 +146,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void initView() {
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mainContainer = (CoordinatorLayout) findViewById(R.id.coordinate_main);
 
         mAddsContainer = (LinearLayout) findViewById(R.id.lib_add_container);
 
@@ -388,9 +389,6 @@ public class MainActivity extends MasterActivity
                 case R.id.nav_store:
                     startCompoundActivities(R.string.store_title);
                     break;
-                /*case R.id.nav_about:
-                    startCompoundActivities(R.string.header_about);
-                    break;*/
                 case R.id.nav_share:
                     Utils.shareStart(this);
                     break;

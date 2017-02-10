@@ -57,6 +57,7 @@ public class MediaCollectionActivity extends MasterActivity {
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(0, 0);
         super.onCreate(savedInstanceState);
+        setDrawerLocked(true);
         MediaItem mMediaItem = getIntent().getParcelableExtra("media_item");
         switch (mMediaItem.getParentType()) {
             case SONGS:

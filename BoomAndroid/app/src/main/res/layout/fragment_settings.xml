@@ -3,6 +3,7 @@
     android:layout_height="match_parent"
     android:layout_below="@+id/settings_toolbar"
     android:background="@color/app_background"
+    android:paddingBottom="@dimen/setting_item_title_margine_top"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
         <LinearLayout
@@ -149,8 +150,7 @@
                 android:orientation="vertical"
                 android:layout_marginTop="@dimen/setting_item_title_margine_top"
                 android:layout_marginLeft="@dimen/setting_item_title_margine_left"
-                android:layout_marginRight="@dimen/setting_item_title_margine_left"
-                android:layout_marginBottom="@dimen/setting_item_title_margine_top">
+                android:layout_marginRight="@dimen/setting_item_title_margine_left">
                 <com.globaldelight.boom.ui.widgets.RegularTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -169,6 +169,24 @@
                     android:textColor="@color/setting_item_title"
                     android:textSize="@dimen/settings_item_title_txt"
                     android:textStyle="normal" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/about_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/setting_item_title_margine_top"
+                android:layout_marginLeft="@dimen/setting_item_title_margine_left"
+                android:layout_marginRight="@dimen/setting_item_title_margine_left"
+                android:layout_marginBottom="@dimen/setting_item_title_margine_top">
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/header_about"
+                    android:textColor="@color/setting_item_header_title"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/settings_item_title_txt" />
             </LinearLayout>
 
         </LinearLayout>

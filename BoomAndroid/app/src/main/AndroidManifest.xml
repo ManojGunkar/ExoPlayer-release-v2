@@ -94,7 +94,6 @@
             </intent-filter>
         </activity>
 
-
         <receiver
             android:name="com.globaldelight.boom.manager.ConnectivityReceiver"
             android:enabled="true">
@@ -115,6 +114,7 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+
         <activity
             android:name=".ui.musiclist.activity.AlbumSongListActivity"
             android:label="@string/title_activity_child"

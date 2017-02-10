@@ -817,9 +817,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             case R.id.equalizer_btn:
                 switchEqualizer();
                 break;
-            case R.id.fullbass_chk:
-                switchFullBass();
-                break;
             case R.id.eq_dialog_panel:
                 if(isEffectOn && audioEffectPreferenceHandler.isEqualizerOn())
                     onEqDialogOpen();
@@ -942,7 +939,24 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mSpeakerBtn.setOnClickListener(this);
 
         mFullBassCheck = (AppCompatCheckBox) mInflater.findViewById(R.id.fullbass_chk);
-        mFullBassCheck.setOnClickListener(this);
+        mFullBassCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
+                if(audioEffectPreferenceHandler.isAudioEffectOn() &&
+                        audioEffectPreferenceHandler.is3DSurroundOn()){
+
+                    audioEffectPreferenceHandler.setEnableFullBass(!audioEffectPreferenceHandler.isFullBassOn());
+                    postMessage.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            aaEffectUIController.OnFullBassEnable(audioEffectPreferenceHandler.isFullBassOn());
+                        }
+                    });
+
+                    FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FULL_BASS_ENABLED, audioEffectPreferenceHandler.isFullBassOn());
+                }
+            }
+        });
 
         mIntensityBtn = (ImageView) mInflater.findViewById(R.id.intensity_btn);
         mIntensityBtn.setOnClickListener(this);
@@ -966,6 +980,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         eq_names = Arrays.asList(mContext.getResources().getStringArray(R.array.eq_names));
         eq_active_on = mContext.getResources().obtainTypedArray(R.array.eq_active_on);
         eq_active_off = mContext.getResources().obtainTypedArray(R.array.eq_active_off);
+
+        mSelectedEqImg.setImageDrawable(eq_active_off.getDrawable(audioEffectPreferenceHandler.getSelectedEqualizerPosition()));
+        mSelectedEqTxt.setText(eq_names.get(audioEffectPreferenceHandler.getSelectedEqualizerPosition()));
+
 
         setEffectIntensity();
 
@@ -1016,8 +1034,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
             setEnableEqualizer(audioEffectPreferenceHandler.isEqualizerOn());
         }
-
-        mFullBassCheck.setEnabled(isEffectOn);
+//        mFullBassCheck.setEnabled(isEffectOn && audioEffectPreferenceHandler.is3DSurroundOn());
     }
 
     private void setEnable3DEffect(boolean enable){
@@ -1031,15 +1048,17 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mSpeakerBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_three_d_dropdown_off, null));
         }
 
-        setEnableFullBass(enable && audioEffectPreferenceHandler.isFullBassOn());
+        setEnableFullBass(audioEffectPreferenceHandler.isFullBassOn());
     }
 
     private void setEnableFullBass(boolean enable){
         mFullBassCheck.setChecked(enable);
-        if(audioEffectPreferenceHandler.isAudioEffectOn()){
+        if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()){
             mFullBassCheck.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
+            mFullBassCheck.setEnabled(true);
         }else{
             mFullBassCheck.setTextColor(ContextCompat.getColor(mContext, R.color.effect_inactive));
+            mFullBassCheck.setEnabled(false);
         }
     }
 
@@ -1224,22 +1243,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             }
             MixPanelAnalyticHelper.track(mContext, audioEffectPreferenceHandler.is3DSurroundOn() ? AnalyticsHelper.EVENT_3D_TURNED_ON : AnalyticsHelper.EVENT_3D_TURNED_OFF);
             FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_3D_STATE_CHANGED, audioEffectPreferenceHandler.is3DSurroundOn());
-        }
-    }
-
-    private void switchFullBass(){
-        if(audioEffectPreferenceHandler.isAudioEffectOn() &&
-                audioEffectPreferenceHandler.is3DSurroundOn()){
-
-            audioEffectPreferenceHandler.setEnableFullBass(!audioEffectPreferenceHandler.isFullBassOn());
-            postMessage.post(new Runnable() {
-                @Override
-                public void run() {
-                    aaEffectUIController.OnFullBassEnable(audioEffectPreferenceHandler.isFullBassOn());
-                }
-            });
-
-            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FULL_BASS_ENABLED, audioEffectPreferenceHandler.isFullBassOn());
         }
     }
 

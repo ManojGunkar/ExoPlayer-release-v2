@@ -36,7 +36,7 @@ public class PlayerUIController implements IPlayerUIController {
 
     @Override
     public void OnPlayPause() {
-        if(null != App.getPlayerEventHandler().getPlayingItem())
+        if(null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem())
             mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
     }
 
@@ -49,24 +49,26 @@ public class PlayerUIController implements IPlayerUIController {
 
     @Override
     public void OnRepeatClick() {
-        mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_REPEAT_SONG));
+        if(null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem())
+            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_REPEAT_SONG));
 
     }
 
     @Override
     public void OnShuffleClick() {
-        mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
+        if(null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem())
+            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
     }
 
     @Override
     public void OnNextTrackClick() {
-        if(App.getPlayerEventHandler().isNext())
+        if(App.getPlayingQueueHandler().getUpNextList().isNext())
             mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_NEXT_SONG));
     }
 
     @Override
     public void OnPreviousTrackClick() {
-        if(App.getPlayerEventHandler().isPrevious())
+        if(App.getPlayingQueueHandler().getUpNextList().isPrevious())
         mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PREV_SONG));
     }
 

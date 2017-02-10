@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -39,7 +40,8 @@ import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSI
 public class MasterActivity extends AppCompatActivity implements SlidingUpPanelLayout.PanelSlideListener, BusinessRequestReceiver.IUpdateBusinessRequest, IFBAddsUpdater, IGoogleAddsUpdater {
     private static final String TAG = "MasterActivity";
 
-    private CoordinatorLayout activity;
+    private FrameLayout activity;
+    public DrawerLayout drawerLayout;
     private LinearLayout activityContainer;
     private SlidingUpPanelLayout mSlidingPaneLayout;
     private MasterContentFragment contentFragment;
@@ -49,12 +51,13 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     private static BusinessRequestReceiver businessRequestReceiver;
     private static ILibraryAddsUpdater iLibraryAddsUpdater;
 
+    private boolean isDrawerLocked = false;
     private static boolean isPlayerExpended = false;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
-        setTheme(R.style.MyTheme);
-        activity = (CoordinatorLayout) getLayoutInflater().inflate(R.layout.activity_master, null);
+        activity = (FrameLayout) getLayoutInflater().inflate(R.layout.activity_master, null);
+        drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
         handler = new Handler();
         mSlidingPaneLayout = (SlidingUpPanelLayout) activity.findViewById(R.id.sliding_layout);
         activityContainer = (LinearLayout) activity.findViewById(R.id.activity_holder);
@@ -90,6 +93,15 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     public void unregisterPlayerReceiver(Context context){
         contentFragment.unregisterPlayerReceiver(context);
         unregisterReceiver(mPlayerSliderReceiver);
+    }
+
+    public void setDrawerUnlocked(){
+        drawerLayout.setDrawerLockMode(isDrawerLocked ? DrawerLayout.LOCK_MODE_LOCKED_CLOSED : DrawerLayout.LOCK_MODE_UNLOCKED);
+    }
+
+    public void setDrawerLocked(boolean locked){
+        isDrawerLocked = locked;
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
     @Override
@@ -189,6 +201,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     @Override
     public void onPanelCollapsed(final View panel) {
         isPlayerExpended = false;
+        setDrawerUnlocked();
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -200,6 +213,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     @Override
     public void onPanelExpanded(final View panel) {
         isPlayerExpended = true;
+        setDrawerLocked(isDrawerLocked);
         handler.post(new Runnable() {
             @Override
             public void run() {

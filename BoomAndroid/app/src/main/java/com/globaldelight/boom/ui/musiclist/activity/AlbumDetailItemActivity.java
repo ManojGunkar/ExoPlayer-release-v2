@@ -54,6 +54,7 @@ public class AlbumDetailItemActivity extends MasterActivity {
     }
 
     private void initViews(Bundle savedInstanceState) {
+        setDrawerLocked(true);
         final FloatingActionButton mFloatPlayAlbums = (FloatingActionButton) findViewById(R.id.fab);
         mFloatPlayAlbums.setOnClickListener(new View.OnClickListener() {
             @Override

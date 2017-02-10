@@ -24,6 +24,7 @@ import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
+import com.globaldelight.boom.ui.musiclist.activity.ActivityContainer;
 import com.globaldelight.boom.ui.musiclist.adapter.HeadPhoneItemAdapter;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
@@ -70,6 +71,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         sleepTimerTxt.setOnClickListener(this);
         LinearLayout sleepTimerPanel = (LinearLayout) rootView.findViewById(R.id.seeting_sleep_timer_panel);
         sleepTimerPanel.setOnClickListener(this);
+        LinearLayout aboutPanel = (LinearLayout) rootView.findViewById(R.id.about_panel);
+        aboutPanel.setOnClickListener(this);
 
         setHeadsetList(recyclerView);
     }
@@ -109,7 +112,16 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                     }
                 }
                 break;
+            case R.id.about_panel:
+                startCompoundActivities(R.string.header_about);
+                break;
         }
+    }
+
+    private void startCompoundActivities(int activityName) {
+        Intent intent = new Intent(getActivity(), ActivityContainer.class);
+        intent.putExtra("container",activityName);
+        getActivity().startActivity(intent);
     }
 
     @Override
