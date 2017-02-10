@@ -29,10 +29,10 @@ public class ActivityContainer extends AppCompatActivity {
         setContentView(R.layout.activity_item_list);
 
         int container = getIntent().getIntExtra("container", R.string.title_about);
-        initViews(savedInstanceState, container);
+        initViews(container);
     }
 
-    private void initViews(Bundle savedInstanceState, int container) {
+    private void initViews(int container) {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ((RegularTextView) findViewById(R.id.toolbar_txt)).setText(getResources().getString(container));

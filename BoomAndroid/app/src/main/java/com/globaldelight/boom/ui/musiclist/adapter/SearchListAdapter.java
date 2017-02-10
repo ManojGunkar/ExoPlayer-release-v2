@@ -407,7 +407,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                             public void run() {
                                 notifyDataSetChanged();
                             }
-                        }, 300);
+                        }, 500);
                     }
                 }
             });

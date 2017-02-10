@@ -151,4 +151,10 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
             rootView.setVisibility(View.VISIBLE);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
+        super.onDestroy();
+    }
 }

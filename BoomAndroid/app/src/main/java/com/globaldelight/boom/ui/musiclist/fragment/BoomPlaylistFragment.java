@@ -86,6 +86,12 @@ public class BoomPlaylistFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        updateBoomPlaylist();
+        super.onResume();
+    }
+
     private void setForAnimation() {
         rootView.scrollTo(0, 100);
     }
@@ -95,7 +101,8 @@ public class BoomPlaylistFragment extends Fragment {
     }
 
     public void updateBoomPlaylist() {
-        boomPlayListAdapter.updateNewList(MediaController.getInstance(getActivity()).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+        if(null != boomPlayListAdapter)
+            boomPlayListAdapter.updateNewList(MediaController.getInstance(getActivity()).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
     }
 
     public class LoadBoomPlaylist  extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {

@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -68,10 +69,11 @@ public class AlbumSongListActivity extends MasterActivity {
     }
 
     public void updateAlbumArt() {
-        if(currentItem.getMediaElement().size() > 0){
+        ArrayList<String> urlList = MediaController.getInstance(this).getArtUrlList((MediaItemCollection) currentItem);
+        if(urlList.size() > 0){
             findViewById(R.id.activity_album_art).setVisibility(View.GONE);
             tblAlbumArt.setVisibility(View.VISIBLE);
-            setSongsArtImage(MediaController.getInstance(this).getArtUrlList((MediaItemCollection) currentItem));
+            setSongsArtImage(urlList);
         }else{
             findViewById(R.id.activity_album_art).setVisibility(View.VISIBLE);
             tblAlbumArt.setVisibility(View.GONE);
@@ -87,12 +89,13 @@ public class AlbumSongListActivity extends MasterActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        initViews(savedInstanceState);
-        initValues();
+        initViews();
     }
 
-    private void initViews(Bundle savedInstanceState) {
+    private void initViews() {
         setDrawerLocked(true);
+        currentItem = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
+
         fragment = new AlbumSongListFragment();
 
         artImg1 = (ImageView)findViewById(R.id.song_detail_list_art_img1);
@@ -101,6 +104,19 @@ public class AlbumSongListActivity extends MasterActivity {
         artImg4 = (ImageView)findViewById(R.id.song_detail_list_art_img4);
 
         tblAlbumArt = (TableLayout)findViewById(R.id.song_detail_list_art_table);
+
+
+        screenWidth = Utils.getWindowWidth(this);
+        int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
+        int height = Utils.getWindowHeight(this) - panelSize * 4;
+        setAlbumArtSize();
+        ArrayList<String> artUrlList;
+        if(currentItem.getItemType() == ItemType.PLAYLIST || currentItem.getItemType() == ItemType.BOOM_PLAYLIST){
+            artUrlList = currentItem.getArtUrlList();
+        }else{
+            artUrlList = ((IMediaItemCollection)currentItem.getMediaElement().get(currentItem.getCurrentIndex())).getArtUrlList();
+        }
+        setAlbumArt(artUrlList);
 
         final FloatingActionButton mFloatPlayAlbumSongs = (FloatingActionButton) findViewById(R.id.fab);
         mFloatPlayAlbumSongs.setOnClickListener(new View.OnClickListener() {
@@ -116,35 +132,17 @@ public class AlbumSongListActivity extends MasterActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        if (savedInstanceState == null) {
-            Bundle arguments = new Bundle();
-            arguments.putParcelable("mediaItemCollection", (MediaItemCollection)currentItem);
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.item_detail_container, fragment)
-                    .commit();
-        }
+        Bundle arguments = new Bundle();
+        arguments.putParcelable("mediaItemCollection", (MediaItemCollection)currentItem);
+        fragment.setArguments(arguments);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.item_detail_container, fragment)
+                .commitAllowingStateLoss();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PlayerEvents.ACTION_UPDATE_BOOM_PLAYLIST_LIST);
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         registerReceiver(mUpdateAlbumSongListReceiver, intentFilter);
-    }
-
-    private void initValues() {
-        currentItem = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
-
-        screenWidth = Utils.getWindowWidth(this);
-        int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
-        int height = Utils.getWindowHeight(this) - panelSize * 4;
-        setAlbumArtSize();
-        ArrayList<String> artUrlList;
-        if(currentItem.getItemType() == ItemType.PLAYLIST || currentItem.getItemType() == ItemType.BOOM_PLAYLIST){
-            artUrlList = currentItem.getArtUrlList();
-        }else{
-            artUrlList = ((IMediaItemCollection)currentItem.getMediaElement().get(currentItem.getCurrentIndex())).getArtUrlList();
-        }
-        setAlbumArt(artUrlList);
     }
 
     @Override
@@ -264,6 +262,8 @@ public class AlbumSongListActivity extends MasterActivity {
 
     @Override
     public void onBackPressed() {
+        if(getSupportFragmentManager().getBackStackEntryCount() > 0)
+            getSupportFragmentManager().popBackStack();
         findViewById(R.id.fab).setVisibility(View.GONE);
         fragment.updateOnBackPressed();
         super.onBackPressed();

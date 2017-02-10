@@ -292,7 +292,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                         public void run() {
                             notifyDataSetChanged();
                         }
-                    }, 200);
+                    }, 500);
                 }
             }
         });
@@ -488,7 +488,10 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
     @Override
     public int getItemCount() {
-        return collection.getItemCount()+1;
+        if(collection.getItemType() == BOOM_PLAYLIST || collection.getItemType() == PLAYLIST)
+            return collection.getMediaElement().size() + 1;
+        else
+            return ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size() + 1;
     }
 
     @Override

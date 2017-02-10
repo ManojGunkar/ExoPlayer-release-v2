@@ -160,10 +160,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
     private void resetGoogleDriveAuth() {
         if(ConnectivityReceiver.isNetworkAvailable(getContext())) {
-            googleDriveHandler = new GoogleDriveHandler(SettingFragment.this);
-            googleDriveHandler.getGoogleAccountCredential();
-            googleDriveHandler.getGoogleApiClient();
-            googleDriveHandler.resetKeys(getContext());
+            try {
+                googleDriveHandler = new GoogleDriveHandler(SettingFragment.this);
+                googleDriveHandler.getGoogleAccountCredential();
+                googleDriveHandler.getGoogleApiClient();
+                googleDriveHandler.resetKeys(getContext());
+            }catch (Exception e){}
         }
     }
 
@@ -174,15 +176,17 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     private void resetAuthentication(){
-        AndroidAuthSession session = App.getDropboxAPI().getSession();
-        if (session.authenticationSuccessful()) {
-            try {
-                session.finishAuthentication();
-                TokenPair tokens = session.getAccessTokenPair();
-                DropBoxUtills.storeKeys(getContext(), tokens.key, tokens.secret);
-            } catch (IllegalStateException e) {
-                Toast.makeText(getContext(),getResources().getString(R.string.dropbox_authenticate_problem)
-                        + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        if(null != App.getDropboxAPI()) {
+            AndroidAuthSession session = App.getDropboxAPI().getSession();
+            if (session.authenticationSuccessful()) {
+                try {
+                    session.finishAuthentication();
+                    TokenPair tokens = session.getAccessTokenPair();
+                    DropBoxUtills.storeKeys(getContext(), tokens.key, tokens.secret);
+                } catch (IllegalStateException e) {
+                    Toast.makeText(getContext(), getResources().getString(R.string.dropbox_authenticate_problem)
+                            + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

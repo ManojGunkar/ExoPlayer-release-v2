@@ -253,5 +253,8 @@
         <item name="colorControlActivated">@color/colorAccent</item>
     </style>
 
+    <style name="TabTextAppearance" parent="Widget.Design.TabLayout">
+        <item name="android:textSize">@dimen/music_tab_txt_size</item>
+    </style>
 
 </resources>

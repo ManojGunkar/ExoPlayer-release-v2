@@ -120,7 +120,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                         public void run() {
                             notifyDataSetChanged();
                         }
-                    }, 200);
+                    }, 500);
                 }
                 try {
                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_SONG_SECTION);
