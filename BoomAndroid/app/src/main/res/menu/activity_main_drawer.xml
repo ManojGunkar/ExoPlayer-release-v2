@@ -11,25 +11,25 @@
         <item
             android:id="@+id/google_drive"
             android:icon="@drawable/drawer_google_drive_selector"
-            android:checked="true"
+            android:checked="false"
             android:checkable="true"
             android:title="@string/google_drive" />
         <item
             android:id="@+id/drop_box"
             android:icon="@drawable/drawer_drop_box_selector"
-            android:checked="true"
+            android:checked="false"
             android:checkable="true"
             android:title="@string/drop_box" />
         <item
             android:id="@+id/boom_palylist"
             android:icon="@drawable/drawer_boom_playlist_selector"
-            android:checked="true"
+            android:checked="false"
             android:checkable="true"
             android:title="@string/boom_playlist" />
         <item
             android:id="@+id/favourite_list"
             android:icon="@drawable/drawer_boom_fav_selector"
-            android:checked="true"
+            android:checked="false"
             android:checkable="true"
             android:title="@string/favourite_list" />
     </group>

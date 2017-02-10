@@ -139,5 +139,6 @@
     <dimen name="share_text_size">20sp</dimen>
     <dimen name="store_page_buy_button_height">42dp</dimen>
     <dimen name="store_page_buy_button_cornor_radius">6dp</dimen>
+    <dimen name="setting_cloud_item_height">58dp</dimen>
 
 </resources>

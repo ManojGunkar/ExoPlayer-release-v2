@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
@@ -428,7 +429,9 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
-        if(isConnected)
+        if(isConnected) {
             LoadNetworkCalls();
+            sendBroadcast(new Intent(ACTION_ON_NETWORK_CONNECTED));
+        }
     }
 }

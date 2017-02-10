@@ -1,34 +1,52 @@
-<android.support.design.widget.CoordinatorLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
-    android:background="@color/app_background" >
-
-    <com.globaldelight.boom.ui.widgets.slidinguppanel.SlidingUpPanelLayout
-        xmlns:sothree="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/sliding_layout"
+    android:layout_width="match_parent">
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="bottom"
-        sothree:fadeColor="@android:color/transparent"
-        sothree:initialState="collapsed"
-        sothree:panelHeight="@dimen/player_mini_height"
-        sothree:shadowHeight="5dp">
+        android:background="@color/app_background"
+        tools:openDrawer="start">
 
-        <!-- activity view -->
-        <LinearLayout
-            android:id="@+id/activity_holder"
+        <com.globaldelight.boom.ui.widgets.slidinguppanel.SlidingUpPanelLayout
+            xmlns:sothree="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/sliding_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:gravity="bottom"
+            sothree:fadeColor="@android:color/transparent"
+            sothree:initialState="collapsed"
+            sothree:panelHeight="@dimen/player_mini_height"
+            sothree:shadowHeight="5dp">
 
-        </LinearLayout>
+            <!-- activity view -->
+            <LinearLayout
+                android:id="@+id/activity_holder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        <!--slidingUpPanel view-->
-        <FrameLayout
-            android:id="@+id/panel_holder"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </com.globaldelight.boom.ui.widgets.slidinguppanel.SlidingUpPanelLayout>
+            </LinearLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+            <!--slidingUpPanel view-->
+            <FrameLayout
+                android:id="@+id/panel_holder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </com.globaldelight.boom.ui.widgets.slidinguppanel.SlidingUpPanelLayout>
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:itemTextColor="@drawable/drawer_selector"
+            android:layout_gravity="start"
+            android:fitsSystemWindows="true"
+            app:headerLayout="@layout/nav_header_main"
+            app:menu="@menu/activity_main_drawer" />
+
+    </android.support.v4.widget.DrawerLayout>
+</FrameLayout>

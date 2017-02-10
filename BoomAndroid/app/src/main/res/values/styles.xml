@@ -249,7 +249,7 @@
     </style>
 
     <style name="MyCheckBox" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlNormal">@color/white</item>
         <item name="colorControlActivated">@color/colorAccent</item>
     </style>
 

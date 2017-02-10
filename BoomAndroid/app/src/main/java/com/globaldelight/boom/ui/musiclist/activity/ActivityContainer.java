@@ -62,7 +62,6 @@ public class ActivityContainer extends AppCompatActivity {
                 mFragment =  new StoreFragment();
                 break;
             case R.string.header_about:
-                toolbar.setVisibility(View.GONE);
                 mFragment =  new AboutFragment();
                 break;
         }

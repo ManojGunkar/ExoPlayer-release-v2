@@ -7,34 +7,20 @@
 <ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/about_title_padding_top"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/about_title_padding_top"
         android:weightSum="100"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:gravity="center_horizontal|top"
-            android:layout_weight="10.761">
-            <com.globaldelight.boom.ui.widgets.RegularTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/header_about"
-                android:textColor="@color/white"
-                android:textSize="@dimen/about_title"
-                android:typeface="normal" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
             android:gravity="center"
-            android:layout_weight="33.634">
+            android:layout_weight="35">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -44,7 +30,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="8.314"
+            android:layout_weight="9"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
@@ -71,7 +57,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="7.498"
+            android:layout_weight="10"
             android:gravity="center"
             android:orientation="vertical">
             <com.globaldelight.boom.ui.widgets.RegularTextView
@@ -88,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:gravity="center"
-            android:layout_weight="25.790">
+            android:layout_weight="27">
             <com.globaldelight.boom.ui.widgets.RegularButton
                 android:id="@+id/btn_rate_app"
                 style="?android:attr/borderlessButtonStyle"
@@ -103,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:gravity="center"
-            android:layout_weight="7.187">
+            android:layout_weight="9">
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -122,7 +108,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:gravity="center"
-            android:layout_weight="6.796">
+            android:layout_weight="9">
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

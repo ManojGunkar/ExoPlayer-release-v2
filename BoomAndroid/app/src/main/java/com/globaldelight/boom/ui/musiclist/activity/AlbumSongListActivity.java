@@ -92,7 +92,7 @@ public class AlbumSongListActivity extends MasterActivity {
     }
 
     private void initViews(Bundle savedInstanceState) {
-
+        setDrawerLocked(true);
         fragment = new AlbumSongListFragment();
 
         artImg1 = (ImageView)findViewById(R.id.song_detail_list_art_img1);

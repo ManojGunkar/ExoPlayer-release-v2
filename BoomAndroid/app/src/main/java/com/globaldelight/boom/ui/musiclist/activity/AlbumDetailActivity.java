@@ -61,6 +61,7 @@ public class AlbumDetailActivity extends MasterActivity {
     }
 
     private void initViews(Bundle savedInstanceState) {
+        setDrawerLocked(true);
         final FloatingActionButton mFloatPlayAllAlbums = (FloatingActionButton) findViewById(R.id.fab);
         mFloatPlayAllAlbums.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,15 +78,13 @@ public class AlbumDetailActivity extends MasterActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        if (savedInstanceState == null) {
-            Bundle arguments = new Bundle();
-            arguments.putParcelable("mediaItemCollection", (MediaItemCollection)currentItem);
-            fragment = new AlbumDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.item_detail_container, fragment)
-                    .commit();
-        }
+        Bundle arguments = new Bundle();
+        arguments.putParcelable("mediaItemCollection", (MediaItemCollection)currentItem);
+        fragment = new AlbumDetailFragment();
+        fragment.setArguments(arguments);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.item_detail_container, fragment)
+                .commitAllowingStateLoss();
     }
 
     @Override

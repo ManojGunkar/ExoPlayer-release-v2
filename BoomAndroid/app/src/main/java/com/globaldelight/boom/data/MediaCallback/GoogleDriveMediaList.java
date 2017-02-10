@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class GoogleDriveMediaList {
 
-    private ArrayList<IMediaItemBase> fileList;
+    private static ArrayList<IMediaItemBase> fileList;
     private IGoogleDriveMediaUpdater googleDriveMediaUpdater;
     private static GoogleDriveMediaList handler;
     private static GoogleDriveHandler mGoogleDriveHandler;

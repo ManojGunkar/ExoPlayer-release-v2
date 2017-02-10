@@ -16,6 +16,8 @@ import android.util.Log;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
 import com.globaldelight.boom.task.MediaLoader.LoadGoogleDriveList;
+import com.globaldelight.boom.ui.musiclist.fragment.GoogleDriveListFragment;
+import com.globaldelight.boom.ui.musiclist.fragment.SettingFragment;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.common.ConnectionResult;
@@ -51,7 +53,6 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     public static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     public static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
     public static final int REQUEST_CODE_RESOLUTION = 1;
-    private static final String BUTTON_TEXT = "Call Drive API";
     public static final String PREF_ACCOUNT_NAME = "accountName";
     SharedPreferences shp;
 //    Client ID : 312070820740-he3m1noeh3dggs8gc538qu11in10ifg0.apps.googleusercontent.com
@@ -66,8 +67,9 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     }
 
     public GoogleDriveHandler(Fragment mFragment){
+        this.mContext = mFragment.getContext();
         this.mFragment = mFragment;
-        shp = this.mFragment.getContext().getSharedPreferences(PREF_ACCOUNT_NAME, this.mFragment.getContext().MODE_PRIVATE);
+        shp = this.mFragment.getContext().getSharedPreferences(PREF_ACCOUNT_NAME, mContext.MODE_PRIVATE);
     }
 
    /* public static GoogleDriveHandler getGoogleDriveInstance(Fragment mFragment){
@@ -126,10 +128,14 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     }
 
     public void resetKeys(Context context){
+        Log.d("PREF_ACCOUNT_NAME", mFragment.getActivity().getPreferences(Context.MODE_PRIVATE)
+                .getString(PREF_ACCOUNT_NAME, null)+"");
         mFragment.getActivity().getPreferences(Context.MODE_PRIVATE).edit()
                 .putString(PREF_ACCOUNT_NAME, null).apply();
         GoogleDriveMediaList.geGoogleDriveMediaListInstance(context).clearGoogleDriveMediaContent();
-        chooseAccount();
+        mFragment.startActivityForResult(
+                mCredential.newChooseAccountIntent(),
+                REQUEST_ACCOUNT_PICKER);
     }
 
     public String getSelectedAccountName(){
@@ -285,9 +291,10 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
             }
         } else {
             // Request the GET_ACCOUNTS permission via a user dialog
-            EasyPermissions.requestPermissions(
-                    mFragment, "This app needs to access your Google account (via Contacts).",
-                    REQUEST_PERMISSION_GET_ACCOUNTS, Manifest.permission.GET_ACCOUNTS);
+            if(mFragment instanceof GoogleDriveListFragment)
+                ((GoogleDriveListFragment)mFragment).checkPermissions();
+            else if(mFragment instanceof SettingFragment)
+                ((SettingFragment)mFragment).checkPermissions();
         }
     }
 
