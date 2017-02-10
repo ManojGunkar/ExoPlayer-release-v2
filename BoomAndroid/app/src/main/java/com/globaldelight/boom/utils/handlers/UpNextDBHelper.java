@@ -17,6 +17,7 @@ import com.globaldelight.boom.handler.PlayingQueue.QueueType;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
@@ -102,7 +103,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
     public synchronized void insertUnShuffledList(List<? extends IMediaItemBase> songs, QueueType queueType, boolean isAppend) {
         if(!isAppend)
             clearList(queueType);
-
+        Collections.reverse(songs);
         SQLiteDatabase db = this.getWritableDatabase();
 
         try {
@@ -268,6 +269,8 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         db.close();
+        if(songList.size() > 0)
+            Collections.reverse(songList);
         return songList;
     }
 }

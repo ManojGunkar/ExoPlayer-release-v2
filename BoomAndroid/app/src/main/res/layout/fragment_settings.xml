@@ -3,7 +3,6 @@
     android:layout_height="match_parent"
     android:layout_below="@+id/settings_toolbar"
     android:background="@color/app_background"
-    android:paddingBottom="@dimen/setting_item_title_margine_top"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
         <LinearLayout
@@ -50,7 +49,7 @@
             <LinearLayout
                 android:id="@+id/setting_dropbox_panel"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/setting_cloud_item_height"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/setting_item_margine_header"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
@@ -71,7 +70,7 @@
                     android:orientation="vertical">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
+                        android:layout_height="wrap_content"
                         android:text="@string/drop_box"
                         android:textColor="@color/setting_item_title"
                         android:textSize="@dimen/settings_item_title_txt"
@@ -80,7 +79,7 @@
                         android:layout_weight=".5"/>
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
+                        android:layout_height="wrap_content"
                         android:text="@string/cloud_setting_dropbox_subtitle"
                         android:textColor="@color/setting_item_sub_title"
                         android:textSize="@dimen/settings_item_title_txt"
@@ -95,7 +94,7 @@
             <LinearLayout
                 android:id="@+id/setting_google_drive_panel"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/setting_cloud_item_height"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/setting_margin_sub_item"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
@@ -116,7 +115,7 @@
                     android:orientation="vertical">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
+                        android:layout_height="wrap_content"
                         android:text="@string/google_drive"
                         android:textColor="@color/setting_item_title"
                         android:textSize="@dimen/settings_item_title_txt"
@@ -125,7 +124,7 @@
                         android:layout_weight=".5"/>
                     <com.globaldelight.boom.ui.widgets.RegularTextView
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
+                        android:layout_height="wrap_content"
                         android:text="@string/cloud_setting_google_subtitle"
                         android:textColor="@color/setting_item_sub_title"
                         android:textSize="@dimen/settings_item_title_txt"
@@ -171,6 +170,12 @@
                     android:textStyle="normal" />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginTop="@dimen/setting_item_title_margine_top"
+                android:background="@color/setting_separator" />
+
             <LinearLayout
                 android:id="@+id/about_panel"
                 android:layout_width="match_parent"
@@ -178,8 +183,7 @@
                 android:orientation="vertical"
                 android:layout_marginTop="@dimen/setting_item_title_margine_top"
                 android:layout_marginLeft="@dimen/setting_item_title_margine_left"
-                android:layout_marginRight="@dimen/setting_item_title_margine_left"
-                android:layout_marginBottom="@dimen/setting_item_title_margine_top">
+                android:layout_marginRight="@dimen/setting_item_title_margine_left">
                 <com.globaldelight.boom.ui.widgets.RegularTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -189,5 +193,29 @@
                     android:textSize="@dimen/settings_item_title_txt" />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginTop="@dimen/setting_item_title_margine_top"
+                android:background="@color/setting_separator" />
+
+            <LinearLayout
+                android:id="@+id/feedback_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/setting_item_title_margine_top"
+                android:layout_marginLeft="@dimen/setting_item_title_margine_left"
+                android:layout_marginRight="@dimen/setting_item_title_margine_left"
+                android:layout_marginBottom="@dimen/setting_item_title_margine_top">
+                <com.globaldelight.boom.ui.widgets.RegularTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_feedback"
+                    android:textColor="@color/setting_item_header_title"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/settings_item_title_txt" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>

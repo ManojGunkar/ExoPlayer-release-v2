@@ -73,6 +73,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         sleepTimerPanel.setOnClickListener(this);
         LinearLayout aboutPanel = (LinearLayout) rootView.findViewById(R.id.about_panel);
         aboutPanel.setOnClickListener(this);
+        LinearLayout feedbackPanel = (LinearLayout) rootView.findViewById(R.id.feedback_panel);
+        feedbackPanel.setOnClickListener(this);
 
         setHeadsetList(recyclerView);
     }
@@ -114,6 +116,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.about_panel:
                 startCompoundActivities(R.string.header_about);
+                break;
+            case R.id.feedback_panel:
+
                 break;
         }
     }
