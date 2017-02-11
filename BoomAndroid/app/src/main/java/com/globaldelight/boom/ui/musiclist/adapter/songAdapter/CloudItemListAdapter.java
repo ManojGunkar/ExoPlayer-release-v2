@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -32,6 +33,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.fragment.FavouriteListFragment;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
@@ -87,27 +89,20 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(final CloudItemListAdapter.SimpleItemViewHolder holder, final int position) {
+        holder.mainView.setElevation(0);
         holder.name.setText(itemList.get(position).getItemTitle());
-        if(whatView(position) == ITEM_VIEW_TYPE_GOOGLE_DRIVE) {
-            setDefaultArt(holder);
-        }else if(whatView(position) == ITEM_VIEW_TYPE_DROPBOX){
-            setDefaultArt(holder);
+        holder.artistName.setVisibility(null != ((MediaItem) itemList.get(position)).getItemArtist() ? View.VISIBLE : View.GONE);
+        holder.artistName.setText(((MediaItem) itemList.get(position)).getItemArtist());
+        if(null != itemList.get(position).getItemArtUrl()) {
+            itemList.get(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem) itemList.get(position)).getItemAlbum()));
         }else{
-            holder.artistName.setText(((MediaItem) itemList.get(position)).getItemArtist());
-            holder.mainView.setElevation(0);
-            if ((itemList.get(position)).getMediaType() == MediaType.DEVICE_MEDIA_LIB && null == itemList.get(position).getItemArtUrl())
-                itemList.get(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem) itemList.get(position)).getItemAlbum()));
-
-            if (null == itemList.get(position).getItemArtUrl())
-                itemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-
-            setAlbumArt(itemList.get(position).getItemArtUrl(), holder);
-            if (selectedHolder != null)
-                selectedHolder.mainView.setBackgroundColor(ContextCompat
-                        .getColor(activity, R.color.appBackground));
-            selectedSongId = -1;
-            selectedHolder = null;
+            itemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
         }
+
+        setAlbumArt(itemList.get(position).getItemArtUrl(), holder);
+        if (selectedHolder != null)
+            selectedSongId = -1;
+        selectedHolder = null;
 
         setOnClicks(holder, position);
 
@@ -123,10 +118,9 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                 holder.art_overlay.setVisibility(View.VISIBLE );
                 holder.art_overlay_play.setVisibility( View.VISIBLE );
                 holder.name.setTextColor( ContextCompat.getColor(activity, R.color.track_selected_title) );
+                holder.loadCloud.setVisibility(View.GONE);
                 if (App.getPlayerEventHandler().isPlaying()) {
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
-                    if(!isMediaItem)
-                        holder.loadCloud.setVisibility(View.GONE);
                 } else {
                     if(!isMediaItem && null != App.getPlayerEventHandler().getPlayer().getDataSource() && !App.getPlayerEventHandler().isPaused())
                         holder.loadCloud.setVisibility(View.VISIBLE);
@@ -150,7 +144,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
         }
     }
 
-    private void setDefaultArt(CloudItemListAdapter.SimpleItemViewHolder holder/*, int size*/) {
+    private void setDefaultArt(CloudItemListAdapter.SimpleItemViewHolder holder) {
         holder.img.setImageDrawable(activity.getResources().getDrawable( R.drawable.ic_default_art_grid , null));
     }
 
@@ -159,7 +153,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
             @Override
             public void onClick(View view) {
                 animate(holder);
-                if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                if (App.getPlayingQueueHandler().getUpNextList() != null && !App.getPlayerEventHandler().isTrackWaitingForPlay()) {
                     App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) itemList, position, false);
                     new Handler().postDelayed(new Runnable() {
                         @Override

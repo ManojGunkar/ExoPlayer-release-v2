@@ -52,6 +52,12 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
         mediaListInstance = GoogleDriveMediaList.geGoogleDriveMediaListInstance(fragment.getContext());
     }
 
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        mediaListInstance.clearGoogleDriveMediaContent();
+    }
+
     /**
      * Background task to call Drive API.
      *

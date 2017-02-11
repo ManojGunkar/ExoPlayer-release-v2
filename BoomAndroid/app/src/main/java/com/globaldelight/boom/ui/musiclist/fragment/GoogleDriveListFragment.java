@@ -30,6 +30,8 @@ import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_CLOUD_SYNC;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
 /**
@@ -57,6 +59,11 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
             switch (intent.getAction()){
                 case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
                     notifyAdapter(null);
+                    break;
+                case ACTION_ON_NETWORK_CONNECTED:
+                    checkPermissions();
+                case ACTION_CLOUD_SYNC:
+                    checkPermissions();
                     break;
             }
         }
@@ -103,6 +110,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     private void initViews() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(ACTION_ON_NETWORK_CONNECTED);
+        intentFilter.addAction(ACTION_CLOUD_SYNC);
         getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
 
         progressLoader = new ProgressDialog(getActivity());

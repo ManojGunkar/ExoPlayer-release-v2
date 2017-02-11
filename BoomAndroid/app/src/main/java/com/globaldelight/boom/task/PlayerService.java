@@ -269,40 +269,46 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     @Override
     public void onNextTrack() {
-        if(System.currentTimeMillis() - mShiftingTime > 1000) {
-            mShiftingTime = System.currentTimeMillis();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    musicPlayerHandler.playNextSong(true);
-                }
-            }, 500);
+        if (App.getPlayingQueueHandler().getUpNextList().isNext() && !App.getPlayerEventHandler().isTrackWaitingForPlay()) {
+            if (System.currentTimeMillis() - mShiftingTime > 1000) {
+                mShiftingTime = System.currentTimeMillis();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        musicPlayerHandler.playNextSong(true);
+                    }
+                }, 500);
+            }
         }
     }
 
     @Override
     public void onPreviousTrack() {
-        if(System.currentTimeMillis() - mShiftingTime > 1000) {
-            mShiftingTime = System.currentTimeMillis();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    musicPlayerHandler.playPrevSong();
-                }
-            }, 500);
+        if (App.getPlayingQueueHandler().getUpNextList().isPrevious() && !App.getPlayerEventHandler().isTrackWaitingForPlay()) {
+            if (System.currentTimeMillis() - mShiftingTime > 1000) {
+                mShiftingTime = System.currentTimeMillis();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        musicPlayerHandler.playPrevSong();
+                    }
+                }, 500);
+            }
         }
     }
 
     @Override
     public void onPlayPauseTrack() {
-        if(!musicPlayerHandler.isPaused() && !musicPlayerHandler.isPlaying()){
-            musicPlayerHandler.onPlayingItemChanged();
-        }else {
-            PlayerEventHandler.PlayState state = musicPlayerHandler.PlayPause();
-            if (state != PlayerEventHandler.PlayState.play && !isPlayerScreenResume) {
-                updateUpNextDB();
-            } else{
-                updatePlayPause(state == PlayerEventHandler.PlayState.play ? true : false);
+        if (null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem() && !App.getPlayerEventHandler().isTrackWaitingForPlay()) {
+            if (!musicPlayerHandler.isPaused() && !musicPlayerHandler.isPlaying()) {
+                musicPlayerHandler.onPlayingItemChanged();
+            } else {
+                PlayerEventHandler.PlayState state = musicPlayerHandler.PlayPause();
+                if (state != PlayerEventHandler.PlayState.play && !isPlayerScreenResume) {
+                    updateUpNextDB();
+                } else {
+                    updatePlayPause(state == PlayerEventHandler.PlayState.play ? true : false);
+                }
             }
         }
     }
@@ -320,7 +326,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     @Override
     public void onStopPlaying() {
         sendBroadcast(new Intent(PlayerEvents.ACTION_TRACK_STOPPED));
-        updateNotificationPlayer(null, false, false);
+        updateNotificationPlayer(App.getPlayerEventHandler().getPlayingItem(), false, false);
     }
 
     @Override

@@ -122,7 +122,10 @@ public class AlbumSongListActivity extends MasterActivity {
         mFloatPlayAlbumSongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fragment.onFloatPlayAlbumSongs();
+                if(null != fragment) {
+                    fragment.onFloatPlayAlbumSongs();
+                    sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+                }
             }
         });
 

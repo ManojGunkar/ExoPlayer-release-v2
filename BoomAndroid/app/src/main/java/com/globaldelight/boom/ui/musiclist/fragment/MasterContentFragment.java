@@ -143,6 +143,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         mIsLastPlayed = false;
                         updatePlayerUI();
                     }
+                    stopCloudItemProgress();
                     break;
                 case ACTION_LAST_PLAYED_SONG:
                     item = intent.getParcelableExtra("playing_song");
@@ -161,12 +162,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                             mPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_pause, null));
                         }
                     }catch (Exception e){}
+                    stopCloudItemProgress();
                     break;
                 case ACTION_TRACK_STOPPED :
                     mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
                     mIsPlaying = false;
                     mIsLastPlayed = false;
                     updatePlayerUI();
+                    startCloudItemProgress();
                     break;
                 case ACTION_UPDATE_TRACK_SEEK :
                     if(!isUser) {
@@ -196,10 +199,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     break;
                 case ACTION_PLAYER_SCREEN_RESUME:
                     onResumePlayerScreen();
-                    break;
-                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
-                    updateCloudItemProgress(App.getPlayerEventHandler().getPlayingItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB, App.getPlayerEventHandler().isPlaying());
-//                    updatePlayerUI();
                     break;
             }
         }
@@ -514,6 +513,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
             DrawableCompat.setTint(mPlayPause.getDrawable(), colorFrom);
             mLargeSongTitle.setText(item.getItemTitle());
+            mLargeSongSubTitle.setVisibility(null != item.getItemArtist() ? View.VISIBLE : View.GONE);
             mLargeSongSubTitle.setText(item.getItemArtist());
 
             if(isLastPlayedItem){
@@ -532,7 +532,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 } else {
                     mPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
-                updateCloudItemProgress(isMediaItem, isPlaying);
             }
         }else if(!isLastPlayedItem){
             DrawableCompat.setTint(mRepeat.getDrawable(), colorTo);
@@ -550,15 +549,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         updateRepeat();
     }
 
-    private void updateCloudItemProgress(boolean isMediaItem, boolean isPlaying) {
-        if(isPlaying){
-            if(!isMediaItem)
-                mInflater.findViewById(R.id.load_cloud).setVisibility(View.GONE);
-        } else {
-            if (!isMediaItem && null != App.getPlayerEventHandler().getPlayer().getDataSource() && !App.getPlayerEventHandler().isPaused())
-                mInflater.findViewById(R.id.load_cloud).setVisibility(View.VISIBLE);
-        }
-    }
+
 
 
     /* Mini Player UI & Functionality*/
@@ -595,6 +586,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mMiniSongTitle.setSelected(true);
             mMiniSongSubTitle.setSelected(true);
             mMiniSongTitle.setText(item.getItemTitle());
+            mMiniSongSubTitle.setVisibility(null != item.getItemArtist() ? View.VISIBLE : View.GONE);
             mMiniSongSubTitle.setText(item.getItemArtist());
             if(isPlaying)
                 mMiniPlayerPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_pause, null));
@@ -767,6 +759,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         playerUIController.OnPlayPause();
                     }
                 });
+                startCloudItemProgress();
                 break;
             case R.id.controller_prev:
                 postMessage.post(new Runnable() {
@@ -775,6 +768,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         playerUIController.OnPreviousTrackClick();
                     }
                 });
+                startCloudItemProgress();
                 break;
             case R.id.controller_next:
                 postMessage.post(new Runnable() {
@@ -783,6 +777,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         playerUIController.OnNextTrackClick();
                     }
                 });
+                startCloudItemProgress();
                 break;
             case R.id.controller_repeat:
                 postMessage.post(new Runnable() {
@@ -845,6 +840,16 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 updateSpeakers(AudioEffect.Speaker.Woofer);
                 break;
         }
+    }
+
+    private void startCloudItemProgress() {
+        IMediaItem item = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        if(!App.getPlayerEventHandler().isPaused() && null != item && item.getMediaType() != MediaType.DEVICE_MEDIA_LIB)
+            mInflater.findViewById(R.id.load_cloud).setVisibility(View.VISIBLE);
+    }
+
+    private void stopCloudItemProgress() {
+        mInflater.findViewById(R.id.load_cloud).setVisibility(View.GONE);
     }
 
     private void overFlowMenu(Context context, View view) {

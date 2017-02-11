@@ -1,6 +1,7 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
 import android.app.ActivityManager;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -26,6 +27,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.fragment.DropBoxListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.GoogleDriveListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.MediaCollectionFragment;
@@ -124,7 +126,10 @@ public class MediaCollectionActivity extends MasterActivity {
         mActionPlaySongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCollectionFragment.onFloatActionPlaySong();
+                if (null != mCollectionFragment){
+                    mCollectionFragment.onFloatActionPlaySong();
+                    sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+                }
             }
         });
 

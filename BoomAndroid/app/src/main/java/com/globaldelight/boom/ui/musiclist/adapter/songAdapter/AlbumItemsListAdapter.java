@@ -186,7 +186,7 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
             @Override
             public void onClick(View view) {
 
-                if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                if (App.getPlayingQueueHandler().getUpNextList() != null && !App.getPlayerEventHandler().isTrackWaitingForPlay()) {
                     if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
                         App.getPlayingQueueHandler().getUpNextList().addToPlay(item, position, false);
                     } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {

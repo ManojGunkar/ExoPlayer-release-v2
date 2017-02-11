@@ -100,8 +100,9 @@
     <dimen name="selected_eq_txt_margin">6dp</dimen>
     <dimen name="selected_eq_go_img_margin">6dp</dimen>
     <dimen name="empty_list_txt">22sp</dimen>
-    <dimen name="player_back_button_margin_start">26dp</dimen>
-    <dimen name="player_back_button_margin_end">20dp</dimen>
+    <dimen name="player_back_button_margin_start">20dp</dimen>
+    <dimen name="player_action_button_margin">8dp</dimen>
+    <dimen name="player_menu_button_margin_end">10dp</dimen>
     <dimen name="mini_player_progress_height">2dp</dimen>
     <dimen name="large_noti_title_panel_padding">8dp</dimen>
     <dimen name="noti_title_txt">18sp</dimen>
