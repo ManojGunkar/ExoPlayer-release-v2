@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -154,14 +155,13 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
             boolean initiated;
 
             private void init() {
-                background = new ColorDrawable(getResources().getColor(R.color.upnext_delete_background));
+                background = new ColorDrawable(ContextCompat.getColor(getContext() ,R.color.upnext_delete_background));
                 initiated = true;
             }
 
             // not important, we don't want drag & drop
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-
 
                 UpNextListAdapter.ListPosition start = upNextListAdapter.getPositionObject(viewHolder.getAdapterPosition());
 
@@ -171,8 +171,8 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
                     if (to.getListType() == UpNextListAdapter.ITEM_VIEW_TYPE_LIST_MANUAL || to.getListType() == UpNextListAdapter.ITEM_VIEW_TYPE_LIST_AUTO) {
                         Collections.swap(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList(), start.getItemPosition(), to.getItemPosition());
                         upNextListAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                        upNextListAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
                         upNextListAdapter.notifyItemChanged(target.getAdapterPosition());
+                        upNextListAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
                     }
                 }
                 return true;
@@ -181,7 +181,6 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 int position = viewHolder.getAdapterPosition();
-
 
                 UpNextListAdapter testAdapter = (UpNextListAdapter) recyclerView.getAdapter();
                 if (!testAdapter.isSwipeDeleteAllowed(position)) {

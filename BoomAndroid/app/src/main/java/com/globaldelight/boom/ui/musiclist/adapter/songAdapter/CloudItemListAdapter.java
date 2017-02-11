@@ -166,7 +166,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                         public void run() {
                             notifyDataSetChanged();
                         }
-                    }, 300);
+                    }, 500);
                 }
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_FAVOURITE_SECTION);
 

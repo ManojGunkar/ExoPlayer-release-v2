@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.AnimRes;
@@ -14,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -30,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
@@ -46,9 +49,6 @@ import com.globaldelight.boom.ui.musiclist.fragment.FavouriteListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.BoomPlaylistFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.GoogleDriveListFragment;
-import com.globaldelight.boom.ui.widgets.MusicListTabs.MusicTabBar;
-import com.globaldelight.boom.ui.widgets.MusicListTabs.MusicTabLayout;
-import com.globaldelight.boom.ui.widgets.MusicListTabs.TabBarStyle;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
@@ -85,9 +85,7 @@ public class MainActivity extends MasterActivity
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private FloatingActionButton mFloatAddPlayList;
-    private MusicTabBar mTabBar;
-    private TabBarStyle mTabBarStyle;
-
+    private TabLayout mTabBar;
     private LinearLayout mAddsContainer;
 
     @Override
@@ -152,7 +150,7 @@ public class MainActivity extends MasterActivity
 
         musicSearchHelper = new MusicSearchHelper(MainActivity.this);
 
-        mTabBar= (MusicTabBar)  findViewById(R.id.tabLayout);
+        mTabBar= (TabLayout)  findViewById(R.id.tabLayout);
 
         mFloatAddPlayList = (FloatingActionButton) findViewById(R.id.fab);
         mFloatAddPlayList.setVisibility(View.GONE);
@@ -188,19 +186,17 @@ public class MainActivity extends MasterActivity
 
         // Set up the ViewPager with the sections adapter.
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mTabBar.setupWithViewPager(mViewPager);
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/TitilliumWeb-SemiBold.ttf");
+        for (int i = 0; i < mTabBar.getChildCount(); i++) {
+            final View view = mTabBar.getChildAt(i);
+            if (view instanceof TextView) {
+                ((TextView) view).setTypeface(font);
+                ((TextView) view).setTextSize(getResources().getDimension(R.dimen.music_tab_txt_size));
+            }
+        }
 
         isUpdateUpnextDB = true;
-        initHandyTabBar();
-    }
-
-    private void initHandyTabBar() {
-        mTabBarStyle=new TabBarStyle.Builder(this)
-                .setDrawIndicator(TabBarStyle.INDICATOR_LINE)
-                .setIndicatorHeight((int) getResources().getDimension(R.dimen.pager_tab_indicator_height))
-                .setIndicatorColorResource(R.color.music_tab_indicator_color)
-                .build();
-        MusicTabLayout customTabLayout=new MusicTabLayout(this);
-        mTabBar.attachToViewPager(mViewPager,customTabLayout,mTabBarStyle);
     }
 
     @Override

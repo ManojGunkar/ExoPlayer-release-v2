@@ -22,7 +22,6 @@ import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -101,10 +100,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private RegularTextView mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
     private Activity mContext;
     private View mInflater, revealView;
-    private int size, colorLight, colorTo , colorFrom;
+    private int colorTo , colorFrom;
     private AppCompatSeekBar mTrackSeek;
     private ImageView mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mEffectTab, mPlayerTab, mPlayerBackBtn, mLargeAlbumArt;
-    private LinearLayout mEffectContent, mPlayerSwitcherPanel, mSeekbarPanel, mPlayerControllerHolder, mPlayerLarge, mPlayerTitlePanel, mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
+    private LinearLayout mEffectContent, mPlayerLarge, mPlayerTitlePanel, mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
     private FrameLayout mPlayerContent;
     private FrameLayout mPlayerBackground;
 
@@ -275,14 +274,16 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     /* Large Player UI and Functionality*/
 
 
-    private void updateUpNextButton() {
+    private void updateActionBarButtons() {
         if(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0 ||
                 App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0 ||
                 null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem() ||
                 App.getPlayingQueueHandler().getUpNextList().getHistoryList().size() > 0){
             mUpNextBtnPanel.setVisibility(View.VISIBLE);
+            mPlayerOverFlowMenuPanel.setVisibility(View.VISIBLE);
         }else{
             mUpNextBtnPanel.setVisibility(View.INVISIBLE);
+            mPlayerOverFlowMenuPanel.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -432,13 +433,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mInflater.findViewById(R.id.player_large_header).setLayoutParams(artParam);
         mPlayerContent = (FrameLayout) mInflater.findViewById(R.id.player_content);
 
-        mPlayerSwitcherPanel = (LinearLayout) mInflater.findViewById(R.id.player_switcher_panel);
         mPlayerTab = (ImageView) mInflater.findViewById(R.id.player_tab);
         mPlayerTab.setOnClickListener(this);
         mEffectTab = (ImageView) mInflater.findViewById(R.id.effect_tab);
         mEffectTab.setOnClickListener(this);
 
-        mSeekbarPanel = (LinearLayout) mInflater.findViewById(R.id.progress_panel);
         mTrackSeek = (AppCompatSeekBar) mInflater.findViewById(R.id.control_seek_bar);
         mTrackSeek.setPadding(mTrackSeek.getPaddingLeft(), 0, mTrackSeek.getPaddingRight(), 0);
         mTrackSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -476,7 +475,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mCurrentSeekTime = (RegularTextView) mInflater.findViewById(R.id.played_time);
         mTotalSeekTime = (RegularTextView) mInflater.findViewById(R.id.remain_time);
 
-        mPlayerControllerHolder = (LinearLayout) mInflater.findViewById(R.id.player_controller_holder);
         mRepeat = (ImageView) mInflater.findViewById(R.id.controller_repeat);
         mRepeat.setOnClickListener(this);
         mPrevious = (ImageView) mInflater.findViewById(R.id.controller_prev);
@@ -498,7 +496,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         if(null != mPlayingMediaItem)
             updateAlbumArt(mPlayingMediaItem);
 
-        updateUpNextButton();
+        updateActionBarButtons();
     }
 
     private void updateLargePlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {

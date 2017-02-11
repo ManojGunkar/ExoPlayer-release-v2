@@ -197,7 +197,7 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                         public void run() {
                             notifyDataSetChanged();
                         }
-                    }, 300);
+                    }, 500);
                 }
             }
         });

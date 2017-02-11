@@ -84,11 +84,11 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         int count;
         if(collection.getItemType() == BOOM_PLAYLIST || collection.getItemType() == PLAYLIST){
             title = collection.getItemTitle();
-            count = collection.getItemCount();
+            count = collection.getMediaElement().size();
 
         }else{
             title = collection.getMediaElement().get(collection.getCurrentIndex()).getItemTitle();
-            count = ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getItemCount();
+            count = ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size();
         }
         itemCount.append(count > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
         itemCount.append(" ").append(count);

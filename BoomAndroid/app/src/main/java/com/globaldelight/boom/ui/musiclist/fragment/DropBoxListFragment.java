@@ -154,6 +154,12 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         }
     }
 
+    @Override
+    public void onDestroy() {
+        getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
+        super.onDestroy();
+    }
+
     public void listIsEmpty(int size) {
         if (size < 1) {
 //                emptyView.setVisibility(View.VISIBLE);

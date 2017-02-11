@@ -73,6 +73,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         sleepTimerPanel.setOnClickListener(this);
         LinearLayout aboutPanel = (LinearLayout) rootView.findViewById(R.id.about_panel);
         aboutPanel.setOnClickListener(this);
+        LinearLayout feedbackPanel = (LinearLayout) rootView.findViewById(R.id.feedback_panel);
+        feedbackPanel.setOnClickListener(this);
 
         setHeadsetList(recyclerView);
     }
@@ -115,6 +117,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
             case R.id.about_panel:
                 startCompoundActivities(R.string.header_about);
                 break;
+            case R.id.feedback_panel:
+
+                break;
         }
     }
 
@@ -155,10 +160,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
     private void resetGoogleDriveAuth() {
         if(ConnectivityReceiver.isNetworkAvailable(getContext())) {
-            googleDriveHandler = new GoogleDriveHandler(SettingFragment.this);
-            googleDriveHandler.getGoogleAccountCredential();
-            googleDriveHandler.getGoogleApiClient();
-            googleDriveHandler.resetKeys(getContext());
+            try {
+                googleDriveHandler = new GoogleDriveHandler(SettingFragment.this);
+                googleDriveHandler.getGoogleAccountCredential();
+                googleDriveHandler.getGoogleApiClient();
+                googleDriveHandler.resetKeys(getContext());
+            }catch (Exception e){}
         }
     }
 
@@ -169,15 +176,17 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     private void resetAuthentication(){
-        AndroidAuthSession session = App.getDropboxAPI().getSession();
-        if (session.authenticationSuccessful()) {
-            try {
-                session.finishAuthentication();
-                TokenPair tokens = session.getAccessTokenPair();
-                DropBoxUtills.storeKeys(getContext(), tokens.key, tokens.secret);
-            } catch (IllegalStateException e) {
-                Toast.makeText(getContext(),getResources().getString(R.string.dropbox_authenticate_problem)
-                        + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        if(null != App.getDropboxAPI()) {
+            AndroidAuthSession session = App.getDropboxAPI().getSession();
+            if (session.authenticationSuccessful()) {
+                try {
+                    session.finishAuthentication();
+                    TokenPair tokens = session.getAccessTokenPair();
+                    DropBoxUtills.storeKeys(getContext(), tokens.key, tokens.secret);
+                } catch (IllegalStateException e) {
+                    Toast.makeText(getContext(), getResources().getString(R.string.dropbox_authenticate_problem)
+                            + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

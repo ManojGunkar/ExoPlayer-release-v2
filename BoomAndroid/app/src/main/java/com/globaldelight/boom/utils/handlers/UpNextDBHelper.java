@@ -17,8 +17,10 @@ import com.globaldelight.boom.handler.PlayingQueue.QueueType;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by Rahul Agarwal on 28-11-16.
@@ -102,28 +104,29 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
     public synchronized void insertUnShuffledList(List<? extends IMediaItemBase> songs, QueueType queueType, boolean isAppend) {
         if(!isAppend)
             clearList(queueType);
-
+//        Collections.reverse(songs);
         SQLiteDatabase db = this.getWritableDatabase();
 
         try {
-            for (IMediaItemBase item : songs) {
+            for (ListIterator iterator = songs.listIterator(songs.size()); iterator.hasPrevious();) {
+                final MediaItem item = (MediaItem) iterator.previous();
                 ContentValues values = new ContentValues();
 
                 values.putNull(SONG_KEY_ID);
                 values.put(SONG_KEY_REAL_ID, item.getItemId());
                 values.put(TITLE, item.getItemTitle());
-                values.put(DISPLAY_NAME, ((IMediaItem) item).getItemDisplayName());
-                values.put(DATA_PATH, ((IMediaItem) item).getItemUrl());
-                values.put(ALBUM_ID, ((IMediaItem) item).getItemAlbumId());
-                values.put(ALBUM, ((IMediaItem) item).getItemAlbum());
-                values.put(ARTIST_ID, ((IMediaItem) item).getItemArtistId());
-                values.put(ARTIST, ((IMediaItem) item).getItemArtist());
-                values.put(DURATION, ((IMediaItem) item).getDurationLong());
-                values.put(DATE_ADDED, ((IMediaItem) item).getDateAdded());
-                values.put(ALBUM_ART, ((IMediaItem) item).getItemArtUrl());
-                values.put(MEDIA_TYPE, ((IMediaItem) item).getMediaType().ordinal());
-                values.put(PARENT_TYPE, ((IMediaItem) item).getParentType().ordinal());
-                values.put(PARENT_ID, ((IMediaItem) item).getParentId());
+                values.put(DISPLAY_NAME, item.getItemDisplayName());
+                values.put(DATA_PATH, item.getItemUrl());
+                values.put(ALBUM_ID, item.getItemAlbumId());
+                values.put(ALBUM, item.getItemAlbum());
+                values.put(ARTIST_ID, item.getItemArtistId());
+                values.put(ARTIST, item.getItemArtist());
+                values.put(DURATION, item.getDurationLong());
+                values.put(DATE_ADDED, item.getDateAdded());
+                values.put(ALBUM_ART, item.getItemArtUrl());
+                values.put(MEDIA_TYPE, item.getMediaType().ordinal());
+                values.put(PARENT_TYPE, item.getParentType().ordinal());
+                values.put(PARENT_ID, item.getParentId());
                 values.put(QUEUE_TYPE, queueType.ordinal());
 
                 db.insert(TABLE_UPNEXT, null, values);
@@ -268,6 +271,8 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         db.close();
+        if(songList.size() > 0)
+            Collections.reverse(songList);
         return songList;
     }
 }
