@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -77,7 +78,7 @@ public class MainActivity extends MasterActivity
     private RegularTextView toolbarTitle;
     private Toolbar toolbar;
     public SearchView searchView;
-    public MenuItem searchMenuItem;
+    public MenuItem searchMenuItem, cloudSyncItem;
     private MusicSearchHelper musicSearchHelper;
     private SearchSuggestionAdapter searchSuggestionAdapter;
     public static String[] columns = new String[]{"_id", "FEED_TITLE"};
@@ -230,9 +231,13 @@ public class MainActivity extends MasterActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
 
+        cloudSyncItem = menu.findItem(R.id.action_cloud_sync);
+        cloudSyncItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         searchMenuItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
+        setVisibleSearch(true);
+        setVisibleCloudSync(false);
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
 
@@ -297,6 +302,9 @@ public class MainActivity extends MasterActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
             return true;
+        }else if(id == R.id.action_cloud_sync){
+            sendBroadcast(new Intent(PlayerEvents.ACTION_CLOUD_SYNC));
+            return false;
         }
 
         return super.onOptionsItemSelected(item);
@@ -360,7 +368,7 @@ public class MainActivity extends MasterActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         mFloatAddPlayList.setVisibility(View.GONE);
-        Bundle arguments = new Bundle();
+        setVisibleCloudSync(false);
         if(null != mSectionsPagerAdapter) {
             switch (item.getItemId()){
                 case R.id.music_library:
@@ -375,9 +383,11 @@ public class MainActivity extends MasterActivity
                     break;
                 case R.id.google_drive:
                     fragmentSwitcher(new GoogleDriveListFragment(),  3, getResources().getString(R.string.google_drive), fade_in, fade_out);
+                    setVisibleCloudSync(true);
                     break;
                 case R.id.drop_box:
                     fragmentSwitcher(new DropBoxListFragment(),  4, getResources().getString(R.string.drop_box), fade_in, fade_out);
+                    setVisibleCloudSync(true);
                     break;
                 case R.id.nav_setting:
                     startCompoundActivities(R.string.title_settings);
@@ -436,6 +446,10 @@ public class MainActivity extends MasterActivity
         searchMenuItem.setVisible(enable);
     }
 
+    private void setVisibleCloudSync(boolean enable){
+        cloudSyncItem.setVisible(enable);
+    }
+
     public void setTitle(String title){
         toolbarTitle.setText(title);
     }
@@ -446,6 +460,7 @@ public class MainActivity extends MasterActivity
             findViewById(R.id.library_tab_panel).setVisibility(View.VISIBLE);
             fragmentContainer.setVisibility(View.GONE);
             setVisibleSearch(true);
+            setVisibleCloudSync(false);
         }else{
             findViewById(R.id.library_tab_panel).setVisibility(View.GONE);
             fragmentContainer.setVisibility(View.VISIBLE);

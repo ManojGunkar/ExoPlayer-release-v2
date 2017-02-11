@@ -29,6 +29,8 @@ import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.pause;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.play;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.stop;
+import static com.globaldelight.boom.manager.PlayerServiceReceiver.ACTION_PLAY_STOP;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
 /**
@@ -38,6 +40,7 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING
 public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocusChangeListener {
     public static boolean isPlayerResume = false;
     private static IMediaItem playingItem;
+    private static boolean isTrackWaiting = false;
     private static AudioPlayer mPlayer;
     private static PlayerEventHandler handler;
     private static int NEXT = 0;
@@ -55,11 +58,13 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
         @Override
         public void onStop() {
             playingItem = null;
-            context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_STOP));
+            context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
         }
 
         @Override
         public void onStart(String mime, int sampleRate, int channels, long duration) {
+            isTrackWaiting = false;
+            context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_GET_SONG));
             if(null != getPlayingItem() && getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB){
                 context.sendBroadcast(new Intent(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
             }
@@ -93,7 +98,7 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
                 playPrevSong();
             }else {
                 App.getPlayingQueueHandler().getUpNextList().managePlayedItem(true);
-                context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_STOP));
+                context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
             }
             context.sendBroadcast(new Intent(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
             Toast.makeText(context, "Error in playing Song", Toast.LENGTH_SHORT).show();
@@ -189,13 +194,18 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
         if(isPlaying() || isPaused()) {
             setSessionState(PlaybackState.STATE_STOPPED);
         }
+        context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
 
         playingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
-
+        isTrackWaiting = true;
         new PlayingItemChanged().execute(playingItem);
     }
 
-    public class PlayingItemChanged extends AsyncTask<IMediaItem, Void, String>{
+    public  boolean isTrackWaitingForPlay(){
+        return isTrackWaiting;
+    }
+
+    private class PlayingItemChanged extends AsyncTask<IMediaItem, Void, String>{
         IMediaItem mediaItemBase;
 
         @Override
@@ -234,7 +244,7 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
                 if ( requestAudioFocus() ) {
                     mPlayer.setDataSource(dataSource);
                     setSessionState(PlaybackState.STATE_PLAYING);
-                    context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_GET_SONG));
+//                    context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_GET_SONG));
                     AnalyticsHelper.songSelectionChanged(context, mediaItemBase);
                 }
             }else{
@@ -243,7 +253,7 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
                 }else if(null == dataSource && mediaItemBase.getMediaType() == MediaType.DROP_BOX){
                     Toast.makeText(context, context.getResources().getString(R.string.login_problem_dropbox), Toast.LENGTH_SHORT).show();
                 }
-                context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_STOP));
+                context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
             }
         }
     }

@@ -106,7 +106,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                 @Override
                 public void onClick(View view) {
                     animate(holder);
-                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
+                    if (App.getPlayingQueueHandler().getUpNextList() != null && !App.getPlayerEventHandler().isTrackWaitingForPlay()) {
                         App.getPlayingQueueHandler().getUpNextList().addSearchItemToPlay(resultItemList.get(position));
                         new Handler().postDelayed(new Runnable() {
                             @Override

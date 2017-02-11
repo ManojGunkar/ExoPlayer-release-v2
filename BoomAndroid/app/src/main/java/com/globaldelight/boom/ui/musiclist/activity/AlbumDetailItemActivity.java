@@ -61,6 +61,7 @@ public class AlbumDetailItemActivity extends MasterActivity {
             public void onClick(View view) {
             if(null != fragment){
                 fragment.onFloatPlayAlbums();
+                sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
             }
             }
         });

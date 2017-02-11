@@ -28,6 +28,7 @@ import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdap
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import java.util.ArrayList;
 
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_CLOUD_SYNC;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
@@ -59,6 +60,9 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                 case ACTION_ON_NETWORK_CONNECTED:
                     LoadDropboxList();
                     break;
+                case ACTION_CLOUD_SYNC:
+                    LoadDropboxList();
+                    break;
             }
         }
     };
@@ -77,6 +81,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         intentFilter.addAction(ACTION_ON_NETWORK_CONNECTED);
+        intentFilter.addAction(ACTION_CLOUD_SYNC);
         getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
 
         progressLoader = new ProgressDialog(getActivity());
@@ -95,8 +100,8 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     private void LoadDropboxList(){
-        if (dropboxMediaList.getDropboxMediaList().isEmpty() &&
-                ConnectivityReceiver.isNetworkAvailable(getContext())) {
+        if (dropboxMediaList.getDropboxMediaList().isEmpty() && null != App.getDropboxAPI()
+                && ConnectivityReceiver.isNetworkAvailable(getContext())) {
             resetAuthentication();
             new LoadDropBoxList(getActivity()).execute();
         } else {

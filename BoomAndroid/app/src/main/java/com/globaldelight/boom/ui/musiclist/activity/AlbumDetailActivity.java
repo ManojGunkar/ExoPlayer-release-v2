@@ -41,7 +41,7 @@ public class AlbumDetailActivity extends MasterActivity {
 
         initValues();
 
-        initViews(savedInstanceState);
+        initViews();
     }
 
     private void initValues() {
@@ -60,7 +60,7 @@ public class AlbumDetailActivity extends MasterActivity {
         setAlbumArt(currentItem.getItemArtUrl(), width);
     }
 
-    private void initViews(Bundle savedInstanceState) {
+    private void initViews() {
         setDrawerLocked(true);
         final FloatingActionButton mFloatPlayAllAlbums = (FloatingActionButton) findViewById(R.id.fab);
         mFloatPlayAllAlbums.setOnClickListener(new View.OnClickListener() {
@@ -68,6 +68,7 @@ public class AlbumDetailActivity extends MasterActivity {
             public void onClick(View view) {
                 if(null != fragment ){
                     fragment.onFloatPlayAlbums();
+                    sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
                 }
             }
         });
