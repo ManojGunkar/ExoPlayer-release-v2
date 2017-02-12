@@ -73,13 +73,6 @@ public class AlbumDetailFragment extends Fragment {
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         getActivity().registerReceiver(mUpdatePlayingItem, intentFilter);
 
-        StringBuilder itemCount = new StringBuilder();
-
-        itemCount.append(((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getItemCount() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
-        itemCount.append(" ").append(collection.getItemCount());
-
-        listDetail = new ListDetail(collection.getItemTitle(), ((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getItemSubTitle(), itemCount.toString());
-
         CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) this.getActivity().findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
             appBarLayout.setTitle(collection.getItemTitle());
@@ -131,12 +124,33 @@ public class AlbumDetailFragment extends Fragment {
         @Override
         protected void onPostExecute(IMediaItemBase iMediaItemBase) {
             super.onPostExecute(iMediaItemBase);
+
+            StringBuilder itemCount = new StringBuilder();
+
+            if(collection.getItemType() == ItemType.ALBUM){
+                itemCount.append(collection.getMediaElement().size() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
+                itemCount.append(" ").append(collection.getMediaElement().size());
+                listDetail = new ListDetail(collection.getItemTitle(), collection.getItemSubTitle(), itemCount.toString());
+
+            }else{
+                itemCount.append(((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
+                itemCount.append(" ").append(((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size());
+                listDetail = new ListDetail(collection.getItemTitle(), ((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getItemSubTitle(), itemCount.toString());
+
+            }
+
             rootView.setLayoutManager(new LinearLayoutManager(getActivity()));
             albumItemsListAdapter = new AlbumItemsListAdapter(getActivity(), (IMediaItemCollection) iMediaItemBase, listDetail);
             rootView.setAdapter(albumItemsListAdapter);
 
-            if (((IMediaItemCollection) iMediaItemBase).getMediaElement().size() < 1) {
-                listIsEmpty();
+            if(collection.getItemType() == ItemType.ALBUM){
+                if (((IMediaItemCollection) iMediaItemBase).getMediaElement().size() < 1) {
+                    listIsEmpty();
+                }
+            }else {
+                if (((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size() < 1) {
+                    listIsEmpty();
+                }
             }
         }
     }

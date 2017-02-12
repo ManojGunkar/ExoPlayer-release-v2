@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private static final long SPLASH_TIME_OUT = 10000;
+    private static final long SPLASH_TIME_OUT = /*1000*/0;
     MixpanelAPI mixpanel;
     JSONObject propsFirst, propsLast;
     String currentDate;

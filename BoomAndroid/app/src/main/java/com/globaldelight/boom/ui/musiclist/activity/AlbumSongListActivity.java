@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
@@ -122,7 +123,7 @@ public class AlbumSongListActivity extends MasterActivity {
         mFloatPlayAlbumSongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(null != fragment) {
+                if(null != fragment && !App.getPlayerEventHandler().isTrackWaitingForPlay()){
                     fragment.onFloatPlayAlbumSongs();
                     sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
                 }
