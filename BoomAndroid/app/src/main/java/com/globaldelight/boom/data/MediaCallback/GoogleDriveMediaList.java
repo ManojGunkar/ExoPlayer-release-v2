@@ -3,6 +3,8 @@ package com.globaldelight.boom.data.MediaCallback;
 import android.content.Context;
 import android.os.Handler;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 
 import java.util.ArrayList;
@@ -13,13 +15,15 @@ import java.util.ArrayList;
 
 public class GoogleDriveMediaList {
 
-    private static ArrayList<IMediaItemBase> fileList;
+    private ArrayList<IMediaItemBase> fileList;
     private IGoogleDriveMediaUpdater googleDriveMediaUpdater;
     private static GoogleDriveMediaList handler;
     private static GoogleDriveHandler mGoogleDriveHandler;
+    private Context mContext;
     private Handler postMessage;
 
     private GoogleDriveMediaList(Context context){
+        this.mContext = context;
         fileList = new ArrayList<IMediaItemBase>();
         postMessage = new Handler();
     }
@@ -51,40 +55,16 @@ public class GoogleDriveMediaList {
         }
     }
 
-    public void addFilesInGoogleDriveMediaList(ArrayList<IMediaItemBase> entries){
-        fileList.addAll(entries);
-        if(null != googleDriveMediaUpdater) {
-            postMessage.post(new Runnable() {
-                @Override
-                public void run() {
-                    googleDriveMediaUpdater.onGoogleDriveMediaListUpdate();
-                }
-            });
-        }
-    }
-
-    public void removeFilesInGoogleDriveMediaList(int position){
-        fileList.remove(position);
-        if(null != googleDriveMediaUpdater) {
-            postMessage.post(new Runnable() {
-                @Override
-                public void run() {
-                    googleDriveMediaUpdater.onGoogleDriveMediaListUpdate();
-                }
-            });
-        }
-    }
-
     public ArrayList<IMediaItemBase> getGoogleDriveMediaList(){
+        if(null != fileList && fileList.size() <= 0){
+            fileList.addAll(MediaController.getInstance(mContext).getCloudMediaItemList(MediaType.GOOGLE_DRIVE));
+        }
         return fileList;
-    }
-
-    public int getCount(){
-        return fileList.size();
     }
 
     public void clearGoogleDriveMediaContent(){
         fileList.clear();
+        MediaController.getInstance(mContext).removeCloudMediaItemList(MediaType.GOOGLE_DRIVE);
     }
 
     public void finishGoogleDriveMediaLoading(){
@@ -96,6 +76,12 @@ public class GoogleDriveMediaList {
                 }
             });
         }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MediaController.getInstance(mContext).addSongsToCloudItemList(fileList);
+            }
+        }).start();
     }
 
     public void onErrorOccurred(final String e){

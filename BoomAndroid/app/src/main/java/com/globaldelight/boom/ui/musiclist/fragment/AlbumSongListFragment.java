@@ -19,7 +19,6 @@ import android.widget.AbsListView;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
-import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -27,7 +26,6 @@ import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.ItemSongListAdapter;
 import com.globaldelight.boom.utils.OnStartDragListener;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import static com.globaldelight.boom.data.MediaLibrary.ItemType.BOOM_PLAYLIST;
 import static com.globaldelight.boom.data.MediaLibrary.ItemType.PLAYLIST;
@@ -88,7 +86,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
 
         }else{
             title = collection.getMediaElement().get(collection.getCurrentIndex()).getItemTitle();
-            count = ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size();
+            count = ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getItemCount();
         }
         itemCount.append(count > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
         itemCount.append(" ").append(count);
@@ -118,9 +116,9 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         try {
             if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                 if (collection.getMediaElement().size() > 0)
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) collection.getMediaElement(), 0, false, true);
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0, true, true);
             } else {
-                App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, false, true);
+                App.getPlayingQueueHandler().getUpNextList().addToPlay((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex()), 0, collection.getItemId(), collection.getItemTitle(), collection.getItemType(), true, true);
             }
         }catch (Exception e){}
     }
@@ -134,16 +132,14 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         @Override
         protected IMediaItemCollection doInBackground(Void... params) {
             //ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
-            if (collection.getItemType() == ItemType.BOOM_PLAYLIST /*&& collection.getMediaElement().isEmpty()*/) {
+            if ((collection.getItemType() == ItemType.BOOM_PLAYLIST || collection.getItemType() == ItemType.PLAYLIST)&& collection.getMediaElement().isEmpty()) {
                 collection.setMediaElement(MediaController.getInstance(getActivity()).getMediaCollectionItemDetails(collection));
             } else
                 //ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
-                if(collection.getItemType() == ItemType.PLAYLIST && collection.getMediaElement().isEmpty()) {
-                    collection.setMediaElement(MediaController.getInstance(getActivity()).getMediaCollectionItemDetails(collection));
-                }else if((collection.getItemType() == ItemType.ARTIST || collection.getItemType() == ItemType.GENRE) &&
+                 if((collection.getItemType() == ItemType.ARTIST || collection.getItemType() == ItemType.GENRE) &&
                         ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
                     ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(getActivity()).getMediaCollectionItemDetails(collection));
-                }
+                 }
             setDetail(collection);
             return collection;
         }

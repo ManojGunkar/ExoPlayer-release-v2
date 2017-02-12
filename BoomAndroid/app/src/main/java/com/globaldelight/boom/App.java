@@ -15,6 +15,7 @@ import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.handler.PlayingQueue.PlayingQueueHandler;
 import com.globaldelight.boom.task.PlayerService;
+import com.globaldelight.boom.utils.handlers.CloudMediaItemDBHelper;
 import com.globaldelight.boom.utils.handlers.FavoriteDBHelper;
 import com.globaldelight.boom.utils.handlers.PlaylistDBHelper;
 import com.globaldelight.boom.utils.handlers.UpNextDBHelper;
@@ -36,6 +37,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     private static PlaylistDBHelper boomPlayListhelper;
     private static FavoriteDBHelper favoriteDBHelper;
     private static UpNextDBHelper upNextDBHelper;
+    private static CloudMediaItemDBHelper cloudMediaItemDBHelper;
     private static PlayerService service;
     private static UserPreferenceHandler userPreferenceHandler;
     private static DropboxAPI<AndroidAuthSession> dropboxAPI;
@@ -70,6 +72,8 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
         upNextDBHelper = new UpNextDBHelper(application);
 
+        cloudMediaItemDBHelper = new CloudMediaItemDBHelper(application);
+
         playingQueueHandler.getUpNextList();
 
         userPreferenceHandler = new UserPreferenceHandler(application);
@@ -97,6 +101,10 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     public static UpNextDBHelper getUPNEXTDBHelper() {
         return upNextDBHelper;
+    }
+
+    public static CloudMediaItemDBHelper getCloudMediaItemDBHelper() {
+        return cloudMediaItemDBHelper;
     }
 
     public static PlayingQueueHandler getPlayingQueueHandler() {

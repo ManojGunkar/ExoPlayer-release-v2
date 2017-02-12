@@ -282,7 +282,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
 //                                    if(!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused()){
                                         ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
                                         if (((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() > 0)
-                                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), 0, false, true);
+                                            App.getPlayingQueueHandler().getUpNextList().addToPlay((IMediaItemCollection) collection.getMediaElement().get(0), 0, true, true);
 //                                    }
                                         activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
                                     }
@@ -315,7 +315,6 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                             i = new Intent(activity, AlbumSongListActivity.class);
                         }else if (itemView == ITEM_VIEW_ALBUM) {
                             i = new Intent(activity, AlbumDetailActivity.class);
-                            i.putExtra("albumColor", holder.defaultAlbumColor);
                         }
                         i.putExtra("mediaItemCollection", collection);
                         activity.startActivity(i);

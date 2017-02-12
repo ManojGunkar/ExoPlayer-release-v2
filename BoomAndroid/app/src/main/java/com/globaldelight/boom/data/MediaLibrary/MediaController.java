@@ -12,6 +12,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -48,6 +49,10 @@ public class MediaController implements IMediaController{
 
     public IMediaItemBase getMediaCollectionItem(Context context, long mParentId, ItemType mParentType, MediaType mMediaType){
         return MediaLibraryHandler.getInstance(context).requestMediaCollectionItem(context, mParentId, mParentType, mMediaType);
+    }
+
+    public ArrayList<? extends IMediaItemBase> getMediaCollectionItem(Context context, long parentId, String parentTitle, ItemType parentType, long itemId, String itemTitle, MediaType mediaType) {
+        return MediaLibraryHandler.getInstance(context).getMediaCollectionItem(context, parentId, parentTitle, parentType, itemId, itemTitle, mediaType);
     }
 
     public ArrayList<? extends IMediaItemBase> getMediaCollectionItemsForQueue(IMediaItemCollection collection, @IntRange(from=-1) int position){
@@ -131,5 +136,17 @@ public class MediaController implements IMediaController{
 
     public ArrayList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) {
         return MediaLibraryHandler.getInstance(context).getUnShuffledList(queueType);
+    }
+
+    public void addSongsToCloudItemList(ArrayList<IMediaItemBase> fileList) {
+        MediaLibraryHandler.getInstance(context).addSongsToCloudItemList(fileList);
+    }
+
+    public Collection<? extends IMediaItemBase> getCloudMediaItemList(MediaType mediaType) {
+        return MediaLibraryHandler.getInstance(context).getCloudItemList(mediaType);
+    }
+
+    public void removeCloudMediaItemList(MediaType mediaType) {
+        MediaLibraryHandler.getInstance(context).deleteCloudMediaItemList(mediaType);
     }
 }

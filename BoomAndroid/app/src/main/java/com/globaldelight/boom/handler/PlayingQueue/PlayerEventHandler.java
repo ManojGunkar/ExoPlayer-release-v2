@@ -31,6 +31,7 @@ import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.Pla
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.stop;
 import static com.globaldelight.boom.manager.PlayerServiceReceiver.ACTION_PLAY_STOP;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_BOOM_PLAYLIST_LIST;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
 /**
@@ -195,6 +196,7 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
             setSessionState(PlaybackState.STATE_STOPPED);
         }
         context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
+        context.sendBroadcast(new Intent(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
 
         playingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
         isTrackWaiting = true;

@@ -8,10 +8,12 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
 import com.globaldelight.boom.utils.handlers.PlaylistDBHelper;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -147,6 +149,15 @@ public class DeviceMediaHandler {
         return null;
     }
 
+    public ArrayList<? extends IMediaItemBase> getMediaCollectionItem(Context context, long parentId, String parentTitle, ItemType parentType, long itemId, String itemTitle) {
+        if(parentType == ARTIST){
+            return DeviceMediaQuery.getSongListOfArtistsAlbum(context, parentId, parentTitle, itemId, itemTitle);
+        }else if(parentType == GENRE){
+            return DeviceMediaQuery.getSongListOfGenreAlbum(context, parentId, parentTitle, itemId, itemTitle);
+        }
+        return null;
+    }
+
     public IMediaItemBase requestMediaCollectionItem(Context context, long mParentId, ItemType mParentType) {
         IMediaItemCollection collection;
         switch (mParentType){
@@ -268,5 +279,17 @@ public class DeviceMediaHandler {
 
     public ArrayList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) {
         return App.getUPNEXTDBHelper().getUnShuffledList(queueType);
+    }
+
+    public void addSongsToCloudItemList(ArrayList<IMediaItemBase> fileList) {
+        App.getCloudMediaItemDBHelper().addSongs(fileList);
+    }
+
+    public Collection<? extends IMediaItemBase> getCloudItemList(MediaType mediaType) {
+        return App.getCloudMediaItemDBHelper().getSongList(mediaType);
+    }
+
+    public void deleteCloudMediaItemList(MediaType mediaType) {
+        App.getCloudMediaItemDBHelper().clearList(mediaType);
     }
 }

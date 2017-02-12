@@ -45,6 +45,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
     private static final String DATE_ADDED = "DateAdded";
     private static final String ALBUM_ART = "ItemArtUrl";
     private static final String MEDIA_TYPE = "mediaType";
+    private static final String ITEM_TYPE = "itemType";
     private static final String PARENT_TYPE = "itemParentType";
     private static final String PARENT_ID = "parentId";
     private static final String QUEUE_TYPE = "queue_type";
@@ -62,7 +63,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
                 DATA_PATH+" TEXT," + ALBUM_ID+" INTEGER," +
                 ALBUM+" TEXT," + ARTIST_ID+" INTEGER," +
                 ARTIST+" TEXT," + DURATION+" TEXT," +
-                DATE_ADDED+" TEXT," + ALBUM_ART+" TEXT," +
+                DATE_ADDED+" TEXT," + ALBUM_ART+" TEXT," + ITEM_TYPE + " INTEGER," +
                 MEDIA_TYPE+" INTEGER," + PARENT_TYPE + " INTEGER," +
                 PARENT_ID+" INTEGER,"+ QUEUE_TYPE+" INTEGER)";
 
@@ -93,6 +94,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         values.put(DURATION, ((IMediaItem)item).getDurationLong());
         values.put(DATE_ADDED, ((IMediaItem)item).getDateAdded());
         values.put(ALBUM_ART, ((IMediaItem)item).getItemArtUrl());
+        values.put(ITEM_TYPE, ((IMediaItem)item).getItemType().ordinal());
         values.put(MEDIA_TYPE, ((IMediaItem)item).getMediaType().ordinal());
         values.put(PARENT_TYPE, ((IMediaItem)item).getParentType().ordinal());
         values.put(PARENT_ID, ((IMediaItem)item).getParentId());
@@ -124,6 +126,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
                 values.put(DURATION, item.getDurationLong());
                 values.put(DATE_ADDED, item.getDateAdded());
                 values.put(ALBUM_ART, item.getItemArtUrl());
+                values.put(ITEM_TYPE, item.getItemType().ordinal());
                 values.put(MEDIA_TYPE, item.getMediaType().ordinal());
                 values.put(PARENT_TYPE, item.getParentType().ordinal());
                 values.put(PARENT_ID, item.getParentId());
@@ -157,6 +160,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
             values.put(DURATION, ((IMediaItem)songs.get(i)).getDurationLong());
             values.put(DATE_ADDED, ((IMediaItem)songs.get(i)).getDateAdded());
             values.put(ALBUM_ART, ((IMediaItem)songs.get(i)).getItemArtUrl());
+            values.put(ITEM_TYPE, ((IMediaItem)songs).getItemType().ordinal());
             values.put(MEDIA_TYPE, ((IMediaItem)songs.get(i)).getMediaType().ordinal());
             values.put(PARENT_TYPE, ((IMediaItem)songs.get(i)).getParentType().ordinal());
             values.put(PARENT_ID, ((IMediaItem)songs.get(i)).getParentId());
@@ -187,6 +191,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         values.put(DURATION, ((IMediaItem)song).getDurationLong());
         values.put(DATE_ADDED, ((IMediaItem)song).getDateAdded());
         values.put(ALBUM_ART, ((IMediaItem)song).getItemArtUrl());
+        values.put(ITEM_TYPE, ((IMediaItem)song).getItemType().ordinal());
         values.put(MEDIA_TYPE, ((IMediaItem)song).getMediaType().ordinal());
         values.put(PARENT_TYPE, ((IMediaItem)song).getParentType().ordinal());
         values.put(PARENT_ID, ((IMediaItem)song).getParentId());
@@ -212,7 +217,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
 
                     songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5),
                             cursor.getString(6), cursor.getInt(7), cursor.getString(8), Long.parseLong(duration),
-                            Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(12)), ItemType.fromOrdinal(cursor.getInt(13)), cursor.getInt(14)));
+                            Long.parseLong(dateAdded), cursor.getString(11), ItemType.fromOrdinal(cursor.getInt(12)), MediaType.fromOrdinal(cursor.getInt(13)), ItemType.fromOrdinal(cursor.getInt(14)), cursor.getInt(15), null));
                 } while (cursor.moveToNext());
             }
         }catch (Exception e){
@@ -254,14 +259,53 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         try {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
+                    long itemId = cursor.getInt(1);
+                    String itemTitle = cursor.getString(2);
                     String duration = cursor.getString(9);
                     String dateAdded = cursor.getString(10);
-                    if(cursor.getString(2).equals(context.getResources().getString(R.string.all_songs))){
-                        songList.addAll((Collection<? extends MediaItem>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB));
+                    ItemType itemType = ItemType.fromOrdinal(cursor.getInt(12));
+                    MediaType mediaType = MediaType.fromOrdinal(cursor.getInt(13));
+                    ItemType parentType = ItemType.fromOrdinal(cursor.getInt(14));
+                    long parentId = cursor.getInt(15);
+                    if(cursor.getString(8).equals(context.getResources().getString(R.string.all_songs))){
+                        switch (parentType){
+                            case FAVOURITE:
+                                songList.addAll((Collection<? extends MediaItem>) MediaController.getInstance(context).getFavouriteListItems());
+                                break;
+                            case ALBUM:
+                            case ARTIST:
+                                if(itemType == ItemType.ALBUM){
+                                    songList.addAll((Collection<? extends MediaItem>) MediaController.getInstance(context).getMediaCollectionItem(context, parentId, cursor.getString(16), parentType, itemId, itemTitle, mediaType));
+                                }else{
+                                    songList.addAll((Collection<? extends MediaItem>) MediaController.getInstance(context).getMediaCollectionItem(context, parentId, parentType, mediaType));
+                                }
+                                break;
+                            case GENRE:
+                                if(itemType == ItemType.ALBUM){
+                                    songList.addAll((Collection<? extends MediaItem>) MediaController.getInstance(context).getMediaCollectionItem(context, parentId, cursor.getString(16), parentType, itemId, itemTitle, mediaType));
+                                }else{
+                                    songList.addAll((Collection<? extends MediaItem>) MediaController.getInstance(context).getMediaCollectionItem(context, parentId, parentType, mediaType));
+                                }
+                                break;
+                            case BOOM_PLAYLIST:
+                            case PLAYLIST:
+                                songList.addAll((Collection<? extends MediaItem>) MediaController.getInstance(context).getMediaCollectionItem(context, parentId, parentType, mediaType));
+                                break;
+                            default:
+                                switch (mediaType){
+                                    case DEVICE_MEDIA_LIB:
+                                        songList.addAll((Collection<? extends MediaItem>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB));
+                                        break;
+                                    default:
+                                        songList.addAll((Collection<? extends MediaItem>) MediaController.getInstance(context).getCloudMediaItemList(MediaType.DEVICE_MEDIA_LIB));
+                                        break;
+                                }
+                                break;
+                        }
                     }else {
-                        songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5),
+                        songList.add(new MediaItem(itemId, itemTitle, cursor.getString(3), cursor.getString(4), cursor.getInt(5),
                                 cursor.getString(6), cursor.getInt(7), cursor.getString(8), Long.parseLong(duration),
-                                Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(12)), ItemType.fromOrdinal(cursor.getInt(13)), cursor.getInt(14)));
+                                Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, mediaType, parentType, parentId, null));
                     }
                 } while (cursor.moveToNext());
             }

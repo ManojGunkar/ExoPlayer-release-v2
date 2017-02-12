@@ -179,12 +179,11 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                 holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);
+                holder.loadCloud.setVisibility(View.GONE);
                 if(App.getPlayerEventHandler().isPlaying()){
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
-                    if(!isMediaItem)
-                        holder.loadCloud.setVisibility(View.GONE);
                 } else {
-                    if(!isMediaItem && null != App.getPlayerEventHandler().getPlayer().getDataSource() && !App.getPlayerEventHandler().isPaused())
+                    if(!isMediaItem && App.getPlayerEventHandler().isTrackWaitingForPlay() && !App.getPlayerEventHandler().isPaused())
                         holder.loadCloud.setVisibility(View.VISIBLE);
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
@@ -254,10 +253,10 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 //                                    if(!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused()){
                                         if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                                             if (collection.getMediaElement().size() > 0)
-                                                App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) collection.getMediaElement(), 0, false, true);
+                                                App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0, true, true);
                                         } else {
                                             if (((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size() > 0)
-                                                App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, false, true);
+                                                App.getPlayingQueueHandler().getUpNextList().addToPlay((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex()), 0, collection.getItemId(), collection.getItemTitle(), collection.getItemType(), true, true);
                                         }
 //                                    }
                                         activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
@@ -283,9 +282,9 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                 animate(holder);
                 if (App.getPlayingQueueHandler().getUpNextList() != null && !App.getPlayerEventHandler().isTrackWaitingForPlay()) {
                     if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) collection.getMediaElement(), position, false, false);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, position, true, false);
                     }else{
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), position, false, false);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex()), position, collection.getItemId(), collection.getItemTitle(), collection.getItemType(), true, false);
                     }
                     new Handler().postDelayed(new Runnable() {
                         @Override

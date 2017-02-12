@@ -16,7 +16,8 @@ import com.globaldelight.boom.R;
 public class ConnectivityReceiver
         extends BroadcastReceiver {
 
-    public ConnectivityReceiverListener connectivityReceiverListener;
+    public static ConnectivityReceiverListener connectivityReceiverListener;
+    public static boolean isNWConnected = false;
 
     public ConnectivityReceiver(){}
 
@@ -33,7 +34,7 @@ public class ConnectivityReceiver
         boolean isConnected = activeNetwork != null
                 && activeNetwork.isConnectedOrConnecting();
 
-        if (connectivityReceiverListener != null) {
+        if (connectivityReceiverListener != null && isNWConnected != isConnected) {
             connectivityReceiverListener.onNetworkConnectionChanged(isConnected);
         }
     }

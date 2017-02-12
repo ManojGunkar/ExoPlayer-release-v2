@@ -110,7 +110,7 @@ public class MediaCollectionFragment extends Fragment {
     public void onFloatActionPlaySong() {
         try {
             if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0, true);
+                App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0, false, true);
                 collectionItemListAdapter.notifyDataSetChanged();
             }
         }catch (Exception e){

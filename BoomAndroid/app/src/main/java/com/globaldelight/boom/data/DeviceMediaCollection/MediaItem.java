@@ -27,11 +27,12 @@ public class MediaItem implements IMediaItem, Parcelable {
     private MediaType mediaType;
     private ItemType parentType;
     private long parentId;
+    private String parentTitle;
     public static String UNKNOWN_ART_URL = "unknown_art_url";
 
     /*Only for Device Media Item*/
     public MediaItem(long ItemId, String ItemTitle, String ItemDisplayName, String ItemUrl, long ItemAlbumId, String ItemAlbum, long ItemArtistId,
-                     String ItemArtist, long Duration, long DateAdded, String ItemArtUrl, ItemType itemType, MediaType mediaType, ItemType parentType, long parentId){
+                     String ItemArtist, long Duration, long DateAdded, String ItemArtUrl, ItemType itemType, MediaType mediaType, ItemType parentType, long parentId, String parentTitle){
         this.ItemId = ItemId;
         this.ItemTitle = ItemTitle;
         this.ItemDisplayName = ItemDisplayName;
@@ -47,10 +48,12 @@ public class MediaItem implements IMediaItem, Parcelable {
         this.mediaType = mediaType;
         this.parentType = parentType;
         this.parentId = parentId;
+        this.parentTitle = parentTitle;
     }
 
     /*Only for Dropbox*/
-    public MediaItem(String ItemTitle, String  ItemUrl, ItemType itemType, MediaType mediaType, ItemType parentType) {
+    public MediaItem(long itemId, String ItemTitle, String  ItemUrl, ItemType itemType, MediaType mediaType, ItemType parentType) {
+        this.ItemId = itemId;
         this.ItemUrl = ItemUrl;
         this.ItemTitle = ItemTitle;
         this.itemType = itemType;
@@ -74,6 +77,7 @@ public class MediaItem implements IMediaItem, Parcelable {
         mediaType = MediaType.valueOf(in.readString());
         parentType = ItemType.valueOf(in.readString());
         parentId = in.readLong();
+        parentTitle = in.readString();
     }
 
     public static final Creator<MediaItem> CREATOR = new Creator<MediaItem>() {
@@ -232,5 +236,6 @@ public class MediaItem implements IMediaItem, Parcelable {
         dest.writeString(mediaType.name());
         dest.writeString(parentType.name());
         dest.writeLong(parentId);
+        dest.writeString(parentTitle);
     }
 }

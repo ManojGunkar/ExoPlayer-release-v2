@@ -22,7 +22,7 @@ public class LoadDropBoxList extends AsyncTask<Void, Void, Void>{
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if(null != dropboxMediaList && dropboxMediaList.getCount() > 0){
+        if(null != dropboxMediaList){
             dropboxMediaList.clearDropboxContent();
         }
     }
@@ -30,6 +30,7 @@ public class LoadDropBoxList extends AsyncTask<Void, Void, Void>{
     @Override
     protected Void doInBackground(Void... params) {
         if (null != DropBoxUtills.getKeys(mContext)) {
+            DropBoxUtills.setItemCount(0);
             DropBoxUtills.getFiles(DropBoxUtills.DIR, dropboxMediaList);
         }
         return null;

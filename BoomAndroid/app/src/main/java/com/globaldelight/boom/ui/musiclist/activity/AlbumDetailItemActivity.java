@@ -40,7 +40,7 @@ public class AlbumDetailItemActivity extends MasterActivity {
 
         initValues();
 
-        initViews(savedInstanceState);
+        initViews();
     }
 
     private void initValues() {
@@ -53,7 +53,7 @@ public class AlbumDetailItemActivity extends MasterActivity {
         setAlbumArt(currentItem.getItemArtUrl(), width);
     }
 
-    private void initViews(Bundle savedInstanceState) {
+    private void initViews() {
         setDrawerLocked(true);
         final FloatingActionButton mFloatPlayAlbums = (FloatingActionButton) findViewById(R.id.fab);
         mFloatPlayAlbums.setOnClickListener(new View.OnClickListener() {
@@ -72,15 +72,13 @@ public class AlbumDetailItemActivity extends MasterActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        if (savedInstanceState == null) {
-            Bundle arguments = new Bundle();
-            arguments.putParcelable("mediaItemCollection", (MediaItemCollection)currentItem);
-            fragment = new AlbumDetailItemFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.item_detail_container, fragment)
-                    .commit();
-        }
+        Bundle arguments = new Bundle();
+        arguments.putParcelable("mediaItemCollection", (MediaItemCollection)currentItem);
+        fragment = new AlbumDetailItemFragment();
+        fragment.setArguments(arguments);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.item_detail_container, fragment)
+                .commit();
     }
 
     @Override

@@ -115,8 +115,6 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
 
             setSongsArtImage(holder, position, size);
             setOnClicks(holder, position);
-        }else{
-
         }
     }
 

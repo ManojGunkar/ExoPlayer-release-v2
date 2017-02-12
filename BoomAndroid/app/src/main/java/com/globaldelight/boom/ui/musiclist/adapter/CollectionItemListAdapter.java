@@ -136,7 +136,7 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
                                     if (App.getPlayingQueueHandler().getUpNextList() != null) {
 //                                    if(!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused()){
                                         if (item.getMediaElement().size() > 0) {
-                                            App.getPlayingQueueHandler().getUpNextList().addToPlay(item, 0, true);
+                                            App.getPlayingQueueHandler().getUpNextList().addToPlay(item, 0, false, true);
                                         }
 //                                    }
                                         activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
@@ -160,7 +160,7 @@ public class CollectionItemListAdapter  extends RecyclerView.Adapter<CollectionI
 
                 if (App.getPlayingQueueHandler().getUpNextList() != null) {
                     if (item.getMediaElement().size() > 0) {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay(item, position, false);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay(item, position, false, false);
                     }
                     holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                     holder.count.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
