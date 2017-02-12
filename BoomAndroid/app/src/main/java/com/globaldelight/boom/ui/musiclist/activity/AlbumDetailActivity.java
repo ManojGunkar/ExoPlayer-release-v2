@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
@@ -66,7 +67,7 @@ public class AlbumDetailActivity extends MasterActivity {
         mFloatPlayAllAlbums.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(null != fragment ){
+                if(null != fragment && !App.getPlayerEventHandler().isTrackWaitingForPlay()){
                     fragment.onFloatPlayAlbums();
                     sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
                 }

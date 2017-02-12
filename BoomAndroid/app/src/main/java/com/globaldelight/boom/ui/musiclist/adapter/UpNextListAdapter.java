@@ -278,13 +278,12 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 setArt(holder, mPlaying.get(0).getUpNextItem().getItemArtUrl(), whatView(position));
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);
+                holder.loadCloud.setVisibility(View.GONE);
                 boolean isMediaItem = mPlaying.get(0).getUpNextItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB;
                 if(App.getPlayerEventHandler().isPlaying()){
                     holder.art_overlay_play.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_pause, null));
-                    if(!isMediaItem)
-                        holder.loadCloud.setVisibility(View.GONE);
                 } else {
-                    if(!isMediaItem && null != App.getPlayerEventHandler().getPlayer().getDataSource() && !App.getPlayerEventHandler().isPaused())
+                    if(!isMediaItem && App.getPlayerEventHandler().isTrackWaitingForPlay() && !App.getPlayerEventHandler().isPaused())
                         holder.loadCloud.setVisibility(View.VISIBLE);
                     holder.art_overlay_play.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
@@ -378,31 +377,34 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (queueType) {
-                    case History:
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay(QueueType.History, itemPosition);
-                        break;
-                    case Playing:
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay(QueueType.Playing, itemPosition);
-                        break;
-                    case Manual_UpNext:
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay(queueType, itemPosition);
-                        break;
-                    case Auto_UpNext:
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay(queueType, itemPosition);
-                        break;
-                    default:
-                        break;
-                }
-                try {
-                    recyclerView.scrollToPosition(headerPlayingPos);
-                }catch (Exception e){}
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDataSetChanged();
+                if (!App.getPlayerEventHandler().isTrackWaitingForPlay()){
+                    switch (queueType) {
+                        case History:
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay(QueueType.History, itemPosition);
+                            break;
+                        case Playing:
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay(QueueType.Playing, itemPosition);
+                            break;
+                        case Manual_UpNext:
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay(queueType, itemPosition);
+                            break;
+                        case Auto_UpNext:
+                            App.getPlayingQueueHandler().getUpNextList().addToPlay(queueType, itemPosition);
+                            break;
+                        default:
+                            break;
                     }
-                }, 300);
+                    try {
+                        recyclerView.scrollToPosition(headerPlayingPos);
+                    } catch (Exception e) {
+                    }
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyDataSetChanged();
+                        }
+                    }, 300);
+                }
             }
         });
     }
@@ -615,7 +617,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
         }
 
         public int getItemPosition() {
-            return position;
+            return position < 0 ? 0 : position;
         }
     }
 }

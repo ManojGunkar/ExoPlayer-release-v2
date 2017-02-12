@@ -123,6 +123,7 @@ public class DropBoxUtills {
                     } else {
                         if (entry.mimeType.toString().startsWith("audio/")) {
                             dropboxMediaList.addFileInDropboxList(new MediaItem(100000+count, entry.fileName(), entry.path, ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
+                            count++;
                         }
                     }
                 }

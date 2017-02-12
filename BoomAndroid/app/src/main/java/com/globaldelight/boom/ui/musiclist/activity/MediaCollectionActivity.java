@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
@@ -126,7 +127,7 @@ public class MediaCollectionActivity extends MasterActivity {
         mActionPlaySongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (null != mCollectionFragment){
+                if (null != mCollectionFragment && !App.getPlayerEventHandler().isTrackWaitingForPlay()){
                     mCollectionFragment.onFloatActionPlaySong();
                     sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
                 }

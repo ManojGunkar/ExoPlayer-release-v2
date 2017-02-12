@@ -153,7 +153,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
             @Override
             public void onClick(View view) {
                 animate(holder);
-                if (App.getPlayingQueueHandler().getUpNextList() != null && !App.getPlayerEventHandler().isTrackWaitingForPlay()) {
+                if (!App.getPlayerEventHandler().isTrackWaitingForPlay()) {
                     App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) itemList, position, true, false);
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -163,7 +163,6 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                     }, 500);
                 }
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_FAVOURITE_SECTION);
-
             }
         });
 
