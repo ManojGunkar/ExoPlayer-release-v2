@@ -75,10 +75,10 @@ public class AlbumDetailFragment extends Fragment {
 
         StringBuilder itemCount = new StringBuilder();
 
-        itemCount.append(collection.getItemCount() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
+        itemCount.append(((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getItemCount() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
         itemCount.append(" ").append(collection.getItemCount());
 
-        listDetail = new ListDetail(collection.getItemTitle(), collection.getItemSubTitle(), itemCount.toString());
+        listDetail = new ListDetail(collection.getItemTitle(), ((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getItemSubTitle(), itemCount.toString());
 
         CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) this.getActivity().findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
@@ -104,9 +104,9 @@ public class AlbumDetailFragment extends Fragment {
         try {
             if (App.getPlayingQueueHandler().getUpNextList() != null) {
                 if (collection.getItemType() == ItemType.ALBUM) {
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0, true);
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0, true, true);
                 } else {
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) ((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0, false, true);
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex()), 0, collection.getItemId(), collection.getItemTitle(), collection.getItemType(), true, true);
                 }
                 albumItemsListAdapter.notifyDataSetChanged();
             }

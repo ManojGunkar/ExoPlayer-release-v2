@@ -84,9 +84,9 @@ public class AlbumDetailItemFragment extends Fragment {
 
     public void onFloatPlayAlbums() {
         try {
-            if(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty())
-                ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(getContext()).getMediaCollectionItemDetails(collection));
-            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) MediaController.getInstance(getContext()).getMediaCollectionItemDetails(collection), 0, false, true);
+            if(((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().isEmpty())
+            ((IMediaItemCollection)collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(getContext()).getMediaCollectionItemDetails(collection));
+            App.getPlayingQueueHandler().getUpNextList().addToPlay((IMediaItemCollection) collection.getMediaElement().get(0), 0, true, true);
         }catch (Exception e){}
     }
 

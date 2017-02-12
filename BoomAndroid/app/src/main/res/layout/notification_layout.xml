@@ -24,6 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:layout_weight="1"
+            android:gravity="center_vertical"
             android:orientation="vertical"
             android:padding="@dimen/large_noti_title_panel_padding">
 

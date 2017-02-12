@@ -411,18 +411,20 @@ public class UpNextList {
     }
 
     public void insertUnShuffledListWithUpdateUpNext(final IMediaItemBase item, final boolean isAppend) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                MediaController.getInstance(context).insertUnShuffledList(item, QueueType.unshuffled, isAppend);
-                if(SHUFFLE.all == mShuffle){
-                    updateShuffleList();
+        if(null != item) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    MediaController.getInstance(context).insertUnShuffledList(item, QueueType.unshuffled, isAppend);
+                    if (SHUFFLE.all == mShuffle) {
+                        updateShuffleList();
+                    }
+                    if (REPEAT.all == mRepeat) {
+                        updateRepeatList();
+                    }
                 }
-                if(REPEAT.all == mRepeat){
-                    updateRepeatList();
-                }
-            }
-        }).start();
+            }).start();
+        }
     }
 
     public void addSearchItemToPlay(final IMediaItemBase item){
@@ -448,55 +450,18 @@ public class UpNextList {
         }
     }
 
-    public void addToPlay(final ArrayList<IMediaItem> itemList, final int position, boolean isPlayAll) {
-        long mTime = System.currentTimeMillis();
-        boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
-        if(itemList.get(position).getMediaType() == MediaType.DEVICE_MEDIA_LIB && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
-            PlayPause();
-        }else if(itemList.get(position).getMediaType() == MediaType.GOOGLE_DRIVE && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
-            PlayPause();
-        } else if(itemList.get(position).getMediaType() == MediaType.DROP_BOX && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
-            PlayPause();
-        }else if(mTime - mShiftingTime > 500) {
-            mShiftingTime = mTime;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(null != itemList && itemList.size() > 0) {
-                        mGhostList.clear();
-                        if (position > 0) {
-                            setItemListAsPrevious(itemList.subList(0, position));
-                        }
-                        setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
-                        mAutoNextList.clear();
-                        if (itemList.size() > position + 1) {
-                            setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
-                        }
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                insertUnShuffledListWithUpdateUpNext(itemList.subList(position, itemList.size()), false);
-                            }
-                        }).start();
-
-                        PlayingItemChanged();
-                    }
-                }
-            }, 100);
-        }
-    }
-
-    //    itemList -> list of collection
-//    position -> Now Playing Item position in item list.
+//        Song List of device, favorite, dropbox, google drive.
     public void addToPlay(final ArrayList<IMediaItem> itemList, final int position, final boolean fromSongList, boolean isPlayAll) {
         long mTime = System.currentTimeMillis();
+        final MediaType mediaType = itemList.get(position).getMediaType();
+        final ItemType itemType = itemList.get(position).getItemType();
         boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
         Log.d("Media_Type : ", itemList.get(position).getMediaType().name());
-        if(itemList.get(position).getMediaType() == MediaType.DEVICE_MEDIA_LIB && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
+        if(mediaType == MediaType.DEVICE_MEDIA_LIB && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
             PlayPause();
-        }else if(itemList.get(position).getMediaType() == MediaType.GOOGLE_DRIVE && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
+        }else if(mediaType == MediaType.GOOGLE_DRIVE && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
             PlayPause();
-        } else if(itemList.get(position).getMediaType() == MediaType.DROP_BOX && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
+        } else if(mediaType == MediaType.DROP_BOX && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
             PlayPause();
         }else if(mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
@@ -517,14 +482,13 @@ public class UpNextList {
                             @Override
                             public void run() {
                                 if(fromSongList) {
-                                    IMediaItem item = new MediaItem(0, context.getResources().getString(R.string.all_songs), null, null, 0, null, 0, null, 0, 0, null, ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.SONGS, 0);
+                                    IMediaItem item =  new MediaItem(0, null, null, null, 0, null, 0, context.getResources().getString(R.string.all_songs), 0, 0, null, itemType, mediaType, itemType, itemList.get(position).getParentId(), null );
                                     insertUnShuffledListWithUpdateUpNext(item, false);
                                 }else {
                                     insertUnShuffledListWithUpdateUpNext(itemList.subList(position, itemList.size()), false);
                                 }
                             }
                         }).start();
-
                         PlayingItemChanged();
                     }
                 }
@@ -532,9 +496,8 @@ public class UpNextList {
         }
     }
 
-    //    selected Collection, Like Album, ic_artist.
-//    index of now Playing item of the collection
-    public void addToPlay(final IMediaItemCollection collection, final int position, boolean isPlayAll) {
+    //Album, Artist, Genre, Playlist, BoomPlaylist
+    public void addToPlay(final IMediaItemCollection collection, final int position, final boolean fromSongList, boolean isPlayAll) {
         boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
         long mTime = System.currentTimeMillis();
         if(null != getPlayingItem() && collection.getMediaElement().size() > 0 && !isPlayAll &&
@@ -558,7 +521,54 @@ public class UpNextList {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                insertUnShuffledListWithUpdateUpNext(collection.getMediaElement().subList(position , collection.getMediaElement().size()), false);
+                                if(fromSongList) {
+
+                                    IMediaItem item =  new MediaItem(collection.getItemId(), collection.getItemTitle(), null, null, 0, null, 0, context.getResources().getString(R.string.all_songs), 0, 0, null, collection.getItemType(), collection.getMediaType(), collection.getItemType(), collection.getItemId(), null );
+                                    insertUnShuffledListWithUpdateUpNext(item, false);
+                                }else {
+                                    insertUnShuffledListWithUpdateUpNext(collection.getMediaElement().subList(position , collection.getMediaElement().size()), false);
+                                }
+                            }
+                        }).start();
+
+                        PlayingItemChanged();
+                    }
+                }
+            }, 300);
+        }
+    }
+
+    //Song items of Artist, Genre
+    public void addToPlay(final IMediaItemCollection collection, final int position, final long parentId, final String parentTitle, final ItemType parentType, final boolean fromSongList, boolean isPlayAll) {
+        boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
+        long mTime = System.currentTimeMillis();
+        if(null != getPlayingItem() && collection.getMediaElement().size() > 0 && !isPlayAll &&
+                collection.getMediaElement().get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
+            PlayPause();
+        }else if(mTime - mShiftingTime > 500) {
+            mShiftingTime = mTime;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(null != collection && collection.getMediaElement().size() > 0) {
+                        mGhostList.clear();
+                        if (position > 0) {
+                            setItemListAsPrevious(collection.getMediaElement().subList(0, position));
+                        }
+                        setItemAsPlayingItem(collection.getMediaElement().get(position), QueueType.Auto_UpNext);
+                        mAutoNextList.clear();
+                        if (collection.getMediaElement().size() > position + 1) {
+                            setItemListAsUpNextFrom(collection.getMediaElement().subList(position + 1, collection.getMediaElement().size()));
+                        }
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(fromSongList) {
+                                    IMediaItem item =  new MediaItem(collection.getItemId(), collection.getItemTitle(), null, null, 0, null, 0, context.getResources().getString(R.string.all_songs), 0, 0, null, collection.getItemType(), collection.getMediaType(), parentType, parentId, parentTitle );
+                                    insertUnShuffledListWithUpdateUpNext(item, false);
+                                }else {
+                                    insertUnShuffledListWithUpdateUpNext(collection.getMediaElement().subList(position , collection.getMediaElement().size()), false);
+                                }
                             }
                         }).start();
 

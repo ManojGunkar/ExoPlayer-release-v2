@@ -97,7 +97,7 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
             if (files != null) {
                 for (File file : files) {
                     if (file.get("mimeType").toString().startsWith("audio")) {
-                        mediaListInstance.addFileInGoogleDriveMediaList(new MediaItem(file.getName(),
+                        mediaListInstance.addFileInGoogleDriveMediaList(new MediaItem(Long.parseLong(file.getId()), file.getName(),
                                 mediaUrl_1 + file.getId() + mediaUrl_2, ItemType.SONGS, MediaType.GOOGLE_DRIVE, ItemType.SONGS));
                     }
                 }
@@ -108,7 +108,7 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
 
     @Override
     protected void onPostExecute(List<String> output) {
-        if ((output == null || output.size() == 0) && mediaListInstance.getGoogleDriveMediaList().isEmpty()) {
+        if ((output == null || output.size() == 0) && mediaListInstance.getGoogleDriveMediaList().size() <= 0) {
             mediaListInstance.onEmptyList();
         } else {
             mediaListInstance.finishGoogleDriveMediaLoading();

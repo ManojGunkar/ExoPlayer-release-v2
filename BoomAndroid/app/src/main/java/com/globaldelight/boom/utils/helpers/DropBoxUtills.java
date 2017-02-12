@@ -14,9 +14,7 @@ import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session;
-import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.App;
-import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
@@ -34,6 +32,7 @@ public class DropBoxUtills {
     public static final String OVERRIDEMSG = "File name with this name already exists.Do you want to replace this file?";
     final static public String DROPBOX_APP_KEY = "unt5kbgl16jw3tx";
     final static public String DROPBOX_APP_SECRET = "nwacus6f0ykxpkm";
+    private static int count = 0;
     public static boolean mLoggedIn = false;
 
     final static public Session.AccessType ACCESS_TYPE = Session.AccessType.DROPBOX;
@@ -123,7 +122,7 @@ public class DropBoxUtills {
                         dropboxFolderList.add(entry);
                     } else {
                         if (entry.mimeType.toString().startsWith("audio/")) {
-                            dropboxMediaList.addFileInDropboxList(new MediaItem(entry.fileName(), entry.path, ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
+                            dropboxMediaList.addFileInDropboxList(new MediaItem(100000+count, entry.fileName(), entry.path, ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
                         }
                     }
                 }
@@ -160,5 +159,9 @@ public class DropBoxUtills {
         if(null != DropboxMediaList.getDropboxListInstance(context)){
             DropboxMediaList.getDropboxListInstance(context).clearDropboxContent();
         }
+    }
+
+    public static void setItemCount(int itemCount) {
+        count = itemCount;
     }
 }

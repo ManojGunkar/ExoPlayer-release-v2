@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private static final long SPLASH_TIME_OUT = /*200*/0;
+    private static final long SPLASH_TIME_OUT = 10000;
     MixpanelAPI mixpanel;
     JSONObject propsFirst, propsLast;
     String currentDate;
@@ -50,7 +50,7 @@ public class SplashActivity extends AppCompatActivity {
         }
         super.onCreate(savedInstanceState);
 
-        App.startPlayerService();
+
         new Handler().postDelayed(new Runnable() {
 
             /*
@@ -62,6 +62,7 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 // This method will be executed once the timer is over
                 // Start your app main activity
+                App.startPlayerService();
                 startBoomLibrary();
                 // close this activity
                 //finish();

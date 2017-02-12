@@ -18,7 +18,6 @@ import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
-import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.data.MediaLibrary.MediaController;
@@ -162,9 +161,9 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
                                     if (App.getPlayingQueueHandler().getUpNextList() != null) {
 //                                    if(!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused()){
                                         if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
-                                            App.getPlayingQueueHandler().getUpNextList().addToPlay(item, 0, true);
+                                            App.getPlayingQueueHandler().getUpNextList().addToPlay(item, 0, true, true);
                                         } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
-                                            App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), 0, false, true);
+                                            App.getPlayingQueueHandler().getUpNextList().addToPlay((IMediaItemCollection) item.getMediaElement().get(item.getCurrentIndex()), 0, item.getItemId(), item.getItemTitle(), item.getItemType(), true, true);
                                         }
 //                                    }
                                         activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
@@ -188,9 +187,9 @@ public class AlbumItemsListAdapter extends RecyclerView.Adapter<AlbumItemsListAd
 
                 if (App.getPlayingQueueHandler().getUpNextList() != null && !App.getPlayerEventHandler().isTrackWaitingForPlay()) {
                     if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay(item, position, false);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay(item, position, true, false);
                     } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
-                        App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), position, false, false);
+                        App.getPlayingQueueHandler().getUpNextList().addToPlay((IMediaItemCollection) item.getMediaElement().get(item.getCurrentIndex()), position, item.getItemId(), item.getItemTitle(), item.getItemType(), true, false);
                     }
                     new Handler().postDelayed(new Runnable() {
                         @Override

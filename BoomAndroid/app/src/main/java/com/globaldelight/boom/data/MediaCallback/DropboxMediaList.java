@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.data.MediaLibrary.MediaType;
+
 import java.util.ArrayList;
 
 /**
@@ -15,9 +18,11 @@ public class DropboxMediaList {
     private ArrayList<IMediaItemBase> fileList;
     private IDropboxUpdater dropboxUpdater;
     private static DropboxMediaList handler;
+    private Context mContext;
     private Handler postMessage;
 
     private DropboxMediaList(Context context){
+        this.mContext = context;
         fileList = new ArrayList<IMediaItemBase>();
         postMessage = new Handler();
     }
@@ -39,36 +44,16 @@ public class DropboxMediaList {
         });
     }
 
-    public void addFilesInDropboxList(ArrayList<IMediaItemBase> entries){
-        fileList.addAll(entries);
-        postMessage.post(new Runnable() {
-            @Override
-            public void run() {
-                dropboxUpdater.UpdateDropboxEntryList();
-            }
-        });
-    }
-
-    public void removeFilesInDropboxList(int position){
-        fileList.remove(position);
-        postMessage.post(new Runnable() {
-            @Override
-            public void run() {
-                dropboxUpdater.UpdateDropboxEntryList();
-            }
-        });
-    }
-
     public ArrayList<IMediaItemBase> getDropboxMediaList(){
+        if(null != fileList && fileList.size() <= 0){
+            fileList.addAll(MediaController.getInstance(mContext).getCloudMediaItemList(MediaType.DROP_BOX));
+        }
         return fileList;
-    }
-
-    public int getCount(){
-        return fileList.size();
     }
 
     public void clearDropboxContent(){
         fileList.clear();
+        MediaController.getInstance(mContext).removeCloudMediaItemList(MediaType.DROP_BOX);
     }
 
     public void finishDropboxLoading(){
@@ -78,6 +63,12 @@ public class DropboxMediaList {
                 dropboxUpdater.UpdateDropboxEntryList();
             }
         });
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MediaController.getInstance(mContext).addSongsToCloudItemList(fileList);
+            }
+        }).start();
     }
 
     public void setDropboxUpdater(IDropboxUpdater dropboxUpdater){

@@ -122,7 +122,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                 if (App.getPlayerEventHandler().isPlaying()) {
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
                 } else {
-                    if(!isMediaItem && null != App.getPlayerEventHandler().getPlayer().getDataSource() && !App.getPlayerEventHandler().isPaused())
+                    if(!isMediaItem && App.getPlayerEventHandler().isTrackWaitingForPlay() && !App.getPlayerEventHandler().isPaused())
                         holder.loadCloud.setVisibility(View.VISIBLE);
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
@@ -154,7 +154,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
             public void onClick(View view) {
                 animate(holder);
                 if (App.getPlayingQueueHandler().getUpNextList() != null && !App.getPlayerEventHandler().isTrackWaitingForPlay()) {
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) itemList, position, false);
+                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) itemList, position, true, false);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
