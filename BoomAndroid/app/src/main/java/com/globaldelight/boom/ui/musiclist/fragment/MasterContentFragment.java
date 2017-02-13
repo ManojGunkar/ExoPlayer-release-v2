@@ -100,7 +100,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private RegularTextView mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
     private Activity mContext;
     private View mInflater, revealView;
-    private int colorTo , colorFrom;
+    private int colorTo , colorFrom, colorFromActive;
     private AppCompatSeekBar mTrackSeek;
     private ImageView mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mEffectTab, mPlayerTab, mPlayerBackBtn, mLargeAlbumArt;
     private LinearLayout mEffectContent, mPlayerLarge, mPlayerTitlePanel, mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
@@ -212,6 +212,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         colorTo = ContextCompat.getColor(mContext, R.color.effect_inactive);
         colorFrom = ContextCompat.getColor(mContext, R.color.effect_active);
+        colorFromActive = ContextCompat.getColor(mContext, R.color.colorAccent);
 
         Point point = new Point();
         getActivity().getWindowManager().getDefaultDisplay().getSize(point);
@@ -500,8 +501,22 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void updateLargePlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
         if(null != item){
-            DrawableCompat.setTint(mRepeat.getDrawable(), colorFrom);
-            DrawableCompat.setTint(mShuffle.getDrawable(), colorFrom);
+            switch (App.getUserPreferenceHandler().getShuffle()){
+                case none:
+                    DrawableCompat.setTint(mShuffle.getDrawable(), colorFrom);
+                    break;
+                case all:
+                    DrawableCompat.setTint(mShuffle.getDrawable(), colorFromActive);
+                    break;
+            }
+            switch (App.getUserPreferenceHandler().getRepeat()){
+                case none:
+                    DrawableCompat.setTint(mRepeat.getDrawable(), colorFrom);
+                    break;
+                default:
+                    DrawableCompat.setTint(mRepeat.getDrawable(), colorFromActive);
+                    break;
+            }
             mLargeSongTitle.setVisibility(View.VISIBLE);
             mLargeSongSubTitle.setVisibility(View.VISIBLE);
             mTrackSeek.setVisibility(View.VISIBLE);
@@ -843,9 +858,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void startCloudItemProgress() {
-        IMediaItem item = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
-        if(!App.getPlayerEventHandler().isPaused() && null != item && item.getMediaType() != MediaType.DEVICE_MEDIA_LIB)
+        if(!App.getPlayerEventHandler().isPaused() && App.getPlayerEventHandler().isTrackWaitingForPlay()) {
             mInflater.findViewById(R.id.load_cloud).setVisibility(View.VISIBLE);
+        }else{
+            mInflater.findViewById(R.id.load_cloud).setVisibility(View.GONE);
+        }
     }
 
     private void stopCloudItemProgress() {

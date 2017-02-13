@@ -110,8 +110,8 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         try {
-            for (ListIterator iterator = songs.listIterator(songs.size()); iterator.hasPrevious();) {
-                final MediaItem item = (MediaItem) iterator.previous();
+            for (int i = 0; i < songs.size(); i++) {
+                final MediaItem item = (MediaItem) songs.get(i);
                 ContentValues values = new ContentValues();
 
                 values.putNull(SONG_KEY_ID);
@@ -160,7 +160,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
             values.put(DURATION, ((IMediaItem)songs.get(i)).getDurationLong());
             values.put(DATE_ADDED, ((IMediaItem)songs.get(i)).getDateAdded());
             values.put(ALBUM_ART, ((IMediaItem)songs.get(i)).getItemArtUrl());
-            values.put(ITEM_TYPE, ((IMediaItem)songs).getItemType().ordinal());
+            values.put(ITEM_TYPE, ((IMediaItem)songs.get(i)).getItemType().ordinal());
             values.put(MEDIA_TYPE, ((IMediaItem)songs.get(i)).getMediaType().ordinal());
             values.put(PARENT_TYPE, ((IMediaItem)songs.get(i)).getParentType().ordinal());
             values.put(PARENT_ID, ((IMediaItem)songs.get(i)).getParentId());
@@ -297,7 +297,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
                                         songList.addAll((Collection<? extends MediaItem>) MediaController.getInstance(context).getMediaCollectionItemList(ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB));
                                         break;
                                     default:
-                                        songList.addAll((Collection<? extends MediaItem>) MediaController.getInstance(context).getCloudMediaItemList(MediaType.DEVICE_MEDIA_LIB));
+                                        songList.addAll((Collection<? extends MediaItem>) MediaController.getInstance(context).getCloudMediaItemList(mediaType));
                                         break;
                                 }
                                 break;
@@ -315,8 +315,8 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         db.close();
-        if(songList.size() > 0)
-            Collections.reverse(songList);
+//        if(songList.size() > 0)
+//            Collections.reverse(songList);
         return songList;
     }
 }
