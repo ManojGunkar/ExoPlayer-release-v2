@@ -37,12 +37,13 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
     private Fragment fragment;
     private GoogleDriveMediaList mediaListInstance;
     String access_token = null;
-    String file_Id;
+    private static int  file_count;
     private String mediaUrl_1 = "https://www.googleapis.com/drive/v3/files/";
     private String mediaUrl_2 = "?alt=media&access_token=";
 
-    public LoadGoogleDriveList(Fragment fragment, GoogleAccountCredential googleAccountCredential) {
+    public LoadGoogleDriveList(Fragment fragment, GoogleAccountCredential googleAccountCredential, int count) {
         this.fragment = fragment;
+        file_count = count;
         HttpTransport transport = AndroidHttp.newCompatibleTransport();
         JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
         mService = new com.google.api.services.drive.Drive.Builder(
@@ -97,7 +98,7 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
             if (files != null) {
                 for (File file : files) {
                     if (file.get("mimeType").toString().startsWith("audio")) {
-                        mediaListInstance.addFileInGoogleDriveMediaList(new MediaItem(Long.parseLong(file.getId()), file.getName(),
+                        mediaListInstance.addFileInGoogleDriveMediaList(new MediaItem(200000+file_count, file.getName(),
                                 mediaUrl_1 + file.getId() + mediaUrl_2, ItemType.SONGS, MediaType.GOOGLE_DRIVE, ItemType.SONGS));
                     }
                 }

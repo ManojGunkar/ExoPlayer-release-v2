@@ -163,7 +163,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
             GoogleDriveMediaList.geGoogleDriveMediaListInstance(null != mContext ? mContext :
                     mFragment.getContext()).onErrorOccurred(mFragment.getResources().getString(R.string.network_error));
         } else {
-            new LoadGoogleDriveList(mFragment, mCredential).execute();
+            new LoadGoogleDriveList(mFragment, mCredential, 0).execute();
         }
     }
 
