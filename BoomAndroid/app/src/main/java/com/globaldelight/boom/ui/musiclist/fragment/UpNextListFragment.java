@@ -57,7 +57,7 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
                     break;
                 case PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
                     if (upNextListAdapter != null)
-                        upNextListAdapter.notifyDataSetChanged();
+                        upNextListAdapter.updateList(App.getPlayingQueueHandler().getUpNextList());
                     break;
             }
         }

@@ -398,12 +398,6 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                         recyclerView.scrollToPosition(headerPlayingPos);
                     } catch (Exception e) {
                     }
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyDataSetChanged();
-                        }
-                    }, 300);
                 }
             }
         });
