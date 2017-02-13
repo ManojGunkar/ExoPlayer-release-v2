@@ -222,7 +222,7 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
             mediaItemBase = params[0];
             if(mediaItemBase.getMediaType() == MediaType.DEVICE_MEDIA_LIB){
                 dataSource = mediaItemBase.getItemUrl();
-                mediaItemBase.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem) mediaItemBase).getItemAlbum()));
+                mediaItemBase.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(mediaItemBase.getItemAlbum()));
             }else if(mediaItemBase.getMediaType() == MediaType.DROP_BOX){
                 if(null != App.getDropboxAPI().getSession()){
                     return DropBoxUtills.getDropboxItemUrl(mediaItemBase.getItemUrl());
@@ -246,15 +246,16 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
                 if ( requestAudioFocus() ) {
                     mPlayer.setDataSource(dataSource);
                     setSessionState(PlaybackState.STATE_PLAYING);
-//                    context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_GET_SONG));
                     AnalyticsHelper.songSelectionChanged(context, mediaItemBase);
                 }
             }else{
                 if(null == dataSource && mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){
-                    Toast.makeText(context, context.getResources().getString(R.string.login_problem_google_drive), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getResources().getString(R.string.loading_problem), Toast.LENGTH_SHORT).show();
                 }else if(null == dataSource && mediaItemBase.getMediaType() == MediaType.DROP_BOX){
-                    Toast.makeText(context, context.getResources().getString(R.string.login_problem_dropbox), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getResources().getString(R.string.loading_problem), Toast.LENGTH_SHORT).show();
                 }
+                isTrackWaiting = false;
+                context.sendBroadcast(new Intent(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
                 context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
             }
         }

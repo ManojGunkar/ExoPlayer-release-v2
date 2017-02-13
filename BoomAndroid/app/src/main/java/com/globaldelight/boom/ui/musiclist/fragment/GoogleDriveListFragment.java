@@ -240,12 +240,14 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     @Override
     public void onDecline() {
         dismissLoader();
-        getActivity().onBackPressed();
+        if(null != getActivity())
+            getActivity().onBackPressed();
     }
 
     @Override
     public void onDestroy() {
-        getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
+        if(null != getActivity())
+            getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
         super.onDestroy();
     }
 }

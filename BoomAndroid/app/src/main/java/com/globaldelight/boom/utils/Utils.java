@@ -286,26 +286,25 @@ public class Utils {
     public static void shareStart(Context context) {
         if(ConnectivityReceiver.isNetworkAvailable(context)) {
             try {
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                List<ResolveInfo> resInfo = context.getPackageManager().queryIntentActivities(shareIntent, 0);
-                if (!resInfo.isEmpty()) {
-                    for (ResolveInfo resolveInfo : resInfo) {
-                        String packageName = resolveInfo.activityInfo.packageName;
-                        if (packageName.equals("com.instagram.android")) {
-                            shareIntent.setType("image/*");
-                            shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("android.resource://" + context.getPackageName() + "/" + R.drawable.share_image));
-                        } else {
-                            shareIntent.setType("text/plain");
-                            shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getResources().getString(R.string.app_name));
-                            String sAux = context.getResources().getString(R.string.share_desc);
-                            sAux = sAux + context.getResources().getString(R.string.playstore_link);
-                            shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
+                Intent shareIntent = new Intent(
+                        android.content.Intent.ACTION_SEND);
+                shareIntent.setType("image/*");
+                shareIntent.putExtra(
+                        android.content.Intent.EXTRA_SUBJECT, "share");
+                shareIntent.putExtra(
+                        android.content.Intent.EXTRA_TITLE, "share");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My application name");
+                String sAux = "\nDownload Boom Music Player\n\n";
+                sAux = sAux + "https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n";
+                shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
+                Resources resources = context.getResources();
+                Uri imageUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + resources.getResourcePackageName(R.drawable.ic_share) + '/' + resources.getResourceTypeName(R.drawable.ic_share) + '/' + resources.getResourceEntryName(R.drawable.ic_share));
 
-                        }
-                    }
-                }
-                context.startActivity(Intent.createChooser(shareIntent, context.getResources().getString(R.string.choose_share)));
+                shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                shareIntent
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+                context.startActivity(Intent.createChooser(shareIntent,
+                        "share"));
             } catch (Exception e) {
             }
         }

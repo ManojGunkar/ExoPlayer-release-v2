@@ -78,21 +78,21 @@ public class CloudMediaItemDBHelper  extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<MediaItem> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_CLOUD_DATA + " WHERE " +
-                MEDIA_TYPE + "='" + mediaType.ordinal() + "'" + " ORDER BY "+SONG_KEY_ID;
+                MEDIA_TYPE + "='" + mediaType.ordinal() + "'"/* + " ORDER BY "+SONG_KEY_ID*/;
 
         Cursor cursor = db.rawQuery(query, null);
 
-        try {
+//        try {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(4)), ItemType.SONGS));
                 } while (cursor.moveToNext());
             }
-        }catch (Exception e){
-            e.printStackTrace();
-        }finally {
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }finally {
             cursor.close();
-        }
+//        }
         db.close();
         return songList;
     }
