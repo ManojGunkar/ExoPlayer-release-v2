@@ -61,6 +61,8 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                     LoadDropboxList();
                     break;
                 case ACTION_CLOUD_SYNC:
+                    if(null != dropboxMediaList)
+                        dropboxMediaList.clearDropboxContent();
                     LoadDropboxList();
                     break;
             }

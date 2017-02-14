@@ -15,23 +15,20 @@ public class Preferences {
     public static final int MODE = Context.MODE_PRIVATE;
 
 
-    public static final String SHAKE_GESTURE_PREF = "SHAKE_GESTURE_PREF";
-    public static final String CROSS_FADE_ENABLE = "CROSS_FADE_ENABLE";
-    public static final String CROSS_FADE_VALUE = "CROSS_FADE_VALUE";
     public static final String SLEEP_TIME = "SLEEP_TIME";
     public static final String SLEEP_TIMER_ENABLED = "SLEEP_TIME_ENABLED";
-    //public static final String APP_NEW_LAUNCH = "APP_NEW_LAUNCH";
     public static final String APP_FRESH_LAUNCH = "APP_FIRST_LAUNCH";
     public static final String APP_LAST_OPEN = "APP_LAST_OPEN";
     public static final String INSTALL_DATE = "APP_INSTALL_DATE";
-    public static final String EXTENDED_DATE = "EXTENDED_DATE";
-    public static final String PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE = "PLAYER_SCREEN_EFFECT_COACHMARK_ENABLE";
-    public static final String PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE = "PLAYER_SCREEN_LIBRARY_COACHMARK_ENABLE";
-    public static final String PLAYER_SCREEN_EFFECT_TAPANDHOLD_COACHMARK_ENABLE = "PLAYER_SCREEN_EFFECT_TAPANDHOLD_COACHMARK_ENABLE";
-    public static final String EFFECT_SCREEN_TAP_SPEAKER_ENABLE = "EFFECT_SCREEN_TAP_SPEAKER_ENABLE";
-    public static final String EFFECT_SCREEN_TAP_EFFECT_ENABLE = "EFFECT_SCREEN_TAP_EFFECT_ENABLE";
 
-    public static final String PLAYER_SCREEN_HEADSET_ENABLE = "PLAYER_SCREEN_HEADSET_ENABLE";
+    public static final String TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER = "TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER";
+    public static final String TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT = "TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT";
+    public static final String TOLLTIP_OPEN_EFFECT_MINI_PLAYER = "TOLLTIP_OPEN_EFFECT_MINI_PLAYER";
+    public static final String TOLLTIP_USE_HEADPHONE_LIBRARY = "TOLLTIP_USE_HEADPHONE_LIBRARY";
+    public static final String TOLLTIP_CHOOSE_HEADPHONE_LIBRARY = "TOLLTIP_CHOOSE_HEADPHONE_LIBRARY";
+
+    public static final String HEADPHONE_CONNECTED = "HEADPHONE_CONNECTED";
+    public static final String HEADPHONE_DISCONNECTED = "HEADPHONE_DISCONNECTED";
 
     public static void writeBoolean(Context context, String key, boolean value) {
         getEditor(context).putBoolean(key, value).commit();
@@ -42,15 +39,6 @@ public class Preferences {
         return getPreferences(context).getBoolean(key, defValue);
     }
 
-    public static void writeInteger(Context context, String key, int value) {
-        getEditor(context).putInt(key, value).commit();
-
-    }
-
-    public static int readInteger(Context context, String key, int defValue) {
-        return getPreferences(context).getInt(key, defValue);
-    }
-
     public static void writeString(Context context, String key, String value) {
         getEditor(context).putString(key, value).commit();
 
@@ -58,14 +46,6 @@ public class Preferences {
 
     public static String readString(Context context, String key, String defValue) {
         return getPreferences(context).getString(key, defValue);
-    }
-
-    public static void writeFloat(Context context, String key, float value) {
-        getEditor(context).putFloat(key, value).commit();
-    }
-
-    public static float readFloat(Context context, String key, float defValue) {
-        return getPreferences(context).getFloat(key, defValue);
     }
 
     public static void writeLong(Context context, String key, long value) {
@@ -83,5 +63,4 @@ public class Preferences {
     public static SharedPreferences.Editor getEditor(Context context) {
         return getPreferences(context).edit();
     }
-
 }

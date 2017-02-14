@@ -166,5 +166,9 @@
     <string name="choose_share">choose one</string>
 
     <string name="title_feedback">Feedback</string>
+    <string name="switch_effect_screen_tooltip">Tap here to switch to\n Boom Effects</string>
+    <string name="effect_player_tooltip">Tap here to quickly open \nBoom Effects</string>
+    <string name="use_headphone_tooltip">Use Headphones for \nbest experience</string>
+    <string name="choose_headphone_tooltip">Choose headphone type \nin Settings for best output</string>
 
 </resources>
