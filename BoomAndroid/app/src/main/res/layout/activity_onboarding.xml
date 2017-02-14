@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager_home"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal">
+        <LinearLayout
+            android:id="@+id/onboarding_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/txt_skip_onboard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="96px"
+                android:layout_weight="0.25"
+                android:padding="5dp"
+                android:text="@string/skip_text"
+                android:textColor="@color/colorAccent"
+                android:textSize="20sp" />
+
+            <com.globaldelight.boom.ui.widgets.onBoarding.CircleIndicator
+                android:id="@+id/indicator_home"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="0.5"
+                android:padding="5dp" />
+
+            <TextView
+                android:id="@+id/txt_next_onboard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="96px"
+                android:layout_weight="0.25"
+                android:padding="5dp"
+                android:text="Next"
+                android:textColor="@color/colorAccent"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+        <Button
+            android:id="@+id/btn_boomin_onboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/onboard_boomin_btn"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/start_boomin"
+            android:textAllCaps="false"
+            android:layout_below="@+id/txt_sub_title_onboard"
+            android:layout_marginTop="30dp"
+            android:textSize="15dp"
+            android:visibility="gone"
+            android:layout_marginBottom="20dp"
+            android:textColor="@android:color/white"/>
+    </FrameLayout>
+
+</FrameLayout>
+
+
+

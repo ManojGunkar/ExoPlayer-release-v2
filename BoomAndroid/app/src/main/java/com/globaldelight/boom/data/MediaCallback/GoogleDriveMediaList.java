@@ -56,15 +56,23 @@ public class GoogleDriveMediaList {
     }
 
     public ArrayList<IMediaItemBase> getGoogleDriveMediaList(){
-        if(null != fileList && fileList.size() <= 0){
+        if(null != fileList && fileList.size() == 0){
             fileList.addAll(MediaController.getInstance(mContext).getCloudMediaItemList(MediaType.GOOGLE_DRIVE));
         }
         return fileList;
     }
 
     public void clearGoogleDriveMediaContent(){
-        fileList.clear();
-        MediaController.getInstance(mContext).removeCloudMediaItemList(MediaType.GOOGLE_DRIVE);
+        if(fileList.size() > 0) {
+            fileList.clear();
+            MediaController.getInstance(mContext).removeCloudMediaItemList(MediaType.GOOGLE_DRIVE);
+            postMessage.post(new Runnable() {
+                @Override
+                public void run() {
+                    googleDriveMediaUpdater.onClearList();
+                }
+            });
+        }
     }
 
     public void finishGoogleDriveMediaLoading(){
@@ -72,7 +80,7 @@ public class GoogleDriveMediaList {
             postMessage.post(new Runnable() {
                 @Override
                 public void run() {
-                    googleDriveMediaUpdater.onGoogleDriveMediaListUpdate();
+                    googleDriveMediaUpdater.onFinishListLoading();
                 }
             });
         }
@@ -125,8 +133,10 @@ public class GoogleDriveMediaList {
 
     public interface IGoogleDriveMediaUpdater {
         void onGoogleDriveMediaListUpdate();
+        void onFinishListLoading();
         void onRequestCancelled();
         void onError(String e);
         void onEmptyList();
+        void onClearList();
     }
 }

@@ -37,6 +37,7 @@ public class ConnectivityReceiver
         if (connectivityReceiverListener != null && isNWConnected != isConnected) {
             connectivityReceiverListener.onNetworkConnectionChanged(isConnected);
         }
+        isNWConnected = isConnected;
     }
 
     public static boolean isNetworkAvailable(Context context) {

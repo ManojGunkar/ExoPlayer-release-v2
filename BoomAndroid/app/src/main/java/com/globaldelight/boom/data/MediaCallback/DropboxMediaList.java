@@ -52,15 +52,23 @@ public class DropboxMediaList {
     }
 
     public void clearDropboxContent(){
-        fileList.clear();
-        MediaController.getInstance(mContext).removeCloudMediaItemList(MediaType.DROP_BOX);
+        if( fileList.size() > 0) {
+            fileList.clear();
+            MediaController.getInstance(mContext).removeCloudMediaItemList(MediaType.DROP_BOX);
+            postMessage.post(new Runnable() {
+                @Override
+                public void run() {
+                    dropboxUpdater.ClearList();
+                }
+            });
+        }
     }
 
     public void finishDropboxLoading(){
         postMessage.post(new Runnable() {
             @Override
             public void run() {
-                dropboxUpdater.UpdateDropboxEntryList();
+                dropboxUpdater.finishDropboxLoading();
             }
         });
         new Thread(new Runnable() {
@@ -77,5 +85,7 @@ public class DropboxMediaList {
 
     public interface IDropboxUpdater {
         void UpdateDropboxEntryList();
+        void finishDropboxLoading();
+        void ClearList();
     }
 }

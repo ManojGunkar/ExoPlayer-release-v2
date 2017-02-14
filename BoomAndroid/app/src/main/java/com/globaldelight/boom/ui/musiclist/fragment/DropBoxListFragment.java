@@ -42,6 +42,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     private ProgressDialog progressLoader;
     private CloudItemListAdapter adapter;
     private RecyclerView rootView;
+    private int listSize = 0;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -58,12 +59,18 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                     notifyAdapter(null);
                     break;
                 case ACTION_ON_NETWORK_CONNECTED:
+                    if(null != progressLoader)
+                        progressLoader.show();
                     LoadDropboxList();
                     break;
                 case ACTION_CLOUD_SYNC:
-                    if(null != dropboxMediaList)
-                        dropboxMediaList.clearDropboxContent();
-                    LoadDropboxList();
+                    if(null != progressLoader)
+                        progressLoader.show();
+                    try{
+                        if(null != dropboxMediaList)
+                            dropboxMediaList.clearDropboxContent();
+                        LoadDropboxList();
+                    }catch (Exception e){}
                     break;
             }
         }
@@ -87,6 +94,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
 
         progressLoader = new ProgressDialog(getActivity());
+        progressLoader.setCanceledOnTouchOutside(false);
         progressLoader.show();
 
         dropboxMediaList = DropboxMediaList.getDropboxListInstance(getActivity());
@@ -98,16 +106,16 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     @Override
     public void onResume() {
         super.onResume();
+        if(listSize <= 0)
+            progressLoader.show();
         LoadDropboxList();
     }
 
     private void LoadDropboxList(){
-        if (dropboxMediaList.getDropboxMediaList().size() <= 0 && null != App.getDropboxAPI()
+        if (null != App.getDropboxAPI()
                 && ConnectivityReceiver.isNetworkAvailable(getContext())) {
             resetAuthentication();
             new LoadDropBoxList(getActivity()).execute();
-        } else {
-            notifyAdapter(dropboxMediaList.getDropboxMediaList());
         }
         setForAnimation();
     }
@@ -131,6 +139,9 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     private void setSongListAdapter(ArrayList<? extends IMediaItemBase> iMediaItemList) {
+        listSize = iMediaItemList.size();
+        if(iMediaItemList.size() > 0 && progressLoader.isShowing())
+            dismissLoader();
         final GridLayoutManager gridLayoutManager =
                 new GridLayoutManager(getActivity(), 1);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -139,14 +150,24 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         adapter = new CloudItemListAdapter(getActivity(), DropBoxListFragment.this, iMediaItemList, ItemType.SONGS);
         rootView.setAdapter(adapter);
         rootView.setHasFixedSize(true);
-        listIsEmpty(iMediaItemList.size());
-
+//        listIsEmpty(iMediaItemList.size());
     }
 
     @Override
     public void UpdateDropboxEntryList() {
         notifyAdapter(dropboxMediaList.getDropboxMediaList());
+    }
+
+    @Override
+    public void finishDropboxLoading() {
+//        listIsEmpty(adapter.getItemCount());
+        listSize = dropboxMediaList.getDropboxMediaList().size();
         dismissLoader();
+    }
+
+    @Override
+    public void ClearList() {
+        notifyAdapter(dropboxMediaList.getDropboxMediaList());
     }
 
     private void dismissLoader() {
@@ -156,8 +177,6 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     private void notifyAdapter(ArrayList<IMediaItemBase> mediaList){
         if(null != adapter){
             adapter.updateMediaList(mediaList);
-            listIsEmpty(adapter.getItemCount());
-            dismissLoader();
         }
     }
 

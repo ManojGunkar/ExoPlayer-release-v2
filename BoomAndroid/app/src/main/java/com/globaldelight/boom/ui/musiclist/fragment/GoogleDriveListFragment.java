@@ -61,8 +61,12 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                     notifyAdapter(null);
                     break;
                 case ACTION_ON_NETWORK_CONNECTED:
+                    if(null != progressLoader)
+                        progressLoader.show();
                     checkPermissions();
                 case ACTION_CLOUD_SYNC:
+                    if(null != progressLoader)
+                        progressLoader.show();
                     if(null != googleDriveMediaList)
                         googleDriveMediaList.clearGoogleDriveMediaContent();
                     checkPermissions();
@@ -103,11 +107,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         if (googleDriveMediaList.getGoogleDriveMediaList().size() <= 0 &&
                 ConnectivityReceiver.isNetworkAvailable(getContext())) {
             googleDriveHandler.getResultsFromApi();
-        } else {
-            notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
         }
     }
-
 
     private void initViews() {
         IntentFilter intentFilter = new IntentFilter();
@@ -131,9 +132,13 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     @Override
     public void onGoogleDriveMediaListUpdate() {
-        dismissLoader();
         notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
         setForAnimation();
+    }
+
+    @Override
+    public void onFinishListLoading() {
+        dismissLoader();
     }
 
     @Override
@@ -155,6 +160,11 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         Toast.makeText(getContext(), getResources().getString(R.string.empty_list), Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onClearList() {
+        notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
+    }
+
     private void dismissLoader(){
         if(progressLoader.isShowing()){
             progressLoader.dismiss();
@@ -166,6 +176,9 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     }
 
     private void setSongListAdapter(ArrayList<? extends IMediaItemBase> iMediaItemList) {
+        if(iMediaItemList.size() > 0)
+            dismissLoader();
+
         final GridLayoutManager gridLayoutManager =
                 new GridLayoutManager(getActivity(), 1);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -174,7 +187,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         adapter = new CloudItemListAdapter(getActivity(), GoogleDriveListFragment.this, iMediaItemList, ItemType.SONGS);
         rootView.setAdapter(adapter);
         rootView.setHasFixedSize(true);
-        listIsEmpty(iMediaItemList.size());
+//        listIsEmpty(iMediaItemList.size());
     }
 
     @Override
@@ -184,10 +197,10 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
             case GoogleDriveHandler.REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
                     Toast.makeText(getContext(), getResources().getString(R.string.require_google_play_service), Toast.LENGTH_SHORT).show();
+//                    dismissLoader();
                 } else {
                     LoadGoogleDriveList();
                 }
-                dismissLoader();
                 break;
             case GoogleDriveHandler.REQUEST_ACCOUNT_PICKER:
                 if (resultCode == RESULT_OK && data != null &&
@@ -210,8 +223,9 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
             case GoogleDriveHandler.REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
                     LoadGoogleDriveList();
+                }else {
+                    dismissLoader();
                 }
-                dismissLoader();
                 break;
         }
     }
@@ -219,8 +233,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     private void notifyAdapter(ArrayList<IMediaItemBase> mediaList){
         if(null != adapter){
             adapter.updateMediaList(mediaList);
-            listIsEmpty(adapter.getItemCount());
-            dismissLoader();
         }
     }
 

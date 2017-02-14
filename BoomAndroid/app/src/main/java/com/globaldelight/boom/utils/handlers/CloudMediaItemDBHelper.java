@@ -51,7 +51,7 @@ public class CloudMediaItemDBHelper  extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public void addSongs(ArrayList<? extends IMediaItemBase> songs) {
+    public synchronized void addSongs(ArrayList<? extends IMediaItemBase> songs) {
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
             ContentValues values = new ContentValues();
@@ -67,14 +67,14 @@ public class CloudMediaItemDBHelper  extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void clearList(MediaType mediaType){
+    public synchronized void clearList(MediaType mediaType){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_CLOUD_DATA+ " WHERE " +
                 MEDIA_TYPE + "='" + mediaType.ordinal() + "'");
         db.close();
     }
 
-    public ArrayList<? extends IMediaItemBase> getSongList(MediaType mediaType) {
+    public synchronized ArrayList<? extends IMediaItemBase> getSongList(MediaType mediaType) {
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<MediaItem> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_CLOUD_DATA + " WHERE " +
