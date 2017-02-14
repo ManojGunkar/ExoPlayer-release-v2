@@ -111,7 +111,12 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void startBoomLibrary(){
-        Intent i = new Intent(SplashActivity.this, MainActivity.class);
+        Intent i;
+        if(Preferences.readBoolean(this, Preferences.ACTION_ONBOARDING_SHOWN, true)){
+            i = new Intent(SplashActivity.this, OnBoardingActivity.class);
+        }else{
+            i = new Intent(SplashActivity.this, MainActivity.class);
+        }
         startActivity(i);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         finish();

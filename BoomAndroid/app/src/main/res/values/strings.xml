@@ -171,4 +171,13 @@
     <string name="use_headphone_tooltip">Use Headphones for \nbest experience</string>
     <string name="choose_headphone_tooltip">Choose headphone type \nin Settings for best output</string>
 
+
+    <string name="onboard_screen_1_main_tx">Redefine your music experience</string>
+    <string name="onboard_screen_1_sub_tx">Intensify your music listening experience with 3D Surround sound and professional music presets.</string>
+    <string name="onboard_screen_2_main_tx">All your music at one place </string>
+    <string name="onboard_screen_2_sub_tx">Listen to music from your Music Library, Google Drive and Dropbox on the go.</string>
+    <string name="onboard_screen_3_main_tx">Optimized for all headphones</string>
+    <string name="onboard_screen_3_sub_tx">Select your ‘Headphone Type’ in Settings to make your music come alive. </string>
+    <string name="skip_text">Skip</string>
+    <string name="start_boomin">Start Boomin\'</string>
 </resources>

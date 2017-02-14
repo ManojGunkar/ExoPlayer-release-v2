@@ -28,7 +28,7 @@ public class Preferences {
     public static final String TOLLTIP_CHOOSE_HEADPHONE_LIBRARY = "TOLLTIP_CHOOSE_HEADPHONE_LIBRARY";
 
     public static final String HEADPHONE_CONNECTED = "HEADPHONE_CONNECTED";
-    public static final String HEADPHONE_DISCONNECTED = "HEADPHONE_DISCONNECTED";
+    public static final String ACTION_ONBOARDING_SHOWN = "ACTION_ONBOARDING_SHOWN";
 
     public static void writeBoolean(Context context, String key, boolean value) {
         getEditor(context).putBoolean(key, value).commit();
