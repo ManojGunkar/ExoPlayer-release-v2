@@ -12,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.ui.widgets.RegularButton;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.ui.widgets.onBoarding.PagerAdapter;
 import com.globaldelight.boom.ui.widgets.onBoarding.CircleIndicator;
 import com.globaldelight.boom.utils.handlers.Preferences;
@@ -22,9 +24,8 @@ import com.globaldelight.boom.utils.handlers.Preferences;
 
 public class OnBoardingActivity extends Activity implements View.OnClickListener {
 
-    private TextView txtSkip;
-    private TextView txtNext;
-    private Button startBoom;
+    private RegularTextView txtSkip, txtNext;
+    private RegularButton startBoom;
     private ViewPager viewpager;
     private CircleIndicator indicator;
     LinearLayout bottomPanel;
@@ -58,7 +59,6 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
                 }
 
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
 
@@ -68,9 +68,10 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     }
 
     private void initComp() {
-        txtSkip = (TextView) findViewById(R.id.txt_skip_onboard);
-        txtNext = (TextView) findViewById(R.id.txt_next_onboard);
-        startBoom = (Button) findViewById(R.id.btn_boomin_onboard);
+        txtSkip = (RegularTextView) findViewById(R.id.txt_skip_onboard);
+        txtNext = (RegularTextView) findViewById(R.id.txt_next_onboard);
+        startBoom = (RegularButton) findViewById(R.id.btn_boomin_onboard);
+
         viewpager = (ViewPager) findViewById(R.id.pager_home);
         indicator = (CircleIndicator) findViewById(R.id.indicator_home);
         viewpager.setAdapter(new PagerAdapter(this));

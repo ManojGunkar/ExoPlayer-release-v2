@@ -141,5 +141,13 @@
     <dimen name="store_page_buy_button_height">42dp</dimen>
     <dimen name="store_page_buy_button_cornor_radius">6dp</dimen>
     <dimen name="setting_cloud_item_height">58dp</dimen>
+    <dimen name="onboarding_txt_title_margin_top">6dp</dimen>
+    <dimen name="onboarding_txt_title_size">20sp</dimen>
+    <dimen name="onboarding_txt_title_margin_side">40dp</dimen>
+    <dimen name="onboarding_txt_sub_title_margin_top">16dp</dimen>
+    <dimen name="onboarding_bottom_height">66dp</dimen>
+    <dimen name="onboarding_bottom_margin_side">24dp</dimen>
+    <dimen name="onboarding_bottom_txt_size">15sp</dimen>
+    <dimen name="onboarding_bottom_button_txt">20sp</dimen>
 
 </resources>

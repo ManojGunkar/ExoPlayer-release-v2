@@ -56,13 +56,6 @@ public class PagerAdapter extends android.support.v4.view.PagerAdapter {
             xmlView = inflater.inflate(R.layout.fragment_onboard_step_2, null);
         }if (position==2){
             xmlView = inflater.inflate(R.layout.fragment_onboard_step_3, null);
-           /* Button btnBoomIn= (Button) xmlView.findViewById(R.id.btn_boomin_onboard);
-            btnBoomIn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context,"BooooooooooooooooM",Toast.LENGTH_SHORT).show();
-                }
-            });*/
         }
 
         view.addView(xmlView);

@@ -66,13 +66,19 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
      */
     @Override
     protected List<String> doInBackground(Void... params) {
+        List<String> itemList = null;
         try {
-            return getDataFromApi();
+            itemList = getDataFromApi();
         } catch (Exception e) {
             mLastError = e;
             cancel(true);
-            return null;
         }
+        if ((itemList == null || itemList.size() == 0) && mediaListInstance.getGoogleDriveMediaList().size() <= 0) {
+            mediaListInstance.onEmptyList();
+        } else {
+            mediaListInstance.finishGoogleDriveMediaLoading();
+        }
+        return itemList;
     }
 
     /**

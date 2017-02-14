@@ -67,9 +67,10 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                 case ACTION_CLOUD_SYNC:
                     if(null != progressLoader)
                         progressLoader.show();
-                    if(null != googleDriveMediaList)
+                    if(null != googleDriveMediaList) {
                         googleDriveMediaList.clearGoogleDriveMediaContent();
-                    checkPermissions();
+                        checkPermissions();
+                    }
                     break;
             }
         }

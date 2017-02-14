@@ -63,7 +63,7 @@ public class GoogleDriveMediaList {
     }
 
     public void clearGoogleDriveMediaContent(){
-        if(fileList.size() > 0) {
+        if(null != fileList) {
             fileList.clear();
             MediaController.getInstance(mContext).removeCloudMediaItemList(MediaType.GOOGLE_DRIVE);
             postMessage.post(new Runnable() {
