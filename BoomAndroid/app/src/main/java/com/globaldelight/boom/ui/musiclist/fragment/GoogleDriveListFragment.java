@@ -119,6 +119,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
 
         progressLoader = new ProgressDialog(getActivity());
+        progressLoader.setMessage(getResources().getString(R.string.loading));
+        progressLoader.setCanceledOnTouchOutside(false);
         progressLoader.show();
 
         googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(getActivity());

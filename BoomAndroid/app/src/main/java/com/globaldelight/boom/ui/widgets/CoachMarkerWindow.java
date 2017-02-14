@@ -16,10 +16,6 @@ import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 
-/**
- * Created by mukeshkumar on 09/02/17.
- */
-
 public class CoachMarkerWindow {
 
     public static final int DRAW_TOP_RIGHT = 1;
@@ -58,6 +54,8 @@ public class CoachMarkerWindow {
                 layout = R.layout.tooltip_top_layout;
                 break;
             case DRAW_BOTTOM_CENTER:
+                layout = R.layout.tooltip_bottom_layout;
+                break;
             case DRAW_BOTTOM_LEFT:
             case DRAW_BOTTOM_RIGHT:
                 layout = R.layout.tooltip_bottom_layout;
@@ -186,8 +184,8 @@ public class CoachMarkerWindow {
                         contentViewHeight[0] = contentView.getHeight();
                         contentViewWidth[0] = contentView.getWidth();
                         tipWindow.dismiss();
-                        position_x[0] = anchor_rect.centerX() - contentViewWidth[0] / 2;
-                        position_y[0] = (int) (anchor_rect.bottom - getArrowHeight() * 0.5);
+                        position_x[0] = anchor_rect.centerX() - contentViewWidth[0] / 4;
+                        position_y[0] = anchor_rect.bottom - getArrowHeight();
                         tipWindow.showAtLocation(anchor,Gravity.NO_GRAVITY,position_x[0],position_y[0]);
                     }
                 });

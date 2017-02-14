@@ -263,11 +263,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mEffectTab.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_effects_active, null));
             mEffectSwitch.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
-            if(Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped())  {
+            if(Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped()&& mInflater.findViewById(R.id.effect_switch).getVisibility()==View.VISIBLE)  {
                 coachMarkEffectSwitcher = new CoachMarkerWindow(getContext(), DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
                 coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
-                coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_content));
-                Preferences.writeBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, false);
+                coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
             }
             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_EFFECT_TAB);
         }
@@ -664,12 +663,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onPanelCollapsed(View panel) {
         setMiniPlayerVisible(true);
-        if(Preferences.readBoolean(getContext(), TOLLTIP_OPEN_EFFECT_MINI_PLAYER, true) &&
-                !Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
-            coachMarkEffectPlayer = new CoachMarkerWindow(getContext(), DRAW_TOP_LEFT, getResources().getString(R.string.effect_player_tooltip));
+        if((Preferences.readBoolean(getContext(), TOLLTIP_OPEN_EFFECT_MINI_PLAYER, true) &&
+                !Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true))) {
+            coachMarkEffectPlayer = new CoachMarkerWindow(getContext(), DRAW_TOP_LEFT, getResources().getString(R.string.library_switch_effect_screen_tooltip));
             coachMarkEffectPlayer.setAutoDismissBahaviour(true);
-            coachMarkEffectPlayer.showCoachMark(mInflater.findViewById(R.id.mini_player_effect_img));
             Preferences.writeBoolean(getContext(), Preferences.TOLLTIP_OPEN_EFFECT_MINI_PLAYER, false);
+            coachMarkEffectPlayer.showCoachMark(mInflater.findViewById(R.id.mini_player_effect_img));
         }
         if (revealView.getVisibility() == View.VISIBLE) {
             revealView.setVisibility(View.INVISIBLE);
@@ -684,7 +683,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             coachMarkEffectPager = new CoachMarkerWindow(getContext(), DRAW_TOP_CENTER, getResources().getString(R.string.switch_effect_screen_tooltip));
             coachMarkEffectPager.setAutoDismissBahaviour(true);
             coachMarkEffectPager.showCoachMark(mInflater.findViewById(R.id.effect_tab));
-            Preferences.writeBoolean(getContext(), Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, false);
         }
     }
 
@@ -1061,6 +1059,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     MixPanelAnalyticHelper.track(mContext, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
                     FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffectPreferenceHandler.isAudioEffectOn());
                 }
+                Preferences.writeBoolean(getContext(), Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, false);
+                Preferences.writeBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, false);
             }
         });
     }

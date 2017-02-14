@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/tooltip_bg"
         android:gravity="start"
-        android:padding="10dp"
+        android:padding="@dimen/padiing_tooltop"
         android:textColor="@android:color/white"
         android:textSize="@dimen/tooltip_txt"
         android:textStyle="normal"/>
