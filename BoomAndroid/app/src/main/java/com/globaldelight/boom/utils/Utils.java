@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
@@ -20,6 +21,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.AnyRes;
 import android.support.annotation.DrawableRes;
@@ -312,17 +314,10 @@ public class Utils {
         }
     }
 
-    public static boolean isMoreThan24Hour(Context context){
-        long installTime = 0;
-        try {
-            installTime = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).firstInstallTime;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        Date before = new Date();
-        if(installTime - before.getTime() > 3600000) {
-             return true;
+    public static boolean isMoreThan24Hour(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if ((System.currentTimeMillis() - Long.parseLong(preferences.getString("Tool_install_date", "n/a"))) > 3600000) {
+            return true;
         }
         return false;
     }

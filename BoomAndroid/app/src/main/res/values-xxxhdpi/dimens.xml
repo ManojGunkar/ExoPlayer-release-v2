@@ -149,5 +149,6 @@
     <dimen name="onboarding_bottom_margin_side">24dp</dimen>
     <dimen name="onboarding_bottom_txt_size">15sp</dimen>
     <dimen name="onboarding_bottom_button_txt">20sp</dimen>
+    <dimen name="padiing_tooltop">12dp</dimen>
 
 </resources>

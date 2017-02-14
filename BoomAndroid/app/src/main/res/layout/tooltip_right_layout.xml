@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/tooltip_bg"
         android:gravity="center"
-        android:padding="10dp"
+        android:padding="@dimen/padiing_tooltop"
         android:text="Boom"
         android:textColor="@android:color/white"
         android:textSize="@dimen/tooltip_txt"

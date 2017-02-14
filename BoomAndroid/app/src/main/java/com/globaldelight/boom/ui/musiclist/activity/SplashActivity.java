@@ -1,9 +1,11 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -64,6 +66,13 @@ public class SplashActivity extends AppCompatActivity {
                 // Start your app main activity
                 App.startPlayerService();
                 startBoomLibrary();
+
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
+                if(null == preferences.getString("Tool_install_date", null)) {
+                    SharedPreferences.Editor edit = preferences.edit();
+                    edit.putString("Tool_install_date", String.valueOf(System.currentTimeMillis()));
+                    edit.commit();
+                }
                 // close this activity
                 //finish();
             }

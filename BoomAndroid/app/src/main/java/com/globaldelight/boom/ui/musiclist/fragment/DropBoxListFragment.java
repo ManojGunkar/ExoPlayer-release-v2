@@ -94,6 +94,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
 
         progressLoader = new ProgressDialog(getActivity());
+        progressLoader.setMessage(getResources().getString(R.string.loading));
         progressLoader.setCanceledOnTouchOutside(false);
         progressLoader.show();
 

@@ -42,12 +42,6 @@ import com.globaldelight.boom.utils.handlers.Preferences;
 import java.util.ArrayList;
 
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
-import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_NORMAL_BOTTOM;
-import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_NORMAL_LEFT;
-import static com.globaldelight.boom.utils.handlers.Preferences.HEADPHONE_CONNECTED;
-import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_CHOOSE_HEADPHONE_LIBRARY;
-import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
-import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_USE_HEADPHONE_LIBRARY;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
