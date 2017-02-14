@@ -10,6 +10,9 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.utils.handlers.Preferences;
+
+import static com.globaldelight.boom.utils.handlers.Preferences.HEADPHONE_CONNECTED;
 
 /**
  * Created by Rahul Agarwal on 05-10-16.
@@ -22,8 +25,8 @@ public class HeadPhonePlugReceiver extends BroadcastReceiver {
     private AudioManager mAudioManager;
     public static boolean HEADSET_PLUGGED = true;
     public static boolean HEADSET_UNPLUGGED = false;
-    private boolean isWiredHeadsetConnected;
-    private boolean isBluetoothHeadsetConnected;
+    private static boolean isWiredHeadsetConnected;
+    private static boolean isBluetoothHeadsetConnected;
 
 
     @Override public void onReceive(final Context context, Intent intent) {
@@ -44,11 +47,11 @@ public class HeadPhonePlugReceiver extends BroadcastReceiver {
                 if ( headsetState == BluetoothHeadset.STATE_CONNECTED && !isBluetoothHeadsetConnected ) {
                     state = 1;
                     isBluetoothHeadsetConnected = true;
+                    Preferences.writeBoolean(context, HEADPHONE_CONNECTED, false);
                 }
                 else  if ( headsetState == BluetoothHeadset.STATE_DISCONNECTED && isBluetoothHeadsetConnected) {
                     state = 0;
                     isBluetoothHeadsetConnected = false;
-
                 }
 
                 break;
@@ -63,6 +66,7 @@ public class HeadPhonePlugReceiver extends BroadcastReceiver {
                 else if ( headsetState == 1 && !isWiredHeadsetConnected ) {
                     state = 1;
                     isWiredHeadsetConnected = true;
+                    Preferences.writeBoolean(context, HEADPHONE_CONNECTED, false);
                 }
                 break;
             }
@@ -107,7 +111,7 @@ public class HeadPhonePlugReceiver extends BroadcastReceiver {
         isPlugged = isHeadsetConnected();
     }
 
-    public boolean isHeadsetConnected() {
+    public static boolean isHeadsetConnected() {
         return isWiredHeadsetConnected || isBluetoothHeadsetConnected;
     }
 

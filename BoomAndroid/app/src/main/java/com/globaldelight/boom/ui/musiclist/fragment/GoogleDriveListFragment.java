@@ -63,6 +63,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                 case ACTION_ON_NETWORK_CONNECTED:
                     checkPermissions();
                 case ACTION_CLOUD_SYNC:
+                    if(null != googleDriveMediaList)
+                        googleDriveMediaList.clearGoogleDriveMediaContent();
                     checkPermissions();
                     break;
             }

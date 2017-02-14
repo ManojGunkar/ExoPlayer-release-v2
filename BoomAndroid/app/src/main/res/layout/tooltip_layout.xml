@@ -4,11 +4,11 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/tooltip_bg"
-
+    android:layout_marginBottom="@dimen/player_mini_height"
     android:orientation="horizontal">
 
 
-    <com.globaldelight.boom.ui.widgets.CoachMarkTextView
+    <com.globaldelight.boom.ui.widgets.RegularTextView
         android:id="@+id/tooltip_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,7 +18,6 @@
         android:paddingLeft="10dp"
         android:paddingRight="0dp"
         android:paddingTop="10dp"
-
         android:text="@string/tutorial_use_headphones"
         android:textColor="@android:color/white"
         android:textSize="@dimen/tooltip_txt"
@@ -33,7 +32,6 @@
         android:layout_weight="1"
         android:paddingBottom="10dp"
         android:paddingRight="5dp"
-        android:paddingTop="10dp" />
-
-
+        android:paddingTop="10dp"
+        android:visibility="gone"/>
 </LinearLayout>

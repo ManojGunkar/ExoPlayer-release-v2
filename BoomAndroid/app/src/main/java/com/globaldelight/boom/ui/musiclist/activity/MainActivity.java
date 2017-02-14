@@ -31,17 +31,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.globaldelight.boom.business.BusinessUtils;
-import com.globaldelight.boom.manager.ConnectivityReceiver;
+import com.globaldelight.boom.manager.HeadPhonePlugReceiver;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.adapter.SearchSuggestionAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.SectionsPagerAdapter;
@@ -50,14 +46,21 @@ import com.globaldelight.boom.ui.musiclist.fragment.FavouriteListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.BoomPlaylistFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.GoogleDriveListFragment;
+import com.globaldelight.boom.ui.widgets.CoachMarkerWindow;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
-
-import java.util.List;
+import com.globaldelight.boom.utils.handlers.Preferences;
 
 import static com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment.isUpdateUpnextDB;
+import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_NORMAL_BOTTOM;
+import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_NORMAL_LEFT;
+import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_TOP_CENTER;
+import static com.globaldelight.boom.utils.handlers.Preferences.HEADPHONE_CONNECTED;
+import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_CHOOSE_HEADPHONE_LIBRARY;
+import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
+import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_USE_HEADPHONE_LIBRARY;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -88,6 +91,7 @@ public class MainActivity extends MasterActivity
     private FloatingActionButton mFloatAddPlayList;
     private TabLayout mTabBar;
     private LinearLayout mAddsContainer;
+    private CoachMarkerWindow coachMarkUseHeadPhone, coachMarkChooseHeadPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +112,24 @@ public class MainActivity extends MasterActivity
     protected void onResume() {
         registerPlayerReceiver(MainActivity.this);
         super.onResume();
+        initHeadphoneCoachMark();
+    }
+
+    private void initHeadphoneCoachMark() {
+        if( Preferences.readBoolean(this, TOLLTIP_USE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && Utils.isMoreThan24Hour(this)
+                && Preferences.readBoolean(this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)){
+            coachMarkUseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
+            coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
+            coachMarkUseHeadPhone.showCoachMark(findViewById(R.id.container));
+            Preferences.writeBoolean(this, TOLLTIP_USE_HEADPHONE_LIBRARY, false);
+        }
+
+        if(Preferences.readBoolean(this, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, true && !isPlayerExpended() && HeadPhonePlugReceiver.isHeadsetConnected())) {
+            coachMarkChooseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.choose_headphone_tooltip));
+            coachMarkChooseHeadPhone.setAutoDismissBahaviour(true);
+            coachMarkChooseHeadPhone.showCoachMark(findViewById(R.id.container));
+            Preferences.writeBoolean(this, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, false);
+        }
     }
 
     private void checkPermissions() {

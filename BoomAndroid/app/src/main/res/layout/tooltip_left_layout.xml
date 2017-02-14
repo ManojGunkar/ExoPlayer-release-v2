@@ -11,19 +11,14 @@
         android:layout_gravity="center"
         android:background="@drawable/nav_left" />
 
-    <com.globaldelight.boom.ui.widgets.CoachMarkTextView
+    <com.globaldelight.boom.ui.widgets.RegularTextView
         android:id="@+id/tooltip_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/tooltip_bg"
-        android:gravity="center"
+        android:gravity="start"
         android:padding="10dp"
-        android:text="Boom"
         android:textColor="@android:color/white"
         android:textSize="@dimen/tooltip_txt"
-        android:textStyle="normal"
-
-        />
-
-
+        android:textStyle="normal"/>
 </LinearLayout>

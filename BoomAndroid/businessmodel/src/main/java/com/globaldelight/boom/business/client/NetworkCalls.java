@@ -238,7 +238,7 @@ public class NetworkCalls {
                 e.printStackTrace();
             }
         } else {
-            Date before = new Date();;
+            Date before = new Date();
             try {
                 before = (Date) formatter.parse(installDate);
             } catch (ParseException e) {

@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -49,6 +50,7 @@ import com.globaldelight.boom.ui.musiclist.adapter.AddToPlaylistAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -275,7 +277,7 @@ public class Utils {
         builder.show();
     }
 
-    public int getStatusBarHeight(Context context){
+    public static int getStatusBarHeight(Context context){
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
             return context.getResources().getDimensionPixelSize(resourceId);
@@ -308,5 +310,20 @@ public class Utils {
             } catch (Exception e) {
             }
         }
+    }
+
+    public static boolean isMoreThan24Hour(Context context){
+        long installTime = 0;
+        try {
+            installTime = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).firstInstallTime;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Date before = new Date();
+        if(installTime - before.getTime() > 3600000) {
+             return true;
+        }
+        return false;
     }
 }
