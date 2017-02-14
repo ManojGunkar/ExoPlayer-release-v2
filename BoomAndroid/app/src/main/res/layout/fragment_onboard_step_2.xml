@@ -15,35 +15,32 @@
             android:layout_centerHorizontal="true"
             android:src="@drawable/ic_on_boarding_streaming" />
 
-        <TextView
+        <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/txt_title_2"
             android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/img_intro_onboard_2"
-            android:padding="5dp"
-            android:text="@string/onboard_screen_2_main_tx"
-            android:textColor="@android:color/white"
-            android:textSize="20dp"
-            android:textStyle="bold" />
+            android:layout_marginTop="@dimen/onboarding_txt_title_margin_top"
+            android:layout_marginLeft="@dimen/onboarding_txt_title_margin_side"
+            android:layout_marginRight="@dimen/onboarding_txt_title_margin_side"
+            android:textColor="@color/white"
+            android:textSize="@dimen/onboarding_txt_title_size"
+            android:textStyle="bold"
+            android:text="@string/onboard_screen_2_main_tx"/>
 
-        <TextView
+        <com.globaldelight.boom.ui.widgets.RegularTextView
             android:layout_below="@+id/txt_title_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:text="@string/onboard_screen_2_sub_tx"
+            android:layout_marginTop="@dimen/onboarding_txt_sub_title_margin_top"
+            android:layout_marginLeft="@dimen/onboarding_txt_title_margin_side"
+            android:layout_marginRight="@dimen/onboarding_txt_title_margin_side"
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal"
             android:textColor="@android:color/darker_gray"
             android:textSize="15dp" />
-
-
-
 
     </RelativeLayout>
 
