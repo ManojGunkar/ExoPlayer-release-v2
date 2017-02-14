@@ -116,7 +116,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void initHeadphoneCoachMark() {
-        if( Preferences.readBoolean(this, TOLLTIP_USE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && Utils.isMoreThan24Hour(this)
+        if( Preferences.readBoolean(this, TOLLTIP_USE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() /*&& Utils.isMoreThan24Hour(this)*/
                 && Preferences.readBoolean(this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)){
             coachMarkUseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
             coachMarkUseHeadPhone.setAutoDismissBahaviour(true);

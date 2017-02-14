@@ -27,14 +27,14 @@ public class BusinessRequestReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         switch (intent.getAction()){
             case ACTION_BUSINESS_CONFIGURATION :
-                postBusinessRequest.postDelayed(new Runnable() {
+               /* postBusinessRequest.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         if(BusinessUtils.getAddEnable()){
                             requestReceiverListener.onBusinessRequest(BusinessUtils.getAddSources(), BusinessUtils.isLibraryBannerEnable(), (BusinessUtils.isEffectVideoEnable()|| BusinessUtils.isPlayerVideoEnable() || BusinessUtils.isLibraryVideoEnable()));
                         }
                     }
-                }, BusinessUtils.getAddsDisplayIntervals());
+                }, BusinessUtils.getAddsDisplayIntervals());*/
 
                 break;
         }

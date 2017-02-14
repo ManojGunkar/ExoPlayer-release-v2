@@ -99,7 +99,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             }
         }).start();
 
-        initBusinessModel();
+//        initBusinessModel();
     }
 
     @Override
