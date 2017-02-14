@@ -97,6 +97,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     public static boolean isUpdateUpnextDB = true;
 
+    private static boolean canShoeExpended = false;
     private static MediaItem mPlayingMediaItem;
     private static boolean mIsPlaying, mIsLastPlayed;
 
@@ -264,7 +265,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mEffectSwitch.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
             if(Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped()&& mInflater.findViewById(R.id.effect_switch).getVisibility()==View.VISIBLE)  {
-                coachMarkEffectSwitcher = new CoachMarkerWindow(getContext(), DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
+                coachMarkEffectSwitcher = new CoachMarkerWindow(getContext(), DRAW_BOTTOM_CENTER, getResources().getString(R.string.switch_effect_screen_tooltip));
                 coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
                 coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
             }
@@ -658,6 +659,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             setMiniPlayerAlpha(0);
             mPlayerActionPanel.setAlpha(1);
         }
+
     }
 
     @Override
@@ -680,7 +682,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         setMiniPlayerVisible(false);
         if(Preferences.readBoolean(getContext(), Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, true) && mPlayerContent.getVisibility() == View.VISIBLE &&
                 !App.getPlayerEventHandler().isStopped() && Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
-            coachMarkEffectPager = new CoachMarkerWindow(getContext(), DRAW_TOP_CENTER, getResources().getString(R.string.switch_effect_screen_tooltip));
+            coachMarkEffectPager = new CoachMarkerWindow(getContext(), DRAW_TOP_CENTER, getResources().getString(R.string.effect_player_tooltip));
             coachMarkEffectPager.setAutoDismissBahaviour(true);
             coachMarkEffectPager.showCoachMark(mInflater.findViewById(R.id.effect_tab));
         }
