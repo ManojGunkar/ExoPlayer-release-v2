@@ -93,7 +93,9 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     }
 
     private void jumpToHome() {
-        Toast.makeText(this, "Skip", Toast.LENGTH_SHORT).show();
+        Preferences.writeBoolean(OnBoardingActivity.this, Preferences.ACTION_ONBOARDING_SHOWN, false);
+        Intent i = new Intent(OnBoardingActivity.this, MainActivity.class);
+        startActivity(i);
     }
 
     @Override
