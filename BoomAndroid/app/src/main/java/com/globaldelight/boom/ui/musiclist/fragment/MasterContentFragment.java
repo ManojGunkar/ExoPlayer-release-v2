@@ -67,6 +67,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_HEADSET_PLUGGED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_PLAYER_SCREEN_RESUME;
@@ -200,11 +201,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 case ACTION_STOP_UPDATING_UPNEXT_DB:
                     isUpdateUpnextDB = false;
                     break;
-                case ACTION_HEADSET_PLUGGED:
-//                    if (tipWindowHeadset != null) {//Plugged
-//                        tipWindowHeadset.dismissTooltip();
-//                        Preferences.writeBoolean(getActivity(), Preferences.PLAYER_SCREEN_HEADSET_ENABLE, false);
-//                    }
+                case ACTION_HOME_SCREEN_BACK_PRESSED:
+                    dismissTooltip();
                     break;
                 case ACTION_PLAYER_SCREEN_RESUME:
                     onResumePlayerScreen();
@@ -263,7 +261,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mEffectTab.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_effects_active, null));
             mEffectSwitch.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
-            if(Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped()&& mInflater.findViewById(R.id.effect_switch).getVisibility()==View.VISIBLE)  {
+            if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
                 coachMarkEffectSwitcher = new CoachMarkerWindow(getContext(), DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
                 coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
                 coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
@@ -679,7 +677,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onPanelExpanded(View panel) {
         setMiniPlayerVisible(false);
-        if(Preferences.readBoolean(getContext(), Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, true) && mPlayerContent.getVisibility() == View.VISIBLE &&
+        if (null != mPlayerContent && mPlayerContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(getContext(), Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, true) && mPlayerContent.getVisibility() == View.VISIBLE &&
                 !App.getPlayerEventHandler().isStopped() && Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
             coachMarkEffectPager = new CoachMarkerWindow(getContext(), DRAW_TOP_CENTER, getResources().getString(R.string.switch_effect_screen_tooltip));
             coachMarkEffectPager.setAutoDismissBahaviour(true);
@@ -729,7 +727,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
-        intentFilter.addAction(ACTION_HEADSET_PLUGGED);
+        intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
+        intentFilter.addAction(ACTION_HOME_SCREEN_BACK_PRESSED);
         context.registerReceiver(mPlayerBroadcastReceiver, intentFilter);
 
         setPlayerInfo();
@@ -1427,5 +1426,17 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 aaEffectUIController.OnSpeakerEnable(speakerType, finalEnable);
             }
         });
+    }
+
+    private void dismissTooltip() {
+        if (null != coachMarkEffectPager) {
+            coachMarkEffectPager.dismissTooltip();
+        }
+        if (null != coachMarkEffectPlayer) {
+            coachMarkEffectPlayer.dismissTooltip();
+        }
+        if (null != coachMarkEffectSwitcher) {
+            coachMarkEffectSwitcher.dismissTooltip();
+        }
     }
 }
