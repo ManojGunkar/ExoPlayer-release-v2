@@ -32,14 +32,7 @@ import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boom.utils.sleepTimerUtils.TimerUtils;
-
-import java.util.List;
-
-import pub.devrel.easypermissions.EasyPermissions;
-
 import static android.app.Activity.RESULT_OK;
-import static com.globaldelight.boom.utils.helpers.GoogleDriveHandler.PREF_ACCOUNT_NAME;
-import static com.globaldelight.boom.utils.helpers.GoogleDriveHandler.REQUEST_PERMISSION_GET_ACCOUNTS;
 
 /**
  * Created by Rahul Agarwal on 03-02-17.
@@ -144,8 +137,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                     String accountName =
                             data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     if (accountName != null) {
-                        getActivity().getPreferences(Context.MODE_PRIVATE).edit()
-                                .putString(PREF_ACCOUNT_NAME, accountName).apply();
+                        App.getUserPreferenceHandler().setGoogleAccountName(accountName);
                         googleDriveHandler.setSelectedGoogleAccountName(accountName);
                     }
                 }

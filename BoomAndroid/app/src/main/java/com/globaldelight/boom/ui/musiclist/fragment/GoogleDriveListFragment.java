@@ -2,12 +2,10 @@ package com.globaldelight.boom.ui.musiclist.fragment;
 
 import android.Manifest;
 import android.accounts.AccountManager;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -17,8 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
@@ -62,10 +61,10 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                     notifyAdapter(null);
                     break;
                 case ACTION_ON_NETWORK_CONNECTED:
-                    ShowLoader();
+                    showLoader();
                     checkPermissions();
                 case ACTION_CLOUD_SYNC:
-                    ShowLoader();
+                    showLoader();
                     if(null != googleDriveMediaList) {
                         googleDriveMediaList.clearGoogleDriveMediaContent();
                         checkPermissions();
@@ -115,7 +114,10 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         if (googleDriveMediaList.getGoogleDriveMediaList().size() <= 0 &&
                 ConnectivityReceiver.isNetworkAvailable(getContext())) {
             googleDriveHandler.getResultsFromApi();
+        }else{
+            dismissLoader();
         }
+        setForAnimation();
     }
 
     private void registerReceiver(){
@@ -128,7 +130,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     }
 
     private void initViews() {
-        ShowLoader();
+        showLoader();
         googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(getActivity());
         googleDriveMediaList.setGoogleDriveMediaUpdater(this);
         googleDriveHandler = new GoogleDriveHandler(GoogleDriveListFragment.this);
@@ -174,8 +176,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
     }
 
-    private void ShowLoader(){
-        if(null == progressLoader || !progressLoader.isShowing()) {
+    private void showLoader(){
+        if((null == progressLoader || !progressLoader.isShowing()) && ConnectivityReceiver.isNetworkAvailable(getContext())) {
             progressLoader = new BoomDialogView(getActivity());
             progressLoader.setCanceledOnTouchOutside(false);
             progressLoader.show();
@@ -224,11 +226,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                     String accountName =
                             data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     if (accountName != null) {
-                        SharedPreferences settings =
-                                getActivity().getPreferences(Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = settings.edit();
-                        editor.putString(GoogleDriveHandler.PREF_ACCOUNT_NAME, accountName);
-                        editor.apply();
+                        App.getUserPreferenceHandler().setGoogleAccountName(accountName);
                         googleDriveHandler.setSelectedGoogleAccountName(accountName);
                         LoadGoogleDriveList();
                     }

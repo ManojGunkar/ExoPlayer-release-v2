@@ -8,6 +8,7 @@
         android:layout_width="@dimen/track_list_album_art_size"
         android:layout_height="@dimen/track_list_album_art_size"
         android:maxLines="1"
+        android:gravity="center"
         android:textColor="@color/track_title"
         android:layout_centerInParent="true"
         android:textSize="@dimen/album_track_number_size" />

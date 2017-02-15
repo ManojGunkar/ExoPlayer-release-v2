@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
 import com.globaldelight.boom.task.MediaLoader.LoadGoogleDriveList;
@@ -53,8 +55,6 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     public static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     public static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
     public static final int REQUEST_CODE_RESOLUTION = 1;
-    public static final String PREF_ACCOUNT_NAME = "accountName";
-    SharedPreferences shp;
 //    Client ID : 312070820740-he3m1noeh3dggs8gc538qu11in10ifg0.apps.googleusercontent.com
     private static final String[] SCOPES = {DriveScopes.DRIVE_METADATA, DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPDATA, DriveScopes.DRIVE};
 //    private Activity mActivity;
@@ -63,26 +63,12 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
 
     public GoogleDriveHandler(Context context){
         this.mContext = context;
-        shp = mContext.getSharedPreferences(PREF_ACCOUNT_NAME, mContext.MODE_PRIVATE);
     }
 
     public GoogleDriveHandler(Fragment mFragment){
         this.mContext = mFragment.getContext();
         this.mFragment = mFragment;
-        shp = this.mFragment.getContext().getSharedPreferences(PREF_ACCOUNT_NAME, mContext.MODE_PRIVATE);
     }
-
-   /* public static GoogleDriveHandler getGoogleDriveInstance(Fragment mFragment){
-        if(null == googleDriveHandler)
-            googleDriveHandler = new GoogleDriveHandler(mFragment);
-        return googleDriveHandler;
-    }
-
-    public static GoogleDriveHandler getGoogleDriveInstance(Context context){
-        if(null == googleDriveHandler)
-            googleDriveHandler = new GoogleDriveHandler(context);
-        return googleDriveHandler;
-    }*/
 
     public GoogleAccountCredential getGoogleAccountCredential(){
         // Initialize credentials and service object.
@@ -128,10 +114,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     }
 
     public void resetKeys(Context context){
-        Log.d("PREF_ACCOUNT_NAME", mFragment.getActivity().getPreferences(Context.MODE_PRIVATE)
-                .getString(PREF_ACCOUNT_NAME, null)+"");
-        mFragment.getActivity().getPreferences(Context.MODE_PRIVATE).edit()
-                .putString(PREF_ACCOUNT_NAME, null).apply();
+        App.getUserPreferenceHandler().setGoogleAccountName(null);
         GoogleDriveMediaList.geGoogleDriveMediaListInstance(context).clearGoogleDriveMediaContent();
         mFragment.startActivityForResult(
                 mCredential.newChooseAccountIntent(),
@@ -167,11 +150,18 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
         }
     }
 
-    public String getAccessTokenApi() {
+    public void connectToGoogleAccount(){
         getGoogleAccountCredential();
         getGoogleApiClient();
         connectGoogleAccount();
-        if (isGooglePlayServicesAvailable() && mCredential.getSelectedAccountName() != null && isDeviceOnline()) {
+        String accountName = App.getUserPreferenceHandler().getGoogleAccountName();
+        if (accountName != null)
+            mCredential.setSelectedAccountName(accountName);
+    }
+
+    public String getAccessTokenApi() {
+        mCredential = getGoogleAccountCredential();
+        if (isGooglePlayServicesAvailable() && null != mCredential && mCredential.getSelectedAccountName() != null && isDeviceOnline()) {
             try {
                 return mCredential.getToken();
             } catch (IOException e) {
@@ -278,8 +268,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
         if (EasyPermissions.hasPermissions(
                 (null != mContext ? mContext : mFragment.getContext()),
                 Manifest.permission.GET_ACCOUNTS)) {
-            String accountName = mFragment.getActivity().getPreferences(Context.MODE_PRIVATE)
-                    .getString(PREF_ACCOUNT_NAME, null);
+            String accountName = App.getUserPreferenceHandler().getGoogleAccountName();
             if (accountName != null) {
                 mCredential.setSelectedAccountName(accountName);
                 getResultsFromApi();

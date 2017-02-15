@@ -69,7 +69,8 @@ public class GoogleDriveMediaList {
             postMessage.post(new Runnable() {
                 @Override
                 public void run() {
-                    googleDriveMediaUpdater.onClearList();
+                    if(null != googleDriveMediaUpdater)
+                        googleDriveMediaUpdater.onClearList();
                 }
             });
         }

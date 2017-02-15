@@ -1,6 +1,5 @@
 package com.globaldelight.boom.ui.musiclist.fragment;
 
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -60,11 +59,11 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                     notifyAdapter(null);
                     break;
                 case ACTION_ON_NETWORK_CONNECTED:
-                    ShowLoader();
+                    showLoader();
                     LoadDropboxList();
                     break;
                 case ACTION_CLOUD_SYNC:
-                    ShowLoader();
+                    showLoader();
                     try{
                         if(null != dropboxMediaList)
                             dropboxMediaList.clearDropboxContent();
@@ -86,7 +85,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     private void initViews() {
-        ShowLoader();
+        showLoader();
         dropboxMediaList = DropboxMediaList.getDropboxListInstance(getActivity());
         dropboxMediaList.setDropboxUpdater(this);
         DropBoxUtills.checkDropboxAuthentication(getActivity());
@@ -98,7 +97,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         registerReceiver();
         super.onResume();
         if(listSize <= 0)
-            ShowLoader();
+            showLoader();
         LoadDropboxList();
     }
 
@@ -123,11 +122,12 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         if(!isListEmpty){
             dismissLoader();
         }
-
         if (null != App.getDropboxAPI()
                 && ConnectivityReceiver.isNetworkAvailable(getContext()) && isListEmpty) {
             resetAuthentication();
             new LoadDropBoxList(getActivity()).execute();
+        }else{
+            dismissLoader();
         }
         setForAnimation();
     }
@@ -182,8 +182,8 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         notifyAdapter(dropboxMediaList.getDropboxMediaList());
     }
 
-    private void ShowLoader(){
-        if(null == progressLoader || !progressLoader.isShowing()) {
+    private void showLoader(){
+        if((null == progressLoader || !progressLoader.isShowing()) && ConnectivityReceiver.isNetworkAvailable(getContext())) {
             progressLoader = new BoomDialogView(getActivity());
             progressLoader.setCanceledOnTouchOutside(false);
             progressLoader.show();
