@@ -96,7 +96,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     public void onResume() {
         registerReceiver();
         super.onResume();
-        if(listSize <= 0)
+        if(listSize <= 0 || DropboxMediaList.isAllSongsLoaded)
             showLoader();
         LoadDropboxList();
     }
@@ -172,7 +172,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
 
     @Override
     public void finishDropboxLoading() {
-//        listIsEmpty(adapter.getItemCount());
+        notifyAdapter(dropboxMediaList.getDropboxMediaList());
         listSize = dropboxMediaList.getDropboxMediaList().size();
         dismissLoader();
     }

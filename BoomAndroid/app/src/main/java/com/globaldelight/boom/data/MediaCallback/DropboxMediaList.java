@@ -19,6 +19,7 @@ public class DropboxMediaList {
     private IDropboxUpdater dropboxUpdater;
     private static DropboxMediaList handler;
     private Context mContext;
+    public static boolean isAllSongsLoaded = false;
     private Handler postMessage;
 
     private DropboxMediaList(Context context){
@@ -35,6 +36,7 @@ public class DropboxMediaList {
     }
 
     public void addFileInDropboxList(IMediaItemBase entry){
+        isAllSongsLoaded = false;
         fileList.add(entry);
         postMessage.post(new Runnable() {
             @Override
@@ -55,28 +57,24 @@ public class DropboxMediaList {
         if( fileList.size() > 0) {
             fileList.clear();
             MediaController.getInstance(mContext).removeCloudMediaItemList(MediaType.DROP_BOX);
-            postMessage.post(new Runnable() {
-                @Override
-                public void run() {
-                    dropboxUpdater.ClearList();
-                }
-            });
         }
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                dropboxUpdater.ClearList();
+            }
+        });
+        isAllSongsLoaded = false;
     }
 
     public void finishDropboxLoading(){
+        isAllSongsLoaded = true;
         postMessage.post(new Runnable() {
             @Override
             public void run() {
                 dropboxUpdater.finishDropboxLoading();
             }
         });
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                MediaController.getInstance(mContext).addSongsToCloudItemList(fileList);
-            }
-        }).start();
     }
 
     public void setDropboxUpdater(IDropboxUpdater dropboxUpdater){

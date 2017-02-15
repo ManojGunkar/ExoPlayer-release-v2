@@ -34,4 +34,6 @@ public class PlayerEvents {
     public static final String ACTION_ON_NETWORK_CONNECTED="ACTION_ON_NETWORK_CONNECTED";
 
     public static final String ACTION_CLOUD_SYNC = "ACTION_CLOUD_SYNC";
+
+    public static final String ACTION_HOME_SCREEN_BACK_PRESSED = "ACTION_HOME_SCREEN_BACK_PRESSED";
 }

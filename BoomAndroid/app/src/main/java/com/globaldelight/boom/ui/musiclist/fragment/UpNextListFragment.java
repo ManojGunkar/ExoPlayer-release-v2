@@ -169,7 +169,10 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
 
                 if (to.getListType() == start.getListType()) {
                     if (to.getListType() == UpNextListAdapter.ITEM_VIEW_TYPE_LIST_MANUAL || to.getListType() == UpNextListAdapter.ITEM_VIEW_TYPE_LIST_AUTO) {
-                        Collections.swap(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList(), start.getItemPosition(), to.getItemPosition());
+                        if(to.getListType() == UpNextListAdapter.ITEM_VIEW_TYPE_LIST_MANUAL )
+                            Collections.swap(App.getPlayingQueueHandler().getUpNextList().getManualUpNextList(), start.getItemPosition(), to.getItemPosition());
+                        else
+                            Collections.swap(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList(), start.getItemPosition(), to.getItemPosition());
                         upNextListAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
                         upNextListAdapter.notifyItemChanged(target.getAdapterPosition());
                         upNextListAdapter.notifyItemChanged(viewHolder.getAdapterPosition());

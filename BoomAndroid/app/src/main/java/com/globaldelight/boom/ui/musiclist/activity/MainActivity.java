@@ -3,7 +3,10 @@ package com.globaldelight.boom.ui.musiclist.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Typeface;
@@ -50,6 +53,8 @@ import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
 import com.globaldelight.boom.utils.handlers.Preferences;
 
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_HEADSET_PLUGGED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
 import static com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment.isUpdateUpnextDB;
 import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_NORMAL_BOTTOM;
 import static com.globaldelight.boom.utils.handlers.Preferences.HEADPHONE_CONNECTED;
@@ -89,6 +94,15 @@ public class MainActivity extends MasterActivity
     private LinearLayout mAddsContainer;
     private CoachMarkerWindow coachMarkUseHeadPhone, coachMarkChooseHeadPhone;
 
+
+    private BroadcastReceiver headPhoneReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction() == ACTION_HEADSET_PLUGGED){
+                initHeadphoneCoachMark();
+            }
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,28 +121,35 @@ public class MainActivity extends MasterActivity
     @Override
     protected void onResume() {
         registerPlayerReceiver(MainActivity.this);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_HEADSET_PLUGGED);
+        registerReceiver(headPhoneReceiver, intentFilter);
+
+        initCoachMark();
         super.onResume();
         initHeadphoneCoachMark();
     }
 
-    private void initHeadphoneCoachMark() {
-        if( Preferences.readBoolean(this, TOLLTIP_USE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() /*&& Utils.isMoreThan24Hour(this)*/
-                && Preferences.readBoolean(this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)){
+    private void initCoachMark(){
+        if (Preferences.readBoolean(this, TOLLTIP_USE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() /*&& Utils.isMoreThan24Hour(this)*/
+                && Preferences.readBoolean(this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
             coachMarkUseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
             coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
             coachMarkUseHeadPhone.showCoachMark(findViewById(R.id.container));
             Preferences.writeBoolean(this, TOLLTIP_USE_HEADPHONE_LIBRARY, false);
         }
 
-        if( Preferences.readBoolean(this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && Utils.isMoreThan24Hour(this)
-                && Preferences.readBoolean(this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)){
+        if (Preferences.readBoolean(this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && Utils.isMoreThan24Hour(this)
+                && Preferences.readBoolean(this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
             coachMarkUseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
             coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
             coachMarkUseHeadPhone.showCoachMark(findViewById(R.id.container));
             Preferences.writeBoolean(this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, false);
         }
+    }
 
-        if(Preferences.readBoolean(this, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && HeadPhonePlugReceiver.isHeadsetConnected() && currentItem==0) {
+    private void initHeadphoneCoachMark() {
+        if (Preferences.readBoolean(this, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && HeadPhonePlugReceiver.isHeadsetConnected() && currentItem == 0) {
             coachMarkChooseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.choose_headphone_tooltip));
             coachMarkChooseHeadPhone.setAutoDismissBahaviour(true);
             coachMarkChooseHeadPhone.showCoachMark(findViewById(R.id.container));
@@ -234,17 +255,27 @@ public class MainActivity extends MasterActivity
 
     @Override
     public void onBackPressed() {
-        if(null != mFloatAddPlayList && mFloatAddPlayList.getVisibility() == View.VISIBLE)
+        sendBroadcast(new Intent(ACTION_HOME_SCREEN_BACK_PRESSED));
+
+        if (null != coachMarkUseHeadPhone) {
+            coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
+        }
+        if (null != coachMarkChooseHeadPhone) {
+            coachMarkChooseHeadPhone.setAutoDismissBahaviour(true);
+        }
+
+        if (null != mFloatAddPlayList && mFloatAddPlayList.getVisibility() == View.VISIBLE)
             mFloatAddPlayList.setVisibility(View.GONE);
-        if(isPlayerExpended()) {
+
+        if (isPlayerExpended()) {
             sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
-        }else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        } else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        }else if(fragmentManager.getBackStackEntryCount() > 0){
+        } else if (fragmentManager.getBackStackEntryCount() > 0) {
             navigationView.getMenu().getItem(0).setChecked(true);
             fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             viewMainActivity();
-        }else{
+        } else {
             moveTaskToBack(true);
         }
     }
@@ -511,6 +542,7 @@ public class MainActivity extends MasterActivity
     @Override
     protected void onPause() {
         unregisterPlayerReceiver(MainActivity.this);
+        unregisterReceiver(headPhoneReceiver);
         super.onPause();
     }
 
