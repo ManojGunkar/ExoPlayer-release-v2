@@ -25,6 +25,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
+import com.globaldelight.boom.ui.widgets.BoomDialogView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     private GoogleDriveMediaList googleDriveMediaList;
     private GoogleDriveHandler googleDriveHandler;
-    private ProgressDialog progressLoader;
+    private BoomDialogView progressLoader;
     private CloudItemListAdapter adapter;
     private RecyclerView rootView;
     private PermissionChecker permissionChecker;
@@ -61,12 +62,10 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                     notifyAdapter(null);
                     break;
                 case ACTION_ON_NETWORK_CONNECTED:
-                    if(null != progressLoader)
-                        progressLoader.show();
+                    ShowLoader();
                     checkPermissions();
                 case ACTION_CLOUD_SYNC:
-                    if(null != progressLoader)
-                        progressLoader.show();
+                    ShowLoader();
                     if(null != googleDriveMediaList) {
                         googleDriveMediaList.clearGoogleDriveMediaContent();
                         checkPermissions();
@@ -92,6 +91,14 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     public void onResume() {
         notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
         super.onResume();
+        registerReceiver();
+    }
+
+    @Override
+    public void onPause() {
+        if(null != getActivity())
+            getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
+        super.onPause();
     }
 
     public void checkPermissions() {
@@ -111,18 +118,17 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         }
     }
 
-    private void initViews() {
+    private void registerReceiver(){
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         intentFilter.addAction(ACTION_ON_NETWORK_CONNECTED);
         intentFilter.addAction(ACTION_CLOUD_SYNC);
-        getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
+        if(null != getActivity())
+            getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
+    }
 
-        progressLoader = new ProgressDialog(getActivity());
-        progressLoader.setMessage(getResources().getString(R.string.loading));
-        progressLoader.setCanceledOnTouchOutside(false);
-        progressLoader.show();
-
+    private void initViews() {
+        ShowLoader();
         googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(getActivity());
         googleDriveMediaList.setGoogleDriveMediaUpdater(this);
         googleDriveHandler = new GoogleDriveHandler(GoogleDriveListFragment.this);
@@ -168,10 +174,17 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
     }
 
-    private void dismissLoader(){
-        if(progressLoader.isShowing()){
-            progressLoader.dismiss();
+    private void ShowLoader(){
+        if(null == progressLoader || !progressLoader.isShowing()) {
+            progressLoader = new BoomDialogView(getActivity());
+            progressLoader.setCanceledOnTouchOutside(false);
+            progressLoader.show();
         }
+    }
+
+    private void dismissLoader() {
+        if(null != progressLoader && progressLoader.isShowing())
+            progressLoader.dismiss();
     }
 
     private void setForAnimation() {
@@ -263,8 +276,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     @Override
     public void onDestroy() {
-        if(null != getActivity())
-            getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
         super.onDestroy();
     }
 }

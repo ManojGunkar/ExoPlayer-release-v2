@@ -4,11 +4,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.AnimRes;
 import android.support.annotation.NonNull;
@@ -22,7 +20,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
@@ -55,12 +52,11 @@ import com.globaldelight.boom.utils.handlers.Preferences;
 
 import static com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment.isUpdateUpnextDB;
 import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_NORMAL_BOTTOM;
-import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_NORMAL_LEFT;
-import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_TOP_CENTER;
 import static com.globaldelight.boom.utils.handlers.Preferences.HEADPHONE_CONNECTED;
 import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_CHOOSE_HEADPHONE_LIBRARY;
 import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
 import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_USE_HEADPHONE_LIBRARY;
+import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_USE_24_HEADPHONE_LIBRARY;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -124,7 +120,15 @@ public class MainActivity extends MasterActivity
             Preferences.writeBoolean(this, TOLLTIP_USE_HEADPHONE_LIBRARY, false);
         }
 
-        if(Preferences.readBoolean(this, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, true && !isPlayerExpended() && HeadPhonePlugReceiver.isHeadsetConnected())) {
+        if( Preferences.readBoolean(this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && Utils.isMoreThan24Hour(this)
+                && Preferences.readBoolean(this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)){
+            coachMarkUseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
+            coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
+            coachMarkUseHeadPhone.showCoachMark(findViewById(R.id.container));
+            Preferences.writeBoolean(this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, false);
+        }
+
+        if(Preferences.readBoolean(this, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && HeadPhonePlugReceiver.isHeadsetConnected() && currentItem==0) {
             coachMarkChooseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.choose_headphone_tooltip));
             coachMarkChooseHeadPhone.setAutoDismissBahaviour(true);
             coachMarkChooseHeadPhone.showCoachMark(findViewById(R.id.container));
@@ -326,10 +330,10 @@ public class MainActivity extends MasterActivity
             return true;
         }else if(id == R.id.action_cloud_sync){
             sendBroadcast(new Intent(PlayerEvents.ACTION_CLOUD_SYNC));
-            return false;
+            return true;
         }
 
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     private MatrixCursor convertToCursor(Cursor feedlyResults) {

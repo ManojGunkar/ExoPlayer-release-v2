@@ -25,6 +25,7 @@ import com.globaldelight.boom.data.MediaLibrary.ItemType;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.task.MediaLoader.LoadDropBoxList;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
+import com.globaldelight.boom.ui.widgets.BoomDialogView;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import java.util.ArrayList;
 
@@ -39,7 +40,7 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING
 public class DropBoxListFragment extends Fragment  implements DropboxMediaList.IDropboxUpdater {
 
     private DropboxMediaList dropboxMediaList;
-    private ProgressDialog progressLoader;
+    private BoomDialogView progressLoader;
     private CloudItemListAdapter adapter;
     private RecyclerView rootView;
     private int listSize = 0;
@@ -59,13 +60,11 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                     notifyAdapter(null);
                     break;
                 case ACTION_ON_NETWORK_CONNECTED:
-                    if(null != progressLoader)
-                        progressLoader.show();
+                    ShowLoader();
                     LoadDropboxList();
                     break;
                 case ACTION_CLOUD_SYNC:
-                    if(null != progressLoader)
-                        progressLoader.show();
+                    ShowLoader();
                     try{
                         if(null != dropboxMediaList)
                             dropboxMediaList.clearDropboxContent();
@@ -87,17 +86,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     private void initViews() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
-        intentFilter.addAction(ACTION_ON_NETWORK_CONNECTED);
-        intentFilter.addAction(ACTION_CLOUD_SYNC);
-        getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
-
-        progressLoader = new ProgressDialog(getActivity());
-        progressLoader.setMessage(getResources().getString(R.string.loading));
-        progressLoader.setCanceledOnTouchOutside(false);
-        progressLoader.show();
-
+        ShowLoader();
         dropboxMediaList = DropboxMediaList.getDropboxListInstance(getActivity());
         dropboxMediaList.setDropboxUpdater(this);
         DropBoxUtills.checkDropboxAuthentication(getActivity());
@@ -106,10 +95,27 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
 
     @Override
     public void onResume() {
+        registerReceiver();
         super.onResume();
-        if(null != progressLoader)
-            progressLoader.show();
+        if(listSize <= 0)
+            ShowLoader();
         LoadDropboxList();
+    }
+
+    @Override
+    public void onPause() {
+        if(null != getActivity())
+            getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
+        super.onPause();
+    }
+
+    private void registerReceiver(){
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(ACTION_ON_NETWORK_CONNECTED);
+        intentFilter.addAction(ACTION_CLOUD_SYNC);
+        if(null != getActivity())
+            getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 
     private void LoadDropboxList(){
@@ -146,7 +152,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
 
     private void setSongListAdapter(ArrayList<? extends IMediaItemBase> iMediaItemList) {
         listSize = iMediaItemList.size();
-        if(iMediaItemList.size() > 0 && progressLoader.isShowing())
+        if(iMediaItemList.size() > 0)
             dismissLoader();
         final GridLayoutManager gridLayoutManager =
                 new GridLayoutManager(getActivity(), 1);
@@ -176,8 +182,17 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         notifyAdapter(dropboxMediaList.getDropboxMediaList());
     }
 
+    private void ShowLoader(){
+        if(null == progressLoader || !progressLoader.isShowing()) {
+            progressLoader = new BoomDialogView(getActivity());
+            progressLoader.setCanceledOnTouchOutside(false);
+            progressLoader.show();
+        }
+    }
+
     private void dismissLoader() {
-        progressLoader.dismiss();
+        if(null != progressLoader && progressLoader.isShowing())
+            progressLoader.dismiss();
     }
 
     private void notifyAdapter(ArrayList<IMediaItemBase> mediaList){
@@ -188,7 +203,6 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
 
     @Override
     public void onDestroy() {
-        getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
         super.onDestroy();
     }
 
