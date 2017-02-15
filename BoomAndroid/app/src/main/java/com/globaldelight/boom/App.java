@@ -21,6 +21,9 @@ import com.globaldelight.boom.utils.handlers.PlaylistDBHelper;
 import com.globaldelight.boom.utils.handlers.UpNextDBHelper;
 import com.globaldelight.boom.utils.handlers.UserPreferenceHandler;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -183,16 +186,15 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
 
     private boolean isExpired(){
-//        String expiryDateString = "FEB-10-2017";
-//        try {
-//            SimpleDateFormat sdf =  new SimpleDateFormat("MMM-dd-yyyy");
-//            Date expiryDate = sdf.parse(expiryDateString);
-//            Date today= new Date();
-//            return today.after(expiryDate);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-        return false;
+        String expiryDateString = "FEB-28-2017";
+        try {
+            SimpleDateFormat sdf =  new SimpleDateFormat("MMM-dd-yyyy");
+            Date expiryDate = sdf.parse(expiryDateString);
+            Date today= new Date();
+            return today.after(expiryDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
