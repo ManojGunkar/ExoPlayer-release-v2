@@ -41,6 +41,8 @@ public class UserPreferenceHandler {
     private static ArrayList<Long> idList = new ArrayList<>();
     private static long boomPlayListId;
 
+    public static final String PREF_ACCOUNT_NAME = "accountName";
+
     public UserPreferenceHandler(Context context) {
         shp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = shp.edit();
@@ -54,6 +56,13 @@ public class UserPreferenceHandler {
         editor.commit();
     }
 
+    public void setGoogleAccountName(String accountName){
+        shp.edit().putString(PREF_ACCOUNT_NAME, accountName).apply();
+    }
+
+    public String getGoogleAccountName(){
+        return  shp.getString(PREF_ACCOUNT_NAME, null);
+    }
 
     public UpNextList.REPEAT resetRepeat(){
         if(shp.getBoolean(REPEAT_NONE, true)){

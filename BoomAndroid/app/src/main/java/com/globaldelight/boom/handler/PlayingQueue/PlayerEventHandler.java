@@ -158,6 +158,8 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
             this.service = service;
         App.getPlayingQueueHandler().getUpNextList().setIQueueEvent(this);
         uiHandler = new Handler();
+        googleDriveHandler = new GoogleDriveHandler(context);
+        googleDriveHandler.connectToGoogleAccount();
         registerSession();
     }
 
@@ -213,7 +215,6 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            googleDriveHandler = new GoogleDriveHandler(context);
         }
 
         @Override

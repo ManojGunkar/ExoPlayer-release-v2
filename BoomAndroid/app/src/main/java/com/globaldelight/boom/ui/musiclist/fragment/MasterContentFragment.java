@@ -73,7 +73,6 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_PLAYER_SCREEN_RESU
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_REPEAT;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_SHUFFLE;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
@@ -731,7 +730,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         context.registerReceiver(mPlayerBroadcastReceiver, intentFilter);
 
         setPlayerInfo();
