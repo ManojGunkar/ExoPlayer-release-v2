@@ -111,30 +111,33 @@ public class DropBoxUtills {
     }
 
     public static boolean getFiles(String DIR, DropboxMediaList dropboxMediaList) {
-        ArrayList<DropboxAPI.Entry> dropboxFolderList = new ArrayList<>();
-        com.dropbox.client2.DropboxAPI.Entry dirent;
         if(null != App.getDropboxAPI()) {
-            try {
-                dirent = App.getDropboxAPI().metadata(DIR, 10000, null, true, null);
-                for (com.dropbox.client2.DropboxAPI.Entry entry : dirent.contents) {
-                    if (entry.isDir) {
-//                    DIR = entry.path;
-                        dropboxFolderList.add(entry);
-                    } else {
-                        if (entry.mimeType.toString().startsWith("audio/")) {
-                            dropboxMediaList.addFileInDropboxList(new MediaItem(100000+count, entry.fileName(), entry.path, ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
-                            count++;
-                        }
-                    }
-                }
-            } catch (DropboxException e) {
-                e.printStackTrace();
-            }
-            getFolderDataFiles(dropboxFolderList, dropboxMediaList);
-
+            getAllFiles(null, dropboxMediaList);
+            dropboxMediaList.doneLoading();
             return true;
         }
         return false;
+    }
+
+    private static void getAllFiles(String cursor, DropboxMediaList dropboxMediaList) {
+        try {
+            DropboxAPI.DeltaPage<DropboxAPI.Entry> page = App.getDropboxAPI().delta(cursor);
+            for (DropboxAPI.DeltaEntry<DropboxAPI.Entry> entry : page.entries) {
+                DropboxAPI.Entry metadata = entry.metadata;
+                if ( metadata.isDeleted || metadata.isDir ) {
+                    continue;
+                }
+                if ( metadata.mimeType != null && metadata.mimeType.toString().startsWith("audio/")) {
+                    dropboxMediaList.addFileInDropboxList(new MediaItem(100000+count, entry.metadata.fileName(), entry.metadata.path, ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
+                    count++;
+                }
+            }
+            if ( page.hasMore ) {
+                getAllFiles(page.cursor, dropboxMediaList);
+            }
+        } catch (DropboxException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void getFolderDataFiles(ArrayList<DropboxAPI.Entry> dropboxFolderList, DropboxMediaList dropboxMediaList) {
