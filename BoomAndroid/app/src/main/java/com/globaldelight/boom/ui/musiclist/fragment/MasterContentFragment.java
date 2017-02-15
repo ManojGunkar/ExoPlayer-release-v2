@@ -265,7 +265,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mEffectSwitch.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
             if(Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped()&& mInflater.findViewById(R.id.effect_switch).getVisibility()==View.VISIBLE)  {
-                coachMarkEffectSwitcher = new CoachMarkerWindow(getContext(), DRAW_BOTTOM_CENTER, getResources().getString(R.string.switch_effect_screen_tooltip));
+                coachMarkEffectSwitcher = new CoachMarkerWindow(getContext(), DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
                 coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
                 coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
             }
@@ -682,7 +682,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         setMiniPlayerVisible(false);
         if(Preferences.readBoolean(getContext(), Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, true) && mPlayerContent.getVisibility() == View.VISIBLE &&
                 !App.getPlayerEventHandler().isStopped() && Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
-            coachMarkEffectPager = new CoachMarkerWindow(getContext(), DRAW_TOP_CENTER, getResources().getString(R.string.effect_player_tooltip));
+            coachMarkEffectPager = new CoachMarkerWindow(getContext(), DRAW_TOP_CENTER, getResources().getString(R.string.switch_effect_screen_tooltip));
             coachMarkEffectPager.setAutoDismissBahaviour(true);
             coachMarkEffectPager.showCoachMark(mInflater.findViewById(R.id.effect_tab));
         }
@@ -991,6 +991,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mSpeakerBtn.setOnClickListener(this);
 
         mFullBassCheck = (AppCompatCheckBox) mInflater.findViewById(R.id.fullbass_chk);
+        mFullBassCheck.setChecked(audioEffectPreferenceHandler.isFullBassOn());
+
         mFullBassCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
@@ -1041,7 +1043,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         switchAudioEffect();
 
-        setEnableEffects(audioEffectPreferenceHandler.isAudioEffectOn());
+        setEnableEffects();
     }
 
     private void switchAudioEffect(){
@@ -1050,8 +1052,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
                 if(audioEffectPreferenceHandler.isAudioEffectOn() != enable) {
-                    audioEffectPreferenceHandler.setEnableAudioEffect(enable);
-                    setEnableEffects(enable);
+                    audioEffectPreferenceHandler.setEnableAudioEffect(!audioEffectPreferenceHandler.isAudioEffectOn());
+                    setEnableEffects();
                     postMessage.post(new Runnable() {
                         @Override
                         public void run() {
@@ -1067,8 +1069,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         });
     }
 
-    private void setEnableEffects(boolean enable){
-        isEffectOn =enable;
+    private void setEnableEffects(){
+        isEffectOn = audioEffectPreferenceHandler.isAudioEffectOn();
         mOldIntensity = audioEffectPreferenceHandler.getIntensity()/(double)100;
         if(isEffectOn){
             mEffectSwitchTxt.setText(mContext.getString(R.string.on));
@@ -1088,7 +1090,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
             setEnableEqualizer(audioEffectPreferenceHandler.isEqualizerOn());
         }
-//        mFullBassCheck.setEnabled(isEffectOn && audioEffectPreferenceHandler.is3DSurroundOn());
     }
 
     private void setEnable3DEffect(boolean enable){
@@ -1106,7 +1107,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void setEnableFullBass(boolean enable){
-        mFullBassCheck.setChecked(enable);
         if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()){
             mFullBassCheck.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
             mFullBassCheck.setEnabled(true);
