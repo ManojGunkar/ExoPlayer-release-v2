@@ -512,6 +512,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 //        }
         if(null != mPlayingMediaItem)
             updateAlbumArt(mPlayingMediaItem);
+        setEnableEffects();
 
         updateActionBarButtons();
     }

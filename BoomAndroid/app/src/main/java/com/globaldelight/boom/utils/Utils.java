@@ -302,11 +302,11 @@ public class Utils {
                 sAux = sAux + "https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n";
                 shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
                 Resources resources = context.getResources();
-                Uri imageUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + resources.getResourcePackageName(R.drawable.ic_share) + '/' + resources.getResourceTypeName(R.drawable.ic_share) + '/' + resources.getResourceEntryName(R.drawable.ic_share));
+                Uri imageUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + resources.getResourcePackageName(R.drawable.image) + '/' + resources.getResourceTypeName(R.drawable.image) + '/' + resources.getResourceEntryName(R.drawable.image));
 
                 shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
                 shareIntent
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
                 context.startActivity(Intent.createChooser(shareIntent,
                         "share"));
             } catch (Exception e) {
