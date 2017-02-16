@@ -489,8 +489,10 @@ public class MainActivity extends MasterActivity
             setVisiblePager(false);
         }
         setTitle(String.valueOf(fname));
-//        removeFragment();
+
         if(currentItem != 0) {
+            removeFragment();
+            findViewById(R.id.fragment_container).setBackgroundColor(ContextCompat.getColor(this, R.color.app_background));
             fragmentManager.beginTransaction()
                     .setCustomAnimations(animationEnter, animationExit)
                     .replace(R.id.fragment_container, fragment)
