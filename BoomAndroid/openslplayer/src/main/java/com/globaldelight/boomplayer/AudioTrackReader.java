@@ -5,6 +5,7 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.os.ConditionVariable;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -115,14 +116,14 @@ class AudioTrackReader extends MediaCodec.Callback {
     }
 
 
-    void startReading() throws Exception {
+    void startReading() throws InterruptedException, ExecutionException, IOException {
         mExtractor = createMediaExtractorWithPath(mSourcePath);
         mInputFormat = mExtractor.getTrackFormat(0);
 
         // check we have audio content we know
         String mime = mInputFormat.getString(MediaFormat.KEY_MIME);
         if ( !mime.startsWith("audio/")) {
-            throw new Exception();
+            throw new ExecutionException("Unsupported mime type", new Throwable());
         }
 
         mDuration = mInputFormat.getLong(MediaFormat.KEY_DURATION);
