@@ -261,11 +261,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mEffectTab.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_effects_active, null));
             mEffectSwitch.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
-            if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
-                coachMarkEffectSwitcher = new CoachMarkerWindow(getContext(), DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
-                coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
-                coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
-            }
+//            if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
+//                coachMarkEffectSwitcher = new CoachMarkerWindow(getContext(), DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
+//                coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
+//                coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
+//            }
             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_EFFECT_TAB);
         }
     }
