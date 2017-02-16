@@ -297,7 +297,7 @@ public class Utils {
                         android.content.Intent.EXTRA_SUBJECT, "share");
                 shareIntent.putExtra(
                         android.content.Intent.EXTRA_TITLE, "share");
-                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My application name");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getResources().getString(R.string.app_name));
                 String sAux = "\nDownload Boom Music Player\n\n";
                 sAux = sAux + "https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n";
                 shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
