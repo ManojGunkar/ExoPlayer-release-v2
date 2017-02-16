@@ -52,7 +52,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     private static ILibraryAddsUpdater iLibraryAddsUpdater;
 
     private boolean isDrawerLocked = false;
-    private static boolean isPlayerExpended = false;
+    private static boolean isPlayerExpended = false, isEffectScreenExpended = false;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
@@ -190,10 +190,15 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
 
     @Override
     public void onPanelSlide(final View panel, final float slideOffset) {
+        if(slideOffset > .92){
+            isEffectScreenExpended = true;
+        }else{
+            isEffectScreenExpended = false;
+        }
         handler.post(new Runnable() {
             @Override
             public void run() {
-                iPlayerSliderControl.onPanelSlide(panel, slideOffset);
+                iPlayerSliderControl.onPanelSlide(panel, slideOffset, isEffectScreenExpended);
             }
         });
     }
@@ -286,7 +291,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     }
 
     public interface IPlayerSliderControl{
-        void onPanelSlide(View panel, float slideOffset);
+        void onPanelSlide(View panel, float slideOffset, boolean isEffectOpened);
         void onPanelCollapsed(View panel);
         void onPanelExpanded(View panel);
         void onPanelAnchored(View panel);

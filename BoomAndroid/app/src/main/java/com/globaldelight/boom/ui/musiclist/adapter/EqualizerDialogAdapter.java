@@ -55,7 +55,7 @@ public class EqualizerDialogAdapter extends RecyclerView.Adapter<EqualizerDialog
             holder.mEqIcon.setImageDrawable(eq_active_on.getDrawable(position));
             holder.mEqName.setTextColor(ContextCompat.getColor(mContext, R.color.dialog_selected_txt));
         }else{
-            holder.mainView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.transparent));
+            holder.mainView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background));
             holder.mEqIcon.setImageDrawable(eq_active_off.getDrawable(position));
             holder.mEqName.setTextColor(ContextCompat.getColor(mContext, R.color.dialog_txt));
         }

@@ -261,12 +261,15 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mEffectTab.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_effects_active, null));
             mEffectSwitch.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
-            if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
-                coachMarkEffectSwitcher = new CoachMarkerWindow(getContext(), DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
-                coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
-                coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
-            }
             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_EFFECT_TAB);
+        }
+    }
+
+    private void showEffectSwitchTip(){
+        if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
+            coachMarkEffectSwitcher = new CoachMarkerWindow(getContext(), DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
+            coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
+            coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
         }
     }
 
@@ -512,6 +515,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 //        }
         if(null != mPlayingMediaItem)
             updateAlbumArt(mPlayingMediaItem);
+        setEnableEffects();
 
         updateActionBarButtons();
     }
@@ -646,9 +650,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     /* Player Slider Callbacks*/
 
-
     @Override
-    public void onPanelSlide(View panel, float slideOffset) {
+    public void onPanelSlide(View panel, float slideOffset, boolean isEffectOpened) {
         if(slideOffset < 0.1){
             setMiniPlayerAlpha(1);
             mPlayerActionPanel.setAlpha(0);
@@ -656,7 +659,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             setMiniPlayerAlpha(0);
             mPlayerActionPanel.setAlpha(1);
         }
-
     }
 
     @Override
@@ -672,6 +674,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         if (revealView.getVisibility() == View.VISIBLE) {
             revealView.setVisibility(View.INVISIBLE);
         }
+
+        if(null != coachMarkEffectSwitcher){
+            coachMarkEffectSwitcher.dismissTooltip();
+        }
+        if(null!=coachMarkEffectSwitcher){
+            coachMarkEffectSwitcher.dismissTooltip();
+        }
     }
 
     @Override
@@ -683,6 +692,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             coachMarkEffectPager.setAutoDismissBahaviour(true);
             coachMarkEffectPager.showCoachMark(mInflater.findViewById(R.id.effect_tab));
         }
+        showEffectSwitchTip();
     }
 
     @Override
@@ -844,6 +854,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 break;
             case R.id.effect_tab:
                 setPlayerEnable(false);
+                showEffectSwitchTip();
                 break;
             case R.id.three_surround_btn:
                 switch3DSurround();
