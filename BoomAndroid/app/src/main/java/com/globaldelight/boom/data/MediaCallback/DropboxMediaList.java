@@ -38,9 +38,6 @@ public class DropboxMediaList {
     public void addFileInDropboxList(IMediaItemBase entry){
         isAllSongsLoaded = false;
         fileList.add(entry);
-    }
-
-    public void doneLoading() {
         postMessage.post(new Runnable() {
             @Override
             public void run() {

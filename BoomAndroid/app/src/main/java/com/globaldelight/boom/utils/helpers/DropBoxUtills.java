@@ -113,7 +113,6 @@ public class DropBoxUtills {
     public static boolean getFiles(String DIR, DropboxMediaList dropboxMediaList) {
         if(null != App.getDropboxAPI()) {
             getAllFiles(null, dropboxMediaList);
-            dropboxMediaList.doneLoading();
             return true;
         }
         return false;
