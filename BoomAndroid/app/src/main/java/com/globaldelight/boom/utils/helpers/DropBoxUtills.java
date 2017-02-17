@@ -71,10 +71,9 @@ public class DropBoxUtills {
         if (stored != null) {
             AccessTokenPair accessToken = new AccessTokenPair(stored[0],
                     stored[1]);
-            session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE,
-                    accessToken);
+            session = new AndroidAuthSession(appKeyPair, accessToken);
         } else {
-            session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
+            session = new AndroidAuthSession(appKeyPair);
         }
 
         return session;

@@ -69,6 +69,10 @@ public class AudioPlayer implements Runnable {
         return state.isPlaying();
     }
 
+    public boolean isLoading() {
+        return state.isLoading();
+    }
+
     public boolean isPause(){
         return state.isPause();
     }
@@ -176,7 +180,8 @@ public class AudioPlayer implements Runnable {
         }
 
         try {
-            state.set(PlayerStates.PLAYING);
+
+            state.set(PlayerStates.LOADING);
 
             reader = new AudioTrackReader(sourcePath);
             reader.startReading();
@@ -184,6 +189,7 @@ public class AudioPlayer implements Runnable {
             MediaFormat inputFormat = reader.getInputFormat();
             duration = inputFormat.getLong(MediaFormat.KEY_DURATION);
 
+            state.set(PlayerStates.PLAYING);
             startPlayer(reader.getOutputFormat(), true);
 
             postOnStart(inputFormat.getString(MediaFormat.KEY_MIME),

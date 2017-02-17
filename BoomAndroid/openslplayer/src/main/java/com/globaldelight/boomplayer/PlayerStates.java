@@ -7,7 +7,7 @@ public class PlayerStates {
     /**
      * Playing state which can either be stopped, playing, or reading the header before playing
      */
-
+    public static final int LOADING = 0;
     public static final int PLAYING = 1;
     public static final int PAUSED = 2;
     public static final int STOPPED = 3;
@@ -31,6 +31,10 @@ public class PlayerStates {
         return playerState == PlayerStates.PAUSED;
     }
 
+
+    public synchronized boolean isLoading() {
+        return playerState == PlayerStates.LOADING;
+    }
 
     /**
      * Checks whether the player is currently playing (phase 3)

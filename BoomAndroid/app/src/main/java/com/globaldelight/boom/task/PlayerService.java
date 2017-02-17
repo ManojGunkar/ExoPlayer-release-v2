@@ -299,8 +299,8 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     @Override
     public void onPlayPauseTrack() {
-        if (null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem() && !App.getPlayerEventHandler().isTrackWaitingForPlay()) {
-            if (!musicPlayerHandler.isPaused() && !musicPlayerHandler.isPlaying()) {
+        if (null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem() && !App.getPlayerEventHandler().isTrackWaitingForPlay() && !musicPlayerHandler.isLoading() ) {
+            if (!musicPlayerHandler.isPaused() && !musicPlayerHandler.isPlaying()  ) {
                 musicPlayerHandler.onPlayingItemChanged();
             } else {
                 PlayerEventHandler.PlayState state = musicPlayerHandler.PlayPause();
