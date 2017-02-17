@@ -176,7 +176,6 @@ public class AudioPlayer implements Runnable {
         }
 
         try {
-            state.set(PlayerStates.PLAYING);
 
             reader = new AudioTrackReader(sourcePath);
             reader.startReading();
@@ -184,6 +183,7 @@ public class AudioPlayer implements Runnable {
             MediaFormat inputFormat = reader.getInputFormat();
             duration = inputFormat.getLong(MediaFormat.KEY_DURATION);
 
+            state.set(PlayerStates.PLAYING);
             startPlayer(reader.getOutputFormat(), true);
 
             postOnStart(inputFormat.getString(MediaFormat.KEY_MIME),
