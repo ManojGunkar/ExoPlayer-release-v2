@@ -11,6 +11,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by adarsh on 20/01/17.
@@ -116,7 +118,8 @@ class AudioTrackReader extends MediaCodec.Callback {
     }
 
 
-    void startReading() throws InterruptedException, ExecutionException, IOException {
+    void startReading()
+            throws InterruptedException, ExecutionException, TimeoutException, IOException {
         mExtractor = createMediaExtractorWithPath(mSourcePath);
         mInputFormat = mExtractor.getTrackFormat(0);
 
@@ -263,19 +266,30 @@ class AudioTrackReader extends MediaCodec.Callback {
                 && f1.getInteger(MediaFormat.KEY_CHANNEL_COUNT) == f2.getInteger(MediaFormat.KEY_CHANNEL_COUNT));
     }
     
-    private MediaExtractor createMediaExtractorWithPath(final String path) throws InterruptedException, ExecutionException {
+    private MediaExtractor createMediaExtractorWithPath(final String path)
+            throws InterruptedException, ExecutionException, TimeoutException {
         FutureTask<MediaExtractor> future = new FutureTask<MediaExtractor>(new Callable<MediaExtractor>() {
             @Override
             public MediaExtractor call() throws Exception {
-                MediaExtractor extractor = new MediaExtractor();
-                extractor.setDataSource(path);
-                return extractor;
+                try {
+                    MediaExtractor extractor = new MediaExtractor();
+                    extractor.setDataSource(path);
+                    return extractor;
+                }
+                catch (Exception e) {
+                    return null;
+                }
             }
         });
 
         new Thread(future).start();
 
-        return future.get();
+        MediaExtractor extractor = future.get(60, TimeUnit.SECONDS);
+        if ( extractor == null ) {
+            throw new ExecutionException("Failed to create extractor", new Throwable());
+        }
+
+        return extractor;
     }
 
 }
