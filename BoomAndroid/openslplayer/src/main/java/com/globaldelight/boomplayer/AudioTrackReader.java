@@ -266,7 +266,7 @@ class AudioTrackReader extends MediaCodec.Callback {
                 && f1.getInteger(MediaFormat.KEY_CHANNEL_COUNT) == f2.getInteger(MediaFormat.KEY_CHANNEL_COUNT));
     }
     
-    private MediaExtractor createMediaExtractorWithPath(final String path)
+    private static MediaExtractor createMediaExtractorWithPath(final String path)
             throws InterruptedException, ExecutionException, TimeoutException {
         FutureTask<MediaExtractor> future = new FutureTask<MediaExtractor>(new Callable<MediaExtractor>() {
             @Override
