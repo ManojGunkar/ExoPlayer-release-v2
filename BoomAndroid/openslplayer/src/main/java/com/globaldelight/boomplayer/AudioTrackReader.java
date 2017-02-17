@@ -5,7 +5,12 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.os.ConditionVariable;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Created by adarsh on 20/01/17.
@@ -110,15 +115,15 @@ class AudioTrackReader extends MediaCodec.Callback {
         mSourcePath = sourcePath;
     }
 
-    void startReading() throws Exception {
-        mExtractor = new MediaExtractor();
-        mExtractor.setDataSource(mSourcePath);
+
+    void startReading() throws InterruptedException, ExecutionException, IOException {
+        mExtractor = createMediaExtractorWithPath(mSourcePath);
         mInputFormat = mExtractor.getTrackFormat(0);
 
         // check we have audio content we know
         String mime = mInputFormat.getString(MediaFormat.KEY_MIME);
         if ( !mime.startsWith("audio/")) {
-            throw new Exception();
+            throw new ExecutionException("Unsupported mime type", new Throwable());
         }
 
         mDuration = mInputFormat.getLong(MediaFormat.KEY_DURATION);
@@ -257,4 +262,20 @@ class AudioTrackReader extends MediaCodec.Callback {
         return (f1.getInteger(MediaFormat.KEY_SAMPLE_RATE) == f2.getInteger(MediaFormat.KEY_SAMPLE_RATE)
                 && f1.getInteger(MediaFormat.KEY_CHANNEL_COUNT) == f2.getInteger(MediaFormat.KEY_CHANNEL_COUNT));
     }
+    
+    private MediaExtractor createMediaExtractorWithPath(final String path) throws InterruptedException, ExecutionException {
+        FutureTask<MediaExtractor> future = new FutureTask<MediaExtractor>(new Callable<MediaExtractor>() {
+            @Override
+            public MediaExtractor call() throws Exception {
+                MediaExtractor extractor = new MediaExtractor();
+                extractor.setDataSource(path);
+                return extractor;
+            }
+        });
+
+        new Thread(future).start();
+
+        return future.get();
+    }
+
 }

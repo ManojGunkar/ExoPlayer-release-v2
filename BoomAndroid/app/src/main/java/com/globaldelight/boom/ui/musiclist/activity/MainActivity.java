@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.AnimRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -59,6 +60,7 @@ import static com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment
 import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_NORMAL_BOTTOM;
 import static com.globaldelight.boom.utils.handlers.Preferences.HEADPHONE_CONNECTED;
 import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_CHOOSE_HEADPHONE_LIBRARY;
+import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_OPEN_EFFECT_MINI_PLAYER;
 import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
 import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_USE_HEADPHONE_LIBRARY;
 import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_USE_24_HEADPHONE_LIBRARY;
@@ -94,12 +96,11 @@ public class MainActivity extends MasterActivity
     private LinearLayout mAddsContainer;
     private CoachMarkerWindow coachMarkUseHeadPhone, coachMarkChooseHeadPhone;
 
-
     private BroadcastReceiver headPhoneReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction() == ACTION_HEADSET_PLUGGED){
-                initHeadphoneCoachMark();
+                chooseCoachMarkWindow();
             }
         }
     };
@@ -124,31 +125,28 @@ public class MainActivity extends MasterActivity
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
         registerReceiver(headPhoneReceiver, intentFilter);
-
-        initCoachMark();
         super.onResume();
-        initHeadphoneCoachMark();
     }
 
-    private void initCoachMark(){
-        if (Preferences.readBoolean(this, TOLLTIP_USE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() /*&& Utils.isMoreThan24Hour(this)*/
-                && Preferences.readBoolean(this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
-            coachMarkUseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
-            coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
-            coachMarkUseHeadPhone.showCoachMark(findViewById(R.id.container));
-            Preferences.writeBoolean(this, TOLLTIP_USE_HEADPHONE_LIBRARY, false);
-        }
+    private void useCoachMarkWindow(){
+        if ((Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, true) || Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, true))
+                && Preferences.readBoolean(MainActivity.this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(MainActivity.this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)
+                && !Preferences.readBoolean(MainActivity.this, TOLLTIP_OPEN_EFFECT_MINI_PLAYER, true)) {
 
-        if (Preferences.readBoolean(this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && Utils.isMoreThan24Hour(this)
-                && Preferences.readBoolean(this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
-            coachMarkUseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
-            coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
-            coachMarkUseHeadPhone.showCoachMark(findViewById(R.id.container));
-            Preferences.writeBoolean(this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, false);
+            if(Utils.isMoreThan24Hour(MainActivity.this) || Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, true)) {
+                coachMarkUseHeadPhone = new CoachMarkerWindow(MainActivity.this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
+                coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
+                coachMarkUseHeadPhone.showCoachMark(findViewById(R.id.container));
+
+                if(Utils.isMoreThan24Hour(MainActivity.this))
+                    Preferences.writeBoolean(MainActivity.this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, false);
+            }
+
+            Preferences.writeBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, false);
         }
     }
 
-    private void initHeadphoneCoachMark() {
+    private void chooseCoachMarkWindow() {
         if (Preferences.readBoolean(this, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && HeadPhonePlugReceiver.isHeadsetConnected() && currentItem == 0) {
             coachMarkChooseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.choose_headphone_tooltip));
             coachMarkChooseHeadPhone.setAutoDismissBahaviour(true);
@@ -251,6 +249,23 @@ public class MainActivity extends MasterActivity
     protected void onResumeFragments() {
         sendBroadcast(new Intent(PlayerEvents.ACTION_PLAYER_SCREEN_RESUME));
         super.onResumeFragments();
+    }
+
+    @Override
+    public void onPanelCollapsed(View panel) {
+        super.onPanelCollapsed(panel);
+        useCoachMarkWindow();
+        chooseCoachMarkWindow();
+    }
+
+    @Override
+    public void onPanelExpanded(View panel) {
+        super.onPanelExpanded(panel);
+        if(null != coachMarkUseHeadPhone)
+            coachMarkUseHeadPhone.dismissTooltip();
+
+        if(null != coachMarkChooseHeadPhone)
+            coachMarkChooseHeadPhone.dismissTooltip();
     }
 
     @Override

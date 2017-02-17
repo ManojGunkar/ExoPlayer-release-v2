@@ -28,6 +28,8 @@ import com.globaldelight.boom.ui.widgets.BoomDialogView;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import java.util.ArrayList;
 
+import io.fabric.sdk.android.services.concurrency.AsyncTask;
+
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_CLOUD_SYNC;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
@@ -125,7 +127,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         if (null != App.getDropboxAPI()
                 && ConnectivityReceiver.isNetworkAvailable(getContext()) && isListEmpty) {
             resetAuthentication();
-            new LoadDropBoxList(getActivity()).execute();
+            new LoadDropBoxList(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }else{
             dismissLoader();
         }

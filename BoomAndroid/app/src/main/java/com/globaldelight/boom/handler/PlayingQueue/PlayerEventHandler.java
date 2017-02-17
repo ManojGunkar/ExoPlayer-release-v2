@@ -255,10 +255,10 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
                 }else if(null == dataSource && mediaItemBase.getMediaType() == MediaType.DROP_BOX){
                     Toast.makeText(context, context.getResources().getString(R.string.loading_problem), Toast.LENGTH_SHORT).show();
                 }
-                isTrackWaiting = false;
                 context.sendBroadcast(new Intent(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
                 context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
             }
+            isTrackWaiting = false;
         }
     }
 

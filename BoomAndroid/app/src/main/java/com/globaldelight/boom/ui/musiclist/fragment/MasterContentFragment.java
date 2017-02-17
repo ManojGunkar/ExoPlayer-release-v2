@@ -80,8 +80,10 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
 import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_BOTTOM_CENTER;
 import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_TOP_CENTER;
 import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_TOP_LEFT;
+import static com.globaldelight.boom.utils.handlers.Preferences.HEADPHONE_CONNECTED;
 import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_OPEN_EFFECT_MINI_PLAYER;
 import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
+import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_USE_HEADPHONE_LIBRARY;
 
 /**
  * Created by Rahul Agarwal on 16-01-17.
@@ -265,18 +267,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }
     }
 
-    private void showEffectSwitchTip(){
-        if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
-            coachMarkEffectSwitcher = new CoachMarkerWindow(getContext(), DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
-            coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
-            coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
-        }
-    }
-
     private void onResumePlayerScreen() {
         App.getPlayerEventHandler().isPlayerResume = true;
     }
-
 
     private void setPlayerInfo(){
         mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
@@ -664,13 +657,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onPanelCollapsed(View panel) {
         setMiniPlayerVisible(true);
-        if((Preferences.readBoolean(getContext(), TOLLTIP_OPEN_EFFECT_MINI_PLAYER, true) &&
-                !Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true))) {
-            coachMarkEffectPlayer = new CoachMarkerWindow(getContext(), DRAW_TOP_LEFT, getResources().getString(R.string.library_switch_effect_screen_tooltip));
-            coachMarkEffectPlayer.setAutoDismissBahaviour(true);
-            Preferences.writeBoolean(getContext(), Preferences.TOLLTIP_OPEN_EFFECT_MINI_PLAYER, false);
-            coachMarkEffectPlayer.showCoachMark(mInflater.findViewById(R.id.mini_player_effect_img));
-        }
+        showEffectShortCut();
         if (revealView.getVisibility() == View.VISIBLE) {
             revealView.setVisibility(View.INVISIBLE);
         }
@@ -678,22 +665,46 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         if(null != coachMarkEffectSwitcher){
             coachMarkEffectSwitcher.dismissTooltip();
         }
-        if(null!=coachMarkEffectSwitcher){
-            coachMarkEffectSwitcher.dismissTooltip();
+        if(null!=coachMarkEffectPager){
+            coachMarkEffectPager.dismissTooltip();
         }
     }
 
     @Override
     public void onPanelExpanded(View panel) {
         setMiniPlayerVisible(false);
+
+        showEffectSwitchTip();
+
+        if(null != coachMarkEffectPlayer){
+            coachMarkEffectPlayer.dismissTooltip();
+        }
+    }
+
+    private void showEffectSwitchTip(){
+        if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
+            coachMarkEffectSwitcher = new CoachMarkerWindow(getContext(), DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
+            coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
+            coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
+        }
+
         if (null != mPlayerContent && mPlayerContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(getContext(), Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, true) && mPlayerContent.getVisibility() == View.VISIBLE &&
                 !App.getPlayerEventHandler().isStopped() && Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
             coachMarkEffectPager = new CoachMarkerWindow(getContext(), DRAW_TOP_CENTER, getResources().getString(R.string.switch_effect_screen_tooltip));
             coachMarkEffectPager.setAutoDismissBahaviour(true);
             coachMarkEffectPager.showCoachMark(mInflater.findViewById(R.id.effect_tab));
         }
-        showEffectSwitchTip();
     }
+
+    private void showEffectShortCut(){
+        if(Preferences.readBoolean(getContext(), TOLLTIP_OPEN_EFFECT_MINI_PLAYER, true) && !Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
+            coachMarkEffectPlayer = new CoachMarkerWindow(getContext(), DRAW_TOP_LEFT, getResources().getString(R.string.library_switch_effect_screen_tooltip));
+            coachMarkEffectPlayer.setAutoDismissBahaviour(true);
+            Preferences.writeBoolean(getContext(), Preferences.TOLLTIP_OPEN_EFFECT_MINI_PLAYER, false);
+            coachMarkEffectPlayer.showCoachMark(mInflater.findViewById(R.id.mini_player_effect_img));
+        }
+    }
+
 
     @Override
     public void onPanelAnchored(View panel) {
@@ -851,6 +862,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 break;
             case R.id.player_tab:
                 setPlayerEnable(true);
+                showEffectSwitchTip();
                 break;
             case R.id.effect_tab:
                 setPlayerEnable(false);
