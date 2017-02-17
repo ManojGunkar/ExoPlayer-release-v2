@@ -82,6 +82,7 @@ class AudioTrackReader extends MediaCodec.Callback {
                             mCodec.wait();
                         }
                     }
+                    Thread.yield();
                 }
             }
             catch (Exception e) {
