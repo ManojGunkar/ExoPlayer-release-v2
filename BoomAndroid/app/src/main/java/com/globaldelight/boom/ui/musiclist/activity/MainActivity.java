@@ -126,7 +126,6 @@ public class MainActivity extends MasterActivity
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
         registerReceiver(headPhoneReceiver, intentFilter);
         super.onResume();
-        chooseCoachMarkWindow();
     }
 
     private void useCoachMarkWindow(){
@@ -256,6 +255,17 @@ public class MainActivity extends MasterActivity
     public void onPanelCollapsed(View panel) {
         super.onPanelCollapsed(panel);
         useCoachMarkWindow();
+        chooseCoachMarkWindow();
+    }
+
+    @Override
+    public void onPanelExpanded(View panel) {
+        super.onPanelExpanded(panel);
+        if(null != coachMarkUseHeadPhone)
+            coachMarkUseHeadPhone.dismissTooltip();
+
+        if(null != coachMarkChooseHeadPhone)
+            coachMarkChooseHeadPhone.dismissTooltip();
     }
 
     @Override
