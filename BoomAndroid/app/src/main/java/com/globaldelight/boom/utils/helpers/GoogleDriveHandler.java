@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -146,7 +147,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
             GoogleDriveMediaList.geGoogleDriveMediaListInstance(null != mContext ? mContext :
                     mFragment.getContext()).onErrorOccurred(mFragment.getResources().getString(R.string.network_error));
         } else {
-            new LoadGoogleDriveList(mFragment, mCredential, 0).execute();
+            new LoadGoogleDriveList(mFragment, mCredential, 0).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 

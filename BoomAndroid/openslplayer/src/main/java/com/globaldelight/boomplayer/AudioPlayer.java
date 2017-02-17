@@ -127,6 +127,7 @@ public class AudioPlayer implements Runnable {
 
     private void stopThread(){
         try {
+            playerThread.interrupt();
             playerThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -175,13 +176,14 @@ public class AudioPlayer implements Runnable {
         }
 
         try {
+            state.set(PlayerStates.PLAYING);
+
             reader = new AudioTrackReader(sourcePath);
             reader.startReading();
 
             MediaFormat inputFormat = reader.getInputFormat();
             duration = inputFormat.getLong(MediaFormat.KEY_DURATION);
 
-            state.set(PlayerStates.PLAYING);
             startPlayer(reader.getOutputFormat(), true);
 
             postOnStart(inputFormat.getString(MediaFormat.KEY_MIME),
@@ -243,7 +245,13 @@ public class AudioPlayer implements Runnable {
                 }
             }
 
-        } catch (Exception e) {
+        }
+        catch (InterruptedException e) {
+            // This is not an error
+            state.set(PlayerStates.STOPPED);
+            stop = true;
+        }
+        catch (Exception e) {
             state.set(PlayerStates.STOPPED);
             stop = true;
             postError();
