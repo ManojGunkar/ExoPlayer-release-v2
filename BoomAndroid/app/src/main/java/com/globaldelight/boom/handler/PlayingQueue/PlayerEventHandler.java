@@ -186,6 +186,12 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
         return false;
     }
 
+    public boolean isLoading() {
+        if(null != mPlayer)
+            return mPlayer.isLoading();
+        return false;
+    }
+
     public boolean isStopped() {
         if(null != mPlayer)
             return mPlayer.isStopped();
@@ -194,7 +200,7 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
 
     @Override
     public synchronized void onPlayingItemChanged() {
-        if(isPlaying() || isPaused()) {
+        if(isPlaying() || isPaused() || isLoading() ) {
             setSessionState(PlaybackState.STATE_STOPPED);
         }
         context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
@@ -448,7 +454,7 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
                 break;
 
             case PlaybackState.STATE_STOPPED:
-                if (mPlayer.isPlaying() || mPlayer.isPause()) {
+                if (mPlayer.isPlaying() || mPlayer.isPause() || mPlayer.isLoading()) {
                     mPlayer.stop();
                 }
                 break;

@@ -69,6 +69,10 @@ public class AudioPlayer implements Runnable {
         return state.isPlaying();
     }
 
+    public boolean isLoading() {
+        return state.isLoading();
+    }
+
     public boolean isPause(){
         return state.isPause();
     }
@@ -176,6 +180,8 @@ public class AudioPlayer implements Runnable {
         }
 
         try {
+
+            state.set(PlayerStates.LOADING);
 
             reader = new AudioTrackReader(sourcePath);
             reader.startReading();
