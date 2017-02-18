@@ -379,8 +379,8 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
         int size = (utils.getWindowWidth(activity) / (isPhone ? 2 : 3))
                 - (int)activity.getResources().getDimension(R.dimen.card_grid_img_margin);
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
-        holder.gridBottomBg.setLayoutParams(params);
+//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
+//        holder.gridBottomBg.setLayoutParams(params);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(size, size);
         holder.defaultImg.setLayoutParams(layoutParams);

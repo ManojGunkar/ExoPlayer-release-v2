@@ -23,18 +23,20 @@
             android:orientation="vertical">
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/album_item_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/track_title"
                 android:textSize="@dimen/album_track_title_size"  />
 
             <com.globaldelight.boom.ui.widgets.RegularTextView
                 android:id="@+id/album_item_duration"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
+                android:ellipsize="end"
                 android:textColor="@color/track_sub_title"
                 android:textSize="@dimen/album_track_sub_title_size"/>
 

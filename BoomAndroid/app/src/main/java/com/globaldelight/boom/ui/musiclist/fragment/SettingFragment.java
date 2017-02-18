@@ -51,6 +51,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = (ScrollView) inflater.inflate(R.layout.fragment_settings, container, false);
         initViews();
+
+        TimerUtils.resumeTimerState(getContext(), sleepTimerTxt);
         return rootView;
     }
 
@@ -61,6 +63,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         LinearLayout googleDrive = (LinearLayout) rootView.findViewById(R.id.setting_google_drive_panel);
         googleDrive.setOnClickListener(this);
         sleepTimerTxt = (RegularTextView) rootView.findViewById(R.id.seeting_sleep_timer);
+
         sleepTimerTxt.setOnClickListener(this);
         LinearLayout sleepTimerPanel = (LinearLayout) rootView.findViewById(R.id.seeting_sleep_timer_panel);
         sleepTimerPanel.setOnClickListener(this);

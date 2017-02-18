@@ -280,8 +280,7 @@ public class TimerUtils {
         }
     }
 
-
-    public void resumeTimerState(final Context mContext, final RegularTextView txtDescTimer) {
+    public static void resumeTimerState(final Context mContext, final RegularTextView txtDescTimer) {
 
         boolean sleepTimerEnabled = Preferences.readBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
         if (!sleepTimerEnabled) {
@@ -320,7 +319,6 @@ public class TimerUtils {
             mCountDownTimer = new CountDownTimer(sleepTime, 1000) {
 
                 public void onTick(long millisUntilFinished) {
-
 
                     String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
                             TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
