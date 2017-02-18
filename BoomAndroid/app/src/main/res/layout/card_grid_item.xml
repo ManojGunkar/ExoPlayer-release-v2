@@ -85,6 +85,7 @@
                 android:id="@+id/card_grid_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
                 android:layout_weight=".8"
                 android:maxLines="1"
                 android:textColor="@color/track_title"
@@ -111,9 +112,10 @@
 
         <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/card_grid_sub_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".5"
+            android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/track_sub_title"
             android:textSize="@dimen/card_grid_item_sub_title" />

@@ -171,8 +171,8 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
         int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
                 - (int)context.getResources().getDimension(R.dimen.card_grid_img_margin);
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
-        holder.gridBottomBg.setLayoutParams(params);
+//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));
+//        holder.gridBottomBg.setLayoutParams(params);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(size, size);
         holder.defaultImg.setLayoutParams(layoutParams);
