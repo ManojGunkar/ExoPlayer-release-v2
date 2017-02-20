@@ -24,6 +24,7 @@ import android.support.annotation.AnyRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -56,6 +57,7 @@ import java.util.ArrayList;
 public class Utils {
     private Context context;
     private static BoomDialogView progressLoader;
+    public static final int SHARE_COMPLETE = 200;
 
     public Utils(Context context) {
         this.context = context;
@@ -287,38 +289,35 @@ public class Utils {
         return 0;
     }
 
-    public static void shareStart(Context context) {
+    public static void shareStart(Activity activity) {
+        if(ConnectivityReceiver.isNetworkAvailable(activity)) {
+            try {
+                Intent shareIntent = new Intent(
+                        android.content.Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, activity.getResources().getString(R.string.app_name));
+                String sAux = "\nDownload Boom Music Player\n\n";
+                sAux = sAux + "https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n";
+                shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
+                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+                activity.startActivityForResult(Intent.createChooser(shareIntent, "share"), SHARE_COMPLETE);
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public static void shareStart(Context context, Fragment fragment) {
         if(ConnectivityReceiver.isNetworkAvailable(context)) {
             try {
                 Intent shareIntent = new Intent(
                         android.content.Intent.ACTION_SEND);
-                /*shareIntent.setType("image*//*");
-                shareIntent.putExtra(
-                        android.content.Intent.EXTRA_SUBJECT, "share");
-                shareIntent.putExtra(
-                        android.content.Intent.EXTRA_TITLE, "share");
-                shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getResources().getString(R.string.app_name));
-                String sAux = "\nDownload Boom Music Player\n\n";
-                sAux = sAux + "https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n";
-                shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
-                Resources resources = context.getResources();
-                Uri imageUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + resources.getResourcePackageName(R.drawable.share_image) + '/' + resources.getResourceTypeName(R.drawable.share_image) + '/' + resources.getResourceEntryName(R.drawable.share_image));
-
-                shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
-                shareIntent
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-                context.startActivity(Intent.createChooser(shareIntent,
-                        "share"));*/
-
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getResources().getString(R.string.app_name));
                 String sAux = "\nDownload Boom Music Player\n\n";
                 sAux = sAux + "https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n";
                 shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
-                shareIntent
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-                context.startActivity(Intent.createChooser(shareIntent,
-                        "share"));
+                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+                fragment.startActivityForResult(Intent.createChooser(shareIntent, "share"), SHARE_COMPLETE);
             } catch (Exception e) {
             }
         }

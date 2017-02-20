@@ -4,32 +4,40 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
+import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.business.inapp.IabHelper;
 import com.globaldelight.boom.business.inapp.IabResult;
 import com.globaldelight.boom.business.inapp.Inventory;
 import com.globaldelight.boom.business.inapp.Purchase;
 
+import static com.globaldelight.boom.business.BusinessPreferences.ACTION_IN_APP_PURCHASE;
 import static com.globaldelight.boom.business.BusinessUtils.SKU_INAPPITEM;
 
 /**
  * Created by Rahul Agarwal on 01-02-17.
  */
 
-public class InAppHandler implements IabHelper.QueryInventoryFinishedListener, IabHelper.OnIabPurchaseFinishedListener, IabHelper.OnConsumeFinishedListener{
+public class InAppHandler implements IabHelper.QueryInventoryFinishedListener, IabHelper.OnIabPurchaseFinishedListener, IabHelper.OnConsumeFinishedListener {
 
     private static final String TAG = "In-App-Handler";
     private IabHelper mHelper;
     private Context mContext;
     private Activity mActivity;
+    private static IPurchaseUpdater iPurchaseUpdater;
+    private Handler uiHandler;
     public static final String ACTION_IN_APP_PURCHASE_SUCCESSFUL = "ACTION_INAPP_PURCHASE_SUCCESSFUL";
 
-    public InAppHandler(Context context, Activity activity){
+    public InAppHandler(Context context, Activity activity, final IPurchaseUpdater iPurchaseUpdater){
         this.mContext = context;
         this.mActivity = activity;
+        this.iPurchaseUpdater = iPurchaseUpdater;
+        this.uiHandler = new Handler();
         mHelper = new IabHelper(mContext, BusinessUtils.base64EncodedPublicKey);
         mHelper.enableDebugLogging(true);
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
@@ -49,84 +57,115 @@ public class InAppHandler implements IabHelper.QueryInventoryFinishedListener, I
         });
     }
 
-
     public void startInAppFlow(){
         String payload = BusinessUtils.getDeviceID(mContext);
         mHelper.launchPurchaseFlow(mActivity, SKU_INAPPITEM, 10000,
                 this, payload);
     }
 
+    private void disposeInAppHandler(){
+        if (mHelper != null) mHelper.dispose();
+        mHelper = null;
+    }
+
     @Override
     public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
         if (result.isFailure()) {
-            complain("Failed to query inventory: " + result);
+            if(null != iPurchaseUpdater){
+                uiHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        iPurchaseUpdater.onErrorAppPurchase();
+                    }
+                });
+            }
             return;
         }
-			/*
-             * Check for items we own. Notice that for each purchase, we check
-			 * the developer payload to see if it's correct! See
-			 * verifyDeveloperPayload().
-			 */
-
-        // Check for gas delivery -- if we own gas, we should fill up the
-        // tank immediately
         Purchase removeAdsPurchase = inventory.getPurchase(SKU_INAPPITEM);
+        boolean mIsPremium = inventory.hasPurchase(SKU_INAPPITEM);
+           /* if (mIsPremium) {
+                bt.setVisibility(View.GONE);
+                Toast.makeText(MainActivity.this, "Already you made purchase", Toast.LENGTH_SHORT);
+            }*/
+
         if (removeAdsPurchase != null
                 && verifyDeveloperPayload(removeAdsPurchase)) {
             mHelper.consumeAsync(inventory.getPurchase(SKU_INAPPITEM),
-                    this);
+                    InAppHandler.this);
             return;
         }
-
     }
 
     @Override
     public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-        Log.d(TAG, "Purchase finished: " + result + ", purchase: "
-                + purchase);
         if (result.isFailure()) {
-            complain("Error purchasing: " + result);
+            if(result.getResponse()==7){
+                BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
+                if(null != iPurchaseUpdater){
+                    uiHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            iPurchaseUpdater.onSuccessRestoreAppPurchase();
+                        }
+                    });
+                }
+            }else{
+                if(null != iPurchaseUpdater){
+                    uiHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            iPurchaseUpdater.onErrorAppPurchase();
+                        }
+                    });
+                }
+            }
+            disposeInAppHandler();
             return;
         }
         if (!verifyDeveloperPayload(purchase)) {
-            complain("Error purchasing. Authenticity verification failed.");
+            if(null != iPurchaseUpdater){
+                uiHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        iPurchaseUpdater.onErrorAppPurchase();
+                    }
+                });
+            }
+
+            disposeInAppHandler();
             return;
         }
 
-        Log.d(TAG, "Purchase successful.");
-
         if (purchase.getSku().equals(SKU_INAPPITEM)) {
             // bought 1/4 tank of gas. So consume it.
-            Log.d(TAG,
-                    "removeAdsPurchase was succesful.. starting consumption.");
-            mHelper.consumeAsync(purchase, this);
-            mContext.sendBroadcast(new Intent(ACTION_IN_APP_PURCHASE_SUCCESSFUL));
+            mHelper.consumeAsync(purchase, InAppHandler.this);
         }
     }
 
     @Override
     public void onConsumeFinished(Purchase purchase, IabResult result) {
-        Log.d(TAG, "Consumption finished. Purchase: " + purchase
-                + ", result: " + result);
-
-        // We know this is the "gas" sku because it's the only one we
-        // consume,
-        // so we don't check which sku was consumed. If you have more than
-        // one
-        // sku, you probably should check...
         if (result.isSuccess()) {
-            // successfully consumed, so we apply the effects of the item in
-            // our
-            // game world's logic, which in our case means filling the gas
-            // tank a bit
-//            Log.d(TAG, "Consumption successful. Provisioning.");
-            alert("You have purchased for removing ads from your app.");
+            BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
+            if(null != iPurchaseUpdater){
+                uiHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        iPurchaseUpdater.onSuccessAppPurchase();
+                    }
+                });
+            }
         } else {
-            complain("Error while consuming: " + result);
+            if(null != iPurchaseUpdater){
+                uiHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        iPurchaseUpdater.onErrorAppPurchase();
+                    }
+                });
+            }
         }
-        Log.d(TAG, "End consumption flow.");
+        disposeInAppHandler();
     }
-
 
     void complain(String message) {
         alert(message);

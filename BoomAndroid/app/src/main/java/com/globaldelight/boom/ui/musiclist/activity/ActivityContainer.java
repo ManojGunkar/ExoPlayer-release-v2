@@ -1,15 +1,23 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
+import android.app.SearchManager;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.ui.musiclist.adapter.utils.SearchSuggestionAdapter;
 import com.globaldelight.boom.ui.musiclist.fragment.AboutFragment;
+import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.SettingFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.StoreFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.UpNextListFragment;
@@ -20,20 +28,23 @@ import com.globaldelight.boom.ui.widgets.RegularTextView;
  */
 
 public class ActivityContainer extends AppCompatActivity {
-    Toolbar toolbar;
-
+    private Toolbar toolbar;
+    private int container;
+    private Fragment mFragment = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(0, 0);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
 
-        int container = getIntent().getIntExtra("container", R.string.title_about);
-        initViews(container);
+        container = getIntent().getIntExtra("container", R.string.title_about);
+        initViews();
     }
 
-    private void initViews(int container) {
+    private void initViews() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if(container == R.string.store_title)
+            toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
         ((RegularTextView) findViewById(R.id.toolbar_txt)).setText(getResources().getString(container));
 
@@ -45,11 +56,10 @@ public class ActivityContainer extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("");
         }
-        addFragment(container);
+        addFragment();
     }
 
-    private void addFragment(int container) {
-        Fragment mFragment = null;
+    private void addFragment() {
         toolbar.setVisibility(View.VISIBLE);
         switch (container){
             case R.string.title_upnext:
@@ -71,11 +81,29 @@ public class ActivityContainer extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        switch (container){
+            case R.string.store_title:
+                getMenuInflater().inflate(R.menu.store_menu, menu);
+                /*menu.findItem(R.id.popup_store_restore).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);*/
+                break;
+            default:
+                break;
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home) {
-            super.onBackPressed();
-            return true;
+        switch (id){
+            case android.R.id.home:
+                super.onBackPressed();
+                return true;
+            case R.id.popup_store_restore:
+                ((StoreFragment)mFragment).restorePurchase();
         }
         return super.onOptionsItemSelected(item);
     }

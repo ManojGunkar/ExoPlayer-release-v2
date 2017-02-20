@@ -127,19 +127,7 @@
     <dimen name="music_tab_txt_size">16dp</dimen>
 
 
-    <dimen name="store_page_img_height">285dp</dimen>
     <dimen name="one_hundred_fourty_eight_pt">37dp</dimen>
-    <dimen name="store_page_head_text_space">15dp</dimen>
-    <dimen name="store_page_header_text_size">24sp</dimen>
-    <dimen name="store_page_descript_text_size">15sp</dimen>
-    <dimen name="store_page_buy_button_text_size">20sp</dimen>
-    <dimen name="store_page_buy_button_width">183dp</dimen>
-    <dimen name="store_page_buy_button_top_space">38dp</dimen>
-    <dimen name="store_page_buy_button_bottom_space">30dp</dimen>
-    <dimen name="store_page_share_text_size">20sp</dimen>
-    <dimen name="share_text_size">20sp</dimen>
-    <dimen name="store_page_buy_button_height">42dp</dimen>
-    <dimen name="store_page_buy_button_cornor_radius">6dp</dimen>
     <dimen name="setting_cloud_item_height">58dp</dimen>
     <dimen name="onboarding_txt_title_margin_top">6dp</dimen>
     <dimen name="onboarding_txt_title_size">20sp</dimen>
@@ -150,5 +138,20 @@
     <dimen name="onboarding_bottom_txt_size">15sp</dimen>
     <dimen name="onboarding_bottom_button_txt">20sp</dimen>
     <dimen name="padiing_tooltop">12dp</dimen>
+
+    <dimen name="store_page_spacing_betw_lines">-5dp</dimen>
+
+    <dimen name="store_page_img_height">285dp</dimen>
+    <dimen name="store_page_head_text_space">4dp</dimen>
+    <dimen name="store_page_header_text_size">24sp</dimen>
+    <dimen name="store_page_descript_text_size">15sp</dimen>
+    <dimen name="store_page_buy_button_text_size">20sp</dimen>
+    <dimen name="store_page_buy_button_width">183dp</dimen>
+    <dimen name="store_page_buy_button_top_space">18dp</dimen>
+    <dimen name="store_page_buy_button_bottom_space">26dp</dimen>
+    <dimen name="store_page_share_text_size">20sp</dimen>
+    <dimen name="share_text_size">20sp</dimen>
+    <dimen name="store_page_buy_button_height">42dp</dimen>
+    <dimen name="store_page_buy_button_cornor_radius">6dp</dimen>
 
 </resources>

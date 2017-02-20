@@ -58,7 +58,8 @@ public class DropboxMediaList {
             fileList.clear();
             MediaController.getInstance(mContext).removeCloudMediaItemList(MediaType.DROP_BOX);
         }
-        postMessage.post(new Runnable() {
+        if(null != dropboxUpdater)
+            postMessage.post(new Runnable() {
             @Override
             public void run() {
                 dropboxUpdater.ClearList();
@@ -69,7 +70,8 @@ public class DropboxMediaList {
 
     public void finishDropboxLoading(){
         isAllSongsLoaded = true;
-        postMessage.post(new Runnable() {
+        if(null != dropboxUpdater)
+            postMessage.post(new Runnable() {
             @Override
             public void run() {
                 dropboxUpdater.finishDropboxLoading();

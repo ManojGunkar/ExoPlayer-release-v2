@@ -88,15 +88,13 @@
     <!--<color name="about_company_color">#1b221b</color>-->
     <color name="about_company_color">#787979</color>
 
-
     <color name="card_grid_item_title_background_tint">#434343</color>
 
+    <color name="black_overlay">#66000000</color>
 
     <color name="store_page_description_text_color">#8d8d8d</color>
     <color name="store_page_button_color">@color/colorAccent</color>
     <color name="share_text_color">#00b0ff</color>
-
-    <color name="black_overlay">#66000000</color>
 
 </resources><!--
 <color name="colorAccent">#FF4081</color>-->

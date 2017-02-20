@@ -297,6 +297,7 @@ public class MainActivity extends MasterActivity
     private void viewMainActivity(){
         fragmentSwitcher(null, 0, getResources().getString(R.string.music_library), fade_in, fade_out);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
