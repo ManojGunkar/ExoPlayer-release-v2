@@ -259,29 +259,29 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     @Override
     public void onBusinessRequest(final AddSource addSources, final boolean libraryBannerEnable, boolean libraryVideoEnable) {
         if(libraryBannerEnable) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (addSources == google) {
-                        App.getBusinessHandler().loadGoogleNativeAdd(addSources, libraryBannerEnable);
-                    } else {
-                        App.getBusinessHandler().loadFbNativeAdds(addSources, libraryBannerEnable);
-                    }
-                }
-            }).start();
+            if (addSources == google) {
+                App.getBusinessHandler().loadGoogleNativeAdd(addSources, libraryBannerEnable);
+            } else {
+                App.getBusinessHandler().loadFbNativeAdds(addSources, libraryBannerEnable);
+            }
         }
         if(libraryVideoEnable) {
             Timer timer = new Timer();
             TimerTask launchVideoAdds = new TimerTask() {
                 @Override
                 public void run() {
-                    FacebookSdk.sdkInitialize(getApplicationContext());
-                    AppEventsLogger.activateApp(getApplicationContext());
-                    if (addSources == google) {
-                        App.getBusinessHandler().loadGoogleFullScreenAdds();
-                    } else {
-                        App.getBusinessHandler().loadFullScreenFbAdds();
-                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            FacebookSdk.sdkInitialize(getApplicationContext());
+                            AppEventsLogger.activateApp(getApplicationContext());
+                            if (addSources == google) {
+                                App.getBusinessHandler().loadGoogleFullScreenAdds();
+                            } else {
+                                App.getBusinessHandler().loadFullScreenFbAdds();
+                            }
+                        }
+                    });
                 }
             };
             timer.scheduleAtFixedRate(launchVideoAdds, 0, FIFTEEN_MINUTES);

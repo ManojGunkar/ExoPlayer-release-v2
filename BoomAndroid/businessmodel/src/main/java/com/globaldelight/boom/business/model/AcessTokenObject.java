@@ -19,5 +19,5 @@ public class AcessTokenObject {
     public void setAppaccesstoken(String networkStatusThresholdIndays) {
         this.appaccesstoken = networkStatusThresholdIndays;
     }
-    }
+}
 

@@ -10,9 +10,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.facebook.FacebookSdk;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdChoicesView;
 import com.facebook.ads.AdError;
@@ -20,7 +17,6 @@ import com.facebook.ads.AdListener;
 import com.facebook.ads.AdSettings;
 import com.facebook.ads.InterstitialAdListener;
 import com.facebook.ads.NativeAd;
-import com.facebook.appevents.AppEventsLogger;
 import com.globaldelight.boom.business.R;
 import com.globaldelight.boom.business.BusinessUtils;
 import com.google.android.gms.ads.AdRequest;
@@ -200,8 +196,8 @@ public class BusinessHandler {
             @Override
             public void onError(Ad ad, AdError adError) {
                 // Ad error callback
-                Toast.makeText(mContext, "Error: " + adError.getErrorMessage(),
-                        Toast.LENGTH_LONG).show();
+//                Toast.makeText(mContext, "Error: " + adError.getErrorMessage(),
+//                        Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -233,22 +229,22 @@ public class BusinessHandler {
 
             @Override
             public void onAdClosed() {
-                Toast.makeText(getApplicationContext(), "Ad is closed!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Ad is closed!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                Toast.makeText(getApplicationContext(), "Ad failed to load! error code: " + errorCode, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Ad failed to load! error code: " + errorCode, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onAdLeftApplication() {
-                Toast.makeText(getApplicationContext(), "Ad left application!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Ad left application!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onAdOpened() {
-                Toast.makeText(getApplicationContext(), "Ad is opened!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Ad is opened!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -267,7 +263,7 @@ public class BusinessHandler {
         if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         } else {
-            Toast.makeText(mContext, "Ad did not load", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(mContext, "Ad did not load", Toast.LENGTH_SHORT).show();
         }
     }
 }

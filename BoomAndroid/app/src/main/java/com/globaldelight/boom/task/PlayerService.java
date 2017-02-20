@@ -394,7 +394,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     }
 
     private void initBusinessModel() {
-        if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+        if(!BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
             App.getBusinessHandler().setBusinessNetworkListener(this);
 
             new Thread(new Runnable() {
