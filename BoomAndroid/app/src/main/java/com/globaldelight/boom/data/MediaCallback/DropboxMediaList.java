@@ -38,12 +38,14 @@ public class DropboxMediaList {
     public void addFileInDropboxList(IMediaItemBase entry){
         isAllSongsLoaded = false;
         fileList.add(entry);
-        postMessage.post(new Runnable() {
-            @Override
-            public void run() {
-                dropboxUpdater.UpdateDropboxEntryList();
-            }
-        });
+        if ( dropboxUpdater != null ) {
+            postMessage.post(new Runnable() {
+                @Override
+                public void run() {
+                    dropboxUpdater.UpdateDropboxEntryList();
+                }
+            });
+        }
     }
 
     public ArrayList<IMediaItemBase> getDropboxMediaList(){
