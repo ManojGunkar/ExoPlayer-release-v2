@@ -6,19 +6,17 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -211,8 +209,8 @@ public class UpNextList {
     public void updateRepeatShuffleOnAppStart(){
         mShuffle = App.getUserPreferenceHandler().getShuffle();
         mRepeat = App.getUserPreferenceHandler().getRepeat();
-        updateShuffleList();
-        updateRepeatList();
+        /*updateShuffleList();
+        updateRepeatList();*/
     }
 
 
@@ -267,15 +265,6 @@ public class UpNextList {
 
     public void addUpNextItemToDB(ArrayList<? extends IMediaItemBase> songs, QueueType queueType) {
         MediaController.getInstance(context).addUpNextItem(songs, queueType);
-    }
-
-    public void insertUnShuffledList(final List<? extends IMediaItemBase> songs, final boolean isAppend) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                MediaController.getInstance(context).insertUnShuffledList(songs, QueueType.unshuffled, isAppend);
-            }
-        }).start();
     }
 
     public ArrayList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
@@ -395,254 +384,6 @@ public class UpNextList {
 
 
     /******************************************************************************************************************/
-    public void insertUnShuffledListWithUpdateUpNext(final List<? extends IMediaItemBase> songs, final boolean isAppend) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                MediaController.getInstance(context).insertUnShuffledList(songs, QueueType.unshuffled, isAppend);
-                if(SHUFFLE.all == mShuffle){
-                    updateShuffleList();
-                }
-                if(REPEAT.all == mRepeat){
-                    updateRepeatList();
-                }
-            }
-        }).start();
-    }
-
-    public void insertUnShuffledListWithUpdateUpNext(final IMediaItemBase item, final boolean isAppend) {
-        if(null != item) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    MediaController.getInstance(context).insertUnShuffledList(item, QueueType.unshuffled, isAppend);
-                    if (SHUFFLE.all == mShuffle) {
-                        updateShuffleList();
-                    }
-                    if (REPEAT.all == mRepeat) {
-                        updateRepeatList();
-                    }
-                }
-            }).start();
-        }
-    }
-
-    public void addSearchItemToPlay(final IMediaItemBase item){
-        if(null != item){
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mGhostList.clear();
-                    setItemAsPlayingItem(item, QueueType.Auto_UpNext);
-                    mAutoNextList.clear();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ArrayList list = new ArrayList();
-                            list.add(item);
-                            insertUnShuffledListWithUpdateUpNext(list, false);
-                        }
-                    }).start();
-
-                    PlayingItemChanged();
-                }
-            }, 100);
-        }
-    }
-
-//        Song List of device, favorite, dropbox, google drive.
-    public void addToPlay(final ArrayList<IMediaItem> itemList, final int position, final boolean fromSongList, boolean isPlayAll) {
-        long mTime = System.currentTimeMillis();
-        final MediaType mediaType = itemList.get(position).getMediaType();
-        final ItemType itemType = itemList.get(position).getItemType();
-        boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
-        Log.d("Media_Type : ", itemList.get(position).getMediaType().name());
-        if(mediaType == MediaType.DEVICE_MEDIA_LIB && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
-            PlayPause();
-        }else if(mediaType == MediaType.GOOGLE_DRIVE && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
-            PlayPause();
-        } else if(mediaType == MediaType.DROP_BOX && null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemTitle().equals(getPlayingItem().getItemTitle()) && isNowPlaying){
-            PlayPause();
-        }else if(mTime - mShiftingTime > 500) {
-            mShiftingTime = mTime;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(null != itemList && itemList.size() > 0) {
-                        mGhostList.clear();
-                        if (position > 0) {
-                            setItemListAsPrevious(itemList.subList(0, position));
-                        }
-                        setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
-                        mAutoNextList.clear();
-                        if (itemList.size() > position + 1) {
-                            setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
-                        }
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(fromSongList) {
-                                    IMediaItem item =  new MediaItem(0, null, null, null, 0, null, 0, context.getResources().getString(R.string.all_songs), 0, 0, null, itemType, mediaType, itemType, itemList.get(position).getParentId(), null );
-                                    insertUnShuffledListWithUpdateUpNext(item, false);
-                                }else {
-                                    insertUnShuffledListWithUpdateUpNext(itemList.subList(position, itemList.size()), false);
-                                }
-                            }
-                        }).start();
-                        PlayingItemChanged();
-                    }
-                }
-            }, 100);
-        }
-    }
-
-    //Album, Artist, Genre, Playlist, BoomPlaylist
-    public void addToPlay(final IMediaItemCollection collection, final int position, final boolean fromSongList, boolean isPlayAll) {
-        boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
-        long mTime = System.currentTimeMillis();
-        if(null != getPlayingItem() && collection.getMediaElement().size() > 0 && !isPlayAll &&
-                collection.getMediaElement().get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
-            PlayPause();
-        }else if(mTime - mShiftingTime > 500) {
-            mShiftingTime = mTime;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(null != collection && collection.getMediaElement().size() > 0) {
-                        mGhostList.clear();
-                        if (position > 0) {
-                            setItemListAsPrevious(collection.getMediaElement().subList(0, position));
-                        }
-                        setItemAsPlayingItem(collection.getMediaElement().get(position), QueueType.Auto_UpNext);
-                        mAutoNextList.clear();
-                        if (collection.getMediaElement().size() > position + 1) {
-                            setItemListAsUpNextFrom(collection.getMediaElement().subList(position + 1, collection.getMediaElement().size()));
-                        }
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(fromSongList) {
-
-                                    IMediaItem item =  new MediaItem(collection.getItemId(), collection.getItemTitle(), null, null, 0, null, 0, context.getResources().getString(R.string.all_songs), 0, 0, null, collection.getItemType(), collection.getMediaType(), collection.getItemType(), collection.getItemId(), null );
-                                    insertUnShuffledListWithUpdateUpNext(item, false);
-                                }else {
-                                    insertUnShuffledListWithUpdateUpNext(collection.getMediaElement().subList(position , collection.getMediaElement().size()), false);
-                                }
-                            }
-                        }).start();
-
-                        PlayingItemChanged();
-                    }
-                }
-            }, 300);
-        }
-    }
-
-    //Song items of Artist, Genre
-    public void addToPlay(final IMediaItemCollection collection, final int position, final long parentId, final String parentTitle, final ItemType parentType, final boolean fromSongList, boolean isPlayAll) {
-        boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
-        long mTime = System.currentTimeMillis();
-        if(null != getPlayingItem() && collection.getMediaElement().size() > 0 && !isPlayAll &&
-                collection.getMediaElement().get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
-            PlayPause();
-        }else if(mTime - mShiftingTime > 500) {
-            mShiftingTime = mTime;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(null != collection && collection.getMediaElement().size() > 0) {
-                        mGhostList.clear();
-                        if (position > 0) {
-                            setItemListAsPrevious(collection.getMediaElement().subList(0, position));
-                        }
-                        setItemAsPlayingItem(collection.getMediaElement().get(position), QueueType.Auto_UpNext);
-                        mAutoNextList.clear();
-                        if (collection.getMediaElement().size() > position + 1) {
-                            setItemListAsUpNextFrom(collection.getMediaElement().subList(position + 1, collection.getMediaElement().size()));
-                        }
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(fromSongList) {
-                                    IMediaItem item =  new MediaItem(collection.getItemId(), collection.getItemTitle(), null, null, 0, null, 0, context.getResources().getString(R.string.all_songs), 0, 0, null, collection.getItemType(), collection.getMediaType(), parentType, parentId, parentTitle );
-                                    insertUnShuffledListWithUpdateUpNext(item, false);
-                                }else {
-                                    insertUnShuffledListWithUpdateUpNext(collection.getMediaElement().subList(position , collection.getMediaElement().size()), false);
-                                }
-                            }
-                        }).start();
-
-                        PlayingItemChanged();
-                    }
-                }
-            }, 300);
-        }
-    }
-
-    public void addToPlay(final QueueType queueType, final int position) {
-        long mTime = System.currentTimeMillis();
-        if(mTime - mShiftingTime > 500) {
-            mShiftingTime = mTime;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    switch (queueType) {
-                        case History:
-                            UpNextItem item = new UpNextItem((IMediaItem) mHistoryList.remove(position), queueType);
-                            managePlayedItem(true);
-                            mCurrentList.add(item);
-                            overFillingPlayingItem();
-                            PlayingItemChanged();
-                            break;
-                        case Playing:
-                            if(App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused()) {
-                                PlayPause();
-                            }else{
-                                PlayingItemChanged();
-                            }
-                            break;
-                        case Manual_UpNext:
-                            managePlayedItem(true);
-                            mCurrentList.add(new UpNextItem((IMediaItem) mUpNextList.remove(position), queueType));
-                            overFillingPlayingItem();
-                            PlayingItemChanged();
-                            break;
-                        case Auto_UpNext:
-                            managePlayedItem(true);
-                            PlayItemIndex = position;
-                /* Shuffle will not effect on random selection*/
-                            if (mRepeat != REPEAT.all/* && mShuffle == SHUFFLE.none*/) {
-                                for (int i = 0; i < PlayItemIndex; PlayItemIndex--) {
-                                    mGhostList.add(mAutoNextList.remove(i));
-                                }
-                                PlayItemIndex = 0;
-//                selected item comes on top, so remove only top (0) item
-                                mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.remove(0), queueType));
-                            } else if (mRepeat == REPEAT.all/* && mShuffle == SHUFFLE.none*/) {
-                                mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.get(PlayItemIndex), queueType));
-                            }
-                            overFillingPlayingItem();
-                            PlayingItemChanged();
-                            break;
-                    }
-                }
-            }, 100);
-        }
-    }
-
-    public void addItemListToUpNext(IMediaItemBase itemList) {
-        if(null != itemList && ((MediaItemCollection) itemList).getMediaElement().size() > 0) {
-            mUpNextList.addAll(((MediaItemCollection) itemList).getMediaElement());
-            QueueUpdated();
-        }
-    }
-
-    public void addItemListToUpNext(IMediaItem item) {
-        if(null != item) {
-            mUpNextList.add(item);
-            QueueUpdated();
-        }
-    }
 
     public void setNextPlayingItem(boolean isUser) {
         /* no repeat and no shuffle or Only Repeat one and user interaction is true*/
@@ -749,27 +490,6 @@ public class UpNextList {
             mAutoNextList.add(PlayItemIndex, item.getUpNextItem());
     }
 
-    public void addItemToUpNextFrom(IMediaItemBase item) {
-        if(null != item) {
-            ArrayList list = new ArrayList();
-            list.add(item);
-            insertUnShuffledList(list, true);
-            mAutoNextList.add(0, item);
-            QueueUpdated();
-        }
-    }
-
-    public void addItemListToUpNextFrom(IMediaItemBase itemList) {
-        if(null != itemList && ((MediaItemCollection) itemList).getMediaElement().size() > 0) {
-            insertUnShuffledList(((MediaItemCollection) itemList).getMediaElement(), true);
-            if(mShuffle == SHUFFLE.all){
-                Collections.shuffle(((MediaItemCollection) itemList).getMediaElement());
-            }
-            mAutoNextList.addAll(0, ((MediaItemCollection) itemList).getMediaElement());
-            QueueUpdated();
-        }
-    }
-
     public boolean isPrevious() {
         if(mRepeat == REPEAT.all){
             return (null != mUpNextList && mUpNextList.size() > 0) || (null != mAutoNextList && mAutoNextList.size() > 0)
@@ -842,4 +562,371 @@ public class UpNextList {
         mHistoryList.addAll(getUpNextItemList(QueueType.History));
     }
 
+
+
+
+
+
+
+
+
+
+
+    public void insertUnShuffledCollection(final IMediaItem item, final QueueType queueType, final boolean isAppended){
+        if(null != item) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    MediaController.getInstance(context).insertUnShuffledItem(item, queueType, isAppended);
+                    if (SHUFFLE.all == mShuffle) {
+                        updateShuffleList();
+                    }
+                    if (REPEAT.all == mRepeat) {
+                        updateRepeatList();
+                    }
+                }
+            }).start();
+        }
+    }
+
+    public void addItemListToUpNext(IMediaItem item) {
+        if(null != item) {
+            mUpNextList.add(item);
+            QueueUpdated();
+        }
+    }
+
+    public void addSearchItemToPlay(final IMediaItemBase item){
+        if(null != item){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mGhostList.clear();
+                    setItemAsPlayingItem(item, QueueType.Auto_UpNext);
+                    mAutoNextList.clear();
+                    insertUnShuffledCollection((IMediaItem) item, QueueType.unshuffled, false);
+                    PlayingItemChanged();
+                }
+            }, 100);
+        }
+    }
+
+    /*All tracks with Cloud and fav*/
+    public void addItemListToUpNext(IMediaItemBase itemList) {
+        if(null != itemList && ((MediaItemCollection) itemList).getMediaElement().size() > 0) {
+            mUpNextList.addAll(((MediaItemCollection) itemList).getMediaElement());
+            QueueUpdated();
+        }
+    }
+
+    public void addUpNextItemToPlay(final QueueType queueType, final int position) {
+        long mTime = System.currentTimeMillis();
+        if(mTime - mShiftingTime > 500) {
+            mShiftingTime = mTime;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    switch (queueType) {
+                        case History:
+                            UpNextItem item = new UpNextItem((IMediaItem) mHistoryList.remove(position), queueType);
+                            managePlayedItem(true);
+                            mCurrentList.add(item);
+                            overFillingPlayingItem();
+                            PlayingItemChanged();
+                            break;
+                        case Playing:
+                            if(App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused()) {
+                                PlayPause();
+                            }else{
+                                PlayingItemChanged();
+                            }
+                            break;
+                        case Manual_UpNext:
+                            managePlayedItem(true);
+                            mCurrentList.add(new UpNextItem((IMediaItem) mUpNextList.remove(position), queueType));
+                            overFillingPlayingItem();
+                            PlayingItemChanged();
+                            break;
+                        case Auto_UpNext:
+                            managePlayedItem(true);
+                            PlayItemIndex = position;
+                /* Shuffle will not effect on random selection*/
+                            if (mRepeat != REPEAT.all/* && mShuffle == SHUFFLE.none*/) {
+                                for (int i = 0; i < PlayItemIndex; PlayItemIndex--) {
+                                    mGhostList.add(mAutoNextList.remove(i));
+                                }
+                                PlayItemIndex = 0;
+//                selected item comes on top, so remove only top (0) item
+                                mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.remove(0), queueType));
+                            } else if (mRepeat == REPEAT.all/* && mShuffle == SHUFFLE.none*/) {
+                                mCurrentList.add(new UpNextItem((IMediaItem) mAutoNextList.get(PlayItemIndex), queueType));
+                            }
+                            overFillingPlayingItem();
+                            PlayingItemChanged();
+                            break;
+                    }
+                }
+            }, 100);
+        }
+    }
+
+    //        Song List of device, favorite, dropbox, google drive.
+    public void addTrackListToPlay(final ArrayList<IMediaItem> itemList, final int position, boolean isPlayAll) {
+        long mTime = System.currentTimeMillis();
+        final ItemType itemType = itemList.get(position).getItemType();
+        boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
+        if(null != getPlayingItem() && !isPlayAll && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
+            PlayPause();
+        }else if(mTime - mShiftingTime > 500) {
+            mShiftingTime = mTime;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(null != itemList && itemList.size() > 0) {
+                        mGhostList.clear();
+                        if (position > 0) {
+                            setItemListAsPrevious(itemList.subList(0, position));
+                        }
+                        setItemAsPlayingItem(itemList.get(position), QueueType.Auto_UpNext);
+                        mAutoNextList.clear();
+                        if (itemList.size() > position + 1) {
+                            setItemListAsUpNextFrom(itemList.subList(position + 1, itemList.size()));
+                        }
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                IMediaItem item =  new MediaItem(0, null, context.getResources().getString(R.string.all_songs), null, 0, null, 0, null, 0, 0, null, itemType, itemList.get(position).getMediaType(), itemType, itemList.get(position).getParentId(), null );
+                                insertUnShuffledCollection(item, QueueType.unshuffled, false);
+                            }
+                        }).start();
+                        PlayingItemChanged();
+                    }
+                }
+            }, 100);
+        }
+    }
+
+    //Album, Playlist, BoomPlaylist
+    public void addTrackCollectionToPlay(final IMediaItemCollection itemCollection, final int position, final  boolean playAll) {
+        if(null == getUpNextInstance(context))
+            return;
+
+        boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
+        long mTime = System.currentTimeMillis();
+        if(null != getPlayingItem() && itemCollection.getMediaElement().size() > 0 && !playAll &&
+                itemCollection.getMediaElement().get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
+            PlayPause();
+        }else if(mTime - mShiftingTime > 500 && null != itemCollection && itemCollection.getMediaElement().size() > 0) {
+            mShiftingTime = mTime;
+            mGhostList.clear();
+            mAutoNextList.clear();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(itemCollection.getMediaElement().size() > 0) {
+                        if (position > 0) {
+                            setItemListAsPrevious(itemCollection.getMediaElement().subList(0, position));
+                        }
+                        setItemAsPlayingItem(itemCollection.getMediaElement().get(position), QueueType.Auto_UpNext);
+
+                        if (itemCollection.getMediaElement().size() > position + 1) {
+                            setItemListAsUpNextFrom(itemCollection.getMediaElement().subList(position + 1, itemCollection.getMediaElement().size()));
+                        }
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                IMediaItem item =  new MediaItem(itemCollection.getItemId(), itemCollection.getItemTitle(), context.getResources().getString(R.string.all_songs), null, 0, null, 0, null, 0, 0, null, itemCollection.getItemType(), itemCollection.getMediaType(), itemCollection.getItemType(), itemCollection.getItemId(), itemCollection.getItemTitle() );
+                                insertUnShuffledCollection(item, QueueType.unshuffled, false);
+                            }
+                        }).start();
+                        PlayingItemChanged();
+                    }
+                }
+            }, 300);
+        }
+    }
+
+    /*Artists and Genre Songs*/
+    public void addCollectionTrackToPlay(final IMediaItemCollection itemCollection, final int position, final boolean playAll) {
+        if(null == getUpNextInstance(context))
+            return;
+
+        boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
+        long mTime = System.currentTimeMillis();
+        if(!playAll && null != getPlayingItem() && ((IMediaItemCollection)itemCollection.getMediaElement().get(0)).getMediaElement().size() > 0 &&
+                ((IMediaItemCollection)itemCollection.getMediaElement().get(0)).getMediaElement().get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
+            PlayPause();
+        }else if(mTime - mShiftingTime > 500 && null != itemCollection.getMediaElement().get(0) && ((IMediaItemCollection)itemCollection.getMediaElement().get(0)).getMediaElement().size() > 0 ) {
+            mShiftingTime = mTime;
+            mGhostList.clear();
+            mAutoNextList.clear();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(((IMediaItemCollection)itemCollection.getMediaElement().get(0)).getMediaElement().size() > 0) {
+                        if (position > 0) {
+                            setItemListAsPrevious(((IMediaItemCollection)itemCollection.getMediaElement().get(0)).getMediaElement().subList(0, position));
+                        }
+                        setItemAsPlayingItem(((IMediaItemCollection)itemCollection.getMediaElement().get(0)).getMediaElement().get(position), QueueType.Auto_UpNext);
+
+                        if (((IMediaItemCollection)itemCollection.getMediaElement().get(0)).getMediaElement().size() > position + 1) {
+                            setItemListAsUpNextFrom(((IMediaItemCollection)itemCollection.getMediaElement().get(0)).getMediaElement().subList(position + 1, ((IMediaItemCollection)itemCollection.getMediaElement().get(0)).getMediaElement().size()));
+                        }
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                IMediaItem item =  new MediaItem(itemCollection.getMediaElement().get(0).getItemId(), itemCollection.getMediaElement().get(0).getItemTitle(), context.getResources().getString(R.string.all_songs), null, 0, null, 0, null, 0, 0, null, itemCollection.getMediaElement().get(0).getItemType(), itemCollection.getMediaType(), itemCollection.getItemType(), itemCollection.getItemId(), itemCollection.getItemTitle() );
+                                insertUnShuffledCollection(item, QueueType.unshuffled, false);
+                            }
+                        }).start();
+                        PlayingItemChanged();
+                    }
+                }
+            }, 300);
+        }
+    }
+
+    //Artist's, Genre's Albums Tracks
+    public void addCollectionItemTrackToPlay(final IMediaItemCollection itemCollection, final int position, final boolean playAll) {
+        if(null == getUpNextInstance(context))
+            return;
+
+        boolean isNowPlaying = App.getPlayerEventHandler().isPlaying() || App.getPlayerEventHandler().isPaused();
+        long mTime = System.currentTimeMillis();
+        if(null != getPlayingItem() && ((IMediaItemCollection)itemCollection.getMediaElement().get(itemCollection.getCurrentIndex())).getMediaElement().size() > 0 && !playAll &&
+                ((IMediaItemCollection)itemCollection.getMediaElement().get(itemCollection.getCurrentIndex())).getMediaElement().get(position).getItemId() == getPlayingItem().getItemId() && isNowPlaying){
+            PlayPause();
+        }else if(mTime - mShiftingTime > 500 && null != itemCollection.getMediaElement().get(itemCollection.getCurrentIndex()) && ((IMediaItemCollection)itemCollection.getMediaElement().get(itemCollection.getCurrentIndex())).getMediaElement().size() > 0 ) {
+            mShiftingTime = mTime;
+            mGhostList.clear();
+            mAutoNextList.clear();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(((IMediaItemCollection)itemCollection.getMediaElement().get(itemCollection.getCurrentIndex())).getMediaElement().size() > 0) {
+                        if (position > 0) {
+                            setItemListAsPrevious(((IMediaItemCollection)itemCollection.getMediaElement().get(itemCollection.getCurrentIndex())).getMediaElement().subList(0, position));
+                        }
+                        setItemAsPlayingItem(((IMediaItemCollection)itemCollection.getMediaElement().get(itemCollection.getCurrentIndex())).getMediaElement().get(position), QueueType.Auto_UpNext);
+
+                        if (((IMediaItemCollection)itemCollection.getMediaElement().get(itemCollection.getCurrentIndex())).getMediaElement().size() > position + 1) {
+                            setItemListAsUpNextFrom(((IMediaItemCollection)itemCollection.getMediaElement().get(itemCollection.getCurrentIndex())).getMediaElement().subList(position + 1, ((IMediaItemCollection)itemCollection.getMediaElement().get(itemCollection.getCurrentIndex())).getMediaElement().size()));
+                        }
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                IMediaItem item =  new MediaItem(itemCollection.getMediaElement().get(itemCollection.getCurrentIndex()).getItemId(), itemCollection.getMediaElement().get(itemCollection.getCurrentIndex()).getItemTitle(), context.getResources().getString(R.string.all_songs), null, 0, null, 0, null, 0, 0, null, itemCollection.getMediaElement().get(itemCollection.getCurrentIndex()).getItemType(), itemCollection.getMediaType(), itemCollection.getItemType(), itemCollection.getItemId(), itemCollection.getItemTitle() );
+                                insertUnShuffledCollection(item, QueueType.unshuffled, false);
+                            }
+                        }).start();
+                        PlayingItemChanged();
+                    }
+                }
+            }, 300);
+        }
+    }
+
+    public void addCollectionToUpNextFrom(Context context, IMediaItemCollection collection) {
+        if(null == getUpNextInstance(context))
+            return;
+
+        IMediaItem item = null;
+        if(collection.getMediaElement().size() > 0) {
+            switch (collection.getItemType()) {
+                case ALBUM:
+                case BOOM_PLAYLIST:
+                case PLAYLIST:
+                    item = new MediaItem(collection.getItemId(), collection.getItemTitle(), context.getResources().getString(R.string.all_songs), null, 0, null, 0, null, 0, 0, null, collection.getItemType(), collection.getMediaType(), collection.getItemType(), collection.getItemId(), collection.getItemTitle());
+                    break;
+                case GENRE:
+                case ARTIST:
+                    /*0th element is a Song collection in list*/
+                    if (((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() > 0) {
+                        item = new MediaItem(collection.getMediaElement().get(0).getItemId(), collection.getMediaElement().get(0).getItemTitle(), context.getResources().getString(R.string.all_songs), null, 0, null, 0, null, 0, 0, null, collection.getMediaElement().get(0).getItemType(), collection.getMediaType(), collection.getItemType(), collection.getItemId(), collection.getItemTitle());
+                    }else{
+                        return;
+                    }
+                    break;
+            }
+            insertUnShuffledCollection(item, QueueType.unshuffled, true);
+
+            switch (collection.getItemType()) {
+                case ALBUM:
+                case BOOM_PLAYLIST:
+                case PLAYLIST:
+                    if(mShuffle == SHUFFLE.all){
+                        Collections.shuffle(collection.getMediaElement());
+                    }
+                    mAutoNextList.addAll(0, collection.getMediaElement());
+                    break;
+                case GENRE:
+                case ARTIST:
+                    if(mShuffle == SHUFFLE.all){
+                        Collections.shuffle(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement());
+                    }
+                    mAutoNextList.addAll(0, ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement());
+                    break;
+            }
+            QueueUpdated();
+        }
+    }
+
+    public void addCollectionTrackToUpNextFrom(Context context, IMediaItemCollection collection) {
+        if(null == getUpNextInstance(context))
+            return;
+
+        IMediaItem item = null;
+        if (collection.getMediaElement().size() > 0 && ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size() > 0) {
+            item = new MediaItem(collection.getMediaElement().get(collection.getCurrentIndex()).getItemId(), collection.getMediaElement().get(collection.getCurrentIndex()).getItemTitle(), context.getResources().getString(R.string.all_songs), null, 0, null, 0, null, 0, 0, null, collection.getMediaElement().get(collection.getCurrentIndex()).getItemType(), collection.getMediaType(), collection.getItemType(), collection.getItemId(), collection.getItemTitle());
+
+            insertUnShuffledCollection(item, QueueType.unshuffled, true);
+
+            if(mShuffle == SHUFFLE.all){
+                Collections.shuffle(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement());
+            }
+            mAutoNextList.addAll(0, ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement());
+            QueueUpdated();
+        }
+    }
+
+    public void addCollectionToUpNext(Context context, IMediaItemCollection collection) {
+        if(null == getUpNextInstance(context))
+            return;
+
+        if(collection.getMediaElement().size() > 0) {
+            switch (collection.getItemType()) {
+                case ALBUM:
+                case BOOM_PLAYLIST:
+                case PLAYLIST:
+                    mUpNextList.addAll(collection.getMediaElement());
+                    break;
+                case GENRE:
+                case ARTIST:
+                    if (((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() > 0) {
+                        mUpNextList.addAll(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement());
+                    }else{
+                        return;
+                    }
+                    break;
+            }
+        }
+        QueueUpdated();
+    }
+
+
+    public void addCollectionTrackToUpNext(Context context, IMediaItemCollection collection) {
+        if(null == getUpNextInstance(context))
+            return;
+
+        if(collection.getMediaElement().size() > 0 && ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size() > 0) {
+            mUpNextList.addAll(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement());
+            QueueUpdated();
+        }
+    }
 }

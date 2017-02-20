@@ -13,13 +13,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.handler.PlayingQueue.QueueType;
 import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
 import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
@@ -270,7 +269,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
             case ITEM_VIEW_TYPE_LIST_PLAYING:
                 itemPosition = getPosition(position);
                 if(null == mPlaying.get(0).getUpNextItem().getItemArtUrl())
-                    mPlaying.get(0).getUpNextItem().setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem)mPlaying.get(0).getUpNextItem()).getItemAlbum()));
+                    mPlaying.get(0).getUpNextItem().setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get((mPlaying.get(0).getUpNextItem()).getItemAlbum()));
 
                 if(null == mPlaying.get(0).getUpNextItem().getItemArtUrl())
                     mPlaying.get(0).getUpNextItem().setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -289,7 +288,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 }
                 holder.name.setText(mPlaying.get(0).getUpNextItem().getItemTitle());
                 holder.name.setTextColor(ContextCompat.getColor(context, R.color.upnext_playing_title));
-                holder.artistName.setText(((MediaItem)mPlaying.get(0).getUpNextItem()).getItemArtist());
+                holder.artistName.setText((mPlaying.get(0).getUpNextItem()).getItemArtist());
                 holder.mainView.setElevation(dpToPx(context, 2));
                 holder.imgHandle.setVisibility(View.INVISIBLE);
                 setOnItemClick(holder, QueueType.Playing, itemPosition);
@@ -380,16 +379,16 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 if (!App.getPlayerEventHandler().isTrackWaitingForPlay()){
                     switch (queueType) {
                         case History:
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay(QueueType.History, itemPosition);
+                            App.getPlayingQueueHandler().getUpNextList().addUpNextItemToPlay(QueueType.History, itemPosition);
                             break;
                         case Playing:
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay(QueueType.Playing, itemPosition);
+                            App.getPlayingQueueHandler().getUpNextList().addUpNextItemToPlay(QueueType.Playing, itemPosition);
                             break;
                         case Manual_UpNext:
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay(queueType, itemPosition);
+                            App.getPlayingQueueHandler().getUpNextList().addUpNextItemToPlay(queueType, itemPosition);
                             break;
                         case Auto_UpNext:
-                            App.getPlayingQueueHandler().getUpNextList().addToPlay(queueType, itemPosition);
+                            App.getPlayingQueueHandler().getUpNextList().addUpNextItemToPlay(queueType, itemPosition);
                             break;
                         default:
                             break;

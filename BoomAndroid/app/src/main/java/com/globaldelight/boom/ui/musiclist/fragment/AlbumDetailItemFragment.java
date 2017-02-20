@@ -9,20 +9,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
-import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
 import com.globaldelight.boom.ui.musiclist.adapter.DetailAlbumGridAdapter;
 import com.globaldelight.boom.ui.widgets.MarginDecoration;
 import com.globaldelight.boom.utils.Utils;
-
-import java.util.ArrayList;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -34,6 +31,7 @@ public class AlbumDetailItemFragment extends Fragment {
     private ListDetail listDetail;
     private RecyclerView rootView;
     private GridLayoutManager gridLayoutManager;
+    private DetailAlbumGridAdapter detailAlbumGridAdapter;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -83,11 +81,13 @@ public class AlbumDetailItemFragment extends Fragment {
     }
 
     public void onFloatPlayAlbums() {
-        try {
-            if(((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().isEmpty())
-            ((IMediaItemCollection)collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(getContext()).getMediaCollectionItemDetails(collection));
-            App.getPlayingQueueHandler().getUpNextList().addToPlay((IMediaItemCollection) collection.getMediaElement().get(0), 0, true, true);
-        }catch (Exception e){}
+        if(collection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().size() == 0) {
+            ((IMediaItemCollection) collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(getContext()).getArtistTrackList(collection));
+        }else if(collection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().size() == 0) {
+            ((IMediaItemCollection) collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(getContext()).getGenreTrackList(collection));
+        }
+        App.getPlayingQueueHandler().getUpNextList().addCollectionTrackToPlay(collection, 0, true);
+        detailAlbumGridAdapter.notifyDataSetChanged();
     }
 
     private class LoadAlbumItems extends AsyncTask<Void, Integer, IMediaItemBase> {
@@ -95,8 +95,10 @@ public class AlbumDetailItemFragment extends Fragment {
         @Override
         protected IMediaItemBase doInBackground(Void... params) {
 //            ItemType.ARTIST && ItemType.GENRE
-            if(collection.getMediaElement().isEmpty())
-                collection.setMediaElement(MediaController.getInstance(getActivity()).getMediaCollectionItemDetails(collection));
+            if(collection.getParentType() == ItemType.ARTIST && collection.getMediaElement().size() == 0)
+                collection.setMediaElement(MediaController.getInstance(getActivity()).getArtistAlbumsList(collection));
+            else if(collection.getParentType() == ItemType.GENRE && collection.getMediaElement().size() == 0)
+                collection.setMediaElement(MediaController.getInstance(getActivity()).getGenreAlbumsList(collection));
             return collection;
         }
 
@@ -114,7 +116,7 @@ public class AlbumDetailItemFragment extends Fragment {
             rootView.setLayoutManager(gridLayoutManager);
             rootView.addItemDecoration(new MarginDecoration(getActivity()));
             rootView.setHasFixedSize(true);
-            final DetailAlbumGridAdapter detailAlbumGridAdapter = new DetailAlbumGridAdapter(getActivity(), rootView, (IMediaItemCollection) iMediaItemBase, listDetail, isPhone);
+            detailAlbumGridAdapter = new DetailAlbumGridAdapter(getActivity(), rootView, (IMediaItemCollection) iMediaItemBase, listDetail, isPhone);
             rootView.setAdapter(detailAlbumGridAdapter);
             gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override

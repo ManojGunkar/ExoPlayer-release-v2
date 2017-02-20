@@ -21,14 +21,14 @@ import android.os.Bundle;
 /**
  * InAppBillingService is the service that provides in-app billing version 3 and beyond.
  * This service provides the following features:
- * 1. Provides a new API to get details of in-app items published for the app including
+ * 1. Provides a new API to get details of in-app itemList published for the app including
  *    price, type, title and description.
  * 2. The purchase flow is synchronous and purchase information is available immediately
  *    after it completes.
  * 3. Purchase information of in-app purchases is maintained within the Google Play system
  *    till the purchase is consumed.
  * 4. An API to consume a purchase of an inapp item. All purchases of one-time
- *    in-app items are consumable and thereafter can be purchased again.
+ *    in-app itemList are consumable and thereafter can be purchased again.
  * 5. An API to get current purchases of the user immediately. This will not contain any
  *    consumed purchases.
  *
@@ -62,7 +62,7 @@ interface IInAppBillingService {
      * This API can be called with a maximum of 20 SKUs.
      * @param apiVersion billing API version that the app is using
      * @param packageName the package name of the calling app
-     * @param type of the in-app items ("inapp" for one-time purchases
+     * @param type of the in-app itemList ("inapp" for one-time purchases
      *        and "subs" for subscriptions)
      * @param skusBundle bundle containing a StringArrayList of SKUs with key "ITEM_ID_LIST"
      * @return Bundle containing the following key-value pairs
@@ -116,11 +116,11 @@ interface IInAppBillingService {
     /**
      * Returns the current SKUs owned by the user of the type and package name specified along with
      * purchase information and a signature of the data to be validated.
-     * This will return all SKUs that have been purchased in V3 and managed items purchased using
+     * This will return all SKUs that have been purchased in V3 and managed itemList purchased using
      * V1 and V2 that have not been consumed.
      * @param apiVersion billing API version that the app is using
      * @param packageName package name of the calling app
-     * @param type of the in-app items being requested ("inapp" for one-time purchases
+     * @param type of the in-app itemList being requested ("inapp" for one-time purchases
      *        and "subs" for subscriptions)
      * @param continuationToken to be set as null for the first call, if the number of owned
      *        skus are too many, a continuationToken is returned in the response bundle.

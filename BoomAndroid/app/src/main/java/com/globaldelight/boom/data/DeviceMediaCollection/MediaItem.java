@@ -4,8 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.Media.ItemType;
+import com.globaldelight.boom.Media.MediaType;
 
 /**
  * Created by Rahul Agarwal on 8/4/2016.
@@ -174,6 +174,11 @@ public class MediaItem implements IMediaItem, Parcelable {
     @Override
     public long getDurationLong() {
         return Duration;
+    }
+
+    @Override
+    public String getParentTitle(){
+        return parentTitle;
     }
 
     @Override

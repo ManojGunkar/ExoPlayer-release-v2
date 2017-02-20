@@ -9,12 +9,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
@@ -38,22 +35,19 @@ import android.view.WindowManager;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.task.PlayerEvents;
-import com.globaldelight.boom.ui.musiclist.adapter.AddToPlaylistAdapter;
+import com.globaldelight.boom.ui.musiclist.adapter.utils.AddToPlaylistAdapter;
+import com.globaldelight.boom.ui.widgets.BoomDialogView;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
@@ -61,6 +55,7 @@ import java.util.List;
 
 public class Utils {
     private Context context;
+    private static BoomDialogView progressLoader;
 
     public Utils(Context context) {
         this.context = context;
@@ -131,8 +126,10 @@ public class Utils {
     }
 
     public void addToPlaylist(final Activity activity, final ArrayList<? extends IMediaItemBase> songList, final String fromPlaylist) {
+        if(songList.size() == 0)
+            return;
 
-        ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(activity).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getPlayList(context)*/;
+        ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(activity).getBoomPlayList();
 
         if(fromPlaylist != null){
             for(int i=0; i< playList.size(); i++){
@@ -240,18 +237,21 @@ public class Utils {
 
     public static boolean isPhone(Activity activity){
         DisplayMetrics metrics = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        if(null != activity) {
+            activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        float yInches= metrics.heightPixels/metrics.ydpi;
-        float xInches= metrics.widthPixels/metrics.xdpi;
-        double diagonalInches = Math.sqrt(xInches*xInches + yInches*yInches);
-        if (diagonalInches >= 6.7){
-            // 6.7 inch device or bigger
-            return false;
-        }else{
-            // smaller device
-            return true;
+            float yInches = metrics.heightPixels / metrics.ydpi;
+            float xInches = metrics.widthPixels / metrics.xdpi;
+            double diagonalInches = Math.sqrt(xInches * xInches + yInches * yInches);
+            if (diagonalInches >= 6.7) {
+                // 6.7 inch device or bigger
+                return false;
+            } else {
+                // smaller device
+                return true;
+            }
         }
+        return true;
     }
 
 
@@ -330,5 +330,38 @@ public class Utils {
             return true;
         }
         return false;
+    }
+
+    public static void showProgressLoader(Context context){
+        if((null == progressLoader || !progressLoader.isShowing()) && ConnectivityReceiver.isNetworkAvailable(context)) {
+            progressLoader = new BoomDialogView(context);
+            progressLoader.setCanceledOnTouchOutside(false);
+            progressLoader.show();
+        }
+    }
+
+    public static void dismissProgressLoader() {
+        if(null != progressLoader && progressLoader.isShowing())
+            progressLoader.dismiss();
+    }
+
+    public static String getDeviceDensity(Activity context){
+        DisplayMetrics metrics = new DisplayMetrics();
+        context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        switch(metrics.densityDpi){
+            case DisplayMetrics.DENSITY_LOW:
+                return "LDP";
+            case DisplayMetrics.DENSITY_MEDIUM:
+                return "MDP";
+            case DisplayMetrics.DENSITY_HIGH:
+                return "HDP";
+            case DisplayMetrics.DENSITY_XHIGH:
+                return "XHDP";
+            case DisplayMetrics.DENSITY_XXHIGH:
+                return "XXHDP";
+            case DisplayMetrics.DENSITY_XXXHIGH:
+                return "XXXHDP";
+        }
+        return "Defeult";
     }
 }

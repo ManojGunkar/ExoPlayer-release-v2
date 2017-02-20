@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCallback.FavouriteMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.task.MediaLoader.LoadFavouriteList;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
 

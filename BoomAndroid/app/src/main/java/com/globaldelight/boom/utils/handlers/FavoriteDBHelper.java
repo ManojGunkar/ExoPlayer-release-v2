@@ -8,9 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.Media.MediaType;
 import java.util.ArrayList;
 
 /**

@@ -13,6 +13,7 @@ import android.util.Log;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.business.client.IBusinessNetworkInit;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.MainActivity;

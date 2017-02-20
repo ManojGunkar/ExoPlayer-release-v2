@@ -10,11 +10,11 @@ import android.database.sqlite.SQLiteStatement;
 
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
-import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
+import com.globaldelight.boom.Media.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.Media.MediaType;
 import java.util.ArrayList;
 
 /**
@@ -135,7 +135,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
 
         MediaItemCollection collection = new MediaItemCollection(playlistId, cursor.getString(1),
                 null, null,
-                getPlaylistSongCount(playlistId), 0,  ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB);
+                getPlaylistSongCount(playlistId), 0,  ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB, ItemType.BOOM_PLAYLIST);
         /*collection.setArtUrlList(getBoomPlayListArtList(playlistId));*/
         return collection;
     }

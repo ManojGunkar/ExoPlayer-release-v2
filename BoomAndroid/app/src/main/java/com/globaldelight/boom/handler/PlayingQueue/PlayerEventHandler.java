@@ -15,9 +15,8 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
-import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
@@ -30,8 +29,6 @@ import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.Pla
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.play;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.stop;
 import static com.globaldelight.boom.manager.PlayerServiceReceiver.ACTION_PLAY_STOP;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_TRACK_STOPPED;
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_BOOM_PLAYLIST_LIST;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
 /**
@@ -48,10 +45,8 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
     private static int PREVIOUS = 1;
     private static int PLAYER_DIRECTION;
     private Context context;
-    private Handler uiHandler;
     private PlayerService service;
     private AudioManager audioManager;
-    private AudioManager.OnAudioFocusChangeListener focusChangeListener;
     private MediaSession session;
     private GoogleDriveHandler googleDriveHandler;
 
@@ -153,11 +148,9 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
             mPlayer = new AudioPlayer(context, IPlayerEvents);
         if(null == audioManager)
             audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-        focusChangeListener = this;
         if(null == this.service)
             this.service = service;
         App.getPlayingQueueHandler().getUpNextList().setIQueueEvent(this);
-        uiHandler = new Handler();
         googleDriveHandler = new GoogleDriveHandler(context);
         googleDriveHandler.connectToGoogleAccount();
         registerSession();
@@ -261,10 +254,10 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
                 }else if(null == dataSource && mediaItemBase.getMediaType() == MediaType.DROP_BOX){
                     Toast.makeText(context, context.getResources().getString(R.string.loading_problem), Toast.LENGTH_SHORT).show();
                 }
+                isTrackWaiting = false;
                 context.sendBroadcast(new Intent(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
                 context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
             }
-            isTrackWaiting = false;
         }
     }
 
@@ -331,7 +324,7 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
     }
 
     public void stop() {
-        if(!isStopped()){
+        if(!isStopped() && null != mPlayer){
             setSessionState(PlaybackState.STATE_STOPPED);
         }
     }

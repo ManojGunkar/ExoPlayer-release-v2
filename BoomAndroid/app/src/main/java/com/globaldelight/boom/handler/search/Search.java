@@ -2,7 +2,7 @@ package com.globaldelight.boom.handler.search;
 
 import android.content.Context;
 
-import com.globaldelight.boom.data.DeviceMediaLibrary.DeviceMediaQuery;
+import com.globaldelight.boom.Media.DeviceMediaQuery;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 
 import java.util.ArrayList;

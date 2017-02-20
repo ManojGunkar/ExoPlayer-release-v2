@@ -4,8 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.Media.ItemType;
+import com.globaldelight.boom.Media.MediaType;
 import java.util.ArrayList;
 
 /**
@@ -19,22 +19,24 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
     private String mItemArtUrl;
     private ItemType mItemType;
     private MediaType mMediaType;
+    private ItemType mParentType;
     private int mItemCount;
     private int mItemListCount;
     protected ArrayList<? extends IMediaItemBase> mMediaElement = new ArrayList<>();
     protected ArrayList<String> mArtUrlList = new ArrayList<>();
     private int mCurrentIndex;
 
-   public MediaItemCollection(long mItemId, String mItemTitle, String mItemSubTitle, String mItemArtUrl,
-                              int mItemCount, int mItemListCount, ItemType mItemType, MediaType mMediaType){
-       this.mItemId = mItemId;
-       this.mItemTitle = mItemTitle;
-       this.mItemSubTitle = mItemSubTitle;
-       this.mItemArtUrl = mItemArtUrl;
-       this.mItemType = mItemType;
-       this.mMediaType = mMediaType;
-       this.mItemCount = mItemCount;
-       this.mItemListCount = mItemListCount;
+    public MediaItemCollection(long mItemId, String mItemTitle, String mItemSubTitle, String mItemArtUrl,
+                               int mItemCount, int mItemListCount, ItemType mItemType, MediaType mMediaType, ItemType mParentType){
+        this.mItemId = mItemId;
+        this.mItemTitle = mItemTitle;
+        this.mItemSubTitle = mItemSubTitle;
+        this.mItemArtUrl = mItemArtUrl;
+        this.mItemType = mItemType;
+        this.mMediaType = mMediaType;
+        this.mParentType = mParentType;
+        this.mItemCount = mItemCount;
+        this.mItemListCount = mItemListCount;
     }
 
     protected MediaItemCollection(Parcel in) {
@@ -47,6 +49,7 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
         mArtUrlList = in.createStringArrayList();
         mItemType = mItemType.valueOf(in.readString());
         mMediaType = mMediaType.valueOf(in.readString());
+        this.mParentType = mItemType.valueOf(in.readString());
         mCurrentIndex = in.readInt();
         mMediaElement = in.readArrayList(IMediaItemBase.class.getClassLoader());
 
@@ -84,12 +87,19 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
         this.mItemArtUrl = url;
     }
 
+    @Override
     public ItemType getItemType() {
         return mItemType;
     }
 
+    @Override
     public MediaType getMediaType(){
         return mMediaType;
+    }
+
+    @Override
+    public ItemType getParentType(){
+        return mParentType;
     }
 
     @Override
@@ -176,6 +186,7 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
         dest.writeStringList(mArtUrlList);
         dest.writeString(mItemType.name());
         dest.writeString(mMediaType.name());
+        dest.writeString(mParentType.name());
         dest.writeInt(mCurrentIndex);
         dest.writeList(mMediaElement);
     }

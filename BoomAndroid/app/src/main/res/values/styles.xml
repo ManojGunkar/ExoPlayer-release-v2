@@ -9,47 +9,6 @@
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
     </style>
 
-    <style name="AppTheme.Splash" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/transparent</item>
-        <item name="android:windowBackground">@drawable/ic_splash</item>
-    </style>
-
-    <style name="AppTheme.About" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:statusBarColor">#00132f</item>
-        <!--<item name="android:windowBackground">@drawable/ic_splash</item>-->
-    </style>
-
-    <style name="AppTheme.Main" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <!--<item name="android:popupMenuStyle">@style/PopupMenu</item>-->
-        <item name="android:windowActionBarOverlay">true</item>
-        <!--<item name="android:actionBarWidgetTheme">@style/WidgetTheme</item>-->
-        <!--<item name="android:navigationBarColor">@android:color/black</item>-->
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-        <item name="searchViewStyle">@style/ToolbarTheme</item>
-        <item name="android:textColorHint">@color/progress_gray</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:itemBackground">@color/dialog_background</item>
-        <item name="android:dropDownListViewStyle">@style/myDropDownListViewStyle</item>
-    </style>
-
-    <style name="AppTheme.Album" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:actionBarWidgetTheme">@style/WidgetTheme</item>
-        <item name="android:navigationBarColor">@android:color/black</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:itemBackground">@color/dialog_background</item>
-    </style>
 
     <style name="WidgetTheme">
         <item name="android:textColorHint">@android:color/white</item>
@@ -59,28 +18,6 @@
         <item name="android:popupBackground">#888888</item>
     </style>
 
-    <!--<style name="ToolbarTheme">
-        <item name="searchViewStyle">@style/CustomSearchView</item>
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:textColorSecondary">@android:color/white</item>
-    </style>-->
-
-    <style name="ToolbarTheme" parent="Widget.AppCompat.SearchView">
-        <item name="searchViewStyle">@style/CustomSearchView</item>
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:textColorSecondary">@android:color/white</item>
-        <item name="android:textColorHint">@color/effect_inactive</item>
-        <item name="searchHintIcon">@null</item>
-    </style>
-
-    <style name="CustomSearchView" parent="Widget.AppCompat.SearchView">
-        <item name="searchIcon">@null</item>
-        <item name="queryBackground">@color/transparent</item>
-        <item name="submitBackground">@color/transparent</item>
-        <item name="queryHint">@string/search_hint</item>
-        <item name="searchHintIcon">@null</item>
-    </style>
 
     <style name="AppTheme.Search" parent="AppTheme">
         <item name="windowActionBar">false</item>
@@ -92,27 +29,6 @@
         <item name="android:textColorHint">@android:color/white</item>
     </style>
 
-    <!--<color name="theme_primary">#607D8B</color>-->
-
-    <style name="AppTheme.Player" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:popupMenuStyle">@style/PopupMenu</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:statusBarColor">#00000000</item>
-        <item name="searchViewStyle">@style/AppTheme.ToolbarTheme</item>
-        <item name="android:textColorHint">@android:color/white</item>
-    </style>
-
-    <style name="AppTheme.Effect" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:popupMenuStyle">@style/PopupMenu</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-        <item name="searchViewStyle">@style/AppTheme.ToolbarTheme</item>
-        <item name="android:textColorHint">@android:color/white</item>
-    </style>
 
     <style name="AppTheme.List" parent="AppTheme">
         <item name="windowActionBar">false</item>
@@ -137,6 +53,7 @@
         <item name="android:layout_height">fill_parent</item>
         <item name="android:gravity">center</item>
     </style>
+
     <style name="GenericProgressIndicator" parent="@android:style/Widget.DeviceDefault.ProgressBar.Large">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -144,34 +61,9 @@
     </style>
 
     <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <!--<item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorPrimary">#FFFFFF</item>
-        <item name="android:background">@color/colorPrimary</item>
-
-        <item name="android:colorPrimary">#00397F</item>
-        <item name="android:colorAccent">#0AAEEF</item>
--->
 
     </style>
 
-    <style name="myDropDownListViewStyle" parent="Widget.AppCompat.ListView.DropDown">
-        <item name="android:background">@color/dialog_background</item>
-    </style>
-
-    <style name="MyTheme" parent="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/transparent</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:itemBackground">@color/dialog_background</item>
-    </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -182,12 +74,11 @@
         <item name="android:displayOptions">homeAsUp</item>
     </style>
 
+
     <style name="FullscreenTheme" parent="AppTheme">
         <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
         <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
-        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
-        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+        <item name="android:windowBackground">@drawable/ic_splash</item>
     </style>
 
     <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
@@ -242,8 +133,7 @@
     </style>
 
 
-    <style name="cart_dialog"
-        parent="@android:style/Theme.Holo.Light.Dialog">
+    <style name="cart_dialog" parent="@android:style/Theme.Holo.Light.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowIsTranslucent">true</item>

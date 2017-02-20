@@ -1,5 +1,8 @@
 package com.globaldelight.boom.data.MediaCollection;
 
+import com.globaldelight.boom.Media.ItemType;
+import com.globaldelight.boom.Media.MediaType;
+
 import java.util.ArrayList;
 
 /**
@@ -26,4 +29,10 @@ public interface IMediaItemCollection extends IMediaItemBase {
     void setMediaElement(ArrayList<? extends IMediaItemBase> iMediaItemList);
 
     ArrayList<? extends IMediaItemBase> getMediaElement();
+
+    ItemType getItemType();
+
+    MediaType getMediaType();
+
+    ItemType getParentType();
 }

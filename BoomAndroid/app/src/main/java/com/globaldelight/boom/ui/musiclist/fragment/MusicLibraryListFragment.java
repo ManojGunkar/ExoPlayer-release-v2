@@ -18,26 +18,21 @@ import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.manager.HeadPhonePlugReceiver;
 import com.globaldelight.boom.ui.musiclist.adapter.AlbumsGridAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.ArtistsGridAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.DefaultPlayListAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.SongListAdapter;
-import com.globaldelight.boom.ui.widgets.CoachMarkerWindow;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.ui.musiclist.adapter.GenreGridAdapter;
 import com.globaldelight.boom.utils.Utils;
-import com.globaldelight.boom.utils.handlers.Preferences;
 
 import java.util.ArrayList;
 
@@ -158,7 +153,7 @@ public class MusicLibraryListFragment extends Fragment {
     private synchronized void fetchMusicList(){
         switch (title){
             case R.string.songs:
-                new LoadSongsList().execute(title);
+                new LoadDeviceMediaList().execute(title);
                 break;
             case R.string.albums:
             case R.string.artists:
@@ -186,13 +181,13 @@ public class MusicLibraryListFragment extends Fragment {
         protected synchronized ArrayList<? extends IMediaItemBase> doInBackground(Integer... params) {
             param = params[0];
             if(param == R.string.albums)
-                return MediaController.getInstance(context).getMediaCollectionItemList(ItemType.ALBUM, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getAlbumList(context, !isOrderByAlbum)*/;
+                return MediaController.getInstance(context).getAlbumList();
             else if(param == R.string.artists)
-                return MediaController.getInstance(context).getMediaCollectionItemList(ItemType.ARTIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getArtistList(context)*/;
+                return MediaController.getInstance(context).getArtistsList();
             else if(param == R.string.playlists)
-                return MediaController.getInstance(context).getMediaCollectionItemList(ItemType.PLAYLIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getPlayList(context)*/;
+                return MediaController.getInstance(context).getPlayList();
             else
-                return MediaController.getInstance(context).getMediaCollectionItemList(ItemType.GENRE, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getGenreList(context)*/;
+                return MediaController.getInstance(context).getGenreList();
         }
 
         @Override
@@ -237,10 +232,10 @@ public class MusicLibraryListFragment extends Fragment {
         }
     }
 
-    private class LoadSongsList extends AsyncTask<Integer, Integer, ArrayList<? extends IMediaItemBase>> {
+    private class LoadDeviceMediaList extends AsyncTask<Integer, Integer, ArrayList<? extends IMediaItemBase>> {
         @Override
         protected ArrayList<? extends IMediaItemBase> doInBackground(Integer... params) {
-            return MediaController.getInstance(context).getMediaCollectionItemList(ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB) /*MediaQuery.getUpNextSongs(context)*/;
+            return MediaController.getInstance(context).getSongList();
         }
 
         @Override

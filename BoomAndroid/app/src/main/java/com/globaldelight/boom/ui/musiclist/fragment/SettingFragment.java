@@ -2,9 +2,7 @@ package com.globaldelight.boom.ui.musiclist.fragment;
 
 import android.Manifest;
 import android.accounts.AccountManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,7 +23,7 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.ActivityContainer;
-import com.globaldelight.boom.ui.musiclist.adapter.HeadPhoneItemAdapter;
+import com.globaldelight.boom.ui.musiclist.adapter.utils.HeadPhoneItemAdapter;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.handlers.Preferences;

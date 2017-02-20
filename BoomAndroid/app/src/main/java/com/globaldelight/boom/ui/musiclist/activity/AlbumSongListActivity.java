@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -21,11 +20,11 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.fragment.AlbumSongListFragment;
 import com.globaldelight.boom.utils.PlayerUtils;
@@ -256,7 +255,6 @@ public class AlbumSongListActivity extends MasterActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            findViewById(R.id.fab).setVisibility(View.GONE);
             fragment.updateOnBackPressed();
             super.onBackPressed();
             return true;
@@ -268,7 +266,6 @@ public class AlbumSongListActivity extends MasterActivity {
     public void onBackPressed() {
         if(getSupportFragmentManager().getBackStackEntryCount() > 0)
             getSupportFragmentManager().popBackStack();
-        findViewById(R.id.fab).setVisibility(View.GONE);
         fragment.updateOnBackPressed();
         super.onBackPressed();
     }

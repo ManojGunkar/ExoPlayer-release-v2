@@ -3,9 +3,9 @@ package com.globaldelight.boom.data.MediaCallback;
 import android.content.Context;
 import android.os.Handler;
 
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.Media.MediaType;
 
 import java.util.ArrayList;
 
@@ -48,7 +48,7 @@ public class DropboxMediaList {
 
     public ArrayList<IMediaItemBase> getDropboxMediaList(){
         if(null != fileList && fileList.size() <= 0){
-            fileList.addAll(MediaController.getInstance(mContext).getCloudMediaItemList(MediaType.DROP_BOX));
+            fileList.addAll(MediaController.getInstance(mContext).getCloudList(MediaType.DROP_BOX));
         }
         return fileList;
     }
