@@ -13,6 +13,8 @@ import android.util.Log;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.Media.MediaType;
+import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.client.IBusinessNetworkInit;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
@@ -99,7 +101,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             }
         }).start();
 
-//        initBusinessModel();
+        initBusinessModel();
     }
 
     @Override
@@ -392,17 +394,19 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     }
 
     private void initBusinessModel() {
-        App.getBusinessHandler().setBusinessNetworkListener(this);
+        if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+            App.getBusinessHandler().setBusinessNetworkListener(this);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                App.getBusinessHandler().getBoomAccessToken();
-                App.getBusinessHandler().registerAndroidDevice();
-                App.getBusinessHandler().getConfigAppWithBoomServer();
-                App.getBusinessHandler().isAppTrialVersion();
-            }
-        }).start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    App.getBusinessHandler().getBoomAccessToken();
+                    App.getBusinessHandler().registerAndroidDevice();
+                    App.getBusinessHandler().getConfigAppWithBoomServer();
+                    App.getBusinessHandler().isAppTrialVersion();
+                }
+            }).start();
+        }
     }
 
     @Override

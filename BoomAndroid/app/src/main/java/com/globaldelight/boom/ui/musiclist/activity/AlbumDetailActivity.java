@@ -14,7 +14,7 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.fragment.AlbumDetailFragment;
 import com.globaldelight.boom.utils.PlayerUtils;
@@ -48,7 +48,7 @@ public class AlbumDetailActivity extends MasterActivity {
     private void initValues() {
         collection = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
 
-        if( collection.getItemType() == ItemType.ALBUM ){
+        if( collection.getParentType() == ItemType.ALBUM ){
             currentItem = collection;
         } else {
             currentItem = (IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex());
@@ -81,7 +81,7 @@ public class AlbumDetailActivity extends MasterActivity {
         }
 
         Bundle arguments = new Bundle();
-        arguments.putParcelable("mediaItemCollection", (MediaItemCollection)currentItem);
+        arguments.putParcelable("mediaItemCollection", (MediaItemCollection)collection);
         fragment = new AlbumDetailFragment();
         fragment.setArguments(arguments);
         getSupportFragmentManager().beginTransaction()

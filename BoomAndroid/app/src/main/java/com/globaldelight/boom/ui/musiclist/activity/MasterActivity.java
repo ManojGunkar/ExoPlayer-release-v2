@@ -29,6 +29,9 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.google.android.gms.ads.NativeExpressAdView;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.globaldelight.boom.business.BusinessUtils.AddSource.*;
 import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
@@ -53,6 +56,8 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
 
     private boolean isDrawerLocked = false;
     private static boolean isPlayerExpended = false, isEffectScreenExpended = false;
+
+    private static final long FIFTEEN_MINUTES = 15 * 60 * 1000;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
@@ -252,22 +257,34 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     }
 
     @Override
-    public void onBusinessRequest(AddSource addSources, boolean libraryBannerEnable, boolean libraryVideoEnable) {
+    public void onBusinessRequest(final AddSource addSources, final boolean libraryBannerEnable, boolean libraryVideoEnable) {
         if(libraryBannerEnable) {
-            if (addSources == google) {
-                App.getBusinessHandler().loadGoogleNativeAdd(addSources, libraryBannerEnable);
-            } else {
-                App.getBusinessHandler().loadFbNativeAdds(addSources, libraryBannerEnable);
-            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (addSources == google) {
+                        App.getBusinessHandler().loadGoogleNativeAdd(addSources, libraryBannerEnable);
+                    } else {
+                        App.getBusinessHandler().loadFbNativeAdds(addSources, libraryBannerEnable);
+                    }
+                }
+            }).start();
         }
-        if(libraryVideoEnable){
-            FacebookSdk.sdkInitialize(getApplicationContext());
-            AppEventsLogger.activateApp(getApplicationContext());
-            if (addSources == google) {
-                App.getBusinessHandler().loadGoogleFullScreenAdds();
-            } else {
-                App.getBusinessHandler().loadFullScreenFbAdds();
-            }
+        if(libraryVideoEnable) {
+            Timer timer = new Timer();
+            TimerTask launchVideoAdds = new TimerTask() {
+                @Override
+                public void run() {
+                    FacebookSdk.sdkInitialize(getApplicationContext());
+                    AppEventsLogger.activateApp(getApplicationContext());
+                    if (addSources == google) {
+                        App.getBusinessHandler().loadGoogleFullScreenAdds();
+                    } else {
+                        App.getBusinessHandler().loadFullScreenFbAdds();
+                    }
+                }
+            };
+            timer.scheduleAtFixedRate(launchVideoAdds, 0, FIFTEEN_MINUTES);
         }
     }
 

@@ -14,19 +14,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
-import com.globaldelight.boom.data.MediaCollection.IMediaItem;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
-import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.AlbumItemsListAdapter;
-
-import java.util.ArrayList;
+import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.AlbumDetailAdapter;
 
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
@@ -36,10 +31,10 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING
 
 public class AlbumDetailFragment extends Fragment {
 
-    private IMediaItemCollection collection;
+    private IMediaItemCollection dataCollection;
     private ListDetail listDetail;
     private RecyclerView rootView;
-    private AlbumItemsListAdapter albumItemsListAdapter;
+    private AlbumDetailAdapter albumDetailAdapter;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -52,8 +47,8 @@ public class AlbumDetailFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
                 case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
-                    if(null != albumItemsListAdapter)
-                        albumItemsListAdapter.notifyDataSetChanged();
+                    if(null != albumDetailAdapter)
+                        albumDetailAdapter.notifyDataSetChanged();
                     break;
             }
         }
@@ -63,7 +58,7 @@ public class AlbumDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        collection = (MediaItemCollection) this.getActivity().getIntent().getParcelableExtra("mediaItemCollection");
+        dataCollection = (MediaItemCollection) this.getActivity().getIntent().getParcelableExtra("mediaItemCollection");
 
         initValues();
     }
@@ -75,7 +70,11 @@ public class AlbumDetailFragment extends Fragment {
 
         CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) this.getActivity().findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
-            appBarLayout.setTitle(collection.getItemTitle());
+            if( dataCollection.getParentType()== ItemType.ALBUM ){
+                appBarLayout.setTitle(dataCollection.getItemTitle());
+            } else {
+                appBarLayout.setTitle(dataCollection.getMediaElement().get(dataCollection.getCurrentIndex()).getItemTitle());
+            }
         }
     }
 
@@ -94,61 +93,57 @@ public class AlbumDetailFragment extends Fragment {
     }
 
     public void onFloatPlayAlbums() {
-        try {
-            if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                if (collection.getItemType() == ItemType.ALBUM) {
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay(collection, 0, true, true);
-                } else {
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex()), 0, collection.getItemId(), collection.getItemTitle(), collection.getItemType(), true, true);
-                }
-                albumItemsListAdapter.notifyDataSetChanged();
-            }
-        }catch (Exception e){
-
+        if (dataCollection.getParentType() == ItemType.ALBUM && dataCollection.getMediaElement().size() > 0) {
+            App.getPlayingQueueHandler().getUpNextList().addTrackCollectionToPlay(dataCollection, 0, true);
+        } else if (dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() > 0) {
+            App.getPlayingQueueHandler().getUpNextList().addCollectionItemTrackToPlay(dataCollection, 0, true);
+        } else if (dataCollection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() > 0) {
+            App.getPlayingQueueHandler().getUpNextList().addCollectionItemTrackToPlay(dataCollection, 0, true);
         }
+        albumDetailAdapter.notifyDataSetChanged();
     }
 
-    private class LoadAlbumSongs extends AsyncTask<Void, Integer, IMediaItemBase> {
+    private class LoadAlbumSongs extends AsyncTask<Void, Integer, IMediaItemCollection> {
 
         @Override
-        protected IMediaItemBase doInBackground(Void... params) {
-            if(collection.getItemType() == ItemType.ALBUM && collection.getMediaElement().isEmpty()) {
-                collection.setMediaElement(MediaController.getInstance(getActivity()).getMediaCollectionItemDetails(collection));
-            }else if((collection.getItemType() == ItemType.ARTIST || collection.getItemType() == ItemType.GENRE) &&
-                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
-                ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(getActivity()).getMediaCollectionItemDetails(collection));
+        protected IMediaItemCollection doInBackground(Void... params) {
+            if(dataCollection.getParentType() == ItemType.ALBUM && dataCollection.getMediaElement().size() == 0) {
+                dataCollection.setMediaElement(MediaController.getInstance(getContext()).getAlbumTrackList(dataCollection));
+            }else if(dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() == 0){
+                ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).setMediaElement(MediaController.getInstance(getContext()).getArtistTrackList(dataCollection));
+            }else if(dataCollection.getParentType() == ItemType.GENRE &&
+                    ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() == 0){
+                ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).setMediaElement(MediaController.getInstance(getContext()).getGenreAlbumsTrackList(dataCollection));
             }
-            return collection;
+            return dataCollection;
         }
 
         @Override
-        protected void onPostExecute(IMediaItemBase iMediaItemBase) {
+        protected void onPostExecute(IMediaItemCollection iMediaItemBase) {
             super.onPostExecute(iMediaItemBase);
 
             StringBuilder itemCount = new StringBuilder();
 
-            if(collection.getItemType() == ItemType.ALBUM){
-                itemCount.append(collection.getMediaElement().size() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
-                itemCount.append(" ").append(collection.getMediaElement().size());
-                listDetail = new ListDetail(collection.getItemTitle(), collection.getItemSubTitle(), itemCount.toString());
-
+            if(iMediaItemBase.getItemType() == ItemType.ALBUM){
+                itemCount.append(iMediaItemBase.getMediaElement().size() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
+                itemCount.append(" ").append(iMediaItemBase.getMediaElement().size());
+                listDetail = new ListDetail(iMediaItemBase.getItemTitle(), iMediaItemBase.getItemSubTitle(), itemCount.toString());
             }else{
-                itemCount.append(((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
-                itemCount.append(" ").append(((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size());
-                listDetail = new ListDetail(collection.getItemTitle(), ((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getItemSubTitle(), itemCount.toString());
-
+                itemCount.append(((MediaItemCollection) iMediaItemBase.getMediaElement().get(iMediaItemBase.getCurrentIndex())).getMediaElement().size() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
+                itemCount.append(" ").append(((MediaItemCollection) iMediaItemBase.getMediaElement().get(iMediaItemBase.getCurrentIndex())).getMediaElement().size());
+                listDetail = new ListDetail(iMediaItemBase.getItemTitle(), ((MediaItemCollection) iMediaItemBase.getMediaElement().get(iMediaItemBase.getCurrentIndex())).getItemSubTitle(), itemCount.toString());
             }
 
             rootView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            albumItemsListAdapter = new AlbumItemsListAdapter(getActivity(), (IMediaItemCollection) iMediaItemBase, listDetail);
-            rootView.setAdapter(albumItemsListAdapter);
+            albumDetailAdapter = new AlbumDetailAdapter(getActivity(), iMediaItemBase, listDetail);
+            rootView.setAdapter(albumDetailAdapter);
 
-            if(collection.getItemType() == ItemType.ALBUM){
+            if(iMediaItemBase.getItemType() == ItemType.ALBUM){
                 if (((IMediaItemCollection) iMediaItemBase).getMediaElement().size() < 1) {
                     listIsEmpty();
                 }
             }else {
-                if (((MediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size() < 1) {
+                if (((MediaItemCollection) iMediaItemBase.getMediaElement().get(iMediaItemBase.getCurrentIndex())).getMediaElement().size() < 1) {
                     listIsEmpty();
                 }
             }

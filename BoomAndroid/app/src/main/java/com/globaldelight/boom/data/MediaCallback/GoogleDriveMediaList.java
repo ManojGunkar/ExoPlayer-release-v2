@@ -2,9 +2,10 @@ package com.globaldelight.boom.data.MediaCallback;
 
 import android.content.Context;
 import android.os.Handler;
+
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 
 import java.util.ArrayList;
@@ -43,21 +44,9 @@ public class GoogleDriveMediaList {
         return mGoogleDriveHandler;
     }
 
-    public void addFileInGoogleDriveMediaList(IMediaItemBase entry){
-        fileList.add(entry);
-        if(null != googleDriveMediaUpdater) {
-            postMessage.post(new Runnable() {
-                @Override
-                public void run() {
-                    googleDriveMediaUpdater.onGoogleDriveMediaListUpdate();
-                }
-            });
-        }
-    }
-
     public ArrayList<IMediaItemBase> getGoogleDriveMediaList(){
         if(null != fileList && fileList.size() == 0){
-            fileList.addAll(MediaController.getInstance(mContext).getCloudMediaItemList(MediaType.GOOGLE_DRIVE));
+            fileList.addAll(MediaController.getInstance(mContext).getCloudList(MediaType.GOOGLE_DRIVE));
         }
         return fileList;
     }
@@ -71,6 +60,18 @@ public class GoogleDriveMediaList {
                 public void run() {
                     if(null != googleDriveMediaUpdater)
                         googleDriveMediaUpdater.onClearList();
+                }
+            });
+        }
+    }
+
+    public void addFileInGoogleDriveMediaList(IMediaItemBase entry){
+        fileList.add(entry);
+        if(null != googleDriveMediaUpdater) {
+            postMessage.post(new Runnable() {
+                @Override
+                public void run() {
+                    googleDriveMediaUpdater.onGoogleDriveMediaListUpdate();
                 }
             });
         }

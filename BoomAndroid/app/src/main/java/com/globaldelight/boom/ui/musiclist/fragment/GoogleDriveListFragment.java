@@ -21,7 +21,7 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
 import com.globaldelight.boom.ui.widgets.BoomDialogView;
@@ -33,6 +33,7 @@ import static android.app.Activity.RESULT_OK;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_CLOUD_SYNC;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import com.globaldelight.boom.utils.Utils;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -42,10 +43,10 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     private GoogleDriveMediaList googleDriveMediaList;
     private GoogleDriveHandler googleDriveHandler;
-    private BoomDialogView progressLoader;
     private CloudItemListAdapter adapter;
     private RecyclerView rootView;
     private PermissionChecker permissionChecker;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -61,10 +62,10 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                     notifyAdapter(null);
                     break;
                 case ACTION_ON_NETWORK_CONNECTED:
-                    showLoader();
+                    Utils.showProgressLoader(getContext());
                     checkPermissions();
                 case ACTION_CLOUD_SYNC:
-                    showLoader();
+                    Utils.showProgressLoader(getContext());
                     if(null != googleDriveMediaList) {
                         googleDriveMediaList.clearGoogleDriveMediaContent();
                         checkPermissions();
@@ -115,7 +116,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                 ConnectivityReceiver.isNetworkAvailable(getContext())) {
             googleDriveHandler.getResultsFromApi();
         }else{
-            dismissLoader();
+            Utils.dismissProgressLoader();
         }
         setForAnimation();
     }
@@ -130,7 +131,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     }
 
     private void initViews() {
-        showLoader();
+        Utils.showProgressLoader(getContext());
         googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(getActivity());
         googleDriveMediaList.setGoogleDriveMediaUpdater(this);
         googleDriveHandler = new GoogleDriveHandler(GoogleDriveListFragment.this);
@@ -149,25 +150,25 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     @Override
     public void onFinishListLoading() {
-        dismissLoader();
+        Utils.dismissProgressLoader();
     }
 
     @Override
     public void onRequestCancelled() {
-        dismissLoader();
+        Utils.dismissProgressLoader();
         Toast.makeText(getContext(), getResources().getString(R.string.request_cancelled), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onError(String e) {
-        dismissLoader();
+        Utils.dismissProgressLoader();
         Toast.makeText(getContext(), getResources().getString(R.string.google_drive_loading_error)
                 + e, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onEmptyList() {
-        dismissLoader();
+        Utils.dismissProgressLoader();
         Toast.makeText(getContext(), getResources().getString(R.string.empty_list), Toast.LENGTH_SHORT).show();
     }
 
@@ -176,26 +177,13 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
     }
 
-    private void showLoader(){
-        if((null == progressLoader || !progressLoader.isShowing()) && ConnectivityReceiver.isNetworkAvailable(getContext())) {
-            progressLoader = new BoomDialogView(getActivity());
-            progressLoader.setCanceledOnTouchOutside(false);
-            progressLoader.show();
-        }
-    }
-
-    private void dismissLoader() {
-        if(null != progressLoader && progressLoader.isShowing())
-            progressLoader.dismiss();
-    }
-
     private void setForAnimation() {
         rootView.scrollTo(0, 100);
     }
 
     private void setSongListAdapter(ArrayList<? extends IMediaItemBase> iMediaItemList) {
         if(iMediaItemList.size() > 0)
-            dismissLoader();
+            Utils.dismissProgressLoader();
 
         final GridLayoutManager gridLayoutManager =
                 new GridLayoutManager(getActivity(), 1);
@@ -231,14 +219,14 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                         LoadGoogleDriveList();
                     }
                 }else{
-                    dismissLoader();
+                    Utils.dismissProgressLoader();
                 }
                 break;
             case GoogleDriveHandler.REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
                     LoadGoogleDriveList();
                 }else {
-                    dismissLoader();
+                    Utils.dismissProgressLoader();
                 }
                 break;
         }
@@ -267,7 +255,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     @Override
     public void onDecline() {
-        dismissLoader();
+        Utils.dismissProgressLoader();
         if(null != getActivity())
             getActivity().onBackPressed();
     }

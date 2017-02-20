@@ -38,9 +38,10 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.App;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.Media.MediaController;
+import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.ui.musiclist.activity.MasterActivity;
-import com.globaldelight.boom.ui.musiclist.adapter.EqualizerDialogAdapter;
+import com.globaldelight.boom.ui.musiclist.adapter.utils.EqualizerDialogAdapter;
 import com.globaldelight.boom.handler.controller.EffectUIController;
 import com.globaldelight.boom.handler.controller.PlayerUIController;
 import com.globaldelight.boom.R;
@@ -49,7 +50,6 @@ import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.widgets.CoachMarkerWindow;
 import com.globaldelight.boom.ui.widgets.NegativeSeekBar;
@@ -65,8 +65,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_HEADSET_PLUGGED;
+import com.globaldelight.boom.utils.Utils;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
@@ -80,10 +79,8 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
 import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_BOTTOM_CENTER;
 import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_TOP_CENTER;
 import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_TOP_LEFT;
-import static com.globaldelight.boom.utils.handlers.Preferences.HEADPHONE_CONNECTED;
 import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_OPEN_EFFECT_MINI_PLAYER;
 import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
-import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_USE_HEADPHONE_LIBRARY;
 
 /**
  * Created by Rahul Agarwal on 16-01-17.
@@ -99,7 +96,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     public static boolean isUpdateUpnextDB = true;
 
-    private static boolean canShoeExpended = false;
     private static MediaItem mPlayingMediaItem;
     private static boolean mIsPlaying, mIsLastPlayed;
 
@@ -155,7 +151,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         mIsLastPlayed = false;
                         updatePlayerUI();
                     }
-                    stopCloudItemProgress();
+                    Utils.dismissProgressLoader();
                     break;
                 case ACTION_LAST_PLAYED_SONG:
                     item = intent.getParcelableExtra("playing_song");
@@ -174,14 +170,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                             mPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_pause, null));
                         }
                     }catch (Exception e){}
-                    stopCloudItemProgress();
+                    Utils.dismissProgressLoader();
                     break;
                 case ACTION_TRACK_STOPPED :
                     mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
                     mIsPlaying = false;
                     mIsLastPlayed = false;
                     updatePlayerUI();
-                    startCloudItemProgress();
+                    showProgressLoader();
                     break;
                 case ACTION_UPDATE_TRACK_SEEK :
                     if(!isUser) {
@@ -285,8 +281,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     /* Large Player UI and Functionality*/
-
-
     private void updateActionBarButtons() {
         if(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0 ||
                 App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0 ||
@@ -452,7 +446,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mEffectTab.setOnClickListener(this);
 
         mTrackSeek = (AppCompatSeekBar) mInflater.findViewById(R.id.control_seek_bar);
+        mTrackSeek.getProgressDrawable().setColorFilter(ContextCompat.getColor(getContext(), R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN);
         mTrackSeek.setPadding(mTrackSeek.getPaddingLeft(), 0, mTrackSeek.getPaddingRight(), 0);
+
         mTrackSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
@@ -578,12 +574,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         updateRepeat();
     }
 
-
-
-
     /* Mini Player UI & Functionality*/
-
-
     private void initMiniPlayer() {
         miniController = mInflater.findViewById(R.id.small_panel);
         miniController.setOnTouchListener(this);
@@ -640,7 +631,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }
     }
 
-
     /* Player Slider Callbacks*/
 
     @Override
@@ -657,6 +647,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onPanelCollapsed(View panel) {
         setMiniPlayerVisible(true);
+        updateMiniPlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
         showEffectShortCut();
         if (revealView.getVisibility() == View.VISIBLE) {
             revealView.setVisibility(View.INVISIBLE);
@@ -704,7 +695,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             coachMarkEffectPlayer.showCoachMark(mInflater.findViewById(R.id.mini_player_effect_img));
         }
     }
-
 
     @Override
     public void onPanelAnchored(View panel) {
@@ -761,6 +751,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     public MasterActivity.IPlayerSliderControl getPlayerSliderControl() {
         return this;
+    }
+
+    private void showProgressLoader(){
+//        if(App.getPlayingQueueHandler().getUpNextList().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB)
+//            Utils.showProgressLoader(getContext());
     }
 
     @Override
@@ -824,7 +819,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         playerUIController.OnPlayPause();
                     }
                 });
-                startCloudItemProgress();
+                showProgressLoader();
                 break;
             case R.id.controller_prev:
                 postMessage.post(new Runnable() {
@@ -833,7 +828,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         playerUIController.OnPreviousTrackClick();
                     }
                 });
-                startCloudItemProgress();
+                showProgressLoader();
                 break;
             case R.id.controller_next:
                 postMessage.post(new Runnable() {
@@ -842,7 +837,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         playerUIController.OnNextTrackClick();
                     }
                 });
-                startCloudItemProgress();
+                showProgressLoader();
                 break;
             case R.id.controller_repeat:
                 postMessage.post(new Runnable() {
@@ -909,7 +904,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }
     }
 
-    private void startCloudItemProgress() {
+    /*private void startCloudItemProgress() {
         if(!App.getPlayerEventHandler().isPaused() && App.getPlayerEventHandler().isTrackWaitingForPlay()) {
             mInflater.findViewById(R.id.load_cloud).setVisibility(View.VISIBLE);
         }else{
@@ -919,17 +914,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void stopCloudItemProgress() {
         mInflater.findViewById(R.id.load_cloud).setVisibility(View.GONE);
-    }
+    }*/
 
     private void overFlowMenu(Context context, View view) {
         PopupMenu pm = new PopupMenu(context, view);
         boolean isCurrentTrackFav= false;
         if(App.getPlayerEventHandler().getPlayingItem() != null) {
-            if(App.getPlayerEventHandler().getPlayingItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB)
-                isCurrentTrackFav = MediaController.getInstance(mContext).isFavouriteItems(App.getPlayerEventHandler().getPlayingItem().getItemId());
-            else{
-                isCurrentTrackFav = MediaController.getInstance(mContext).isFavouriteItems(App.getPlayerEventHandler().getPlayingItem().getItemTitle());
-            }
+            isCurrentTrackFav = MediaController.getInstance(mContext).isFavoriteItem(App.getPlayerEventHandler().getPlayingItem().getItemId());
         }
         final boolean isFav = isCurrentTrackFav;
         pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -939,14 +930,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     switch (item.getItemId()) {
                         case R.id.popup_song_add_fav:
                             if(isFav){
-                                if(App.getPlayerEventHandler().getPlayingItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB)
-                                    MediaController.getInstance(mContext).removeItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem().getItemId());
-                                else{
-                                    MediaController.getInstance(mContext).removeItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem().getItemTitle());
-                                }
+                                MediaController.getInstance(mContext).removeItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem().getItemId());
                                 Toast.makeText(mContext, mContext.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                             }else{
-                                MediaController.getInstance(mContext).addSongsToFavoriteList(App.getPlayerEventHandler().getPlayingItem());
+                                MediaController.getInstance(mContext).addItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem());
                                 Toast.makeText(mContext, mContext.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                             }
                             break;

@@ -1,6 +1,6 @@
 package com.globaldelight.boom.data.MediaCollection;
 
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.Media.ItemType;
 
 /**
  * Created by Rahul Agarwal on 8/4/2016.
@@ -28,6 +28,8 @@ public interface IMediaItem extends IMediaItemBase {
     ItemType getItemType();
 
     long getParentId();
+
+    String getParentTitle();
 
     void setParentId(long parentId);
 

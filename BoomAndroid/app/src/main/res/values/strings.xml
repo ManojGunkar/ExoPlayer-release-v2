@@ -151,7 +151,6 @@
     <string name="minute">Minute</string>
 
 
-
     <string name="store_page_header">Hassle free Boomin\'</string>
     <string name="store_page_buy_description">Buy now to #FeelYourMusic \n withoutany hassle,Without any ad.</string>
     <string name="store_page_share_description">You may also share Boom to discontinue ads \n for 5 days.</string>
@@ -159,6 +158,10 @@
     <string name="share_text">Share Boom</string>
     <string name="menu_restore">Restore Purchases</string>
     <string name="store_title">Store</string>
+
+    <string name="after_purchase_store_page_header">Happy Boomin\'!</string>
+    <string name="after_purchase_store_page_buy_description">Congratulations!You can now\n listen to your music the way it \n was intended!</string>
+    <string name="after_purchase_buy_button">Purchased</string>
 
     <string name="title_share">Share</string>
     <string name="playstore_link">https://play.google.com/store/apps/details?id=com.globaldelight.boom  \n\n</string>
@@ -185,4 +188,7 @@
     <string name="start_boomin">Start Boomin\'</string>
     <string name="next">Next</string>
     <string name="loading">Loading...</string>
+    <string name="inapp_process_error">Error while InApp Purchase.</string>
+    <string name="inapp_process_success">Purchase Success.</string>
+    <string name="inapp_process_restore">Purchase Restored.</string>
 </resources>

@@ -14,11 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.SongListAdapter;
 
 import java.util.ArrayList;
@@ -80,7 +78,7 @@ public class MediaItemListFragment extends Fragment {
 
         @Override
         protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
-            return MediaController.getInstance(getActivity()).getMediaCollectionItemList(ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB) /*MediaQuery.getUpNextSongs(context)*/;
+            return MediaController.getInstance(getActivity()).getSongList();
         }
 
         @Override

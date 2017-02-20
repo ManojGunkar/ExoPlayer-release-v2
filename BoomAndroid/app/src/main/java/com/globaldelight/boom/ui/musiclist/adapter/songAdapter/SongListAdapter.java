@@ -16,14 +16,14 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.ui.musiclist.fragment.MediaItemListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.MusicLibraryListFragment;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
@@ -79,7 +79,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
     }
 
     private void updatePlayingTrack(SimpleItemViewHolder holder, int position, long itemId){
-        IMediaItem nowPlayingItem = (IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        IMediaItem nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
         if(null != nowPlayingItem){
             holder.name.setTextColor(itemId == nowPlayingItem.getItemId() ? ContextCompat.getColor(activity, R.color.track_selected_title)
             : ContextCompat.getColor(activity, R.color.track_title));
@@ -98,8 +98,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
     private void setAlbumArt(String path, SimpleItemViewHolder holder) {
         int size = (int) activity.getResources().getDimension(R.dimen.track_list_album_art_size);
             if (PlayerUtils.isPathValid(path))
-                Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))/*.resize(size,
-                        size).centerCrop()*/.into(holder.img);
+                Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.img);
             else {
                 setDefaultArt(holder, size);
             }
@@ -114,7 +113,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
             @Override
             public void onClick(View view) {
                 if (!App.getPlayerEventHandler().isTrackWaitingForPlay()) {
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay(itemList, position, true, false);
+                    App.getPlayingQueueHandler().getUpNextList().addTrackListToPlay(itemList, position, false);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -137,24 +136,21 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                         public boolean onMenuItemClick(MenuItem item) {
                             try {
                                 switch (item.getItemId()) {
-                                    case R.id.popup_song_play_next:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom(getMediaItem(position));
-                                        break;
                                     case R.id.popup_song_add_queue:
                                         App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(getMediaItem(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
                                         Utils util = new Utils(activity);
-                                        ArrayList list = new ArrayList<IMediaItemBase>();
+                                        ArrayList list = new ArrayList();
                                         list.add(getMediaItem(position));
                                         util.addToPlaylist(activity, list, null);
                                         break;
                                     case R.id.popup_song_add_fav:
-                                        if (MediaController.getInstance(activity).isFavouriteItems(getMediaItem(position).getItemId())) {
+                                        if (MediaController.getInstance(activity).isFavoriteItem(getMediaItem(position).getItemId())) {
                                             MediaController.getInstance(activity).removeItemToFavoriteList(getMediaItem(position).getItemId());
                                             Toast.makeText(activity, activity.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                                         } else {
-                                            MediaController.getInstance(activity).addSongsToFavoriteList(getMediaItem(position));
+                                            MediaController.getInstance(activity).addItemToFavoriteList(getMediaItem(position));
                                             Toast.makeText(activity, activity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                                         }
                                         break;
@@ -165,7 +161,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                             return false;
                         }
                     });
-                    if (MediaController.getInstance(activity).isFavouriteItems(getMediaItem(position).getItemId())) {
+                    if (MediaController.getInstance(activity).isFavoriteItem(getMediaItem(position).getItemId())) {
                         pm.inflate(R.menu.song_remove_fav);
                     } else {
                         pm.inflate(R.menu.song_add_fav);

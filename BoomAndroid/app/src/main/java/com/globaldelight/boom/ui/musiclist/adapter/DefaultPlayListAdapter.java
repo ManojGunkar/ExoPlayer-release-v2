@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -15,11 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumSongListActivity;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
@@ -28,13 +26,10 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -44,18 +39,18 @@ import java.util.ArrayList;
 public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayListAdapter.SimpleItemViewHolder>{
 
     private static final String TAG = "AlbumListAdapter-TAG";
-    ArrayList<MediaItemCollection> items;
+    ArrayList<MediaItemCollection> itemList;
     private Context context;
     private Activity activity;
     private  RecyclerView recyclerView;
     private boolean isPhone;
 
     public DefaultPlayListAdapter(Context context, FragmentActivity activity, RecyclerView recyclerView,
-                                  ArrayList<? extends IMediaItemBase> items, boolean isPhone) {
+                                  ArrayList<? extends IMediaItemBase> itemList, boolean isPhone) {
         this.context = context;
         this.activity = activity;
         this.recyclerView = recyclerView;
-        this.items = (ArrayList<MediaItemCollection>) items;
+        this.itemList = (ArrayList<MediaItemCollection>) itemList;
         this.isPhone = isPhone;
     }
 
@@ -69,26 +64,26 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
     @Override
     public void onBindViewHolder(final DefaultPlayListAdapter.SimpleItemViewHolder holder, final int position) {
 
-        if(items.get(position).getArtUrlList().isEmpty())
-            items.get(position).setArtUrlList(MediaController.getInstance(context).getArtUrlList(items.get(position)));
+        if(itemList.get(position).getArtUrlList().isEmpty())
+            itemList.get(position).setArtUrlList(MediaController.getInstance(context).getArtUrlList(itemList.get(position)));
 
-        if(items.get(position).getArtUrlList().isEmpty()) {
+        if(itemList.get(position).getArtUrlList().isEmpty()) {
             ArrayList list = new ArrayList();
             list.add(MediaItem.UNKNOWN_ART_URL);
-            items.get(position).setArtUrlList(list);
+            itemList.get(position).setArtUrlList(list);
         }
 
         int size= setSize(holder);
-        if(items.get(position).getArtUrlList().size() >= 1 && PlayerUtils.isPathValid(items.get(position).getArtUrlList().get(0))){
+        if(itemList.get(position).getArtUrlList().size() >= 1 && PlayerUtils.isPathValid(itemList.get(position).getArtUrlList().get(0))){
             holder.artTable.setVisibility(View.VISIBLE);
-            setSongsArtImage(holder, position, size, items.get(position).getArtUrlList());
-        }else /*if(items.get(position).getArtUrlList().size() == 0 || !PlayerUtils.isPathValid(items.get(position).getArtUrlList().get(0)))*/{
+            setSongsArtImage(holder, position, size, itemList.get(position).getArtUrlList());
+        }else /*if(itemList.get(position).getArtUrlList().size() == 0 || !PlayerUtils.isPathValid(itemList.get(position).getArtUrlList().get(0)))*/{
             holder.defaultImg.setVisibility(View.VISIBLE);
             setDefaultImage(holder.defaultImg, size, size);
         }
 
-        holder.title.setText(items.get(position).getItemTitle());
-        int itemcount = items.get(position).getItemCount();
+        holder.title.setText(itemList.get(position).getItemTitle());
+        int itemcount = itemList.get(position).getItemCount();
         holder.subTitle.setText((itemcount > 1 ? context.getResources().getString(R.string.songs):  context.getResources().getString(R.string.song))+" "+ itemcount);
 
         holder.grid_menu.setVisibility(View.VISIBLE);
@@ -184,7 +179,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
                     @Override
                     public void run() {
                         Intent i = new Intent(context, AlbumSongListActivity.class);
-                        i.putExtra("mediaItemCollection", items.get(position));
+                        i.putExtra("mediaItemCollection", itemList.get(position));
                         context.startActivity(i);
                     }
                 }, 100);
@@ -199,30 +194,20 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         try {
+                            if(itemList.get(position).getMediaElement().size() == 0)
+                                itemList.get(position).setMediaElement(MediaController.getInstance(context).getPlayListTrackList(itemList.get(position)));
+
                             switch (item.getItemId()) {
-                                case R.id.popup_album_play_next:
-                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                                        items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(items.get(position));
-                                    }
-                                    break;
                                 case R.id.popup_album_add_queue:
-                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                                        items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(items.get(position));
-                                    }
+                                    App.getPlayingQueueHandler().getUpNextList().addCollectionToUpNext(context, itemList.get(position));
                                     break;
                                 case R.id.popup_album_add_playlist:
                                     Utils util = new Utils(context);
-                                    items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
-
-                                    util.addToPlaylist(activity, items.get(position).getMediaElement(), null);
+                                    util.addToPlaylist(activity, itemList.get(position).getMediaElement(), null);
                                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                     break;
                             }
-                        }catch (Exception e){
-
-                        }
+                        }catch (Exception e){ }
                         return false;
                     }
                 });
@@ -248,7 +233,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return itemList.size();
     }
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {

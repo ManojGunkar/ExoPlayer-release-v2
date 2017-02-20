@@ -17,8 +17,8 @@ import com.dropbox.client2.session.Session;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.Media.ItemType;
+import com.globaldelight.boom.Media.MediaType;
 
 import java.util.ArrayList;
 

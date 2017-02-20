@@ -3,9 +3,9 @@ package com.globaldelight.boom.task.MediaLoader;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.data.MediaCallback.FavouriteMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +21,7 @@ public class LoadFavouriteList extends AsyncTask<Void, Integer, ArrayList<? exte
     }
     @Override
     protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
-        return MediaController.getInstance(mContext).getFavouriteListItems();
+        return MediaController.getInstance(mContext).getFavoriteList();
     }
 
     @Override

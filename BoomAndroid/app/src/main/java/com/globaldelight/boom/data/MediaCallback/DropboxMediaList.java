@@ -3,9 +3,9 @@ package com.globaldelight.boom.data.MediaCallback;
 import android.content.Context;
 import android.os.Handler;
 
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.Media.MediaType;
 
 import java.util.ArrayList;
 
@@ -38,17 +38,19 @@ public class DropboxMediaList {
     public void addFileInDropboxList(IMediaItemBase entry){
         isAllSongsLoaded = false;
         fileList.add(entry);
-        postMessage.post(new Runnable() {
-            @Override
-            public void run() {
-                dropboxUpdater.UpdateDropboxEntryList();
-            }
-        });
+        if ( dropboxUpdater != null ) {
+            postMessage.post(new Runnable() {
+                @Override
+                public void run() {
+                    dropboxUpdater.UpdateDropboxEntryList();
+                }
+            });
+        }
     }
 
     public ArrayList<IMediaItemBase> getDropboxMediaList(){
         if(null != fileList && fileList.size() <= 0){
-            fileList.addAll(MediaController.getInstance(mContext).getCloudMediaItemList(MediaType.DROP_BOX));
+            fileList.addAll(MediaController.getInstance(mContext).getCloudList(MediaType.DROP_BOX));
         }
         return fileList;
     }
@@ -58,7 +60,8 @@ public class DropboxMediaList {
             fileList.clear();
             MediaController.getInstance(mContext).removeCloudMediaItemList(MediaType.DROP_BOX);
         }
-        postMessage.post(new Runnable() {
+        if(null != dropboxUpdater)
+            postMessage.post(new Runnable() {
             @Override
             public void run() {
                 dropboxUpdater.ClearList();
@@ -69,7 +72,8 @@ public class DropboxMediaList {
 
     public void finishDropboxLoading(){
         isAllSongsLoaded = true;
-        postMessage.post(new Runnable() {
+        if(null != dropboxUpdater)
+            postMessage.post(new Runnable() {
             @Override
             public void run() {
                 dropboxUpdater.finishDropboxLoading();

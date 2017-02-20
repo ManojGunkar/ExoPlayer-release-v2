@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -16,10 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
 
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumDetailActivity;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
@@ -27,13 +24,10 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -81,11 +75,10 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
         String path = itemList.get(position).getItemArtUrl();
         if (PlayerUtils.isPathValid(path))
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).noFade()
-                    /*.centerCrop().resize(size, size)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
+                    .into(holder.defaultImg);
         else
             holder.defaultImg.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_default_art_grid, null));
     }
-
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {
 
@@ -93,6 +86,7 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
             @Override
             public void onClick(View view) {
                 recyclerView.smoothScrollToPosition(position);
+                itemList.get(position).setCurrentIndex(position);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -112,33 +106,20 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         try {
+                            if(itemList.get(position).getMediaElement().size() == 0)
+                                itemList.get(position).setMediaElement(MediaController.getInstance(context).getAlbumTrackList(itemList.get(position)));
+
                             switch (item.getItemId()) {
-                                case R.id.popup_album_play_next:
-                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                                        itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
-                                        if (itemList.get(position).getMediaElement().size() > 0)
-                                            App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(itemList.get(position));
-                                    }
-                                    break;
                                 case R.id.popup_album_add_queue:
-                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                                        itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
-                                        if (itemList.get(position).getMediaElement().size() > 0)
-                                            App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(itemList.get(position));
-                                    }
+                                    App.getPlayingQueueHandler().getUpNextList().addCollectionToUpNext(context, itemList.get(position));
                                     break;
                                 case R.id.popup_album_add_playlist:
                                     Utils util = new Utils(context);
-                                    itemList.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(itemList.get(position)));
-
-                                    if (itemList.get(position).getMediaElement().size() > 0)
-                                        util.addToPlaylist(activity, itemList.get(position).getMediaElement(), null);
+                                    util.addToPlaylist(activity, itemList.get(position).getMediaElement(), null);
                                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                     break;
                             }
-                        }catch (Exception e){
-
-                        }
+                        }catch (Exception e){ }
                         return false;
                     }
                 });

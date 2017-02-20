@@ -4,7 +4,6 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -24,16 +23,15 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
-import com.globaldelight.boom.task.PlayerEvents;
+import com.globaldelight.boom.Media.ItemType;
+import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.ui.musiclist.fragment.FavouriteListFragment;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
@@ -106,15 +104,15 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
 
         setOnClicks(holder, position);
 
-        updatePlayingTrack(holder, position, itemList.get(position).getItemId(), itemList.get(position).getItemTitle());
+        updatePlayingTrack(holder, itemList.get(position).getItemId());
     }
 
-    private void updatePlayingTrack(SimpleItemViewHolder holder, int position, long itemId, String itemTitle){
+    private void updatePlayingTrack(SimpleItemViewHolder holder, long itemId){
         IMediaItem nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
         if(null != nowPlayingItem) {
             boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
             if ((isMediaItem && itemId == nowPlayingItem.getItemId())
-                    || (!isMediaItem && itemTitle.equals(nowPlayingItem.getItemTitle()))) {
+                    || (!isMediaItem && itemId == nowPlayingItem.getItemId())) {
                 holder.art_overlay.setVisibility(View.VISIBLE );
                 holder.art_overlay_play.setVisibility( View.VISIBLE );
                 holder.name.setTextColor( ContextCompat.getColor(activity, R.color.track_selected_title) );
@@ -137,8 +135,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
 
     private void setAlbumArt(String path, CloudItemListAdapter.SimpleItemViewHolder holder) {
         if (PlayerUtils.isPathValid(path ))
-            Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))/*.resize(dpToPx(90),
-                    dpToPx(90)).centerCrop()*/.into(holder.img);
+            Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.img);
         else{
             setDefaultArt(holder);
         }
@@ -154,7 +151,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
             public void onClick(View view) {
                 animate(holder);
                 if (!App.getPlayerEventHandler().isTrackWaitingForPlay()) {
-                    App.getPlayingQueueHandler().getUpNextList().addToPlay((ArrayList<IMediaItem>) itemList, position, true, false);
+                    App.getPlayingQueueHandler().getUpNextList().addTrackListToPlay((ArrayList<IMediaItem>) itemList, position, false);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -175,9 +172,6 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                         public boolean onMenuItemClick(MenuItem item) {
                             try {
                                 switch (item.getItemId()) {
-                                    case R.id.popup_song_play_next:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemToUpNextFrom( itemList.get(position));
-                                        break;
                                     case R.id.popup_song_add_queue:
                                         App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((IMediaItem) itemList.get(position));
                                         break;
@@ -188,19 +182,14 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                                         util.addToPlaylist(activity, list, null);
                                         break;
                                     case R.id.popup_song_add_fav:
-                                        if(itemList.get(position).getMediaType() == MediaType.DEVICE_MEDIA_LIB) {
+                                        if(MediaController.getInstance(activity).isFavoriteItem(itemList.get(position).getItemId())){
                                             MediaController.getInstance(activity).removeItemToFavoriteList(itemList.get(position).getItemId());
                                             Toast.makeText(activity, activity.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                                         }else{
-                                            if(MediaController.getInstance(activity).isFavouriteItems(itemList.get(position).getItemTitle())){
-                                                MediaController.getInstance(activity).removeItemToFavoriteList(itemList.get(position).getItemTitle());
-                                                Toast.makeText(activity, activity.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
-                                            }else{
-                                                MediaController.getInstance(activity).addSongsToFavoriteList(itemList.get(position));
-                                                Toast.makeText(activity, activity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
-                                            }
+                                            MediaController.getInstance(activity).addItemToFavoriteList((IMediaItem) itemList.get(position));
+                                            Toast.makeText(activity, activity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                                         }
-                                        updateFavoriteList(MediaController.getInstance(activity).getFavouriteListItems());
+                                        updateFavoriteList(MediaController.getInstance(activity).getFavoriteList());
                                         break;
                                 }
                             }catch (Exception e){
@@ -210,7 +199,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                         }
                     });
                     if(listItemType == ItemType.FAVOURITE ||
-                            MediaController.getInstance(activity).isFavouriteItems(itemList.get(position).getItemTitle())) {
+                            MediaController.getInstance(activity).isFavoriteItem(itemList.get(position).getItemId())) {
                         pm.inflate(R.menu.song_remove_fav);
                     }else{
                         pm.inflate(R.menu.song_add_fav);

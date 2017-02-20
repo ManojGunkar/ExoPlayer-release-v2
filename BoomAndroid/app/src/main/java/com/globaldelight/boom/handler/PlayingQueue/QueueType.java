@@ -1,7 +1,5 @@
 package com.globaldelight.boom.handler.PlayingQueue;
 
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
-
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;

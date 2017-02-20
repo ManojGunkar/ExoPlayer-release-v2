@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -16,11 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
-
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.Media.MediaController;
+import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumDetailItemActivity;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
@@ -29,13 +26,10 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -45,18 +39,18 @@ import java.util.ArrayList;
 public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.SimpleItemViewHolder> {
 
     private static final String TAG = "AlbumListAdapter-TAG";
-    ArrayList<MediaItemCollection> items;
+    ArrayList<MediaItemCollection> itemList;
     private Context context;
     private Activity activity;
     private RecyclerView recyclerView;
     private boolean isPhone;
 
     public GenreGridAdapter(Context context, FragmentActivity activity, RecyclerView recyclerView,
-                            ArrayList<? extends IMediaItemBase> items, boolean isPhone) {
+                            ArrayList<? extends IMediaItemBase> itemList, boolean isPhone) {
         this.context = context;
         this.activity = activity;
         this.recyclerView = recyclerView;
-        this.items = (ArrayList<MediaItemCollection>) items;
+        this.itemList = (ArrayList<MediaItemCollection>) itemList;
         this.isPhone = isPhone;
     }
 
@@ -71,9 +65,9 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
     public void onBindViewHolder(final GenreGridAdapter.SimpleItemViewHolder holder, final int position) {
         holder.defaultImg.setVisibility(View.VISIBLE);
 
-        holder.title.setText(items.get(position).getItemTitle());
-        int count = items.get(position).getItemCount();
-        int albumCount = items.get(position).getItemListCount();
+        holder.title.setText(itemList.get(position).getItemTitle());
+        int count = itemList.get(position).getItemCount();
+        int albumCount = itemList.get(position).getItemListCount();
 
         StringBuilder sb = new StringBuilder();
         sb.append((count<=1 ? context.getResources().getString(R.string.song) : context.getResources().getString(R.string.songs)));
@@ -87,11 +81,11 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
 
         holder.subTitle.setText( sb.toString());
         int size = setSize(holder);
-        if(null == items.get(position).getItemArtUrl())
-            items.get(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(items.get(position).getItemSubTitle()));
+        if(null == itemList.get(position).getItemArtUrl())
+            itemList.get(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(itemList.get(position).getItemSubTitle()));
 
-        if(null == items.get(position).getItemArtUrl())
-            items.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
+        if(null == itemList.get(position).getItemArtUrl())
+            itemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
 
         setArtistImg(holder, position, size);
 
@@ -100,7 +94,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
     }
 
     private void setArtistImg(final SimpleItemViewHolder holder, final int position, final int size) {
-        String path = items.get(position).getItemArtUrl();
+        String path = itemList.get(position).getItemArtUrl();
         if (PlayerUtils.isPathValid(path))
             Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
                     /*.centerCrop().resize(size, size)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
@@ -118,7 +112,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
                     @Override
                     public void run() {
                         Intent i = new Intent(context, AlbumDetailItemActivity.class);
-                        i.putExtra("mediaItemCollection", items.get(position));
+                        i.putExtra("mediaItemCollection", itemList.get(position));
                         context.startActivity(i);
                     }
                 }, 100);
@@ -133,34 +127,24 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         try {
+                            if(itemList.get(position).getParentType() == ItemType.GENRE && itemList.get(position).getMediaElement().size() == 0)
+                                itemList.get(position).setMediaElement(MediaController.getInstance(context).getGenreAlbumsList(itemList.get(position)));
+
+                            if(((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).getMediaElement().size() == 0)
+                                ((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).
+                                        setMediaElement(MediaController.getInstance(activity).getGenreTrackList(itemList.get(position)));
+
                             switch (item.getItemId()) {
-                                case R.id.popup_album_play_next:
-                                    items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
-                                    ((IMediaItemCollection) items.get(position).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
-
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(items.get(position).getMediaElement().get(items.get(position).getCurrentIndex()));
-                                    items.get(position).getMediaElement().clear();
-                                    break;
                                 case R.id.popup_album_add_queue:
-                                    items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
-                                    ((IMediaItemCollection) items.get(position).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
-
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(items.get(position).getMediaElement().get(items.get(position).getCurrentIndex()));
-                                    items.get(position).getMediaElement().clear();
+                                    App.getPlayingQueueHandler().getUpNextList().addCollectionToUpNext(context, itemList.get(position));
                                     break;
                                 case R.id.popup_album_add_playlist:
                                     Utils util = new Utils(context);
-                                    items.get(position).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
-                                    ((IMediaItemCollection) items.get(position).getMediaElement().get(0)).setMediaElement(MediaController.getInstance(context).getMediaCollectionItemDetails(items.get(position)));
-
-                                    util.addToPlaylist(activity, ((IMediaItemCollection) items.get(position).getMediaElement().get(items.get(position).getCurrentIndex())).getMediaElement(), null);
+                                    util.addToPlaylist(activity, ((IMediaItemCollection) itemList.get(position).getMediaElement().get(0)).getMediaElement(), null);
                                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
-                                    items.get(position).getMediaElement().clear();
                                     break;
                             }
-                        }catch (Exception e){
-
-                        }
+                        }catch (Exception e){ }
                         return false;
                     }
                 });
@@ -191,7 +175,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return itemList.size();
     }
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {

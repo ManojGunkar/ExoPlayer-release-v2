@@ -20,11 +20,11 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
+import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.task.MediaLoader.LoadDropBoxList;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
-import com.globaldelight.boom.ui.widgets.BoomDialogView;
+import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import java.util.ArrayList;
 
@@ -41,7 +41,6 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING
 public class DropBoxListFragment extends Fragment  implements DropboxMediaList.IDropboxUpdater {
 
     private DropboxMediaList dropboxMediaList;
-    private BoomDialogView progressLoader;
     private CloudItemListAdapter adapter;
     private RecyclerView rootView;
     private int listSize = 0;
@@ -61,11 +60,11 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                     notifyAdapter(null);
                     break;
                 case ACTION_ON_NETWORK_CONNECTED:
-                    showLoader();
+                    Utils.showProgressLoader(getContext());
                     LoadDropboxList();
                     break;
                 case ACTION_CLOUD_SYNC:
-                    showLoader();
+                    Utils.showProgressLoader(getContext());
                     try{
                         if(null != dropboxMediaList)
                             dropboxMediaList.clearDropboxContent();
@@ -87,7 +86,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     private void initViews() {
-        showLoader();
+        Utils.showProgressLoader(getContext());
         dropboxMediaList = DropboxMediaList.getDropboxListInstance(getActivity());
         dropboxMediaList.setDropboxUpdater(this);
         DropBoxUtills.checkDropboxAuthentication(getActivity());
@@ -99,7 +98,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         registerReceiver();
         super.onResume();
         if(listSize <= 0 || DropboxMediaList.isAllSongsLoaded)
-            showLoader();
+            Utils.showProgressLoader(getContext());
         LoadDropboxList();
     }
 
@@ -122,14 +121,14 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     private void LoadDropboxList(){
         boolean isListEmpty = dropboxMediaList.getDropboxMediaList().size() <= 0;
         if(!isListEmpty){
-            dismissLoader();
+            Utils.dismissProgressLoader();
         }
         if (null != App.getDropboxAPI()
                 && ConnectivityReceiver.isNetworkAvailable(getContext()) && isListEmpty) {
             resetAuthentication();
             new LoadDropBoxList(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }else{
-            dismissLoader();
+            Utils.dismissProgressLoader();
         }
         setForAnimation();
     }
@@ -155,7 +154,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     private void setSongListAdapter(ArrayList<? extends IMediaItemBase> iMediaItemList) {
         listSize = iMediaItemList.size();
         if(iMediaItemList.size() > 0)
-            dismissLoader();
+            Utils.dismissProgressLoader();
         final GridLayoutManager gridLayoutManager =
                 new GridLayoutManager(getActivity(), 1);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -176,25 +175,12 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     public void finishDropboxLoading() {
         notifyAdapter(dropboxMediaList.getDropboxMediaList());
         listSize = dropboxMediaList.getDropboxMediaList().size();
-        dismissLoader();
+        Utils.dismissProgressLoader();
     }
 
     @Override
     public void ClearList() {
         notifyAdapter(dropboxMediaList.getDropboxMediaList());
-    }
-
-    private void showLoader(){
-        if((null == progressLoader || !progressLoader.isShowing()) && ConnectivityReceiver.isNetworkAvailable(getContext())) {
-            progressLoader = new BoomDialogView(getActivity());
-            progressLoader.setCanceledOnTouchOutside(false);
-            progressLoader.show();
-        }
-    }
-
-    private void dismissLoader() {
-        if(null != progressLoader && progressLoader.isShowing())
-            progressLoader.dismiss();
     }
 
     private void notifyAdapter(ArrayList<IMediaItemBase> mediaList){

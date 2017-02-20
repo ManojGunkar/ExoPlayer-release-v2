@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,13 +17,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
-import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.adapter.BoomPlayListAdapter;
 import com.globaldelight.boom.utils.Utils;
@@ -56,7 +52,7 @@ public class BoomPlaylistFragment extends Fragment {
             switch (intent.getAction()){
                 case PlayerEvents.ACTION_UPDATE_BOOM_PLAYLIST:
                     if (boomPlayListAdapter != null) {
-                        boomPlayListAdapter.updateNewList(MediaController.getInstance(context).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                        boomPlayListAdapter.updateNewList(MediaController.getInstance(context).getBoomPlayList());
                     }
                     break;
                 case PlayerEvents.ACTION_ADD_NEW_BOOM_PLAYLIST:
@@ -102,14 +98,14 @@ public class BoomPlaylistFragment extends Fragment {
 
     public void updateBoomPlaylist() {
         if(null != boomPlayListAdapter)
-            boomPlayListAdapter.updateNewList(MediaController.getInstance(getActivity()).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+            boomPlayListAdapter.updateNewList(MediaController.getInstance(getActivity()).getBoomPlayList());
     }
 
     public class LoadBoomPlaylist  extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {
         GridLayoutManager gridLayoutManager;
         @Override
         protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
-            return MediaController.getInstance(getActivity()).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB)/*MediaQuery.getPlayList(context)*/;
+            return MediaController.getInstance(getActivity()).getBoomPlayList();
         }
 
         @Override

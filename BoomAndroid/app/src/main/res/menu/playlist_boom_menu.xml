@@ -8,15 +8,6 @@
         android:id="@+id/popup_add_queue"
         android:title="@string/menu_add_upnext"/>
     <item
-        android:id="@+id/popup_add_playlist"
-        android:title="@string/menu_add_boom_playlist"/>
-
-    <item
-        android:id="@+id/popup_add_song"
-        android:visible="false"
-        android:title="@string/menu_add_songs"/>
-
-    <item
         android:id="@+id/popup_playlist_rename"
         android:title="@string/rename"/>
 

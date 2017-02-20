@@ -1,12 +1,8 @@
 package com.globaldelight.boom.ui.musiclist.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -15,11 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumDetailActivity;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumSongListActivity;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
@@ -29,17 +24,13 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
+import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
-import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -240,7 +231,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
 
         if (PlayerUtils.isPathValid(path))
             Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).noFade()
-                    /*.centerCrop().resize(size, size)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.defaultImg);
+                    .into(holder.defaultImg);
         else
             setDefaultImage(holder.defaultImg, size, size);
     }
@@ -249,7 +240,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
         img.setImageDrawable(activity.getResources().getDrawable( R.drawable.ic_default_art_grid, null));
     }
 
-    private void setOnMenuClickListener(SimpleItemViewHolder holder, int position) {
+    private void setOnMenuClickListener(SimpleItemViewHolder holder, final int position) {
         holder.mMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
@@ -257,39 +248,25 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                 pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
-                        try {
-                            switch (menuItem.getItemId()) {
-                                case R.id.album_header_add_play_next:
-                                    ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
-                                    if (((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() > 0)
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(collection.getMediaElement().get(0));
-                                    break;
-                                case R.id.album_header_add_to_upnext:
-                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                                        ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
-                                        if (((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() > 0)
-                                            App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(0));
-                                    }
-                                    break;
-                                case R.id.album_header_add_to_playlist:
-                                    Utils util = new Utils(activity);
-                                    ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
-                                    if (((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() > 0)
-                                        util.addToPlaylist(activity, ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), null);
-                                    break;
-                                case R.id.album_header_shuffle:
-                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
-//                                    if(!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused()){
-                                        ((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
-                                        if (((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() > 0)
-                                            App.getPlayingQueueHandler().getUpNextList().addToPlay((IMediaItemCollection) collection.getMediaElement().get(0), 0, true, true);
-//                                    }
-                                        activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
-                                    }
-                                    break;
-                            }
-                        }catch (Exception e){
-
+                        if(collection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() == 0){
+                            ((IMediaItemCollection) collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(activity).getArtistTrackList(collection));
+                        }else if(collection.getParentType() == ItemType.GENRE && ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement().size() == 0){
+                            ((IMediaItemCollection) collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(activity).getGenreTrackList(collection));
+                        }
+                        switch (menuItem.getItemId()) {
+                            case R.id.album_header_add_to_upnext:
+                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(0));
+                                break;
+                            case R.id.album_header_add_to_playlist:
+                                Utils util = new Utils(activity);
+                                util.addToPlaylist(activity, ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), null);
+                                break;
+                            case R.id.album_header_shuffle:
+                                if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                    activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
+                                    App.getPlayingQueueHandler().getUpNextList().addCollectionTrackToPlay(collection, 0, true);
+                                }
+                                break;
                         }
                         return false;
                     }
@@ -330,38 +307,28 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                 pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
+                        if(collection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection) collection.getMediaElement().get(position)).getMediaElement().size() == 0){
+                            if((collection.getMediaElement().get(position)).getItemType() == ItemType.SONGS){
+                                ((IMediaItemCollection) collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(activity).getArtistTrackList(collection));
+                            }else{
+                                collection.setCurrentIndex(position);
+                                ((IMediaItemCollection) collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(activity).getArtistAlbumsTrackList(collection));
+                            }
+                        }else if(collection.getParentType() == ItemType.GENRE && ((IMediaItemCollection) collection.getMediaElement().get(position)).getMediaElement().size() == 0){
+                            if((collection.getMediaElement().get(position)).getItemType() == ItemType.SONGS){
+                                ((IMediaItemCollection) collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(activity).getGenreTrackList(collection));
+                            }else{
+                                collection.setCurrentIndex(position);
+                                ((IMediaItemCollection) collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(activity).getGenreAlbumsTrackList(collection));
+                            }
+                        }
                         switch (item.getItemId()) {
-                            case R.id.popup_album_play_next :
-                                if(itemView == ITEM_VIEW_SONG){
-                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
-                                }else if (itemView == ITEM_VIEW_ALBUM) {
-                                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                                        ((IMediaItemCollection)collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
-                                    }
-                                }
-                                if(((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement().size() > 0)
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(collection.getMediaElement().get(position));
-                                break;
                             case R.id.popup_album_add_queue :
-                                if(itemView == ITEM_VIEW_SONG){
-                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
-                                }else if (itemView == ITEM_VIEW_ALBUM) {
-                                    if(App.getPlayingQueueHandler().getUpNextList()!=null){
-                                        ((IMediaItemCollection)collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
-                                    }
-                                }
-                                if(((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement().size() > 0)
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(position));
+                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(position));
                                 break;
                             case R.id.popup_album_add_playlist:
                                 Utils util = new Utils(activity);
-                                if(itemView == ITEM_VIEW_SONG){
-                                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
-                                }else if (itemView == ITEM_VIEW_ALBUM) {
-                                    ((IMediaItemCollection)collection.getMediaElement().get(position)).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails(collection));
-                                }
-                                if(((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement().size() > 0)
-                                    util.addToPlaylist(activity, ((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement(), null);
+                                util.addToPlaylist(activity, ((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement(), null);
                                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                 break;
                         }

@@ -4,13 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
-import com.globaldelight.boom.ui.musiclist.activity.MediaCollectionActivity;
 import com.globaldelight.boom.ui.musiclist.activity.ActivityContainer;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
@@ -93,18 +90,5 @@ public class PlayerUIController implements IPlayerUIController {
 
     @Override
     public void OnPlayerTitleClick(Activity activity) {
-        MediaItem item = (MediaItem) App.getPlayerEventHandler().getPlayingItem();
-        startCollectionListActivity(activity, item);
-    }
-
-    private void startCollectionListActivity(final Activity activity, MediaItem item) {
-        final Intent listIntent = new Intent(activity, MediaCollectionActivity.class);
-        listIntent.putExtra("media_item", item);
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                activity.startActivity(listIntent);
-            }
-        });
     }
 }

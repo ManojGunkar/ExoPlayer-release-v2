@@ -2,7 +2,6 @@ package com.globaldelight.boom.ui.musiclist.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -13,30 +12,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumSongListActivity;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaController;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
 import com.globaldelight.boom.ui.musiclist.fragment.BoomPlaylistFragment;
-import com.globaldelight.boom.ui.widgets.CoachMarkTextView;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -47,7 +40,7 @@ import java.util.ArrayList;
 public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapter.SimpleItemViewHolder>{
 
     private static final String TAG = "AlbumListAdapter-TAG";
-    ArrayList<? extends IMediaItemBase> items;
+    ArrayList<? extends IMediaItemBase> itemList;
     public static final int ITEM_VIEW_TYPE_ITEM_LIST = 0;
     public static final int ITEM_VIEW_TYPE_ITEM_LIST_FOOTER = 1;
     private Activity activity;
@@ -56,16 +49,16 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     private BoomPlaylistFragment fragment;
 
     public BoomPlayListAdapter(Activity activity, BoomPlaylistFragment fragment, RecyclerView recyclerView,
-                               ArrayList<? extends IMediaItemBase> items, boolean isPhone) {
+                               ArrayList<? extends IMediaItemBase> itemList, boolean isPhone) {
         this.activity = activity;
         this.fragment = fragment;
         this.recyclerView = recyclerView;
-        this.items = items;
+        this.itemList = itemList;
         this.isPhone = isPhone;
     }
 
     public int whatView(int position){
-        if(position < items.size()){
+        if(position < itemList.size()){
             return ITEM_VIEW_TYPE_ITEM_LIST;
         }else{
             return ITEM_VIEW_TYPE_ITEM_LIST_FOOTER;
@@ -78,7 +71,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
     }
 
     public IMediaItemBase getItem(int position){
-        return items.get(position);
+        return itemList.get(position);
     }
 
     @Override
@@ -96,7 +89,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
 
     @Override
     public void onBindViewHolder(final BoomPlayListAdapter.SimpleItemViewHolder holder, final int position) {
-        if(position < items.size()) {
+        if(position < itemList.size()) {
             int size = setSize(holder);
 
             holder.title.setText(getItem(position).getItemTitle());
@@ -104,13 +97,13 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
             holder.subTitle.setText((itemcount > 1 ? activity.getResources().getString(R.string.songs) : activity.getResources().getString(R.string.song)) + " " + itemcount);
 
             holder.grid_menu.setVisibility(View.VISIBLE);
-            if (((IMediaItemCollection) items.get(position)).getArtUrlList().isEmpty())
-                ((IMediaItemCollection) items.get(position)).setArtUrlList(MediaController.getInstance(activity).getArtUrlList((MediaItemCollection) items.get(position)));
+            if (((IMediaItemCollection) itemList.get(position)).getArtUrlList().isEmpty())
+                ((IMediaItemCollection) itemList.get(position)).setArtUrlList(MediaController.getInstance(activity).getArtUrlList((MediaItemCollection) itemList.get(position)));
 
-            if (((IMediaItemCollection) items.get(position)).getArtUrlList().isEmpty()) {
+            if (((IMediaItemCollection) itemList.get(position)).getArtUrlList().isEmpty()) {
                 ArrayList list = new ArrayList();
                 list.add(MediaItem.UNKNOWN_ART_URL);
-                ((IMediaItemCollection) items.get(position)).setArtUrlList(list);
+                ((IMediaItemCollection) itemList.get(position)).setArtUrlList(list);
             }
 
             setSongsArtImage(holder, position, size);
@@ -161,44 +154,28 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
             try {
                 switch (count) {
                     case 1:
-                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
                         break;
                     case 2:
-                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                        Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                        Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
+                        Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
+                        Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
                         break;
                     case 3:
-                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                        Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                        Picasso.with(activity).load(new File(Urls.get(2))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
+                        Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
+                        Picasso.with(activity).load(new File(Urls.get(2))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
                         break;
                     case 4:
-                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg1);
-                        Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg2);
-                        Picasso.with(activity).load(new File(Urls.get(2))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg3);
-                        Picasso.with(activity).load(new File(Urls.get(3))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                                /*.centerCrop().resize(size.width / 2, size.height / 2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(holder.artImg4);
+                        Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
+                        Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
+                        Picasso.with(activity).load(new File(Urls.get(2))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
+                        Picasso.with(activity).load(new File(Urls.get(3))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
                         break;
                 }
             } catch (NullPointerException e) {
@@ -239,34 +216,22 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         try {
+                            if(((IMediaItemCollection)itemList.get(position)).getMediaElement().size() == 0)
+                                ((IMediaItemCollection)itemList.get(position)).setMediaElement(MediaController.getInstance(activity).getBoomPlayListTrackList(itemList.get(position).getItemId()));
+
                             switch (menuItem.getItemId()) {
-                                case R.id.popup_play_next:
-                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                                        ((MediaItemCollection) items.get(position)).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNextFrom(items.get(position));
-                                    }
-                                    break;
                                 case R.id.popup_add_queue:
-                                    if (App.getPlayingQueueHandler().getUpNextList() != null) {
-                                        ((MediaItemCollection) items.get(position)).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(items.get(position));
-                                    }
+                                    App.getPlayingQueueHandler().getUpNextList().addCollectionToUpNext(activity, (IMediaItemCollection) itemList.get(position));
                                     break;
                                 case R.id.popup_playlist_rename:
-                                    renameDialog(position, items.get(position).getItemTitle());
-                                    break;
-                                case R.id.popup_add_playlist:
-                                    ((MediaItemCollection) items.get(position)).setMediaElement(MediaController.getInstance(activity).getMediaCollectionItemDetails((IMediaItemCollection) items.get(position)));
-                                    Utils util = new Utils(activity);
-                                    util.addToPlaylist(activity, ((MediaItemCollection) items.get(position)).getMediaElement(), ((MediaItemCollection) items.get(position)).getItemTitle());
+                                    renameDialog(position, itemList.get(position).getItemTitle());
                                     break;
                                 case R.id.popup_playlist_delete:
-                                    MediaController.getInstance(activity).deleteBoomPlaylist(items.get(position).getItemId());
-                                    items.clear();
-                                    items = MediaController.getInstance(activity).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB);
+                                    MediaController.getInstance(activity).deleteBoomPlaylist(itemList.get(position).getItemId());
+                                    itemList.remove(position);
                                     notifyItemRemoved(position);
                                     notifyDataSetChanged();
-                                    if(items.size() == 0){
+                                    if(itemList.size() == 0){
                                         fragment.listIsEmpty();
                                     }
                                     Toast.makeText(activity, activity.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
@@ -300,11 +265,11 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
                         if (input.toString().matches("")) {
-                            renameDialog(position, items.get(position).getItemTitle());
+                            renameDialog(position, itemList.get(position).getItemTitle());
                         } else {
                             MediaController.getInstance(activity).renameBoomPlaylist(input.toString(),
-                                    items.get(position).getItemId());
-                            updateNewList((ArrayList<? extends MediaItemCollection>) MediaController.getInstance(activity).getMediaCollectionItemList(ItemType.BOOM_PLAYLIST, MediaType.DEVICE_MEDIA_LIB));
+                                    itemList.get(position).getItemId());
+                            updateNewList(MediaController.getInstance(activity).getBoomPlayList());
                             notifyDataSetChanged();
                         }
                     }
@@ -327,12 +292,12 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
 
     @Override
     public int getItemCount() {
-        return items.size()+1;
+        return itemList.size()+1;
     }
 
     public void updateNewList(ArrayList<? extends IMediaItemBase> newList) {
-        items.clear();
-        items = newList;
+        itemList.clear();
+        itemList = newList;
         notifyDataSetChanged();
     }
 

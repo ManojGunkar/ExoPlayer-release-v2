@@ -1,7 +1,7 @@
 package com.globaldelight.boom.data.MediaCollection;
 
-import com.globaldelight.boom.data.MediaLibrary.ItemType;
-import com.globaldelight.boom.data.MediaLibrary.MediaType;
+import com.globaldelight.boom.Media.ItemType;
+import com.globaldelight.boom.Media.MediaType;
 
 /**
  * Created by Rahul Agarwal on 8/4/2016.
