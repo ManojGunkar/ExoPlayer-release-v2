@@ -6,9 +6,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
-
 import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.business.model.AcessTokenObject;
 import com.globaldelight.boom.business.model.JsonResultObjects;
@@ -19,7 +16,6 @@ import com.globaldelight.boom.business.network.PostHandleData;
 import com.globaldelight.boom.business.network.PostRegisterDeviceData;
 import com.globaldelight.boom.business.network.PostRequestAccessToken;
 import com.globaldelight.boom.business.network.PostSaveEmailData;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -76,7 +72,6 @@ public class NetworkCalls {
                 try {
                     pInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
                     installDate = String.valueOf(mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).firstInstallTime);
-                    Log.d("installDate",installDate);
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -139,7 +134,6 @@ public class NetworkCalls {
                             iBusinessNetworkInit.onGetAccessToken(true);
                         }
                     });
-                    Toast.makeText(mContext, "AccessToken Successfully Recieved ", Toast.LENGTH_LONG).show();
                 }
 
                 @Override
@@ -150,7 +144,6 @@ public class NetworkCalls {
                             iBusinessNetworkInit.onGetAccessToken(false);
                         }
                     });
-                    Toast.makeText(mContext, "Failed to Fetch data  ", Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -167,7 +160,6 @@ public class NetworkCalls {
                         iBusinessNetworkInit.onRegisterDevice(true);
                     }
                 });
-                Toast.makeText(mContext, "Successfully Registred Device ", Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -178,9 +170,7 @@ public class NetworkCalls {
                         iBusinessNetworkInit.onRegisterDevice(false);
                     }
                 });
-                Toast.makeText(mContext, "Failed to Fetch data  ", Toast.LENGTH_LONG).show();
             }
-
         });
     }
 
@@ -221,7 +211,6 @@ public class NetworkCalls {
                             iBusinessNetworkInit.onGetBusinessConfiguration(false);
                         }
                     });
-                    Toast.makeText(mContext, "Failed to Fetch data  ", Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -279,7 +268,6 @@ public class NetworkCalls {
                         iBusinessNetworkInit.onEmailSubmition(true);
                     }
                 });
-                Toast.makeText(mContext, "Succesfully saved Eamil Addreess  ", Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -290,9 +278,7 @@ public class NetworkCalls {
                         iBusinessNetworkInit.onEmailSubmition(false);
                     }
                 });
-                Toast.makeText(mContext, "Failed to Fetch data  ", Toast.LENGTH_LONG).show();
             }
-
         });
 
     }

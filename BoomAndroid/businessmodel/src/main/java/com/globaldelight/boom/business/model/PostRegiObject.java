@@ -145,6 +145,4 @@ public class PostRegiObject {
     @SerializedName("timeZoneOffset")
     @Expose
     private String timeZoneOffset;
-
-
 }
