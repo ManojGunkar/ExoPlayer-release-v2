@@ -754,8 +754,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void showProgressLoader(){
-        if(App.getPlayingQueueHandler().getUpNextList().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB)
-            Utils.showProgressLoader(getContext());
+//        if(App.getPlayingQueueHandler().getUpNextList().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB)
+//            Utils.showProgressLoader(getContext());
     }
 
     @Override
