@@ -138,7 +138,7 @@ public class BusinessUtils {
     }
 
     public static Long getAddsDisplayIntervals() {
-        return addsDisplayIntervals ;
+        return 1000 * addsDisplayIntervals ;
     }
 
     public enum AddSource{

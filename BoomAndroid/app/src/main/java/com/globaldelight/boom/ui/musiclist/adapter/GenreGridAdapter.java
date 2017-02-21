@@ -45,7 +45,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
     private RecyclerView recyclerView;
     private boolean isPhone;
 
-    public GenreGridAdapter(Context context, FragmentActivity activity, RecyclerView recyclerView,
+    public GenreGridAdapter(Context context, Activity activity, RecyclerView recyclerView,
                             ArrayList<? extends IMediaItemBase> itemList, boolean isPhone) {
         this.context = context;
         this.activity = activity;

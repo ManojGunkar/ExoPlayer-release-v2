@@ -45,7 +45,7 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
     private  RecyclerView recyclerView;
     private boolean isPhone;
 
-    public ArtistsGridAdapter(Context context, FragmentActivity activity, RecyclerView recyclerView,
+    public ArtistsGridAdapter(Context context, Activity activity, RecyclerView recyclerView,
                               ArrayList<? extends IMediaItemBase> itemList, boolean isPhone) {
         this.context = context;
         this.activity = activity;

@@ -45,7 +45,7 @@ public class DefaultPlayListAdapter extends RecyclerView.Adapter<DefaultPlayList
     private  RecyclerView recyclerView;
     private boolean isPhone;
 
-    public DefaultPlayListAdapter(Context context, FragmentActivity activity, RecyclerView recyclerView,
+    public DefaultPlayListAdapter(Context context, Activity activity, RecyclerView recyclerView,
                                   ArrayList<? extends IMediaItemBase> itemList, boolean isPhone) {
         this.context = context;
         this.activity = activity;

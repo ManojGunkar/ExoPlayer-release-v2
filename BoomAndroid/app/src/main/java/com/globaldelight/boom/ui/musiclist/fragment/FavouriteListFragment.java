@@ -1,6 +1,7 @@
 package com.globaldelight.boom.ui.musiclist.fragment;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +39,7 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
     private FavouriteMediaList favouriteMediaList;
     private RecyclerView rootView;
     private CloudItemListAdapter adapter;
+    Activity mActivity;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -61,7 +63,7 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
-
+        mActivity = getActivity();
         initViews();
         return rootView;
     }
@@ -69,14 +71,14 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
     private void initViews() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
-        getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
+        mActivity.registerReceiver(mUpdateItemSongListReceiver, intentFilter);
 
-        favouriteMediaList = FavouriteMediaList.getFavouriteListInstance(getActivity());
+        favouriteMediaList = FavouriteMediaList.getFavouriteListInstance(mActivity);
         favouriteMediaList.setFavouriteUpdater(this);
         favouriteMediaList.clearFavouriteContent();
         setSongListAdapter(favouriteMediaList.getFavouriteMediaList());
 
-        if(EasyPermissions.hasPermissions(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+        if(EasyPermissions.hasPermissions(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
             LoadFavouriteList();
         }else {
             EasyPermissions.requestPermissions(
@@ -87,11 +89,11 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
 
     private void setSongListAdapter(ArrayList<IMediaItemBase> favouriteMediaList) {
         final GridLayoutManager gridLayoutManager =
-                new GridLayoutManager(getActivity(), 1);
+                new GridLayoutManager(mActivity, 1);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         gridLayoutManager.scrollToPosition(0);
         rootView.setLayoutManager(gridLayoutManager);
-        adapter = new CloudItemListAdapter(getActivity(), FavouriteListFragment.this, favouriteMediaList, ItemType.FAVOURITE);
+        adapter = new CloudItemListAdapter(mActivity, FavouriteListFragment.this, favouriteMediaList, ItemType.FAVOURITE);
         rootView.setAdapter(adapter);
         rootView.setHasFixedSize(true);
         listIsEmpty(favouriteMediaList.size());
@@ -99,7 +101,7 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
 
     private void LoadFavouriteList(){
         if (favouriteMediaList.getFavouriteMediaList().isEmpty()) {
-            new LoadFavouriteList(getActivity()).execute();
+            new LoadFavouriteList(mActivity).execute();
         } else {
             notifyAdapter(favouriteMediaList.getFavouriteMediaList());
         }
@@ -122,7 +124,7 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        getActivity().onBackPressed();
+        mActivity.onBackPressed();
     }
 
     @Override
@@ -154,7 +156,7 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
 
     @Override
     public void onDestroy() {
-        getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
+        mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
         super.onDestroy();
     }
 }
