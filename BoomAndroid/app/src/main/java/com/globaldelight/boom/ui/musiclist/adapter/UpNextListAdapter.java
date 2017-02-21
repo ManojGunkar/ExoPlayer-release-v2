@@ -376,7 +376,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!App.getPlayerEventHandler().isTrackWaitingForPlay()){
+                if (!App.getPlayerEventHandler().isTrackLoading()){
                     switch (queueType) {
                         case History:
                             App.getPlayingQueueHandler().getUpNextList().addUpNextItemToPlay(QueueType.History, itemPosition);

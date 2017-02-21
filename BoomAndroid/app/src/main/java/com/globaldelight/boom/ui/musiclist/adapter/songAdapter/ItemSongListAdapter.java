@@ -260,7 +260,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             @Override
             public void onClick(View view) {
                 animate(holder);
-                if (!App.getPlayerEventHandler().isTrackWaitingForPlay()) {
+                if (!App.getPlayerEventHandler().isTrackLoading()) {
                     if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                         App.getPlayingQueueHandler().getUpNextList().addTrackCollectionToPlay(collection, position, false);
                     }else{

@@ -150,7 +150,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
             @Override
             public void onClick(View view) {
                 animate(holder);
-                if (!App.getPlayerEventHandler().isTrackWaitingForPlay()) {
+                if (!App.getPlayerEventHandler().isTrackLoading()) {
                     App.getPlayingQueueHandler().getUpNextList().addTrackListToPlay((ArrayList<IMediaItem>) itemList, position, false);
                     new Handler().postDelayed(new Runnable() {
                         @Override

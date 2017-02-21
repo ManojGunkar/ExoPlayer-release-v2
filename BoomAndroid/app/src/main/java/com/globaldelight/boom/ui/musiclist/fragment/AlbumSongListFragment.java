@@ -69,25 +69,18 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
                              Bundle savedInstanceState) {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
         mActivity = getActivity();
+        collection = (MediaItemCollection) this.mActivity.getIntent().getParcelableExtra("mediaItemCollection");
+        setDetail(collection);
         new LoadAlbumSongListItems().execute();
         setForAnimation();
         return rootView;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        collection = (MediaItemCollection) this.mActivity.getIntent().getParcelableExtra("mediaItemCollection");
-
+    private void setDetail(IMediaItemCollection collection) {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
 
-        setDetail(collection);
-    }
-
-    private void setDetail(IMediaItemCollection collection) {
         StringBuilder itemCount = new StringBuilder();
         String title;
         int count;

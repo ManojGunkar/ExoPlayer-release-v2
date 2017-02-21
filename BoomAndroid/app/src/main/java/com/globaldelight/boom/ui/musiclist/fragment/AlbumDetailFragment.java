@@ -63,18 +63,11 @@ public class AlbumDetailFragment extends Fragment {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
 
         mActivity = getActivity();
+        dataCollection = (MediaItemCollection) this.mActivity.getIntent().getParcelableExtra("mediaItemCollection");
+        initValues();
         new LoadAlbumSongs().execute();
         setForAnimation();
         return rootView;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        dataCollection = (MediaItemCollection) this.mActivity.getIntent().getParcelableExtra("mediaItemCollection");
-
-        initValues();
     }
 
     private void initValues(){

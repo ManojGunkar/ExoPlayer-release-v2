@@ -78,15 +78,9 @@ public class MusicLibraryListFragment extends Fragment {
         mainView = view;
         
         mActivity = getActivity();
+
         initViews();
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        page = getArguments().getInt("item", 0);
-        title = getArguments().getInt("title");
     }
 
     private BroadcastReceiver mPlayerEventBroadcastReceiver = new BroadcastReceiver() {
@@ -135,6 +129,8 @@ public class MusicLibraryListFragment extends Fragment {
     }
 
     private void initViews() {
+        page = getArguments().getInt("item", 0);
+        title = getArguments().getInt("title");
         mLibContainer = (LinearLayout)mainView.findViewById(R.id.lib_container);
         mLibProgress = (LinearLayout)mainView.findViewById(R.id.lib_progress);
         recyclerView = (RecyclerView) mainView.findViewById(R.id.albumsListContainer);

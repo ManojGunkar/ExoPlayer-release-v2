@@ -112,7 +112,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!App.getPlayerEventHandler().isTrackWaitingForPlay()) {
+                if (!App.getPlayerEventHandler().isTrackLoading()) {
                     App.getPlayingQueueHandler().getUpNextList().addTrackListToPlay(itemList, position, false);
                     new Handler().postDelayed(new Runnable() {
                         @Override
