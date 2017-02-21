@@ -3,6 +3,7 @@ package com.globaldelight.boom.ui.musiclist.fragment;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -53,8 +54,8 @@ public class AlbumDetailItemFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         collection = (MediaItemCollection) this.mActivity.getIntent().getParcelableExtra("mediaItemCollection");
 

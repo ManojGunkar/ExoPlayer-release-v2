@@ -57,7 +57,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     private boolean isDrawerLocked = false;
     private static boolean isPlayerExpended = false, isEffectScreenExpended = false;
 
-    private static final long FIFTEEN_MINUTES = 15 * 60 * 1000;
+    private static final long FIFTEEN_MINUTES = /*15 * 60 * 1000*/30 * 1000;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {

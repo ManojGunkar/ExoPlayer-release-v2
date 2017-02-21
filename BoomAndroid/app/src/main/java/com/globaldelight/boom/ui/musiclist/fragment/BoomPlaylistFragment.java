@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
@@ -75,9 +76,8 @@ public class BoomPlaylistFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PlayerEvents.ACTION_UPDATE_BOOM_PLAYLIST);
         intentFilter.addAction(PlayerEvents.ACTION_ADD_NEW_BOOM_PLAYLIST);
