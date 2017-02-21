@@ -1,5 +1,6 @@
 package com.globaldelight.boom.ui.musiclist.fragment;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -32,6 +33,7 @@ public class AlbumDetailItemFragment extends Fragment {
     private RecyclerView rootView;
     private GridLayoutManager gridLayoutManager;
     private DetailAlbumGridAdapter detailAlbumGridAdapter;
+    private Activity mActivity;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -40,10 +42,21 @@ public class AlbumDetailItemFragment extends Fragment {
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
+
+        mActivity = getActivity();
+        new LoadAlbumItems().execute();
+        setForAnimation();
+        return rootView;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        collection = (MediaItemCollection) this.getActivity().getIntent().getParcelableExtra("mediaItemCollection");
+        collection = (MediaItemCollection) this.mActivity.getIntent().getParcelableExtra("mediaItemCollection");
 
         setListDetail();
     }
@@ -60,20 +73,10 @@ public class AlbumDetailItemFragment extends Fragment {
         songCount.append(collection.getItemCount());
 
         listDetail = new ListDetail(collection.getItemTitle(), albumCount.toString(), songCount.toString());
-        CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) this.getActivity().findViewById(R.id.toolbar_layout);
+        CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) this.mActivity.findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
             appBarLayout.setTitle(collection.getItemTitle());
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
-
-        new LoadAlbumItems().execute();
-        setForAnimation();
-        return rootView;
     }
 
     private void setForAnimation() {
@@ -82,9 +85,9 @@ public class AlbumDetailItemFragment extends Fragment {
 
     public void onFloatPlayAlbums() {
         if(collection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().size() == 0) {
-            ((IMediaItemCollection) collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(getContext()).getArtistTrackList(collection));
+            ((IMediaItemCollection) collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(mActivity).getArtistTrackList(collection));
         }else if(collection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().size() == 0) {
-            ((IMediaItemCollection) collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(getContext()).getGenreTrackList(collection));
+            ((IMediaItemCollection) collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(mActivity).getGenreTrackList(collection));
         }
         App.getPlayingQueueHandler().getUpNextList().addCollectionTrackToPlay(collection, 0, true);
         detailAlbumGridAdapter.notifyDataSetChanged();
@@ -96,27 +99,27 @@ public class AlbumDetailItemFragment extends Fragment {
         protected IMediaItemBase doInBackground(Void... params) {
 //            ItemType.ARTIST && ItemType.GENRE
             if(collection.getParentType() == ItemType.ARTIST && collection.getMediaElement().size() == 0)
-                collection.setMediaElement(MediaController.getInstance(getActivity()).getArtistAlbumsList(collection));
+                collection.setMediaElement(MediaController.getInstance(mActivity).getArtistAlbumsList(collection));
             else if(collection.getParentType() == ItemType.GENRE && collection.getMediaElement().size() == 0)
-                collection.setMediaElement(MediaController.getInstance(getActivity()).getGenreAlbumsList(collection));
+                collection.setMediaElement(MediaController.getInstance(mActivity).getGenreAlbumsList(collection));
             return collection;
         }
 
         @Override
         protected void onPostExecute(IMediaItemBase iMediaItemBase) {
             super.onPostExecute(iMediaItemBase);
-            boolean isPhone = Utils.isPhone(getActivity());
+            boolean isPhone = Utils.isPhone(mActivity);
             if(isPhone){
                 gridLayoutManager =
-                        new GridLayoutManager(getActivity(), 2);
+                        new GridLayoutManager(mActivity, 2);
             }else{
                 gridLayoutManager =
-                        new GridLayoutManager(getActivity(), 3);
+                        new GridLayoutManager(mActivity, 3);
             }
             rootView.setLayoutManager(gridLayoutManager);
-            rootView.addItemDecoration(new MarginDecoration(getActivity()));
+            rootView.addItemDecoration(new MarginDecoration(mActivity));
             rootView.setHasFixedSize(true);
-            detailAlbumGridAdapter = new DetailAlbumGridAdapter(getActivity(), rootView, (IMediaItemCollection) iMediaItemBase, listDetail, isPhone);
+            detailAlbumGridAdapter = new DetailAlbumGridAdapter(mActivity, rootView, (IMediaItemCollection) iMediaItemBase, listDetail, isPhone);
             rootView.setAdapter(detailAlbumGridAdapter);
             gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override

@@ -29,19 +29,17 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING
 public class SearchViewFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private Context context;
-    private Activity activity;
+    private Activity mActivity;
     private View mainView, emptyView;
     private SearchListAdapter adapter;
     private GridLayoutManager gridLayoutManager;
-
 
 
     public SearchViewFragment(){}
 
     private BroadcastReceiver mUpdatePlayingItem = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context mActivity, Intent intent) {
             switch (intent.getAction()){
                 case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
                     if(null != adapter)
@@ -52,28 +50,26 @@ public class SearchViewFragment extends Fragment {
     };
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
-        getActivity().registerReceiver(mUpdatePlayingItem, intentFilter);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search,
                 container, false);
         mainView = view;
-
+        mActivity = getActivity();
         return view;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
     }
 
     private class LoadSearchResult extends AsyncTask<String, Void, Search> {
 
         @Override
         protected void onPreExecute() {
-            context = mainView.getContext();
-            activity = getActivity();
             recyclerView = (RecyclerView) mainView.findViewById(R.id.search_view_results);
             emptyView = mainView.findViewById(R.id.search_empty_view);
             super.onPreExecute();
@@ -82,21 +78,21 @@ public class SearchViewFragment extends Fragment {
         @Override
         protected Search doInBackground(String... params) {
             Search searchRes = new Search();
-            searchRes.getSearchResult(context, params[0], true);
+            searchRes.getSearchResult(mActivity, params[0], true);
             return searchRes;
         }
 
         @Override
         protected void onPostExecute(Search search) {
             super.onPostExecute(search);
-            if (null != activity) {
-                final boolean isPhone = Utils.isPhone(activity);
+            if (null != mActivity) {
+                final boolean isPhone = Utils.isPhone(mActivity);
                 if (isPhone) {
                     gridLayoutManager =
-                            new GridLayoutManager(mainView.getContext(), 2);
+                            new GridLayoutManager(mActivity, 2);
                 } else {
                     gridLayoutManager =
-                            new GridLayoutManager(mainView.getContext(), 3);
+                            new GridLayoutManager(mActivity, 3);
                 }
                 gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                     @Override
@@ -113,7 +109,7 @@ public class SearchViewFragment extends Fragment {
                     }
                 });
                 recyclerView.setLayoutManager(gridLayoutManager);
-                adapter = new SearchListAdapter(context, activity, search, recyclerView, isPhone);
+                adapter = new SearchListAdapter(mActivity, mActivity, search, recyclerView, isPhone);
                 recyclerView.addItemDecoration(new SearchListSpacesItemDecoration(2, adapter));
                 recyclerView.setAdapter(adapter);
                 if(search.getSongCount() + search.getAlbumCount() + search.getArtistCount() > 0){
@@ -139,7 +135,7 @@ public class SearchViewFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        getActivity().unregisterReceiver(mUpdatePlayingItem);
+        mActivity.unregisterReceiver(mUpdatePlayingItem);
         super.onDestroy();
     }
 }

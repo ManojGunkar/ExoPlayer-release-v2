@@ -1,23 +1,15 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
-import android.app.SearchManager;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.ui.musiclist.adapter.utils.SearchSuggestionAdapter;
 import com.globaldelight.boom.ui.musiclist.fragment.AboutFragment;
-import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.SettingFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.StoreFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.UpNextListFragment;
@@ -31,6 +23,7 @@ public class ActivityContainer extends AppCompatActivity {
     private Toolbar toolbar;
     private int container;
     private Fragment mFragment = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(0, 0);

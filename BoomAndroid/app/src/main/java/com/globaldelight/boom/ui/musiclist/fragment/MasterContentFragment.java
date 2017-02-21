@@ -91,6 +91,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private long mItemId=-1;
     private boolean isUser = false;
+    
+    Activity mActivity;
 
     private AudioEffect audioEffectPreferenceHandler;
 
@@ -104,7 +106,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     public View miniController, mPlayerActionPanel;
 
     private RegularTextView mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
-    private Activity mContext;
     private View mInflater, revealView;
     private int colorTo , colorFrom, colorFromActive;
     private AppCompatSeekBar mTrackSeek;
@@ -213,20 +214,20 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mInflater = inflater.inflate(R.layout.fragment_content_master, container, false);
-        mContext = getActivity();
+        mActivity = getActivity();
 
-        colorTo = ContextCompat.getColor(mContext, R.color.effect_inactive);
-        colorFrom = ContextCompat.getColor(mContext, R.color.effect_active);
-        colorFromActive = ContextCompat.getColor(mContext, R.color.colorAccent);
+        colorTo = ContextCompat.getColor(mActivity, R.color.effect_inactive);
+        colorFrom = ContextCompat.getColor(mActivity, R.color.effect_active);
+        colorFromActive = ContextCompat.getColor(mActivity, R.color.colorAccent);
 
         Point point = new Point();
-        getActivity().getWindowManager().getDefaultDisplay().getSize(point);
+        mActivity.getWindowManager().getDefaultDisplay().getSize(point);
         ScreenWidth = point.x;
         ScreenHeight = point.y;
 
-        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(getActivity());
+        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(mActivity);
 
-        playerUIController = new PlayerUIController(getActivity());
+        playerUIController = new PlayerUIController(mActivity);
         PlayerUIController.registerPlayerUIController(playerUIController);
 
         mPlayerBackground = (FrameLayout) mInflater.findViewById(R.id.player_src_background);
@@ -247,16 +248,16 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void setPlayerEnable(boolean isEnable){
         if(isEnable){
-            mPlayerTab.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_active, null));
-            mEffectTab.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_effects_normal, null));
+            mPlayerTab.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_active, null));
+            mEffectTab.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_effects_normal, null));
             mPlayerContent.setVisibility(View.VISIBLE);
             mEffectContent.setVisibility(View.GONE);
             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_PLAYER_TAB);
         }else{
             mPlayerContent.setVisibility(View.GONE);
             mEffectContent.setVisibility(View.VISIBLE);
-            mPlayerTab.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_normal, null));
-            mEffectTab.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_effects_active, null));
+            mPlayerTab.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_normal, null));
+            mEffectTab.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_effects_active, null));
             mEffectSwitch.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
 
             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_EFFECT_TAB);
@@ -297,10 +298,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private void updateShuffle(){
         switch (App.getUserPreferenceHandler().getShuffle()){
             case none:
-                mShuffle.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_shuffle_off, null));
+                mShuffle.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_shuffle_off, null));
                 break;
             case all:
-                mShuffle.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_shuffle_on, null));
+                mShuffle.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_shuffle_on, null));
                 break;
         }
     }
@@ -308,13 +309,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private void updateRepeat(){
         switch (App.getUserPreferenceHandler().getRepeat()){
             case none:
-                mRepeat.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_repeat_off, null));
+                mRepeat.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_repeat_off, null));
                 break;
             case one:
-                mRepeat.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_repeat_one, null));
+                mRepeat.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_repeat_one, null));
                 break;
             case all:
-                mRepeat.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_repeat_all, null));
+                mRepeat.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_repeat_all, null));
                 break;
         }
     }
@@ -350,7 +351,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
                         return null;
                     } else {
-                        return img = BitmapFactory.decodeResource(mContext.getResources(),
+                        return img = BitmapFactory.decodeResource(mActivity.getResources(),
                                 R.drawable.ic_default_art_player_header);
                     }
                 }
@@ -364,24 +365,24 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                                 Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
                                 bitmap = Bitmap.createScaledBitmap(bitmap, ScreenWidth,
                                         ScreenWidth, false);
-                                Bitmap blurredBitmap = PlayerUtils.blur(mContext, bitmap);
+                                Bitmap blurredBitmap = PlayerUtils.blur(mActivity, bitmap);
                                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
-                                    PlayerUtils.ImageViewAnimatedChange(mContext, mLargeAlbumArt, bitmap);
+                                    PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, bitmap);
                                     mItemId = item.getItemId();
                                 }else{
                                     mLargeAlbumArt.setImageBitmap(bitmap);
                                 }
-                                mPlayerBackground.setBackground(new BitmapDrawable(mContext.getResources(), blurredBitmap));
+                                mPlayerBackground.setBackground(new BitmapDrawable(mActivity.getResources(), blurredBitmap));
                             }catch (Exception e){
-                                Bitmap albumArt = BitmapFactory.decodeResource(mContext.getResources(),
+                                Bitmap albumArt = BitmapFactory.decodeResource(mActivity.getResources(),
                                         R.drawable.ic_default_art_player_header);
                                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
-                                    PlayerUtils.ImageViewAnimatedChange(mContext, mLargeAlbumArt, albumArt);
+                                    PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, albumArt);
                                 }else{
                                     mLargeAlbumArt.setImageBitmap(albumArt);
                                 }
-                                Bitmap blurredBitmap = PlayerUtils.blur(mContext, albumArt);
-                                mPlayerBackground.setBackground(new BitmapDrawable(mContext.getResources(), blurredBitmap));
+                                Bitmap blurredBitmap = PlayerUtils.blur(mActivity, albumArt);
+                                mPlayerBackground.setBackground(new BitmapDrawable(mActivity.getResources(), blurredBitmap));
                             }
                         }
                     });
@@ -389,15 +390,15 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             }.execute();
         } else {
             if(item != null) {
-                Bitmap albumArt = Utils.getBitmapOfVector(mContext, R.drawable.ic_default_art_player_header, ScreenWidth, ScreenWidth);
+                Bitmap albumArt = Utils.getBitmapOfVector(mActivity, R.drawable.ic_default_art_player_header, ScreenWidth, ScreenWidth);
                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
-                    PlayerUtils.ImageViewAnimatedChange(mContext, mLargeAlbumArt, albumArt);
+                    PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, albumArt);
                     mItemId = item.getItemId();
                 }else {
                     mLargeAlbumArt.setImageBitmap(albumArt);
                 }
-                Bitmap blurredBitmap = PlayerUtils.blur(mContext, albumArt);
-                mPlayerBackground.setBackground(new BitmapDrawable(mContext.getResources(), blurredBitmap));
+                Bitmap blurredBitmap = PlayerUtils.blur(mActivity, albumArt);
+                mPlayerBackground.setBackground(new BitmapDrawable(mActivity.getResources(), blurredBitmap));
             }
         }
     }
@@ -446,7 +447,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mEffectTab.setOnClickListener(this);
 
         mTrackSeek = (AppCompatSeekBar) mInflater.findViewById(R.id.control_seek_bar);
-        mTrackSeek.getProgressDrawable().setColorFilter(ContextCompat.getColor(getContext(), R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN);
+        mTrackSeek.getProgressDrawable().setColorFilter(ContextCompat.getColor(mActivity, R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN);
         mTrackSeek.setPadding(mTrackSeek.getPaddingLeft(), 0, mTrackSeek.getPaddingRight(), 0);
 
         mTrackSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -543,7 +544,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
             if(isLastPlayedItem){
                 mTrackSeek.setProgress(0);
-                mPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_play, null));
+                mPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_play, null));
 
                 long totalMillis = item.getDurationLong();
                 long currentMillis = 0;
@@ -553,9 +554,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             }else {
                 boolean isMediaItem = item.getMediaType() == MediaType.DEVICE_MEDIA_LIB;
                 if (isPlaying) {
-                    mPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_pause, null));
+                    mPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_pause, null));
                 } else {
-                    mPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_play, null));
+                    mPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
             }
         }else if(!isLastPlayedItem){
@@ -565,7 +566,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mLargeSongTitle.setVisibility(View.INVISIBLE);
             mLargeSongSubTitle.setVisibility(View.INVISIBLE);
             mTrackSeek.setVisibility(View.INVISIBLE);
-            mLargeAlbumArt.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_no_music_selected, null));
+            mLargeAlbumArt.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_no_music_selected, null));
             mTotalSeekTime.setVisibility(View.INVISIBLE);
             mCurrentSeekTime.setVisibility(View.INVISIBLE);
         }
@@ -596,9 +597,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void updateMiniPlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
         if(audioEffectPreferenceHandler.isAudioEffectOn()) {
-            mMiniPlayerEffect.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_effects_on, null));
+            mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects_on, null));
         }else{
-            mMiniPlayerEffect.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_effects, null));
+            mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects, null));
         }
 
         if(null != item){
@@ -609,9 +610,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mMiniSongSubTitle.setVisibility(null != item.getItemArtist() ? View.VISIBLE : View.GONE);
             mMiniSongSubTitle.setText(item.getItemArtist());
             if(isPlaying)
-                mMiniPlayerPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_pause, null));
+                mMiniPlayerPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_pause, null));
             else
-                mMiniPlayerPlayPause.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_miniplayer_play, null));
+                mMiniPlayerPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_play, null));
         }else if(!isLastPlayedItem){
             DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorTo);
         }
@@ -673,25 +674,25 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void showEffectSwitchTip(){
-        if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
-            coachMarkEffectSwitcher = new CoachMarkerWindow(getContext(), DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
+        if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
+            coachMarkEffectSwitcher = new CoachMarkerWindow(mActivity, DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
             coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
             coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
         }
 
-        if (null != mPlayerContent && mPlayerContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(getContext(), Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, true) && mPlayerContent.getVisibility() == View.VISIBLE &&
-                !App.getPlayerEventHandler().isStopped() && Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
-            coachMarkEffectPager = new CoachMarkerWindow(getContext(), DRAW_TOP_CENTER, getResources().getString(R.string.switch_effect_screen_tooltip));
+        if (null != mPlayerContent && mPlayerContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, true) && mPlayerContent.getVisibility() == View.VISIBLE &&
+                !App.getPlayerEventHandler().isStopped() && Preferences.readBoolean(mActivity, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
+            coachMarkEffectPager = new CoachMarkerWindow(mActivity, DRAW_TOP_CENTER, getResources().getString(R.string.switch_effect_screen_tooltip));
             coachMarkEffectPager.setAutoDismissBahaviour(true);
             coachMarkEffectPager.showCoachMark(mInflater.findViewById(R.id.effect_tab));
         }
     }
 
     private void showEffectShortCut(){
-        if(Preferences.readBoolean(getContext(), TOLLTIP_OPEN_EFFECT_MINI_PLAYER, true) && !Preferences.readBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
-            coachMarkEffectPlayer = new CoachMarkerWindow(getContext(), DRAW_TOP_LEFT, getResources().getString(R.string.library_switch_effect_screen_tooltip));
+        if(Preferences.readBoolean(mActivity, TOLLTIP_OPEN_EFFECT_MINI_PLAYER, true) && !Preferences.readBoolean(mActivity, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
+            coachMarkEffectPlayer = new CoachMarkerWindow(mActivity, DRAW_TOP_LEFT, getResources().getString(R.string.library_switch_effect_screen_tooltip));
             coachMarkEffectPlayer.setAutoDismissBahaviour(true);
-            Preferences.writeBoolean(getContext(), Preferences.TOLLTIP_OPEN_EFFECT_MINI_PLAYER, false);
+            Preferences.writeBoolean(mActivity, Preferences.TOLLTIP_OPEN_EFFECT_MINI_PLAYER, false);
             coachMarkEffectPlayer.showCoachMark(mInflater.findViewById(R.id.mini_player_effect_img));
         }
     }
@@ -755,7 +756,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void showProgressLoader(){
 //        if(App.getPlayingQueueHandler().getUpNextList().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB)
-//            Utils.showProgressLoader(getContext());
+//            Utils.showProgressLoader(mActivity);
     }
 
     @Override
@@ -766,7 +767,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 if(!MasterActivity.isPlayerExpended()){
                     setPlayerEnable(false);
                 }
-                getActivity().sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+                mActivity.sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
                 break;
             case R.id.mini_player_title_panel:
             case R.id.player_title_panel:
@@ -774,12 +775,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     postMessage.post(new Runnable() {
                         @Override
                         public void run() {
-                            playerUIController.OnPlayerTitleClick((MasterActivity) getActivity());
+                            playerUIController.OnPlayerTitleClick((MasterActivity) mActivity);
                         }
                     });
                 }else{*/
                     setPlayerEnable(true);
-                    getActivity().sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+                mActivity.sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
                 /*}*/
                 break;
             case R.id.player_upnext_button:
@@ -787,7 +788,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     postMessage.post(new Runnable() {
                         @Override
                         public void run() {
-                            playerUIController.OnUpNextClick(getActivity());
+                            playerUIController.OnUpNextClick(mActivity);
                         }
                     });
                 }else{
@@ -801,7 +802,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 break;
             case R.id.player_overflow_button:
                 if(MasterActivity.isPlayerExpended()) {
-                    overFlowMenu(getContext(), view);
+                    overFlowMenu(mActivity, view);
                 }else{
                     postMessage.post(new Runnable() {
                         @Override
@@ -920,7 +921,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         PopupMenu pm = new PopupMenu(context, view);
         boolean isCurrentTrackFav= false;
         if(App.getPlayerEventHandler().getPlayingItem() != null) {
-            isCurrentTrackFav = MediaController.getInstance(mContext).isFavoriteItem(App.getPlayerEventHandler().getPlayingItem().getItemId());
+            isCurrentTrackFav = MediaController.getInstance(mActivity).isFavoriteItem(App.getPlayerEventHandler().getPlayingItem().getItemId());
         }
         final boolean isFav = isCurrentTrackFav;
         pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -930,18 +931,18 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     switch (item.getItemId()) {
                         case R.id.popup_song_add_fav:
                             if(isFav){
-                                MediaController.getInstance(mContext).removeItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem().getItemId());
-                                Toast.makeText(mContext, mContext.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
+                                MediaController.getInstance(mActivity).removeItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem().getItemId());
+                                Toast.makeText(mActivity, mActivity.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                             }else{
-                                MediaController.getInstance(mContext).addItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem());
-                                Toast.makeText(mContext, mContext.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
+                                MediaController.getInstance(mActivity).addItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem());
+                                Toast.makeText(mActivity, mActivity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                             }
                             break;
                         case R.id.popup_song_add_playlist:
-                            Utils util = new Utils(getContext());
+                            Utils util = new Utils(mActivity);
                             ArrayList list = new ArrayList();
                             list.add(App.getPlayerEventHandler().getPlayingItem());
-                            util.addToPlaylist(getActivity(), list, null);
+                            util.addToPlaylist(mActivity, list, null);
                             break;
                     }
                 }catch (Exception e){
@@ -980,7 +981,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private void initEffectControl() {
         postMessage = new Handler();
 
-        aaEffectUIController = new EffectUIController(mContext);
+        aaEffectUIController = new EffectUIController(mActivity);
         EffectUIController.registerEffectController(aaEffectUIController);
 
 //        FrameLayout.LayoutParams effectParam = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (ScreenWidth*85)/100);
@@ -1038,9 +1039,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         mDisableIntensity = (RegularTextView) mInflater.findViewById(R.id.intensity_disable_img);
         mDisableIntensity.setOnTouchListener(this);
-        eq_names = Arrays.asList(mContext.getResources().getStringArray(R.array.eq_names));
-        eq_active_on = mContext.getResources().obtainTypedArray(R.array.eq_active_on);
-        eq_active_off = mContext.getResources().obtainTypedArray(R.array.eq_active_off);
+        eq_names = Arrays.asList(mActivity.getResources().getStringArray(R.array.eq_names));
+        eq_active_on = mActivity.getResources().obtainTypedArray(R.array.eq_active_on);
+        eq_active_off = mActivity.getResources().obtainTypedArray(R.array.eq_active_off);
 
         mSelectedEqImg.setImageDrawable(eq_active_off.getDrawable(audioEffectPreferenceHandler.getSelectedEqualizerPosition()));
         mSelectedEqTxt.setText(eq_names.get(audioEffectPreferenceHandler.getSelectedEqualizerPosition()));
@@ -1067,11 +1068,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                             aaEffectUIController.OnEffectEnable(isEffectOn);
                         }
                     });
-                    MixPanelAnalyticHelper.track(mContext, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
+                    MixPanelAnalyticHelper.track(mActivity, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
                     FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffectPreferenceHandler.isAudioEffectOn());
                 }
-                Preferences.writeBoolean(getContext(), Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, false);
-                Preferences.writeBoolean(getContext(), TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, false);
+                Preferences.writeBoolean(mActivity, Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, false);
+                Preferences.writeBoolean(mActivity, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, false);
             }
         });
     }
@@ -1080,7 +1081,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         isEffectOn = audioEffectPreferenceHandler.isAudioEffectOn();
         mOldIntensity = audioEffectPreferenceHandler.getIntensity()/(double)100;
         if(isEffectOn){
-            mEffectSwitchTxt.setText(mContext.getString(R.string.on));
+            mEffectSwitchTxt.setText(mActivity.getString(R.string.on));
 
             setEnable3DEffect(audioEffectPreferenceHandler.is3DSurroundOn());
 
@@ -1089,7 +1090,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             setEnableEqualizer(audioEffectPreferenceHandler.isEqualizerOn());
 
         }else{
-            mEffectSwitchTxt.setText(mContext.getString(R.string.off));
+            mEffectSwitchTxt.setText(mActivity.getString(R.string.off));
 
             setEnable3DEffect(audioEffectPreferenceHandler.is3DSurroundOn());
 
@@ -1101,13 +1102,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void setEnable3DEffect(boolean enable){
         if(enable && audioEffectPreferenceHandler.isAudioEffectOn()) {
-            m3DSurroundBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_three_d_on, null));
-            m3DSurroundTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
-            mSpeakerBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_three_d_dropdown, null));
+            m3DSurroundBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_three_d_on, null));
+            m3DSurroundTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_active));
+            mSpeakerBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_three_d_dropdown, null));
         }else{
-            m3DSurroundBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_three_d_off, null));
-            m3DSurroundTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_inactive));
-            mSpeakerBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_three_d_dropdown_off, null));
+            m3DSurroundBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_three_d_off, null));
+            m3DSurroundTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_inactive));
+            mSpeakerBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_three_d_dropdown_off, null));
         }
 
         setEnableFullBass(audioEffectPreferenceHandler.isFullBassOn());
@@ -1115,22 +1116,22 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void setEnableFullBass(boolean enable){
         if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()){
-            mFullBassCheck.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
+            mFullBassCheck.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_active));
             mFullBassCheck.setEnabled(true);
         }else{
-            mFullBassCheck.setTextColor(ContextCompat.getColor(mContext, R.color.effect_inactive));
+            mFullBassCheck.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_inactive));
             mFullBassCheck.setEnabled(false);
         }
     }
 
     private void setEnableIntensity(boolean enable) {
         if(enable && audioEffectPreferenceHandler.isAudioEffectOn()){
-            mIntensityBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_intensity_on, null));
-            mIntensityTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
+            mIntensityBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_intensity_on, null));
+            mIntensityTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_active));
             mIntensitySeek.setDisable(false);
         }else{
-            mIntensityBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_intensity_off, null));
-            mIntensityTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_inactive));
+            mIntensityBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_intensity_off, null));
+            mIntensityTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_inactive));
             mIntensitySeek.setDisable(true);
         }
         FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_INTENSITY_STATE_CHANGED);
@@ -1139,23 +1140,23 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private void setEnableEqualizer(boolean enable) {
         setChangeEqualizerValue(audioEffectPreferenceHandler.getSelectedEqualizerPosition());
         if(enable && audioEffectPreferenceHandler.isAudioEffectOn()){
-            mEqualizerBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_equalizer_on, null));
-            mEqualizerTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
-            mEqDialogPanel.setBackground(mContext.getResources().getDrawable(R.drawable.equalizer_border_active, null));
+            mEqualizerBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_equalizer_on, null));
+            mEqualizerTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_active));
+            mEqDialogPanel.setBackground(mActivity.getResources().getDrawable(R.drawable.equalizer_border_active, null));
 
             try {
                 DrawableCompat.setTint(mSelectedEqImg.getDrawable(), colorFrom);
-                mSelectedEqTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_active));
+                mSelectedEqTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_active));
                 mSelectedEqGoImg.setImageDrawable(getResources().getDrawable(R.drawable.ic_eq_dropdown_on, null));
             }catch (Exception e){}
         }else{
-            mEqualizerBtn.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_equalizer_off, null));
-            mEqualizerTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_inactive));
-            mEqDialogPanel.setBackground(mContext.getResources().getDrawable(R.drawable.equalizer_border_inactive, null));
+            mEqualizerBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_equalizer_off, null));
+            mEqualizerTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_inactive));
+            mEqDialogPanel.setBackground(mActivity.getResources().getDrawable(R.drawable.equalizer_border_inactive, null));
 
             try {
                 DrawableCompat.setTint(mSelectedEqImg.getDrawable(), colorTo);
-                mSelectedEqTxt.setTextColor(ContextCompat.getColor(mContext, R.color.effect_inactive));
+                mSelectedEqTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_inactive));
                 mSelectedEqGoImg.setImageDrawable(getResources().getDrawable(R.drawable.ic_eq_dropdown_off, null));
             }catch (NullPointerException e){}
         }
@@ -1175,24 +1176,24 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mSurroundRightSpeaker.setOnClickListener(this);
 
         if(!audioEffectPreferenceHandler.isLeftFrontSpeakerOn()){
-            mFrontLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_l_front_inactive, null));
+            mFrontLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_l_front_inactive, null));
         }else {
-            mFrontLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_l_front_active, null));
+            mFrontLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_l_front_active, null));
         }
         if(!audioEffectPreferenceHandler.isRightFrontSpeakerOn()){
-            mFrontRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_r_front_inactive, null));
+            mFrontRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_r_front_inactive, null));
         }else {
-            mFrontRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_r_front_active, null));
+            mFrontRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_r_front_active, null));
         }
         if(!audioEffectPreferenceHandler.isLeftSurroundSpeakerOn()){
-            mSurroundLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_l_surround_inactive, null));
+            mSurroundLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_l_surround_inactive, null));
         }else {
-            mSurroundLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_l_surround_active, null));
+            mSurroundLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_l_surround_active, null));
         }
         if(!audioEffectPreferenceHandler.isRightSurroundSpeakerOn()){
-            mSurroundRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_r_surround_inactive, null));
+            mSurroundRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_r_surround_inactive, null));
         }else {
-            mSurroundRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_speakers_r_surround_active, null));
+            mSurroundRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_r_surround_active, null));
         }
         updateTweeterAndWoofer(speakerPanel, audioEffectPreferenceHandler.isAllSpeakerOn());
     }
@@ -1210,37 +1211,37 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         if(enable){
             audioEffectPreferenceHandler.setOnAllSpeaker(true);
             if(!audioEffectPreferenceHandler.isTweeterOn()){
-                mTweeterLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_tweeter_l_inactive, null));
-                mTweeterRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_tweeter_r_inactive, null));
+                mTweeterLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_tweeter_l_inactive, null));
+                mTweeterRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_tweeter_r_inactive, null));
             }else {
-                mTweeterLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_tweeter_l_active, null));
-                mTweeterRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_tweeter_r_active, null));
+                mTweeterLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_tweeter_l_active, null));
+                mTweeterRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_tweeter_r_active, null));
             }
             if(!audioEffectPreferenceHandler.isWooferOn()){
-                mWoofer.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_woofer_inactive, null));
+                mWoofer.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_woofer_inactive, null));
             }else {
-                mWoofer.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_woofer_active, null));
+                mWoofer.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_woofer_active, null));
             }
         }else{
             audioEffectPreferenceHandler.setOnAllSpeaker(false);
-            mTweeterLeftSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_tweeter_l_disabled, null));
-            mTweeterRightSpeaker.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_tweeter_r_disabled, null));
-            mWoofer.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_woofer_disabled, null));
+            mTweeterLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_tweeter_l_disabled, null));
+            mTweeterRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_tweeter_r_disabled, null));
+            mWoofer.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_woofer_disabled, null));
         }
     }
 
     private void onEqDialogOpen(){
-        final EqualizerDialogAdapter adapter = new EqualizerDialogAdapter(mContext, audioEffectPreferenceHandler.getSelectedEqualizerPosition(), eq_names, eq_active_on, eq_active_off, this);
-        RecyclerView recyclerView = (RecyclerView) getActivity().getLayoutInflater()
+        final EqualizerDialogAdapter adapter = new EqualizerDialogAdapter(mActivity, audioEffectPreferenceHandler.getSelectedEqualizerPosition(), eq_names, eq_active_on, eq_active_off, this);
+        RecyclerView recyclerView = (RecyclerView)mActivity.getLayoutInflater()
                 .inflate(R.layout.recycler_view_layout, null);
-        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         recyclerView.setAdapter(adapter);
 
-        MaterialDialog dialog = new MaterialDialog.Builder(mContext)
+        MaterialDialog dialog = new MaterialDialog.Builder(mActivity)
                 .title(R.string.eq_dialog_title)
-                .backgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background))
-                .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
-                .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
+                .backgroundColor(ContextCompat.getColor(mActivity, R.color.dialog_background))
+                .titleColor(ContextCompat.getColor(mActivity, R.color.dialog_title))
+                .positiveColor(ContextCompat.getColor(mActivity, R.color.dialog_submit_positive))
                 .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .customView(recyclerView, false)
                 .positiveText(R.string.done)
@@ -1258,16 +1259,16 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void openSpeakerDialog() {
-        mSpeakerDialogPanel = (LinearLayout) getActivity().getLayoutInflater()
+        mSpeakerDialogPanel = (LinearLayout) mActivity.getLayoutInflater()
                 .inflate(R.layout.speaker_panel, null);
 
         updateSpeakers(mSpeakerDialogPanel);
 
-        MaterialDialog dialog = new MaterialDialog.Builder(mContext)
+        MaterialDialog dialog = new MaterialDialog.Builder(mActivity)
                 .title(R.string.speaker_dialog_title)
-                .backgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background))
-                .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
-                .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
+                .backgroundColor(ContextCompat.getColor(mActivity, R.color.dialog_background))
+                .titleColor(ContextCompat.getColor(mActivity, R.color.dialog_title))
+                .positiveColor(ContextCompat.getColor(mActivity, R.color.dialog_submit_positive))
                 .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .customView(mSpeakerDialogPanel, false)
                 .positiveText(R.string.done)
@@ -1302,7 +1303,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     switchEqualizer();
                 }
             }
-            MixPanelAnalyticHelper.track(mContext, audioEffectPreferenceHandler.is3DSurroundOn() ? AnalyticsHelper.EVENT_3D_TURNED_ON : AnalyticsHelper.EVENT_3D_TURNED_OFF);
+            MixPanelAnalyticHelper.track(mActivity, audioEffectPreferenceHandler.is3DSurroundOn() ? AnalyticsHelper.EVENT_3D_TURNED_ON : AnalyticsHelper.EVENT_3D_TURNED_OFF);
             FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_3D_STATE_CHANGED, audioEffectPreferenceHandler.is3DSurroundOn());
         }
     }
@@ -1315,7 +1316,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             setEnableIntensity(!audioEffectPreferenceHandler.isIntensityOn());
             audioEffectPreferenceHandler.setEnableIntensity(!audioEffectPreferenceHandler.isIntensityOn());
         }else if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn() && audioEffectPreferenceHandler.isIntensityOn()){
-            Toast.makeText(mContext, mContext.getResources().getString(R.string.req_intensity), Toast.LENGTH_LONG).show();
+            Toast.makeText(mActivity, mActivity.getResources().getString(R.string.req_intensity), Toast.LENGTH_LONG).show();
         }
         postMessage.post(new Runnable() {
             @Override
@@ -1333,7 +1334,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             setEnableEqualizer(!audioEffectPreferenceHandler.isEqualizerOn());
             audioEffectPreferenceHandler.setEnableEqualizer(!audioEffectPreferenceHandler.isEqualizerOn());
         } else if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn() && audioEffectPreferenceHandler.isEqualizerOn()){
-            Toast.makeText(mContext, mContext.getResources().getString(R.string.req_equlaizer), Toast.LENGTH_LONG).show();
+            Toast.makeText(mActivity, mActivity.getResources().getString(R.string.req_equlaizer), Toast.LENGTH_LONG).show();
         }
         postMessage.post(new Runnable() {
             @Override
@@ -1341,7 +1342,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 aaEffectUIController.OnEqualizerEnable(audioEffectPreferenceHandler.isEqualizerOn());
             }
         });
-        MixPanelAnalyticHelper.track(mContext, audioEffectPreferenceHandler.isEqualizerOn() ? AnalyticsHelper.EVENT_EQ_TURNED_ON : AnalyticsHelper.EVENT_EQ_TURNED_OFF);
+        MixPanelAnalyticHelper.track(mActivity, audioEffectPreferenceHandler.isEqualizerOn() ? AnalyticsHelper.EVENT_EQ_TURNED_ON : AnalyticsHelper.EVENT_EQ_TURNED_OFF);
     }
 
     private void setEffectIntensity() {

@@ -43,7 +43,7 @@ public class AlbumsGridAdapter extends RecyclerView.Adapter<AlbumsGridAdapter.Si
     private  RecyclerView recyclerView;
     private boolean isPhone;
 
-    public AlbumsGridAdapter(Context context, FragmentActivity activity, RecyclerView recyclerView, ArrayList<? extends IMediaItemBase> itemList, boolean isPhone) {
+    public AlbumsGridAdapter(Context context, Activity activity, RecyclerView recyclerView, ArrayList<? extends IMediaItemBase> itemList, boolean isPhone) {
         this.context = context;
         this.activity = activity;
         this.recyclerView = recyclerView;

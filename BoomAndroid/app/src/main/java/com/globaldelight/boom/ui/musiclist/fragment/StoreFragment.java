@@ -1,5 +1,6 @@
 package com.globaldelight.boom.ui.musiclist.fragment;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +33,8 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING
 public class StoreFragment extends Fragment implements View.OnClickListener, IPurchaseUpdater{
 
     ScrollView rootView;
+    Activity mActivity;
+
     private BroadcastReceiver mUpdateInAppItemReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -46,6 +49,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener, IPu
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = (ScrollView) inflater.inflate(R.layout.fragment_store, container, false);
+        mActivity = getActivity();
         initViews();
         return rootView;
     }
@@ -53,7 +57,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener, IPu
     private void initViews() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_IN_APP_PURCHASE_SUCCESSFUL);
-        getActivity().registerReceiver(mUpdateInAppItemReceiver, intentFilter);
+        mActivity.registerReceiver(mUpdateInAppItemReceiver, intentFilter);
 
         updateStoreUI();
 
@@ -67,7 +71,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener, IPu
     }
 
     private void updateStoreUI() {
-        if(BusinessPreferences.readBoolean(getContext(), BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
+        if(BusinessPreferences.readBoolean(mActivity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
             ((RegularTextView)rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.after_purchase_store_page_header));
             ((RegularTextView)rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.after_purchase_store_page_buy_description));
             ((RegularButton)rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.after_purchase_buy_button));
@@ -82,9 +86,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener, IPu
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.store_share_text:
-                if(ConnectivityReceiver.isNetworkAvailable(getContext())) {
+                if(ConnectivityReceiver.isNetworkAvailable(mActivity)) {
                     try {
-                        Utils.shareStart(getActivity(), StoreFragment.this);
+                        Utils.shareStart(mActivity, StoreFragment.this);
                     }catch (Exception e){}
                 }
                 break;
@@ -97,14 +101,14 @@ public class StoreFragment extends Fragment implements View.OnClickListener, IPu
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == Utils.SHARE_COMPLETE && resultCode == RESULT_OK){
-            BusinessPreferences.writeBoolean(getContext(), ACTION_APP_SHARED, true);
+        if(requestCode == Utils.SHARE_COMPLETE){
+            BusinessPreferences.writeBoolean(mActivity, ACTION_APP_SHARED, true);
             updateShareContent();
         }
     }
 
     private void updateShareContent() {
-        if(BusinessPreferences.readBoolean(getContext(), ACTION_APP_SHARED, false)){
+        if(BusinessPreferences.readBoolean(mActivity, ACTION_APP_SHARED, false)){
             rootView.findViewById(R.id.store_sub_discription).setVisibility(View.INVISIBLE);
             rootView.findViewById(R.id.store_share_text).setVisibility(View.INVISIBLE);
         }else{
@@ -114,9 +118,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener, IPu
     }
 
     private void startPurchaseRestore(){
-        if(ConnectivityReceiver.isNetworkAvailable(getContext())){
+        if(ConnectivityReceiver.isNetworkAvailable(mActivity)){
             try {
-                InAppHandler inAppHandler = new InAppHandler(getContext(), getActivity(), this);
+                InAppHandler inAppHandler = new InAppHandler(mActivity, mActivity, this);
                 inAppHandler.startInAppFlow();
             }catch (Exception e){}
         }
@@ -128,7 +132,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener, IPu
 
     @Override
     public void onDestroy() {
-        getActivity().unregisterReceiver(mUpdateInAppItemReceiver);
+        mActivity.unregisterReceiver(mUpdateInAppItemReceiver);
         super.onDestroy();
     }
 
@@ -138,18 +142,18 @@ public class StoreFragment extends Fragment implements View.OnClickListener, IPu
 
     @Override
     public void onErrorAppPurchase() {
-        Toast.makeText(getContext(), getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();
+        Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onSuccessAppPurchase() {
         updateStoreUI();
-        Toast.makeText(getContext(), getResources().getString(R.string.inapp_process_success), Toast.LENGTH_SHORT).show();
+        Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_success), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onSuccessRestoreAppPurchase() {
         updateStoreUI();
-        Toast.makeText(getContext(), getResources().getString(R.string.inapp_process_restore), Toast.LENGTH_SHORT).show();
+        Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_restore), Toast.LENGTH_SHORT).show();
     }
 }

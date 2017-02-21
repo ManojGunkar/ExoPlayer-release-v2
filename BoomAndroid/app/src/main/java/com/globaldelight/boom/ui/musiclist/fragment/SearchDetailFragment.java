@@ -1,5 +1,6 @@
 package com.globaldelight.boom.ui.musiclist.fragment;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -36,6 +37,7 @@ public class SearchDetailFragment extends Fragment{
     private GridLayoutManager gridLayoutManager;
     private String mResultType, mQuery;
     private RecyclerView rootView;
+    Activity mActivity;
 
     public SearchDetailFragment(){}
 
@@ -51,6 +53,18 @@ public class SearchDetailFragment extends Fragment{
         }
     };
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
+
+        mActivity = getActivity();
+        new LoadSearchDetailList().execute(mResultType, mQuery);
+
+        setForAnimation();
+        return rootView;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,18 +79,7 @@ public class SearchDetailFragment extends Fragment{
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
-        getActivity().registerReceiver(mUpdatePlayingItem, intentFilter);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
-
-        new LoadSearchDetailList().execute(mResultType, mQuery);
-
-        setForAnimation();
-        return rootView;
+        mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
     }
 
     private class LoadSearchDetailList extends AsyncTask<String, Void, ArrayList<? extends IMediaItemBase>> {
@@ -87,11 +90,11 @@ public class SearchDetailFragment extends Fragment{
             mResultType = params[0];
             mQuery = params[1];
             if(mResultType.equals(SearchResult.ARTISTS)){
-                return result.getResultArtistList(getActivity(), mQuery, false);
+                return result.getResultArtistList(mActivity, mQuery, false);
             }else if(mResultType.equals(SearchResult.ALBUMS)){
-                return result.getResultAlbumList(getActivity(), mQuery, false);
+                return result.getResultAlbumList(mActivity, mQuery, false);
             }else if(mResultType.equals(SearchResult.SONGS)){
-                return result.getResultSongList(getActivity(), mQuery, false);
+                return result.getResultSongList(mActivity, mQuery, false);
             }
             return null;
         }
@@ -99,18 +102,18 @@ public class SearchDetailFragment extends Fragment{
         @Override
         protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
             super.onPostExecute(iMediaItemList);
-            final boolean isPhone = Utils.isPhone(getActivity());
+            final boolean isPhone = Utils.isPhone(mActivity);
             if(isPhone){
                 gridLayoutManager =
-                        new GridLayoutManager(getActivity(), 2);
+                        new GridLayoutManager(mActivity, 2);
             }else{
                 gridLayoutManager =
-                        new GridLayoutManager(getActivity(), 3);
+                        new GridLayoutManager(mActivity, 3);
             }
 
-            adapter = new SearchDetailListAdapter(getActivity(), iMediaItemList, mResultType, isPhone);
+            adapter = new SearchDetailListAdapter(mActivity, iMediaItemList, mResultType, isPhone);
             if(mResultType.equals(SearchResult.SONGS)){
-                rootView.addItemDecoration(new SimpleDividerItemDecoration(getActivity(), 0));
+                rootView.addItemDecoration(new SimpleDividerItemDecoration(mActivity, 0));
             }
             rootView.setHasFixedSize(true);
             gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -140,7 +143,7 @@ public class SearchDetailFragment extends Fragment{
 
     @Override
     public void onDestroy() {
-        getActivity().unregisterReceiver(mUpdatePlayingItem);
+        mActivity.unregisterReceiver(mUpdatePlayingItem);
         super.onDestroy();
     }
 }

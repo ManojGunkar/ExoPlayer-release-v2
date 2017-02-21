@@ -1,6 +1,7 @@
 package com.globaldelight.boom.ui.musiclist.fragment;
 
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +36,7 @@ public class AlbumDetailFragment extends Fragment {
     private ListDetail listDetail;
     private RecyclerView rootView;
     private AlbumDetailAdapter albumDetailAdapter;
+    Activity mActivity;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -55,10 +57,21 @@ public class AlbumDetailFragment extends Fragment {
     };
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
+
+        mActivity = getActivity();
+        new LoadAlbumSongs().execute();
+        setForAnimation();
+        return rootView;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dataCollection = (MediaItemCollection) this.getActivity().getIntent().getParcelableExtra("mediaItemCollection");
+        dataCollection = (MediaItemCollection) this.mActivity.getIntent().getParcelableExtra("mediaItemCollection");
 
         initValues();
     }
@@ -66,26 +79,18 @@ public class AlbumDetailFragment extends Fragment {
     private void initValues(){
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
-        getActivity().registerReceiver(mUpdatePlayingItem, intentFilter);
+        if(null != mActivity) {
+            mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
 
-        CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) this.getActivity().findViewById(R.id.toolbar_layout);
-        if (appBarLayout != null) {
-            if( dataCollection.getParentType()== ItemType.ALBUM ){
-                appBarLayout.setTitle(dataCollection.getItemTitle());
-            } else {
-                appBarLayout.setTitle(dataCollection.getMediaElement().get(dataCollection.getCurrentIndex()).getItemTitle());
+            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) mActivity.findViewById(R.id.toolbar_layout);
+            if (appBarLayout != null) {
+                if (dataCollection.getParentType() == ItemType.ALBUM) {
+                    appBarLayout.setTitle(dataCollection.getItemTitle());
+                } else {
+                    appBarLayout.setTitle(dataCollection.getMediaElement().get(dataCollection.getCurrentIndex()).getItemTitle());
+                }
             }
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
-
-        new LoadAlbumSongs().execute();
-        setForAnimation();
-        return rootView;
     }
 
     private void setForAnimation() {
@@ -108,12 +113,12 @@ public class AlbumDetailFragment extends Fragment {
         @Override
         protected IMediaItemCollection doInBackground(Void... params) {
             if(dataCollection.getParentType() == ItemType.ALBUM && dataCollection.getMediaElement().size() == 0) {
-                dataCollection.setMediaElement(MediaController.getInstance(getContext()).getAlbumTrackList(dataCollection));
+                dataCollection.setMediaElement(MediaController.getInstance(mActivity).getAlbumTrackList(dataCollection));
             }else if(dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() == 0){
-                ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).setMediaElement(MediaController.getInstance(getContext()).getArtistTrackList(dataCollection));
+                ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).setMediaElement(MediaController.getInstance(mActivity).getArtistTrackList(dataCollection));
             }else if(dataCollection.getParentType() == ItemType.GENRE &&
                     ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() == 0){
-                ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).setMediaElement(MediaController.getInstance(getContext()).getGenreAlbumsTrackList(dataCollection));
+                ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).setMediaElement(MediaController.getInstance(mActivity).getGenreAlbumsTrackList(dataCollection));
             }
             return dataCollection;
         }
@@ -134,8 +139,8 @@ public class AlbumDetailFragment extends Fragment {
                 listDetail = new ListDetail(iMediaItemBase.getItemTitle(), ((MediaItemCollection) iMediaItemBase.getMediaElement().get(iMediaItemBase.getCurrentIndex())).getItemSubTitle(), itemCount.toString());
             }
 
-            rootView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            albumDetailAdapter = new AlbumDetailAdapter(getActivity(), iMediaItemBase, listDetail);
+            rootView.setLayoutManager(new LinearLayoutManager(mActivity));
+            albumDetailAdapter = new AlbumDetailAdapter(mActivity, iMediaItemBase, listDetail);
             rootView.setAdapter(albumDetailAdapter);
 
             if(iMediaItemBase.getItemType() == ItemType.ALBUM){
@@ -156,7 +161,7 @@ public class AlbumDetailFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        getActivity().unregisterReceiver(mUpdatePlayingItem);
+        mActivity.unregisterReceiver(mUpdatePlayingItem);
         super.onDestroy();
     }
 }

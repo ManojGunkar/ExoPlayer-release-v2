@@ -41,17 +41,20 @@ public class ConnectivityReceiver
     }
 
     public static boolean isNetworkAvailable(Context context) {
-        boolean isConnect;
-        ConnectivityManager
-                cm = (ConnectivityManager) context.getApplicationContext()
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        isConnect = activeNetwork != null
-                && activeNetwork.isConnectedOrConnecting();
-        if(!isConnect){
-            Toast.makeText(context, context.getResources().getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+        if(null != context) {
+            boolean isConnect;
+            ConnectivityManager
+                    cm = (ConnectivityManager) context.getApplicationContext()
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            isConnect = activeNetwork != null
+                    && activeNetwork.isConnectedOrConnecting();
+            if (!isConnect)
+                Toast.makeText(context, context.getResources().getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+            return isConnect;
+        }else{
+            return false;
         }
-        return isConnect;
     }
 
     public interface ConnectivityReceiverListener {

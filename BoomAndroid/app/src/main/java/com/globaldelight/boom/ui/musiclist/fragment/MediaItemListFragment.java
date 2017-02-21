@@ -1,6 +1,7 @@
 package com.globaldelight.boom.ui.musiclist.fragment;
 
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,7 @@ public class MediaItemListFragment extends Fragment {
 
     private RecyclerView rootView;
     private SongListAdapter songListAdapter;
+    Activity mActivity;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -54,13 +56,13 @@ public class MediaItemListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
-
+        mActivity = getActivity();
         new LoadSongsList().execute();
         setForAnimation();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
-        getActivity().registerReceiver(mUpdatePlayingItem, intentFilter);
+        mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
 
         return rootView;
     }
@@ -70,7 +72,7 @@ public class MediaItemListFragment extends Fragment {
     }
 
     public void killActivity() {
-        getActivity().finish();
+        mActivity.finish();
     }
 
 
@@ -78,14 +80,14 @@ public class MediaItemListFragment extends Fragment {
 
         @Override
         protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
-            return MediaController.getInstance(getActivity()).getSongList();
+            return MediaController.getInstance(mActivity).getSongList();
         }
 
         @Override
         protected void onPostExecute(ArrayList<? extends IMediaItemBase> itemList) {
             super.onPostExecute(itemList);
-            rootView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            songListAdapter = new SongListAdapter(getActivity(), MediaItemListFragment.this, itemList);
+            rootView.setLayoutManager(new LinearLayoutManager(mActivity));
+            songListAdapter = new SongListAdapter(mActivity, MediaItemListFragment.this, itemList);
             rootView.setAdapter(songListAdapter);
             rootView.setHasFixedSize(true);
             if (itemList.size() < 1) {
@@ -100,7 +102,7 @@ public class MediaItemListFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        getActivity().unregisterReceiver(mUpdatePlayingItem);
+        mActivity.unregisterReceiver(mUpdatePlayingItem);
         super.onDestroy();
     }
 }

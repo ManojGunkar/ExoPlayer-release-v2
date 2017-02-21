@@ -2,6 +2,7 @@ package com.globaldelight.boom.ui.musiclist.fragment;
 
 import android.Manifest;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -46,6 +47,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     private CloudItemListAdapter adapter;
     private RecyclerView rootView;
     private PermissionChecker permissionChecker;
+    Activity mActivity;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -62,10 +64,10 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                     notifyAdapter(null);
                     break;
                 case ACTION_ON_NETWORK_CONNECTED:
-                    Utils.showProgressLoader(getContext());
+                    Utils.showProgressLoader(mActivity);
                     checkPermissions();
                 case ACTION_CLOUD_SYNC:
-                    Utils.showProgressLoader(getContext());
+                    Utils.showProgressLoader(mActivity);
                     if(null != googleDriveMediaList) {
                         googleDriveMediaList.clearGoogleDriveMediaContent();
                         checkPermissions();
@@ -79,7 +81,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
-
+        mActivity = getActivity();
         initViews();
 
         checkPermissions();
@@ -96,13 +98,13 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     @Override
     public void onPause() {
-        if(null != getActivity())
-            getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
+        if(null != mActivity)
+            mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
         super.onPause();
     }
 
     public void checkPermissions() {
-        permissionChecker = new PermissionChecker(getContext(), getActivity(), rootView);
+        permissionChecker = new PermissionChecker(mActivity, mActivity, rootView);
         permissionChecker.check(Manifest.permission.GET_ACCOUNTS, getResources().getString(R.string.account_permission), this);
     }
 
@@ -113,7 +115,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     private void LoadGoogleDriveList(){
         if (googleDriveMediaList.getGoogleDriveMediaList().size() <= 0 &&
-                ConnectivityReceiver.isNetworkAvailable(getContext())) {
+                ConnectivityReceiver.isNetworkAvailable(mActivity)) {
             googleDriveHandler.getResultsFromApi();
         }else{
             Utils.dismissProgressLoader();
@@ -126,13 +128,13 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         intentFilter.addAction(ACTION_ON_NETWORK_CONNECTED);
         intentFilter.addAction(ACTION_CLOUD_SYNC);
-        if(null != getActivity())
-            getActivity().registerReceiver(mUpdateItemSongListReceiver, intentFilter);
+        if(null != mActivity)
+            mActivity.registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 
     private void initViews() {
-        Utils.showProgressLoader(getContext());
-        googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(getActivity());
+        Utils.showProgressLoader(mActivity);
+        googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(mActivity);
         googleDriveMediaList.setGoogleDriveMediaUpdater(this);
         googleDriveHandler = new GoogleDriveHandler(GoogleDriveListFragment.this);
         googleDriveMediaList.setGoogleDriveHandler(googleDriveHandler);
@@ -156,20 +158,20 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     @Override
     public void onRequestCancelled() {
         Utils.dismissProgressLoader();
-        Toast.makeText(getContext(), getResources().getString(R.string.request_cancelled), Toast.LENGTH_SHORT).show();
+        Toast.makeText(mActivity, getResources().getString(R.string.request_cancelled), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onError(String e) {
         Utils.dismissProgressLoader();
-        Toast.makeText(getContext(), getResources().getString(R.string.google_drive_loading_error)
+        Toast.makeText(mActivity, getResources().getString(R.string.google_drive_loading_error)
                 + e, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onEmptyList() {
         Utils.dismissProgressLoader();
-        Toast.makeText(getContext(), getResources().getString(R.string.empty_list), Toast.LENGTH_SHORT).show();
+        Toast.makeText(mActivity, getResources().getString(R.string.empty_list), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -186,11 +188,11 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
             Utils.dismissProgressLoader();
 
         final GridLayoutManager gridLayoutManager =
-                new GridLayoutManager(getActivity(), 1);
+                new GridLayoutManager(mActivity, 1);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         gridLayoutManager.scrollToPosition(0);
         rootView.setLayoutManager(gridLayoutManager);
-        adapter = new CloudItemListAdapter(getActivity(), GoogleDriveListFragment.this, iMediaItemList, ItemType.SONGS);
+        adapter = new CloudItemListAdapter(mActivity, GoogleDriveListFragment.this, iMediaItemList, ItemType.SONGS);
         rootView.setAdapter(adapter);
         rootView.setHasFixedSize(true);
 //        listIsEmpty(iMediaItemList.size());
@@ -202,7 +204,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         switch (requestCode) {
             case GoogleDriveHandler.REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
-                    Toast.makeText(getContext(), getResources().getString(R.string.require_google_play_service), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, getResources().getString(R.string.require_google_play_service), Toast.LENGTH_SHORT).show();
 //                    dismissLoader();
                 } else {
                     LoadGoogleDriveList();
@@ -256,8 +258,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     @Override
     public void onDecline() {
         Utils.dismissProgressLoader();
-        if(null != getActivity())
-            getActivity().onBackPressed();
+        if(null != mActivity)
+            mActivity.onBackPressed();
     }
 
     @Override

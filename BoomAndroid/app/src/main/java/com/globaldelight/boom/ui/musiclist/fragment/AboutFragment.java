@@ -1,5 +1,6 @@
 package com.globaldelight.boom.ui.musiclist.fragment;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +28,13 @@ public class AboutFragment extends Fragment {
 
     LinearLayout rootView;
     RegularButton rateButton;
+    Activity mActivity;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = (LinearLayout) inflater.inflate(R.layout.fragment_about, container, false);
+        mActivity = getActivity();
         initViews();
         return rootView;
     }
@@ -40,7 +45,7 @@ public class AboutFragment extends Fragment {
         rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse("market://details?id=" + getContext().getPackageName());
+                Uri uri = Uri.parse("market://details?id=" + mActivity.getPackageName());
                 Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
                 // To count with Play market backstack, After pressing back button,
                 // to taken back to our application, we need to add following flags to intent.
@@ -51,7 +56,7 @@ public class AboutFragment extends Fragment {
                     startActivity(goToMarket);
                 } catch (ActivityNotFoundException e) {
                     startActivity(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("http://play.google.com/store/apps/details?id=" + getContext().getPackageName())));
+                            Uri.parse("http://play.google.com/store/apps/details?id=" + mActivity.getPackageName())));
                 }
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ABOUT_RATE_BUTTON_TAPPED);
             }

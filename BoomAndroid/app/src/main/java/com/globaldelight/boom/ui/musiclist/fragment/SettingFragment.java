@@ -2,6 +2,7 @@ package com.globaldelight.boom.ui.musiclist.fragment;
 
 import android.Manifest;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     RegularTextView sleepTimerTxt;
     private GoogleDriveHandler googleDriveHandler;
     private PermissionChecker permissionChecker;
+    Activity mActivity;
 
     public SettingFragment(){}
 
@@ -48,9 +50,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = (ScrollView) inflater.inflate(R.layout.fragment_settings, container, false);
+        mActivity = getActivity();
         initViews();
 
-        TimerUtils.resumeTimerState(getContext(), sleepTimerTxt);
+        TimerUtils.resumeTimerState(mActivity, sleepTimerTxt);
         return rootView;
     }
 
@@ -78,19 +81,19 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         TypedArray inactiveHeadPhoneList = getResources().obtainTypedArray(R.array.headphone_inactive);
         TypedArray HeadPhoneList = getResources().obtainTypedArray(R.array.headphone_list);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        recyclerView.setAdapter(new HeadPhoneItemAdapter(activeHeadPhoneList, inactiveHeadPhoneList, HeadPhoneList, getContext(), recyclerView));
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setAdapter(new HeadPhoneItemAdapter(activeHeadPhoneList, inactiveHeadPhoneList, HeadPhoneList, mActivity, recyclerView));
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.setting_dropbox_panel:
-                if(ConnectivityReceiver.isNetworkAvailable(getContext())) {
+                if(ConnectivityReceiver.isNetworkAvailable(mActivity)) {
                     App.getDropboxAPI().getSession().unlink();
-                    DropBoxUtills.clearKeys(getContext());
+                    DropBoxUtills.clearKeys(mActivity);
                     DropBoxUtills.checkAppKeySetup(App.getApplication());
-                    DropBoxUtills.checkDropboxAuthentication(getActivity());
+                    DropBoxUtills.checkDropboxAuthentication(mActivity);
                 }
                 break;
             case R.id.setting_google_drive_panel:
@@ -98,8 +101,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.seeting_sleep_timer:
             case R.id.seeting_sleep_timer_panel:
-                boolean sleepTimerEnabled = Preferences.readBoolean(getContext(), Preferences.SLEEP_TIMER_ENABLED, false);
-                TimerUtils.customMaterialTimepicker(getContext(), sleepTimerTxt, sleepTimerEnabled);
+                boolean sleepTimerEnabled = Preferences.readBoolean(mActivity, Preferences.SLEEP_TIMER_ENABLED, false);
+                TimerUtils.customMaterialTimepicker(mActivity, sleepTimerTxt, sleepTimerEnabled);
                 if (sleepTimerEnabled) {
                     try {
                         TimerUtils.cancelTimer(sleepTimerTxt);
@@ -118,9 +121,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     private void startCompoundActivities(int activityName) {
-        Intent intent = new Intent(getActivity(), ActivityContainer.class);
+        Intent intent = new Intent(mActivity, ActivityContainer.class);
         intent.putExtra("container",activityName);
-        getActivity().startActivity(intent);
+        mActivity.startActivity(intent);
     }
 
     @Override
@@ -129,7 +132,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         switch (requestCode) {
             case GoogleDriveHandler.REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
-                    Toast.makeText(getContext(), getResources().getString(R.string.require_google_play_service), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, getResources().getString(R.string.require_google_play_service), Toast.LENGTH_SHORT).show();
                 }
                 break;
             case GoogleDriveHandler.REQUEST_ACCOUNT_PICKER:
@@ -152,12 +155,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     private void resetGoogleDriveAuth() {
-        if(ConnectivityReceiver.isNetworkAvailable(getContext())) {
+        if(ConnectivityReceiver.isNetworkAvailable(mActivity)) {
             try {
                 googleDriveHandler = new GoogleDriveHandler(SettingFragment.this);
                 googleDriveHandler.getGoogleAccountCredential();
                 googleDriveHandler.getGoogleApiClient();
-                googleDriveHandler.resetKeys(getContext());
+                googleDriveHandler.resetKeys(mActivity);
             }catch (Exception e){}
         }
     }
@@ -175,9 +178,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 try {
                     session.finishAuthentication();
                     TokenPair tokens = session.getAccessTokenPair();
-                    DropBoxUtills.storeKeys(getContext(), tokens.key, tokens.secret);
+                    DropBoxUtills.storeKeys(mActivity, tokens.key, tokens.secret);
                 } catch (IllegalStateException e) {
-                    Toast.makeText(getContext(), getResources().getString(R.string.dropbox_authenticate_problem)
+                    Toast.makeText(mActivity, getResources().getString(R.string.dropbox_authenticate_problem)
                             + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -185,7 +188,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     public void checkPermissions() {
-        permissionChecker = new PermissionChecker(getContext(), getActivity(), rootView);
+        permissionChecker = new PermissionChecker(mActivity, mActivity, rootView);
         permissionChecker.check(Manifest.permission.GET_ACCOUNTS,
                 getResources().getString(R.string.account_permission),
                 new PermissionChecker.OnPermissionResponse() {
