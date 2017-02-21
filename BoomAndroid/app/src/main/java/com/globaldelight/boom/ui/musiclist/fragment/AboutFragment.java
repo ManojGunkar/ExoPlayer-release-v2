@@ -30,13 +30,27 @@ public class AboutFragment extends Fragment {
     RegularButton rateButton;
     Activity mActivity;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            mActivity = (Activity) context;
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = (LinearLayout) inflater.inflate(R.layout.fragment_about, container, false);
-        mActivity = getActivity();
-        initViews();
+        if(null == mActivity)
+            mActivity = getActivity();
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initViews();
     }
 
     private void initViews() {

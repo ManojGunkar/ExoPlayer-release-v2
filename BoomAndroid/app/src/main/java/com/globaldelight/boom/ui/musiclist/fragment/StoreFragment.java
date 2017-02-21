@@ -45,13 +45,28 @@ public class StoreFragment extends Fragment implements View.OnClickListener, IPu
             }
         }
     };
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            mActivity = (Activity) context;
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = (ScrollView) inflater.inflate(R.layout.fragment_store, container, false);
-        mActivity = getActivity();
-        initViews();
+        if(null == mActivity)
+            mActivity = getActivity();
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initViews();
     }
 
     private void initViews() {

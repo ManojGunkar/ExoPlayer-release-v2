@@ -210,11 +210,26 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }
     };
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            mActivity = (Activity) context;
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mInflater = inflater.inflate(R.layout.fragment_content_master, container, false);
-        mActivity = getActivity();
+        if(null == mActivity)
+            mActivity = getActivity();
+        return mInflater;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         colorTo = ContextCompat.getColor(mActivity, R.color.effect_inactive);
         colorFrom = ContextCompat.getColor(mActivity, R.color.effect_active);
@@ -237,8 +252,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         initEffectControl();
 
         setPlayerInfo();
-
-        return mInflater;
     }
 
     @Override

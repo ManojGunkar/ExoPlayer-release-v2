@@ -67,15 +67,17 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     }
 
     public GoogleDriveHandler(Fragment mFragment){
-        this.mContext = mFragment.getContext();
+        if(mFragment instanceof GoogleDriveListFragment)
+            this.mContext = ((GoogleDriveListFragment)mFragment).getFragmentContext();
+        else if (mFragment instanceof SettingFragment)
+            this.mContext = ((SettingFragment)mFragment).getFragmentContext();
         this.mFragment = mFragment;
     }
 
     public GoogleAccountCredential getGoogleAccountCredential(){
         // Initialize credentials and service object.
         if(null == mCredential) {
-            mCredential = GoogleAccountCredential.usingOAuth2((null != mContext ? mContext :
-                    mFragment.getContext()), Arrays.asList(SCOPES))
+            mCredential = GoogleAccountCredential.usingOAuth2(mContext, Arrays.asList(SCOPES))
                     .setBackOff(new ExponentialBackOff());
         }
         return mCredential;
@@ -85,8 +87,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         if(null == client) {
-            client = new GoogleApiClient.Builder(null != mContext ? mContext :
-                    mFragment.getContext()).addApi(Drive.API)
+            client = new GoogleApiClient.Builder(mContext).addApi(Drive.API)
                     .addScope(Drive.SCOPE_FILE)
                     .addScope(Drive.SCOPE_APPFOLDER) // required for App Folder sample
                     .addConnectionCallbacks(this)
@@ -144,8 +145,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (!isDeviceOnline()) {
-            GoogleDriveMediaList.geGoogleDriveMediaListInstance(null != mContext ? mContext :
-                    mFragment.getContext()).onErrorOccurred(mFragment.getResources().getString(R.string.network_error));
+            GoogleDriveMediaList.geGoogleDriveMediaListInstance(mContext).onErrorOccurred(mFragment.getResources().getString(R.string.network_error));
         } else {
             new LoadGoogleDriveList(mFragment, mCredential, 0).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
@@ -181,8 +181,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
      */
     private boolean isDeviceOnline() {
         ConnectivityManager connMgr =
-                (ConnectivityManager) (null != mContext ? mContext :
-                        mFragment.getContext()).getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) (mContext).getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
     }
@@ -199,8 +198,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
             GoogleApiAvailability apiAvailability =
                     GoogleApiAvailability.getInstance();
             connectionStatusCode =
-                    apiAvailability.isGooglePlayServicesAvailable(null != mContext ? mContext :
-                            mFragment.getContext());
+                    apiAvailability.isGooglePlayServicesAvailable(mContext);
         }catch (Exception e){
             return connectionStatusCode != ConnectionResult.SUCCESS;
         }
@@ -214,10 +212,9 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     private void acquireGooglePlayServices() {
         GoogleApiAvailability apiAvailability =
                 GoogleApiAvailability.getInstance();
-        if(null != apiAvailability && (null != mContext || null != mFragment.getContext())) {
+        if(null != apiAvailability && null != mContext) {
             final int connectionStatusCode =
-                    apiAvailability.isGooglePlayServicesAvailable(null != mContext ? mContext :
-                            mFragment.getContext());
+                    apiAvailability.isGooglePlayServicesAvailable(mContext);
             if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
                 showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
             }
@@ -266,8 +263,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
      */
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
     public void chooseAccount() {
-        if (EasyPermissions.hasPermissions(
-                (null != mContext ? mContext : mFragment.getContext()),
+        if (EasyPermissions.hasPermissions(mContext,
                 Manifest.permission.GET_ACCOUNTS)) {
             String accountName = App.getUserPreferenceHandler().getGoogleAccountName();
             if (accountName != null) {

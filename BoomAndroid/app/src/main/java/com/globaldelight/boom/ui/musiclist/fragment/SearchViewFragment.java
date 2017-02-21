@@ -50,13 +50,27 @@ public class SearchViewFragment extends Fragment {
     };
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            mActivity = (Activity) context;
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search,
                 container, false);
         mainView = view;
-        mActivity = getActivity();
-        registerReceiver();
+        if(null == mActivity)
+            mActivity = getActivity();
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        registerReceiver();
     }
 
     private void registerReceiver() {

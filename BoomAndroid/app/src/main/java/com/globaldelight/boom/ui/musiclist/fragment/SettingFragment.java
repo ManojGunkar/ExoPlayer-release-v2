@@ -3,6 +3,7 @@ package com.globaldelight.boom.ui.musiclist.fragment;
 import android.Manifest;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -46,15 +47,28 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
     public SettingFragment(){}
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            mActivity = (Activity) context;
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = (ScrollView) inflater.inflate(R.layout.fragment_settings, container, false);
-        mActivity = getActivity();
-        initViews();
-
-        TimerUtils.resumeTimerState(mActivity, sleepTimerTxt);
+        if(null == mActivity)
+            mActivity = getActivity();
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initViews();
+        TimerUtils.resumeTimerState(mActivity, sleepTimerTxt);
     }
 
     private void initViews() {
@@ -207,5 +221,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         permissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public Context getFragmentContext() {
+        return mActivity;
     }
 }

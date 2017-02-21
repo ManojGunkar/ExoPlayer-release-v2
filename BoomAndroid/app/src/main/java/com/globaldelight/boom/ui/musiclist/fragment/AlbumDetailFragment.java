@@ -58,16 +58,30 @@ public class AlbumDetailFragment extends Fragment {
     };
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            mActivity = (Activity) context;
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
+        if(null == mActivity)
+            mActivity = getActivity();
+        return rootView;
+    }
 
-        mActivity = getActivity();
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         dataCollection = (MediaItemCollection) this.mActivity.getIntent().getParcelableExtra("mediaItemCollection");
         initValues();
         new LoadAlbumSongs().execute();
         setForAnimation();
-        return rootView;
     }
 
     private void initValues(){
