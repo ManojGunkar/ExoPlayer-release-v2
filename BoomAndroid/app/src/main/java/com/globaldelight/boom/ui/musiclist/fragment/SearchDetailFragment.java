@@ -66,9 +66,8 @@ public class SearchDetailFragment extends Fragment{
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if (getArguments().containsKey(ARG_LIST_TYPE)) {
             mResultType = getArguments().getString(ARG_LIST_TYPE);
         }
