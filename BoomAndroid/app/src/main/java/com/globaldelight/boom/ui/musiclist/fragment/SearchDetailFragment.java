@@ -53,16 +53,29 @@ public class SearchDetailFragment extends Fragment{
         }
     };
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            mActivity = (Activity) context;
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
+        if(null == mActivity)
+            mActivity = getActivity();
+        return rootView;
+    }
 
-        mActivity = getActivity();
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         initSearch();
         new LoadSearchDetailList().execute(mResultType, mQuery);
         setForAnimation();
-        return rootView;
     }
 
     private void initSearch() {

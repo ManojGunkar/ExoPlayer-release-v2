@@ -36,7 +36,7 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
     private Exception mLastError = null;
     private Fragment fragment;
     private GoogleDriveMediaList mediaListInstance;
-    String access_token = null;
+    String access_token =    null;
     private static int  file_count;
     private String mediaUrl_1 = "https://www.googleapis.com/drive/v3/files/";
     private String mediaUrl_2 = "?alt=media&access_token=";

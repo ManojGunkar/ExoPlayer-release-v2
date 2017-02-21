@@ -66,15 +66,28 @@ public class BoomPlaylistFragment extends Fragment {
     };
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            mActivity = (Activity) context;
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
-        mActivity = getActivity();
+        if(null == mActivity)
+            mActivity = getActivity();
+        return rootView;
+    }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         registerReceiver();
         new LoadBoomPlaylist().execute();
         setForAnimation();
-        return rootView;
     }
 
     private void registerReceiver() {
