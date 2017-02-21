@@ -70,14 +70,14 @@ public class BoomPlaylistFragment extends Fragment {
                              Bundle savedInstanceState) {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
         mActivity = getActivity();
+
+        registerReceiver();
         new LoadBoomPlaylist().execute();
         setForAnimation();
         return rootView;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private void registerReceiver() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PlayerEvents.ACTION_UPDATE_BOOM_PLAYLIST);
         intentFilter.addAction(PlayerEvents.ACTION_ADD_NEW_BOOM_PLAYLIST);

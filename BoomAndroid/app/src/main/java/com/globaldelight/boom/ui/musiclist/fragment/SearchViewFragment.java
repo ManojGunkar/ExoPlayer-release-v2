@@ -55,12 +55,11 @@ public class SearchViewFragment extends Fragment {
                 container, false);
         mainView = view;
         mActivity = getActivity();
+        registerReceiver();
         return view;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private void registerReceiver() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);

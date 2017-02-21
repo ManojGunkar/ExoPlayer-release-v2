@@ -374,7 +374,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             holder.mainView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (!App.getPlayerEventHandler().isTrackWaitingForPlay()) {
+                    if (!App.getPlayerEventHandler().isTrackLoading()) {
                         animate(holder);
                         App.getPlayingQueueHandler().getUpNextList().addSearchItemToPlay(songs.get(getPosition(position)));
                         new Handler().postDelayed(new Runnable() {

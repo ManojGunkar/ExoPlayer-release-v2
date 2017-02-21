@@ -59,15 +59,13 @@ public class SearchDetailFragment extends Fragment{
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
 
         mActivity = getActivity();
+        initSearch();
         new LoadSearchDetailList().execute(mResultType, mQuery);
-
         setForAnimation();
         return rootView;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private void initSearch() {
         if (getArguments().containsKey(ARG_LIST_TYPE)) {
             mResultType = getArguments().getString(ARG_LIST_TYPE);
         }
