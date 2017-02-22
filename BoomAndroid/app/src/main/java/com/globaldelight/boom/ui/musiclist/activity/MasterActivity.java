@@ -34,6 +34,7 @@ import java.util.TimerTask;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.globaldelight.boom.business.BusinessUtils.AddSource.*;
+import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_APP_EXPIRE;
 import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
 
 /**
@@ -161,11 +162,18 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     @Override
     protected void onResume() {
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
+        initBusinessReceiver();
+        super.onResume();
+    }
+
+    private void initBusinessReceiver(){
         App.getBusinessHandler().setFBNativeAddListener(this);
         App.getBusinessHandler().setGoogleNativeAddListener(this);
         businessRequestReceiver = new BusinessRequestReceiver(this, businessRequestReceiver);
-        registerReceiver(businessRequestReceiver, new IntentFilter(ACTION_BUSINESS_CONFIGURATION));
-        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_BUSINESS_APP_EXPIRE);
+        filter.addAction(ACTION_BUSINESS_CONFIGURATION);
+        registerReceiver(businessRequestReceiver, filter);
     }
 
     @Override

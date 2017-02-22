@@ -9,11 +9,10 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
-
+import com.globaldelight.boom.utils.Utils;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.App;
-import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.client.IBusinessNetworkInit;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
@@ -31,6 +30,7 @@ import com.globaldelight.boomplayer.AudioConfiguration;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_APP_EXPIRE;
 import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
 
@@ -394,7 +394,19 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     }
 
     private void initBusinessModel() {
-        if(!BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+
+        boolean isShownAdds = true;
+        if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_APP_SHARED, false)){
+            if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
+                isShownAdds = false;
+            }else {
+                isShownAdds = Utils.isShareExpireHour(this);
+            }
+        }else if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
+            isShownAdds = false;
+        }
+
+        if(isShownAdds) {
             App.getBusinessHandler().setBusinessNetworkListener(this);
 
             new Thread(new Runnable() {
@@ -429,6 +441,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     public void onAppTrailExpired(boolean expired) {
         if(expired){
 //            Show dialog and get Email
+            sendBroadcast(new Intent(ACTION_BUSINESS_APP_EXPIRE));
         }
     }
 

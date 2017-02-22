@@ -15,6 +15,10 @@ public class BusinessPreferences {
 
     public static final String ACTION_IN_APP_PURCHASE = "ACTION_IN_APP_PURCHASE";
     public static final String ACTION_APP_SHARED = "ACTION_APP_SHARED";
+    public static final String ACTION_APP_SHARED_DATE = "ACTION_APP_SHARED_DATE";
+    public static final String ACTION_APP_SHARED_DIALOG_SHOWN = "ACTION_APP_SHARED_DIALOG_SHOWN";
+    public static final String ACTION_APP_INTERNET_DIALOG_SHOWN = "ACTION_APP_INTERNET_DIALOG_SHOWN";
+    public static final String ACTION_APP_EXPIRE_DIALOG_SHOWN = "ACTION_APP_EXPIRE_DIALOG_SHOWN";
 
     public static void writeBoolean(Context context, String key, boolean value) {
         getEditor(context).putBoolean(key, value).commit();
@@ -31,5 +35,14 @@ public class BusinessPreferences {
 
     public static SharedPreferences.Editor getEditor(Context context) {
         return getPreferences(context).edit();
+    }
+
+    public static void writeLong(Context context, String key, long value) {
+        getEditor(context).putLong(key, value).commit();
+    }
+
+    public static Long readLong(Context context, String key,
+                                      long defValue) {
+        return getPreferences(context).getLong(key, defValue);
     }
 }
