@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -39,6 +41,7 @@ import android.view.WindowManager;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
@@ -56,6 +59,7 @@ import com.globaldelight.boom.utils.handlers.Preferences;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
@@ -337,11 +341,20 @@ public class Utils {
         }
     }
 
-    public static boolean isMoreThan24Hour(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if ((System.currentTimeMillis() - Long.parseLong(preferences.getString("Tool_install_date", "n/a"))) > 3600000) {
-            return true;
-        }
+    public static boolean isMoreThan24Hour() {
+        Date installTime;
+        try {
+            PackageManager pm = App.getApplication().getApplicationContext().getPackageManager();
+            PackageInfo packageInfo = pm.getPackageInfo(App.getApplication().getPackageName(), PackageManager.GET_PERMISSIONS);
+
+            installTime = new Date( packageInfo.firstInstallTime );
+            if(System.currentTimeMillis() - installTime.getTime() > 3600000){
+                return true;
+            }
+        }catch (PackageManager.NameNotFoundException e1) {
+        } catch (SecurityException e1) {
+        } catch (IllegalArgumentException e1) {
+        }catch (Exception e){}
         return false;
     }
 
@@ -494,7 +507,7 @@ public class Utils {
     }
 
     public static void InternetPopup(final Context activity){
-        if(!BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, false) && isMoreThan24Hour(activity) && !ConnectivityReceiver.isNetworkAvailable(activity) && BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
+        if(!BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, false) && isMoreThan24Hour() && !ConnectivityReceiver.isNetworkAvailable(activity) && BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
             new MaterialDialog.Builder(activity)
                     .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
                     .icon(activity.getResources().getDrawable(R.drawable.com_facebook_button_icon, null))
