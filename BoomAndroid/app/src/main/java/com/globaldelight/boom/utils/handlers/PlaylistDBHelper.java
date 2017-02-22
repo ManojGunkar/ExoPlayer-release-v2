@@ -57,7 +57,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         String CREATE_PLAYLIST_SONG_TABLE = "CREATE TABLE playlistSongs (" +
-                SONG_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                SONG_KEY_ID + " INTEGER AUTOINCREMENT," +
                 SONG_KEY_REAL_ID + " INTEGER," + TITLE + " TEXT," + DISPLAY_NAME + " TEXT,"+
                 DATA_PATH + " TEXT," + ALBUM_ID + " INTEGER," +
                 ALBUM + " TEXT," + ARTIST_ID + " INTEGER," +
@@ -95,9 +95,10 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
     public ArrayList<? extends IMediaItemBase> getAllPlaylist() {
         String query = "SELECT  * FROM " + TABLE_PLAYLIST;
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
         ArrayList<MediaItemCollection> playlist = new ArrayList<>();
+        Cursor cursor = null;
         try {
+            cursor = db.rawQuery(query, null);
             if (cursor.moveToFirst()) {
                 do {
                     playlist.add(getPlaylistFromCursor(cursor));
@@ -309,5 +310,6 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
                 SONG_KEY_PLAYLIST_ID + "='" + playlistId + "'");
         db.close();
     }
+
 /***********************************************************************************************************************************/
 }

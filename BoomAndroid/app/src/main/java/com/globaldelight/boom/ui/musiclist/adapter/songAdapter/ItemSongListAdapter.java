@@ -174,7 +174,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         IMediaItem nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
         if(null != nowPlayingItem ){
             boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
-            if((isMediaItem && currentItem.getItemId() == nowPlayingItem.getItemId())){
+            if(currentItem.getItemId() == nowPlayingItem.getItemId()){
                 holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);

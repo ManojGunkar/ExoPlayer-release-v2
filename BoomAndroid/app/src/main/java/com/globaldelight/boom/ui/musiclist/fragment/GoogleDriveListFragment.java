@@ -28,6 +28,7 @@ import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
 import com.globaldelight.boom.ui.widgets.BoomDialogView;
 import com.globaldelight.boom.utils.PermissionChecker;
+import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import java.util.ArrayList;
 
@@ -65,7 +66,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                     notifyAdapter(null);
                     break;
                 case ACTION_ON_NETWORK_CONNECTED:
-                    Utils.showProgressLoader(mActivity);
                     checkPermissions();
                 case ACTION_CLOUD_SYNC:
                     Utils.showProgressLoader(mActivity);
@@ -108,7 +108,12 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     @Override
     public void onResume() {
-        notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
+        if(Preferences.readBoolean(mActivity, Preferences.GOOGLE_DRIVE_ACCOUNT_CHANGED, false)){
+            checkPermissions();
+            Preferences.writeBoolean(mActivity, Preferences.GOOGLE_DRIVE_ACCOUNT_CHANGED, false);
+        }else {
+            notifyAdapter(googleDriveMediaList.getGoogleDriveMediaList());
+        }
         super.onResume();
         registerReceiver();
     }
@@ -133,6 +138,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     private void LoadGoogleDriveList(){
         if (googleDriveMediaList.getGoogleDriveMediaList().size() <= 0 &&
                 ConnectivityReceiver.isNetworkAvailable(mActivity)) {
+            Utils.showProgressLoader(mActivity);
             googleDriveHandler.getResultsFromApi();
         }else{
             Utils.dismissProgressLoader();
@@ -150,7 +156,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     }
 
     private void initViews() {
-        Utils.showProgressLoader(mActivity);
         googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(mActivity);
         googleDriveMediaList.setGoogleDriveMediaUpdater(this);
         googleDriveHandler = new GoogleDriveHandler(GoogleDriveListFragment.this);

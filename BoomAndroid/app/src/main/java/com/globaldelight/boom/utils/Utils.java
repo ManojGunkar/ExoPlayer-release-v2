@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
@@ -41,14 +42,20 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
+import com.globaldelight.boom.business.BusinessPreferences;
+import com.globaldelight.boom.business.BusinessUtils;
+import com.globaldelight.boom.business.client.BusinessHandler;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.adapter.utils.AddToPlaylistAdapter;
 import com.globaldelight.boom.ui.widgets.BoomDialogView;
+import com.globaldelight.boom.utils.handlers.Preferences;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import static android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
@@ -289,18 +296,18 @@ public class Utils {
         return 0;
     }
 
-    public static void shareStart(Activity activity) {
-        if(ConnectivityReceiver.isNetworkAvailable(activity)) {
+    public static void shareStart(Context context) {
+        if(ConnectivityReceiver.isNetworkAvailable(context)) {
             try {
                 Intent shareIntent = new Intent(
                         android.content.Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_SUBJECT, activity.getResources().getString(R.string.app_name));
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getResources().getString(R.string.app_name));
                 String sAux = "\nDownload Boom Music Player\n\n";
                 sAux = sAux + "https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n";
                 shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
                 shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-                activity.startActivityForResult(Intent.createChooser(shareIntent, "share"), SHARE_COMPLETE);
+                context.startActivity(Intent.createChooser(shareIntent, "share"));
             } catch (Exception e) {
             }
         }
@@ -362,5 +369,124 @@ public class Utils {
                 return "XXXHDP";
         }
         return "Defeult";
+    }
+
+    public static void SharePopup(final Context context) {
+        if(BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false) &&
+                BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED, false)) {
+            new MaterialDialog.Builder(context)
+                    .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
+                    .icon(context.getResources().getDrawable(R.drawable.com_facebook_button_icon, null))
+                    .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
+                    .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
+                    .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
+                    .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                    .negativeText(R.string.share_button)
+                    .positiveText(R.string.continue_button)
+                    .customView(R.layout.share_popup, false)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            shareStart(context);
+                        }
+                    })
+                    .show();
+        }
+    }
+
+    public static void EmailPopup(final Context context) {
+        if(BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+            new MaterialDialog.Builder(context)
+                    .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
+                    .icon(context.getResources().getDrawable(R.drawable.com_facebook_button_icon, null))
+                    .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
+                    .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
+                    .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
+                    .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                    .positiveText(R.string.submit)
+                    .customView(R.layout.subsribe_email, false)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                    .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+                    .inputType(TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
+                    .input(context.getResources().getString(R.string.email_text_hint), null, new MaterialDialog.InputCallback() {
+                        @Override
+                        public void onInput(MaterialDialog dialog, CharSequence input) {
+                            if (!input.toString().matches("") && ConnectivityReceiver.isNetworkAvailable(context)) {
+                                BusinessHandler.getBusinessHandlerInstance(context).saveEmailAddress(BusinessUtils.EmailSource.library, input.toString(), true);
+                            }
+                        }
+                    }).show();
+        }
+    }
+
+    public static void ExpirePopup(final Context context) {
+        if(BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+            new MaterialDialog.Builder(context)
+                    .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
+                    .icon(context.getResources().getDrawable(R.drawable.com_facebook_button_icon, null))
+                    .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
+                    .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
+                    .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
+                    .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                    .negativeText(R.string.buy_button)
+                    .positiveText(R.string.continue_button)
+                    .customView(R.layout.expire_pop_up, false)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                    .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            if (ConnectivityReceiver.isNetworkAvailable(context)) {
+                                final String appPackageName = context.getPackageName(); // package name of the app
+                                try {
+                                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                                } catch (android.content.ActivityNotFoundException anfe) {
+                                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                                }
+                            }
+                        }
+                    })
+                    .show();
+        }
+    }
+
+    public static void InternetPopup(final Activity activity){
+        if(!ConnectivityReceiver.isNetworkAvailable(activity) && BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
+            new MaterialDialog.Builder(activity)
+                    .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
+                    .icon(activity.getResources().getDrawable(R.drawable.com_facebook_button_icon, null))
+                    .positiveColor(ContextCompat.getColor(activity, R.color.dialog_submit_positive))
+                    .negativeColor(ContextCompat.getColor(activity, R.color.dialog_submit_negative))
+                    .widgetColor(ContextCompat.getColor(activity, R.color.dialog_widget))
+                    .contentColor(ContextCompat.getColor(activity, R.color.dialog_content))
+                    .negativeText(R.string.buy_button)
+                    .positiveText(R.string.settings_button)
+                    .customView(R.layout.off_line_pop_up, false)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            activity.startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+                        }
+                    })
+                    .show();
+        }
     }
 }

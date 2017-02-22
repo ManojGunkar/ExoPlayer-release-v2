@@ -191,4 +191,19 @@
     <string name="inapp_process_error">Error while InApp Purchase.</string>
     <string name="inapp_process_success">Purchase Success.</string>
     <string name="inapp_process_restore">Purchase Restored.</string>
+
+    <string name="share_button">Share now</string>
+    <string name="continue_button">Continue with ads</string>
+    <string name="dialog_title">Like it? Share it!</string>
+    <string name="sub_email_header">Don\'t Stop Boomin\'</string>
+    <string name="sub_email_text">Share your e-mail ID and continue to #FeelYourMusic</string>
+    <string name="email_text_hint">email for promotions</string>
+    <string name="submit">Submit</string>
+    <string name="buy_button">Buy Now</string>
+    <string name="expire_header_text">Ad free usage expired!</string>
+    <string name="expire_text">Your ad free usage session has expired. Buy now to #FeelYourMusic without ads.</string>
+    <string name="settings_button">Settings</string>
+    <string name="internet_off_header">Somethin\' doesn\'t sound right   </string>
+    <string name="internet_off_discription">Boom Audio Effects get locked without internet connection. Turn on WiFi or Mobile Data to enjoy them all.Alternatively, you may BUY BOOM to unlock all features and #FeelYourMusic hassle-free.
+  </string>
 </resources>

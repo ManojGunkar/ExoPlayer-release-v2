@@ -161,8 +161,7 @@ public class BusinessUtils {
     }
 
     public enum EmailSource{
-        dropbox,
-        googledrive,
-        icloud,
+        library,
+        cloud,
     }
 }

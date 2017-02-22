@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/share_popup_title_image_margin_bottom"
+        android:layout_marginTop="@dimen/share_popup_title_image_margin_top"
+        android:src="@drawable/ic_floating_playlist_addtracks" />
+
+    <com.globaldelight.boom.ui.widgets.RegularTextView
+        android:id="@+id/share_popup_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/share_popup_title_margin_bottom"
+        android:gravity="center"
+        android:text="@string/sub_email_header"
+        android:textColor="@color/dialog_title"
+        android:textSize="@dimen/share_popup_title_size"
+        android:textStyle="bold"/>
+
+    <com.globaldelight.boom.ui.widgets.RegularTextView
+        android:id="@+id/email_popup_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/share_popup_body_margin_bottom"
+        android:gravity="center"
+        android:paddingLeft="@dimen/share_popup_body_margin_side"
+        android:paddingRight="@dimen/share_popup_body_margin_side"
+        android:text="@string/sub_email_text"
+        android:textColor="@color/share_popup_body"
+        android:textSize="@dimen/share_popup_body_size"/>
+
+</LinearLayout>

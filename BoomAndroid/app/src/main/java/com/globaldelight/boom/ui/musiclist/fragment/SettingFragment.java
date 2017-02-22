@@ -59,8 +59,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = (ScrollView) inflater.inflate(R.layout.fragment_settings, container, false);
-        if(null == mActivity)
-            mActivity = getActivity();
+        mActivity = getActivity();
+
         return rootView;
     }
 

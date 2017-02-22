@@ -62,11 +62,9 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                     notifyAdapter(null);
                     break;
                 case ACTION_ON_NETWORK_CONNECTED:
-                    Utils.showProgressLoader(mActivity);
                     LoadDropboxList();
                     break;
                 case ACTION_CLOUD_SYNC:
-                    Utils.showProgressLoader(mActivity);
                     try{
                         if(null != dropboxMediaList)
                             dropboxMediaList.clearDropboxContent();
@@ -101,7 +99,6 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     private void initViews() {
-        Utils.showProgressLoader(mActivity);
         dropboxMediaList = DropboxMediaList.getDropboxListInstance(mActivity);
         dropboxMediaList.setDropboxUpdater(this);
         DropBoxUtills.checkDropboxAuthentication(mActivity);
@@ -112,8 +109,8 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     public void onResume() {
         registerReceiver();
         super.onResume();
-        if(listSize <= 0 || DropboxMediaList.isAllSongsLoaded)
-            Utils.showProgressLoader(mActivity);
+        if(null != dropboxMediaList)
+            listSize = dropboxMediaList.getDropboxMediaList().size();
         LoadDropboxList();
     }
 
@@ -135,7 +132,9 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
 
     private void LoadDropboxList(){
         boolean isListEmpty = dropboxMediaList.getDropboxMediaList().size() <= 0;
-        if(!isListEmpty){
+        if(isListEmpty){
+            Utils.showProgressLoader(mActivity);
+        }else{
             Utils.dismissProgressLoader();
         }
         if (null != App.getDropboxAPI()
@@ -144,6 +143,8 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
             new LoadDropBoxList(mActivity).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }else{
             Utils.dismissProgressLoader();
+            if(null != adapter)
+                adapter.notifyDataSetChanged();
         }
         setForAnimation();
     }

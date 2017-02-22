@@ -53,25 +53,27 @@ public class PermissionChecker {
                         }
                     });
                 } else {
-                    Log.v(TAG, "Waiting");
+                    /*Log.v(TAG, "Waiting");
                     if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
-                            permission) && !checkDirectly && baseView != null) {
-                        Snackbar.make(baseView, customMsg,
-                                Snackbar.LENGTH_INDEFINITE)
-                                .setAction(R.string.ok, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        ActivityCompat.requestPermissions(activity,
-                                                new String[]{permission},
-                                                REQUEST_CODE);
-                                    }
-                                })
-                                .show();
-                    } else {
+                            permission) && null != activity && !checkDirectly && null != baseView ) {
+                        try {
+                            Snackbar.make(baseView, customMsg,
+                                    Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(R.string.ok, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            ActivityCompat.requestPermissions(activity,
+                                                    new String[]{permission},
+                                                    REQUEST_CODE);
+                                        }
+                                    })
+                                    .show();
+                        }catch (Exception e){}
+                    } else {*/
                         ActivityCompat.requestPermissions(activity,
                                 new String[]{permission},
                                 REQUEST_CODE);
-                    }
+                    /*}*/
                 }
             }
         }).start();

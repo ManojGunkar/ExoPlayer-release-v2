@@ -21,6 +21,7 @@ import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
 import com.globaldelight.boom.task.MediaLoader.LoadGoogleDriveList;
 import com.globaldelight.boom.ui.musiclist.fragment.GoogleDriveListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.SettingFragment;
+import com.globaldelight.boom.utils.handlers.Preferences;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.common.ConnectionResult;
@@ -117,6 +118,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
 
     public void resetKeys(Context context){
         App.getUserPreferenceHandler().setGoogleAccountName(null);
+        Preferences.writeBoolean(context, Preferences.GOOGLE_DRIVE_ACCOUNT_CHANGED, true);
         GoogleDriveMediaList.geGoogleDriveMediaListInstance(context).clearGoogleDriveMediaContent();
         mFragment.startActivityForResult(
                 mCredential.newChooseAccountIntent(),

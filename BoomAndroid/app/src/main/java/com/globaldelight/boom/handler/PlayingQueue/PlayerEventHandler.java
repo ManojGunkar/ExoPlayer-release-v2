@@ -18,6 +18,7 @@ import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.task.PlayerService;
+import com.globaldelight.boom.utils.handlers.UserPreferenceHandler;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boomplayer.AudioEffect;
@@ -49,6 +50,8 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
     private AudioManager audioManager;
     private MediaSession session;
     private GoogleDriveHandler googleDriveHandler;
+    private Handler seekEventHandler;
+    private static boolean isSeeked = false;
 
     IPlayerEvents IPlayerEvents = new IPlayerEvents() {
         @Override
@@ -74,6 +77,7 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
             intent.putExtra("currentms", currentms);
             intent.putExtra("totalms", totalms);
             context.sendBroadcast(intent);
+            isSeeked = false;
         }
 
         @Override
@@ -153,6 +157,7 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
         App.getPlayingQueueHandler().getUpNextList().setIQueueEvent(this);
         googleDriveHandler = new GoogleDriveHandler(context);
         googleDriveHandler.connectToGoogleAccount();
+        seekEventHandler = new Handler();
         registerSession();
     }
 
@@ -343,9 +348,16 @@ public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocu
         return App.getPlayingQueueHandler().getUpNextList().getPlayingItem()/*playingItem*/;
     }
 
-    public void seek(int progress) {
-        if(null != mPlayer)
-            mPlayer.seek(progress);
+    public void seek(final int progress) {
+        if(null != mPlayer && !isSeeked && !isTrackWaiting){
+            isSeeked = true;
+            seekEventHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mPlayer.seek(progress);
+                }
+            });
+        }
     }
 
 

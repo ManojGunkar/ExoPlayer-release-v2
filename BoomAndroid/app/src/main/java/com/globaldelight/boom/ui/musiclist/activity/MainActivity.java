@@ -287,7 +287,10 @@ public class MainActivity extends MasterActivity
             drawerLayout.closeDrawer(GravityCompat.START);
         } else if (fragmentManager.getBackStackEntryCount() > 0) {
             navigationView.getMenu().getItem(0).setChecked(true);
-            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            setVisibleCloudSync(false);
+            try {
+                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }catch (IllegalStateException e){}
             viewMainActivity();
         } else {
             moveTaskToBack(true);
@@ -440,26 +443,27 @@ public class MainActivity extends MasterActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         mFloatAddPlayList.setVisibility(View.GONE);
-        setVisibleCloudSync(false);
         if(null != mSectionsPagerAdapter) {
             switch (item.getItemId()){
                 case R.id.music_library:
+                    setVisibleCloudSync(false);
                     viewMainActivity();
                     break;
                 case R.id.boom_palylist:
-//                    mFloatAddPlayList.setVisibility(View.VISIBLE);
+                    setVisibleCloudSync(false);
                     fragmentSwitcher(new BoomPlaylistFragment(),  1, getResources().getString(R.string.boom_playlist), fade_in, fade_out);
                     break;
                 case R.id.favourite_list:
+                    setVisibleCloudSync(false);
                     fragmentSwitcher(new FavouriteListFragment(),  2, getResources().getString(R.string.favourite_list), fade_in, fade_out);
                     break;
                 case R.id.google_drive:
-                    fragmentSwitcher(new GoogleDriveListFragment(),  3, getResources().getString(R.string.google_drive), fade_in, fade_out);
                     setVisibleCloudSync(true);
+                    fragmentSwitcher(new GoogleDriveListFragment(),  3, getResources().getString(R.string.google_drive), fade_in, fade_out);
                     break;
                 case R.id.drop_box:
-                    fragmentSwitcher(new DropBoxListFragment(),  4, getResources().getString(R.string.drop_box), fade_in, fade_out);
                     setVisibleCloudSync(true);
+                    fragmentSwitcher(new DropBoxListFragment(),  4, getResources().getString(R.string.drop_box), fade_in, fade_out);
                     break;
                 case R.id.nav_setting:
                     startCompoundActivities(R.string.title_settings);
@@ -534,7 +538,6 @@ public class MainActivity extends MasterActivity
             findViewById(R.id.library_tab_panel).setVisibility(View.VISIBLE);
             fragmentContainer.setVisibility(View.GONE);
             setVisibleSearch(true);
-            setVisibleCloudSync(false);
         }else{
             findViewById(R.id.library_tab_panel).setVisibility(View.GONE);
             fragmentContainer.setVisibility(View.VISIBLE);
