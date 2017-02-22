@@ -2,6 +2,8 @@ package com.globaldelight.boom.utils.handlers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
@@ -32,7 +34,7 @@ public class UserPreferenceHandler {
     private static final String PLAYER_PLAYED_TIME = "played_time";
     private static final String PLAYER_REMAINS_TIME = "remains_time";
 
-    private static final String LIBRARY_TAB_POSITION = "library_tab_position";
+    private static final String CURRENT_PLAYING_SONG = "CURRENT_PLAYING_SONG";
 
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
@@ -176,13 +178,5 @@ public class UserPreferenceHandler {
 
     public long getRemainsTime(){
         return shp.getLong(PLAYER_REMAINS_TIME, 0);
-    }
-
-    public void setLibraryCurrentTabPosition(int TabPosition) {
-        shp.edit().putInt(LIBRARY_TAB_POSITION, TabPosition).apply();
-    }
-
-    public int getLibraryCurrentTabPosition() {
-        return shp.getInt(LIBRARY_TAB_POSITION, 0);
     }
 }

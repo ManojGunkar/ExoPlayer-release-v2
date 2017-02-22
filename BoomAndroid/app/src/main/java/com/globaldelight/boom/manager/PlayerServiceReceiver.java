@@ -89,7 +89,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
     private void handleBroadcastReceived(Context context, final Intent intent) {
         switch (intent.getAction()){
             case ACTION_NOTI_CLICK :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -98,7 +98,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_NOTI_REMOVE :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -107,7 +107,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_REPEAT_SONG :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -116,7 +116,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_SHUFFLE_SONG :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -125,7 +125,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_GET_SONG :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -134,7 +134,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_CHANGE_SONG :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -143,7 +143,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_SEEK_SONG :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -152,7 +152,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_NEXT_SONG :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -161,7 +161,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_PREV_SONG :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -170,7 +170,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_PLAY_PAUSE_SONG :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -179,7 +179,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_ADD_QUEUE :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -188,7 +188,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_LAST_PLAYED_SONG :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -197,7 +197,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_PLAY_STOP :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -206,7 +206,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_TRACK_POSITION_UPDATE :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -215,7 +215,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_UPNEXT_UPDATE :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -224,7 +224,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_PLAYING_ITEM_CLICKED :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -233,7 +233,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_CREATE_PLAYER_SCREEN :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPostMessage.post(new Runnable() {
                     @Override
                     public void run() {
@@ -242,7 +242,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 });
                 break;
             case ACTION_DESTROY_PLAYER_SCREEN :
-                if(null != mPlayerService)
+                if(null != mPostMessage && null != mPlayerService)
                 mPlayerService.onDestroyLibrary();
                 break;
         }

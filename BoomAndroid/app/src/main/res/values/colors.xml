@@ -95,6 +95,7 @@
     <color name="store_page_description_text_color">#8d8d8d</color>
     <color name="store_page_button_color">@color/colorAccent</color>
     <color name="share_text_color">#00b0ff</color>
+    <color name="share_popup_body">#a9a9aa</color>
 
 </resources><!--
 <color name="colorAccent">#FF4081</color>-->

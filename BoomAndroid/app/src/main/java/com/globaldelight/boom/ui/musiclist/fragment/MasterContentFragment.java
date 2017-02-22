@@ -32,6 +32,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -65,7 +66,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import com.globaldelight.boom.utils.Utils;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
@@ -93,7 +93,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private boolean isUser = false;
     
     Activity mActivity;
-
+    private static ProgressBar mLoadingProgress;
+    private static boolean isCloudSeek = false;
     private AudioEffect audioEffectPreferenceHandler;
 
     public static boolean isUpdateUpnextDB = true;
@@ -150,9 +151,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         mPlayingMediaItem = (MediaItem) item;
                         mIsPlaying = intent.getBooleanExtra("playing", false);
                         mIsLastPlayed = false;
+                        mTrackSeek.setProgress(0);
+                        mMiniPlayerSeek.setProgress(0);
                         updatePlayerUI();
                     }
-                    Utils.dismissProgressLoader();
+                    stopLoadProgress();
                     break;
                 case ACTION_LAST_PLAYED_SONG:
                     item = intent.getParcelableExtra("playing_song");
@@ -171,7 +174,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                             mPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_pause, null));
                         }
                     }catch (Exception e){}
-                    Utils.dismissProgressLoader();
+                    stopLoadProgress();
                     break;
                 case ACTION_TRACK_STOPPED :
                     mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
@@ -184,6 +187,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     if(!isUser) {
                         mTrackSeek.setProgress(intent.getIntExtra("percent", 0));
                         mMiniPlayerSeek.setProgress(intent.getIntExtra("percent", 0));
+                    }
+                    if(isCloudSeek){
+                        stopLoadProgress();
+                        isCloudSeek = false;
                     }
 
                     long totalMillis = intent.getLongExtra("totalms", 0);
@@ -436,6 +443,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         mPlayerActionPanel = mInflater.findViewById(R.id.player_action_bar);
 
+        mLoadingProgress = (ProgressBar) mInflater. findViewById(R.id.load_cloud);
+
         mPlayerBackBtn = (ImageView) mInflater.findViewById(R.id.player_back_button);
         mPlayerBackBtn.setOnClickListener(this);
         mPlayerTitlePanel = (LinearLayout) mInflater.findViewById(R.id.player_title_panel);
@@ -469,6 +478,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 if(fromUser) {
                     isUser = true;
                     mTrackSeek.setProgress(progress);
+                    if(App.getPlayerEventHandler().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB){
+                        showProgressLoader();
+                    }
                 }
             }
 
@@ -482,14 +494,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 if(isUser)
                     postMessage.post(new Runnable() {
                         @Override
-                        public void run() {
-                            playerUIController.OnPlayerSeekChange(mTrackSeek.getProgress());
-                        }
+                        public void run() { playerUIController.OnPlayerSeekChange(mTrackSeek.getProgress()); }
                     });
                 postMessage.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         isUser = false;
+                        isCloudSeek = true;
                     }
                 }, 300);
             }
@@ -723,6 +734,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onResumeFragment(int alfa) {
         mPlayerActionPanel.setAlpha(alfa);
+        if(App.getPlayerEventHandler().isTrackLoading())
+            showProgressLoader();
+        else
+            stopLoadProgress();
     }
 
     @Override
@@ -765,11 +780,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     public MasterActivity.IPlayerSliderControl getPlayerSliderControl() {
         return this;
-    }
-
-    private void showProgressLoader(){
-//        if(App.getPlayingQueueHandler().getUpNextList().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB)
-//            Utils.showProgressLoader(mActivity);
     }
 
     @Override
@@ -1462,5 +1472,15 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         if (null != coachMarkEffectSwitcher) {
             coachMarkEffectSwitcher.dismissTooltip();
         }
+    }
+
+    private void showProgressLoader(){
+        if(View.GONE == mLoadingProgress.getVisibility())
+            mLoadingProgress.setVisibility(View.VISIBLE);
+    }
+
+    private void stopLoadProgress(){
+        if(View.VISIBLE == mLoadingProgress.getVisibility())
+            mLoadingProgress.setVisibility(View.GONE);
     }
 }

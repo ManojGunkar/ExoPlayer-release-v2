@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
@@ -329,7 +330,8 @@ public class TimerUtils {
                 public void onFinish() {
                     //txtTimer.setText("00:00:00");
                     txtDescTimer.setText("00:00:00" + mContext.getResources().getString(R.string.remaning));
-                    Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
+                    if(!App.getPlayerEventHandler().isPlaying())
+                        Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
                     txtDescTimer.setText(mContext.getResources().getString(R.string.sleep_timer_description));
 
                 }

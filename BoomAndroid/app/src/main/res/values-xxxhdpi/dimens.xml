@@ -153,5 +153,12 @@
     <dimen name="share_text_size">20sp</dimen>
     <dimen name="store_page_buy_button_height">42dp</dimen>
     <dimen name="store_page_buy_button_cornor_radius">6dp</dimen>
+    <dimen name="share_popup_title_image_margin_bottom">24dp</dimen>
+    <dimen name="share_popup_title_image_margin_top">21dp</dimen>
+    <dimen name="share_popup_title_margin_bottom">12dp</dimen>
+    <dimen name="share_popup_title_size">20sp</dimen>
+    <dimen name="share_popup_body_margin_bottom">12dp</dimen>
+    <dimen name="share_popup_body_margin_side">18dp</dimen>
+    <dimen name="share_popup_body_size">18sp</dimen>
 
 </resources>
