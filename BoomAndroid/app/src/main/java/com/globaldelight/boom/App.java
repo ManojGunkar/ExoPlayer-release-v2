@@ -20,6 +20,7 @@ import com.globaldelight.boom.utils.handlers.FavoriteDBHelper;
 import com.globaldelight.boom.utils.handlers.PlaylistDBHelper;
 import com.globaldelight.boom.utils.handlers.UpNextDBHelper;
 import com.globaldelight.boom.utils.handlers.UserPreferenceHandler;
+import com.globaldelight.boom.utils.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -88,6 +89,13 @@ public class App extends Application implements Application.ActivityLifecycleCal
         FlurryAnalyticHelper.init(this);
 
         registerActivityLifecycleCallbacks(this);
+
+        showInternetPopUp();
+    }
+
+    private void showInternetPopUp() {
+
+        Utils.InternetPopup(application);
     }
 
     public static BusinessHandler getBusinessHandler(){

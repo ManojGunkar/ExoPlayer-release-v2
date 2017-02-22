@@ -19,8 +19,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.AnyRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -56,6 +58,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import static android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
+import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
+import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED_DATE;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
@@ -135,14 +139,14 @@ public class Utils {
     }
 
     public void addToPlaylist(final Activity activity, final ArrayList<? extends IMediaItemBase> songList, final String fromPlaylist) {
-        if(songList.size() == 0)
+        if (songList.size() == 0)
             return;
 
-        ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(activity).getBoomPlayList();
+        ArrayList<? extends IMediaItemBase> playList = MediaController.getInstance(activity).getBoomPlayList();
 
-        if(fromPlaylist != null){
-            for(int i=0; i< playList.size(); i++){
-                if(playList.get(i).getItemTitle().equalsIgnoreCase(fromPlaylist)){
+        if (fromPlaylist != null) {
+            for (int i = 0; i < playList.size(); i++) {
+                if (playList.get(i).getItemTitle().equalsIgnoreCase(fromPlaylist)) {
                     playList.remove(i);
                 }
             }
@@ -244,9 +248,9 @@ public class Utils {
     }
 
 
-    public static boolean isPhone(Activity activity){
+    public static boolean isPhone(Activity activity) {
         DisplayMetrics metrics = new DisplayMetrics();
-        if(null != activity) {
+        if (null != activity) {
             activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
             float yInches = metrics.heightPixels / metrics.ydpi;
@@ -288,7 +292,7 @@ public class Utils {
         builder.show();
     }
 
-    public static int getStatusBarHeight(Context context){
+    public static int getStatusBarHeight(Context context) {
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
             return context.getResources().getDimensionPixelSize(resourceId);
@@ -297,7 +301,7 @@ public class Utils {
     }
 
     public static void shareStart(Context context) {
-        if(ConnectivityReceiver.isNetworkAvailable(context)) {
+        if (ConnectivityReceiver.isNetworkAvailable(context)) {
             try {
                 Intent shareIntent = new Intent(
                         android.content.Intent.ACTION_SEND);
@@ -314,7 +318,7 @@ public class Utils {
     }
 
     public static void shareStart(Context context, Fragment fragment) {
-        if(ConnectivityReceiver.isNetworkAvailable(context)) {
+        if (ConnectivityReceiver.isNetworkAvailable(context)) {
             try {
                 Intent shareIntent = new Intent(
                         android.content.Intent.ACTION_SEND);
@@ -325,21 +329,37 @@ public class Utils {
                 shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
                 shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
                 fragment.startActivityForResult(Intent.createChooser(shareIntent, "share"), SHARE_COMPLETE);
+
+                BusinessPreferences.writeBoolean(context, ACTION_APP_SHARED, true);
+                BusinessPreferences.writeLong(context, ACTION_APP_SHARED_DATE, System.currentTimeMillis());
             } catch (Exception e) {
             }
         }
     }
 
     public static boolean isMoreThan24Hour(Context context) {
+        long firstTimeLaunchDate = 0;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if ((System.currentTimeMillis() - Long.parseLong(preferences.getString("Tool_install_date", "n/a"))) > 3600000) {
+
+        try {
+            firstTimeLaunchDate = Long.parseLong(preferences.getString("Tool_install_date", "n/a"));
+        } catch (NumberFormatException ex) {
+        }
+        if ((System.currentTimeMillis() - firstTimeLaunchDate) > 3600000) {
             return true;
         }
         return false;
     }
 
-    public static void showProgressLoader(Context context){
-        if((null == progressLoader || !progressLoader.isShowing()) && ConnectivityReceiver.isNetworkAvailable(context)) {
+    public static boolean isShareExpireHour(Context context) {
+        if ((System.currentTimeMillis() - BusinessPreferences.readLong(context, ACTION_APP_SHARED_DATE, System.currentTimeMillis())) > (3600000 * 5)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static void showProgressLoader(Context context) {
+        if ((null == progressLoader || !progressLoader.isShowing()) && ConnectivityReceiver.isNetworkAvailable(context)) {
             progressLoader = new BoomDialogView(context);
             progressLoader.setCanceledOnTouchOutside(false);
             progressLoader.show();
@@ -347,14 +367,14 @@ public class Utils {
     }
 
     public static void dismissProgressLoader() {
-        if(null != progressLoader && progressLoader.isShowing())
+        if (null != progressLoader && progressLoader.isShowing())
             progressLoader.dismiss();
     }
 
-    public static String getDeviceDensity(Activity context){
+    public static String getDeviceDensity(Activity context) {
         DisplayMetrics metrics = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        switch(metrics.densityDpi){
+        switch (metrics.densityDpi) {
             case DisplayMetrics.DENSITY_LOW:
                 return "LDP";
             case DisplayMetrics.DENSITY_MEDIUM:
@@ -372,7 +392,8 @@ public class Utils {
     }
 
     public static void SharePopup(final Context context) {
-        if(BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false) &&
+        if (!BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED_DIALOG_SHOWN, false) &&
+                BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false) &&
                 BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED, false)) {
             new MaterialDialog.Builder(context)
                     .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
@@ -397,11 +418,12 @@ public class Utils {
                         }
                     })
                     .show();
+            BusinessPreferences.writeBoolean(context, BusinessPreferences.ACTION_APP_SHARED_DIALOG_SHOWN, true);
         }
     }
 
     public static void EmailPopup(final Context context) {
-        if(BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+        if (BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
             new MaterialDialog.Builder(context)
                     .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
                     .icon(context.getResources().getDrawable(R.drawable.com_facebook_button_icon, null))
@@ -432,7 +454,8 @@ public class Utils {
     }
 
     public static void ExpirePopup(final Context context) {
-        if(BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+        if (!BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_EXPIRE_DIALOG_SHOWN, false) &&
+                BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
             new MaterialDialog.Builder(context)
                     .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
                     .icon(context.getResources().getDrawable(R.drawable.com_facebook_button_icon, null))
@@ -446,7 +469,14 @@ public class Utils {
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    EmailPopup(context);
+                                }
+                            }, 5000);
                             dialog.dismiss();
+
                         }
                     })
                     .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
@@ -465,11 +495,12 @@ public class Utils {
                         }
                     })
                     .show();
+            BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_EXPIRE_DIALOG_SHOWN, true);
         }
     }
 
-    public static void InternetPopup(final Activity activity){
-        if(!ConnectivityReceiver.isNetworkAvailable(activity) && BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
+    public static void InternetPopup(final Context activity) {
+        if (!BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, false) && isMoreThan24Hour(activity) && !ConnectivityReceiver.isNetworkAvailable(activity) && BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
             new MaterialDialog.Builder(activity)
                     .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
                     .icon(activity.getResources().getDrawable(R.drawable.com_facebook_button_icon, null))
@@ -483,10 +514,11 @@ public class Utils {
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            activity.startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+                            activity.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
                         }
                     })
                     .show();
+            BusinessPreferences.writeBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, true);
         }
     }
 }
