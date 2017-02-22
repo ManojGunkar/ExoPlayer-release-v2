@@ -132,12 +132,12 @@ public class MainActivity extends MasterActivity
                 && Preferences.readBoolean(MainActivity.this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(MainActivity.this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)
                 && !Preferences.readBoolean(MainActivity.this, TOLLTIP_OPEN_EFFECT_MINI_PLAYER, true)) {
 
-            if(Utils.isMoreThan24Hour(MainActivity.this) || Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, true)) {
+            if(Utils.isMoreThan24Hour() || Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, true)) {
                 coachMarkUseHeadPhone = new CoachMarkerWindow(MainActivity.this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
                 coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
                 coachMarkUseHeadPhone.showCoachMark(findViewById(R.id.container));
 
-                if(Utils.isMoreThan24Hour(MainActivity.this))
+                if(Utils.isMoreThan24Hour())
                     Preferences.writeBoolean(MainActivity.this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, false);
             }
 
