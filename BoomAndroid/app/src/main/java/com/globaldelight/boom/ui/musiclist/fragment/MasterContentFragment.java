@@ -268,10 +268,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onResume() {
         super.onResume();
-        if(App.getPlayerEventHandler().isTrackWaitingForPlay())
-            showProgressLoader();
-        else
-            stopLoadProgress();
+        updateProgressLoader();
     }
 
     private void setPlayerEnable(boolean isEnable){
@@ -694,11 +691,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         if(null!=coachMarkEffectPager){
             coachMarkEffectPager.dismissTooltip();
         }
-
-        if(App.getPlayerEventHandler().isTrackWaitingForPlay())
-            showProgressLoader();
-        else
-            stopLoadProgress();
     }
 
     @Override
@@ -710,6 +702,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         if(null != coachMarkEffectPlayer){
             coachMarkEffectPlayer.dismissTooltip();
         }
+        updateProgressLoader();
     }
 
     private void showEffectSwitchTip(){
@@ -749,6 +742,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onResumeFragment(int alfa) {
         mPlayerActionPanel.setAlpha(alfa);
+        updateProgressLoader();
+    }
+
+    private void updateProgressLoader(){
+        if(App.getPlayerEventHandler().isTrackWaitingForPlay())
+            showProgressLoader();
+        else
+            stopLoadProgress();
     }
 
     @Override
@@ -1503,7 +1504,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void showProgressLoader(){
         if(View.GONE == mLoadingProgress.getVisibility() && ConnectivityReceiver.isNetworkAvailable(mActivity, true))
-            mLoadingProgress.setVisibility(View.VISIBLE);
+            mLoadingProgress.post(new Runnable() {
+                @Override
+                public void run() {
+                    mLoadingProgress.setVisibility(View.VISIBLE);
+                }
+            });
         else
             stopLoadProgress();
     }
