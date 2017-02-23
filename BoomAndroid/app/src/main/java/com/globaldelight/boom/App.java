@@ -185,11 +185,9 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public void onActivitySaveInstanceState(Activity var1, Bundle var2) {
-
     }
 
     public void onActivityDestroyed(Activity var1) {
-
     }
 
 
