@@ -121,12 +121,12 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.store_share_text:
-                try {
-                    Utils.shareStart(mActivity, StoreFragment.this);
-                }catch (Exception e){}
+//                try {
+//                    Utils.shareStart(mActivity, StoreFragment.this);
+//                }catch (Exception e){}
                 break;
             case R.id.store_buyButton:
-                startPurchaseRestore();
+//                startPurchaseRestore();
                 break;
         }
     }
@@ -178,7 +178,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
 
     public void restorePurchase() {
-        startPurchaseRestore();
+//        startPurchaseRestore();
     }
 
     public void onErrorAppPurchase() {
