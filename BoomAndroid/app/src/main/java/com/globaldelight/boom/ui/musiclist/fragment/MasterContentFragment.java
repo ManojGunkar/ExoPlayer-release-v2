@@ -41,6 +41,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.Media.MediaType;
+import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.MasterActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.utils.EqualizerDialogAdapter;
 import com.globaldelight.boom.handler.controller.EffectUIController;
@@ -267,6 +268,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onResume() {
         super.onResume();
+        if(App.getPlayerEventHandler().isTrackWaitingForPlay())
+            showProgressLoader();
+        else
+            stopLoadProgress();
     }
 
     private void setPlayerEnable(boolean isEnable){
@@ -291,10 +296,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void onResumePlayerScreen() {
         App.getPlayerEventHandler().isPlayerResume = true;
-        if(App.getPlayerEventHandler().isTrackLoading())
-            showProgressLoader();
-        else
-            stopLoadProgress();
     }
 
     private void setPlayerInfo(){
@@ -693,6 +694,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         if(null!=coachMarkEffectPager){
             coachMarkEffectPager.dismissTooltip();
         }
+
+        if(App.getPlayerEventHandler().isTrackWaitingForPlay())
+            showProgressLoader();
+        else
+            stopLoadProgress();
     }
 
     @Override
@@ -1496,8 +1502,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void showProgressLoader(){
-        if(View.GONE == mLoadingProgress.getVisibility())
+        if(View.GONE == mLoadingProgress.getVisibility() && ConnectivityReceiver.isNetworkAvailable(mActivity, true))
             mLoadingProgress.setVisibility(View.VISIBLE);
+        else
+            stopLoadProgress();
     }
 
     private void stopLoadProgress(){
