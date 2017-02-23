@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:gravity="center"
-            android:layout_weight="35">
+            android:layout_weight="34">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:gravity="center"
-            android:layout_weight="27">
+            android:layout_weight="25">
             <com.globaldelight.boom.ui.widgets.RegularButton
                 android:id="@+id/btn_rate_app"
                 style="?android:attr/borderlessButtonStyle"
