@@ -120,11 +120,15 @@ public class MainActivity extends MasterActivity
 
     @Override
     protected void onResume() {
+        registerHeadSetReceiver();
+        super.onResume();
+    }
+
+    private void registerHeadSetReceiver(){
         registerPlayerReceiver(MainActivity.this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
         registerReceiver(headPhoneReceiver, intentFilter);
-        super.onResume();
     }
 
     private void useCoachMarkWindow(){

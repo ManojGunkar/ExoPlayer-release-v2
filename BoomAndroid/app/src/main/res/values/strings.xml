@@ -206,4 +206,6 @@
     <string name="internet_off_header">Somethin\' doesn\'t sound right   </string>
     <string name="internet_off_discription">Boom Audio Effects get locked without internet connection. Turn on WiFi or Mobile Data to enjoy them all.Alternatively, you may BUY BOOM to unlock all features and #FeelYourMusic hassle-free.
   </string>
+    <string name="all_speakers_off">All speakers are Off</string>
+    <string name="some_speakers_off">Some speakers are Off</string>
 </resources>

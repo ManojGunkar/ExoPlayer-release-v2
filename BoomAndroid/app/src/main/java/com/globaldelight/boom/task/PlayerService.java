@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_APP_EXPIRE;
 import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_NETWORK_DISCONNECTED;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
@@ -85,7 +86,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
         connectivityReceiver = new ConnectivityReceiver(this);
 
-        if(connectivityReceiver.isNetworkAvailable(this)){
+        if(connectivityReceiver.isNetworkAvailable(this, false)){
             LoadNetworkCalls();
         }
     }
@@ -395,7 +396,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     private void initBusinessModel() {
 
-        boolean isShownAdds = true;
+       /* boolean isShownAdds = true;
         if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_APP_SHARED, false)){
             if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
                 isShownAdds = false;
@@ -418,7 +419,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
                     App.getBusinessHandler().isAppTrialVersion();
                 }
             }).start();
-        }
+        }*/
     }
 
     @Override
@@ -455,6 +456,8 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         if(isConnected) {
             LoadNetworkCalls();
             sendBroadcast(new Intent(ACTION_ON_NETWORK_CONNECTED));
+        }else{
+            sendBroadcast(new Intent(ACTION_ON_NETWORK_DISCONNECTED));
         }
     }
 }

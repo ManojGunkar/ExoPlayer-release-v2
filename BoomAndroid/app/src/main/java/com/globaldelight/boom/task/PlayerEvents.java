@@ -32,6 +32,7 @@ public class PlayerEvents {
     public static final String ACTION_UPDATE_BOOM_PLAYLIST_LIST ="ACTION_UPDATE_BOOM_PLAYLIST_LIST";
 
     public static final String ACTION_ON_NETWORK_CONNECTED="ACTION_ON_NETWORK_CONNECTED";
+    public static final String ACTION_ON_NETWORK_DISCONNECTED="ACTION_ON_NETWORK_DISCONNECTED";
 
     public static final String ACTION_CLOUD_SYNC = "ACTION_CLOUD_SYNC";
 
