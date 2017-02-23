@@ -26,7 +26,6 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
-import com.globaldelight.boom.ui.widgets.BoomDialogView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
@@ -137,7 +136,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     private void LoadGoogleDriveList(){
         if (googleDriveMediaList.getGoogleDriveMediaList().size() <= 0 &&
-                ConnectivityReceiver.isNetworkAvailable(mActivity)) {
+                ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
             Utils.showProgressLoader(mActivity);
             googleDriveHandler.getResultsFromApi();
         }else{

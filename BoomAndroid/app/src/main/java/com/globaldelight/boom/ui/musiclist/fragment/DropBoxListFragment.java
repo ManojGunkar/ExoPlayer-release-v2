@@ -138,7 +138,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
             Utils.dismissProgressLoader();
         }
         if (null != App.getDropboxAPI()
-                && ConnectivityReceiver.isNetworkAvailable(mActivity) && isListEmpty) {
+                && ConnectivityReceiver.isNetworkAvailable(mActivity, true) && isListEmpty) {
             resetAuthentication();
             new LoadDropBoxList(mActivity).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }else{

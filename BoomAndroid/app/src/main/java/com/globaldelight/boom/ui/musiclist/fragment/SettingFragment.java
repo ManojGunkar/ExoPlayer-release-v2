@@ -103,7 +103,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.setting_dropbox_panel:
-                if(ConnectivityReceiver.isNetworkAvailable(mActivity)) {
+                if(ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
                     App.getDropboxAPI().getSession().unlink();
                     DropBoxUtills.clearKeys(mActivity);
                     DropBoxUtills.checkAppKeySetup(App.getApplication());
@@ -169,7 +169,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     private void resetGoogleDriveAuth() {
-        if(ConnectivityReceiver.isNetworkAvailable(mActivity)) {
+        if(ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
             try {
                 googleDriveHandler = new GoogleDriveHandler(SettingFragment.this);
                 googleDriveHandler.getGoogleAccountCredential();

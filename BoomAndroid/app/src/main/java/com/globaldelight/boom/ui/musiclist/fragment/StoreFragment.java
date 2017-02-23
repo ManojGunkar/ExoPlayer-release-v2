@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.BusinessUtils;
-import com.globaldelight.boom.business.client.IPurchaseUpdater;
 import com.globaldelight.boom.business.inapp.IabHelper;
 import com.globaldelight.boom.business.inapp.IabResult;
 import com.globaldelight.boom.business.inapp.Inventory;
@@ -29,8 +28,7 @@ import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
-import static android.app.Activity.RESULT_OK;
-import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
+
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_IN_APP_PURCHASE;
 import static com.globaldelight.boom.business.BusinessUtils.SKU_INAPPITEM;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
@@ -123,11 +121,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.store_share_text:
-                if(ConnectivityReceiver.isNetworkAvailable(mActivity)) {
-                    try {
-                        Utils.shareStart(mActivity, StoreFragment.this);
-                    }catch (Exception e){}
-                }
+                try {
+                    Utils.shareStart(mActivity, StoreFragment.this);
+                }catch (Exception e){}
                 break;
             case R.id.store_buyButton:
                 startPurchaseRestore();
@@ -158,7 +154,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
 
     private void startPurchaseRestore(){
-        if(ConnectivityReceiver.isNetworkAvailable(mActivity)){
+        if(ConnectivityReceiver.isNetworkAvailable(mActivity, true)){
             try {
                 startInAppFlow();
             }catch (Exception e){}
