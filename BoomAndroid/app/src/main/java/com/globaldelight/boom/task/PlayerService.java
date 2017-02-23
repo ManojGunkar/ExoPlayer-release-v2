@@ -396,7 +396,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     private void initBusinessModel() {
 
-        boolean isShownAdds = true;
+       /* boolean isShownAdds = true;
         if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_APP_SHARED, false)){
             if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
                 isShownAdds = false;
@@ -419,7 +419,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
                     App.getBusinessHandler().isAppTrialVersion();
                 }
             }).start();
-        }
+        }*/
     }
 
     @Override
