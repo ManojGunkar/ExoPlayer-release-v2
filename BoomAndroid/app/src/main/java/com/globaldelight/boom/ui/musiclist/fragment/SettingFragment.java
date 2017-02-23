@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -129,7 +130,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 startCompoundActivities(R.string.header_about);
                 break;
             case R.id.feedback_panel:
-
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://apimboom2.globaldelight.net/feedback.php ")));
+                }catch (Exception e){}
                 break;
         }
     }
