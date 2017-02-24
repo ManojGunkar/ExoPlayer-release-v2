@@ -105,7 +105,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             }
         }).start();
 
-//        initBusinessModel();
+        initBusinessModel();
     }
 
     @Override
@@ -117,7 +117,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         App.getPlayingQueueHandler().getUpNextList().updateRepeatShuffleOnAppStart();
 
         notificationHandler = new NotificationHandler(context, this);
-//        App.setNotifica
         return START_NOT_STICKY;
     }
 
@@ -187,7 +186,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            updateNotificationPlayer((IMediaItem) musicPlayerHandler.getPlayingItem(), false, true);
+            updateNotificationPlayer( musicPlayerHandler.getPlayingItem(), false, true);
         }
         sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
     }
@@ -399,30 +398,31 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     }
 
     private void initBusinessModel() {
-
-        boolean isShownAdds = true;
-        if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_APP_SHARED, false)){
-            if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
-                isShownAdds = false;
-            }else {
-                isShownAdds = Utils.isShareExpireHour(this);
-            }
-        }else if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
-            isShownAdds = false;
-        }
-
-        if(isShownAdds) {
-            App.getBusinessHandler().setBusinessNetworkListener(this);
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    App.getBusinessHandler().getBoomAccessToken();
-                    App.getBusinessHandler().registerAndroidDevice();
-                    App.getBusinessHandler().getConfigAppWithBoomServer();
-                    App.getBusinessHandler().isAppTrialVersion();
+        if(Utils.isBusinessModelEnable()) {
+            boolean isShownAdds = true;
+            if (BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_APP_SHARED, false)) {
+                if (BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+                    isShownAdds = false;
+                } else {
+                    isShownAdds = Utils.isShareExpireHour(this);
                 }
-            }).start();
+            } else if (BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+                isShownAdds = false;
+            }
+
+            if (isShownAdds) {
+                App.getBusinessHandler().setBusinessNetworkListener(this);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        App.getBusinessHandler().getBoomAccessToken();
+                        App.getBusinessHandler().registerAndroidDevice();
+                        App.getBusinessHandler().getConfigAppWithBoomServer();
+                        App.getBusinessHandler().isAppTrialVersion();
+                    }
+                }).start();
+            }
         }
     }
 

@@ -191,15 +191,18 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
 
     private boolean isExpired(){
-        String expiryDateString = "MAR-20-2017";
-        try {
-            SimpleDateFormat sdf =  new SimpleDateFormat("MMM-dd-yyyy");
-            Date expiryDate = sdf.parse(expiryDateString);
-            Date today= new Date();
-            return today.after(expiryDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return false;
+        if(Utils.isAppExpireEnable()) {
+            String expiryDateString = "MAR-20-2017";
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd-yyyy");
+                Date expiryDate = sdf.parse(expiryDateString);
+                Date today = new Date();
+                return today.after(expiryDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
+        return false;
     }
 }

@@ -3,10 +3,7 @@ package com.globaldelight.boom.business.client;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
-import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.globaldelight.boom.business.BusinessPreferences;
@@ -52,19 +49,31 @@ public class InAppHandler implements IabHelper.QueryInventoryFinishedListener, I
                 if (mHelper == null) return;
                 // Hooray, IAB is fully set up. Now, let's get an inventory of
                 // stuff we own.
-                mHelper.queryInventoryAsync(InAppHandler.this);
+                try {
+                    mHelper.queryInventoryAsync(InAppHandler.this);
+                } catch (IabHelper.IabAsyncInProgressException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
 
     public void startInAppFlow(){
         String payload = BusinessUtils.getDeviceID(mContext);
-        mHelper.launchPurchaseFlow(mActivity, SKU_INAPPITEM, 10000,
-                this, payload);
+        try {
+            mHelper.launchPurchaseFlow(mActivity, SKU_INAPPITEM, 10000,
+                    this, payload);
+        } catch (IabHelper.IabAsyncInProgressException e) {
+            e.printStackTrace();
+        }
     }
 
     private void disposeInAppHandler(){
-        if (mHelper != null) mHelper.dispose();
+        if (mHelper != null) try {
+            mHelper.dispose();
+        } catch (IabHelper.IabAsyncInProgressException e) {
+            e.printStackTrace();
+        }
         mHelper = null;
     }
 
@@ -90,8 +99,12 @@ public class InAppHandler implements IabHelper.QueryInventoryFinishedListener, I
 
         if (removeAdsPurchase != null
                 && verifyDeveloperPayload(removeAdsPurchase)) {
-            mHelper.consumeAsync(inventory.getPurchase(SKU_INAPPITEM),
-                    InAppHandler.this);
+            try {
+                mHelper.consumeAsync(inventory.getPurchase(SKU_INAPPITEM),
+                        InAppHandler.this);
+            } catch (IabHelper.IabAsyncInProgressException e) {
+                e.printStackTrace();
+            }
             return;
         }
     }
@@ -138,7 +151,11 @@ public class InAppHandler implements IabHelper.QueryInventoryFinishedListener, I
 
         if (purchase.getSku().equals(SKU_INAPPITEM)) {
             // bought 1/4 tank of gas. So consume it.
-            mHelper.consumeAsync(purchase, InAppHandler.this);
+            try {
+                mHelper.consumeAsync(purchase, InAppHandler.this);
+            } catch (IabHelper.IabAsyncInProgressException e) {
+                e.printStackTrace();
+            }
         }
     }
 

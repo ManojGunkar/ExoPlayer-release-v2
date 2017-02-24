@@ -1,5 +1,6 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.business.inapp.IabHelper;
 import com.globaldelight.boom.ui.musiclist.fragment.AboutFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.SettingFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.StoreFragment;
@@ -104,6 +106,27 @@ public class ActivityContainer extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (null != mFragment && mFragment instanceof  StoreFragment &&
+                !((StoreFragment) mFragment).getPurchaseHelper().handleActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(null != mFragment && mFragment instanceof  StoreFragment) {
+            IabHelper mHelper = ((StoreFragment) mFragment).getPurchaseHelper();
+            if (mHelper != null) try {
+                mHelper.dispose();
+            } catch (IabHelper.IabAsyncInProgressException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 
