@@ -522,4 +522,12 @@ public class Utils {
             BusinessPreferences.writeBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, true);
         }
     }
+
+    public static boolean isBusinessModelEnable(){
+        return false;
+    }
+
+    public static boolean isAppExpireEnable(){
+        return true;
+    }
 }

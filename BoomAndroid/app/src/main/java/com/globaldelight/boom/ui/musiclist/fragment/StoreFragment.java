@@ -1,5 +1,3 @@
-
-
 package com.globaldelight.boom.ui.musiclist.fragment;
 
 import android.annotation.SuppressLint;
@@ -9,9 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +18,7 @@ import android.widget.Toast;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.BusinessUtils;
+import com.globaldelight.boom.business.inapp.IabBroadcastReceiver;
 import com.globaldelight.boom.business.inapp.IabHelper;
 import com.globaldelight.boom.business.inapp.IabResult;
 import com.globaldelight.boom.business.inapp.Inventory;
@@ -28,7 +27,6 @@ import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
-
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_IN_APP_PURCHASE;
 import static com.globaldelight.boom.business.BusinessUtils.SKU_INAPPITEM;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
@@ -37,28 +35,28 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING
  * Created by Rahul Agarwal on 08-02-17.
  */
 
-public class StoreFragment extends Fragment implements View.OnClickListener {
+public class StoreFragment extends Fragment implements View.OnClickListener,IabBroadcastReceiver.IabBroadcastListener {
 
     private static final int SHARE_COMPLETE = 1;
     ScrollView rootView;
     private static final String TAG = "In-App-Handler";
-
-
+    IabBroadcastReceiver mBroadcastReceiver;
     private IabHelper mHelper;
     private Context mContext;
     private Activity mActivity;
-    private Handler uiHandler;
     public static final String ACTION_IN_APP_PURCHASE_SUCCESSFUL = "ACTION_INAPP_PURCHASE_SUCCESSFUL";
+
     private BroadcastReceiver mUpdateInAppItemReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
+            switch (intent.getAction()) {
                 case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
                     updateInApp();
                     break;
             }
         }
     };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -83,7 +81,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         RegularButton mStoreBuyBtn = (RegularButton) rootView.findViewById(R.id.store_buyButton);
         mStoreBuyBtn.setOnClickListener(this);
 
-        this.uiHandler = new Handler();
         this.mContext = mActivity;
         mHelper = new IabHelper(mContext, BusinessUtils.base64EncodedPublicKey);
         mHelper.enableDebugLogging(true);
@@ -91,14 +88,21 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
             public void onIabSetupFinished(IabResult result) {
                 if (!result.isSuccess()) {
                     // Oh noes, there was a problem.
-                    complain("Problem setting up in-app billing: " + result);
+//                    complain("Problem setting up in-app billing: " + result);
                     return;
                 }
 
                 if (mHelper == null) return;
                 // Hooray, IAB is fully set up. Now, let's get an inventory of
                 // stuff we own.
-                mHelper.queryInventoryAsync(mGotInventoryListener);
+                mBroadcastReceiver = new IabBroadcastReceiver(StoreFragment.this);
+                IntentFilter broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
+                mContext.registerReceiver(mBroadcastReceiver, broadcastFilter);
+                try {
+                    mHelper.queryInventoryAsync(mGotInventoryListener);
+                } catch (IabHelper.IabAsyncInProgressException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -119,16 +123,19 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        /*switch (view.getId()){
-            case R.id.store_share_text:
-                try {
-                    Utils.shareStart(mActivity, StoreFragment.this);
-                }catch (Exception e){}
-                break;
-            case R.id.store_buyButton:
-                startPurchaseRestore();
-                break;
-        }*/
+        if(Utils.isBusinessModelEnable()) {
+            switch (view.getId()) {
+                case R.id.store_share_text:
+                    try {
+                        Utils.shareStart(mActivity, StoreFragment.this);
+                    } catch (Exception e) {
+                    }
+                    break;
+                case R.id.store_buyButton:
+                    startPurchaseRestore();
+                    break;
+            }
+        }
     }
 
     @Override
@@ -137,7 +144,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 resultCode, data)) {
             super.onActivityResult(requestCode, resultCode, data);
         }
-        if(requestCode == SHARE_COMPLETE){
+        if (requestCode == SHARE_COMPLETE) {
             updateShareContent();
         }
     }
@@ -153,21 +160,27 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 //        }
     }
 
-    private void startPurchaseRestore(){
-        if(ConnectivityReceiver.isNetworkAvailable(mActivity, true)){
+    private void startPurchaseRestore() {
+        if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
             try {
                 startInAppFlow();
-            }catch (Exception e){}
+            } catch (Exception e) {
+            }
         }
     }
 
     public void startInAppFlow() {
         String payload = BusinessUtils.getDeviceID(mContext);
-        mHelper.launchPurchaseFlow(mActivity, SKU_INAPPITEM, 10000,
-                mPurchaseFinishedListener, payload);
+//        String payload = "test1";
+        try {
+            mHelper.launchPurchaseFlow(mActivity, SKU_INAPPITEM, 10000,
+                    mPurchaseFinishedListener, payload);
+        } catch (IabHelper.IabAsyncInProgressException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void updateInApp(){
+    private void updateInApp() {
         rootView.findViewById(R.id.store_buyButton).setVisibility(View.GONE);
     }
 
@@ -178,11 +191,12 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
 
     public void restorePurchase() {
-//        startPurchaseRestore();
+        if(Utils.isBusinessModelEnable())
+            startPurchaseRestore();
     }
 
     public void onErrorAppPurchase() {
-        Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();
     }
 
     public void onSuccessAppPurchase() {
@@ -205,26 +219,31 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
             } else {
                 onErrorAppPurchase();
             }
-            disposeInAppHandler();
         }
     };
     IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result,
                                              Inventory inventory) {
+            if (mHelper == null) return;
+
             if (result.isFailure()) {
                 onErrorAppPurchase();
                 return;
             }
-            Purchase removeAdsPurchase = inventory.getPurchase(SKU_INAPPITEM);
+            Purchase premiumPurchase = inventory.getPurchase(SKU_INAPPITEM);
             boolean mIsPremium = inventory.hasPurchase(SKU_INAPPITEM);
            /* if (mIsPremium) {
                 bt.setVisibility(View.GONE);
                 Toast.makeText(MainActivity.this, "Already you made purchase", Toast.LENGTH_SHORT);
             }*/
-            if (removeAdsPurchase != null
-                    && verifyDeveloperPayload(removeAdsPurchase)) {
-                mHelper.consumeAsync(inventory.getPurchase(SKU_INAPPITEM),
-                        mConsumeFinishedListener);
+            if (premiumPurchase != null
+                    && verifyDeveloperPayload(premiumPurchase)) {
+                try {
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_INAPPITEM),
+                            mConsumeFinishedListener);
+                } catch (IabHelper.IabAsyncInProgressException e) {
+                    e.printStackTrace();
+                }
                 return;
             }
 
@@ -235,32 +254,35 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         @SuppressLint("LongLogTag")
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
             if (result.isFailure()) {
+                if(result.getResponse()==-1003){
+                    BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
+                    onSuccessAppPurchase();
+                }
                 if (result.getResponse() == 7) {
                     BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
                     onSuccessRestoreAppPurchase();
                 } else {
                     onErrorAppPurchase();
                 }
-                disposeInAppHandler();
                 return;
             }
             if (!verifyDeveloperPayload(purchase)) {
                 onErrorAppPurchase();
-
-                disposeInAppHandler();
                 return;
             }
 
             if (purchase.getSku().equals(SKU_INAPPITEM)) {
                 // bought 1/4 tank of gas. So consume it.
-                mHelper.consumeAsync(purchase, mConsumeFinishedListener);
+//                try {
+//                    mHelper.consumeAsync(purchase, mConsumeFinishedListener);
+//                } catch (IabHelper.IabAsyncInProgressException e) {
+//                    e.printStackTrace();
+//                }
+                BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
+                onSuccessAppPurchase();
             }
         }
     };
-
-    void complain(String message) {
-        alert(message);
-    }
 
     boolean verifyDeveloperPayload(Purchase purchase) {
         String payload = purchase.getDeveloperPayload();
@@ -294,13 +316,17 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         return true;
     }
 
-    @SuppressLint("LongLogTag")
-    void alert(String message) {
-        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+    @Override
+    public void receivedBroadcast() {
+        Log.d(TAG, "Received broadcast notification. Querying inventory.");
+        try {
+            mHelper.queryInventoryAsync(mGotInventoryListener);
+        } catch (IabHelper.IabAsyncInProgressException e) {
+//            complain("Error querying inventory. Another async operation in progress.");
+        }
     }
-    private void disposeInAppHandler() {
-        /*if (mHelper != null) mHelper.dispose();
-        mHelper = null;*/
+
+    public IabHelper getPurchaseHelper() {
+        return mHelper;
     }
 }
-
