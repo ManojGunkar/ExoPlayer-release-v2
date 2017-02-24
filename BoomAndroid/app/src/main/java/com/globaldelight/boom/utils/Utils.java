@@ -397,7 +397,7 @@ public class Utils {
     }
 
     public static void SharePopup(final Context context) {
-        if(!BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED_DIALOG_SHOWN, false) &&
+        if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED_DIALOG_SHOWN, false) &&
                 BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false) &&
                 BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED, false)) {
             new MaterialDialog.Builder(context)
@@ -427,7 +427,7 @@ public class Utils {
     }
 
     public static void EmailPopup(final Context context) {
-        if(BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+        if(isBusinessModelEnable() && BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
             new MaterialDialog.Builder(context)
                     .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
                     .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
@@ -457,7 +457,7 @@ public class Utils {
     }
 
     public static void ExpirePopup(final Context context) {
-        if(!BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_EXPIRE_DIALOG_SHOWN, false) &&
+        if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_EXPIRE_DIALOG_SHOWN, false) &&
                 BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
             new MaterialDialog.Builder(context)
                     .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
@@ -502,7 +502,7 @@ public class Utils {
     }
 
     public static void InternetPopup(final Context activity){
-        if(!BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, false) && isMoreThan24Hour() && !ConnectivityReceiver.isNetworkAvailable(activity, false) && BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
+        if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, false) && isMoreThan24Hour() && !ConnectivityReceiver.isNetworkAvailable(activity, false) && BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
             new MaterialDialog.Builder(activity)
                     .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
                     .positiveColor(ContextCompat.getColor(activity, R.color.dialog_submit_positive))
