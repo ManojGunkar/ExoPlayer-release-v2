@@ -1,6 +1,5 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -9,9 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.business.inapp.IabHelper;
 import com.globaldelight.boom.ui.musiclist.fragment.AboutFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.SettingFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.StoreFragment;
@@ -39,7 +36,7 @@ public class ActivityContainer extends AppCompatActivity {
 
     private void initViews() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (container == R.string.store_title)
+        if(container == R.string.store_title)
             toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
         ((RegularTextView) findViewById(R.id.toolbar_txt)).setText(getResources().getString(container));
@@ -57,18 +54,18 @@ public class ActivityContainer extends AppCompatActivity {
 
     private void addFragment() {
         toolbar.setVisibility(View.VISIBLE);
-        switch (container) {
+        switch (container){
             case R.string.title_upnext:
-                mFragment = new UpNextListFragment();
+                mFragment =  new UpNextListFragment();
                 break;
             case R.string.title_settings:
-                mFragment = new SettingFragment();
+                mFragment =  new SettingFragment();
                 break;
             case R.string.store_title:
-                mFragment = new StoreFragment();
+                mFragment =  new StoreFragment();
                 break;
             case R.string.header_about:
-                mFragment = new AboutFragment();
+                mFragment =  new AboutFragment();
                 break;
         }
         getSupportFragmentManager().beginTransaction()
@@ -79,7 +76,7 @@ public class ActivityContainer extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        switch (container) {
+        switch (container){
             case R.string.store_title:
                 getMenuInflater().inflate(R.menu.store_menu, menu);
                 /*menu.findItem(R.id.popup_store_restore).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);*/
@@ -94,12 +91,12 @@ public class ActivityContainer extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id) {
+        switch (id){
             case android.R.id.home:
                 super.onBackPressed();
                 return true;
             case R.id.popup_store_restore:
-                ((StoreFragment) mFragment).restorePurchase();
+                ((StoreFragment)mFragment).restorePurchase();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -107,29 +104,6 @@ public class ActivityContainer extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!((StoreFragment) mFragment).getmHelper().handleActivityResult(requestCode,
-                resultCode, data)) {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-//        if (mService != null) {
-//            unbindService(mServiceConn);
-//        }
-        IabHelper mHelper = ((StoreFragment) mFragment).getmHelper();
-        if (mHelper != null) try {
-            mHelper.dispose();
-        } catch (IabHelper.IabAsyncInProgressException e) {
-            e.printStackTrace();
-        }
-        mHelper = null;
     }
 }
 
