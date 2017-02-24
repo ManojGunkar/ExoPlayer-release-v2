@@ -166,8 +166,7 @@
             android:name=".ui.musiclist.activity.BoomSplash"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/FullscreenTheme">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

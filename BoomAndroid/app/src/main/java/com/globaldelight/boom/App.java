@@ -18,6 +18,7 @@ import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.handlers.CloudMediaItemDBHelper;
 import com.globaldelight.boom.utils.handlers.FavoriteDBHelper;
 import com.globaldelight.boom.utils.handlers.PlaylistDBHelper;
+import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boom.utils.handlers.UpNextDBHelper;
 import com.globaldelight.boom.utils.handlers.UserPreferenceHandler;
 import com.globaldelight.boom.utils.Utils;
@@ -145,12 +146,9 @@ public class App extends Application implements Application.ActivityLifecycleCal
     @Override
     public void onTerminate() {
         super.onTerminate();
-
         application = null;
         playingQueueHandler.Terminate();
-        /*playlistManager = null;*/
         MixPanelAnalyticHelper.getInstance(this).flush();
-
     }
 
     public void onActivityCreated(Activity var1, Bundle var2) {
@@ -188,6 +186,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public void onActivityDestroyed(Activity var1) {
+
     }
 
 

@@ -47,7 +47,6 @@ public class HeadPhonePlugReceiver extends BroadcastReceiver {
                 if ( headsetState == BluetoothHeadset.STATE_CONNECTED && !isBluetoothHeadsetConnected ) {
                     state = 1;
                     isBluetoothHeadsetConnected = true;
-                    Preferences.writeBoolean(context, HEADPHONE_CONNECTED, false);
                 }
                 else  if ( headsetState == BluetoothHeadset.STATE_DISCONNECTED && isBluetoothHeadsetConnected) {
                     state = 0;
@@ -66,7 +65,6 @@ public class HeadPhonePlugReceiver extends BroadcastReceiver {
                 else if ( headsetState == 1 && !isWiredHeadsetConnected ) {
                     state = 1;
                     isWiredHeadsetConnected = true;
-                    Preferences.writeBoolean(context, HEADPHONE_CONNECTED, false);
                 }
                 break;
             }

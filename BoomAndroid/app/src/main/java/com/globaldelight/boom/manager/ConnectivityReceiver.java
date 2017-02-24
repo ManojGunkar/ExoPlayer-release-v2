@@ -16,8 +16,8 @@ import com.globaldelight.boom.R;
 public class ConnectivityReceiver
         extends BroadcastReceiver {
 
-    public static ConnectivityReceiverListener connectivityReceiverListener;
-    public static boolean isNWConnected = false;
+    private static ConnectivityReceiverListener connectivityReceiverListener;
+    private static boolean isNWConnected = false;
 
     public ConnectivityReceiver(){}
 

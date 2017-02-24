@@ -232,13 +232,6 @@ public class TimerUtils {
 
             public void onFinish() {
                 txtDescTimer.setText("00:00:00" + mContext.getResources().getString(R.string.remaning));
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
-                    }
-                },5000);
-
                 txtDescTimer.setText(mContext.getResources().getString(R.string.sleep_timer_description));
             }
         }.start();
@@ -337,12 +330,6 @@ public class TimerUtils {
                 public void onFinish() {
                     //txtTimer.setText("00:00:00");
                     txtDescTimer.setText("00:00:00" + mContext.getResources().getString(R.string.remaning));
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
-                        }
-                    },5000);
                     txtDescTimer.setText(mContext.getResources().getString(R.string.sleep_timer_description));
 
                 }

@@ -121,6 +121,7 @@ public class MainActivity extends MasterActivity
     @Override
     protected void onResume() {
         registerHeadSetReceiver();
+        App.getPlayerEventHandler().isLibraryResumes = true;
         super.onResume();
     }
 
@@ -132,6 +133,9 @@ public class MainActivity extends MasterActivity
     }
 
     private void useCoachMarkWindow(){
+        if(HeadPhonePlugReceiver.isHeadsetConnected()){
+            Preferences.writeBoolean(this, HEADPHONE_CONNECTED, false);
+        }
         if ((Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, true) || Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, true))
                 && Preferences.readBoolean(MainActivity.this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(MainActivity.this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)
                 && !Preferences.readBoolean(MainActivity.this, TOLLTIP_OPEN_EFFECT_MINI_PLAYER, true)) {
@@ -150,7 +154,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void chooseCoachMarkWindow() {
-        if (Preferences.readBoolean(this, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && HeadPhonePlugReceiver.isHeadsetConnected() && currentItem == 0) {
+        if (!Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, true) && Preferences.readBoolean(this, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && HeadPhonePlugReceiver.isHeadsetConnected() && currentItem == 0) {
             coachMarkChooseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.choose_headphone_tooltip));
             coachMarkChooseHeadPhone.setAutoDismissBahaviour(true);
             coachMarkChooseHeadPhone.showCoachMark(findViewById(R.id.container));
@@ -488,6 +492,7 @@ public class MainActivity extends MasterActivity
         Intent intent = new Intent(this, ActivityContainer.class);
         intent.putExtra("container",activityName);
         startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     private void removeFragment() {
@@ -567,6 +572,7 @@ public class MainActivity extends MasterActivity
     protected void onPause() {
         unregisterPlayerReceiver(MainActivity.this);
         unregisterReceiver(headPhoneReceiver);
+        App.getPlayerEventHandler().isLibraryResumes = false;
         super.onPause();
     }
 

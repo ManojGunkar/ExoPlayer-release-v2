@@ -29,7 +29,7 @@ public class BusinessRequestReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         switch (intent.getAction()){
-            /*case ACTION_BUSINESS_CONFIGURATION :
+           /* case ACTION_BUSINESS_CONFIGURATION :
                 postBusinessRequest.postDelayed(new Runnable() {
                     @Override
                     public void run() {

@@ -22,7 +22,7 @@ public class SleepAlarm extends BroadcastReceiver {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
         wl.acquire();
-        if(Preferences.getPreferences(context).getBoolean(Preferences.SLEEP_TIMER_ENABLED, false) == true) {
+        if(Preferences.getPreferences(context).getBoolean(Preferences.SLEEP_TIMER_ENABLED, false)) {
             sendMessagePlayerStop(context);
             Preferences.writeBoolean(context, Preferences.SLEEP_TIMER_ENABLED, false);
         }

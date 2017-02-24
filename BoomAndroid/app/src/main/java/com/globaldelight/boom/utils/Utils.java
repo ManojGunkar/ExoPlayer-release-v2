@@ -502,7 +502,7 @@ public class Utils {
     }
 
     public static void InternetPopup(final Context activity){
-        if(!BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, false) && isMoreThan24Hour() && !ConnectivityReceiver.isNetworkAvailable(activity, true) && BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
+        if(!BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, false) && isMoreThan24Hour() && !ConnectivityReceiver.isNetworkAvailable(activity, false) && BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
             new MaterialDialog.Builder(activity)
                     .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
                     .positiveColor(ContextCompat.getColor(activity, R.color.dialog_submit_positive))
