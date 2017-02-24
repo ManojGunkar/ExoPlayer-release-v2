@@ -26,7 +26,7 @@ import com.globaldelight.boom.ui.widgets.RegularButton;
 
 public class AboutFragment extends Fragment {
 
-    LinearLayout rootView;
+    View rootView;
     RegularButton rateButton;
     Activity mActivity;
 
@@ -41,7 +41,7 @@ public class AboutFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = (LinearLayout) inflater.inflate(R.layout.fragment_about, container, false);
+        rootView = inflater.inflate(R.layout.fragment_about, container, false);
         if(null == mActivity)
             mActivity = getActivity();
         return rootView;

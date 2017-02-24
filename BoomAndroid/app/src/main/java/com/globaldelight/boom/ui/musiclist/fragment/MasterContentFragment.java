@@ -41,6 +41,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.Media.MediaType;
+import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.MasterActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.utils.EqualizerDialogAdapter;
 import com.globaldelight.boom.handler.controller.EffectUIController;
@@ -69,6 +70,7 @@ import java.util.concurrent.TimeUnit;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_NETWORK_DISCONNECTED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_PLAYER_SCREEN_RESUME;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB;
@@ -213,6 +215,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 case ACTION_PLAYER_SCREEN_RESUME:
                     onResumePlayerScreen();
                     break;
+                case ACTION_ON_NETWORK_DISCONNECTED:
+                    stopLoadProgress();
             }
         }
     };
@@ -264,6 +268,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onResume() {
         super.onResume();
+        updateProgressLoader();
     }
 
     private void setPlayerEnable(boolean isEnable){
@@ -279,7 +284,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mPlayerTab.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_normal, null));
             mEffectTab.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_effects_active, null));
             mEffectSwitch.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
-
+            String msg = isAllSpeakersAreOff();
+            if(null != msg)
+                Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_EFFECT_TAB);
         }
     }
@@ -695,6 +702,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         if(null != coachMarkEffectPlayer){
             coachMarkEffectPlayer.dismissTooltip();
         }
+        updateProgressLoader();
     }
 
     private void showEffectSwitchTip(){
@@ -734,7 +742,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onResumeFragment(int alfa) {
         mPlayerActionPanel.setAlpha(alfa);
-        if(App.getPlayerEventHandler().isTrackLoading())
+        updateProgressLoader();
+    }
+
+    private void updateProgressLoader(){
+        if(App.getPlayerEventHandler().isTrackWaitingForPlay())
             showProgressLoader();
         else
             stopLoadProgress();
@@ -769,6 +781,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
         intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
         intentFilter.addAction(ACTION_HOME_SCREEN_BACK_PRESSED);
+        intentFilter.addAction(ACTION_PLAYER_SCREEN_RESUME);
+        intentFilter.addAction(ACTION_ON_NETWORK_DISCONNECTED);
         context.registerReceiver(mPlayerBroadcastReceiver, intentFilter);
 
         setPlayerInfo();
@@ -1185,6 +1199,19 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }
     }
 
+    private String isAllSpeakersAreOff(){
+        if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()) {
+            if (!audioEffectPreferenceHandler.isLeftFrontSpeakerOn() && !audioEffectPreferenceHandler.isRightFrontSpeakerOn()
+                    && !audioEffectPreferenceHandler.isLeftSurroundSpeakerOn() && !audioEffectPreferenceHandler.isRightSurroundSpeakerOn()) {
+                return getResources().getString(R.string.all_speakers_off);
+            } else if (!audioEffectPreferenceHandler.isLeftFrontSpeakerOn() || !audioEffectPreferenceHandler.isRightFrontSpeakerOn()
+                    || !audioEffectPreferenceHandler.isLeftSurroundSpeakerOn() || !audioEffectPreferenceHandler.isRightSurroundSpeakerOn()) {
+                return getResources().getString(R.string.some_speakers_off);
+            }
+        }
+        return null;
+    }
+
     private void updateSpeakers(LinearLayout speakerPanel){
         ImageView mFrontLeftSpeaker, mFrontRightSpeaker, mSurroundLeftSpeaker, mSurroundRightSpeaker;
 
@@ -1258,6 +1285,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         RecyclerView recyclerView = (RecyclerView)mActivity.getLayoutInflater()
                 .inflate(R.layout.recycler_view_layout, null);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
+        recyclerView.scrollToPosition(audioEffectPreferenceHandler.getSelectedEqualizerPosition());
         recyclerView.setAdapter(adapter);
 
         MaterialDialog dialog = new MaterialDialog.Builder(mActivity)
@@ -1475,8 +1503,15 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void showProgressLoader(){
-        if(View.GONE == mLoadingProgress.getVisibility())
-            mLoadingProgress.setVisibility(View.VISIBLE);
+        if(View.GONE == mLoadingProgress.getVisibility() && ConnectivityReceiver.isNetworkAvailable(mActivity, true))
+            mLoadingProgress.post(new Runnable() {
+                @Override
+                public void run() {
+                    mLoadingProgress.setVisibility(View.VISIBLE);
+                }
+            });
+        else
+            stopLoadProgress();
     }
 
     private void stopLoadProgress(){

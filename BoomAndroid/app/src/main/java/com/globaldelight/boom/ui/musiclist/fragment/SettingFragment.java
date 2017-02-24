@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -103,7 +104,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.setting_dropbox_panel:
-                if(ConnectivityReceiver.isNetworkAvailable(mActivity)) {
+                if(ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
                     App.getDropboxAPI().getSession().unlink();
                     DropBoxUtills.clearKeys(mActivity);
                     DropBoxUtills.checkAppKeySetup(App.getApplication());
@@ -129,7 +130,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 startCompoundActivities(R.string.header_about);
                 break;
             case R.id.feedback_panel:
-
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://apimboom2.globaldelight.net/feedback.php ")));
+                }catch (Exception e){}
                 break;
         }
     }
@@ -169,7 +172,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     private void resetGoogleDriveAuth() {
-        if(ConnectivityReceiver.isNetworkAvailable(mActivity)) {
+        if(ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
             try {
                 googleDriveHandler = new GoogleDriveHandler(SettingFragment.this);
                 googleDriveHandler.getGoogleAccountCredential();

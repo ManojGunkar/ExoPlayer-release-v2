@@ -8,11 +8,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
@@ -20,9 +20,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.annotation.AnyRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -39,6 +37,7 @@ import android.view.WindowManager;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
@@ -52,10 +51,10 @@ import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.adapter.utils.AddToPlaylistAdapter;
 import com.globaldelight.boom.ui.widgets.BoomDialogView;
-import com.globaldelight.boom.utils.handlers.Preferences;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
@@ -139,14 +138,14 @@ public class Utils {
     }
 
     public void addToPlaylist(final Activity activity, final ArrayList<? extends IMediaItemBase> songList, final String fromPlaylist) {
-        if (songList.size() == 0)
+        if(songList.size() == 0)
             return;
 
-        ArrayList<? extends IMediaItemBase> playList = MediaController.getInstance(activity).getBoomPlayList();
+        ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(activity).getBoomPlayList();
 
-        if (fromPlaylist != null) {
-            for (int i = 0; i < playList.size(); i++) {
-                if (playList.get(i).getItemTitle().equalsIgnoreCase(fromPlaylist)) {
+        if(fromPlaylist != null){
+            for(int i=0; i< playList.size(); i++){
+                if(playList.get(i).getItemTitle().equalsIgnoreCase(fromPlaylist)){
                     playList.remove(i);
                 }
             }
@@ -248,9 +247,9 @@ public class Utils {
     }
 
 
-    public static boolean isPhone(Activity activity) {
+    public static boolean isPhone(Activity activity){
         DisplayMetrics metrics = new DisplayMetrics();
-        if (null != activity) {
+        if(null != activity) {
             activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
             float yInches = metrics.heightPixels / metrics.ydpi;
@@ -292,7 +291,7 @@ public class Utils {
         builder.show();
     }
 
-    public static int getStatusBarHeight(Context context) {
+    public static int getStatusBarHeight(Context context){
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
             return context.getResources().getDimensionPixelSize(resourceId);
@@ -301,7 +300,7 @@ public class Utils {
     }
 
     public static void shareStart(Context context) {
-        if (ConnectivityReceiver.isNetworkAvailable(context)) {
+        if(ConnectivityReceiver.isNetworkAvailable(context, true)) {
             try {
                 Intent shareIntent = new Intent(
                         android.content.Intent.ACTION_SEND);
@@ -318,7 +317,7 @@ public class Utils {
     }
 
     public static void shareStart(Context context, Fragment fragment) {
-        if (ConnectivityReceiver.isNetworkAvailable(context)) {
+        if(ConnectivityReceiver.isNetworkAvailable(context, true)) {
             try {
                 Intent shareIntent = new Intent(
                         android.content.Intent.ACTION_SEND);
@@ -337,29 +336,35 @@ public class Utils {
         }
     }
 
-    public static boolean isMoreThan24Hour(Context context) {
-        long firstTimeLaunchDate = 0;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-
+    public static boolean isMoreThan24Hour() {
+        Date installTime = null;
         try {
-            firstTimeLaunchDate = Long.parseLong(preferences.getString("Tool_install_date", "n/a"));
-        } catch (NumberFormatException ex) {
-        }
-        if ((System.currentTimeMillis() - firstTimeLaunchDate) > 3600000) {
-            return true;
-        }
+            PackageManager pm = App.getApplication().getApplicationContext().getPackageManager();
+            PackageInfo packageInfo = pm.getPackageInfo(App.getApplication().getPackageName(), PackageManager.GET_PERMISSIONS);
+
+            installTime = new Date( packageInfo.firstInstallTime );
+            if(System.currentTimeMillis() - installTime.getTime() > 3600000){
+                return true;
+            }
+        }catch (PackageManager.NameNotFoundException e1) {
+        } catch (SecurityException e1) {
+        } catch (IllegalArgumentException e1) {
+        }catch (Exception e){}
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//
+//        Log.d("Installed: " , dateFormat.format( installTime));
         return false;
     }
 
     public static boolean isShareExpireHour(Context context) {
-        if ((System.currentTimeMillis() - BusinessPreferences.readLong(context, ACTION_APP_SHARED_DATE, System.currentTimeMillis())) > (3600000 * 5)) {
+        if ((System.currentTimeMillis() - BusinessPreferences.readLong(context, ACTION_APP_SHARED_DATE, System.currentTimeMillis())) > (3600000 *  5)) {
             return true;
         }
         return false;
     }
 
-    public static void showProgressLoader(Context context) {
-        if ((null == progressLoader || !progressLoader.isShowing()) && ConnectivityReceiver.isNetworkAvailable(context)) {
+    public static void showProgressLoader(Context context){
+        if((null == progressLoader || !progressLoader.isShowing()) && ConnectivityReceiver.isNetworkAvailable(context, true)) {
             progressLoader = new BoomDialogView(context);
             progressLoader.setCanceledOnTouchOutside(false);
             progressLoader.show();
@@ -367,14 +372,14 @@ public class Utils {
     }
 
     public static void dismissProgressLoader() {
-        if (null != progressLoader && progressLoader.isShowing())
+        if(null != progressLoader && progressLoader.isShowing())
             progressLoader.dismiss();
     }
 
-    public static String getDeviceDensity(Activity context) {
+    public static String getDeviceDensity(Activity context){
         DisplayMetrics metrics = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        switch (metrics.densityDpi) {
+        switch(metrics.densityDpi){
             case DisplayMetrics.DENSITY_LOW:
                 return "LDP";
             case DisplayMetrics.DENSITY_MEDIUM:
@@ -392,12 +397,11 @@ public class Utils {
     }
 
     public static void SharePopup(final Context context) {
-        if (!BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED_DIALOG_SHOWN, false) &&
+        if(!BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED_DIALOG_SHOWN, false) &&
                 BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false) &&
                 BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED, false)) {
             new MaterialDialog.Builder(context)
                     .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                    .icon(context.getResources().getDrawable(R.drawable.com_facebook_button_icon, null))
                     .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
                     .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
                     .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
@@ -423,10 +427,9 @@ public class Utils {
     }
 
     public static void EmailPopup(final Context context) {
-        if (BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+        if(BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
             new MaterialDialog.Builder(context)
                     .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                    .icon(context.getResources().getDrawable(R.drawable.com_facebook_button_icon, null))
                     .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
                     .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
                     .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
@@ -445,7 +448,7 @@ public class Utils {
                     .input(context.getResources().getString(R.string.email_text_hint), null, new MaterialDialog.InputCallback() {
                         @Override
                         public void onInput(MaterialDialog dialog, CharSequence input) {
-                            if (!input.toString().matches("") && ConnectivityReceiver.isNetworkAvailable(context)) {
+                            if (!input.toString().matches("") && ConnectivityReceiver.isNetworkAvailable(context, true)) {
                                 BusinessHandler.getBusinessHandlerInstance(context).saveEmailAddress(BusinessUtils.EmailSource.library, input.toString(), true);
                             }
                         }
@@ -454,11 +457,10 @@ public class Utils {
     }
 
     public static void ExpirePopup(final Context context) {
-        if (!BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_EXPIRE_DIALOG_SHOWN, false) &&
+        if(!BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_EXPIRE_DIALOG_SHOWN, false) &&
                 BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
             new MaterialDialog.Builder(context)
                     .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                    .icon(context.getResources().getDrawable(R.drawable.com_facebook_button_icon, null))
                     .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
                     .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
                     .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
@@ -484,7 +486,7 @@ public class Utils {
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            if (ConnectivityReceiver.isNetworkAvailable(context)) {
+                            if (ConnectivityReceiver.isNetworkAvailable(context, true)) {
                                 final String appPackageName = context.getPackageName(); // package name of the app
                                 try {
                                     context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
@@ -499,11 +501,10 @@ public class Utils {
         }
     }
 
-    public static void InternetPopup(final Context activity) {
-        if (!BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, false) && isMoreThan24Hour(activity) && !ConnectivityReceiver.isNetworkAvailable(activity) && BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+    public static void InternetPopup(final Context activity){
+        if(!BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, false) && isMoreThan24Hour() && !ConnectivityReceiver.isNetworkAvailable(activity, true) && BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
             new MaterialDialog.Builder(activity)
                     .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
-                    .icon(activity.getResources().getDrawable(R.drawable.com_facebook_button_icon, null))
                     .positiveColor(ContextCompat.getColor(activity, R.color.dialog_submit_positive))
                     .negativeColor(ContextCompat.getColor(activity, R.color.dialog_submit_negative))
                     .widgetColor(ContextCompat.getColor(activity, R.color.dialog_widget))

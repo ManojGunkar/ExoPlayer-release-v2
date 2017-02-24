@@ -40,7 +40,7 @@ public class ConnectivityReceiver
         isNWConnected = isConnected;
     }
 
-    public static boolean isNetworkAvailable(Context context) {
+    public static boolean isNetworkAvailable(Context context, boolean showToast) {
         if(null != context) {
             boolean isConnect;
             ConnectivityManager
@@ -49,7 +49,7 @@ public class ConnectivityReceiver
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             isConnect = activeNetwork != null
                     && activeNetwork.isConnectedOrConnecting();
-            if (!isConnect)
+            if (!isConnect && showToast)
                 Toast.makeText(context, context.getResources().getString(R.string.network_error), Toast.LENGTH_SHORT).show();
             return isConnect;
         }else{

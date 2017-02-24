@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -231,7 +232,13 @@ public class TimerUtils {
 
             public void onFinish() {
                 txtDescTimer.setText("00:00:00" + mContext.getResources().getString(R.string.remaning));
-                Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
+                    }
+                },5000);
+
                 txtDescTimer.setText(mContext.getResources().getString(R.string.sleep_timer_description));
             }
         }.start();
@@ -330,8 +337,12 @@ public class TimerUtils {
                 public void onFinish() {
                     //txtTimer.setText("00:00:00");
                     txtDescTimer.setText("00:00:00" + mContext.getResources().getString(R.string.remaning));
-                    if(!App.getPlayerEventHandler().isPlaying())
-                        Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
+                        }
+                    },5000);
                     txtDescTimer.setText(mContext.getResources().getString(R.string.sleep_timer_description));
 
                 }

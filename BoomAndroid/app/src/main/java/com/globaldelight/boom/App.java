@@ -185,16 +185,14 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public void onActivitySaveInstanceState(Activity var1, Bundle var2) {
-
     }
 
     public void onActivityDestroyed(Activity var1) {
-
     }
 
 
     private boolean isExpired(){
-        String expiryDateString = "FEB-28-2017";
+        String expiryDateString = "MAR-20-2017";
         try {
             SimpleDateFormat sdf =  new SimpleDateFormat("MMM-dd-yyyy");
             Date expiryDate = sdf.parse(expiryDateString);
