@@ -213,7 +213,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     dismissTooltip();
                     break;
                 case ACTION_PLAYER_SCREEN_RESUME:
-                    onResumePlayerScreen();
+
                     break;
                 case ACTION_ON_NETWORK_DISCONNECTED:
                     stopLoadProgress();
@@ -289,10 +289,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_EFFECT_TAB);
         }
-    }
-
-    private void onResumePlayerScreen() {
-        App.getPlayerEventHandler().isPlayerResume = true;
     }
 
     private void setPlayerInfo(){
@@ -778,7 +774,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         intentFilter.addAction(ACTION_UPDATE_TRACK_SEEK);
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
-        intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
         intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
         intentFilter.addAction(ACTION_HOME_SCREEN_BACK_PRESSED);
         intentFilter.addAction(ACTION_PLAYER_SCREEN_RESUME);
@@ -1503,7 +1498,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void showProgressLoader(){
-        if(View.GONE == mLoadingProgress.getVisibility() && ConnectivityReceiver.isNetworkAvailable(mActivity, true))
+        if(null != mPlayingMediaItem && mPlayingMediaItem.getMediaType() != MediaType.DEVICE_MEDIA_LIB &&
+                View.GONE == mLoadingProgress.getVisibility() && ConnectivityReceiver.isNetworkAvailable(mActivity, true))
             mLoadingProgress.post(new Runnable() {
                 @Override
                 public void run() {

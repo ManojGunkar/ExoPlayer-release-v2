@@ -9,6 +9,8 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import com.globaldelight.boom.ui.musiclist.activity.BoomSplash;
 import com.globaldelight.boom.utils.Utils;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
@@ -24,6 +26,7 @@ import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.manager.HeadPhonePlugReceiver;
+import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boomplayer.AudioConfiguration;
 
@@ -102,7 +105,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             }
         }).start();
 
-        initBusinessModel();
+//        initBusinessModel();
     }
 
     @Override
@@ -222,8 +225,8 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     public void onNotificationClick() {
         sendBroadcast(new Intent(PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB));
         final Intent i = new Intent();
-        i.setClass(context, MainActivity.class);
-        if(!App.getPlayerEventHandler().isPlayerResume) {
+        i.setClass(context, BoomSplash.class);
+        if(!App.getPlayerEventHandler().isLibraryResumes) {
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
         }
@@ -366,6 +369,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     @Override
     public void onDestroy() {
         unregisterReceiver(headPhonePlugReceiver);
+        Preferences.writeBoolean(this, Preferences.SLEEP_TIMER_ENABLED, false);
         serviceReceiver.unregisterPlayerServiceReceiver(this);
         try {
             mServiceStopTime = SystemClock.currentThreadTimeMillis();
@@ -396,7 +400,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     private void initBusinessModel() {
 
-       /* boolean isShownAdds = true;
+        boolean isShownAdds = true;
         if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_APP_SHARED, false)){
             if(BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
                 isShownAdds = false;
@@ -419,7 +423,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
                     App.getBusinessHandler().isAppTrialVersion();
                 }
             }).start();
-        }*/
+        }
     }
 
     @Override

@@ -37,7 +37,7 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING
  */
 
 public class PlayerEventHandler implements IQueueEvent, AudioManager.OnAudioFocusChangeListener {
-    public static boolean isPlayerResume = false;
+    public static boolean isLibraryResumes = false;
     private static IMediaItem playingItem;
     private static boolean isTrackWaiting = false;
     private static AudioPlayer mPlayer;
