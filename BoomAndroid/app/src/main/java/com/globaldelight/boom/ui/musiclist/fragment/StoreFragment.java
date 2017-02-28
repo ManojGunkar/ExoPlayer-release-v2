@@ -1,7 +1,10 @@
+
+
 package com.globaldelight.boom.ui.musiclist.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,8 +16,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Toast;
+
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.BusinessUtils;
@@ -27,15 +32,21 @@ import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
+import com.globaldelight.boom.utils.handlers.Preferences;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_IN_APP_PURCHASE;
 import static com.globaldelight.boom.business.BusinessUtils.SKU_INAPPITEM;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.utils.handlers.Preferences.INAPP_PURCHASE_PRICE_VALUE;
 
 /**
  * Created by Rahul Agarwal on 08-02-17.
  */
 
-public class StoreFragment extends Fragment implements View.OnClickListener,IabBroadcastReceiver.IabBroadcastListener {
+public class StoreFragment extends Fragment implements View.OnClickListener, IabBroadcastReceiver.IabBroadcastListener {
 
     private static final int SHARE_COMPLETE = 1;
     ScrollView rootView;
@@ -45,6 +56,10 @@ public class StoreFragment extends Fragment implements View.OnClickListener,IabB
     private Context mContext;
     private Activity mActivity;
     public static final String ACTION_IN_APP_PURCHASE_SUCCESSFUL = "ACTION_INAPP_PURCHASE_SUCCESSFUL";
+    boolean mIsPremium = false;
+    private String boomPriceSh;
+    private String boomPrice;
+    private ProgressBar progressBar;
 
     private BroadcastReceiver mUpdateInAppItemReceiver = new BroadcastReceiver() {
         @Override
@@ -62,28 +77,36 @@ public class StoreFragment extends Fragment implements View.OnClickListener,IabB
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = (ScrollView) inflater.inflate(R.layout.fragment_store, container, false);
         mActivity = getActivity();
+        progressBar = new ProgressBar(mActivity);
         initViews();
         return rootView;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.mContext=context;
+    }
+
     private void initViews() {
+        progressBar.setVisibility(View.VISIBLE);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_IN_APP_PURCHASE_SUCCESSFUL);
+        boomPriceSh = Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null);
         mActivity.registerReceiver(mUpdateInAppItemReceiver, intentFilter);
-
-        updateStoreUI();
-
-        updateShareContent();
-
         RegularTextView mStoreShareTxt = (RegularTextView) rootView.findViewById(R.id.store_share_text);
-
         mStoreShareTxt.setOnClickListener(this);
         RegularButton mStoreBuyBtn = (RegularButton) rootView.findViewById(R.id.store_buyButton);
         mStoreBuyBtn.setOnClickListener(this);
-
-        this.mContext = mActivity;
         mHelper = new IabHelper(mContext, BusinessUtils.base64EncodedPublicKey);
         mHelper.enableDebugLogging(true);
+
+        if(null != Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null)){
+            updateStoreUI(true, Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null));
+        }else{
+            updateStoreUI(false, null);
+        }
+
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
                 if (!result.isSuccess()) {
@@ -98,32 +121,41 @@ public class StoreFragment extends Fragment implements View.OnClickListener,IabB
                 mBroadcastReceiver = new IabBroadcastReceiver(StoreFragment.this);
                 IntentFilter broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
                 mContext.registerReceiver(mBroadcastReceiver, broadcastFilter);
+                ArrayList<String> skuList = new ArrayList<String>();
+                skuList.add(SKU_INAPPITEM);
                 try {
-                    mHelper.queryInventoryAsync(mGotInventoryListener);
+                    mHelper.queryInventoryAsync(true, skuList, null, mGotInventoryListener);
+//                    mHelper.queryInventoryAsync(mGotInventoryListener);
                 } catch (IabHelper.IabAsyncInProgressException e) {
                     e.printStackTrace();
                 }
             }
         });
+        progressBar.setVisibility(View.GONE);
+        updateShareContent();
     }
 
-    private void updateStoreUI() {
-        if(BusinessPreferences.readBoolean(mActivity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
-            ((RegularTextView)rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.after_purchase_store_page_header));
-            ((RegularTextView)rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.after_purchase_store_page_buy_description));
-            ((RegularButton)rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.after_purchase_buy_button));
+
+    private void updateStoreUI(boolean purchased, String price) {
+        if (BusinessPreferences.readBoolean(mActivity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)&& purchased) {
+            ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.after_purchase_store_page_header));
+            ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.after_purchase_store_page_buy_description));
+            ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.after_purchase_buy_button));
             (rootView.findViewById(R.id.store_share_text)).setVisibility(View.GONE);
             (rootView.findViewById(R.id.store_sub_discription)).setVisibility(View.GONE);
-        }else{
-            ((RegularTextView)rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.store_page_header));
-            ((RegularTextView)rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.store_page_buy_description));
-            ((RegularButton)rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.store_page_button_text));
+        } else {
+            ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.store_page_header));
+            ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.store_page_buy_description));
+            if(null != price)
+                ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.store_page_buy_now)+" @ " + price);
+            else
+                ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.store_page_buy_now));
         }
     }
 
     @Override
     public void onClick(View view) {
-        if(Utils.isBusinessModelEnable()) {
+        if (Utils.isBusinessModelEnable()) {
             switch (view.getId()) {
                 case R.id.store_share_text:
                     try {
@@ -132,7 +164,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener,IabB
                     }
                     break;
                 case R.id.store_buyButton:
-                    startPurchaseRestore();
+                    if (mIsPremium == false) {
+                        startPurchaseRestore();
+                    }
                     break;
             }
         }
@@ -187,12 +221,16 @@ public class StoreFragment extends Fragment implements View.OnClickListener,IabB
     @Override
     public void onDestroy() {
         mActivity.unregisterReceiver(mUpdateInAppItemReceiver);
+        if (mBroadcastReceiver != null) {
+            mActivity.unregisterReceiver(mBroadcastReceiver);
+        }
         super.onDestroy();
     }
 
     public void restorePurchase() {
-        if(Utils.isBusinessModelEnable())
+        if (Utils.isBusinessModelEnable() && mIsPremium == false) {
             startPurchaseRestore();
+        }
     }
 
     public void onErrorAppPurchase() {
@@ -200,12 +238,12 @@ public class StoreFragment extends Fragment implements View.OnClickListener,IabB
     }
 
     public void onSuccessAppPurchase() {
-        updateStoreUI();
+        updateStoreUI(true,boomPriceSh);
         Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_success), Toast.LENGTH_SHORT).show();
     }
 
     public void onSuccessRestoreAppPurchase() {
-        updateStoreUI();
+        updateStoreUI(true,boomPriceSh);
         Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_restore), Toast.LENGTH_SHORT).show();
     }
 
@@ -215,51 +253,64 @@ public class StoreFragment extends Fragment implements View.OnClickListener,IabB
         public void onConsumeFinished(Purchase purchase, IabResult result) {
             if (result.isSuccess()) {
                 BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
+                mIsPremium = true;
                 onSuccessAppPurchase();
             } else {
                 onErrorAppPurchase();
             }
         }
     };
+
+
     IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+        @Override
         public void onQueryInventoryFinished(IabResult result,
                                              Inventory inventory) {
             if (mHelper == null) return;
-
             if (result.isFailure()) {
                 onErrorAppPurchase();
                 return;
             }
             Purchase premiumPurchase = inventory.getPurchase(SKU_INAPPITEM);
-            boolean mIsPremium = inventory.hasPurchase(SKU_INAPPITEM);
-           /* if (mIsPremium) {
-                bt.setVisibility(View.GONE);
-                Toast.makeText(MainActivity.this, "Already you made purchase", Toast.LENGTH_SHORT);
-            }*/
+            if (null != inventory) {
+//                if (inventory.getAllOwnedSkus().size() != 0) {
+                mIsPremium = inventory.hasPurchase(SKU_INAPPITEM);
+                boomPrice =
+                        inventory.getSkuDetails(SKU_INAPPITEM).getPrice();
+                BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
+                updateStoreUI(mIsPremium,boomPrice);
+//                }
+            }
+            if (null != boomPrice) {
+                Preferences.writeString(mActivity, INAPP_PURCHASE_PRICE_VALUE, boomPrice);
+            }
+//            if (mIsPremium) {
+//                updateStoreUI(boomPrice);
+//            }
             if (premiumPurchase != null
                     && verifyDeveloperPayload(premiumPurchase)) {
-                try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_INAPPITEM),
-                            mConsumeFinishedListener);
-                } catch (IabHelper.IabAsyncInProgressException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    mHelper.consumeAsync(inventory.getPurchase(SKU_INAPPITEM),
+//                            mConsumeFinishedListener);
+//                } catch (IabHelper.IabAsyncInProgressException e) {
+//                    e.printStackTrace();
+//                }
+                mIsPremium = true;
                 return;
             }
-
         }
-
     };
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
         @SuppressLint("LongLogTag")
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
             if (result.isFailure()) {
-                if(result.getResponse()==-1003){
+                if (result.getResponse() == -1003) {
                     BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
                     onSuccessAppPurchase();
                 }
                 if (result.getResponse() == 7) {
                     BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
+                    mIsPremium = true;
                     onSuccessRestoreAppPurchase();
                 } else {
                     onErrorAppPurchase();
@@ -272,6 +323,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener,IabB
             }
 
             if (purchase.getSku().equals(SKU_INAPPITEM)) {
+                mIsPremium = true;
                 // bought 1/4 tank of gas. So consume it.
 //                try {
 //                    mHelper.consumeAsync(purchase, mConsumeFinishedListener);
@@ -283,6 +335,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener,IabB
             }
         }
     };
+
 
     boolean verifyDeveloperPayload(Purchase purchase) {
         String payload = purchase.getDeveloperPayload();

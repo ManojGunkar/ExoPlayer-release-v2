@@ -136,7 +136,8 @@ public class SearchViewFragment extends Fragment {
     }
 
     public void updateSearchResult(String query) {
-        new LoadSearchResult().execute(query);
+        if(null != getActivity())
+            new LoadSearchResult().execute(query);
     }
 
     public void showEmpty(boolean isEmpty) {

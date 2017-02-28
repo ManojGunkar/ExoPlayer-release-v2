@@ -73,10 +73,10 @@ public class MainActivity extends MasterActivity
     private PermissionChecker permissionChecker;
     private CoordinatorLayout mainContainer;
     private NavigationView navigationView;
-    private Fragment mSearchResult;
-    private int currentItem = 0;
+    private Fragment mSearchResult, mLibraryFragment;
     private int fade_in = android.R.anim.fade_in;
     private int fade_out = android.R.anim.fade_out;
+    private boolean isLibraryRendered = false;
     private RegularTextView toolbarTitle;
     private Toolbar toolbar;
     public SearchView searchView;
@@ -88,13 +88,12 @@ public class MainActivity extends MasterActivity
     Runnable runnable;
     String action;
     private FloatingActionButton mFloatAddPlayList;
-    private CoachMarkerWindow coachMarkUseHeadPhone, coachMarkChooseHeadPhone;
 
     private BroadcastReceiver headPhoneReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction() == ACTION_HEADSET_PLUGGED){
-                chooseCoachMarkWindow();
+            if(intent.getAction() == ACTION_HEADSET_PLUGGED && null != mLibraryFragment){
+                ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
             }
         }
     };
@@ -115,18 +114,20 @@ public class MainActivity extends MasterActivity
 
     Runnable navigateLibrary = new Runnable() {
         public void run() {
+            isLibraryRendered = true;
             setVisibleSearch(true);
             setVisibleCloudSync(false);
             setTitle(getResources().getString(R.string.music_library));
             navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
-            Fragment fragment = new LibraryFragment();
+            mLibraryFragment = new LibraryFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+            transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.fragment_container, mLibraryFragment).commitAllowingStateLoss();
         }
     };
 
     Runnable navigateDropbox= new Runnable() {
         public void run() {
+            isLibraryRendered = false;
             setTitle(getResources().getString(R.string.drop_box));
             setVisibleSearch(false);
             setVisibleCloudSync(true);
@@ -139,6 +140,7 @@ public class MainActivity extends MasterActivity
 
     Runnable navigateGoogleDrive = new Runnable() {
         public void run() {
+            isLibraryRendered = false;
             setTitle(getResources().getString(R.string.google_drive));
             setVisibleSearch(false);
             setVisibleCloudSync(true);
@@ -151,6 +153,7 @@ public class MainActivity extends MasterActivity
 
     Runnable navigateBoomPlaylist = new Runnable() {
         public void run() {
+            isLibraryRendered = false;
             setTitle(getResources().getString(R.string.boom_playlist));
             setVisibleSearch(false);
             setVisibleCloudSync(false);
@@ -163,6 +166,7 @@ public class MainActivity extends MasterActivity
 
     Runnable navigateFavorite = new Runnable() {
         public void run() {
+            isLibraryRendered = false;
             setTitle(getResources().getString(R.string.favourite_list));
             setVisibleSearch(false);
             setVisibleCloudSync(false);
@@ -185,36 +189,6 @@ public class MainActivity extends MasterActivity
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
         registerReceiver(headPhoneReceiver, intentFilter);
-    }
-
-    private void useCoachMarkWindow(){
-        if(HeadPhonePlugReceiver.isHeadsetConnected()){
-            Preferences.writeBoolean(this, HEADPHONE_CONNECTED, false);
-        }
-        if ((Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, true) || Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, true))
-                && Preferences.readBoolean(MainActivity.this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(MainActivity.this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)
-                && !Preferences.readBoolean(MainActivity.this, TOLLTIP_OPEN_EFFECT_MINI_PLAYER, true)) {
-
-            if(Utils.isMoreThan24Hour() || Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, true)) {
-                coachMarkUseHeadPhone = new CoachMarkerWindow(MainActivity.this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
-                coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
-                coachMarkUseHeadPhone.showCoachMark(findViewById(R.id.container));
-
-                if(Utils.isMoreThan24Hour())
-                    Preferences.writeBoolean(MainActivity.this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, false);
-            }
-
-            Preferences.writeBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, false);
-        }
-    }
-
-    private void chooseCoachMarkWindow() {
-        if (!Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, true) && Preferences.readBoolean(this, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && HeadPhonePlugReceiver.isHeadsetConnected() && currentItem == 0) {
-            coachMarkChooseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.choose_headphone_tooltip));
-            coachMarkChooseHeadPhone.setAutoDismissBahaviour(true);
-            coachMarkChooseHeadPhone.showCoachMark(findViewById(R.id.container));
-            Preferences.writeBoolean(this, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, false);
-        }
     }
 
     private void checkPermissions() {
@@ -290,8 +264,6 @@ public class MainActivity extends MasterActivity
         navigationView.setItemIconTintList(null);
         navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
-
-
     }
 
     @Override
@@ -303,30 +275,23 @@ public class MainActivity extends MasterActivity
     @Override
     public void onPanelCollapsed(View panel) {
         super.onPanelCollapsed(panel);
-        useCoachMarkWindow();
-        chooseCoachMarkWindow();
+        if(null != mLibraryFragment){
+            ((LibraryFragment)mLibraryFragment).useCoachMarkWindow();
+            ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
+        }
     }
 
     @Override
     public void onPanelExpanded(View panel) {
         super.onPanelExpanded(panel);
-        if(null != coachMarkUseHeadPhone)
-            coachMarkUseHeadPhone.dismissTooltip();
-
-        if(null != coachMarkChooseHeadPhone)
-            coachMarkChooseHeadPhone.dismissTooltip();
+        ((LibraryFragment)mLibraryFragment).setDismissHeadphoneCoachmark();
     }
 
     @Override
     public void onBackPressed() {
         sendBroadcast(new Intent(ACTION_HOME_SCREEN_BACK_PRESSED));
 
-        if (null != coachMarkUseHeadPhone) {
-            coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
-        }
-        if (null != coachMarkChooseHeadPhone) {
-            coachMarkChooseHeadPhone.setAutoDismissBahaviour(true);
-        }
+        ((LibraryFragment)mLibraryFragment).setAutoDismissBahaviour();
 
         if (null != mFloatAddPlayList && mFloatAddPlayList.getVisibility() == View.VISIBLE)
             mFloatAddPlayList.setVisibility(View.GONE);
@@ -502,9 +467,11 @@ public class MainActivity extends MasterActivity
                     runnable = navigateDropbox;
                     break;
                 case R.id.nav_setting:
+                    isLibraryRendered = false;
                     startCompoundActivities(R.string.title_settings);
                     break;
                 case R.id.nav_store:
+                    isLibraryRendered = false;
                     startCompoundActivities(R.string.store_title);
                     break;
                 case R.id.nav_share:
@@ -550,7 +517,7 @@ public class MainActivity extends MasterActivity
 
     public void setVisibleLibrary(boolean visible){
         if(visible){
-            currentItem = 0;
+            isLibraryRendered = true;
             findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
             findViewById(R.id.search_container).setVisibility(View.GONE);
         }else{
@@ -592,9 +559,8 @@ public class MainActivity extends MasterActivity
 
     @Override
     public void onAddsUpdate(BusinessUtils.AddSource addSources, boolean isAddEnable, View addContainer) {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if(currentFragment instanceof LibraryFragment){
-            ((LibraryFragment)currentFragment).updateAdds(addSources, isAddEnable, addContainer);
+        if(null != mLibraryFragment){
+            ((LibraryFragment)mLibraryFragment).updateAdds(addSources, isAddEnable, addContainer);
         }
     }
 

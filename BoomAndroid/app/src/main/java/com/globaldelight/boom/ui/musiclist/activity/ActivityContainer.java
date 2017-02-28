@@ -78,14 +78,14 @@ public class ActivityContainer extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        switch (container){
+        /*switch (container){
             case R.string.store_title:
                 getMenuInflater().inflate(R.menu.store_menu, menu);
-                /*menu.findItem(R.id.popup_store_restore).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);*/
+                *//*menu.findItem(R.id.popup_store_restore).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);*//*
                 break;
             default:
                 break;
-        }
+        }*/
 
         return super.onCreateOptionsMenu(menu);
     }

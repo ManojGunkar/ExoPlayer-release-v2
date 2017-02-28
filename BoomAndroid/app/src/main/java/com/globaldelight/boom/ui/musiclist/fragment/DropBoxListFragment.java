@@ -124,6 +124,12 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         super.onPause();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        dropboxMediaList.setDropboxUpdater(null);
+    }
+
     private void registerReceiver(){
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
@@ -205,7 +211,8 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     private void notifyAdapter(ArrayList<IMediaItemBase> mediaList){
         if(null != adapter){
             adapter.updateMediaList(mediaList);
-            listIsEmpty(mediaList.size());
+            if(null != mediaList)
+                listIsEmpty(mediaList.size());
         }
     }
 
@@ -215,14 +222,16 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     public void listIsEmpty(int size) {
-        if (size < 1) {
-            Drawable imgResource = getResources().getDrawable(R.drawable.ic_cloud_placeholder, null);
-            String placeHolderTxt = getResources().getString(R.string.cloud_configure_placeholder_txt);
-            ((MainActivity)mActivity).setEmptyPlaceHolder(imgResource, placeHolderTxt, true);
-             rootView.setVisibility(View.GONE);
-        }else{
-            ((MainActivity)mActivity).setEmptyPlaceHolder(null, null, false);
-             rootView.setVisibility(View.VISIBLE);
+        if(null != getActivity()) {
+            if (size < 1) {
+                Drawable imgResource = getResources().getDrawable(R.drawable.ic_cloud_placeholder, null);
+                String placeHolderTxt = getResources().getString(R.string.cloud_configure_placeholder_txt);
+                ((MainActivity) mActivity).setEmptyPlaceHolder(imgResource, placeHolderTxt, true);
+                rootView.setVisibility(View.GONE);
+            } else {
+                ((MainActivity) mActivity).setEmptyPlaceHolder(null, null, false);
+                rootView.setVisibility(View.VISIBLE);
+            }
         }
     }
 }

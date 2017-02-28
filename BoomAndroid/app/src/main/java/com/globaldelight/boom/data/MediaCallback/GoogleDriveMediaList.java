@@ -17,6 +17,7 @@ import java.util.ArrayList;
 public class GoogleDriveMediaList {
 
     private ArrayList<IMediaItemBase> fileList;
+    private static boolean isAllSongsLoaded = false;
     private IGoogleDriveMediaUpdater googleDriveMediaUpdater;
     private static GoogleDriveMediaList handler;
     private static GoogleDriveHandler mGoogleDriveHandler;
@@ -63,68 +64,71 @@ public class GoogleDriveMediaList {
                 }
             });
         }
+        isAllSongsLoaded = false;
     }
 
-    public void addFileInGoogleDriveMediaList(IMediaItemBase entry){
+    public void addFileInGoogleDriveMediaList(final IMediaItemBase entry){
+        if(isAllSongsLoaded)
+            clearGoogleDriveMediaContent();
+
+        isAllSongsLoaded = false;
         fileList.add(entry);
-        if(null != googleDriveMediaUpdater) {
-            postMessage.post(new Runnable() {
-                @Override
-                public void run() {
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                if(null != googleDriveMediaUpdater)
                     googleDriveMediaUpdater.onGoogleDriveMediaListUpdate();
-                }
-            });
-        }
+            }
+        });
     }
 
     public void finishGoogleDriveMediaLoading(){
-        if(null != googleDriveMediaUpdater) {
-            postMessage.post(new Runnable() {
-                @Override
-                public void run() {
-                    googleDriveMediaUpdater.onFinishListLoading();
-                }
-            });
-        }
-        new Thread(new Runnable() {
+        postMessage.post(new Runnable() {
             @Override
             public void run() {
-                MediaController.getInstance(mContext).addSongsToCloudItemList(fileList);
+                if(null != googleDriveMediaUpdater)
+                    googleDriveMediaUpdater.onFinishListLoading();
             }
-        }).start();
+        });
+        if(fileList.size() > 0) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    MediaController.getInstance(mContext).addSongsToCloudItemList(MediaType.GOOGLE_DRIVE, fileList);
+                }
+            }).start();
+        }
+        isAllSongsLoaded = true;
     }
 
     public void onErrorOccurred(final String e){
-        if(null != googleDriveMediaUpdater) {
-            postMessage.post(new Runnable() {
-                @Override
-                public void run() {
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                if(null != googleDriveMediaUpdater)
                     googleDriveMediaUpdater.onError(e);
-                }
-            });
-        }
+            }
+        });
     }
 
     public void onEmptyList(){
-        if(null != googleDriveMediaUpdater) {
-            postMessage.post(new Runnable() {
-                @Override
-                public void run() {
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                if(null != googleDriveMediaUpdater)
                     googleDriveMediaUpdater.onEmptyList();
-                }
-            });
-        }
+            }
+        });
     }
 
     public void onRequestCancelled(){
-        if(null != googleDriveMediaUpdater) {
-            postMessage.post(new Runnable() {
-                @Override
-                public void run() {
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                if(null != googleDriveMediaUpdater)
                     googleDriveMediaUpdater.onRequestCancelled();
-                }
-            });
-        }
+            }
+        });
     }
 
     public void setGoogleDriveMediaUpdater(IGoogleDriveMediaUpdater googleDriveMediaUpdater){

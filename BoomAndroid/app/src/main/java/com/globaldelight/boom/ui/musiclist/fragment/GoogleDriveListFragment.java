@@ -126,6 +126,12 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         super.onPause();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        googleDriveMediaList.setGoogleDriveMediaUpdater(null);
+    }
+
     public void checkPermissions() {
         permissionChecker = new PermissionChecker(mActivity, mActivity, rootView);
         permissionChecker.check(Manifest.permission.GET_ACCOUNTS, getResources().getString(R.string.account_permission), this);
@@ -181,20 +187,23 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     @Override
     public void onRequestCancelled() {
         Utils.dismissProgressLoader();
-        Toast.makeText(mActivity, getResources().getString(R.string.request_cancelled), Toast.LENGTH_SHORT).show();
+        if(null != getActivity())
+            Toast.makeText(mActivity, getResources().getString(R.string.request_cancelled), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onError(String e) {
         Utils.dismissProgressLoader();
-        Toast.makeText(mActivity, getResources().getString(R.string.google_drive_loading_error)
+        if(null != getActivity())
+            Toast.makeText(mActivity, getResources().getString(R.string.google_drive_loading_error)
                 + e, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onEmptyList() {
         Utils.dismissProgressLoader();
-        Toast.makeText(mActivity, getResources().getString(R.string.empty_list), Toast.LENGTH_SHORT).show();
+        if(null != getActivity())
+            Toast.makeText(mActivity, getResources().getString(R.string.empty_list), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -228,7 +237,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
             case GoogleDriveHandler.REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
                     Toast.makeText(mActivity, getResources().getString(R.string.require_google_play_service), Toast.LENGTH_SHORT).show();
-//                    dismissLoader();
+                    Utils.dismissProgressLoader();
                 } else {
                     LoadGoogleDriveList();
                 }
@@ -260,19 +269,22 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     private void notifyAdapter(ArrayList<IMediaItemBase> mediaList){
         if(null != adapter){
             adapter.updateMediaList(mediaList);
-            listIsEmpty(mediaList.size());
+            if(null != mediaList)
+                listIsEmpty(mediaList.size());
         }
     }
 
     public void listIsEmpty(int size) {
-        if (size < 1) {
-            Drawable imgResource = getResources().getDrawable(R.drawable.ic_cloud_placeholder, null);
-            String placeHolderTxt = getResources().getString(R.string.cloud_configure_placeholder_txt);
-            ((MainActivity)mActivity).setEmptyPlaceHolder(imgResource, placeHolderTxt, true);
-            rootView.setVisibility(View.GONE);
-        }else{
-            ((MainActivity)mActivity).setEmptyPlaceHolder(null, null, false);
-            rootView.setVisibility(View.VISIBLE);
+        if(null != getActivity()) {
+            if (size < 1) {
+                Drawable imgResource = getResources().getDrawable(R.drawable.ic_cloud_placeholder, null);
+                String placeHolderTxt = getResources().getString(R.string.cloud_configure_placeholder_txt);
+                ((MainActivity) mActivity).setEmptyPlaceHolder(imgResource, placeHolderTxt, true);
+                rootView.setVisibility(View.GONE);
+            } else {
+                ((MainActivity) mActivity).setEmptyPlaceHolder(null, null, false);
+                rootView.setVisibility(View.VISIBLE);
+            }
         }
     }
 

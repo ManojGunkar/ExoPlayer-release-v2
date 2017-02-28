@@ -51,7 +51,22 @@ public class CloudMediaItemDBHelper  extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public synchronized void addSongs(ArrayList<? extends IMediaItemBase> songs) {
+    public synchronized void addSong(IMediaItemBase song) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.putNull(SONG_KEY_ID);
+        values.put(SONG_KEY_REAL_ID, song.getItemId());
+        values.put(TITLE, song.getItemTitle());
+        values.put(DATA_PATH, ((IMediaItem)song).getItemUrl());
+        values.put(MEDIA_TYPE, song.getMediaType().ordinal());
+
+        db.insert(TABLE_CLOUD_DATA, null, values);
+        db.close();
+    }
+
+    public synchronized void addSongs(MediaType mediaType, ArrayList<? extends IMediaItemBase> songs) {
+        clearList(mediaType);
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
             ContentValues values = new ContentValues();

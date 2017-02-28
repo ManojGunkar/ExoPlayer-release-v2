@@ -172,7 +172,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     private void initBusinessReceiver(){
         App.getBusinessHandler().setFBNativeAddListener(this);
         App.getBusinessHandler().setGoogleNativeAddListener(this);
-        businessRequestReceiver = new BusinessRequestReceiver(this, businessRequestReceiver);
+        businessRequestReceiver = new BusinessRequestReceiver(this);
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_BUSINESS_APP_EXPIRE);
         filter.addAction(ACTION_BUSINESS_CONFIGURATION);

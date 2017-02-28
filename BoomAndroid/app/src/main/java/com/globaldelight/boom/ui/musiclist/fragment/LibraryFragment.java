@@ -16,7 +16,20 @@ import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.business.BusinessUtils;
+import com.globaldelight.boom.manager.HeadPhonePlugReceiver;
+import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.utils.SectionsPagerAdapter;
+import com.globaldelight.boom.ui.widgets.CoachMarkerWindow;
+import com.globaldelight.boom.utils.Utils;
+import com.globaldelight.boom.utils.handlers.Preferences;
+
+import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_NORMAL_BOTTOM;
+import static com.globaldelight.boom.utils.handlers.Preferences.HEADPHONE_CONNECTED;
+import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_CHOOSE_HEADPHONE_LIBRARY;
+import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_OPEN_EFFECT_MINI_PLAYER;
+import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
+import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_USE_24_HEADPHONE_LIBRARY;
+import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_USE_HEADPHONE_LIBRARY;
 
 /**
  * Created by Rahul Agarwal on 27-02-17.
@@ -29,6 +42,7 @@ public class LibraryFragment extends Fragment {
     private TabLayout mTabBar;
     private ViewPager mViewPager;
     private LinearLayout mAddsContainer;
+    private CoachMarkerWindow coachMarkUseHeadPhone, coachMarkChooseHeadPhone;
 
     @Override
     public void onAttach(Context context) {
@@ -84,8 +98,63 @@ public class LibraryFragment extends Fragment {
     }
 
     public void updateAdds(BusinessUtils.AddSource addSources, boolean isAddEnable, View addContainer) {
-        mAddsContainer.removeAllViews();
-        mAddsContainer.addView(addContainer);
-        mAddsContainer.setVisibility(isAddEnable ? View.VISIBLE : View.GONE);
+        if(null != getActivity()) {
+            mAddsContainer.removeAllViews();
+            mAddsContainer.addView(addContainer);
+            mAddsContainer.setVisibility(isAddEnable ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    public void useCoachMarkWindow(){
+        if(HeadPhonePlugReceiver.isHeadsetConnected()){
+            Preferences.writeBoolean(mActivity, HEADPHONE_CONNECTED, false);
+        }
+        if (null != getActivity() && (Preferences.readBoolean(mActivity, TOLLTIP_USE_HEADPHONE_LIBRARY, true) || Preferences.readBoolean(mActivity, TOLLTIP_USE_24_HEADPHONE_LIBRARY, true))
+                && Preferences.readBoolean(mActivity, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(mActivity, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)
+                && !Preferences.readBoolean(mActivity, TOLLTIP_OPEN_EFFECT_MINI_PLAYER, true)) {
+
+            if(Utils.isMoreThan24Hour() || Preferences.readBoolean(mActivity, TOLLTIP_USE_HEADPHONE_LIBRARY, true)) {
+                coachMarkUseHeadPhone = new CoachMarkerWindow(mActivity, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
+                coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
+                coachMarkUseHeadPhone.showCoachMark(mViewPager);
+
+                if(Utils.isMoreThan24Hour())
+                    Preferences.writeBoolean(mActivity, TOLLTIP_USE_24_HEADPHONE_LIBRARY, false);
+            }
+
+            Preferences.writeBoolean(mActivity, TOLLTIP_USE_HEADPHONE_LIBRARY, false);
+        }
+    }
+
+    public void setDismissHeadphoneCoachmark(){
+        if(null != getActivity()) {
+            if (null != coachMarkUseHeadPhone)
+                coachMarkUseHeadPhone.dismissTooltip();
+
+            if (null != coachMarkChooseHeadPhone)
+                coachMarkChooseHeadPhone.dismissTooltip();
+        }
+    }
+
+    public void setAutoDismissBahaviour(){
+        if(null != getActivity()) {
+            if (null != coachMarkUseHeadPhone) {
+                coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
+            }
+            if (null != coachMarkChooseHeadPhone) {
+                coachMarkChooseHeadPhone.setAutoDismissBahaviour(true);
+            }
+        }
+    }
+
+    public void chooseCoachMarkWindow(boolean isPlayerExpended, boolean isLibraryRendered) {
+        if (null != getActivity() && !Preferences.readBoolean(mActivity, TOLLTIP_USE_HEADPHONE_LIBRARY, true) && Preferences.readBoolean(mActivity, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, true) && !isPlayerExpended && HeadPhonePlugReceiver.isHeadsetConnected() && isLibraryRendered ) {
+            if(null != coachMarkUseHeadPhone)
+                coachMarkUseHeadPhone.dismissTooltip();
+            coachMarkChooseHeadPhone = new CoachMarkerWindow(mActivity, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.choose_headphone_tooltip));
+            coachMarkChooseHeadPhone.setAutoDismissBahaviour(true);
+            coachMarkChooseHeadPhone.showCoachMark(mViewPager);
+            Preferences.writeBoolean(mActivity, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, false);
+        }
     }
 }

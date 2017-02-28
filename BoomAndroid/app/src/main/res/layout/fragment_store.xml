@@ -54,8 +54,9 @@
 
         <com.globaldelight.boom.ui.widgets.RegularButton
             android:id="@+id/store_buyButton"
-            android:layout_width="@dimen/store_page_buy_button_width"
-            android:layout_height="@dimen/store_page_buy_button_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/purchase_button_padding"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/store_page_buy_button_bottom_space"
             android:layout_marginTop="@dimen/store_page_buy_button_top_space"

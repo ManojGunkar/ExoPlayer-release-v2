@@ -161,5 +161,7 @@
     <dimen name="share_popup_body_margin_side">18dp</dimen>
     <dimen name="share_popup_body_size">18sp</dimen>
     <dimen name="library_empty_placeholder_txt_size">18sp</dimen>
+    <dimen name="player_action_button">20dp</dimen>
+    <dimen name="purchase_button_padding">8dp</dimen>
 
 </resources>

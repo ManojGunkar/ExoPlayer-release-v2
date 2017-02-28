@@ -21,7 +21,7 @@ public class BusinessRequestReceiver extends BroadcastReceiver {
     private Handler postBusinessRequest;
     private static IUpdateBusinessRequest requestReceiverListener;
 
-    public BusinessRequestReceiver(IUpdateBusinessRequest requestReceiverListener, BusinessRequestReceiver businessRequestReceiver){
+    public BusinessRequestReceiver(IUpdateBusinessRequest requestReceiverListener){
         this.requestReceiverListener = requestReceiverListener;
         postBusinessRequest = new Handler();
     }
