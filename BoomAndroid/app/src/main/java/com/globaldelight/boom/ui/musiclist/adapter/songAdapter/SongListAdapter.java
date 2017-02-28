@@ -25,7 +25,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.ui.musiclist.fragment.MediaItemListFragment;
-import com.globaldelight.boom.ui.musiclist.fragment.MusicLibraryListFragment;
+import com.globaldelight.boom.ui.musiclist.fragment.SongsListFragment;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
@@ -182,8 +182,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
 
     public void onBackPressed() {
         if (activity != null && getMediaItem(0).getItemType() == ItemType.SONGS){
-            if(fragment instanceof MusicLibraryListFragment)
-                ((MusicLibraryListFragment)fragment).killActivity();
+            if(fragment instanceof SongsListFragment)
+                ((SongsListFragment)fragment).killActivity();
             else
                 ((MediaItemListFragment)fragment).killActivity();
         }

@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,12 +19,14 @@ import android.widget.Toast;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.task.MediaLoader.LoadDropBoxList;
+import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
@@ -179,7 +182,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         adapter = new CloudItemListAdapter(mActivity, DropBoxListFragment.this, iMediaItemList, ItemType.SONGS);
         rootView.setAdapter(adapter);
         rootView.setHasFixedSize(true);
-//        listIsEmpty(iMediaItemList.size());
+        listIsEmpty(iMediaItemList.size());
     }
 
     @Override
@@ -202,6 +205,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     private void notifyAdapter(ArrayList<IMediaItemBase> mediaList){
         if(null != adapter){
             adapter.updateMediaList(mediaList);
+            listIsEmpty(mediaList.size());
         }
     }
 
@@ -212,11 +216,13 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
 
     public void listIsEmpty(int size) {
         if (size < 1) {
-//                emptyView.setVisibility(View.VISIBLE);
-                rootView.setVisibility(View.GONE);
+            Drawable imgResource = getResources().getDrawable(R.drawable.ic_cloud_placeholder, null);
+            String placeHolderTxt = getResources().getString(R.string.cloud_configure_placeholder_txt);
+            ((MainActivity)mActivity).setEmptyPlaceHolder(imgResource, placeHolderTxt, true);
+             rootView.setVisibility(View.GONE);
         }else{
-//            emptyView.setVisibility(View.GONE);
-            rootView.setVisibility(View.VISIBLE);
+            ((MainActivity)mActivity).setEmptyPlaceHolder(null, null, false);
+             rootView.setVisibility(View.VISIBLE);
         }
     }
 }

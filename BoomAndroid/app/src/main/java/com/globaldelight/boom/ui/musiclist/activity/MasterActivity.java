@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.CoordinatorLayout;
@@ -64,6 +65,8 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     public void setContentView(@LayoutRes int layoutResID) {
         activity = (FrameLayout) getLayoutInflater().inflate(R.layout.activity_master, null);
         drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
+        //make volume keys change multimedia volume even if music is not playing now
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         handler = new Handler();
         mSlidingPaneLayout = (SlidingUpPanelLayout) activity.findViewById(R.id.sliding_layout);
         activityContainer = (LinearLayout) activity.findViewById(R.id.activity_holder);

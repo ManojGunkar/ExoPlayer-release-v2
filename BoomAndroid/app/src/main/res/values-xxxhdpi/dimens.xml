@@ -160,5 +160,6 @@
     <dimen name="share_popup_body_margin_bottom">12dp</dimen>
     <dimen name="share_popup_body_margin_side">18dp</dimen>
     <dimen name="share_popup_body_size">18sp</dimen>
+    <dimen name="library_empty_placeholder_txt_size">18sp</dimen>
 
 </resources>

@@ -3,13 +3,12 @@
     android:layout_height="match_parent"
     android:background="@color/app_background"
     xmlns:android="http://schemas.android.com/apk/res/android" >
-    <LinearLayout
-        android:id="@+id/lib_progress"
-        style="@style/GenericProgressBackground">
-        <ProgressBar
-            style="@style/GenericProgressIndicator"
-            android:id="@+id/lib_load"/>
-    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/lib_load"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
     <LinearLayout
         android:id="@+id/lib_container"
         android:layout_width="match_parent"
@@ -21,26 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <LinearLayout
-            android:id="@+id/album_empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:gravity="center"
-            android:orientation="vertical" >
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_no_music_placeholder"/>
-            <com.globaldelight.boom.ui.widgets.RegularTextView
-                android:id="@+id/empty_list_txt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#787878"
-                android:gravity="center"
-                android:text="@string/playlist_placeholder_txt"
-                android:textSize="@dimen/empty_list_txt"
-                android:layout_marginTop="@dimen/empty_list_txt_margin"/>
-        </LinearLayout>
+        <include layout="@layout/layout_empty_placeholder"/>
+
     </LinearLayout>
 </FrameLayout>

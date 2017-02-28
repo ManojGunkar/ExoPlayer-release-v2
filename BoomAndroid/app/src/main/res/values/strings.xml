@@ -95,8 +95,7 @@
     <!--Boom PlayList-->
 
     <!--PlayList-->
-    <string name="playlist_placeholder_txt">There are no Playlists \n in music library.</string>
-    <string name="no_music_placeholder_txt">No music found \n in library.</string>
+    <string name="no_music_placeholder_txt">No music found in library.</string>
 
     <!--purchase-->
 
@@ -208,4 +207,7 @@
   </string>
     <string name="all_speakers_off">All speakers are Off</string>
     <string name="some_speakers_off">Some speakers are Off</string>
+    <string name="boom_playlist_empty_placeholder_txt">You have not created \n any playlists yet.</string>
+    <string name="favorite_empty_placeholder_txt">You have not liked \n any songs yet.</string>
+    <string name="cloud_configure_placeholder_txt">No accounts configured yet. \nConfigure accounts in Settings to \naccess songs.</string>
 </resources>

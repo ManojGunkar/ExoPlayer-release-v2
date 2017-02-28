@@ -37,4 +37,10 @@ public class PlayerEvents {
     public static final String ACTION_CLOUD_SYNC = "ACTION_CLOUD_SYNC";
 
     public static final String ACTION_HOME_SCREEN_BACK_PRESSED = "ACTION_HOME_SCREEN_BACK_PRESSED";
+    public static final String NAVIGATE_LIBRARY = "music_library";
+    public static final String NAVIGATE_BOOM_PLAYLIST = "boom_playlist";
+    public static final String NAVIGATE_FAVOURITE = "favourite";
+    public static final String NAVIGATE_GOOGLE_DRIVE = "google_drive";
+    public static final String NAVIGATE_DROPBOX = "dropbox";
+
 }
