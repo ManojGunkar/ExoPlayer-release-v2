@@ -386,8 +386,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         public void run() {
                             try {
                                 Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
-                                bitmap = Bitmap.createScaledBitmap(bitmap, ScreenWidth,
-                                        ScreenWidth, false);
+                                /*bitmap = Bitmap.createScaledBitmap(bitmap, ScreenWidth,
+                                        ScreenWidth, false);*/
                                 Bitmap blurredBitmap = PlayerUtils.blur(mActivity, bitmap);
                                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
                                     PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, bitmap);

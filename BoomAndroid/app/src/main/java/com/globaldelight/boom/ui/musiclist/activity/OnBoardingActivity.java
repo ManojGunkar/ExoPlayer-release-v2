@@ -57,14 +57,12 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
                     txtSkip.setVisibility(View.VISIBLE);
                     txtNext.setVisibility(View.VISIBLE);
                 }
-
             }
             @Override
             public void onPageScrollStateChanged(int state) {
 
             }
         });
-
     }
 
     private void initComp() {
@@ -80,16 +78,6 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
         txtSkip.setOnClickListener(this);
         txtNext.setOnClickListener(this);
         bottomPanel = (LinearLayout) findViewById(R.id.onboarding_bottom) ;
-
-        startBoom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Preferences.writeBoolean(OnBoardingActivity.this, Preferences.ACTION_ONBOARDING_SHOWN, false);
-                Intent i = new Intent(OnBoardingActivity.this, MainActivity.class);
-                startActivity(i);
-            }
-        });
-
     }
 
     private void jumpToHome() {
@@ -106,6 +94,7 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btn_boomin_onboard:
             case R.id.txt_skip_onboard:
                 jumpToHome();
                 break;
