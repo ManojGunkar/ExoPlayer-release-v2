@@ -1,7 +1,6 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,20 +8,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.AnimRes;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
@@ -30,9 +27,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ImageView;
+
 import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.manager.HeadPhonePlugReceiver;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
@@ -40,9 +36,9 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.adapter.utils.SearchSuggestionAdapter;
-import com.globaldelight.boom.ui.musiclist.adapter.utils.SectionsPagerAdapter;
 import com.globaldelight.boom.ui.musiclist.fragment.DropBoxListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.FavouriteListFragment;
+import com.globaldelight.boom.ui.musiclist.fragment.LibraryFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.BoomPlaylistFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.GoogleDriveListFragment;
@@ -52,6 +48,9 @@ import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
 import com.globaldelight.boom.utils.handlers.Preferences;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_HEADSET_PLUGGED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
@@ -74,12 +73,10 @@ public class MainActivity extends MasterActivity
     private PermissionChecker permissionChecker;
     private CoordinatorLayout mainContainer;
     private NavigationView navigationView;
-    private Fragment mSearchResult;
-    private FrameLayout fragmentContainer;
-    private int currentItem = 0;
+    private Fragment mSearchResult, mLibraryFragment;
     private int fade_in = android.R.anim.fade_in;
     private int fade_out = android.R.anim.fade_out;
-    private FragmentManager fragmentManager;
+    private boolean isLibraryRendered = false;
     private RegularTextView toolbarTitle;
     private Toolbar toolbar;
     public SearchView searchView;
@@ -87,19 +84,16 @@ public class MainActivity extends MasterActivity
     private MusicSearchHelper musicSearchHelper;
     private SearchSuggestionAdapter searchSuggestionAdapter;
     public static String[] columns = new String[]{"_id", "FEED_TITLE"};
-
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-    private ViewPager mViewPager;
+    Map<String, Runnable> navigationMap = new HashMap<String, Runnable>();
+    Runnable runnable;
+    String action;
     private FloatingActionButton mFloatAddPlayList;
-    private TabLayout mTabBar;
-    private LinearLayout mAddsContainer;
-    private CoachMarkerWindow coachMarkUseHeadPhone, coachMarkChooseHeadPhone;
 
     private BroadcastReceiver headPhoneReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction() == ACTION_HEADSET_PLUGGED){
-                chooseCoachMarkWindow();
+            if(intent.getAction() == ACTION_HEADSET_PLUGGED && null != mLibraryFragment){
+                ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
             }
         }
     };
@@ -118,6 +112,71 @@ public class MainActivity extends MasterActivity
         checkPermissions();
     }
 
+    Runnable navigateLibrary = new Runnable() {
+        public void run() {
+            isLibraryRendered = true;
+            setVisibleSearch(true);
+            setVisibleCloudSync(false);
+            setTitle(getResources().getString(R.string.music_library));
+            navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
+            mLibraryFragment = new LibraryFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.fragment_container, mLibraryFragment).commitAllowingStateLoss();
+        }
+    };
+
+    Runnable navigateDropbox= new Runnable() {
+        public void run() {
+            isLibraryRendered = false;
+            setTitle(getResources().getString(R.string.drop_box));
+            setVisibleSearch(false);
+            setVisibleCloudSync(true);
+            navigationView.getMenu().findItem(R.id.drop_box).setChecked(true);
+            Fragment fragment = new DropBoxListFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+        }
+    };
+
+    Runnable navigateGoogleDrive = new Runnable() {
+        public void run() {
+            isLibraryRendered = false;
+            setTitle(getResources().getString(R.string.google_drive));
+            setVisibleSearch(false);
+            setVisibleCloudSync(true);
+            navigationView.getMenu().findItem(R.id.google_drive).setChecked(true);
+            Fragment fragment = new GoogleDriveListFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+        }
+    };
+
+    Runnable navigateBoomPlaylist = new Runnable() {
+        public void run() {
+            isLibraryRendered = false;
+            setTitle(getResources().getString(R.string.boom_playlist));
+            setVisibleSearch(false);
+            setVisibleCloudSync(false);
+            navigationView.getMenu().findItem(R.id.boom_palylist).setChecked(true);
+            Fragment fragment = new BoomPlaylistFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+        }
+    };
+
+    Runnable navigateFavorite = new Runnable() {
+        public void run() {
+            isLibraryRendered = false;
+            setTitle(getResources().getString(R.string.favourite_list));
+            setVisibleSearch(false);
+            setVisibleCloudSync(false);
+            navigationView.getMenu().findItem(R.id.favourite_list).setChecked(true);
+            Fragment fragment = new FavouriteListFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+        }
+    };
+
     @Override
     protected void onResume() {
         registerHeadSetReceiver();
@@ -132,36 +191,6 @@ public class MainActivity extends MasterActivity
         registerReceiver(headPhoneReceiver, intentFilter);
     }
 
-    private void useCoachMarkWindow(){
-        if(HeadPhonePlugReceiver.isHeadsetConnected()){
-            Preferences.writeBoolean(this, HEADPHONE_CONNECTED, false);
-        }
-        if ((Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, true) || Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, true))
-                && Preferences.readBoolean(MainActivity.this, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(MainActivity.this, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)
-                && !Preferences.readBoolean(MainActivity.this, TOLLTIP_OPEN_EFFECT_MINI_PLAYER, true)) {
-
-            if(Utils.isMoreThan24Hour() || Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, true)) {
-                coachMarkUseHeadPhone = new CoachMarkerWindow(MainActivity.this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
-                coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
-                coachMarkUseHeadPhone.showCoachMark(findViewById(R.id.container));
-
-                if(Utils.isMoreThan24Hour())
-                    Preferences.writeBoolean(MainActivity.this, TOLLTIP_USE_24_HEADPHONE_LIBRARY, false);
-            }
-
-            Preferences.writeBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, false);
-        }
-    }
-
-    private void chooseCoachMarkWindow() {
-        if (!Preferences.readBoolean(MainActivity.this, TOLLTIP_USE_HEADPHONE_LIBRARY, true) && Preferences.readBoolean(this, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, true) && !isPlayerExpended() && HeadPhonePlugReceiver.isHeadsetConnected() && currentItem == 0) {
-            coachMarkChooseHeadPhone = new CoachMarkerWindow(this, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.choose_headphone_tooltip));
-            coachMarkChooseHeadPhone.setAutoDismissBahaviour(true);
-            coachMarkChooseHeadPhone.showCoachMark(findViewById(R.id.container));
-            Preferences.writeBoolean(this, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, false);
-        }
-    }
-
     private void checkPermissions() {
         permissionChecker = new PermissionChecker(this, MainActivity.this, mainContainer);
         permissionChecker.check(Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -169,7 +198,8 @@ public class MainActivity extends MasterActivity
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
-                        initFragment();
+                        isUpdateUpnextDB = true;
+                        loadEverything();
                         initSearchAndArt();
                     }
 
@@ -178,6 +208,15 @@ public class MainActivity extends MasterActivity
                         finish();
                     }
                 });
+    }
+
+    private void loadEverything() {
+        Runnable navigation = navigationMap.get(action);
+        if (navigation != null) {
+            navigation.run();
+        } else {
+            navigateLibrary.run();
+        }
     }
 
     @Override
@@ -197,13 +236,15 @@ public class MainActivity extends MasterActivity
     }
 
     private void initView() {
+        navigationMap.put(PlayerEvents.NAVIGATE_LIBRARY, navigateLibrary);
+        navigationMap.put(PlayerEvents.NAVIGATE_BOOM_PLAYLIST, navigateBoomPlaylist);
+        navigationMap.put(PlayerEvents.NAVIGATE_FAVOURITE, navigateFavorite);
+        navigationMap.put(PlayerEvents.NAVIGATE_GOOGLE_DRIVE, navigateGoogleDrive);
+        navigationMap.put(PlayerEvents.NAVIGATE_DROPBOX, navigateDropbox);
+
         mainContainer = (CoordinatorLayout) findViewById(R.id.coordinate_main);
 
-        mAddsContainer = (LinearLayout) findViewById(R.id.lib_add_container);
-
         musicSearchHelper = new MusicSearchHelper(MainActivity.this);
-
-        mTabBar= (TabLayout)  findViewById(R.id.tabLayout);
 
         mFloatAddPlayList = (FloatingActionButton) findViewById(R.id.fab);
         mFloatAddPlayList.setVisibility(View.GONE);
@@ -214,10 +255,6 @@ public class MainActivity extends MasterActivity
             }
         });
 
-        fragmentContainer = (FrameLayout) findViewById(R.id.fragment_container);
-
-        fragmentManager = getSupportFragmentManager();
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
@@ -227,29 +264,6 @@ public class MainActivity extends MasterActivity
         navigationView.setItemIconTintList(null);
         navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
-
-        mViewPager = (ViewPager) findViewById(R.id.container);
-    }
-
-    private void initFragment(){
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        int[] items = {R.string.artists, R.string.albums, R.string.songs, R.string.playlists, R.string.genres};
-        mSectionsPagerAdapter = new SectionsPagerAdapter(this, fragmentManager, items);
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-        mTabBar.setupWithViewPager(mViewPager);
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/TitilliumWeb-SemiBold.ttf");
-        for (int i = 0; i < mTabBar.getChildCount(); i++) {
-            final View view = mTabBar.getChildAt(i);
-            if (view instanceof TextView) {
-                ((TextView) view).setTypeface(font);
-                ((TextView) view).setTextSize(getResources().getDimension(R.dimen.music_tab_txt_size));
-            }
-        }
-
-        isUpdateUpnextDB = true;
     }
 
     @Override
@@ -261,30 +275,23 @@ public class MainActivity extends MasterActivity
     @Override
     public void onPanelCollapsed(View panel) {
         super.onPanelCollapsed(panel);
-        useCoachMarkWindow();
-        chooseCoachMarkWindow();
+        if(null != mLibraryFragment){
+            ((LibraryFragment)mLibraryFragment).useCoachMarkWindow();
+            ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
+        }
     }
 
     @Override
     public void onPanelExpanded(View panel) {
         super.onPanelExpanded(panel);
-        if(null != coachMarkUseHeadPhone)
-            coachMarkUseHeadPhone.dismissTooltip();
-
-        if(null != coachMarkChooseHeadPhone)
-            coachMarkChooseHeadPhone.dismissTooltip();
+        ((LibraryFragment)mLibraryFragment).setDismissHeadphoneCoachmark();
     }
 
     @Override
     public void onBackPressed() {
         sendBroadcast(new Intent(ACTION_HOME_SCREEN_BACK_PRESSED));
 
-        if (null != coachMarkUseHeadPhone) {
-            coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
-        }
-        if (null != coachMarkChooseHeadPhone) {
-            coachMarkChooseHeadPhone.setAutoDismissBahaviour(true);
-        }
+        ((LibraryFragment)mLibraryFragment).setAutoDismissBahaviour();
 
         if (null != mFloatAddPlayList && mFloatAddPlayList.getVisibility() == View.VISIBLE)
             mFloatAddPlayList.setVisibility(View.GONE);
@@ -293,20 +300,9 @@ public class MainActivity extends MasterActivity
             sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
         } else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else if (fragmentManager.getBackStackEntryCount() > 0) {
-            navigationView.getMenu().getItem(0).setChecked(true);
-            setVisibleCloudSync(false);
-            try {
-                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            }catch (IllegalStateException e){}
-            viewMainActivity();
         } else {
             moveTaskToBack(true);
         }
-    }
-
-    private void viewMainActivity(){
-        fragmentSwitcher(null, 0, getResources().getString(R.string.music_library), fade_in, fade_out);
     }
 
     @Override
@@ -361,13 +357,15 @@ public class MainActivity extends MasterActivity
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 mSearchResult = new SearchViewFragment();
-                fragmentSwitcher(mSearchResult,  -1, getResources().getString(R.string.search_hint), fade_in, fade_out);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.search_container, mSearchResult).commitAllowingStateLoss();
+                setVisibleLibrary(false);
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                viewMainActivity();
+                setVisibleLibrary(true);
                 searchSuggestionAdapter.changeCursor(null);
                 return true;
             }
@@ -451,32 +449,29 @@ public class MainActivity extends MasterActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         mFloatAddPlayList.setVisibility(View.GONE);
-        if(null != mSectionsPagerAdapter) {
+        runnable = null;
             switch (item.getItemId()){
                 case R.id.music_library:
-                    setVisibleCloudSync(false);
-                    viewMainActivity();
+                    runnable = navigateLibrary;
                     break;
                 case R.id.boom_palylist:
-                    setVisibleCloudSync(false);
-                    fragmentSwitcher(new BoomPlaylistFragment(),  1, getResources().getString(R.string.boom_playlist), fade_in, fade_out);
+                    runnable = navigateBoomPlaylist;
                     break;
                 case R.id.favourite_list:
-                    setVisibleCloudSync(false);
-                    fragmentSwitcher(new FavouriteListFragment(),  2, getResources().getString(R.string.favourite_list), fade_in, fade_out);
+                    runnable = navigateFavorite;
                     break;
                 case R.id.google_drive:
-                    setVisibleCloudSync(true);
-                    fragmentSwitcher(new GoogleDriveListFragment(),  3, getResources().getString(R.string.google_drive), fade_in, fade_out);
+                    runnable = navigateGoogleDrive;
                     break;
                 case R.id.drop_box:
-                    setVisibleCloudSync(true);
-                    fragmentSwitcher(new DropBoxListFragment(),  4, getResources().getString(R.string.drop_box), fade_in, fade_out);
+                    runnable = navigateDropbox;
                     break;
                 case R.id.nav_setting:
+                    isLibraryRendered = false;
                     startCompoundActivities(R.string.title_settings);
                     break;
                 case R.id.nav_store:
+                    isLibraryRendered = false;
                     startCompoundActivities(R.string.store_title);
                     break;
                 case R.id.nav_share:
@@ -484,6 +479,16 @@ public class MainActivity extends MasterActivity
                     break;
             }
             drawerLayout.closeDrawer(GravityCompat.START);
+
+        if (runnable != null) {
+            item.setChecked(true);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    runnable.run();
+                }
+            }, 350);
         }
         return true;
     }
@@ -495,67 +500,30 @@ public class MainActivity extends MasterActivity
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
-    private void removeFragment() {
-        fragmentContainer.removeAllViews();
-    }
-
-    public void fragmentSwitcher(Fragment fragment, int itemId,
-                                 String fname, @AnimRes int animationEnter,
-                                 @AnimRes int animationExit) {
-        if (currentItem == itemId) {
-            // Don't allow re-selection of the currently active item
-            return;
-        }
-        currentItem = itemId;
-
-        if(currentItem < 0){
-            setVisiblePager(false);
-
-        }else if(currentItem == 0){
-            setVisiblePager(true);
-        }else {
-            setVisiblePager(false);
-        }
-        setTitle(String.valueOf(fname));
-
-        if(currentItem != 0) {
-            removeFragment();
-            findViewById(R.id.fragment_container).setBackgroundColor(ContextCompat.getColor(this, R.color.app_background));
-            fragmentManager.beginTransaction()
-                    .setCustomAnimations(animationEnter, animationExit)
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(String.valueOf(fname))
-                    .commitAllowingStateLoss();
-        }
-    }
-
     private void setVisibleSearch(boolean enable){
-        searchMenuItem.setVisible(enable);
+        if(null != searchMenuItem)
+            searchMenuItem.setVisible(enable);
     }
 
     private void setVisibleCloudSync(boolean enable){
-        cloudSyncItem.setVisible(enable);
+        if(null != cloudSyncItem)
+            cloudSyncItem.setVisible(enable);
     }
 
     public void setTitle(String title){
-        toolbarTitle.setText(title);
+        if(null != toolbarTitle)
+            toolbarTitle.setText(title);
     }
 
-    public void setVisiblePager(boolean visible){
+    public void setVisibleLibrary(boolean visible){
         if(visible){
-            currentItem = 0;
-            findViewById(R.id.library_tab_panel).setVisibility(View.VISIBLE);
-            fragmentContainer.setVisibility(View.GONE);
-            setVisibleSearch(true);
+            isLibraryRendered = true;
+            findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
+            findViewById(R.id.search_container).setVisibility(View.GONE);
         }else{
-            findViewById(R.id.library_tab_panel).setVisibility(View.GONE);
-            fragmentContainer.setVisibility(View.VISIBLE);
-            setVisibleSearch(false);
+            findViewById(R.id.fragment_container).setVisibility(View.GONE);
+            findViewById(R.id.search_container).setVisibility(View.VISIBLE);
         }
-    }
-
-    public void setStatusBarColor(Activity activity, int color) {
-        activity.getWindow().setStatusBarColor(color);
     }
 
     @Override
@@ -591,8 +559,16 @@ public class MainActivity extends MasterActivity
 
     @Override
     public void onAddsUpdate(BusinessUtils.AddSource addSources, boolean isAddEnable, View addContainer) {
-        mAddsContainer.removeAllViews();
-        mAddsContainer.addView(addContainer);
-        mAddsContainer.setVisibility(isAddEnable ? View.VISIBLE : View.GONE);
+        if(null != mLibraryFragment){
+            ((LibraryFragment)mLibraryFragment).updateAdds(addSources, isAddEnable, addContainer);
+        }
+    }
+
+    public void setEmptyPlaceHolder(Drawable placeHolderImg, String placeHolderTxt, boolean enable) {
+        if(null != placeHolderTxt && null != placeHolderImg) {
+            ((ImageView) findViewById(R.id.list_empty_placeholder_icon)).setImageDrawable(placeHolderImg);
+            ((RegularTextView) findViewById(R.id.list_empty_placeholder_txt)).setText(placeHolderTxt);
+        }
+        findViewById(R.id.list_empty_placeholder).setVisibility(enable ? View.VISIBLE : View.GONE);
     }
 }

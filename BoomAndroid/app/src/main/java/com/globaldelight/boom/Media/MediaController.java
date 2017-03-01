@@ -190,8 +190,8 @@ public class MediaController implements IMediaController {
     }
 
     @Override
-    public void addSongsToCloudItemList(ArrayList<IMediaItemBase> fileList) {
-        App.getCloudMediaItemDBHelper().addSongs(fileList);
+    public void addSongsToCloudItemList(MediaType mediaType, ArrayList<IMediaItemBase> fileList) {
+        App.getCloudMediaItemDBHelper().addSongs(mediaType, fileList);
     }
 
     @Override

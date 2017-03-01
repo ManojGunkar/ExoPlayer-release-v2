@@ -74,7 +74,7 @@ public interface IMediaController {
 
     void createBoomPlaylist(String playlist) ;
 
-    void addSongsToCloudItemList(ArrayList<IMediaItemBase> fileList) ;
+    void addSongsToCloudItemList(MediaType mediaType, ArrayList<IMediaItemBase> fileList);
 
     void addUpNextItem(IMediaItemBase song, QueueType queueType) ;
     

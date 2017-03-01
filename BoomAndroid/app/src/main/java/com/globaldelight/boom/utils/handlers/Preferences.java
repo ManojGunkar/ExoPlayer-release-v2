@@ -30,6 +30,7 @@ public class Preferences {
     public static final String HEADPHONE_CONNECTED = "HEADPHONE_CONNECTED";
     public static final String ACTION_ONBOARDING_SHOWN = "ACTION_ONBOARDING_SHOWN";
     public static final String GOOGLE_DRIVE_ACCOUNT_CHANGED = "GOOGLE_DRIVE_ACCOUNT_CHANGED";
+    public static final String INAPP_PURCHASE_PRICE_VALUE = "INAPP_PURCHASE_PRICE_VALUE";
 
     public static void writeBoolean(Context context, String key, boolean value) {
         getEditor(context).putBoolean(key, value).commit();

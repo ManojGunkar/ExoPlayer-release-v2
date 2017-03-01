@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,6 +25,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.task.PlayerEvents;
+import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.BoomPlayListAdapter;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
@@ -154,14 +156,7 @@ public class BoomPlaylistFragment extends Fragment {
             rootView.setAdapter(boomPlayListAdapter);
             rootView.addItemDecoration(new BoomPlayListFooterItemDecoration(2, boomPlayListAdapter));
 //                        rootView.setHasFixedSize(true);
-            if (iMediaItemList.size() < 1) {
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        listIsEmpty();
-                    }
-                });
-            }
+            listIsEmpty(iMediaItemList.size());
         }
     }
 
@@ -190,8 +185,18 @@ public class BoomPlaylistFragment extends Fragment {
                 }).show();
     }
 
-    public void listIsEmpty() {
-        rootView.setVisibility(View.GONE);
+    public void listIsEmpty(int size) {
+        if(null != getActivity()) {
+            if (size < 1) {
+                Drawable imgResource = getResources().getDrawable(R.drawable.ic_playlists_placeholder, null);
+                String placeHolderTxt = getResources().getString(R.string.boom_playlist_empty_placeholder_txt);
+                ((MainActivity) mActivity).setEmptyPlaceHolder(imgResource, placeHolderTxt, true);
+                rootView.setVisibility(View.GONE);
+            } else {
+                ((MainActivity) mActivity).setEmptyPlaceHolder(null, null, false);
+                rootView.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override

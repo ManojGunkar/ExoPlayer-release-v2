@@ -16,11 +16,11 @@ import java.util.ArrayList;
 public class DropboxMediaList {
 
     private ArrayList<IMediaItemBase> fileList;
+    private static boolean isAllSongsLoaded = false;
     private IDropboxUpdater dropboxUpdater;
     private static DropboxMediaList handler;
-    private Context mContext;
-    public static boolean isAllSongsLoaded = false;
     private Handler postMessage;
+    private Context mContext;
 
     private DropboxMediaList(Context context){
         this.mContext = context;
@@ -35,17 +35,20 @@ public class DropboxMediaList {
         return handler;
     }
 
-    public void addFileInDropboxList(IMediaItemBase entry){
+    public void addFileInDropboxList(final IMediaItemBase entry){
+        if(isAllSongsLoaded)
+            clearDropboxContent();
+
         isAllSongsLoaded = false;
         fileList.add(entry);
-        if ( dropboxUpdater != null ) {
-            postMessage.post(new Runnable() {
-                @Override
-                public void run() {
+
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                if ( dropboxUpdater != null )
                     dropboxUpdater.UpdateDropboxEntryList();
-                }
-            });
-        }
+            }
+        });
     }
 
     public ArrayList<IMediaItemBase> getDropboxMediaList(){
@@ -60,25 +63,36 @@ public class DropboxMediaList {
             fileList.clear();
             MediaController.getInstance(mContext).removeCloudMediaItemList(MediaType.DROP_BOX);
         }
-        if(null != dropboxUpdater)
-            postMessage.post(new Runnable() {
+
+        postMessage.post(new Runnable() {
             @Override
             public void run() {
-                dropboxUpdater.ClearList();
+                if(null != dropboxUpdater)
+                    dropboxUpdater.ClearList();
             }
         });
+
         isAllSongsLoaded = false;
     }
 
     public void finishDropboxLoading(){
-        isAllSongsLoaded = true;
-        if(null != dropboxUpdater)
-            postMessage.post(new Runnable() {
+        postMessage.post(new Runnable() {
             @Override
             public void run() {
-                dropboxUpdater.finishDropboxLoading();
+                if(null != dropboxUpdater)
+                    dropboxUpdater.finishDropboxLoading();
             }
         });
+
+        if(fileList.size() > 0) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    MediaController.getInstance(mContext).addSongsToCloudItemList(MediaType.DROP_BOX, fileList);
+                }
+            }).start();
+        }
+        isAllSongsLoaded = true;
     }
 
     public void setDropboxUpdater(IDropboxUpdater dropboxUpdater){

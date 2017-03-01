@@ -231,9 +231,7 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                                     itemList.remove(position);
                                     notifyItemRemoved(position);
                                     notifyDataSetChanged();
-                                    if(itemList.size() == 0){
-                                        fragment.listIsEmpty();
-                                    }
+                                    fragment.listIsEmpty(itemList.size());
                                     Toast.makeText(activity, activity.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
                                     break;
                             }

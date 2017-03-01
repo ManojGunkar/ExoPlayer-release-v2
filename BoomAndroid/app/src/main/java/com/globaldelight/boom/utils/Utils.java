@@ -524,7 +524,7 @@ public class Utils {
     }
 
     public static boolean isBusinessModelEnable(){
-        return false;
+        return true;
     }
 
     public static boolean isAppExpireEnable(){

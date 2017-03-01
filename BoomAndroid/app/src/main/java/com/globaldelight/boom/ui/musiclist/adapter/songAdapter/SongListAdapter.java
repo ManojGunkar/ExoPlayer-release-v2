@@ -25,7 +25,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.ui.musiclist.fragment.MediaItemListFragment;
-import com.globaldelight.boom.ui.musiclist.fragment.MusicLibraryListFragment;
+import com.globaldelight.boom.ui.musiclist.fragment.SongsListFragment;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
@@ -96,16 +96,11 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
     }
 
     private void setAlbumArt(String path, SimpleItemViewHolder holder) {
-        int size = (int) activity.getResources().getDimension(R.dimen.track_list_album_art_size);
             if (PlayerUtils.isPathValid(path))
                 Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.img);
             else {
-                setDefaultArt(holder, size);
+                holder.img.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null));
             }
-    }
-
-    private void setDefaultArt(SimpleItemViewHolder holder, int size) {
-        holder.img.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null));
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {
@@ -182,8 +177,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
 
     public void onBackPressed() {
         if (activity != null && getMediaItem(0).getItemType() == ItemType.SONGS){
-            if(fragment instanceof MusicLibraryListFragment)
-                ((MusicLibraryListFragment)fragment).killActivity();
+            if(fragment instanceof SongsListFragment)
+                ((SongsListFragment)fragment).killActivity();
             else
                 ((MediaItemListFragment)fragment).killActivity();
         }

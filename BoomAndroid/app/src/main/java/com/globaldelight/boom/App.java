@@ -90,13 +90,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
         FlurryAnalyticHelper.init(this);
 
         registerActivityLifecycleCallbacks(this);
-
-        showInternetPopUp();
-    }
-
-    private void showInternetPopUp() {
-
-        Utils.InternetPopup(application);
     }
 
     public static BusinessHandler getBusinessHandler(){
