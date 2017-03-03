@@ -3,6 +3,7 @@ package com.globaldelight.boom.handler.PlayingQueue;
 import android.content.Context;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.handler.UpNextPlayingQueue;
 
 /**
  * Created by Rahul Agarwal on 16-09-16.
@@ -10,11 +11,11 @@ import com.globaldelight.boom.App;
 public class PlayingQueueHandler {
 
     private static PlayingQueueHandler handler;
-    private static UpNextList upNextList;
+    private static UpNextPlayingQueue upNextList;
 
     private PlayingQueueHandler(Context context){
         if(upNextList == null){
-            upNextList = UpNextList.getUpNextInstance(context);
+            upNextList = UpNextPlayingQueue.getUpNextInstance(context);
         }
     }
 
@@ -25,13 +26,13 @@ public class PlayingQueueHandler {
         return handler;
     }
 
-    public UpNextList getUpNextList() {
+    public UpNextPlayingQueue getUpNextList() {
         return upNextList;
     }
 
 
     public void Terminate() {
         handler = null;
-        UpNextList.Terminate();
+        getUpNextList().Terminate();
     }
 }

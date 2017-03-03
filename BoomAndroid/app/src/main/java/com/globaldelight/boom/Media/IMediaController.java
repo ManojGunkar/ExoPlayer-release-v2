@@ -1,12 +1,9 @@
 package com.globaldelight.boom.Media;
 
-import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.handler.PlayingQueue.QueueType;
-
 import java.util.ArrayList;
 
 /**
@@ -51,9 +48,6 @@ public interface IMediaController {
 
     ArrayList<? extends IMediaItemBase> getGenreAlbumsTrackList(IMediaItemCollection collection);
 
-
-    void insertUnShuffledItem(IMediaItem item, QueueType queueType, boolean isAppended);
-
     boolean isFavoriteItem(long trackId);
 
     void removeItemToFavoriteList(long trackId);
@@ -75,16 +69,6 @@ public interface IMediaController {
     void createBoomPlaylist(String playlist) ;
 
     void addSongsToCloudItemList(MediaType mediaType, ArrayList<IMediaItemBase> fileList);
-
-    void addUpNextItem(IMediaItemBase song, QueueType queueType) ;
-    
-    void addUpNextItem(ArrayList<? extends IMediaItemBase> songs, QueueType queueType) ;
-
-    ArrayList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) ;
-
-    ArrayList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) ;
-
-    void clearUpNextList(QueueType queueType) ;
 
     ArrayList<? extends IMediaItem> getAlbumTrackList(long itemId, String itemTitle) ;
 

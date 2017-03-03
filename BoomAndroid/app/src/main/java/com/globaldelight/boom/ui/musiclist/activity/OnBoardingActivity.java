@@ -77,6 +77,7 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
         viewpager.setCurrentItem(0);
         txtSkip.setOnClickListener(this);
         txtNext.setOnClickListener(this);
+        startBoom.setOnClickListener(this);
         bottomPanel = (LinearLayout) findViewById(R.id.onboarding_bottom) ;
     }
 

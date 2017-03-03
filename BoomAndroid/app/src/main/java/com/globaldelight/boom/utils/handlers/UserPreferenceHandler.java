@@ -2,12 +2,9 @@ package com.globaldelight.boom.utils.handlers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Parcel;
-import android.os.Parcelable;
 
-import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
-import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
+import com.globaldelight.boom.handler.UpNextPlayingQueue;
 
 import java.util.ArrayList;
 
@@ -66,35 +63,35 @@ public class UserPreferenceHandler {
         return  shp.getString(PREF_ACCOUNT_NAME, null);
     }
 
-    public UpNextList.REPEAT resetRepeat(){
+    public UpNextPlayingQueue.REPEAT resetRepeat(){
         if(shp.getBoolean(REPEAT_NONE, true)){
             shp.edit().putBoolean(REPEAT_NONE, false).apply();
             shp.edit().putBoolean(REPEAT_ONE, true).apply();
             shp.edit().putBoolean(REPEAT_ALL, false).apply();
-            return UpNextList.REPEAT.one;
+            return UpNextPlayingQueue.REPEAT.one;
         }else if(shp.getBoolean(REPEAT_ONE, false)){
             shp.edit().putBoolean(REPEAT_NONE, false).apply();
             shp.edit().putBoolean(REPEAT_ONE, false).apply();
             shp.edit().putBoolean(REPEAT_ALL, true).apply();
-            return UpNextList.REPEAT.all;
+            return UpNextPlayingQueue.REPEAT.all;
         }else if(shp.getBoolean(REPEAT_ALL, false)){
             shp.edit().putBoolean(REPEAT_NONE, true).apply();
             shp.edit().putBoolean(REPEAT_ONE, false).apply();
             shp.edit().putBoolean(REPEAT_ALL, false).apply();
         }
-        return UpNextList.REPEAT.none;
+        return UpNextPlayingQueue.REPEAT.none;
     }
 
-    public UpNextList.SHUFFLE resetShuffle(){
+    public UpNextPlayingQueue.SHUFFLE resetShuffle(){
         if(shp.getBoolean(SHUFFLE_NONE, true)){
             shp.edit().putBoolean(SHUFFLE_NONE, false).apply();
             shp.edit().putBoolean(SHUFFLE, true).apply();
-            return UpNextList.SHUFFLE.all;
+            return UpNextPlayingQueue.SHUFFLE.all;
         }else if(shp.getBoolean(SHUFFLE, false)){
             shp.edit().putBoolean(SHUFFLE_NONE, true).apply();
             shp.edit().putBoolean(SHUFFLE, false).apply();
         }
-        return UpNextList.SHUFFLE.none;
+        return UpNextPlayingQueue.SHUFFLE.none;
     }
 
 
@@ -107,22 +104,22 @@ public class UserPreferenceHandler {
     }
 
 
-    public UpNextList.REPEAT getRepeat(){
+    public UpNextPlayingQueue.REPEAT getRepeat(){
         if(shp.getBoolean(REPEAT_ALL, false)){
-            return UpNextList.REPEAT.all;
+            return UpNextPlayingQueue.REPEAT.all;
         }else if(shp.getBoolean(REPEAT_ONE, false)){
-            return UpNextList.REPEAT.one;
+            return UpNextPlayingQueue.REPEAT.one;
         }else{
-            return UpNextList.REPEAT.none;
+            return UpNextPlayingQueue.REPEAT.none;
         }
     }
 
 
-    public UpNextList.SHUFFLE getShuffle(){
+    public UpNextPlayingQueue.SHUFFLE getShuffle(){
         if(shp.getBoolean(SHUFFLE, false)){
-            return UpNextList.SHUFFLE.all;
+            return UpNextPlayingQueue.SHUFFLE.all;
         }else{
-            return UpNextList.SHUFFLE.none;
+            return UpNextPlayingQueue.SHUFFLE.none;
         }
     }
 

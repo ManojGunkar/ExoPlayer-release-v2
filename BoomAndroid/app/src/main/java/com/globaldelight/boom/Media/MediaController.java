@@ -1,17 +1,12 @@
 package com.globaldelight.boom.Media;
 
 import android.content.Context;
-
 import com.globaldelight.boom.App;
-import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.handler.PlayingQueue.QueueType;
-
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Created by Rahul Agarwal on 18-02-17.
@@ -148,11 +143,6 @@ public class MediaController implements IMediaController {
     }
 
     @Override
-    public void insertUnShuffledItem(IMediaItem item, QueueType queueType, boolean isAppended) {
-        App.getUPNEXTDBHelper().insertUnShuffledList(item, queueType, isAppended);
-    }
-
-    @Override
     public boolean isFavoriteItem(long trackId){
         return App.getFavoriteDBHelper().isFavouriteItems(trackId);
     }
@@ -195,31 +185,6 @@ public class MediaController implements IMediaController {
     }
 
     @Override
-    public void addUpNextItem(IMediaItemBase song, QueueType queueType) {
-        App.getUPNEXTDBHelper().addSong(song, queueType);
-    }
-
-    @Override
-    public void addUpNextItem(ArrayList<? extends IMediaItemBase> songs, QueueType queueType) {
-        App.getUPNEXTDBHelper().addSongsToUpNext(songs, queueType);
-    }
-
-    @Override
-    public ArrayList<? extends IMediaItemBase> getUpNextItemList(QueueType queueType) {
-        return App.getUPNEXTDBHelper().getUpNextSongs(queueType);
-    }
-
-    @Override
-    public ArrayList<? extends IMediaItemBase> getUnShuffledList(QueueType queueType) {
-        return App.getUPNEXTDBHelper().getUnShuffledList(queueType);
-    }
-
-    @Override
-    public void clearUpNextList(QueueType queueType) {
-        App.getUPNEXTDBHelper().clearList(queueType);
-    }
-
-    @Override
     public ArrayList<? extends IMediaItem> getAlbumTrackList(long itemId, String itemTitle) {
         return DeviceMediaQuery.getAlbumDetail(context, itemId, itemTitle);
     }
@@ -242,5 +207,13 @@ public class MediaController implements IMediaController {
     @Override
     public ArrayList<? extends IMediaItemBase> getGenreTrackList(long parentId, String parentTitle) {
         return DeviceMediaQuery.getSongListOfGenre(context, parentId, parentTitle);
+    }
+
+    public ArrayList<? extends IMediaItemBase> getRecentPlayedList() {
+        return App.getUPNEXTDBHelper().getSongsToRecent();
+    }
+
+    public void setRecentPlayedItem(IMediaItemBase recentPlayedItem) {
+        App.getUPNEXTDBHelper().addSongsToRecent(recentPlayedItem);
     }
 }

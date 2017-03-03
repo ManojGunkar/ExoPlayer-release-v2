@@ -79,7 +79,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
     }
 
     private void updatePlayingTrack(SimpleItemViewHolder holder, int position, long itemId){
-        IMediaItem nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        IMediaItemBase nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
         if(null != nowPlayingItem){
             holder.name.setTextColor(itemId == nowPlayingItem.getItemId() ? ContextCompat.getColor(activity, R.color.track_selected_title)
             : ContextCompat.getColor(activity, R.color.track_title));
@@ -108,7 +108,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
             @Override
             public void onClick(View view) {
                 if (!App.getPlayerEventHandler().isTrackLoading()) {
-                    App.getPlayingQueueHandler().getUpNextList().addTrackListToPlay(itemList, position, false);
+                    App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(itemList, position);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -131,8 +131,11 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                         public boolean onMenuItemClick(MenuItem item) {
                             try {
                                 switch (item.getItemId()) {
+                                    case R.id.popup_song_play_next:
+                                        App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(getMediaItem(position));
+                                        break;
                                     case R.id.popup_song_add_queue:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(getMediaItem(position));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(getMediaItem(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
                                         Utils util = new Utils(activity);

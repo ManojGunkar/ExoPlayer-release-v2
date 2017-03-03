@@ -306,10 +306,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     /* Large Player UI and Functionality*/
     private void updateActionBarButtons() {
-        if(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0 ||
-                App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0 ||
-                null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem() ||
-                App.getPlayingQueueHandler().getUpNextList().getHistoryList().size() > 0){
+        if(App.getPlayingQueueHandler().getUpNextList().getUpNextItemCount() > 0 ){
             mUpNextBtnPanel.setVisibility(View.VISIBLE);
             mPlayerOverFlowMenuPanel.setVisibility(View.VISIBLE);
         }else{
@@ -386,8 +383,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         public void run() {
                             try {
                                 Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
-                                /*bitmap = Bitmap.createScaledBitmap(bitmap, ScreenWidth,
-                                        ScreenWidth, false);*/
+                                bitmap = Bitmap.createScaledBitmap(bitmap, ScreenWidth,
+                                        ScreenWidth, false);
                                 Bitmap blurredBitmap = PlayerUtils.blur(mActivity, bitmap);
                                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
                                     PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, bitmap);
@@ -699,6 +696,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             coachMarkEffectPlayer.dismissTooltip();
         }
         updateProgressLoader();
+
+        updateActionBarButtons();
     }
 
     private void showEffectSwitchTip(){

@@ -4,7 +4,7 @@ package com.globaldelight.boom.handler.PlayingQueue;
  * Created by Rahul Agarwal on 30-09-16.
  */
 
-public interface IQueueEvent {
+public interface IUpNextMediaEvent {
 
     public void onPlayingItemChanged();
 

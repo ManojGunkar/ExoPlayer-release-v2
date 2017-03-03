@@ -88,12 +88,7 @@ public class NotificationHandler {
         if(item == null && !isLastPlayed){
             removeNotification();
             return;
-        }/*else if (isLastPlayed){
-            notificationCompat.bigContentView
-                    .setImageViewResource(R.id.noti_play_button, R.drawable.ic_play_notification);
-            notificationCompat.contentView
-                    .setImageViewResource(R.id.noti_play_button, R.drawable.ic_play_notification);
-        }else*/
+        }
         notificationCompat.bigContentView.setViewVisibility(R.id.noti_name, VISIBLE);
         notificationCompat.bigContentView.setViewVisibility(R.id.noti_artist, null != item.getItemArtist() ? VISIBLE : GONE);
         notificationCompat.bigContentView.setTextViewText(R.id.noti_name, item.getItemTitle());
@@ -180,21 +175,6 @@ public class NotificationHandler {
         notificationManager.cancel(NOTIFICATION_ID);
     }
 
-    public void hideNotification(){
-        notificationManager.cancel(NOTIFICATION_ID);
-    }
-
-    private void setNoTrackImageView() {
-        Utils utils = new Utils(context);
-        notificationCompat.bigContentView.setImageViewBitmap(R.id.noti_album_art,
-                utils.getBitmapOfVector(context, R.drawable.ic_default_art_grid,
-                        utils.dpToPx(context, 100), utils.dpToPx(context, 100)));
-        notificationCompat.contentView.setImageViewBitmap(R.id.noti_album_art,
-                utils.getBitmapOfVector(context, R.drawable.ic_default_art_grid,
-                        utils.dpToPx(context, 50), utils.dpToPx(context, 50)));
-//        notificationManager.notify(NOTIFICATION_ID, notificationCompat);
-    }
-
     private void setDefaultImageView() {
         Utils utils = new Utils(context);
         notificationCompat.bigContentView.setImageViewBitmap(R.id.noti_album_art,
@@ -205,19 +185,11 @@ public class NotificationHandler {
                         utils.dpToPx(context, 50), utils.dpToPx(context, 50)));
     }
 
-    public void updateNotificationView() {
-        notificationManager.notify(NOTIFICATION_ID, notificationCompat);
-    }
-
     public boolean isNotificationActive() {
         return notificationActive;
     }
 
     public void setNotificationActive(boolean notificationActive) {
         this.notificationActive = notificationActive;
-    }
-
-    public Notification getNotificationCompat() {
-        return notificationCompat;
     }
 }

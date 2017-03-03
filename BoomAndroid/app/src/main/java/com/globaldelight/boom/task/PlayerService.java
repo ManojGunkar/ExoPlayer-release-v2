@@ -9,7 +9,6 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
-
 import com.globaldelight.boom.ui.musiclist.activity.BoomSplash;
 import com.globaldelight.boom.utils.Utils;
 import com.dropbox.client2.DropboxAPI;
@@ -18,7 +17,6 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.client.IBusinessNetworkInit;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
-import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
@@ -29,7 +27,6 @@ import com.globaldelight.boom.manager.HeadPhonePlugReceiver;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boomplayer.AudioConfiguration;
-
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -68,7 +65,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         serviceReceiver.registerPlayerServiceReceiver(this, serviceReceiver, this);
 
         try {
-            App.getPlayingQueueHandler().getUpNextList().fetchUpNextItemsToDB(this);
+            App.getPlayingQueueHandler().getUpNextList().fetchSavedUpNextItems();
         }catch (Exception e){
 
         }
@@ -357,11 +354,11 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     @Override
     public void onDestroyLibrary() {
         isPlayerScreenResume = false;
-        if(notificationHandler.isNotificationActive() && !App.getPlayerEventHandler().isPlaying()) {
+        if(null != notificationHandler && !App.getPlayerEventHandler().isPlaying()) {
             stopForeground(true);
             notificationHandler.setNotificationPlayer(true);
             notificationHandler.changeNotificationDetails(null, false , false);
-            App.getPlayingQueueHandler().getUpNextList().addUpNextItemsToDB();
+            App.getPlayingQueueHandler().getUpNextList().SaveUpNextItems();
         }
     }
 
@@ -389,7 +386,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             notificationHandler.removeNotification();
             stopForeground(true);
         }
-        App.getPlayingQueueHandler().getUpNextList().addUpNextItemsToDB();
+        App.getPlayingQueueHandler().getUpNextList().SaveUpNextItems();
         if (musicPlayerHandler.getPlayer() != null) {
             musicPlayerHandler.stop();
 //            musicPlayerHandler.release();

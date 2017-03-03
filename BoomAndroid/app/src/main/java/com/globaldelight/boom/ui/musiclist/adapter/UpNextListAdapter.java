@@ -14,22 +14,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.Media.MediaType;
-import com.globaldelight.boom.handler.PlayingQueue.QueueType;
-import com.globaldelight.boom.handler.PlayingQueue.UpNextItem;
-import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
+import com.globaldelight.boom.handler.UpNextPlayingQueue;
 import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.squareup.picasso.Picasso;
-
 import java.io.File;
-import java.util.ArrayList;
 
 import static android.view.LayoutInflater.from;
 import static com.globaldelight.boom.utils.Utils.dpToPx;
@@ -39,320 +34,99 @@ import static com.globaldelight.boom.utils.Utils.dpToPx;
  */
 
 public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.SimpleItemViewHolder> {
-    public static final int ITEM_VIEW_TYPE_HEADER_HISTORY = 0;
-    public static final int ITEM_VIEW_TYPE_HEADER_PLAYING = 1;
-    public static final int ITEM_VIEW_TYPE_HEADER_MANUAL = 2;
-    public static final int ITEM_VIEW_TYPE_HEADER_AUTO = 3;
-    public static final int ITEM_VIEW_TYPE_LIST_HISTORY = 4;
-    public static final int ITEM_VIEW_TYPE_LIST_PLAYING = 5;
-    public static final int ITEM_VIEW_TYPE_LIST_MANUAL = 6;
-    public static final int ITEM_VIEW_TYPE_LIST_AUTO = 7;
-    public static final int ITEM_VIEW_TYPE_NULL = 8;
-    private static final int PENDING_REMOVAL_TIMEOUT = 3000;
+    private static final int PENDING_REMOVAL_TIMEOUT = 2000;
     final Handler swipeDeletehandler = new Handler();
-    public ListPosition itemDelete;
+    public int itemDeletePosition = -1, playingItemPosition;
     OnStartDragListener mOnStartDragListener;
-    private ArrayList<IMediaItemBase> mHistoryList;
-    ArrayList<UpNextItem> mPlaying;
-//    private ArrayList<IMediaItemBase> mUpnextManualList;
-//    private ArrayList<IMediaItemBase> mUpnextAutoList;
-    private int headerHistoryPos, headerPlayingPos, headerManualPos,
-            headerAutoPos, totalSize;
     private RecyclerView recyclerView;
     private Context context;
 
-    public UpNextListAdapter(Context context, UpNextList playingQueue, OnStartDragListener dragListener, RecyclerView recyclerView) {
+    public UpNextListAdapter(Context context, OnStartDragListener dragListener, RecyclerView recyclerView) {
         this.context = context;
-        init(playingQueue.getHistoryList(), playingQueue.getPlayingList());
         this.mOnStartDragListener = dragListener;
         this.recyclerView = recyclerView;
     }
 
-
-    private void init(ArrayList<IMediaItemBase> history, ArrayList<UpNextItem> playing) {
-        this.mHistoryList = history;
-        this.mPlaying = playing;
-        updateHeaderPosition();
-    }
-
-    public void updateHeaderPosition() {
-
-        headerHistoryPos = 0;
-        headerPlayingPos = mHistoryList.size() + 1;
-        headerManualPos = mHistoryList.size() + mPlaying.size() + 2;
-        headerAutoPos = mHistoryList.size() + mPlaying.size() + App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() + 3;
-        this.totalSize = mHistoryList.size() + mPlaying.size() + App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() + App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() + 4;
-    }
-
-    public int whatView(int position) {
-        if (position == headerHistoryPos) {
-            return ITEM_VIEW_TYPE_HEADER_HISTORY;
-        } else if (position == headerPlayingPos) {
-            return ITEM_VIEW_TYPE_HEADER_PLAYING;
-        } else if (position == headerManualPos) {
-            return ITEM_VIEW_TYPE_HEADER_MANUAL;
-        } else if (position == headerAutoPos) {
-            return ITEM_VIEW_TYPE_HEADER_AUTO;
-        } else if (position > 0 && position < headerPlayingPos) {
-            return ITEM_VIEW_TYPE_LIST_HISTORY;
-        } else if (position > headerPlayingPos && position < headerManualPos) {
-            return ITEM_VIEW_TYPE_LIST_PLAYING;
-        } else if (position > headerManualPos && position < headerAutoPos) {
-            return ITEM_VIEW_TYPE_LIST_MANUAL;
-        } else if (position > headerAutoPos) {
-            return ITEM_VIEW_TYPE_LIST_AUTO;
-        } else
-            return ITEM_VIEW_TYPE_NULL;
-    }
-
-    public void updateList(UpNextList playingQueue) {
-        init(playingQueue.getHistoryList(), playingQueue.getPlayingList());
+    public void updateList(UpNextPlayingQueue playingQueue) {
         notifyDataSetChanged();
-    }
-
-    private int getPosition(int position) {
-
-        if (position > headerHistoryPos && position < headerPlayingPos) {
-            position = position - 1;
-        } else if (position > headerPlayingPos && position < headerManualPos) {
-            position = position - mHistoryList.size() - 2;
-        } else if (position > headerManualPos && position < headerAutoPos) {
-            position = position - mHistoryList.size() - mPlaying.size() - 3;
-        } else if (position > headerAutoPos)
-            position = position - mHistoryList.size() - mPlaying.size() - App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() - 4;
-
-        return position == -1 ? 0 : position;
-    }
-
-    public ListPosition getPositionObject(int position) {
-        int listType = 0;
-
-        if (position > headerHistoryPos && position < headerPlayingPos) {
-            position = position - 1;
-            listType = ITEM_VIEW_TYPE_LIST_HISTORY;
-        } else if (position > headerPlayingPos && position < headerManualPos) {
-            position = position - mHistoryList.size() - 2;
-            listType = ITEM_VIEW_TYPE_LIST_PLAYING;
-        } else if (position > headerManualPos && position < headerAutoPos) {
-            position = position - mHistoryList.size() - mPlaying.size() - 3;
-            listType = ITEM_VIEW_TYPE_LIST_MANUAL;
-        } else if (position > headerAutoPos) {
-            position = position - mHistoryList.size() - mPlaying.size() - App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() - 4;
-            listType = ITEM_VIEW_TYPE_LIST_AUTO;
-        }
-        return new ListPosition(listType, position == -1 ? 0 : position);
     }
 
     @Override
     public SimpleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView;
-        switch (viewType) {
-            case ITEM_VIEW_TYPE_HEADER_PLAYING:
-            case ITEM_VIEW_TYPE_HEADER_MANUAL:
-            case ITEM_VIEW_TYPE_HEADER_HISTORY:
-            case ITEM_VIEW_TYPE_HEADER_AUTO:
-                itemView = from(parent.getContext()).
-                        inflate(R.layout.card_header_upnext, parent, false);
-                return new SimpleItemViewHolder(itemView);
-            case ITEM_VIEW_TYPE_LIST_MANUAL:
-
-            case ITEM_VIEW_TYPE_LIST_HISTORY:
-
-            case ITEM_VIEW_TYPE_LIST_PLAYING:
-
-            case ITEM_VIEW_TYPE_LIST_AUTO:
-
-                itemView = from(parent.getContext()).
-                        inflate(R.layout.card_upnext, parent, false);
-                return new SimpleItemViewHolder(itemView);
-            case ITEM_VIEW_TYPE_NULL:
-                itemView = from(parent.getContext()).
-                        inflate(R.layout.empty_search_layout, parent, false);
-                return new SimpleItemViewHolder(itemView);
-        }
-        return null;
+        View itemView = from(parent.getContext()).
+                inflate(R.layout.card_upnext, parent, false);
+        return new SimpleItemViewHolder(itemView);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(final SimpleItemViewHolder holder, final int position) {
-        int itemPosition;
-        final ListPosition item;
-        switch (whatView(position)) {
-            case ITEM_VIEW_TYPE_HEADER_MANUAL:
-                    setHeaderBg(holder);
-                    holder.headerText.setText(R.string.up_next_manual);
-                    if (App.getPlayingQueueHandler().getUpNextList().getManualUpNextList() != null && App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0) {
-                        setOnClearBottonClick(holder, QueueType.Manual_UpNext, position);
-                        holder.buttonClrear.setVisibility(View.VISIBLE);
-                    } else {
-                        holder.buttonClrear.setVisibility(View.INVISIBLE);
-                    }
-                break;
-            case ITEM_VIEW_TYPE_HEADER_PLAYING:
-                    setHeaderBg(holder);
-                    holder.headerText.setText(R.string.now_playing);
-                    holder.buttonClrear.setVisibility(View.INVISIBLE);
-                break;
-            case ITEM_VIEW_TYPE_HEADER_HISTORY:
-                    setHeaderBg(holder);
-                    holder.headerText.setText(R.string.recently_played);
-                    if (mHistoryList != null && mHistoryList.size() > 0) {
-                        holder.buttonClrear.setVisibility(View.VISIBLE);
-                        setOnClearBottonClick(holder, QueueType.History, position);
-                    } else {
-                        holder.buttonClrear.setVisibility(View.INVISIBLE);
-                    }
-                break;
-            case ITEM_VIEW_TYPE_HEADER_AUTO:
-                    setHeaderBg(holder);
-                    holder.headerText.setText(R.string.up_next_auto);
-                    if (App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList() != null && App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
-                        holder.buttonClrear.setVisibility(View.VISIBLE);
-                        setOnClearBottonClick(holder, QueueType.Auto_UpNext, position);
-                    } else {
-                        holder.buttonClrear.setVisibility(View.INVISIBLE);
-                    }
-                break;
-            case ITEM_VIEW_TYPE_LIST_MANUAL:
+        if (itemDeletePosition == (position)) {
+            // we need to show the "undo" state of the row
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(context,R.color.upnext_delete_background));
 
-                item = getPositionObject(position);
+            holder.layout.setVisibility(View.GONE);
+            holder.undoButton.setVisibility(View.INVISIBLE);
+            holder.undoButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    swipeDeletehandler.removeMessages(0);
+                    itemDeletePosition = -1;
+                    notifyItemChanged(position);
 
-                if (itemDelete != null && itemDelete.getItemPosition() == item.getItemPosition() && item.getListType() == itemDelete.getListType()) {
-                    holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.upnext_delete_background));
-                    holder.layout.setVisibility(View.GONE);
-                    holder.undoButton.setVisibility(View.INVISIBLE);
-                    holder.undoButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            swipeDeletehandler.removeMessages(0);
-                            itemDelete = null;
-                            int p = getViewPosition(item);
-                            notifyItemChanged(p);
-
-                        }
-                    });
-                    //handler showing undo button after some time
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (holder.undoButton.getVisibility() == View.INVISIBLE)
-                                holder.undoButton.setVisibility(View.VISIBLE);
-                        }
-                    }, 500);
-
-                } else {
-                    try {
-                        // we need to show the "normal" state
-                        holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.app_background));
-                        holder.layout.setVisibility(View.VISIBLE);
-                        holder.undoButton.setVisibility(View.GONE);
-                        holder.undoButton.setOnClickListener(null);
-                        itemPosition = getPositionObject(position).getItemPosition();
-                        if(null == App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).getItemArtUrl())
-                            App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem)App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition)).getItemAlbum()));
-
-                        if(null == App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).getItemArtUrl())
-                            App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-
-                        setArt(holder, App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).getItemArtUrl(), whatView(position));
-                        holder.name.setText(App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition).getItemTitle());
-                        holder.artistName.setText(((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().get(itemPosition)).getItemArtist());
-                        setOnItemClick(holder, QueueType.Manual_UpNext, itemPosition);
-                        setDragHandle(holder);
-                    } catch (IndexOutOfBoundsException e) {
-                        e.printStackTrace();
-                    }
                 }
-                break;
-            case ITEM_VIEW_TYPE_LIST_PLAYING:
-                itemPosition = getPosition(position);
-                if(null == mPlaying.get(0).getUpNextItem().getItemArtUrl())
-                    mPlaying.get(0).getUpNextItem().setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get((mPlaying.get(0).getUpNextItem()).getItemAlbum()));
-
-                if(null == mPlaying.get(0).getUpNextItem().getItemArtUrl())
-                    mPlaying.get(0).getUpNextItem().setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-
-                setArt(holder, mPlaying.get(0).getUpNextItem().getItemArtUrl(), whatView(position));
-                holder.art_overlay.setVisibility(View.VISIBLE);
-                holder.art_overlay_play.setVisibility(View.VISIBLE);
-                holder.loadCloud.setVisibility(View.GONE);
-                boolean isMediaItem = mPlaying.get(0).getUpNextItem().getMediaType() == MediaType.DEVICE_MEDIA_LIB;
-                if(App.getPlayerEventHandler().isPlaying()){
-                    holder.art_overlay_play.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_pause, null));
-                } else {
-                    if(!isMediaItem && App.getPlayerEventHandler().isTrackWaitingForPlay() && !App.getPlayerEventHandler().isPaused())
-                        holder.loadCloud.setVisibility(View.VISIBLE);
-                    holder.art_overlay_play.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_play, null));
+            });
+            //handler showing undo button after some time
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (holder.undoButton.getVisibility() == View.INVISIBLE)
+                        holder.undoButton.setVisibility(View.VISIBLE);
                 }
-                holder.name.setText(mPlaying.get(0).getUpNextItem().getItemTitle());
-                holder.name.setTextColor(ContextCompat.getColor(context, R.color.upnext_playing_title));
-                holder.artistName.setText((mPlaying.get(0).getUpNextItem()).getItemArtist());
-                holder.mainView.setElevation(dpToPx(context, 2));
-                holder.imgHandle.setVisibility(View.INVISIBLE);
-                setOnItemClick(holder, QueueType.Playing, itemPosition);
-                holder.undoButton.setVisibility(View.INVISIBLE);
+            }, 500);
+        } else if(App.getPlayingQueueHandler().getUpNextList().getUpNextItemCount() > 0){
+            MediaItem item = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getUpNextItemList().get(position);
+            if(null != item) {
+                // we need to show the "normal" state
+                holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.app_background));
+                holder.layout.setVisibility(View.VISIBLE);
+                holder.undoButton.setVisibility(View.GONE);
+                holder.undoButton.setOnClickListener(null);
+                if (null == item.getItemArtUrl())
+                    item.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(item.getItemAlbum()));
 
-                break;
-            case ITEM_VIEW_TYPE_LIST_HISTORY:
-                itemPosition = getPosition(position);
-                setArt(holder, mHistoryList.get(itemPosition).getItemArtUrl(), whatView(position));
-                holder.name.setText(mHistoryList.get(itemPosition).getItemTitle());
-                holder.artistName.setText(((IMediaItem) mHistoryList.get(itemPosition)).getItemArtist());
-                holder.imgHandle.setVisibility(View.INVISIBLE);
-                holder.undoButton.setVisibility(View.INVISIBLE);
-                setOnItemClick(holder, QueueType.History, itemPosition);
-                break;
-            case ITEM_VIEW_TYPE_LIST_AUTO:
-                item = getPositionObject(position);
-                if (itemDelete != null && itemDelete.getItemPosition() == item.getItemPosition() && item.getListType() == itemDelete.getListType()) {
-                    // we need to show the "undo" state of the row
-                    holder.itemView.setBackgroundColor(ContextCompat.getColor(context,R.color.upnext_delete_background));
+                if (null == item.getItemArtUrl())
+                    item.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
 
-                    holder.layout.setVisibility(View.GONE);
-                    holder.undoButton.setVisibility(View.INVISIBLE);
-                    holder.undoButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            swipeDeletehandler.removeMessages(0);
-                            itemDelete = null;
-                            int p = getViewPosition(item);
-                            notifyItemChanged(p);
+                setArt(holder, item.getItemArtUrl());
+                holder.name.setText(item.getItemTitle());
+                holder.artistName.setText(item.getItemArtist());
 
-                        }
-                    });
-                    //handler showing undo button after some time
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (holder.undoButton.getVisibility() == View.INVISIBLE)
-                                holder.undoButton.setVisibility(View.VISIBLE);
-                        }
-                    }, 500);
+                if (null != App.getPlayerEventHandler().getPlayingItem() &&
+                        item.getItemId() == App.getPlayerEventHandler().getPlayingItem().getItemId()) {
+                    playingItemPosition = position;
+                    holder.art_overlay.setVisibility(View.VISIBLE);
+                    holder.art_overlay_play.setVisibility(View.VISIBLE);
+                    holder.loadCloud.setVisibility(View.GONE);
+                    holder.name.setTextColor(ContextCompat.getColor(context, R.color.upnext_playing_title));
+                    boolean isMediaItem = item.getMediaType() == MediaType.DEVICE_MEDIA_LIB;
+                    if (App.getPlayerEventHandler().isPlaying()) {
+                        holder.art_overlay_play.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_pause, null));
+                    } else {
+                        if (!isMediaItem && App.getPlayerEventHandler().isTrackWaitingForPlay() && !App.getPlayerEventHandler().isPaused())
+                            holder.loadCloud.setVisibility(View.VISIBLE);
+                        holder.art_overlay_play.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_play, null));
+                    }
                 } else {
-                    // we need to show the "normal" state
-                    holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.app_background));
-                    holder.layout.setVisibility(View.VISIBLE);
-                    holder.undoButton.setVisibility(View.GONE);
-                    holder.undoButton.setOnClickListener(null);
-                    itemPosition = getPositionObject(position).getItemPosition();
-                    if(null == App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemArtUrl())
-                        App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem)App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition)).getItemAlbum()));
-
-                    if(null == App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemArtUrl())
-                        App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-
-                    setArt(holder, App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemArtUrl(), whatView(position));
-                    holder.name.setText(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition).getItemTitle());
-                    holder.artistName.setText(((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().get(itemPosition)).getItemArtist());
-                    setOnItemClick(holder, QueueType.Auto_UpNext, itemPosition);
-                    setDragHandle(holder);
+                    holder.art_overlay.setVisibility(View.GONE);
+                    holder.art_overlay_play.setVisibility(View.GONE);
+                    holder.loadCloud.setVisibility(View.GONE);
+                    holder.name.setTextColor(ContextCompat.getColor(context, R.color.upnext_track_title));
                 }
-                break;
-            default:
-                break;
+                setOnItemClick(holder, position);
+                setDragHandle(holder);
+            }
         }
     }
 
@@ -372,31 +146,16 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
 
     }
 
-    public void setOnItemClick(SimpleItemViewHolder holder, final QueueType queueType, final int itemPosition) {
+    public void setOnItemClick(SimpleItemViewHolder holder, final int itemPosition) {
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 if (!App.getPlayerEventHandler().isTrackLoading()){
-                    switch (queueType) {
-                        case History:
-                            App.getPlayingQueueHandler().getUpNextList().addUpNextItemToPlay(QueueType.History, itemPosition);
-                            break;
-                        case Playing:
-                            App.getPlayingQueueHandler().getUpNextList().addUpNextItemToPlay(QueueType.Playing, itemPosition);
-                            break;
-                        case Manual_UpNext:
-                            App.getPlayingQueueHandler().getUpNextList().addUpNextItemToPlay(queueType, itemPosition);
-                            break;
-                        case Auto_UpNext:
-                            App.getPlayingQueueHandler().getUpNextList().addUpNextItemToPlay(queueType, itemPosition);
-                            break;
-                        default:
-                            break;
-                    }
-                    try {
-                        recyclerView.scrollToPosition(headerPlayingPos);
-                    } catch (Exception e) {
-                    }
+                    App.getPlayingQueueHandler().getUpNextList().setNewItemAsPlayingItem(itemPosition);
+                }
+                try {
+                    recyclerView.scrollToPosition(itemPosition);
+                } catch (Exception e) {
                 }
             }
         });
@@ -407,157 +166,50 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
         holder.mainView.setElevation(dpToPx(context, 2));
     }
 
-    private void setArt(SimpleItemViewHolder holder, String path, int what) {
+    private void setArt(SimpleItemViewHolder holder, String path) {
         if (PlayerUtils.isPathValid(path ))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_art_grid, null))/*.resize(size,
-                    size).centerCrop()*/.into(holder.img);
+            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.img);
         else{
-            setDefaultArt(holder);
+            holder.img.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_art_grid, null));
         }
-    }
-
-    private void setDefaultArt(SimpleItemViewHolder holder) {
-
-        holder.img.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_art_grid, null));
     }
 
     @Override
     public int getItemCount() {
-        return totalSize;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return whatView(position);
-    }
-
-    public void setOnClearBottonClick(final SimpleItemViewHolder holder, final QueueType queueType, final int itemPosition) {
-        holder.buttonClrear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                switch (queueType) {
-                    case History:
-                        if (App.getPlayingQueueHandler().getUpNextList().getHistoryList().size() > 0) {
-                            App.getPlayingQueueHandler().getUpNextList().clearUpNext(QueueType.History);
-                            holder.buttonClrear.setVisibility(View.INVISIBLE);
-                            updateList(App.getPlayingQueueHandler().getUpNextList());
-                        }
-                        break;
-
-                    case Manual_UpNext:
-                        if (itemDelete != null) {
-                            swipeDeletehandler.removeMessages(0);
-                            itemDelete = null;
-                        }
-                        if (App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().size() > 0) {
-                            App.getPlayingQueueHandler().getUpNextList().clearUpNext(QueueType.Manual_UpNext);
-                            holder.buttonClrear.setVisibility(View.INVISIBLE);
-                            updateList(App.getPlayingQueueHandler().getUpNextList());
-                        }
-
-                        break;
-                    case Auto_UpNext:
-                        if (itemDelete != null) {
-
-                            swipeDeletehandler.removeMessages(0);
-                            itemDelete = null;
-                        }
-
-                        if (App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().size() > 0) {
-                            App.getPlayingQueueHandler().getUpNextList().clearUpNext(QueueType.Auto_UpNext);
-                            holder.buttonClrear.setVisibility(View.INVISIBLE);
-                            updateList(App.getPlayingQueueHandler().getUpNextList());
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
-    }
-
-    public int getViewPosition(ListPosition listPositionData) {
-        int normalposition = listPositionData.getItemPosition();
-        switch (listPositionData.getListType()) {
-            case ITEM_VIEW_TYPE_LIST_PLAYING:
-                normalposition = headerPlayingPos + listPositionData.getItemPosition() + 1;
-                break;
-
-
-            case ITEM_VIEW_TYPE_LIST_HISTORY:
-                normalposition = headerHistoryPos + listPositionData.getItemPosition() + 1;
-                break;
-
-
-            case ITEM_VIEW_TYPE_LIST_MANUAL:
-
-                normalposition = headerManualPos + listPositionData.getItemPosition() + 1;
-
-                break;
-
-            case ITEM_VIEW_TYPE_LIST_AUTO:
-                normalposition = headerAutoPos + listPositionData.getItemPosition() + 1;
-                break;
-
-        }
-        return normalposition;
-    }
-
-    public ArrayList<IMediaItemBase> getListForType(int type) {
-
-        switch (type) {
-            case ITEM_VIEW_TYPE_LIST_HISTORY:
-                return mHistoryList;
-            case ITEM_VIEW_TYPE_LIST_MANUAL:
-                return App.getPlayingQueueHandler().getUpNextList().getManualUpNextList();
-            case ITEM_VIEW_TYPE_LIST_AUTO:
-                return App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList();
-        }
-        return null;
+        return App.getPlayingQueueHandler().getUpNextList().getUpNextItemCount();
     }
 
     public boolean isSwipeDeleteAllowed(int postion) {
-        ListPosition objPosition = getPositionObject(postion);
-        if (itemDelete == null && (objPosition.getListType() == ITEM_VIEW_TYPE_LIST_MANUAL || objPosition.getListType() == ITEM_VIEW_TYPE_LIST_AUTO)) {
-
+        if(postion == playingItemPosition){
+            return false;
+        }else if (postion >= 0 && postion < getItemCount())
             return true;
-        }
         return false;
     }
 
     public void removeSwipedItem(final RecyclerView.ViewHolder viewholder) {
-        if (itemDelete == null) {
-            final ListPosition postionObject = getPositionObject(viewholder.getAdapterPosition());
-            itemDelete = getPositionObject(viewholder.getAdapterPosition());
-//            notifyItemRemoved(viewholder.getAdapterPosition());
+        if (itemDeletePosition == -1) {
+            itemDeletePosition = viewholder.getAdapterPosition();
             notifyItemChanged(viewholder.getAdapterPosition());
             swipeDeletehandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (itemDelete != null) {
+                    if (itemDeletePosition >= 0) {
                         try {
-                            if(postionObject.getListType() == ITEM_VIEW_TYPE_LIST_MANUAL ){
-                                App.getPlayingQueueHandler().getUpNextList().getManualUpNextList().remove(postionObject.getItemPosition());
-                            }else{
-                                App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList().remove(postionObject.getItemPosition());
+                            App.getPlayingQueueHandler().getUpNextList().removeItem(itemDeletePosition);
+
+                            if(playingItemPosition > itemDeletePosition){
+                                App.getPlayingQueueHandler().getUpNextList().setPlayingItemIndex(playingItemPosition-1);
                             }
                         } catch (ArrayIndexOutOfBoundsException e) {
                             e.printStackTrace();
                         }
-                        updateHeaderPosition();
                         notifyDataSetChanged();
-                        itemDelete = null;
+                        itemDeletePosition = -1;
                     }
                 }
             }, PENDING_REMOVAL_TIMEOUT);
         }
-
-
-    }
-
-    public int getPlayingHeaderPosition() {
-        return headerPlayingPos = mHistoryList.size() + 1;
     }
 
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
@@ -593,24 +245,6 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
             name = (RegularTextView) itemView.findViewById(R.id.queue_item_name);
             artistName = (RegularTextView) itemView.findViewById(R.id.queue_item_artist);
             undoButton = (RegularButton) itemView.findViewById(R.id.undo_button);
-        }
-    }
-
-    public class ListPosition {
-        private int ListType, position;
-
-        public ListPosition(int ListType, int position) {
-            this.ListType = ListType;
-            this.position = position;
-        }
-
-
-        public int getListType() {
-            return ListType;
-        }
-
-        public int getItemPosition() {
-            return position < 0 ? 0 : position;
         }
     }
 }
