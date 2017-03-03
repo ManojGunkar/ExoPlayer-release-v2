@@ -53,7 +53,7 @@ public class OpenSLPlayer {
 
     public native boolean getEffectsState();
 
-    public native boolean getIntensity();
+    public native float getIntensity();
 
     public native int getEqualizerId();
 

@@ -108,7 +108,7 @@ namespace gdpl {
 
     jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_getEffectsState(JNIEnv *env, jobject instance);
 
-    jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_getIntensity(JNIEnv *env, jobject instance);
+    jfloat Java_com_globaldelight_boomplayer_OpenSLPlayer_getIntensity(JNIEnv *env, jobject instance);
 
     jint Java_com_globaldelight_boomplayer_OpenSLPlayer_getEqualizerId(JNIEnv *env, jobject instance);
 

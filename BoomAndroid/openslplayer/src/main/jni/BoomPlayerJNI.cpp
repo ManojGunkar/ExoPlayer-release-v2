@@ -262,7 +262,7 @@ namespace gdpl {
 
         gdpl::AutoLock lock(&mLock);
         LOGD("setEqualizer(%d)", id);
-        mEngine->SetEqualizer(id, (float *) bandGains);
+        mEngine->SetEqualizer(id, bandGains);
 
         env->ReleaseFloatArrayElements(bandGains_, bandGains, 0);
     }
@@ -278,7 +278,7 @@ namespace gdpl {
                                                                         jobject instance) {
 
         gdpl::AutoLock lock(&mLock);
-        return mEngine->Get3DAudioState();
+        return (jboolean)mEngine->Get3DAudioState();
 
     }
 
@@ -286,11 +286,11 @@ namespace gdpl {
                                                                         jobject instance) {
 
         gdpl::AutoLock lock(&mLock);
-        return mEngine->GetEffectsState();
+        return (jboolean)mEngine->GetEffectsState();
 
     }
 
-    extern "C" jboolean Java_com_globaldelight_boomplayer_OpenSLPlayer_getIntensity(JNIEnv *env,
+    extern "C" jfloat Java_com_globaldelight_boomplayer_OpenSLPlayer_getIntensity(JNIEnv *env,
                                                                      jobject instance) {
         gdpl::AutoLock lock(&mLock);
         return mEngine->GetIntensity();
