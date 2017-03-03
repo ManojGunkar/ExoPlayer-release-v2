@@ -39,7 +39,7 @@ public class OpenSLPlayer {
 
     public native void enableEqualizer(boolean enable);
 
-    public native void setIntensity(double value);
+    public native void setIntensity(float value);
 
     public native void setEqualizer(int id, float []bandGains);
 

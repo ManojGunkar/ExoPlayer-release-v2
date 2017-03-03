@@ -445,7 +445,7 @@ public class AudioPlayer implements Runnable {
     public synchronized void setIntensityValue(double intensity) {
         try {
             if(isPlaying() || isPause())
-                nativePlayer.setIntensity((intensity-0.5)/0.5);
+                nativePlayer.setIntensity((float)((intensity-0.5)/0.5));
         }catch (Exception e){
 
         }

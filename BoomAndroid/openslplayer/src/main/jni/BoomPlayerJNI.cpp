@@ -248,7 +248,7 @@ namespace gdpl {
     }
 
     extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_setIntensity(JNIEnv *env, jobject instance,
-                                                                 jdouble value) {
+                                                                 jfloat value) {
         gdpl::AutoLock lock(&mLock);
         LOGD("setIntensity(%g)", value);
         mEngine->SetIntensity(value);

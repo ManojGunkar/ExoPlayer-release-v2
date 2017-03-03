@@ -96,7 +96,7 @@ namespace gdpl {
                                                                       jint quality);
 
     void Java_com_globaldelight_boomplayer_OpenSLPlayer_setIntensity(JNIEnv *env, jobject instance,
-                                                                    jdouble value);
+                                                                    jfloat value);
 
     void Java_com_globaldelight_boomplayer_OpenSLPlayer_setEqualizer(JNIEnv *env, jobject instance, jint id,
                                                                  jfloatArray bandGains_);
