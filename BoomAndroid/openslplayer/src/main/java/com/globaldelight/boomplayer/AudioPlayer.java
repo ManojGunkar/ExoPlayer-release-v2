@@ -99,7 +99,7 @@ public class AudioPlayer implements Runnable {
             playerThread = new Thread(this);
             playerThread.start();
         }else if (state.get() == PlayerStates.PAUSED ) {
-            nativePlayer.setPlayingAudioPlayer(true);
+            nativePlayer.setPlayingState(true);
             state.set(PlayerStates.PLAYING);
             syncNotify();
             pauseSeek();
@@ -139,13 +139,13 @@ public class AudioPlayer implements Runnable {
     }
 
     public void pause() {
-        nativePlayer.setPlayingAudioPlayer(false);
+        nativePlayer.setPlayingState(false);
         state.set(PlayerStates.PAUSED);
     }
 
     private void seek(long pos) {
         if(reader != null) {
-            nativePlayer.seekTo(pos);
+            nativePlayer.flush();
             reader.seekTo(pos);
         }
     }

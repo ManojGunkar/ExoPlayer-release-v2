@@ -25,9 +25,9 @@ public class OpenSLPlayer {
 
     public native int write(ByteBuffer buf, int offset, int frameCount);
 
-    public native void setPlayingAudioPlayer(boolean isPlaying);
+    public native void setPlayingState(boolean isPlaying);
 
-    public native void seekTo(long position);
+    public native void flush();
 
     public native void enableAudioEffect(boolean enable);
 

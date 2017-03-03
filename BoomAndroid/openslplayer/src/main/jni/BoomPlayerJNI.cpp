@@ -138,10 +138,10 @@ namespace gdpl {
 
 /*
  * Class:     com_globaldelight_boomplayer_OpenSLPlayer
- * Method:    setPlayingAudioPlayer
+ * Method:    setPlayingState
  * Signature: (Z)V
  */
-    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_setPlayingAudioPlayer(JNIEnv *env, jclass clazz,
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_setPlayingState(JNIEnv *env, jclass clazz,
                                                                           jboolean play) {
         gdpl::AutoLock lock(&mLock);
 
@@ -159,11 +159,10 @@ namespace gdpl {
 
 /*
  * Class:     com_globaldelight_boomplayer_OpenSLPlayer
- * Method:    seekTo
- * Signature: (J)V
+ * Method:    flush
+ * Signature: ()V
  */
-    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_seekTo(JNIEnv *env, jclass type,
-                                                           jlong position) {
+    extern "C" void Java_com_globaldelight_boomplayer_OpenSLPlayer_flush(JNIEnv *env, jclass type) {
         gdpl::AutoLock lock(&mLock);
 
         mProcessor->Flush();

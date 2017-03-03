@@ -53,18 +53,18 @@ namespace gdpl {
 
 /*
  * Class:     com_globaldelight_boomplayer_OpenSLPlayer
- * Method:    setPlayingAudioPlayer
+ * Method:    setPlayingState
  * Signature: (Z)V
  */
-    void Java_com_globaldelight_boomplayer_OpenSLPlayer_setPlayingAudioPlayer
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_setPlayingState
             (JNIEnv *, jclass, jboolean);
 
 /*
  * Class:     com_globaldelight_boomplayer_OpenSLPlayer
- * Method:    seekTo
- * Signature: (I)V
+ * Method:    flush
+ * Signature: ()V
  */
-    void Java_com_globaldelight_boomplayer_OpenSLPlayer_seekTo(JNIEnv *, jclass, jlong);
+    void Java_com_globaldelight_boomplayer_OpenSLPlayer_flush(JNIEnv *, jclass);
 
 /*
  * Class:     com_globaldelight_boomplayer_OpenSLPlayer
