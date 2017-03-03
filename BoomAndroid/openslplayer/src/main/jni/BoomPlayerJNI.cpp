@@ -1,13 +1,15 @@
 /** log */
 #include <stddef.h>
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+
 #include "logger/log.h"
-#include "BoomPlayerJNI.h"
-#include "audioresampler/include/AudioResampler.h"
-#include "bufferprovider/include/RingBuffer.h"
-#include "audioFx/AudioEngine.h"
-#include "Utilities/AutoLock.hpp"
-#include "BoomAudioProcessor.h"
 #include "OpenSLPlayer.hpp"
+#include "audioFx/AudioEngine.h"
+#include "BoomAudioProcessor.h"
+#include "Utilities/AutoLock.hpp"
+
+#include "BoomPlayerJNI.h"
 
 #define LOG_TAG "BoomPlayerJNI"
 
