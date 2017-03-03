@@ -43,17 +43,6 @@ namespace gdpl {
     }
 
 
-    /* Checks for error. If any errors exit the application! */
-    void CheckErr(SLresult res) {
-        if (res != SL_RESULT_SUCCESS) {
-            // Debug printing to be placed here
-            exit(1);
-        }
-    }
-
-
-
-
 /*
  * Class:     com_globaldelight_boomplayer_OpenSLPlayer
  * Method:    createEngine
@@ -64,11 +53,11 @@ namespace gdpl {
         globalJavaAssetManager = env->NewGlobalRef(assetManager);
         InitAssetManager(AAssetManager_fromJava(env, globalJavaAssetManager));
 
-        uint32_t frameCount = inFrameCount;
+        uint32_t frameCount = (uint32_t)inFrameCount;
         if ( DEFAULT_FRAME_COUNT > inFrameCount ) {
-            frameCount = inFrameCount * (DEFAULT_FRAME_COUNT/inFrameCount);
+            frameCount = (uint32_t)(inFrameCount * (DEFAULT_FRAME_COUNT/inFrameCount));
         }
-        OpenSLPlayer::setupEngine(sampleRate, frameCount, useFloat);
+        OpenSLPlayer::setupEngine((uint32_t)sampleRate, frameCount, useFloat);
         mEngine = new AudioEngine(sampleRate, DEFAULT_FRAME_COUNT);
         mEngine->SetHeadPhoneType(eOnEar);
         if ( !useFloat ) {
@@ -104,12 +93,12 @@ namespace gdpl {
         mEngine->ResetEngine();
         RinseEngine();
 
-        mProcessor = new BoomAudioProcessor(mEngine, samplerate, channel);
+        mProcessor = new BoomAudioProcessor(mEngine, samplerate, (uint32_t)channel);
         mPlayer = new gdpl::OpenSLPlayer(mProcessor);
         mPlayer->setup();
         mPlayer->play();
 
-        return true;
+        return (jboolean)true;
     }
 
     /*
@@ -128,7 +117,7 @@ namespace gdpl {
         int written = 0;
         //ALOGD("Enter into Write Method");
         if (mPlayer->getState() == SL_PLAYSTATE_PLAYING) {
-            written = mProcessor->Write((uint8_t*)sData + offset, size - offset);
+            written = mProcessor->Write((uint8_t*)sData + offset, size_t(size - offset));
         }
 
         if ( !mPlayer->isReading() && mProcessor->isReady() ) {
