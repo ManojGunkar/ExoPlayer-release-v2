@@ -103,8 +103,8 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 holder.name.setText(item.getItemTitle());
                 holder.artistName.setText(item.getItemArtist());
 
-                if (null != App.getPlayerEventHandler().getPlayingItem() &&
-                        item.getItemId() == App.getPlayerEventHandler().getPlayingItem().getItemId()) {
+                if (null != App.getPlayerEventHandler().getPlayingItem() && position == App.getPlayingQueueHandler().getUpNextList().getPlayingItemIndex()
+                       && item.getItemId() == App.getPlayerEventHandler().getPlayingItem().getItemId()) {
                     playingItemPosition = position;
                     holder.art_overlay.setVisibility(View.VISIBLE);
                     holder.art_overlay_play.setVisibility(View.VISIBLE);
