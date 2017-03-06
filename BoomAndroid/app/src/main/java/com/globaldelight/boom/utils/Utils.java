@@ -49,8 +49,10 @@ import com.globaldelight.boom.business.client.BusinessHandler;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.task.PlayerEvents;
+import com.globaldelight.boom.ui.musiclist.activity.ActivityContainer;
 import com.globaldelight.boom.ui.musiclist.adapter.utils.AddToPlaylistAdapter;
 import com.globaldelight.boom.ui.widgets.BoomDialogView;
+import com.globaldelight.boom.utils.handlers.Preferences;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -59,6 +61,7 @@ import java.util.Date;
 import static android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED_DATE;
+import static com.globaldelight.boom.business.BusinessPreferences.ACTION_EMAIL_DIALOG_SHOWN;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
@@ -396,10 +399,12 @@ public class Utils {
         return "Defeult";
     }
 
+
+
     public static void SharePopup(final Context context) {
         if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED_DIALOG_SHOWN, false) &&
-                BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false) &&
-                BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED, false)) {
+                !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false) &&
+                !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED, false)) {
             new MaterialDialog.Builder(context)
                     .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
                     .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
@@ -427,15 +432,20 @@ public class Utils {
     }
 
     public static void EmailPopup(final Context context) {
-        if(isBusinessModelEnable() && BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+        if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)
+                && !Preferences.readBoolean(context, ACTION_EMAIL_DIALOG_SHOWN, false)) {
+            Preferences.writeBoolean(context, ACTION_EMAIL_DIALOG_SHOWN, true);
             new MaterialDialog.Builder(context)
                     .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
+                    .title(R.string.sub_email_header)
+                    .titleColor(ContextCompat.getColor(context, R.color.dialog_title))
+                    .icon(context.getDrawable(R.drawable.ic_icon_for_popup))
                     .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
                     .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
                     .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
                     .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
                     .positiveText(R.string.submit)
-                    .customView(R.layout.subsribe_email, false)
+                    .autoDismiss(false)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -458,7 +468,7 @@ public class Utils {
 
     public static void ExpirePopup(final Context context) {
         if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_EXPIRE_DIALOG_SHOWN, false) &&
-                BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
+                !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
             new MaterialDialog.Builder(context)
                     .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
                     .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
@@ -486,14 +496,13 @@ public class Utils {
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            if (ConnectivityReceiver.isNetworkAvailable(context, true)) {
-                                final String appPackageName = context.getPackageName(); // package name of the app
-                                try {
-                                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                                } catch (android.content.ActivityNotFoundException anfe) {
-                                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                            jumpToStore(context);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    EmailPopup(context);
                                 }
-                            }
+                            }, 5000);
                         }
                     })
                     .show();
@@ -502,7 +511,7 @@ public class Utils {
     }
 
     public static void InternetPopup(final Context activity){
-        if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, false) && isMoreThan24Hour() && !ConnectivityReceiver.isNetworkAvailable(activity, false) && BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
+        if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, false) && isMoreThan24Hour() && !ConnectivityReceiver.isNetworkAvailable(activity, false) && !BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
             new MaterialDialog.Builder(activity)
                     .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
                     .positiveColor(ContextCompat.getColor(activity, R.color.dialog_submit_positive))
@@ -518,9 +527,23 @@ public class Utils {
                             activity.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
                         }
                     })
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            jumpToStore(activity);
+                        }
+                    })
                     .show();
             BusinessPreferences.writeBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, true);
         }
+    }
+
+
+
+    private static void jumpToStore(Context activity) {
+        Intent intent = new Intent(activity, ActivityContainer.class);
+        intent.putExtra("container", R.string.store_title);
+        activity.getApplicationContext().startActivity(intent);
     }
 
     public static boolean isBusinessModelEnable(){
