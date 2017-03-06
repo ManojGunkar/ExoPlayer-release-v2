@@ -26,7 +26,7 @@ import android.widget.ProgressBar;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.handler.PlayingQueue.UpNextList;
+import com.globaldelight.boom.handler.UpNextPlayingQueue;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.adapter.UpNextListAdapter;
 import com.globaldelight.boom.utils.OnStartDragListener;
@@ -99,7 +99,7 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
         checkPermissions();
     }
 
-    private class LoadPlayingQueueList extends AsyncTask<Void, Integer, UpNextList> {
+    private class LoadPlayingQueueList extends AsyncTask<Object, Object, UpNextPlayingQueue> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -108,12 +108,12 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
         }
 
         @Override
-        protected UpNextList doInBackground(Void... params) {
+        protected UpNextPlayingQueue doInBackground(Object... params) {
             return App.getPlayingQueueHandler().getUpNextList();
         }
 
         @Override
-        protected void onPostExecute(UpNextList upNextList) {
+        protected void onPostExecute(UpNextPlayingQueue upNextList) {
             super.onPostExecute(upNextList);
             GridLayoutManager gridLayoutManager =
                     new GridLayoutManager(mActivity, 1);
@@ -121,9 +121,9 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
             rootView.setLayoutManager(gridLayoutManager);
             rootView.addItemDecoration(new SimpleDividerItemDecoration(mActivity, Utils.getWindowWidth(mActivity)));
             rootView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(mActivity, 0)));
-            upNextListAdapter = new UpNextListAdapter(mActivity, upNextList, UpNextListFragment.this, rootView);
+            upNextListAdapter = new UpNextListAdapter(mActivity, UpNextListFragment.this, rootView);
             rootView.setAdapter(upNextListAdapter);
-            gridLayoutManager.scrollToPosition(upNextListAdapter.getPlayingHeaderPosition());
+            gridLayoutManager.scrollToPosition(App.getPlayingQueueHandler().getUpNextList().getPlayingItemIndex());
             rootView.setHasFixedSize(true);
             setUpItemTouchHelper();
             rootView.setVisibility(View.VISIBLE);
@@ -177,21 +177,18 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
             // not important, we don't want drag & drop
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-
-                UpNextListAdapter.ListPosition start = upNextListAdapter.getPositionObject(viewHolder.getAdapterPosition());
-
-                UpNextListAdapter.ListPosition to = upNextListAdapter.getPositionObject(target.getAdapterPosition());
-
-                if (to.getListType() == start.getListType()) {
-                    if (to.getListType() == UpNextListAdapter.ITEM_VIEW_TYPE_LIST_MANUAL || to.getListType() == UpNextListAdapter.ITEM_VIEW_TYPE_LIST_AUTO) {
-                        if(to.getListType() == UpNextListAdapter.ITEM_VIEW_TYPE_LIST_MANUAL )
-                            Collections.swap(App.getPlayingQueueHandler().getUpNextList().getManualUpNextList(), start.getItemPosition(), to.getItemPosition());
-                        else
-                            Collections.swap(App.getPlayingQueueHandler().getUpNextList().getAutoUpNextList(), start.getItemPosition(), to.getItemPosition());
-                        upNextListAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                        upNextListAdapter.notifyItemChanged(target.getAdapterPosition());
-                        upNextListAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                if(App.getPlayingQueueHandler().getUpNextList().getUpNextItemCount() > 0) {
+                    int start = viewHolder.getAdapterPosition();
+                    int to = target.getAdapterPosition();
+                    if (start == App.getPlayingQueueHandler().getUpNextList().getPlayingItemIndex()) {
+                        App.getPlayingQueueHandler().getUpNextList().setPlayingItemIndex(to);
+                    } else if (to == App.getPlayingQueueHandler().getUpNextList().getPlayingItemIndex()) {
+                        App.getPlayingQueueHandler().getUpNextList().setPlayingItemIndex(start);
                     }
+                    Collections.swap(App.getPlayingQueueHandler().getUpNextList().getUpNextItemList(), start, to);
+                    upNextListAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                    upNextListAdapter.notifyItemChanged(target.getAdapterPosition());
+                    upNextListAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
                 }
                 return true;
             }
@@ -200,8 +197,8 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 int position = viewHolder.getAdapterPosition();
 
-                UpNextListAdapter testAdapter = (UpNextListAdapter) recyclerView.getAdapter();
-                if (!testAdapter.isSwipeDeleteAllowed(position)) {
+                UpNextListAdapter adapter = (UpNextListAdapter) recyclerView.getAdapter();
+                if (!adapter.isSwipeDeleteAllowed(position)) {
                     return 0;
                 }
 

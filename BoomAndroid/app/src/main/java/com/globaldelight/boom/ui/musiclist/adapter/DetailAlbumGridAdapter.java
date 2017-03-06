@@ -15,6 +15,8 @@ import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import com.globaldelight.boom.Media.MediaController;
+import com.globaldelight.boom.data.MediaCollection.IMediaItem;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumDetailActivity;
 import com.globaldelight.boom.ui.musiclist.activity.AlbumSongListActivity;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
@@ -254,8 +256,11 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                             ((IMediaItemCollection) collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(activity).getGenreTrackList(collection));
                         }
                         switch (menuItem.getItemId()) {
+                            case R.id.album_header_add_play_next:
+                                App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement());
+                                break;
                             case R.id.album_header_add_to_upnext:
-                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(0));
+                                App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement());
                                 break;
                             case R.id.album_header_add_to_playlist:
                                 Utils util = new Utils(activity);
@@ -264,7 +269,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                             case R.id.album_header_shuffle:
                                 if (App.getPlayingQueueHandler().getUpNextList() != null) {
                                     activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
-                                    App.getPlayingQueueHandler().getUpNextList().addCollectionTrackToPlay(collection, 0, true);
+                                    App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), 0);
                                 }
                                 break;
                         }
@@ -323,8 +328,11 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                             }
                         }
                         switch (item.getItemId()) {
+                            case R.id.popup_album_play_next :
+                                App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(((IMediaItemCollection) collection.getMediaElement().get(position)).getMediaElement());
+                                break;
                             case R.id.popup_album_add_queue :
-                                App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext(collection.getMediaElement().get(position));
+                                App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection) collection.getMediaElement().get(position)).getMediaElement());
                                 break;
                             case R.id.popup_album_add_playlist:
                                 Utils util = new Utils(activity);

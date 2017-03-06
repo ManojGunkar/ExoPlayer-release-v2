@@ -108,7 +108,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
     }
 
     private void updatePlayingTrack(SimpleItemViewHolder holder, long itemId){
-        IMediaItem nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        IMediaItemBase nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
         if(null != nowPlayingItem) {
             boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
             if ((isMediaItem && itemId == nowPlayingItem.getItemId())
@@ -151,7 +151,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
             public void onClick(View view) {
                 animate(holder);
                 if (!App.getPlayerEventHandler().isTrackLoading()) {
-                    App.getPlayingQueueHandler().getUpNextList().addTrackListToPlay((ArrayList<IMediaItem>) itemList, position, false);
+                    App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(itemList, position);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -172,8 +172,11 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                         public boolean onMenuItemClick(MenuItem item) {
                             try {
                                 switch (item.getItemId()) {
+                                    case R.id.popup_song_play_next:
+                                        App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(itemList.get(position));
+                                        break;
                                     case R.id.popup_song_add_queue:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemListToUpNext((IMediaItem) itemList.get(position));
+                                        App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemList.get(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
                                         Utils util = new Utils(activity);

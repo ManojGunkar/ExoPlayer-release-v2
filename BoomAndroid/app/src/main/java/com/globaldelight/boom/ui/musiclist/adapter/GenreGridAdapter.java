@@ -135,8 +135,11 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
                                         setMediaElement(MediaController.getInstance(activity).getGenreTrackList(itemList.get(position)));
 
                             switch (item.getItemId()) {
+                                case R.id.popup_album_play_next:
+                                    App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).getMediaElement());
+                                    break;
                                 case R.id.popup_album_add_queue:
-                                    App.getPlayingQueueHandler().getUpNextList().addCollectionToUpNext(context, itemList.get(position));
+                                    App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).getMediaElement());
                                     break;
                                 case R.id.popup_album_add_playlist:
                                     Utils util = new Utils(context);

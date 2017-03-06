@@ -97,7 +97,7 @@ public class AlbumDetailItemFragment extends Fragment {
         }else if(collection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().size() == 0) {
             ((IMediaItemCollection) collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(mActivity).getGenreTrackList(collection));
         }
-        App.getPlayingQueueHandler().getUpNextList().addCollectionTrackToPlay(collection, 0, true);
+        App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), 0);
         detailAlbumGridAdapter.notifyDataSetChanged();
     }
 

@@ -10,9 +10,7 @@
     <string name="new_playlist">New Playlist</string>
 
     <string name="recently_played">Recently Played</string>
-    <string name="now_playing">Now Playing</string>
-    <string name="up_next_auto">Next From</string>
-    <string name="up_next_manual">Up Next</string>
+    <string name="up_next">Up Next</string>
 
     <string name="added_to_playlist">Added to Playlist</string>
     <string name="rename">Rename</string>

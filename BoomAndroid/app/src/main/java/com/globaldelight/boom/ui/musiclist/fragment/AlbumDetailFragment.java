@@ -107,11 +107,11 @@ public class AlbumDetailFragment extends Fragment {
 
     public void onFloatPlayAlbums() {
         if (dataCollection.getParentType() == ItemType.ALBUM && dataCollection.getMediaElement().size() > 0) {
-            App.getPlayingQueueHandler().getUpNextList().addTrackCollectionToPlay(dataCollection, 0, true);
+            App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(dataCollection.getMediaElement(), 0);
         } else if (dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() > 0) {
-            App.getPlayingQueueHandler().getUpNextList().addCollectionItemTrackToPlay(dataCollection, 0, true);
+            App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement(), 0);
         } else if (dataCollection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() > 0) {
-            App.getPlayingQueueHandler().getUpNextList().addCollectionItemTrackToPlay(dataCollection, 0, true);
+            App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement(), 0);
         }
         albumDetailAdapter.notifyDataSetChanged();
     }

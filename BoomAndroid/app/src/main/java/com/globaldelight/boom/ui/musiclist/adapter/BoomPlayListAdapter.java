@@ -220,8 +220,11 @@ public class BoomPlayListAdapter extends RecyclerView.Adapter<BoomPlayListAdapte
                                 ((IMediaItemCollection)itemList.get(position)).setMediaElement(MediaController.getInstance(activity).getBoomPlayListTrackList(itemList.get(position).getItemId()));
 
                             switch (menuItem.getItemId()) {
+                                case R.id.popup_play_next:
+                                    App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(((IMediaItemCollection)itemList.get(position)).getMediaElement());
+                                    break;
                                 case R.id.popup_add_queue:
-                                    App.getPlayingQueueHandler().getUpNextList().addCollectionToUpNext(activity, (IMediaItemCollection) itemList.get(position));
+                                    App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection)itemList.get(position)).getMediaElement());
                                     break;
                                 case R.id.popup_playlist_rename:
                                     renameDialog(position, itemList.get(position).getItemTitle());

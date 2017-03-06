@@ -4,7 +4,6 @@
         android:id="@+id/popup_album_play_next"
         android:icon="@drawable/ic_menu_selected"
         android:title="@string/menu_play_next"
-        android:visible="false"
         android:showAsAction="ifRoom" />
     <item
         android:id="@+id/popup_album_add_queue"

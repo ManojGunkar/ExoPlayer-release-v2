@@ -32,6 +32,8 @@ public class Preferences {
     public static final String GOOGLE_DRIVE_ACCOUNT_CHANGED = "GOOGLE_DRIVE_ACCOUNT_CHANGED";
     public static final String INAPP_PURCHASE_PRICE_VALUE = "INAPP_PURCHASE_PRICE_VALUE";
 
+    public static final String PLAYING_ITEM_INDEX_IN_UPNEXT= "PLAYING_ITEM_INDEX_IN_UPNEXT";
+
     public static void writeBoolean(Context context, String key, boolean value) {
         getEditor(context).putBoolean(key, value).commit();
     }
@@ -56,6 +58,14 @@ public class Preferences {
 
     public static long readLong(Context context, String key, long defValue) {
         return getPreferences(context).getLong(key, defValue);
+    }
+
+    public static void writeInteger(Context context, String key, int value) {
+        getEditor(context).putInt(key, value).commit();
+    }
+
+    public static int readInteger(Context context, String key, int defValue) {
+        return getPreferences(context).getInt(key, defValue);
     }
 
     public static SharedPreferences getPreferences(Context context) {
