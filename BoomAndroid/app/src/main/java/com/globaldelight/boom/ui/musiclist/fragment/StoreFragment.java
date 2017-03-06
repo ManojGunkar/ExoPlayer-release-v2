@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -46,12 +47,11 @@ import static com.globaldelight.boom.utils.handlers.Preferences.INAPP_PURCHASE_P
  * Created by Rahul Agarwal on 08-02-17.
  */
 
-public class StoreFragment extends Fragment implements View.OnClickListener, IabBroadcastReceiver.IabBroadcastListener {
+public class StoreFragment extends Fragment implements View.OnClickListener {
 
     private static final int SHARE_COMPLETE = 1;
     ScrollView rootView;
     private static final String TAG = "In-App-Handler";
-    IabBroadcastReceiver mBroadcastReceiver;
     private IabHelper mHelper;
     private Context mContext;
     private Activity mActivity;
@@ -59,8 +59,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener, Iab
     boolean mIsPremium = false;
     private String boomPriceSh;
     private String boomPrice;
+    private boolean intiStoreStartup;
     private ProgressBar progressBar;
-
+    //    ConnectivityReceiver.isNetworkAvailable(mActivity, true)
     private BroadcastReceiver mUpdateInAppItemReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -85,11 +86,17 @@ public class StoreFragment extends Fragment implements View.OnClickListener, Iab
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.mContext=context;
+        this.mContext = context;
     }
 
     private void initViews() {
         progressBar.setVisibility(View.VISIBLE);
+
+        if (!ConnectivityReceiver.isNetworkAvailable(mContext, false)) {
+            updateStoreUiAfterStartup();
+        }
+        intiStoreStartup();
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_IN_APP_PURCHASE_SUCCESSFUL);
         boomPriceSh = Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null);
@@ -98,15 +105,25 @@ public class StoreFragment extends Fragment implements View.OnClickListener, Iab
         mStoreShareTxt.setOnClickListener(this);
         RegularButton mStoreBuyBtn = (RegularButton) rootView.findViewById(R.id.store_buyButton);
         mStoreBuyBtn.setOnClickListener(this);
-        mHelper = new IabHelper(mContext, BusinessUtils.base64EncodedPublicKey);
-        mHelper.enableDebugLogging(true);
+        progressBar.setVisibility(View.GONE);
+        updateShareContent();
+    }
 
-        if(null != Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null)){
-            updateStoreUI(true, Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null));
-        }else{
+    private void updateStoreUiAfterStartup() {
+        if (null != Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null)) {
+            if (!BusinessPreferences.readBoolean(mContext, ACTION_IN_APP_PURCHASE, false)) {
+                updateStoreUI(false, Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null));
+            } else {
+                updateStoreUI(true, Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null));
+            }
+        } else {
             updateStoreUI(false, null);
         }
+    }
 
+    private void intiStoreStartup() {
+        mHelper = new IabHelper(mContext, BusinessUtils.base64EncodedPublicKey);
+        mHelper.enableDebugLogging(true);
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
                 if (!result.isSuccess()) {
@@ -118,26 +135,20 @@ public class StoreFragment extends Fragment implements View.OnClickListener, Iab
                 if (mHelper == null) return;
                 // Hooray, IAB is fully set up. Now, let's get an inventory of
                 // stuff we own.
-                mBroadcastReceiver = new IabBroadcastReceiver(StoreFragment.this);
-                IntentFilter broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
-                mContext.registerReceiver(mBroadcastReceiver, broadcastFilter);
                 ArrayList<String> skuList = new ArrayList<String>();
                 skuList.add(SKU_INAPPITEM);
                 try {
                     mHelper.queryInventoryAsync(true, skuList, null, mGotInventoryListener);
-//                    mHelper.queryInventoryAsync(mGotInventoryListener);
                 } catch (IabHelper.IabAsyncInProgressException e) {
                     e.printStackTrace();
                 }
             }
         });
-        progressBar.setVisibility(View.GONE);
-        updateShareContent();
     }
 
 
     private void updateStoreUI(boolean purchased, String price) {
-        if (BusinessPreferences.readBoolean(mActivity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)&& purchased) {
+        if (BusinessPreferences.readBoolean(mActivity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false) && purchased) {
             ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.after_purchase_store_page_header));
             ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.after_purchase_store_page_buy_description));
             ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.after_purchase_buy_button));
@@ -146,8 +157,8 @@ public class StoreFragment extends Fragment implements View.OnClickListener, Iab
         } else {
             ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.store_page_header));
             ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.store_page_buy_description));
-            if(null != price)
-                ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.store_page_buy_now)+" @ " + price);
+            if (null != price)
+                ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.store_page_buy_now) + " @ " + price);
             else
                 ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.store_page_buy_now));
         }
@@ -165,6 +176,11 @@ public class StoreFragment extends Fragment implements View.OnClickListener, Iab
                     break;
                 case R.id.store_buyButton:
                     if (mIsPremium == false) {
+                        try {
+                            Log.d("installdate",String.valueOf(mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).firstInstallTime));
+                        } catch (PackageManager.NameNotFoundException e) {
+                            e.printStackTrace();
+                        }
                         startPurchaseRestore();
                     }
                     break;
@@ -221,9 +237,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener, Iab
     @Override
     public void onDestroy() {
         mActivity.unregisterReceiver(mUpdateInAppItemReceiver);
-        if (mBroadcastReceiver != null) {
-            mActivity.unregisterReceiver(mBroadcastReceiver);
-        }
         super.onDestroy();
     }
 
@@ -238,12 +251,12 @@ public class StoreFragment extends Fragment implements View.OnClickListener, Iab
     }
 
     public void onSuccessAppPurchase() {
-        updateStoreUI(true,boomPriceSh);
+        updateStoreUI(mIsPremium, boomPriceSh);
         Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_success), Toast.LENGTH_SHORT).show();
     }
 
     public void onSuccessRestoreAppPurchase() {
-        updateStoreUI(true,boomPriceSh);
+//        updateStoreUI(true, boomPriceSh);
         Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_restore), Toast.LENGTH_SHORT).show();
     }
 
@@ -272,18 +285,21 @@ public class StoreFragment extends Fragment implements View.OnClickListener, Iab
                 return;
             }
             Purchase premiumPurchase = inventory.getPurchase(SKU_INAPPITEM);
-            if (null != inventory) {
+
 //                if (inventory.getAllOwnedSkus().size() != 0) {
-                mIsPremium = inventory.hasPurchase(SKU_INAPPITEM);
+            mIsPremium = inventory.hasPurchase(SKU_INAPPITEM);
+            if (inventory.hasDetails(SKU_INAPPITEM)) {
                 boomPrice =
                         inventory.getSkuDetails(SKU_INAPPITEM).getPrice();
+                if (null != boomPrice) {
+                    Preferences.writeString(mActivity, INAPP_PURCHASE_PRICE_VALUE, boomPrice);
+                }
+            }
+
+            if (mIsPremium) {
                 BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
-                updateStoreUI(mIsPremium,boomPrice);
-//                }
             }
-            if (null != boomPrice) {
-                Preferences.writeString(mActivity, INAPP_PURCHASE_PRICE_VALUE, boomPrice);
-            }
+
 //            if (mIsPremium) {
 //                updateStoreUI(boomPrice);
 //            }
@@ -296,8 +312,10 @@ public class StoreFragment extends Fragment implements View.OnClickListener, Iab
 //                    e.printStackTrace();
 //                }
                 mIsPremium = true;
-                return;
+
             }
+            updateStoreUiAfterStartup();
+            return;
         }
     };
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
@@ -333,6 +351,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener, Iab
                 BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
                 onSuccessAppPurchase();
             }
+
         }
     };
 
@@ -369,17 +388,8 @@ public class StoreFragment extends Fragment implements View.OnClickListener, Iab
         return true;
     }
 
-    @Override
-    public void receivedBroadcast() {
-        Log.d(TAG, "Received broadcast notification. Querying inventory.");
-        try {
-            mHelper.queryInventoryAsync(mGotInventoryListener);
-        } catch (IabHelper.IabAsyncInProgressException e) {
-//            complain("Error querying inventory. Another async operation in progress.");
-        }
-    }
-
     public IabHelper getPurchaseHelper() {
         return mHelper;
     }
 }
+

@@ -450,6 +450,7 @@ public class MainActivity extends MasterActivity
         // Handle navigation view item clicks here.
         mFloatAddPlayList.setVisibility(View.GONE);
         runnable = null;
+        setEmptyPlaceHolder(null, null, false);
             switch (item.getItemId()){
                 case R.id.music_library:
                     runnable = navigateLibrary;

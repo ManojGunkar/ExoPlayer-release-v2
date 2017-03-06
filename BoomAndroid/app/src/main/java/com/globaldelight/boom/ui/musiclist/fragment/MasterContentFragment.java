@@ -269,6 +269,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     public void onResume() {
         super.onResume();
         updateProgressLoader();
+        Utils.InternetPopup(mActivity);
     }
 
     private void setPlayerEnable(boolean isEnable){
