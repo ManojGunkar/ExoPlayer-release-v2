@@ -85,6 +85,15 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
         initViews();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(null != adapter )
+            listIsEmpty(adapter.getItemCount());
+        else
+            listIsEmpty(0);
+    }
+
     private void initViews() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);

@@ -510,7 +510,7 @@ public class Utils {
         }
     }
 
-    public static void InternetPopup(final Context activity){
+    public static void InternetPopup(final Activity activity){
         if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, false) && isMoreThan24Hour() && !ConnectivityReceiver.isNetworkAvailable(activity, false) && !BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
             new MaterialDialog.Builder(activity)
                     .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
@@ -538,12 +538,11 @@ public class Utils {
         }
     }
 
-
-
     private static void jumpToStore(Context activity) {
         Intent intent = new Intent(activity, ActivityContainer.class);
         intent.putExtra("container", R.string.store_title);
-        activity.getApplicationContext().startActivity(intent);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
     }
 
     public static boolean isBusinessModelEnable(){

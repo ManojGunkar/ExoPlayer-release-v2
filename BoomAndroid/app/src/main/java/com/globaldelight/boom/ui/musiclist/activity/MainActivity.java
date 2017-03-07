@@ -1,6 +1,7 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
 import android.Manifest;
+import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -27,6 +28,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.globaldelight.boom.business.BusinessUtils;
@@ -121,7 +123,7 @@ public class MainActivity extends MasterActivity
             navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
             mLibraryFragment = new LibraryFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.fragment_container, mLibraryFragment).commitAllowingStateLoss();
+            transaction.replace(R.id.fragment_container, mLibraryFragment).commitAllowingStateLoss();
         }
     };
 
@@ -134,7 +136,7 @@ public class MainActivity extends MasterActivity
             navigationView.getMenu().findItem(R.id.drop_box).setChecked(true);
             Fragment fragment = new DropBoxListFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+            transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
         }
     };
 
@@ -147,7 +149,7 @@ public class MainActivity extends MasterActivity
             navigationView.getMenu().findItem(R.id.google_drive).setChecked(true);
             Fragment fragment = new GoogleDriveListFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+            transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
         }
     };
 
@@ -160,7 +162,7 @@ public class MainActivity extends MasterActivity
             navigationView.getMenu().findItem(R.id.boom_palylist).setChecked(true);
             Fragment fragment = new BoomPlaylistFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+            transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
         }
     };
 
@@ -173,7 +175,7 @@ public class MainActivity extends MasterActivity
             navigationView.getMenu().findItem(R.id.favourite_list).setChecked(true);
             Fragment fragment = new FavouriteListFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+            transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
         }
     };
 
@@ -453,18 +455,23 @@ public class MainActivity extends MasterActivity
         setEmptyPlaceHolder(null, null, false);
             switch (item.getItemId()){
                 case R.id.music_library:
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     runnable = navigateLibrary;
                     break;
                 case R.id.boom_palylist:
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     runnable = navigateBoomPlaylist;
                     break;
                 case R.id.favourite_list:
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     runnable = navigateFavorite;
                     break;
                 case R.id.google_drive:
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     runnable = navigateGoogleDrive;
                     break;
                 case R.id.drop_box:
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     runnable = navigateDropbox;
                     break;
                 case R.id.nav_setting:
@@ -484,12 +491,7 @@ public class MainActivity extends MasterActivity
         if (runnable != null) {
             item.setChecked(true);
             Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    runnable.run();
-                }
-            }, 350);
+            handler.postDelayed(runnable, 100);
         }
         return true;
     }
