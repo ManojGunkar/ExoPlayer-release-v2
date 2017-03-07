@@ -57,7 +57,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     private Activity mActivity;
     public static final String ACTION_IN_APP_PURCHASE_SUCCESSFUL = "ACTION_INAPP_PURCHASE_SUCCESSFUL";
     boolean mIsPremium = false;
-    private String boomPriceSh;
     private String boomPrice;
     private boolean intiStoreStartup;
     private ProgressBar progressBar;
@@ -90,34 +89,37 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initViews() {
-        progressBar.setVisibility(View.VISIBLE);
-
-        if (!ConnectivityReceiver.isNetworkAvailable(mContext, false)) {
-            updateStoreUiAfterStartup();
-        }
-        intiStoreStartup();
-
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_IN_APP_PURCHASE_SUCCESSFUL);
-        boomPriceSh = Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null);
         mActivity.registerReceiver(mUpdateInAppItemReceiver, intentFilter);
+
         RegularTextView mStoreShareTxt = (RegularTextView) rootView.findViewById(R.id.store_share_text);
         mStoreShareTxt.setOnClickListener(this);
         RegularButton mStoreBuyBtn = (RegularButton) rootView.findViewById(R.id.store_buyButton);
         mStoreBuyBtn.setOnClickListener(this);
         progressBar.setVisibility(View.GONE);
         updateShareContent();
+
+        if (!BusinessPreferences.readBoolean(mContext, ACTION_IN_APP_PURCHASE, false)) {
+//            Not Purchased
+            if (ConnectivityReceiver.isNetworkAvailable(mContext, true)) {
+                intiStoreStartup();
+            }else{
+                normalStoreUI(Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null));
+            }
+        }else{
+//            Purchased
+            purchasedStoreUI();
+        }
     }
 
     private void updateStoreUiAfterStartup() {
-        if (null != Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null)) {
-            if (!BusinessPreferences.readBoolean(mContext, ACTION_IN_APP_PURCHASE, false)) {
-                updateStoreUI(false, Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null));
-            } else {
-                updateStoreUI(true, Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null));
-            }
-        } else {
-            updateStoreUI(false, null);
+        if (!BusinessPreferences.readBoolean(mContext, ACTION_IN_APP_PURCHASE, false)) {
+//            Not Purchased
+            normalStoreUI(Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null));
+        }else{
+//            Purchased
+            purchasedStoreUI();
         }
     }
 
@@ -146,22 +148,21 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    private void purchasedStoreUI(){
+        ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.after_purchase_store_page_header));
+        ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.after_purchase_store_page_buy_description));
+        ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.after_purchase_buy_button));
+        (rootView.findViewById(R.id.store_share_text)).setVisibility(View.GONE);
+        (rootView.findViewById(R.id.store_sub_discription)).setVisibility(View.GONE);
+    }
 
-    private void updateStoreUI(boolean purchased, String price) {
-        if (BusinessPreferences.readBoolean(mActivity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false) && purchased) {
-            ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.after_purchase_store_page_header));
-            ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.after_purchase_store_page_buy_description));
-            ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.after_purchase_buy_button));
-            (rootView.findViewById(R.id.store_share_text)).setVisibility(View.GONE);
-            (rootView.findViewById(R.id.store_sub_discription)).setVisibility(View.GONE);
-        } else {
-            ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.store_page_header));
-            ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.store_page_buy_description));
-            if (null != price)
-                ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.store_page_buy_now) + " @ " + price);
-            else
-                ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.store_page_buy_now));
-        }
+    private void normalStoreUI(String price){
+        ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.store_page_header));
+        ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.store_page_buy_description));
+        if (null != price)
+            ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.store_page_buy_now) + " @ " + price);
+        else
+            ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.store_page_buy_now));
     }
 
     @Override
@@ -251,7 +252,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
 
     public void onSuccessAppPurchase() {
-        updateStoreUI(mIsPremium, boomPriceSh);
+        purchasedStoreUI();
         Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_success), Toast.LENGTH_SHORT).show();
     }
 
@@ -286,7 +287,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
             }
             Purchase premiumPurchase = inventory.getPurchase(SKU_INAPPITEM);
 
-//                if (inventory.getAllOwnedSkus().size() != 0) {
             mIsPremium = inventory.hasPurchase(SKU_INAPPITEM);
             if (inventory.hasDetails(SKU_INAPPITEM)) {
                 boomPrice =
@@ -299,20 +299,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
             if (mIsPremium) {
                 BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
             }
-
-//            if (mIsPremium) {
-//                updateStoreUI(boomPrice);
-//            }
             if (premiumPurchase != null
                     && verifyDeveloperPayload(premiumPurchase)) {
-//                try {
-//                    mHelper.consumeAsync(inventory.getPurchase(SKU_INAPPITEM),
-//                            mConsumeFinishedListener);
-//                } catch (IabHelper.IabAsyncInProgressException e) {
-//                    e.printStackTrace();
-//                }
                 mIsPremium = true;
-
             }
             updateStoreUiAfterStartup();
             return;
@@ -342,12 +331,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
             if (purchase.getSku().equals(SKU_INAPPITEM)) {
                 mIsPremium = true;
-                // bought 1/4 tank of gas. So consume it.
-//                try {
-//                    mHelper.consumeAsync(purchase, mConsumeFinishedListener);
-//                } catch (IabHelper.IabAsyncInProgressException e) {
-//                    e.printStackTrace();
-//                }
                 BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
                 onSuccessAppPurchase();
             }

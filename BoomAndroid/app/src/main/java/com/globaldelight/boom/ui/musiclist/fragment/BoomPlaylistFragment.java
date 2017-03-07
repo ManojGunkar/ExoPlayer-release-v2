@@ -114,8 +114,10 @@ public class BoomPlaylistFragment extends Fragment {
     }
 
     public void updateBoomPlaylist() {
-        if(null != boomPlayListAdapter)
+        if(null != boomPlayListAdapter) {
             boomPlayListAdapter.updateNewList(MediaController.getInstance(mActivity).getBoomPlayList());
+            listIsEmpty(boomPlayListAdapter.getItemCount());
+        }
     }
 
     public class LoadBoomPlaylist  extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {

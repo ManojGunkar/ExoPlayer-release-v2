@@ -24,7 +24,7 @@
     <color name="music_tab_normal_color">@color/white</color>
     <color name="music_tab_indicator_color">@color/colorAccent</color>
 
-    <color name="noti_background">#0e0e0f</color>
+    <color name="noti_background">#1f1f20</color>
     <color name="noti_track_title">@color/white</color>
     <color name="noti_track_sub_title">#5d5d5e</color>
 
