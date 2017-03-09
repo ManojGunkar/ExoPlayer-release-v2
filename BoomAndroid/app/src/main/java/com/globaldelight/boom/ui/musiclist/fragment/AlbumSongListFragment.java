@@ -23,7 +23,9 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.Media.ItemType;
+import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.ListDetail;
+import com.globaldelight.boom.ui.musiclist.activity.AlbumSongListActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.ItemSongListAdapter;
 import com.globaldelight.boom.utils.OnStartDragListener;
 
@@ -31,6 +33,7 @@ import java.util.Collections;
 import static com.globaldelight.boom.Media.ItemType.BOOM_PLAYLIST;
 import static com.globaldelight.boom.Media.ItemType.PLAYLIST;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_BOOM_ITEM_LIST;
 
 /**
  * Created by Rahul Agarwal on 27-01-17.
@@ -60,6 +63,9 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
                     if(null != itemSongListAdapter)
                         itemSongListAdapter.notifyDataSetChanged();
                     break;
+                case ACTION_UPDATE_BOOM_ITEM_LIST:
+                    updateBoomPlayList();
+                    break;
             }
         }
     };
@@ -84,6 +90,10 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(ACTION_UPDATE_BOOM_ITEM_LIST);
+        mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
         collection = (MediaItemCollection) this.mActivity.getIntent().getParcelableExtra("mediaItemCollection");
         setDetail(collection);
         new LoadAlbumSongListItems().execute();
@@ -91,10 +101,6 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
     }
 
     private void setDetail(IMediaItemCollection collection) {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
-        mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
-
         StringBuilder itemCount = new StringBuilder();
         String title;
         int count;
@@ -151,6 +157,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
                 ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(mActivity).getGenreTrackList(collection));
             }
             setDetail(collection);
+            ((AlbumSongListActivity)mActivity).updateAlbumArt();
             return collection;
         }
 
@@ -158,9 +165,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         protected void onPostExecute(IMediaItemCollection iMediaItemCollection) {
             super.onPostExecute(iMediaItemCollection);
             LinearLayoutManager llm = new LinearLayoutManager(mActivity);
-
             rootView.setLayoutManager(llm);
-//                        rv.addItemDecoration(new SimpleDividerItemDecoration(SongsDetailListActivity.this, 0));
             rootView.setHasFixedSize(true);
             rootView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -197,13 +202,15 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
 
     public void updateBoomPlayList(){
         if (collection.getParentType() == ItemType.BOOM_PLAYLIST) {
-            int oldCount = collection.getMediaElement().size();
-            collection.getMediaElement().clear();
-            collection.setMediaElement(MediaController.getInstance(mActivity).getBoomPlayListTrackList(collection.getItemId()));
-            collection.setItemCount(collection.getMediaElement().size());
-            setDetail(collection);
-            itemSongListAdapter.updateNewList(collection, listDetail, oldCount);
-            itemSongListAdapter.notifyDataSetChanged();
+            collection = MediaController.getInstance(mActivity).getBoomPlayListItem(collection.getItemId());
+            if(null != collection) {
+                collection.setMediaElement(MediaController.getInstance(mActivity).getBoomPlayListTrackList(collection.getItemId()));
+                setDetail(collection);
+                itemSongListAdapter.updateNewList(collection, listDetail);
+                ((AlbumSongListActivity)mActivity).updateAlbumArt();
+            }else{
+                getActivity().finish();
+            }
         }
     }
 

@@ -25,12 +25,14 @@
             android:icon="@drawable/drawer_boom_playlist_selector"
             android:checked="false"
             android:checkable="true"
+            android:visible="false"
             android:title="@string/boom_playlist" />
         <item
             android:id="@+id/favourite_list"
             android:icon="@drawable/drawer_boom_fav_selector"
             android:checked="false"
             android:checkable="true"
+            android:visible="false"
             android:title="@string/favourite_list" />
     </group>
 

@@ -22,7 +22,11 @@ public interface IMediaController {
 
     ArrayList<? extends IMediaItemBase> getGenreList();
 
+    IMediaItemCollection getBoomPlayListItem(long itemId);
+
     ArrayList<? extends IMediaItemBase> getBoomPlayList();
+
+    int getFavouriteCount();
 
     ArrayList<? extends IMediaItemBase> getFavoriteList();
 
@@ -58,11 +62,11 @@ public interface IMediaController {
 
     void deleteBoomPlaylist(long itemId);
 
-    void renameBoomPlaylist(String playlistTitle, long itemId);
+    void renamePlaylist(String playlistTitle, long itemId);
 
     void addSongToBoomPlayList(long itemId, ArrayList<? extends IMediaItemBase> mediaElement, boolean isUpdate) ;
 
-    void removeSongToBoomPlayList(long itemId, int playlistId) ;
+    void removeSongToPlayList(long itemId, int playlistId) ;
 
     void removeCloudMediaItemList(MediaType mediaType) ;
 
@@ -81,6 +85,12 @@ public interface IMediaController {
     ArrayList<? extends IMediaItemBase> getGenreTrackList(long parentId, String parentTitle) ;
 
     ArrayList<? extends IMediaItemBase> getPlayListTrackList(long parentId, String parentTitle) ;
+
+    int getRecentPlayedItemCount();
+
+    ArrayList<? extends IMediaItemBase> getRecentPlayedList();
+
+    void setRecentPlayedItem(IMediaItemBase recentPlayedItem);
 }
 
 

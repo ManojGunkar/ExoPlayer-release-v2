@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
         android:id="@+id/popup_song_play_next"
         android:icon="@drawable/ic_menu_selected"
@@ -21,7 +20,10 @@
         android:icon="@drawable/ic_menu_selected"
         android:title="@string/menu_remove_boom_fav"
         android:showAsAction="ifRoom" />
+
     <item
-        android:id="@+id/boom_header_delete_songs"
-        android:title="@string/delete"/>
+        android:id="@+id/boom_item_delete"
+        android:icon="@drawable/ic_menu_selected"
+        android:title="@string/menu_remove_boom_item"
+        android:showAsAction="ifRoom" />
 </menu>

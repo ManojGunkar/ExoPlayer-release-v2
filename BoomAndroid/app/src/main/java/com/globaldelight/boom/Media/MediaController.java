@@ -1,11 +1,15 @@
 package com.globaldelight.boom.Media;
 
 import android.content.Context;
+import android.content.Intent;
+
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
+import com.globaldelight.boom.task.PlayerEvents;
+
 import java.util.ArrayList;
 
 /**
@@ -53,6 +57,11 @@ public class MediaController implements IMediaController {
     }
 
     @Override
+    public IMediaItemCollection getBoomPlayListItem(long itemId) {
+        return App.getBoomPlayListHelper().gePlaylist(itemId);
+    }
+
+    @Override
     public ArrayList<? extends IMediaItemBase> getBoomPlayListTrackList(long id) {
         return App.getBoomPlayListHelper().getPlaylistSongs(id);
     }
@@ -60,21 +69,27 @@ public class MediaController implements IMediaController {
     @Override
     public void addSongToBoomPlayList(long itemId, ArrayList<? extends IMediaItemBase> mediaElement, boolean isUpdate) {
         App.getBoomPlayListHelper().addSongs(mediaElement, itemId, isUpdate);
+        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
     @Override
-    public void removeSongToBoomPlayList(long itemId, int playlistId) {
+    public void removeSongToPlayList(long itemId, int playlistId) {
         App.getBoomPlayListHelper().removeSong(itemId, playlistId);
+        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_BOOM_ITEM_LIST));
+        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
     @Override
     public void deleteBoomPlaylist(long itemId) {
         App.getBoomPlayListHelper().deletePlaylist(itemId);
+        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
     @Override
-    public void renameBoomPlaylist(String playlistTitle, long itemId) {
+    public void renamePlaylist(String playlistTitle, long itemId) {
         App.getBoomPlayListHelper().renamePlaylist(playlistTitle, itemId);
+        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_BOOM_ITEM_LIST));
+        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
     @Override
@@ -98,8 +113,13 @@ public class MediaController implements IMediaController {
     }
 
     @Override
+    public int getFavouriteCount(){
+        return App.getFavoriteDBHelper().getFavouriteItemCount();
+    }
+
+    @Override
     public ArrayList<? extends IMediaItemBase> getFavoriteList() {
-        return App.getFavoriteDBHelper().getSongList();
+        return App.getFavoriteDBHelper().getFavouriteItemList();
     }
 
     @Override
@@ -150,11 +170,13 @@ public class MediaController implements IMediaController {
     @Override
     public void removeItemToFavoriteList(long trackId){
         App.getFavoriteDBHelper().removeSong(trackId);
+        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
     @Override
     public void addItemToFavoriteList(IMediaItem item){
         App.getFavoriteDBHelper().addSong(item);
+        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
     @Override
@@ -168,6 +190,10 @@ public class MediaController implements IMediaController {
                 return DeviceMediaQuery.getGenreArtList(context, collection.getItemId(), collection.getItemTitle());
             case BOOM_PLAYLIST:
                 return App.getBoomPlayListHelper().getBoomPlayListArtList(collection.getItemId());
+            case RECENT_PLAYED:
+                return App.getUPNEXTDBHelper().getRecentArtList();
+            case FAVOURITE:
+                return App.getFavoriteDBHelper().getFavouriteArtList();
             default:
                 break;
         }
@@ -209,11 +235,19 @@ public class MediaController implements IMediaController {
         return DeviceMediaQuery.getSongListOfGenre(context, parentId, parentTitle);
     }
 
-    public ArrayList<? extends IMediaItemBase> getRecentPlayedList() {
-        return App.getUPNEXTDBHelper().getSongsToRecent();
+    @Override
+    public int getRecentPlayedItemCount(){
+        return App.getUPNEXTDBHelper().getRecentPlayedCount();
     }
 
+    @Override
+    public ArrayList<? extends IMediaItemBase> getRecentPlayedList() {
+        return App.getUPNEXTDBHelper().getRecentPlayedItemList();
+    }
+
+    @Override
     public void setRecentPlayedItem(IMediaItemBase recentPlayedItem) {
-        App.getUPNEXTDBHelper().addSongsToRecent(recentPlayedItem);
+        App.getUPNEXTDBHelper().addItemsToRecentPlayedList(recentPlayedItem);
+        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 }

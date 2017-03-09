@@ -64,7 +64,7 @@
 
     <!-- Menu-->
     <string name="cant_play_song">Song can\'t be played...!</string>
-    <string name="favourite_list">Boom Favourites</string>
+    <string name="favourite_list">Favourites</string>
     <string name="song">Song</string>
 
 
@@ -106,7 +106,7 @@
     <string name="menu_add_boom_fav">Add Favourites</string>
     <string name="menu_remove_boom_fav">Remove Favourites</string>
     <string name="unknown_artist">Unknown Artist</string>
-
+    <string name="menu_remove_boom_item">Remove Song</string>
 
     <!-- Survey -->
     <string name="network_error">No network connection available.</string>

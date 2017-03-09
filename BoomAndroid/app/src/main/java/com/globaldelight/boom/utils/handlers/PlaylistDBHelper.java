@@ -15,6 +15,8 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.Media.MediaType;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
+
 import java.util.ArrayList;
 
 /**
@@ -112,11 +114,11 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         return playlist;
     }
 
-    public IMediaItemBase gePlaylist(long id) {
+    public IMediaItemCollection gePlaylist(long id) {
         String query = "SELECT  * FROM " + TABLE_PLAYLIST +" WHERE "+PLAYLIST_KEY_ID +"="+id;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
-        IMediaItemBase playlist = null;
+        IMediaItemCollection playlist = null;
         try {
             if (cursor.moveToFirst()) {
                     playlist = getPlaylistFromCursor(cursor);
@@ -283,7 +285,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<String> artList = new ArrayList<>();
-        String query = "SELECT  "+ALBUM_ART+" FROM " + TABLE_PLAYLIST_SONGS + " WHERE "
+        String query = "SELECT "+ALBUM_ART+" FROM " + TABLE_PLAYLIST_SONGS + " WHERE "
                 + SONG_KEY_PLAYLIST_ID + "='" + playlistId + "'";
         Cursor cursor = db.rawQuery(query, null);
 

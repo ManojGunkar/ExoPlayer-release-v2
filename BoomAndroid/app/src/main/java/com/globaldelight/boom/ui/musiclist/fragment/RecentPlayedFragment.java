@@ -18,11 +18,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.globaldelight.boom.R;
-import com.globaldelight.boom.data.MediaCallback.FavouriteMediaList;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.Media.ItemType;
-import com.globaldelight.boom.task.MediaLoader.LoadFavouriteList;
+import com.globaldelight.boom.R;
+import com.globaldelight.boom.data.MediaCallback.RecentPlayedMediaList;
+import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
+import com.globaldelight.boom.task.MediaLoader.LoadRecentPlayedList;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
 
 import java.util.ArrayList;
@@ -37,8 +37,8 @@ import static com.globaldelight.boom.task.PlayerEvents.REQUEST_PERMISSION_WRITE_
  * Created by Rahul Agarwal on 08-02-17.
  */
 
-public class FavouriteListFragment extends Fragment implements FavouriteMediaList.IFavouriteUpdater, EasyPermissions.PermissionCallbacks  {
-    private FavouriteMediaList favouriteMediaList;
+public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaList.IRecentPlayedUpdater, EasyPermissions.PermissionCallbacks  {
+    private RecentPlayedMediaList recentPlayedMediaList;
     private RecyclerView rootView;
     private CloudItemListAdapter adapter;
     Activity mActivity;
@@ -47,19 +47,8 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public FavouriteListFragment() {
+    public RecentPlayedFragment() {
     }
-
-    private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
-                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
-                    notifyAdapter(null);
-                    break;
-            }
-        }
-    };
 
     @Override
     public void onAttach(Context context) {
@@ -94,55 +83,51 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
     }
 
     private void initViews() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
-        mActivity.registerReceiver(mUpdateItemSongListReceiver, intentFilter);
-
-        favouriteMediaList = FavouriteMediaList.getFavouriteListInstance(mActivity);
-        favouriteMediaList.setFavouriteUpdater(this);
-        favouriteMediaList.clearFavouriteContent();
-        setSongListAdapter(favouriteMediaList.getFavouriteMediaList());
+        recentPlayedMediaList = RecentPlayedMediaList.getRecentPlayedListInstance(mActivity);
+        recentPlayedMediaList.setRecentPlayedUpdater(this);
+        recentPlayedMediaList.clearRecentPlayedContent();
+        setSongListAdapter(recentPlayedMediaList.getRecentPlayedMediaList());
 
         if(EasyPermissions.hasPermissions(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-            LoadFavouriteList();
+            LoadRecentPlayedList();
         }else {
             EasyPermissions.requestPermissions(
-                    FavouriteListFragment.this, getResources().getString(R.string.storage_permission),
+                    RecentPlayedFragment.this, getResources().getString(R.string.storage_permission),
                     REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
     }
 
-    private void setSongListAdapter(ArrayList<IMediaItemBase> favouriteMediaList) {
+    private void setSongListAdapter(ArrayList<IMediaItemBase> recentPlayedMediaList) {
         final GridLayoutManager gridLayoutManager =
                 new GridLayoutManager(mActivity, 1);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         gridLayoutManager.scrollToPosition(0);
         rootView.setLayoutManager(gridLayoutManager);
-        adapter = new CloudItemListAdapter(mActivity, FavouriteListFragment.this, favouriteMediaList, ItemType.FAVOURITE);
+        adapter = new CloudItemListAdapter(mActivity, RecentPlayedFragment.this, recentPlayedMediaList, ItemType.RECENT_PLAYED);
         rootView.setAdapter(adapter);
         rootView.setHasFixedSize(true);
-        listIsEmpty(favouriteMediaList.size());
+        listIsEmpty(recentPlayedMediaList.size());
     }
 
-    private void LoadFavouriteList(){
-        if (favouriteMediaList.getFavouriteMediaList().isEmpty()) {
-            new LoadFavouriteList(mActivity).execute();
+    private void LoadRecentPlayedList(){
+        if (recentPlayedMediaList.getRecentPlayedMediaList().isEmpty()) {
+            new LoadRecentPlayedList(mActivity).execute();
         } else {
-            notifyAdapter(favouriteMediaList.getFavouriteMediaList());
+            notifyAdapter(recentPlayedMediaList.getRecentPlayedMediaList());
         }
         setForAnimation();
     }
 
 
     @Override
-    public void onUpdateFavouriteList() {
-        notifyAdapter(favouriteMediaList.getFavouriteMediaList());
+    public void onUpdateRecentPlayedList() {
+        notifyAdapter(recentPlayedMediaList.getRecentPlayedMediaList());
     }
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
         if(requestCode == REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE) {
-            LoadFavouriteList();
+            LoadRecentPlayedList();
         }
         setForAnimation();
     }
@@ -155,7 +140,7 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, FavouriteListFragment.this);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, RecentPlayedFragment.this);
     }
 
     private void setForAnimation() {
@@ -185,7 +170,6 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
 
     @Override
     public void onDestroy() {
-        mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
         super.onDestroy();
     }
 }

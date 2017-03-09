@@ -12,7 +12,13 @@
     <item
         android:id="@+id/album_header_add_to_playlist"
         android:title="@string/menu_add_boom_playlist"/>
+
     <item
-        android:id="@+id/boom_header_add_songs"
-        android:title="@string/menu_add_songs"/>
+        android:id="@+id/popup_playlist_rename"
+        android:title="@string/rename"/>
+
+    <item
+        android:id="@+id/popup_playlist_delete"
+        android:visible="false"
+        android:title="@string/delete"/>
 </menu>

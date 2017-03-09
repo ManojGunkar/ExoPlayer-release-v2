@@ -42,28 +42,16 @@ import com.globaldelight.boom.ui.musiclist.fragment.DropBoxListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.FavouriteListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.LibraryFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
-import com.globaldelight.boom.ui.musiclist.fragment.BoomPlaylistFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.GoogleDriveListFragment;
-import com.globaldelight.boom.ui.widgets.CoachMarkerWindow;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.handlers.MusicSearchHelper;
-import com.globaldelight.boom.utils.handlers.Preferences;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_HEADSET_PLUGGED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
 import static com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment.isUpdateUpnextDB;
-import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_NORMAL_BOTTOM;
-import static com.globaldelight.boom.utils.handlers.Preferences.HEADPHONE_CONNECTED;
-import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_CHOOSE_HEADPHONE_LIBRARY;
-import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_OPEN_EFFECT_MINI_PLAYER;
-import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
-import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_USE_HEADPHONE_LIBRARY;
-import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_USE_24_HEADPHONE_LIBRARY;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -89,7 +77,6 @@ public class MainActivity extends MasterActivity
     Map<String, Runnable> navigationMap = new HashMap<String, Runnable>();
     Runnable runnable;
     String action;
-    private FloatingActionButton mFloatAddPlayList;
 
     private BroadcastReceiver headPhoneReceiver = new BroadcastReceiver() {
         @Override
@@ -148,32 +135,6 @@ public class MainActivity extends MasterActivity
             setVisibleCloudSync(true);
             navigationView.getMenu().findItem(R.id.google_drive).setChecked(true);
             Fragment fragment = new GoogleDriveListFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
-        }
-    };
-
-    Runnable navigateBoomPlaylist = new Runnable() {
-        public void run() {
-            isLibraryRendered = false;
-            setTitle(getResources().getString(R.string.boom_playlist));
-            setVisibleSearch(false);
-            setVisibleCloudSync(false);
-            navigationView.getMenu().findItem(R.id.boom_palylist).setChecked(true);
-            Fragment fragment = new BoomPlaylistFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
-        }
-    };
-
-    Runnable navigateFavorite = new Runnable() {
-        public void run() {
-            isLibraryRendered = false;
-            setTitle(getResources().getString(R.string.favourite_list));
-            setVisibleSearch(false);
-            setVisibleCloudSync(false);
-            navigationView.getMenu().findItem(R.id.favourite_list).setChecked(true);
-            Fragment fragment = new FavouriteListFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
         }
@@ -239,23 +200,12 @@ public class MainActivity extends MasterActivity
 
     private void initView() {
         navigationMap.put(PlayerEvents.NAVIGATE_LIBRARY, navigateLibrary);
-        navigationMap.put(PlayerEvents.NAVIGATE_BOOM_PLAYLIST, navigateBoomPlaylist);
-        navigationMap.put(PlayerEvents.NAVIGATE_FAVOURITE, navigateFavorite);
         navigationMap.put(PlayerEvents.NAVIGATE_GOOGLE_DRIVE, navigateGoogleDrive);
         navigationMap.put(PlayerEvents.NAVIGATE_DROPBOX, navigateDropbox);
 
         mainContainer = (CoordinatorLayout) findViewById(R.id.coordinate_main);
 
         musicSearchHelper = new MusicSearchHelper(MainActivity.this);
-
-        mFloatAddPlayList = (FloatingActionButton) findViewById(R.id.fab);
-        mFloatAddPlayList.setVisibility(View.GONE);
-        mFloatAddPlayList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendBroadcast(new Intent(PlayerEvents.ACTION_ADD_NEW_BOOM_PLAYLIST));
-            }
-        });
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -294,9 +244,6 @@ public class MainActivity extends MasterActivity
         sendBroadcast(new Intent(ACTION_HOME_SCREEN_BACK_PRESSED));
 
         ((LibraryFragment)mLibraryFragment).setAutoDismissBahaviour();
-
-        if (null != mFloatAddPlayList && mFloatAddPlayList.getVisibility() == View.VISIBLE)
-            mFloatAddPlayList.setVisibility(View.GONE);
 
         if (isPlayerExpended()) {
             sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
@@ -450,21 +397,12 @@ public class MainActivity extends MasterActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        mFloatAddPlayList.setVisibility(View.GONE);
         runnable = null;
         setEmptyPlaceHolder(null, null, false);
             switch (item.getItemId()){
                 case R.id.music_library:
                     getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     runnable = navigateLibrary;
-                    break;
-                case R.id.boom_palylist:
-                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    runnable = navigateBoomPlaylist;
-                    break;
-                case R.id.favourite_list:
-                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    runnable = navigateFavorite;
                     break;
                 case R.id.google_drive:
                     getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);

@@ -30,6 +30,7 @@ import com.globaldelight.boom.business.inapp.IabResult;
 import com.globaldelight.boom.business.inapp.Inventory;
 import com.globaldelight.boom.business.inapp.Purchase;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
+import com.globaldelight.boom.ui.musiclist.activity.ActivityContainer;
 import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
@@ -49,7 +50,6 @@ import static com.globaldelight.boom.utils.handlers.Preferences.INAPP_PURCHASE_P
 
 public class StoreFragment extends Fragment implements View.OnClickListener {
 
-    private static final int SHARE_COMPLETE = 1;
     ScrollView rootView;
     private static final String TAG = "In-App-Handler";
     private IabHelper mHelper;
@@ -195,7 +195,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 resultCode, data)) {
             super.onActivityResult(requestCode, resultCode, data);
         }
-        if (requestCode == SHARE_COMPLETE) {
+        if (requestCode == Utils.SHARE_COMPLETE) {
             updateShareContent();
         }
     }
@@ -224,7 +224,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         String payload = BusinessUtils.getDeviceID(mContext);
 //        String payload = "test1";
         try {
-            mHelper.launchPurchaseFlow(mActivity, SKU_INAPPITEM, 10000,
+            mHelper.launchPurchaseFlow(mActivity, SKU_INAPPITEM, Utils.PURCHASE_FLOW_LAUNCH,
                     mPurchaseFinishedListener, payload);
         } catch (IabHelper.IabAsyncInProgressException e) {
             e.printStackTrace();
