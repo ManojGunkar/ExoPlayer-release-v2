@@ -161,6 +161,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                         App.getUserPreferenceHandler().setGoogleAccountName(accountName);
                         googleDriveHandler.setSelectedGoogleAccountName(accountName);
                     }
+                    Preferences.writeBoolean(getContext(), Preferences.GOOGLE_DRIVE_ACCOUNT_CHANGED, true);
                 }
                 break;
             case GoogleDriveHandler.REQUEST_AUTHORIZATION:

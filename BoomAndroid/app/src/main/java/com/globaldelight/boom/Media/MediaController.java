@@ -49,6 +49,7 @@ public class MediaController implements IMediaController {
     @Override
     public void createBoomPlaylist(String playlist) {
         App.getBoomPlayListHelper().createPlaylist(playlist);
+        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
     @Override

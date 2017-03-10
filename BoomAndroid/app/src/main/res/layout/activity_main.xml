@@ -36,15 +36,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-       <FrameLayout
+        <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/app_background">
-
-           <include layout="@layout/layout_empty_placeholder"/>
-
-       </FrameLayout>
+            android:background="@color/app_background"/>
         <LinearLayout
             android:id="@+id/search_container"
             android:layout_width="match_parent"

@@ -103,9 +103,11 @@ public class ActivityContainer extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (null != mFragment && mFragment instanceof  StoreFragment && requestCode == Utils.PURCHASE_FLOW_LAUNCH &&
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Utils.PURCHASE_FLOW_LAUNCH && null != mFragment && mFragment instanceof  StoreFragment &&
                 !((StoreFragment) mFragment).getPurchaseHelper().handleActivityResult(requestCode, resultCode, data)) {
-            super.onActivityResult(requestCode, resultCode, data);
+        }else{
+            getSupportFragmentManager().findFragmentById(R.id.item_detail_container).onActivityResult(requestCode, resultCode, data);
         }
     }
 

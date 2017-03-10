@@ -243,7 +243,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
                                 break;
                             case ITEM_VIEW_TYPE_PLAYLIST:
                                 Intent listIntent = new Intent(activity, AlbumSongListActivity.class);
-                                listIntent.putExtra("mediaItemCollection", (MediaItemCollection)defaultPlayList.get(position));
+                                listIntent.putExtra("mediaItemCollection", (MediaItemCollection)defaultPlayList.get(getPosition(position)));
                                 activity.startActivity(listIntent);
                                 break;
                         }

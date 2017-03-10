@@ -261,7 +261,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
 
     @Override
     public int getItemCount() {
-        return itemList.size();
+        return null == itemList ? 0 : itemList.size();
     }
 
     @Override

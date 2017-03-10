@@ -1,7 +1,6 @@
 package com.globaldelight.boom.ui.musiclist.activity;
 
 import android.Manifest;
-import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,12 +8,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -28,21 +25,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.globaldelight.boom.business.BusinessUtils;
-import com.globaldelight.boom.manager.HeadPhonePlugReceiver;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.adapter.utils.SearchSuggestionAdapter;
-import com.globaldelight.boom.ui.musiclist.fragment.DropBoxListFragment;
-import com.globaldelight.boom.ui.musiclist.fragment.FavouriteListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.LibraryFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.SearchViewFragment;
-import com.globaldelight.boom.ui.musiclist.fragment.GoogleDriveListFragment;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
@@ -68,9 +59,8 @@ public class MainActivity extends MasterActivity
     private int fade_out = android.R.anim.fade_out;
     private boolean isLibraryRendered = false;
     private RegularTextView toolbarTitle;
-    private Toolbar toolbar;
     public SearchView searchView;
-    public MenuItem searchMenuItem, cloudSyncItem;
+    public MenuItem searchMenuItem;
     private MusicSearchHelper musicSearchHelper;
     private SearchSuggestionAdapter searchSuggestionAdapter;
     public static String[] columns = new String[]{"_id", "FEED_TITLE"};
@@ -89,14 +79,7 @@ public class MainActivity extends MasterActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.app_bar_main);
-        sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_CREATE_PLAYER_SCREEN));
-        setLibraryAddsUpdater(this);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbarTitle = (RegularTextView) findViewById(R.id.toolbar_txt);
-        setTitle(getResources().getString(R.string.music_library));
-        setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_main);
         initView();
         checkPermissions();
     }
@@ -104,9 +87,7 @@ public class MainActivity extends MasterActivity
     Runnable navigateLibrary = new Runnable() {
         public void run() {
             isLibraryRendered = true;
-            setVisibleSearch(true);
-            setVisibleCloudSync(false);
-            setTitle(getResources().getString(R.string.music_library));
+            toolbarTitle.setText(getResources().getString(R.string.music_library));
             navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
             mLibraryFragment = new LibraryFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -116,32 +97,28 @@ public class MainActivity extends MasterActivity
 
     Runnable navigateDropbox= new Runnable() {
         public void run() {
-            isLibraryRendered = false;
-            setTitle(getResources().getString(R.string.drop_box));
-            setVisibleSearch(false);
-            setVisibleCloudSync(true);
             navigationView.getMenu().findItem(R.id.drop_box).setChecked(true);
-            Fragment fragment = new DropBoxListFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+            Intent dropboxIntent = new Intent(MainActivity.this, CloudListActivity.class);
+            dropboxIntent.putExtra("title", getResources().getString(R.string.drop_box));
+            startActivity(dropboxIntent);
+            overridePendingTransition(fade_in, fade_out);
         }
     };
 
     Runnable navigateGoogleDrive = new Runnable() {
         public void run() {
-            isLibraryRendered = false;
-            setTitle(getResources().getString(R.string.google_drive));
-            setVisibleSearch(false);
-            setVisibleCloudSync(true);
             navigationView.getMenu().findItem(R.id.google_drive).setChecked(true);
-            Fragment fragment = new GoogleDriveListFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+            Intent driveIntent = new Intent(MainActivity.this, CloudListActivity.class);
+            driveIntent.putExtra("title", getResources().getString(R.string.google_drive));
+            startActivity(driveIntent);
+            overridePendingTransition(fade_in, fade_out);
         }
     };
 
     @Override
     protected void onResume() {
+        if(null != navigationView)
+            navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
         registerHeadSetReceiver();
         App.getPlayerEventHandler().isLibraryResumes = true;
         super.onResume();
@@ -199,6 +176,14 @@ public class MainActivity extends MasterActivity
     }
 
     private void initView() {
+        sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_CREATE_PLAYER_SCREEN));
+        setLibraryAddsUpdater(this);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbarTitle = (RegularTextView) findViewById(R.id.toolbar_txt);
+        setTitle(getResources().getString(R.string.music_library));
+        setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        setSupportActionBar(toolbar);
+
         navigationMap.put(PlayerEvents.NAVIGATE_LIBRARY, navigateLibrary);
         navigationMap.put(PlayerEvents.NAVIGATE_GOOGLE_DRIVE, navigateGoogleDrive);
         navigationMap.put(PlayerEvents.NAVIGATE_DROPBOX, navigateDropbox);
@@ -257,15 +242,10 @@ public class MainActivity extends MasterActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-
-        cloudSyncItem = menu.findItem(R.id.action_cloud_sync);
-        cloudSyncItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        getMenuInflater().inflate(R.menu.library_menu, menu);
         searchMenuItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
-        setVisibleSearch(true);
-        setVisibleCloudSync(false);
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
 
@@ -324,19 +304,10 @@ public class MainActivity extends MasterActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
             return true;
-        }else if(id == R.id.action_cloud_sync){
-            sendBroadcast(new Intent(PlayerEvents.ACTION_CLOUD_SYNC));
-            return true;
         }
-
         return false;
     }
 
@@ -396,28 +367,21 @@ public class MainActivity extends MasterActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         runnable = null;
-        setEmptyPlaceHolder(null, null, false);
             switch (item.getItemId()){
                 case R.id.music_library:
-                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     runnable = navigateLibrary;
                     break;
                 case R.id.google_drive:
-                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     runnable = navigateGoogleDrive;
                     break;
                 case R.id.drop_box:
-                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     runnable = navigateDropbox;
                     break;
                 case R.id.nav_setting:
-                    isLibraryRendered = false;
                     startCompoundActivities(R.string.title_settings);
                     break;
                 case R.id.nav_store:
-                    isLibraryRendered = false;
                     startCompoundActivities(R.string.store_title);
                     break;
                 case R.id.nav_share:
@@ -438,22 +402,7 @@ public class MainActivity extends MasterActivity
         Intent intent = new Intent(this, ActivityContainer.class);
         intent.putExtra("container",activityName);
         startActivity(intent);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-    }
-
-    private void setVisibleSearch(boolean enable){
-        if(null != searchMenuItem)
-            searchMenuItem.setVisible(enable);
-    }
-
-    private void setVisibleCloudSync(boolean enable){
-        if(null != cloudSyncItem)
-            cloudSyncItem.setVisible(enable);
-    }
-
-    public void setTitle(String title){
-        if(null != toolbarTitle)
-            toolbarTitle.setText(title);
+        overridePendingTransition(fade_in, fade_out);
     }
 
     public void setVisibleLibrary(boolean visible){
@@ -503,13 +452,5 @@ public class MainActivity extends MasterActivity
         if(null != mLibraryFragment){
             ((LibraryFragment)mLibraryFragment).updateAdds(addSources, isAddEnable, addContainer);
         }
-    }
-
-    public void setEmptyPlaceHolder(Drawable placeHolderImg, String placeHolderTxt, boolean enable) {
-        if(null != placeHolderTxt && null != placeHolderImg) {
-            ((ImageView) findViewById(R.id.list_empty_placeholder_icon)).setImageDrawable(placeHolderImg);
-            ((RegularTextView) findViewById(R.id.list_empty_placeholder_txt)).setText(placeHolderTxt);
-        }
-        findViewById(R.id.list_empty_placeholder).setVisibility(enable ? View.VISIBLE : View.GONE);
     }
 }

@@ -157,10 +157,4 @@ public class LibraryFragment extends Fragment {
             Preferences.writeBoolean(mActivity, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, false);
         }
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((MainActivity) mActivity).setEmptyPlaceHolder(null, null, false);
-    }
 }

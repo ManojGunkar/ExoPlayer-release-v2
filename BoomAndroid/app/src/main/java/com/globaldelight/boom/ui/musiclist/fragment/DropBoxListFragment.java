@@ -223,16 +223,16 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     public void listIsEmpty(int size) {
-        if(null != getActivity()) {
-            if (size < 1) {
-                Drawable imgResource = getResources().getDrawable(R.drawable.ic_cloud_placeholder, null);
-                String placeHolderTxt = getResources().getString(R.string.cloud_configure_placeholder_txt);
-                ((MainActivity) mActivity).setEmptyPlaceHolder(imgResource, placeHolderTxt, true);
-                rootView.setVisibility(View.GONE);
-            } else {
-                ((MainActivity) mActivity).setEmptyPlaceHolder(null, null, false);
-                rootView.setVisibility(View.VISIBLE);
-            }
-        }
+//        if(null != getActivity()) {
+//            if (size < 1) {
+//                Drawable imgResource = getResources().getDrawable(R.drawable.ic_cloud_placeholder, null);
+//                String placeHolderTxt = getResources().getString(R.string.cloud_configure_placeholder_txt);
+//                ((MainActivity) mActivity).setEmptyPlaceHolder(imgResource, placeHolderTxt, true);
+//                rootView.setVisibility(View.GONE);
+//            } else {
+//                ((MainActivity) mActivity).setEmptyPlaceHolder(null, null, false);
+//                rootView.setVisibility(View.VISIBLE);
+//            }
+//        }
     }
 }
