@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.session.TokenPair;
@@ -22,14 +25,18 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
+import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.task.MediaLoader.LoadDropBoxList;
 import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
+
 import java.util.ArrayList;
 
 import io.fabric.sdk.android.services.concurrency.AsyncTask;
@@ -37,6 +44,9 @@ import io.fabric.sdk.android.services.concurrency.AsyncTask;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_CLOUD_SYNC;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.utils.helpers.DropBoxUtills.ACCESS_KEY_NAME;
+import static com.globaldelight.boom.utils.helpers.DropBoxUtills.ACCESS_SECRET_NAME;
+import static com.globaldelight.boom.utils.helpers.DropBoxUtills.ACCOUNT_PREFS_NAME;
 
 /**
  * Created by Rahul Agarwal on 08-02-17.
@@ -45,9 +55,14 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING
 public class DropBoxListFragment extends Fragment  implements DropboxMediaList.IDropboxUpdater {
 
     private DropboxMediaList dropboxMediaList;
+    private boolean isDropboxAccountConfigured = true;
     private CloudItemListAdapter adapter;
-    private RecyclerView rootView;
-    private int listSize = 0;
+    SharedPreferences prefs;
+    private View rootView;
+    private RecyclerView recyclerView;
+    ImageView emptyPlaceholderIcon;
+    RegularTextView emptyPlaceholderTitle;
+    LinearLayout emptyPlaceHolder;
     Activity mActivity;
 
     /**
@@ -62,17 +77,17 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
                 case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
-                    notifyAdapter(null);
+                    if(null != adapter)
+                        adapter.notifyDataSetChanged();
                     break;
                 case ACTION_ON_NETWORK_CONNECTED:
                     LoadDropboxList();
                     break;
                 case ACTION_CLOUD_SYNC:
-                    try{
-                        if(null != dropboxMediaList)
-                            dropboxMediaList.clearDropboxContent();
-                        LoadDropboxList();
-                    }catch (Exception e){}
+                    if(null != dropboxMediaList) {
+                        dropboxMediaList.clearDropboxContent();
+                    }
+                    LoadDropboxList();
                     break;
             }
         }
@@ -89,7 +104,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
+        rootView = inflater.inflate(R.layout.fragment_cloud_list, container, false);
         if(null == mActivity)
             mActivity = getActivity();
         return rootView;
@@ -98,30 +113,40 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        prefs = mActivity.getSharedPreferences(
+                ACCOUNT_PREFS_NAME, 0);
         initViews();
     }
 
     private void initViews() {
+        emptyPlaceholderIcon = (ImageView) rootView.findViewById(R.id.list_empty_placeholder_icon);
+        emptyPlaceholderTitle = (RegularTextView) rootView.findViewById(R.id.list_empty_placeholder_txt);
+        emptyPlaceHolder = (LinearLayout) rootView.findViewById(R.id.list_empty_placeholder);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.cloud_item_list);
+        recyclerView.setNestedScrollingEnabled(false);
+        if (null == prefs.getString(ACCESS_KEY_NAME, null) &&
+                null == prefs.getString(ACCESS_SECRET_NAME, null)){
+            isDropboxAccountConfigured = false;
+            listIsEmpty(true);
+        }
         dropboxMediaList = DropboxMediaList.getDropboxListInstance(mActivity);
         dropboxMediaList.setDropboxUpdater(this);
         DropBoxUtills.checkDropboxAuthentication(mActivity);
-        setSongListAdapter(dropboxMediaList.getDropboxMediaList());
     }
 
     @Override
     public void onResume() {
-        registerReceiver();
         super.onResume();
-        if(null != dropboxMediaList)
-            listSize = dropboxMediaList.getDropboxMediaList().size();
+        registerReceiver();
         LoadDropboxList();
     }
 
     @Override
     public void onPause() {
-        if(null != mActivity)
-            mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
         super.onPause();
+        if(null != mActivity) {
+            mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
+        }
     }
 
     @Override
@@ -141,20 +166,23 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
 
     private void LoadDropboxList(){
         boolean isListEmpty = dropboxMediaList.getDropboxMediaList().size() <= 0;
-        if(isListEmpty){
-            Utils.showProgressLoader(mActivity);
-        }else{
-            Utils.dismissProgressLoader();
-            listIsEmpty(dropboxMediaList.getDropboxMediaList().size());
-        }
-        if (null != App.getDropboxAPI()
-                && ConnectivityReceiver.isNetworkAvailable(mActivity, true) && isListEmpty) {
-            resetAuthentication();
-            new LoadDropBoxList(mActivity).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }else{
-            Utils.dismissProgressLoader();
-            if(null != adapter)
-                adapter.notifyDataSetChanged();
+        resetAuthentication();
+        if(null != prefs.getString(ACCESS_KEY_NAME, null) &&
+                null != prefs.getString(ACCESS_SECRET_NAME, null)){
+            isDropboxAccountConfigured = true;
+            if (null != App.getDropboxAPI()
+                    && ConnectivityReceiver.isNetworkAvailable(mActivity, true) && isListEmpty) {
+                listIsEmpty(false);
+                Utils.showProgressLoader(mActivity);
+                new LoadDropBoxList(mActivity).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }else if(!isListEmpty){
+                listIsEmpty(false);
+                setSongListAdapter();
+            }
+        }else if (null == prefs.getString(ACCESS_KEY_NAME, null) &&
+                    null == prefs.getString(ACCESS_SECRET_NAME, null)){
+            isDropboxAccountConfigured = false;
+            listIsEmpty(true);
         }
         setForAnimation();
     }
@@ -177,62 +205,81 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         rootView.scrollTo(0, 100);
     }
 
-    private void setSongListAdapter(ArrayList<? extends IMediaItemBase> iMediaItemList) {
-        listSize = iMediaItemList.size();
-        if(iMediaItemList.size() > 0)
-            Utils.dismissProgressLoader();
-        final GridLayoutManager gridLayoutManager =
-                new GridLayoutManager(mActivity, 1);
-        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        gridLayoutManager.scrollToPosition(0);
-        rootView.setLayoutManager(gridLayoutManager);
-        adapter = new CloudItemListAdapter(mActivity, DropBoxListFragment.this, iMediaItemList, ItemType.SONGS);
-        rootView.setAdapter(adapter);
-        rootView.setHasFixedSize(true);
-        listIsEmpty(iMediaItemList.size());
+    private void setSongListAdapter() {
+        boolean isEmpty = dropboxMediaList.getDropboxMediaList().size() <= 0;
+
+        if(!isEmpty && null != adapter){
+            notifyAdapter();
+        }else if(!isEmpty){
+            final GridLayoutManager gridLayoutManager =
+                    new GridLayoutManager(mActivity, 1);
+            gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            gridLayoutManager.scrollToPosition(0);
+            recyclerView.setLayoutManager(gridLayoutManager);
+            adapter = new CloudItemListAdapter(mActivity, DropBoxListFragment.this, dropboxMediaList.getDropboxMediaList(), ItemType.SONGS);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setHasFixedSize(true);
+        }
+    }
+
+    private void notifyAdapter() {
+        adapter.updateMediaList(dropboxMediaList.getDropboxMediaList());
     }
 
     @Override
     public void UpdateDropboxEntryList() {
-        notifyAdapter(dropboxMediaList.getDropboxMediaList());
+        if(null != adapter) {
+            notifyAdapter();
+        }else {
+            LoadDropboxList();
+        }
     }
 
     @Override
     public void finishDropboxLoading() {
-        notifyAdapter(dropboxMediaList.getDropboxMediaList());
-        listSize = dropboxMediaList.getDropboxMediaList().size();
+        if(null != adapter)
+            notifyAdapter();
+        Utils.dismissProgressLoader();
+    }
+
+    @Override
+    public void EmptyDropboxList() {
+        listIsEmpty(true);
+        Utils.dismissProgressLoader();
+    }
+
+    @Override
+    public void onLoadingError() {
+        listIsEmpty(true);
         Utils.dismissProgressLoader();
     }
 
     @Override
     public void ClearList() {
-        notifyAdapter(dropboxMediaList.getDropboxMediaList());
+        if(null != adapter)
+            notifyAdapter();
     }
 
-    private void notifyAdapter(ArrayList<IMediaItemBase> mediaList){
-        if(null != adapter){
-            adapter.updateMediaList(mediaList);
-            if(null != mediaList)
-                listIsEmpty(mediaList.size());
+    public void listIsEmpty(boolean enable) {
+        if(null != getActivity()) {
+            if (enable) {
+                emptyPlaceHolder.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+                Drawable imgResource = null;
+                String placeHolderTxt = null;
+                if(isDropboxAccountConfigured){
+                    imgResource = getResources().getDrawable(R.drawable.ic_no_music_placeholder, null);
+                    placeHolderTxt = getResources().getString(R.string.no_music_placeholder_txt);
+                }else {
+                    imgResource = getResources().getDrawable(R.drawable.ic_cloud_placeholder, null);
+                    placeHolderTxt = getResources().getString(R.string.cloud_configure_placeholder_txt);
+                }
+                emptyPlaceholderIcon.setImageDrawable(imgResource);
+                emptyPlaceholderTitle.setText(placeHolderTxt);
+            } else {
+                recyclerView.setVisibility(View.VISIBLE);
+                emptyPlaceHolder.setVisibility(View.GONE);
+            }
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    public void listIsEmpty(int size) {
-//        if(null != getActivity()) {
-//            if (size < 1) {
-//                Drawable imgResource = getResources().getDrawable(R.drawable.ic_cloud_placeholder, null);
-//                String placeHolderTxt = getResources().getString(R.string.cloud_configure_placeholder_txt);
-//                ((MainActivity) mActivity).setEmptyPlaceHolder(imgResource, placeHolderTxt, true);
-//                rootView.setVisibility(View.GONE);
-//            } else {
-//                ((MainActivity) mActivity).setEmptyPlaceHolder(null, null, false);
-//                rootView.setVisibility(View.VISIBLE);
-//            }
-//        }
     }
 }

@@ -22,16 +22,13 @@ public class LoadDropBoxList extends AsyncTask<Void, Void, Void>{
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if(null != dropboxMediaList){
-            dropboxMediaList.clearDropboxContent();
-        }
     }
 
     @Override
     protected Void doInBackground(Void... params) {
         if (null != DropBoxUtills.getKeys(mContext)) {
             DropBoxUtills.setItemCount(0);
-            DropBoxUtills.getFiles(DropBoxUtills.DIR, dropboxMediaList);
+            DropBoxUtills.getFiles(dropboxMediaList);
         }
         return null;
     }
@@ -39,6 +36,12 @@ public class LoadDropBoxList extends AsyncTask<Void, Void, Void>{
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        dropboxMediaList.finishDropboxLoading();
+        if(null != dropboxMediaList && dropboxMediaList.getDropboxMediaList().size() > 0) {
+            dropboxMediaList.finishDropboxLoading();
+        }else if(null != dropboxMediaList){
+            dropboxMediaList.EmptyDropboxList();
+        }else{
+            dropboxMediaList.ErrorOnLoadinfDropboxList();
+        }
     }
 }

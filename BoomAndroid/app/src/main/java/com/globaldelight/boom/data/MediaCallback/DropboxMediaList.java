@@ -95,6 +95,28 @@ public class DropboxMediaList {
         isAllSongsLoaded = true;
     }
 
+    public void EmptyDropboxList(){
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                if(null != dropboxUpdater)
+                    dropboxUpdater.EmptyDropboxList();
+            }
+        });
+        isAllSongsLoaded = true;
+    }
+
+    public void ErrorOnLoadinfDropboxList(){
+        postMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                if(null != dropboxUpdater)
+                    dropboxUpdater.onLoadingError();
+            }
+        });
+        isAllSongsLoaded = true;
+    }
+
     public void setDropboxUpdater(IDropboxUpdater dropboxUpdater){
         this.dropboxUpdater = dropboxUpdater;
     }
@@ -102,6 +124,8 @@ public class DropboxMediaList {
     public interface IDropboxUpdater {
         void UpdateDropboxEntryList();
         void finishDropboxLoading();
+        void EmptyDropboxList();
+        void onLoadingError();
         void ClearList();
     }
 }

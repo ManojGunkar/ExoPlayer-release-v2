@@ -76,8 +76,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                 case ACTION_CLOUD_SYNC:
                     if(null != googleDriveMediaList) {
                         googleDriveMediaList.clearGoogleDriveMediaContent();
-                        checkPermissions();
                     }
+                    checkPermissions();
                     break;
             }
         }
@@ -156,6 +156,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         if(googleDriveMediaList.getGoogleDriveMediaList().size() <= 0){
             if(ConnectivityReceiver.isNetworkAvailable(mActivity, true)){
                 Utils.showProgressLoader(mActivity);
+                listIsEmpty(false);
                 googleDriveHandler.getResultsFromApi();
             }else{
                 Utils.dismissProgressLoader();
@@ -177,7 +178,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     }
 
     private void initViews() {
-        Utils.showProgressLoader(mActivity);
         emptyPlaceholderIcon = (ImageView) rootView.findViewById(R.id.list_empty_placeholder_icon);
         emptyPlaceholderTitle = (RegularTextView) rootView.findViewById(R.id.list_empty_placeholder_txt);
         emptyPlaceHolder = (LinearLayout) rootView.findViewById(R.id.list_empty_placeholder);
@@ -332,10 +332,5 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         Utils.dismissProgressLoader();
         if(null != mActivity)
             mActivity.onBackPressed();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 }

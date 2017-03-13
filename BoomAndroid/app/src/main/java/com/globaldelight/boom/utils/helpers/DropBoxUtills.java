@@ -28,7 +28,6 @@ import java.util.ArrayList;
 
 public class DropBoxUtills {
 
-    public static String DIR = "/";
     public static final String OVERRIDEMSG = "File name with this name already exists.Do you want to replace this file?";
     final static public String DROPBOX_APP_KEY = "unt5kbgl16jw3tx";
     final static public String DROPBOX_APP_SECRET = "nwacus6f0ykxpkm";
@@ -37,9 +36,9 @@ public class DropBoxUtills {
 
     final static public Session.AccessType ACCESS_TYPE = Session.AccessType.DROPBOX;
 
-    final static public String ACCOUNT_PREFS_NAME = "prefs";
-    final static public String ACCESS_KEY_NAME = "ACCESS_KEY";
-    final static public String ACCESS_SECRET_NAME = "ACCESS_SECRET";
+    final static public String ACCOUNT_PREFS_NAME = "dropbox_prefs";
+    final static public String ACCESS_KEY_NAME = "dropbox_ACCESS_KEY";
+    final static public String ACCESS_SECRET_NAME = "dropbox_ACCESS_SECRET";
 
     public static void checkAppKeySetup(Context context) {
         if (DROPBOX_APP_KEY.startsWith("CHANGE")
@@ -88,6 +87,17 @@ public class DropBoxUtills {
         edit.commit();
     }
 
+    public static void clearKeys(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(
+                ACCOUNT_PREFS_NAME, 0);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.clear();
+        edit.commit();
+        if(null != DropboxMediaList.getDropboxListInstance(context)){
+            DropboxMediaList.getDropboxListInstance(context).clearDropboxContent();
+        }
+    }
+
     public static String[] getKeys(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(
                 ACCOUNT_PREFS_NAME, 0);
@@ -109,7 +119,7 @@ public class DropBoxUtills {
         }
     }
 
-    public static boolean getFiles(String DIR, DropboxMediaList dropboxMediaList) {
+    public static boolean getFiles(DropboxMediaList dropboxMediaList) {
         if(null != App.getDropboxAPI()) {
             getAllFiles(null, dropboxMediaList);
             return true;
@@ -138,11 +148,6 @@ public class DropBoxUtills {
         }
     }
 
-    public static void getFolderDataFiles(ArrayList<DropboxAPI.Entry> dropboxFolderList, DropboxMediaList dropboxMediaList) {
-        for (int i =0; i < dropboxFolderList.size(); i++ ) {
-            getFiles(dropboxFolderList.get(i).path, dropboxMediaList);
-        }
-    }
     public static String getDropboxItemUrl(String path){
         try {
             return App.getDropboxAPI().media(path, true).url;
@@ -150,17 +155,6 @@ public class DropBoxUtills {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public  static void clearKeys(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(
-                ACCOUNT_PREFS_NAME, 0);
-        SharedPreferences.Editor edit = prefs.edit();
-        edit.clear();
-        edit.commit();
-        if(null != DropboxMediaList.getDropboxListInstance(context)){
-            DropboxMediaList.getDropboxListInstance(context).clearDropboxContent();
-        }
     }
 
     public static void setItemCount(int itemCount) {

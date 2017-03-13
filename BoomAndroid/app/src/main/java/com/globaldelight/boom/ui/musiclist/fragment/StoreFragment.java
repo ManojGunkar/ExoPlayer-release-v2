@@ -114,12 +114,14 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateStoreUiAfterStartup() {
-        if (!BusinessPreferences.readBoolean(mContext, ACTION_IN_APP_PURCHASE, false)) {
+        if(null != getActivity()) {
+            if (!BusinessPreferences.readBoolean(mContext, ACTION_IN_APP_PURCHASE, false)) {
 //            Not Purchased
-            normalStoreUI(Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null));
-        }else{
+                normalStoreUI(Preferences.readString(mActivity, INAPP_PURCHASE_PRICE_VALUE, null));
+            } else {
 //            Purchased
-            purchasedStoreUI();
+                purchasedStoreUI();
+            }
         }
     }
 

@@ -93,6 +93,8 @@ public class CloudListActivity extends MasterActivity
         navigationView.setItemIconTintList(null);
         navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
+
+        loadEveryThing(getIntent().getStringExtra("title"));
     }
 
     @Override
@@ -136,10 +138,12 @@ public class CloudListActivity extends MasterActivity
                 runnable = navigateLibrary;
                 break;
             case R.id.google_drive:
+                setTitle(getResources().getString(R.string.google_drive));
                 getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 runnable = navigateGoogleDrive;
                 break;
             case R.id.drop_box:
+                setTitle(getResources().getString(R.string.drop_box));
                 getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 runnable = navigateDropbox;
                 break;
@@ -172,15 +176,14 @@ public class CloudListActivity extends MasterActivity
 
     @Override
     protected void onResume() {
-        registerPlayerReceiver(CloudListActivity.this);
-        loadEveryThing(getIntent().getStringExtra("title"));
         super.onResume();
+        registerPlayerReceiver(CloudListActivity.this);
     }
 
     @Override
     protected void onPause() {
-        unregisterPlayerReceiver(CloudListActivity.this);
         super.onPause();
+        unregisterPlayerReceiver(CloudListActivity.this);
     }
 
     @Override
