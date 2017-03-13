@@ -1,11 +1,9 @@
 package com.globaldelight.boom.utils.helpers;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -117,8 +115,6 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     }
 
     public void resetKeys(Context context){
-        App.getUserPreferenceHandler().setGoogleAccountName(null);
-        Preferences.writeBoolean(context, Preferences.GOOGLE_DRIVE_ACCOUNT_CHANGED, true);
         GoogleDriveMediaList.geGoogleDriveMediaListInstance(context).clearGoogleDriveMediaContent();
         mFragment.startActivityForResult(
                 mCredential.newChooseAccountIntent(),

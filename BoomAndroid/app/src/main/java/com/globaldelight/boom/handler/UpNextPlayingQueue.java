@@ -91,7 +91,8 @@ public class UpNextPlayingQueue {
     }
 
     private void insertToHistory(IMediaItemBase itemBase){
-        MediaController.getInstance(context).setRecentPlayedItem(itemBase);
+        if(null != itemBase)
+            MediaController.getInstance(context).setRecentPlayedItem(itemBase);
     }
 
     public int getPlayingItemIndex(){
@@ -322,8 +323,6 @@ public class UpNextPlayingQueue {
     public void setNewItemAsPlayingItem(int position){
         if(mPlayingItemIndex == position && !App.getPlayerEventHandler().isStopped()){
             PlayPause();
-        }else if(mPlayingItemIndex == position && !App.getPlayerEventHandler().isStopped()){
-            PlayingItemChanged();
         }else{
             insertToHistory(getPlayingItem());
             mPlayingItemIndex = position;
@@ -423,6 +422,7 @@ public class UpNextPlayingQueue {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    insertToHistory(getPlayingItem());
                     mUpNextList.clear();
                     mUpNextList.add(item);
                     mPlayingItemIndex = 0;
@@ -439,6 +439,7 @@ public class UpNextPlayingQueue {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    insertToHistory(getPlayingItem());
                     clearUpNext();
                     mUpNextList.addAll(itemList);
                     if(mShuffle == SHUFFLE.all){

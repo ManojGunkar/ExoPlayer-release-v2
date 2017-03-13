@@ -20,7 +20,10 @@
         android:icon="@drawable/ic_menu_selected"
         android:title="@string/menu_add_boom_fav"
         android:showAsAction="ifRoom" />
+
     <item
-        android:id="@+id/boom_header_delete_songs"
-        android:title="@string/delete"/>
+        android:id="@+id/boom_item_delete"
+        android:icon="@drawable/ic_menu_selected"
+        android:title="@string/menu_remove_boom_item"
+        android:showAsAction="ifRoom" />
 </menu>

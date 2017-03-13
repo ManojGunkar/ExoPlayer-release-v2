@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -52,10 +53,6 @@ public class AlbumSongListActivity extends MasterActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
-                case PlayerEvents.ACTION_UPDATE_BOOM_PLAYLIST_LIST:
-                    fragment.updateBoomPlayList();
-                    updateAlbumArt();
-                    break;
                 case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
                     fragment.updateAdapter();
                     break;
@@ -63,22 +60,22 @@ public class AlbumSongListActivity extends MasterActivity {
         }
     };
 
-    public void updateAlbumArt(MediaItemCollection collection) {
-        currentItem = collection;
-        updateAlbumArt();
-    }
-
     public void updateAlbumArt() {
-        ArrayList<String> urlList = MediaController.getInstance(this).getArtUrlList((MediaItemCollection) currentItem);
-        if(urlList.size() > 0){
-            findViewById(R.id.activity_album_art).setVisibility(View.GONE);
-            tblAlbumArt.setVisibility(View.VISIBLE);
-            setSongsArtImage(urlList);
-        }else{
-            findViewById(R.id.activity_album_art).setVisibility(View.VISIBLE);
-            tblAlbumArt.setVisibility(View.GONE);
-            setDefaultImage();
-        }
+        final ArrayList<String> urlList = MediaController.getInstance(this).getArtUrlList((MediaItemCollection) currentItem);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(urlList.size() > 0){
+                    findViewById(R.id.activity_album_art).setVisibility(View.GONE);
+                    tblAlbumArt.setVisibility(View.VISIBLE);
+                    setSongsArtImage(urlList);
+                }else{
+                    findViewById(R.id.activity_album_art).setVisibility(View.VISIBLE);
+                    tblAlbumArt.setVisibility(View.GONE);
+                    setDefaultImage();
+                }
+            }
+        });
     }
 
     @Override
@@ -143,7 +140,6 @@ public class AlbumSongListActivity extends MasterActivity {
                 .commitAllowingStateLoss();
 
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(PlayerEvents.ACTION_UPDATE_BOOM_PLAYLIST_LIST);
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         registerReceiver(mUpdateAlbumSongListReceiver, intentFilter);
     }

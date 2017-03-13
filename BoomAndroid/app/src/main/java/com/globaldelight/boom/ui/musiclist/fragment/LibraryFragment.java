@@ -90,7 +90,7 @@ public class LibraryFragment extends Fragment {
         mSectionsPagerAdapter.addFragment(mActivity, new ArtistsListFragment(), items[0]);
         mSectionsPagerAdapter.addFragment(mActivity, new AlbumsListFragment(), items[1]);
         mSectionsPagerAdapter.addFragment(mActivity, new SongsListFragment(), items[2]);
-        mSectionsPagerAdapter.addFragment(mActivity, new DefaultPlayListsFragment(), items[3]);
+        mSectionsPagerAdapter.addFragment(mActivity, new PlayListsFragment(), items[3]);
         mSectionsPagerAdapter.addFragment(mActivity, new GenresListFragment(), items[4]);
         viewPager.setAdapter(mSectionsPagerAdapter);
         viewPager.setOffscreenPageLimit(items.length);
@@ -156,11 +156,5 @@ public class LibraryFragment extends Fragment {
             coachMarkChooseHeadPhone.showCoachMark(mViewPager);
             Preferences.writeBoolean(mActivity, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, false);
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((MainActivity) mActivity).setEmptyPlaceHolder(null, null, false);
     }
 }

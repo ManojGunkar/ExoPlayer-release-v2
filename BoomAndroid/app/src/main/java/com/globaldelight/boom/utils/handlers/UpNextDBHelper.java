@@ -3,6 +3,7 @@ package com.globaldelight.boom.utils.handlers;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -74,7 +75,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
 
 /*History Table List*/
 
-    public synchronized void addSongsToRecent(IMediaItemBase song) {
+    public synchronized void addItemsToRecentPlayedList(IMediaItemBase song) {
         removeSong(song.getItemId());
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -115,7 +116,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public synchronized ArrayList<? extends IMediaItemBase> getSongsToRecent() {
+    public synchronized ArrayList<? extends IMediaItemBase> getRecentPlayedItemList() {
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<IMediaItemBase> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_UPNEXT ;
@@ -139,5 +140,40 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         }
         db.close();
         return songList;
+    }
+
+    public int getRecentPlayedCount(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        int count = 0;
+        try {
+            count = (int) DatabaseUtils.queryNumEntries(db, TABLE_UPNEXT, null);
+        }catch (Exception e){
+
+        }finally {
+            db.close();
+        }
+        return count;
+    }
+
+    public ArrayList<String> getRecentArtList() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<String> artList = new ArrayList<>();
+        String query = "SELECT  "+ALBUM_ART+" FROM " + TABLE_UPNEXT;
+        Cursor cursor = db.rawQuery(query, null);
+
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    if(cursor.getString(0) != null && !cursor.getString(0).equals(MediaItem.UNKNOWN_ART_URL))
+                        artList.add(cursor.getString(0));
+                } while (cursor.moveToNext());
+            }
+        }catch (Exception e){
+
+        }finally {
+            cursor.close();
+        }
+        db.close();
+        return artList;
     }
 }

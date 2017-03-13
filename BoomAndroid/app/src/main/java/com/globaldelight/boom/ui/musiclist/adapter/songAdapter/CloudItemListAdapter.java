@@ -192,7 +192,8 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                                             MediaController.getInstance(activity).addItemToFavoriteList((IMediaItem) itemList.get(position));
                                             Toast.makeText(activity, activity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                                         }
-                                        updateFavoriteList(MediaController.getInstance(activity).getFavoriteList());
+                                        if(listItemType == ItemType.FAVOURITE)
+                                            updateFavoriteList(MediaController.getInstance(activity).getFavoriteList());
                                         break;
                                 }
                             }catch (Exception e){
@@ -260,7 +261,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
 
     @Override
     public int getItemCount() {
-        return itemList.size();
+        return null == itemList ? 0 : itemList.size();
     }
 
     @Override
