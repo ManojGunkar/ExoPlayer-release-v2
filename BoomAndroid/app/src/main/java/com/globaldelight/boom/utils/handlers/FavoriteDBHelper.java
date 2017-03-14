@@ -3,6 +3,7 @@ package com.globaldelight.boom.utils.handlers;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -127,7 +128,7 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<? extends IMediaItemBase> getSongList() {
+    public ArrayList<? extends IMediaItemBase> getFavouriteItemList() {
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<MediaItem> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_FAVORITE + " ORDER BY "+SONG_KEY_ID + " DESC";
@@ -154,6 +155,19 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         return songList;
     }
 
+    public int getFavouriteItemCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int count = 0;
+        try {
+            count = (int) DatabaseUtils.queryNumEntries(db, TABLE_FAVORITE, null);
+        }catch (Exception e){
+
+        }finally {
+            db.close();
+        }
+        return count;
+    }
+
     public boolean isFavouriteItems(long itemId) {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT  * FROM " + TABLE_FAVORITE+ " WHERE " +
@@ -178,5 +192,27 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return true;
+    }
+
+    public ArrayList<String> getFavouriteArtList() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<String> artList = new ArrayList<>();
+        String query = "SELECT  "+ALBUM_ART+" FROM " + TABLE_FAVORITE;
+        Cursor cursor = db.rawQuery(query, null);
+
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    if(cursor.getString(0) != null && !cursor.getString(0).equals(MediaItem.UNKNOWN_ART_URL))
+                        artList.add(cursor.getString(0));
+                } while (cursor.moveToNext());
+            }
+        }catch (Exception e){
+
+        }finally {
+            cursor.close();
+        }
+        db.close();
+        return artList;
     }
 }

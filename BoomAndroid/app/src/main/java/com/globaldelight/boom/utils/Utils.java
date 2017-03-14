@@ -70,7 +70,8 @@ import static com.globaldelight.boom.business.BusinessPreferences.ACTION_EMAIL_D
 public class Utils {
     private Context context;
     private static BoomDialogView progressLoader;
-    public static final int SHARE_COMPLETE = 200;
+    public static final int SHARE_COMPLETE = 1001;
+    public static final int PURCHASE_FLOW_LAUNCH = 1002;
 
     public Utils(Context context) {
         this.context = context;
@@ -205,50 +206,12 @@ public class Utils {
                         if (!input.toString().matches("")) {
                             MediaController.getInstance(context).createBoomPlaylist(input.toString());
                             addToPlaylist(activity, song, fromPlaylist);
-                            context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_BOOM_PLAYLIST));
                             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
                             MixPanelAnalyticHelper.getInstance(context).getPeople().set(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST, input.toString());
                         }
                     }
                 }).show();
     }
-
-    /*public static int dpToPx(Context context, int dp) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
-    }*/
-
-    private void setAsRingtone(String filepath) {
-        File ringtoneFile = new File(filepath);
-
-        ContentValues content = new ContentValues();
-        content.put(MediaStore.MediaColumns.DATA, ringtoneFile.getAbsolutePath());
-        content.put(MediaStore.MediaColumns.TITLE, ringtoneFile.getName());
-        content.put(MediaStore.MediaColumns.SIZE, 215454);
-        content.put(MediaStore.MediaColumns.MIME_TYPE, "audio/*");
-        content.put(MediaStore.Audio.Media.DURATION, 230);
-        content.put(MediaStore.Audio.Media.IS_RINGTONE, true);
-        content.put(MediaStore.Audio.Media.IS_NOTIFICATION, true);
-        content.put(MediaStore.Audio.Media.IS_ALARM, true);
-        content.put(MediaStore.Audio.Media.IS_MUSIC, true);
-
-        Uri uri = MediaStore.Audio.Media.getContentUriForPath(
-                ringtoneFile.getAbsolutePath());
-
-
-//        context.getContentResolver().delete(uri, MediaStore.MediaColumns.DATA + "=\"" + ringtoneFile.getAbsolutePath() + "\"",
-//                null);
-        Uri newUri = context.getContentResolver().insert(uri, content);
-        RingtoneManager.setActualDefaultRingtoneUri(
-                context, RingtoneManager.TYPE_RINGTONE,
-                newUri);
-    }
-
-    private Spanned getString(@StringRes int string) {
-        return Html.fromHtml(context.getResources().getString(string));
-    }
-
 
     public static boolean isPhone(Activity activity){
         DisplayMetrics metrics = new DisplayMetrics();
@@ -372,6 +335,10 @@ public class Utils {
             progressLoader.setCanceledOnTouchOutside(false);
             progressLoader.show();
         }
+    }
+
+    public static boolean isProgressLoaderActive(){
+        return (null == progressLoader || !progressLoader.isShowing()) ? false : true;
     }
 
     public static void dismissProgressLoader() {

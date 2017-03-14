@@ -116,8 +116,8 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                 holder.art_overlay.setVisibility(View.VISIBLE );
                 holder.art_overlay_play.setVisibility( View.VISIBLE );
                 holder.name.setTextColor( ContextCompat.getColor(activity, R.color.track_selected_title) );
-                holder.loadCloud.setVisibility(View.GONE);
                 if (App.getPlayerEventHandler().isPlaying()) {
+                    holder.loadCloud.setVisibility(View.GONE);
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
                 } else {
                     if(!isMediaItem && App.getPlayerEventHandler().isTrackWaitingForPlay() && !App.getPlayerEventHandler().isPaused())
@@ -151,6 +151,9 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
             public void onClick(View view) {
                 animate(holder);
                 if (!App.getPlayerEventHandler().isTrackLoading()) {
+                    if(itemList.get(position).getMediaType() != MediaType.DEVICE_MEDIA_LIB)
+                        holder.loadCloud.setVisibility(View.VISIBLE);
+
                     App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(itemList, position);
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -192,7 +195,8 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                                             MediaController.getInstance(activity).addItemToFavoriteList((IMediaItem) itemList.get(position));
                                             Toast.makeText(activity, activity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                                         }
-                                        updateFavoriteList(MediaController.getInstance(activity).getFavoriteList());
+                                        if(listItemType == ItemType.FAVOURITE)
+                                            updateFavoriteList(MediaController.getInstance(activity).getFavoriteList());
                                         break;
                                 }
                             }catch (Exception e){
@@ -260,7 +264,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
 
     @Override
     public int getItemCount() {
-        return itemList.size();
+        return null == itemList ? 0 : itemList.size();
     }
 
     @Override

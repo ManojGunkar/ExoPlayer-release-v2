@@ -91,7 +91,8 @@ public class UpNextPlayingQueue {
     }
 
     private void insertToHistory(IMediaItemBase itemBase){
-        MediaController.getInstance(context).setRecentPlayedItem(itemBase);
+        if(null != itemBase)
+            MediaController.getInstance(context).setRecentPlayedItem(itemBase);
     }
 
     public int getPlayingItemIndex(){
@@ -322,8 +323,6 @@ public class UpNextPlayingQueue {
     public void setNewItemAsPlayingItem(int position){
         if(mPlayingItemIndex == position && !App.getPlayerEventHandler().isStopped()){
             PlayPause();
-        }else if(mPlayingItemIndex == position && !App.getPlayerEventHandler().isStopped()){
-            PlayingItemChanged();
         }else{
             insertToHistory(getPlayingItem());
             mPlayingItemIndex = position;
@@ -340,7 +339,7 @@ public class UpNextPlayingQueue {
 
     public void addItemAsUpNext(ArrayList<? extends IMediaItemBase> itemList){
         if(mShuffle == SHUFFLE.all) {
-            Collections.shuffle(itemList, new Random(itemList.size()));
+//            Collections.shuffle(itemList, new Random(itemList.size()));
             updateUnshuffledList(mUpNextList.size() - 1, itemList);
         }
         mUpNextList.addAll(itemList);
@@ -418,11 +417,14 @@ public class UpNextPlayingQueue {
 
     public void addItemToPlay(final IMediaItemBase item){
         long mTime = System.currentTimeMillis();
-        if(null != mUpNextList && null != item && mTime - mShiftingTime > 500) {
+        if(null != item && null != getPlayingItem() && item.getItemId() == getPlayingItem().getItemId()){
+          PlayPause();
+        } else if(null != mUpNextList && null != item && mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    insertToHistory(getPlayingItem());
                     mUpNextList.clear();
                     mUpNextList.add(item);
                     mPlayingItemIndex = 0;
@@ -434,21 +436,34 @@ public class UpNextPlayingQueue {
 
     public void addItemListToPlay(final ArrayList<? extends IMediaItemBase> itemList, final int position){
         long mTime = System.currentTimeMillis();
-        if(null != mUpNextList && null != itemList && itemList.size() > 0 && mTime - mShiftingTime > 500) {
+        if(null != itemList && null != getPlayingItem() && itemList.get(position).getItemId() == getPlayingItem().getItemId()){
+            PlayPause();
+        } else if(null != mUpNextList && null != itemList && itemList.size() > 0 && mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    insertToHistory(getPlayingItem());
                     clearUpNext();
                     mUpNextList.addAll(itemList);
-                    if(mShuffle == SHUFFLE.all){
-                        insertUpNextList(UNSHUFFLE);
-                        Collections.shuffle(itemList, new Random(itemList.size()));
-                    }
                     mPlayingItemIndex = position;
+                    newShuffleList();
                     PlayingItemChanged();
                 }
             }, 100);
+        }
+    }
+
+    private void newShuffleList() {
+        if(mUpNextList.size() > 0) {
+            IMediaItemBase playingItem = getPlayingItem();
+            if (mShuffle == UpNextPlayingQueue.SHUFFLE.all) {
+                insertUpNextList(UNSHUFFLE);
+                mUpNextList.remove(getPlayingItemIndex());
+                Collections.shuffle(mUpNextList, new Random(mUpNextList.size()));
+                mUpNextList.add(0, playingItem);
+                mPlayingItemIndex = 0;
+            }
         }
     }
 

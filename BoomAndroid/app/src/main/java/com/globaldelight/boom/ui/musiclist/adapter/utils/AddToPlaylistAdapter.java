@@ -57,7 +57,6 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
                 notifyDataSetChanged();
                 dialog.dismiss();
                 makeText(context, R.string.added_to_playlist, LENGTH_SHORT).show();
-                context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_BOOM_PLAYLIST));
             }
         });
     }

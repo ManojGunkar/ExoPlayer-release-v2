@@ -14,7 +14,8 @@ public enum ItemType {
     PLAYLIST,
     GENRE,
     BOOM_PLAYLIST,
-    FAVOURITE;
+    FAVOURITE,
+    RECENT_PLAYED;
     private static final Map<Integer, ItemType> lookup = new HashMap<Integer, ItemType>();
 
     static{

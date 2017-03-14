@@ -3,6 +3,7 @@ package com.globaldelight.boom.utils.handlers;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -14,6 +15,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.Media.MediaType;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
@@ -46,6 +48,8 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
     private static final String PARENT_TITLE = "parentTitle";
     private static final String QUEUE_TYPE = "queue_type";
 
+    private static final int RECENT_LIMIT = 25;
+
     public UpNextDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
@@ -74,7 +78,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
 
 /*History Table List*/
 
-    public synchronized void addSongsToRecent(IMediaItemBase song) {
+    public synchronized void addItemsToRecentPlayedList(IMediaItemBase song) {
         removeSong(song.getItemId());
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -115,8 +119,10 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public synchronized ArrayList<? extends IMediaItemBase> getSongsToRecent() {
+    public synchronized ArrayList<? extends IMediaItemBase> getRecentPlayedItemList() {
+        limit25();
         SQLiteDatabase db = this.getWritableDatabase();
+
         ArrayList<IMediaItemBase> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_UPNEXT ;
 
@@ -138,6 +144,58 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         db.close();
+        Collections.reverse(songList);
         return songList;
+    }
+
+    private void limit25() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            int count = (int) DatabaseUtils.queryNumEntries(db, TABLE_UPNEXT) - RECENT_LIMIT;
+            if (count > 0) {
+                String limitquery = "Delete from " + TABLE_UPNEXT + " where " + SONG_KEY_REAL_ID + " IN (Select " + SONG_KEY_REAL_ID + " from " + TABLE_UPNEXT + " limit " + count + ")";
+                db.execSQL(limitquery);
+            }
+        }catch (Exception e){
+
+        }finally {
+            db.close();
+        }
+    }
+
+    public int getRecentPlayedCount(){
+        limit25();
+        SQLiteDatabase db = this.getReadableDatabase();
+        int count = 0;
+        try {
+            count = (int) DatabaseUtils.queryNumEntries(db, TABLE_UPNEXT, null);
+        }catch (Exception e){
+
+        }finally {
+            db.close();
+        }
+        return count;
+    }
+
+    public ArrayList<String> getRecentArtList() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<String> artList = new ArrayList<>();
+        String query = "SELECT  "+ALBUM_ART+" FROM " + TABLE_UPNEXT;
+        Cursor cursor = db.rawQuery(query, null);
+
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    if(cursor.getString(0) != null && !cursor.getString(0).equals(MediaItem.UNKNOWN_ART_URL))
+                        artList.add(cursor.getString(0));
+                } while (cursor.moveToNext());
+            }
+        }catch (Exception e){
+
+        }finally {
+            cursor.close();
+        }
+        db.close();
+        return artList;
     }
 }
