@@ -342,12 +342,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updatePreviousNext(boolean prev_enable, boolean next_enable){
+        DrawableCompat.setTint(mPrevious.getDrawable(), ContextCompat.getColor(mActivity, R.color.black));
         if(prev_enable){
             DrawableCompat.setTint(mPrevious.getDrawable(), colorFrom);
         }else{
             DrawableCompat.setTint(mPrevious.getDrawable(), colorTo);
         }
 
+        DrawableCompat.setTint(mNext.getDrawable(), ContextCompat.getColor(mActivity, R.color.black));
         if(next_enable){
             DrawableCompat.setTint(mNext.getDrawable(), colorFrom);
         }else{

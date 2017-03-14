@@ -337,6 +337,10 @@ public class Utils {
         }
     }
 
+    public static boolean isProgressLoaderActive(){
+        return (null == progressLoader || !progressLoader.isShowing()) ? false : true;
+    }
+
     public static void dismissProgressLoader() {
         if(null != progressLoader && progressLoader.isShowing())
             progressLoader.dismiss();

@@ -46,9 +46,13 @@ public class GoogleDriveMediaList {
     }
 
     public ArrayList<IMediaItemBase> getGoogleDriveMediaList(){
+        if(null == fileList)
+            fileList = new ArrayList<>();
+
         if(null != fileList && fileList.size() == 0){
             fileList.addAll(MediaController.getInstance(mContext).getCloudList(MediaType.GOOGLE_DRIVE));
         }
+
         return fileList;
     }
 
