@@ -13,6 +13,7 @@ public class RegularTextView extends TextView {
 
     public static final String ANDROID_SCHEMA = "http://schemas.android.com/apk/res/android";
 
+
     public RegularTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
 

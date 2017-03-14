@@ -152,21 +152,21 @@ public class NotificationHandler {
         } else {
             setDefaultImageView();
         }
-        if(App.getPlayerEventHandler().isNext()){
-            notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
-            notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
-        }else{
-            notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, INVISIBLE);
-            notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, INVISIBLE);
-        }
+//        if(App.getPlayerEventHandler().isNext()){
+//            notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
+//            notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, VISIBLE);
+//        }else{
+//            notificationCompat.bigContentView.setViewVisibility(R.id.noti_next_button, INVISIBLE);
+//            notificationCompat.contentView.setViewVisibility(R.id.noti_next_button, INVISIBLE);
+//        }
 
-        if(App.getPlayerEventHandler().isPrevious()){
-            notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
-            notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
-        }else{
-            notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, INVISIBLE);
-            notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, INVISIBLE);
-        }
+//        if(App.getPlayerEventHandler().isPrevious()){
+//            notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
+//            notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, VISIBLE);
+//        }else{
+//            notificationCompat.bigContentView.setViewVisibility(R.id.noti_prev_button, INVISIBLE);
+//            notificationCompat.contentView.setViewVisibility(R.id.noti_prev_button, INVISIBLE);
+//        }
 
         notificationManager.notify(NOTIFICATION_ID, notificationCompat);
     }

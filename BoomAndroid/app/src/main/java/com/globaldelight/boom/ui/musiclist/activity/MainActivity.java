@@ -395,7 +395,7 @@ public class MainActivity extends MasterActivity
                 if (runnable != null) {
                     item.setChecked(true);
                     Handler handler = new Handler();
-                    handler.postDelayed(runnable, 100);
+                    handler.post(runnable);
                 }
             }
         }, 150);
