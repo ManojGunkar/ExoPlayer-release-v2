@@ -43,6 +43,16 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
     private CloudItemListAdapter adapter;
     Activity mActivity;
 
+    private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()){
+                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                    notifyAdapter(null);
+                    break;
+            }
+        }
+    };
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -83,6 +93,10 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
     }
 
     private void initViews() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        mActivity.registerReceiver(mUpdateItemSongListReceiver, intentFilter);
+
         recentPlayedMediaList = RecentPlayedMediaList.getRecentPlayedListInstance(mActivity);
         recentPlayedMediaList.setRecentPlayedUpdater(this);
         recentPlayedMediaList.clearRecentPlayedContent();
@@ -171,5 +185,6 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
     }
 }

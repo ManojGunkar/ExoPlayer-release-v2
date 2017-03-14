@@ -79,6 +79,8 @@
     <string name="dialog_txt_cancel">Cancel</string>
     <string name="dialog_txt_rename">Rename</string>
     <string name="dialog_txt_done">Done</string>
+    <string name="delete_dialog_title">Delete Playlist</string>
+    <string name="delete_dialog_txt">Do you want to delete</string>
 
     <!-- library-->
 

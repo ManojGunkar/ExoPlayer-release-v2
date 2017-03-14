@@ -2,13 +2,17 @@ package com.globaldelight.boom.utils;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaController;
@@ -19,6 +23,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
+import com.globaldelight.boom.ui.widgets.RegularTextView;
 
 import java.util.ArrayList;
 
@@ -66,8 +71,7 @@ public class OverFlowMenuUtils {
                             renameDialog(activity, itemBase.getItemTitle(), itemBase.getItemId());
                             break;
                         case R.id.popup_playlist_delete:
-                            MediaController.getInstance(activity).deleteBoomPlaylist(itemBase.getItemId());
-                            Toast.makeText(activity, activity.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
+                            deletePlaylistDialog(activity, itemBase.getItemTitle(), itemBase.getItemId());
                             break;
                     }
                 }catch (Exception e){}
@@ -76,6 +80,30 @@ public class OverFlowMenuUtils {
         });
         pm.inflate(R.menu.playlist_boom_menu);
         pm.show();
+    }
+
+    private static void deletePlaylistDialog(final Activity activity, final String itemTitle, final long itemId) {
+        String content = activity.getResources().getString(R.string.delete_dialog_txt) +" \""+itemTitle+"\" ?";
+        new MaterialDialog.Builder(activity)
+                .title(R.string.delete_dialog_title)
+                .titleColor(ContextCompat.getColor(activity, R.color.dialog_title))
+                .content(content)
+                .contentColor(ContextCompat.getColor(activity, R.color.dialog_title))
+                .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
+                .positiveColor(ContextCompat.getColor(activity, R.color.dialog_submit_positive))
+                .negativeColor(ContextCompat.getColor(activity, R.color.dialog_submit_negative))
+                .widgetColor(ContextCompat.getColor(activity, R.color.white))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+                .cancelable(false)
+                .positiveText(activity.getResources().getString(R.string.ok))
+                .negativeText(activity.getResources().getString(R.string.dialog_txt_cancel))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                       @Override
+                       public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                           MediaController.getInstance(activity).deleteBoomPlaylist(itemId);
+                           Toast.makeText(activity, activity.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
+                       }
+                   }).show();
     }
 
     public static void setFavouriteMenu(final Activity activity, View view) {
