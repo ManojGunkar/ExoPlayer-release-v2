@@ -130,40 +130,45 @@ public class CloudListActivity extends MasterActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(final MenuItem item) {
         runnable = null;
-        switch (item.getItemId()){
-            case R.id.music_library:
-                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                runnable = navigateLibrary;
-                break;
-            case R.id.google_drive:
-                setTitle(getResources().getString(R.string.google_drive));
-                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                runnable = navigateGoogleDrive;
-                break;
-            case R.id.drop_box:
-                setTitle(getResources().getString(R.string.drop_box));
-                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                runnable = navigateDropbox;
-                break;
-            case R.id.nav_setting:
-                startCompoundActivities(R.string.title_settings);
-                break;
-            case R.id.nav_store:
-                startCompoundActivities(R.string.store_title);
-                break;
-            case R.id.nav_share:
-                Utils.shareStart(this);
-                break;
-        }
         drawerLayout.closeDrawer(GravityCompat.START);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                switch (item.getItemId()){
+                    case R.id.music_library:
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        runnable = navigateLibrary;
+                        break;
+                    case R.id.google_drive:
+                        setTitle(getResources().getString(R.string.google_drive));
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        runnable = navigateGoogleDrive;
+                        break;
+                    case R.id.drop_box:
+                        setTitle(getResources().getString(R.string.drop_box));
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        runnable = navigateDropbox;
+                        break;
+                    case R.id.nav_setting:
+                        startCompoundActivities(R.string.title_settings);
+                        break;
+                    case R.id.nav_store:
+                        startCompoundActivities(R.string.store_title);
+                        break;
+                    case R.id.nav_share:
+                        Utils.shareStart(CloudListActivity.this);
+                        break;
+                }
 
-        if (runnable != null) {
-            item.setChecked(true);
-            Handler handler = new Handler();
-            handler.postDelayed(runnable, 100);
-        }
+                if (runnable != null) {
+                    item.setChecked(true);
+                    Handler handler = new Handler();
+                    handler.postDelayed(runnable, 100);
+                }
+            }
+        }, 150);
         return true;
     }
 

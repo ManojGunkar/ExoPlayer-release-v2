@@ -366,35 +366,40 @@ public class MainActivity extends MasterActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(final MenuItem item) {
         runnable = null;
-            switch (item.getItemId()){
-                case R.id.music_library:
-                    runnable = navigateLibrary;
-                    break;
-                case R.id.google_drive:
-                    runnable = navigateGoogleDrive;
-                    break;
-                case R.id.drop_box:
-                    runnable = navigateDropbox;
-                    break;
-                case R.id.nav_setting:
-                    startCompoundActivities(R.string.title_settings);
-                    break;
-                case R.id.nav_store:
-                    startCompoundActivities(R.string.store_title);
-                    break;
-                case R.id.nav_share:
-                    Utils.shareStart(this);
-                    break;
+        drawerLayout.closeDrawer(GravityCompat.START);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                switch (item.getItemId()){
+                    case R.id.music_library:
+                        runnable = navigateLibrary;
+                        break;
+                    case R.id.google_drive:
+                        runnable = navigateGoogleDrive;
+                        break;
+                    case R.id.drop_box:
+                        runnable = navigateDropbox;
+                        break;
+                    case R.id.nav_setting:
+                        startCompoundActivities(R.string.title_settings);
+                        break;
+                    case R.id.nav_store:
+                        startCompoundActivities(R.string.store_title);
+                        break;
+                    case R.id.nav_share:
+                        Utils.shareStart(MainActivity.this);
+                        break;
+                }
+                if (runnable != null) {
+                    item.setChecked(true);
+                    Handler handler = new Handler();
+                    handler.postDelayed(runnable, 100);
+                }
             }
-            drawerLayout.closeDrawer(GravityCompat.START);
+        }, 150);
 
-        if (runnable != null) {
-            item.setChecked(true);
-            Handler handler = new Handler();
-            handler.postDelayed(runnable, 100);
-        }
         return true;
     }
 
