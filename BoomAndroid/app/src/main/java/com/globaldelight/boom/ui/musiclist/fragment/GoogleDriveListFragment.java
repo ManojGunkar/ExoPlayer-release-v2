@@ -125,7 +125,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                Log.d("Load_time_start_init", System.currentTimeMillis()+"");
                 googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(mActivity);
                 googleDriveMediaList.setGoogleDriveMediaUpdater(GoogleDriveListFragment.this);
                 googleDriveHandler = new GoogleDriveHandler(GoogleDriveListFragment.this);
@@ -133,9 +132,25 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                 googleDriveHandler.getGoogleAccountCredential();
                 googleDriveHandler.getGoogleApiClient();
                 googleDriveHandler.connectGoogleAccount();
-                Log.d("Load_time_end_init", System.currentTimeMillis()+"");
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerReceiver();
+        if (Preferences.readBoolean(mActivity, Preferences.GOOGLE_DRIVE_ACCOUNT_CHANGED, false)) {
+            if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
+                checkPermissions();
+            }
+            Preferences.writeBoolean(mActivity, Preferences.GOOGLE_DRIVE_ACCOUNT_CHANGED, false);
+        }
+        if( null == App.getUserPreferenceHandler().getGoogleAccountName()){
+            isGoogleAccountConfigured = false;
+            listIsEmpty(true);
+            Utils.dismissProgressLoader();
+        }
     }
 
     public void checkPermissions() {
@@ -145,37 +160,33 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     @Override
     public void onAccepted() {
+        LoadGoogleDriveList();
+    }
+
+    private void LoadGoogleDriveList(){
         Utils.showProgressLoader(mActivity);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                LoadGoogleDriveList();
+        if( null != App.getUserPreferenceHandler().getGoogleAccountName()){
+            isGoogleAccountConfigured = true;
+            listIsEmpty(false);
+            if(googleDriveMediaList.getGoogleDriveMediaList().size() <= 0){
+                if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
+                    googleDriveHandler.getResultsFromApi();
+                }
+            }else if(googleDriveMediaList.getGoogleDriveMediaList().size() > 0){
+                setSongListAdapter(true);
             }
-        }, 100);
+        }else{
+            Utils.dismissProgressLoader();
+            if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
+                googleDriveHandler.getResultsFromApi();
+            }
+        }
     }
 
     @Override
     public void onDecline() {
         if(null != mActivity)
             mActivity.onBackPressed();
-    }
-
-    private void LoadGoogleDriveList(){
-        if(null != getActivity()) {
-            listIsEmpty(false);
-            if(!Utils.isProgressLoaderActive())
-                Utils.showProgressLoader(mActivity);
-            if (googleDriveMediaList.getGoogleDriveMediaList().size() <= 0) {
-                if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
-                    googleDriveHandler.getResultsFromApi();
-                } else {
-                    Utils.dismissProgressLoader();
-                }
-            } else {
-                setSongListAdapter(true);
-            }
-            setForAnimation();
-        }
     }
 
     private void setSongListAdapter(final boolean isUpdate) {
@@ -206,21 +217,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                 }
             }, 3000);
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if( null != App.getUserPreferenceHandler().getGoogleAccountName()){
-            isGoogleAccountConfigured = true;
-            if (Preferences.readBoolean(mActivity, Preferences.GOOGLE_DRIVE_ACCOUNT_CHANGED, false)) {
-                checkPermissions();
-                Preferences.writeBoolean(mActivity, Preferences.GOOGLE_DRIVE_ACCOUNT_CHANGED, false);
-            }
-        }else{
-            isGoogleAccountConfigured = true;
-        }
-        registerReceiver();
     }
 
     @Override
@@ -307,7 +303,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         switch (requestCode) {
             case GoogleDriveHandler.REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode == RESULT_OK) {
-                    LoadGoogleDriveList();
+                    checkPermissions();
                 }
                 break;
             case GoogleDriveHandler.REQUEST_ACCOUNT_PICKER:
@@ -318,7 +314,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                     if (accountName != null) {
                         App.getUserPreferenceHandler().setGoogleAccountName(accountName);
                         googleDriveHandler.setSelectedGoogleAccountName(accountName);
-                        LoadGoogleDriveList();
+                        checkPermissions();
                     }
                 }else{
                     Utils.dismissProgressLoader();
@@ -326,7 +322,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                 break;
             case GoogleDriveHandler.REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
-                    LoadGoogleDriveList();
+                    checkPermissions();
                 }
                 break;
         }

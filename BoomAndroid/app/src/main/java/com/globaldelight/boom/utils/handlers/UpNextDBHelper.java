@@ -15,6 +15,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.Media.MediaType;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
@@ -46,6 +47,8 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
     private static final String PARENT_ID = "parentId";
     private static final String PARENT_TITLE = "parentTitle";
     private static final String QUEUE_TYPE = "queue_type";
+
+    private static final int RECENT_LIMIT = 25;
 
     public UpNextDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -117,7 +120,9 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
     }
 
     public synchronized ArrayList<? extends IMediaItemBase> getRecentPlayedItemList() {
+        limit25();
         SQLiteDatabase db = this.getWritableDatabase();
+
         ArrayList<IMediaItemBase> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_UPNEXT ;
 
@@ -139,10 +144,27 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         db.close();
+        Collections.reverse(songList);
         return songList;
     }
 
+    private void limit25() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            int count = (int) DatabaseUtils.queryNumEntries(db, TABLE_UPNEXT) - RECENT_LIMIT;
+            if (count > 0) {
+                String limitquery = "Delete from " + TABLE_UPNEXT + " where " + SONG_KEY_REAL_ID + " IN (Select " + SONG_KEY_REAL_ID + " from " + TABLE_UPNEXT + " limit " + count + ")";
+                db.execSQL(limitquery);
+            }
+        }catch (Exception e){
+
+        }finally {
+            db.close();
+        }
+    }
+
     public int getRecentPlayedCount(){
+        limit25();
         SQLiteDatabase db = this.getReadableDatabase();
         int count = 0;
         try {

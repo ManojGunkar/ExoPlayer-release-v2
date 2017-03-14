@@ -446,14 +446,24 @@ public class UpNextPlayingQueue {
                     insertToHistory(getPlayingItem());
                     clearUpNext();
                     mUpNextList.addAll(itemList);
-                    if(mShuffle == SHUFFLE.all){
-                        insertUpNextList(UNSHUFFLE);
-                        Collections.shuffle(mUpNextList, new Random(mUpNextList.size()));
-                    }
                     mPlayingItemIndex = position;
+                    newShuffleList();
                     PlayingItemChanged();
                 }
             }, 100);
+        }
+    }
+
+    private void newShuffleList() {
+        if(mUpNextList.size() > 0) {
+            IMediaItemBase playingItem = getPlayingItem();
+            if (mShuffle == UpNextPlayingQueue.SHUFFLE.all) {
+                insertUpNextList(UNSHUFFLE);
+                mUpNextList.remove(getPlayingItemIndex());
+                Collections.shuffle(mUpNextList, new Random(mUpNextList.size()));
+                mUpNextList.add(0, playingItem);
+                mPlayingItemIndex = 0;
+            }
         }
     }
 
