@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="eq_names">
+        <item>自動</item>
+        <item>低音增強</item>
+        <item>音響</item>
+        <item>60 年代</item>
+        <item>古典z</item>
+        <item>杜波斯特泊</item>
+        <item>電子</item>
+        <item>平坦</item>
+        <item>嘻哈</item>
+        <item>房屋</item>
+        <item>爵士樂</item>
+        <item>大聲</item>
+        <item>音樂</item>
+        <item>派對</item>
+        <item>流行音樂</item>
+        <item>瑞格舞</item>
+        <item>搖滾</item>
+        <item>輕音樂</item>
+        <item>高音</item>
+        <item>聲樂</item>
+        <item>藍調 &amp; 音樂</item>
+        <item>金屬樂</item>
+    </string-array>
+
+    <string name="app_name">Boom</string>
+    <string name="all_songs">所有歌曲</string>
+    <string name="songs">歌曲</string>
+    <string name="albums">專輯</string>
+    <string name="album">專輯</string>
+    <string name="artists">藝術家</string>
+    <string name="playlists">播放清單</string>
+    <string name="genres">內容類型</string>
+    <string name="new_playlist">新的播放清單</string>
+
+    <string name="recently_played">近期播放</string>
+    <string name="up_next">下一首</string>
+
+    <string name="added_to_playlist">已新增到播放清單</string>
+    <string name="rename">重新命名</string>
+    <string name="delete">刪除</string>
+    <string name="search_hint">搜尋</string>
+    <string name="storage_permission">SD 卡讀取/寫入權限</string>
+    <string name="account_permission">“該應用程式需要存取您的 Google 帳戶（透過聯絡人）。”</string>
+    <string name="ok">確定</string>
+
+    <!--3d surround-->
+    <string name="req_intensity">3D 需要開啟強度</string>
+    <string name="req_equlaizer">3D 需要開啟等化器</string>
+
+    <!--Setting-->
+    <string name="title_headphone_type">選擇耳機類型</string>
+    <string name="on_ear">壓耳式</string>
+    <string name="in_canal">入耳式</string>
+    <string name="over_ear">包耳式</string>
+
+    <string name="timer_start">開始計時器</string>
+    <string name="timer_cancel">取消計時器</string>
+    <string name="timer_reset">關閉</string>
+
+    <string name="cloud_services">雲端服務</string>
+    <string name="cloud_setting_dropbox_subtitle">點選以新增 Dropbox 帳戶</string>
+    <string name="cloud_setting_google_subtitle">點選以新增 Google Drive 帳戶</string>
+
+
+    <string name="title_sleep_timer">睡眠計時器</string>
+    <string name="sleep_timer_description">選擇一個睡眠計時器，以在設定的一段時間後自動關閉音樂。</string>
+    <string name="sleep_timer_description_active">您的睡眠計時器已開啟。\n 音樂將在以下時間停止 </string>
+    <string name="invalid_timer_entry">進入有效睡眠間隔。</string>
+
+    <!-- about-->
+
+    <string name="header_about">關於</string>
+    <string name="version">v1.0</string>
+    <string name="description_about">由 \n Global Delight 設計的愉悅環繞身歷聲</string>
+    <string name="rate_app">在 Play Store 上評級</string>
+    <string name="about_technology">\n耳機上的沉浸式環繞音效技術正在申請專利中。</string>
+    <string name="copyright">\u00a9 2017, Global Delight Technologies Pvt Ltd. \n 保留所有權利。</string>
+
+    <!-- Tutorial-->
+    <string name="tutorial_use_headphones">使用耳機以獲得\n最佳體驗</string>
+
+    <!-- playing queue-->
+    <string name="clear">清除</string>
+
+    <!-- Menu-->
+    <string name="cant_play_song">無法播放歌曲！</string>
+    <string name="favourite_list">我的最愛</string>
+    <string name="song">歌曲</string>
+
+
+    <!-- Player-->
+    <string name="no_song">沒有選擇的歌曲。</string>
+
+    <!-- Boom Playlist-->
+    <string name="boom_playlist">Boom 播放清單</string>
+    <string name="playlist_created">播放清單已建立。</string>
+    <string name="playlist_deleted">播放清單已刪除。</string>
+    <string name="txt_undo">復原</string>
+    <string name="dialog_txt_cancel">取消</string>
+
+    <!-- library-->
+
+    <!--inapp-->
+
+    <!-- Favorite-->
+    <string name="added_to_favorite">已新增為我的最愛。</string>
+    <string name="playing_added_to_favorite">播放新增為我的最愛的歌曲。</string>
+    <string name="removed_from_favorite">從我的最愛中移除。</string>
+    <string name="playing_removed_from_favorite">播放從我的最愛中移除的歌曲。</string>
+
+    <!--Boom PlayList-->
+
+    <!--PlayList-->
+    <string name="no_music_placeholder_txt">沒有找到音樂。</string>
+
+    <!--purchase-->
+
+    <!--Menus-->
+    <string name="menu_play_next">播放下一首</string>
+    <string name="menu_shuffle">亂序</string>
+    <string name="menu_add_upnext">新增到下一首</string>
+    <string name="menu_add_boom_playlist">新增到播放清單</string>
+    <string name="menu_add_songs">新增歌曲</string>
+    <string name="menu_add_boom_fav">新增到我的最愛</string>
+    <string name="menu_remove_boom_fav">從我的最愛中移除</string>
+    <string name="unknown_artist">未知藝術家</string>
+    <string name="menu_remove_boom_item">移除歌曲</string>
+
+    <!-- Survey -->
+    <string name="network_error">沒有可用的網路連接。</string>
+    <string name="error_fetch_data">獲取資料出錯</string>
+    <string name="title_item_detail">項目標題詳細資料</string>
+    <string name="title_activity_child">標題活動兒童</string>
+
+
+    <string name="navigation_drawer_open">開啟導航抽屜</string>
+    <string name="navigation_drawer_close">關閉導航抽屜</string>
+
+    <string name="eq_dialog_title">選擇等化器</string>
+    <string name="speaker_dialog_title">喇叭</string>
+    <string name="done">完成</string>
+    <string name="on">開啟</string>
+    <string name="off">關閉</string>
+    <string name="effect">效果&#160;</string>
+    <string name="three_d_surround">3D 環繞</string>
+    <string name="fullbass">重低音</string>
+    <string name="intensity">強度</string>
+    <string name="equalizer">等化器</string>
+    <string name="music_library">音樂庫</string>
+    <string name="drop_box">Dropbox</string>
+    <string name="google_drive">Google Drive</string>
+    <string name="request_cancelled">請求已取消。</string>
+    <string name="login_problem_dropbox">無法登入至 Dropbox</string>
+    <string name="login_problem_google_drive">無法登入至 Google Drive</string>
+    <string name="loading_problem">載入失敗。</string>
+    <string name="more">&#160;更多</string>
+    <string name="dropbox_authenticate_problem">無法驗證 Dropbox：</string>
+    <string name="google_drive_loading_error">Google Drive:\\n 載入失敗</string>
+    <string name="empty_list">清單是空的。</string>
+    <string name="require_google_play_service">該應用程式需要 Google Play 服務。請在您的裝置上安裝 Google Play 服務，並重新啟動該應用程式。</string>
+    <string name="remaning">&#160;剩餘。</string>
+    <string name="network_alart">NetworkCalls 警告</string>
+    <string name="check_network">請查看您的網路連接並重試</string>
+    <string name="app_expire">應用程式已過期！</string>
+    <string name="hour">小時</string>
+    <string name="minute">分鐘</string>
+
+
+    <string name="store_page_header">完全免費 Boom</string>
+    <string name="store_page_buy_description">現在購買以輕鬆 #FeelYourMusic\n。沒有任何廣告。</string>
+    <string name="store_page_share_description">您也可以分享 Boom，以在 5 天內停用廣告\n。</string>
+    <string name="share_text">分享 Boom</string>
+    <string name="menu_restore">恢復購買</string>
+    <string name="store_title">商店</string>
+
+    <string name="after_purchase_store_page_header">快樂的 Boom！</string>
+    <string name="after_purchase_store_page_buy_description">祝賀您！您現在\n可以自然地聽音樂\n！</string>
+    <string name="after_purchase_buy_button">已購買</string>
+
+    <string name="title_share">分享</string>
+    <string name="playstore_link">https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n</string>
+    <string name="share_desc">\n我想你推薦這個應用程式\n\n</string>
+    <string name="choose_share">選擇一個</string>
+
+    <string name="title_feedback">意見反應</string>
+
+    <string name="library_switch_effect_screen_tooltip">點選此處以快速開啟\n Boom 效果</string>
+    <string name="effect_player_tooltip">點選此處以開啟效果</string>
+
+    <string name="switch_effect_screen_tooltip">點選此處以切換到\n Boom 效果</string>
+    <string name="use_headphone_tooltip">使用耳機以獲得\n最佳體驗</string>
+    <string name="choose_headphone_tooltip">在設定中選擇耳機類型\n以實現最佳輸出</string>
+
+
+    <string name="onboard_screen_1_main_tx">重新定義您的音樂體驗</string>
+    <string name="onboard_screen_1_sub_tx">用 3D 環繞聲和專業的音樂預設來強化您的音樂欣賞體驗。</string>
+    <string name="onboard_screen_2_main_tx">所有音樂彙聚一處 </string>
+    <string name="onboard_screen_2_sub_tx">在忙碌時聽聽您音樂庫、Google Drive 和 Dropbox 中的音樂。</string>
+    <string name="onboard_screen_3_main_tx">針對所有耳機最佳化</string>
+    <string name="onboard_screen_3_sub_tx">在設定中選擇您的「耳機類型」，讓您的音樂重獲新生。 </string>
+    <string name="skip_text">跳過</string>
+    <string name="start_boomin">開始 Boom</string>
+    <string name="next">下一步</string>
+    <string name="loading">載入中…</string>
+    <string name="inapp_process_error">InApp 購買時出錯！</string>
+    <string name="inapp_process_success">購買承購。</string>
+    <string name="inapp_process_restore">購買已恢復。</string>
+
+    <string name="share_button">立刻分享</string>
+    <string name="continue_button">繼續帶廣告使用</string>
+    <string name="dialog_title">喜歡它？分享它吧！</string>
+    <string name="sub_email_header">不要停止 Boom</string>
+    <string name="sub_email_text">分享您的電子郵箱 ID 並繼續 #FeelYourMusic</string>
+    <string name="email_text_hint">促銷郵件</string>
+    <string name="submit">提交</string>
+    <string name="buy_button">立即購買</string>
+    <string name="expire_header_text">廣告免費使用已過期！</string>
+    <string name="expire_text">您的廣告免費使用時間已過期。立即購買，無廣告 #FreeYourMusic。</string>
+    <string name="internet_off_header">有什麼東西聽起來不對勁 </string>
+    <string name="internet_off_discription">無網際網路連接，Boom 音效被鎖定。開啟 WiFi 或行動資料以享受全部。或者，您也可以購買 BOOM 以解鎖所有功能，輕鬆 #FeelYourMusic。
+	</string>
+    <string name="all_speakers_off">所有喇叭都已關閉。</string>
+    <string name="some_speakers_off">一些喇叭是關閉的。</string>
+    <string name="boom_playlist_empty_placeholder_txt">您尚未建立\n任何播放清單。</string>
+    <string name="favorite_empty_placeholder_txt">您尚未喜歡\n任何歌曲。</string>
+    <string name="cloud_configure_placeholder_txt">尚未配置帳戶。\n在設定中配置帳戶以\n存取歌曲。</string>
+
+    <string name="playlist_track_already_added">歌曲已經新增到播放清單。</string>
+    <!--<string name="placeholder_cloud">沒有網際網路連接。\n 連接到網際網路以存取音樂</string>-->
+
+    <string name="settings_button">設定</string>
+    <string name="title_settings">設定</string>
+
+    <string name="delete_dialog_txt">Do you want to delete</string>
+    <string name="delete_dialog_title">Delete Playlist</string>
+    <string name="share_pop_up_text">Share Boom with your loved ones,\n and #FeelYourMusic without ads \n for 5 days</string>
+</resources>

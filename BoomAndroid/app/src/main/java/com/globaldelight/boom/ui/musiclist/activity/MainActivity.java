@@ -176,6 +176,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void initView() {
+        App.startPlayerService();
         sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_CREATE_PLAYER_SCREEN));
         setLibraryAddsUpdater(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
