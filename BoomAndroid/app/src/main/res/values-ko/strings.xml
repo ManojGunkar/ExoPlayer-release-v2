@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--
+    <string-array name="eq_names">
+        <item>자동</item>
+        <item>베이스 부스트</item>
+        <item>어쿠스틱</item>
+        <item>60년대</item>
+        <item>클래식</item>
+        <item>덥스텝</item>
+        <item>일렉트로닉</item>
+        <item>플랫</item>
+        <item>힙합</item>
+        <item>하우스</item>
+        <item>재즈</item>
+        <item>라우드</item>
+        <item>뮤직</item>
+        <item>파티</item>
+        <item>팝</item>
+        <item>레게</item>
+        <item>락</item>
+        <item>소프트</item>
+        <item>트레블</item>
+        <item>보컬</item>
+        <item>R &amp; B</item>
+        <item>메탈</item>
+    </string-array>
+
+    <string name="app_name">Boom</string>
+    <string name="all_songs">모든 노래</string>
+    <string name="songs">노래</string>
+    <string name="albums">앨범</string>
+    <string name="album">앨범</string>
+    <string name="artists">아티스트</string>
+    <string name="playlists">재생 목록</string>
+    <string name="genres">장르</string>
+    <string name="new_playlist">새 재생 목록</string>
+
+    <string name="recently_played">최근 재생한 곡</string>
+    <string name="up_next">다음</string>
+
+    <string name="added_to_playlist">재생 목록에 추가됨</string>
+    <string name="rename">이름 바꾸기</string>
+    <string name="delete">삭제</string>
+    <string name="search_hint">검색</string>
+    <string name="storage_permission">SD 카드 읽기/쓰기 권한</string>
+    <string name="account_permission">&quot;이 앱은 (주소록을 통해) Google 계정에 액세스해야 합니다.&quot;</string>
+    <string name="ok">확인</string>
+
+    &lt;!&ndash;3d surround&ndash;&gt;
+    <string name="req_intensity">3D는 강도가 켜져 있어야 합니다.</string>
+    <string name="req_equlaizer">3D는 이퀄라이저가 켜져 있어야 합니다.</string>
+
+    &lt;!&ndash;Setting&ndash;&gt;
+    <string name="title_headphone_type">헤드폰 유형 선택</string>
+    <string name="on_ear">온 이어(On Ear)</string>
+    <string name="in_canal">인 이어(In Canal)</string>
+    <string name="over_ear">오버 이어(Over Ear)</string>
+
+    <string name="timer_start">시작 타이머</string>
+    <string name="timer_cancel">취소 타이머</string>
+    <string name="timer_reset">닫기</string>
+
+    <string name="cloud_services">클라우드 서비스</string>
+    <string name="cloud_setting_dropbox_subtitle">Dropbox 계정을 추가하려면 탭하십시오.</string>
+    <string name="cloud_setting_google_subtitle">Google Drive 계정을 추가하려면 탭하십시오.</string>
+
+
+    <string name="title_sleep_timer">슬립 타이머</string>
+    <string name="sleep_timer_description">설정된 시간 후 자동으로 음악이 꺼지도록 하려면 슬립 타이머를 설정하십시오.</string>
+    <string name="sleep_timer_description_active">슬립 타이머가 켜져 있습니다. \n 다음 시각에 음악 재생이 중지됩니다. </string>
+    <string name="invalid_timer_entry">유효한 슬립 간격을 입력하십시오.</string>
+
+    &lt;!&ndash; about&ndash;&gt;
+
+    <string name="header_about">정보</string>
+    <string name="version">v1.0</string>
+    <string name="description_about">Global Delight에 의해 제작된 \n 즐거운 서라운드 사운드</string>
+    <string name="rate_app">Play Store에서 평가하기</string>
+    <string name="about_technology">헤드폰으로 즐기는 몰입형 서라운드 오디오 기술은 \n 특허 출원 중입니다.</string>
+    <string name="copyright">\u00a9 2017, Global Delight Technologies Pvt Ltd. \n 판권 소유.</string>
+
+    &lt;!&ndash; Tutorial&ndash;&gt;
+    <string name="tutorial_use_headphones">최고의 경험을 위해 \n 헤드폰을 사용하십시오.</string>
+
+    &lt;!&ndash; playing queue&ndash;&gt;
+    <string name="clear">지우기</string>
+
+    &lt;!&ndash; Menu&ndash;&gt;
+    <string name="cant_play_song">노래를 재생할 수 없습니다!</string>
+    <string name="favourite_list">즐겨찾기</string>
+    <string name="song">노래</string>
+
+
+    &lt;!&ndash; Player&ndash;&gt;
+    <string name="no_song">선택된 노래가 없습니다.</string>
+
+    &lt;!&ndash; Boom Playlist&ndash;&gt;
+    <string name="boom_playlist">Boom 재생 목록</string>
+    <string name="playlist_created">재생 목록이 생성되었습니다.</string>
+    <string name="playlist_deleted">재생 목록이 삭제되었습니다.</string>
+    <string name="txt_undo">실행 취소</string>
+    <string name="dialog_txt_cancel">취소</string>
+
+    &lt;!&ndash; library&ndash;&gt;
+
+    &lt;!&ndash;inapp&ndash;&gt;
+
+    &lt;!&ndash; Favorite&ndash;&gt;
+    <string name="added_to_favorite">즐겨찾기로 추가되었습니다.</string>
+    <string name="playing_added_to_favorite">재생 중인 노래가 즐겨찾기로 추가되었습니다.</string>
+    <string name="removed_from_favorite">즐겨찾기에서 제거되었습니다.</string>
+    <string name="playing_removed_from_favorite">재생 중인 노래가 즐겨찾기에서 제거되었습니다.</string>
+
+    &lt;!&ndash;Boom PlayList&ndash;&gt;
+
+    &lt;!&ndash;PlayList&ndash;&gt;
+    <string name="no_music_placeholder_txt">음악이 없습니다.</string>
+
+    &lt;!&ndash;purchase&ndash;&gt;
+
+    &lt;!&ndash;Menus&ndash;&gt;
+    <string name="menu_play_next">다음 재생</string>
+    <string name="menu_shuffle">셔플</string>
+    <string name="menu_add_upnext">다음에 추가</string>
+    <string name="menu_add_boom_playlist">재생 목록에 추가</string>
+    <string name="menu_add_songs">노래 추가</string>
+    <string name="menu_add_boom_fav">즐겨찾기에 추가</string>
+    <string name="menu_remove_boom_fav">즐겨찾기에서 제거</string>
+    <string name="unknown_artist">알 수 없는 아티스트</string>
+    <string name="menu_remove_boom_item">노래 제거</string>
+
+    &lt;!&ndash; Survey &ndash;&gt;
+    <string name="network_error">사용 가능한 네트워크 연결이 없습니다.</string>
+    <string name="error_fetch_data">데이터 가져오기 오류</string>
+    <string name="title_item_detail">항목 제목 세부 사항</string>
+    <string name="title_activity_child">제목 활동 하위</string>
+
+
+    <string name="navigation_drawer_open">탐색 창 열기</string>
+    <string name="navigation_drawer_close">탐색 창 닫기</string>
+
+    <string name="eq_dialog_title">이퀄라이저 선택</string>
+    <string name="speaker_dialog_title">스피커</string>
+    <string name="done">완료</string>
+    <string name="on">ON</string>
+    <string name="off">OFF</string>
+    <string name="effect">&#160;효과 </string>
+    <string name="three_d_surround">3D 사운드</string>
+    <string name="fullbass">풀 베이스</string>
+    <string name="intensity">강도</string>
+    <string name="equalizer">이퀄라이저</string>
+    <string name="music_library">뮤직 라이브러리</string>
+    <string name="drop_box">Dropbox</string>
+    <string name="google_drive">Google Drive</string>
+    <string name="request_cancelled">요청이 취소되었습니다.</string>
+    <string name="login_problem_dropbox">Dropbox에 로그인할 수 없습니다.</string>
+    <string name="login_problem_google_drive">Google Drive에 로그인할 수 없습니다.</string>
+    <string name="loading_problem">로드하지 못했습니다.</string>
+    <string name="more">&#160;더</string>
+    <string name="dropbox_authenticate_problem">Dropbox로 인증할 수 없습니다.</string>
+    <string name="google_drive_loading_error">Google Drive에서 로드 오류:\\n</string>
+    <string name="empty_list">목록이 비어 있습니다.</string>
+    <string name="require_google_play_service">이 앱은 Google Play 서비스가 필요합니다. 기기에 Google Play 서비스를 설치하고 이 앱을 다시 실행하십시오.</string>
+    <string name="remaning">&#160;남음.</string>
+    <string name="network_alart">NetworkCalls 경고</string>
+    <string name="check_network">네트워크 연결을 확인하고 다시 시도하십시오.</string>
+    <string name="app_expire">앱이 만료되었습니다!</string>
+    <string name="hour">시</string>
+    <string name="minute">분</string>
+
+
+    <string name="store_page_header">번거로움 없는 Boom</string>
+    <string name="store_page_buy_description">번거로움 없이 #FeelYourMusic을 \n 지금 구입하십시오. 광고 없이.</string>
+    <string name="store_page_share_description">또한 Boom을 공유하면 \n 5일 동안 광고가 중단됩니다.</string>
+    <string name="share_text">Boom 공유</string>
+    <string name="menu_restore">구매 재개</string>
+    <string name="store_title">스토어</string>
+
+    <string name="after_purchase_store_page_header">행복한 Boom!</string>
+    <string name="after_purchase_store_page_buy_description">축하합니다! \n이제 원하는 방식으로 \n 음악을 들으실 수 있습니다!</string>
+    <string name="after_purchase_buy_button">구매함</string>
+
+    <string name="title_share">공유</string>
+    <string name="playstore_link">https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n</string>
+    <string name="share_desc">\n이 애플리케이션을 추천해 드립니다\n\n</string>
+    <string name="choose_share">하나를 선택하십시오.</string>
+
+    <string name="title_feedback">Feedback</string>
+
+    <string name="library_switch_effect_screen_tooltip">Boom 효과를 빨리 열려면 \n 여기를 탭하십시오.</string>
+    <string name="effect_player_tooltip">효과를 켜려면 탭하십시오.</string>
+
+    <string name="switch_effect_screen_tooltip">Boom 효과로 전환하려면 \n 여기를 탭하십시오.</string>
+    <string name="use_headphone_tooltip">최고의 경험을 위해 \n 헤드폰을 사용하십시오.</string>
+    <string name="choose_headphone_tooltip">최상의 출력을 위해 설정에서 \n헤드폰 유형을 선택하십시오.</string>
+
+
+    <string name="onboard_screen_1_main_tx">음악 경험을 재정의하십시오.</string>
+    <string name="onboard_screen_1_sub_tx">3D 서라운드 사운드 및 전문 음악 사전 설정으로 음악 감상 경험을 강화하십시오.</string>
+    <string name="onboard_screen_2_main_tx">모든 음악을 한 곳에서 </string>
+    <string name="onboard_screen_2_sub_tx">뮤직 라이브러리, Google Drive 및 Dropbox에서 이동 중에 음악을 들으십시오.</string>
+    <string name="onboard_screen_3_main_tx">모든 헤드폰에 최적화</string>
+    <string name="onboard_screen_3_sub_tx">설정의 &apos;헤드폰 유형&apos;을 선택하여 음악이 더욱 살아나게 하십시오. </string>
+    <string name="skip_text">건너뛰기</string>
+    <string name="start_boomin">Boom 시작</string>
+    <string name="next">다음</string>
+    <string name="loading">로드 중...</string>
+    <string name="inapp_process_error">InApp 구매 중 오류가 발생했습니다!</string>
+    <string name="inapp_process_success">구매 성공</string>
+    <string name="inapp_process_restore">구매 재개</string>
+
+    <string name="share_button">지금 공유</string>
+    <string name="continue_button">광고와 함께 계속</string>
+    <string name="dialog_title">좋아요? 공유하세요!</string>
+    <string name="sub_email_header">Boom을 멈추지 마세요.</string>
+    <string name="sub_email_text">이메일 ID를 공유하고 #FeelYourMusic을 계속하세요.</string>
+    <string name="email_text_hint">프로모션을 위한 이메일</string>
+    <string name="submit">제출</string>
+    <string name="buy_button">지금 구입</string>
+    <string name="expire_header_text">광고 없는 사용 기간이 만료되었습니다!</string>
+    <string name="expire_text">광고 없는 사용 세션이 만료되었습니다. 광고 없는 #FeelYourMusic을 지금 구입하십시오.</string>
+    <string name="internet_off_header">소리가 올바르지 않습니다. </string>
+    <string name="internet_off_discription">인터넷 연결이 없으면 Boom 오디오 효과가 잠깁니다. Wi-Fi 또는 모바일 데이터를 켜고 모두 즐기십시오. 또는 BOOM을 구입하여 번거로움 없이 모든 기능과 #FeelYourMusic을 잠금 해제하실 수 있습니다.
+	</string>
+    <string name="all_speakers_off">모든 스피커가 꺼져 있습니다.</string>
+    <string name="some_speakers_off">일부 스피커가 꺼져 있습니다.</string>
+    <string name="boom_playlist_empty_placeholder_txt">아직 재생 목록을 \n 만들지 않았습니다.</string>
+    <string name="favorite_empty_placeholder_txt">아직 좋아요를 선택한 \n 노래가 없습니다.</string>
+    <string name="cloud_configure_placeholder_txt">아직 구성된 계정이 없습니다. \n 노래에 액세스하려면 설정에서 \n 계정을 구성하십시오.</string>
+
+    <string name="playlist_track_already_added">노래가 이미 재생 목록에 추가되었습니다.</string>
+    &lt;!&ndash;<string name="placeholder_cloud">인터넷에 연결되어 있지 않습니다. \n 음악에 액세스하려면 인터넷에 연결하십시오.</string>&ndash;&gt;
+
+    <string name="settings_button">설정</string>
+    <string name="title_settings">설정</string>-->
+</resources>

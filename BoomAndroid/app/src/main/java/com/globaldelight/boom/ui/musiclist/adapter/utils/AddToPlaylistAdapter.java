@@ -52,13 +52,27 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
         holder.mainView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                MediaController.getInstance(context).addSongToBoomPlayList(playList.get(position).getItemId(), songList, false);
-                playList = MediaController.getInstance(context).getBoomPlayList();
-                notifyDataSetChanged();
-                dialog.dismiss();
-                makeText(context, R.string.added_to_playlist, LENGTH_SHORT).show();
+
+                if(songList.size() == 1){
+                    if(MediaController.getInstance(context).isAlreadyAdded(playList.get(position).getItemId(), songList.get(0).getItemId())){
+                        addToPlayList(position);
+                        makeText(context, R.string.playlist_track_already_added, LENGTH_SHORT).show();
+                    }else{
+                        makeText(context, R.string.added_to_playlist, LENGTH_SHORT).show();
+                    }
+                }else if(songList.size() > 1){
+                    addToPlayList(position);
+                    dialog.dismiss();
+                    makeText(context, R.string.added_to_playlist, LENGTH_SHORT).show();
+                }
             }
         });
+    }
+
+    private void addToPlayList(int position){
+        MediaController.getInstance(context).addSongToBoomPlayList(playList.get(position).getItemId(), songList, false);
+        playList = MediaController.getInstance(context).getBoomPlayList();
+        notifyDataSetChanged();
     }
 
     public void setDialog(MaterialDialog dialog) {

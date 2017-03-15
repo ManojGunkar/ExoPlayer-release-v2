@@ -36,7 +36,7 @@ public class ActivityContainer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
 
-        container = getIntent().getIntExtra("container", R.string.title_about);
+        container = getIntent().getIntExtra("container", R.string.header_about);
         initViews();
     }
 
@@ -67,7 +67,7 @@ public class ActivityContainer extends AppCompatActivity {
             case R.string.recently_played:
                 mFragment = new RecentPlayedFragment();
                 break;
-            case R.string.title_upnext:
+            case R.string.up_next:
                 mFragment =  new UpNextListFragment();
                 break;
             case R.string.title_settings:

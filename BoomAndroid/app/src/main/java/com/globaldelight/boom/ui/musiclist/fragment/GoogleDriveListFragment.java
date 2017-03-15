@@ -116,6 +116,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     }
 
     private void initViews() {
+        Preferences.writeBoolean(mActivity, Preferences.GOOGLE_DRIVE_ACCOUNT_CHANGED, false);
         emptyPlaceholderIcon = (ImageView) rootView.findViewById(R.id.list_empty_placeholder_icon);
         emptyPlaceholderTitle = (RegularTextView) rootView.findViewById(R.id.list_empty_placeholder_txt);
         emptyPlaceHolder = (LinearLayout) rootView.findViewById(R.id.list_empty_placeholder);

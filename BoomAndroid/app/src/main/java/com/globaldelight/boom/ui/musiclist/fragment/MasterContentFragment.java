@@ -1000,7 +1000,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             case R.id.player_large:
                 return true;
             case R.id.intensity_disable_img:
-                if(isEffectOn)
+                if(isEffectOn && audioEffectPreferenceHandler.isIntensityOn())
                     return false;
                 else
                     return true;

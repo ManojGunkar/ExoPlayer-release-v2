@@ -193,15 +193,28 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     private void resetAuthentication(){
-        AndroidAuthSession session = App.getDropboxAPI().getSession();
-        if (session.authenticationSuccessful()) {
-            try {
-                session.finishAuthentication();
-                TokenPair tokens = session.getAccessTokenPair();
-                DropBoxUtills.storeKeys(mActivity, tokens.key, tokens.secret);
-            } catch (IllegalStateException e) {
-                Toast.makeText(mActivity,getResources().getString(R.string.dropbox_authenticate_problem)
-                        + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        if(null != App.getDropboxAPI()) {
+            AndroidAuthSession session = App.getDropboxAPI().getSession();
+            if (session.authenticationSuccessful()) {
+                try {
+                    session.finishAuthentication();
+                    TokenPair tokens = session.getAccessTokenPair();
+                    DropBoxUtills.storeKeys(mActivity, tokens.key, tokens.secret);
+                } catch (IllegalStateException e) {
+                    Toast.makeText(mActivity, getResources().getString(R.string.dropbox_authenticate_problem)
+                            + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }else{
+            if (null == prefs.getString(ACCESS_KEY_NAME, null) &&
+                    null == prefs.getString(ACCESS_SECRET_NAME, null)) {
+                isDropboxAccountConfigured = false;
+                listIsEmpty(true);
+                Utils.dismissProgressLoader();
+            }else if(null != dropboxMediaList && dropboxMediaList.getDropboxMediaList().size() <= 0){
+                isDropboxAccountConfigured = true;
+                listIsEmpty(true);
+                Utils.dismissProgressLoader();
             }
         }
     }

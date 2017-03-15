@@ -25,30 +25,7 @@
         <item>@drawable/ic_list_rb_on</item>
         <item>@drawable/ic_list_metal_on</item>
     </integer-array>
-    <string-array name="eq_names">
-        <item>AUTO</item>
-        <item>BASSBOOST</item>
-        <item>ACOUSTIC</item>
-        <item>60\'s</item>
-        <item>CLASSICAL</item>
-        <item>DUBSTEP</item>
-        <item>ELECTRONIC</item>
-        <item>FLAT</item>
-        <item>HIPHOP</item>
-        <item>HOUSE</item>
-        <item>JAZZ</item>
-        <item>LOUD</item>
-        <item>MUSIC</item>
-        <item>PARTY</item>
-        <item>POP</item>
-        <item>REGGAE</item>
-        <item>ROCK</item>
-        <item>SOFT</item>
-        <item>TREBLE</item>
-        <item>VOCALS</item>
-        <item>R &amp; B</item>
-        <item>METAL</item>
-    </string-array>
+
     <integer-array name="eq_active_off">
         <item>@drawable/ic_list_auto_off</item>
         <item>@drawable/ic_list_bassboost_off</item>
