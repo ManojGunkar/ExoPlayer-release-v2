@@ -85,7 +85,7 @@ public class PlayerUIController implements IPlayerUIController {
 
     private void startUpNextActivity(Activity activity) {
         Intent queueIntent = new Intent(activity, ActivityContainer.class);
-        queueIntent.putExtra("container", R.string.title_upnext);
+        queueIntent.putExtra("container", R.string.up_next);
         activity.startActivity(queueIntent);
     }
 

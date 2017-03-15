@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="right"
                 android:paddingRight="4dp"
-                android:text="@string/title_about"
+                android:text="@string/header_about"
                 android:textColor="@color/white"
                 android:textSize="@dimen/about_title"
                 android:typeface="normal" />

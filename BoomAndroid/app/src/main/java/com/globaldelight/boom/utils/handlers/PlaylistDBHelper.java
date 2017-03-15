@@ -203,6 +203,20 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
                 + SONG_KEY_PLAYLIST_ID + "='" + playlistId + "'");
     }
 
+    public boolean isAlreadyAddedToPlaylist(long playlistId, long trackId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT  * FROM " + TABLE_PLAYLIST_SONGS+ " WHERE " +
+                SONG_KEY_REAL_ID + "='" + trackId + "' AND "
+                + SONG_KEY_PLAYLIST_ID + "='" + playlistId + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
+
     public void removeSong(long songId, int playlistId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_PLAYLIST_SONGS + " WHERE " +

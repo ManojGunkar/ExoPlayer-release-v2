@@ -67,6 +67,10 @@ public class MediaController implements IMediaController {
         return App.getBoomPlayListHelper().getPlaylistSongs(id);
     }
 
+    public boolean isAlreadyAdded(long playlistId, long trackId) {
+        return App.getBoomPlayListHelper().isAlreadyAddedToPlaylist(playlistId, trackId);
+    }
+
     @Override
     public void addSongToBoomPlayList(long itemId, ArrayList<? extends IMediaItemBase> mediaElement, boolean isUpdate) {
         App.getBoomPlayListHelper().addSongs(mediaElement, itemId, isUpdate);

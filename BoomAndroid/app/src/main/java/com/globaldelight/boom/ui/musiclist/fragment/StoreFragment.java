@@ -162,9 +162,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.store_page_header));
         ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.store_page_buy_description));
         if (null != price)
-            ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.store_page_buy_now) + " @ " + price);
+            ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.buy_button) + " @ " + price);
         else
-            ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.store_page_buy_now));
+            ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.buy_button));
     }
 
     @Override
