@@ -229,7 +229,7 @@
     <string name="favorite_empty_placeholder_txt">您尚未喜歡\n任何歌曲。</string>
     <string name="cloud_configure_placeholder_txt">尚未配置帳戶。\n在設定中配置帳戶以\n存取歌曲。</string>
 
-    <string name="playlist">歌曲已經新增到播放清單。</string>
+    <string name="playlist_track_already_added">歌曲已經新增到播放清單。</string>
     <!--<string name="placeholder_cloud">沒有網際網路連接。\n 連接到網際網路以存取音樂</string>-->
 
     <string name="settings_button">設定</string>
