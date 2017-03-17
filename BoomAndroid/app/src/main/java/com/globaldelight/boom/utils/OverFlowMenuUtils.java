@@ -152,7 +152,7 @@ public class OverFlowMenuUtils {
 
     private static void renameDialog(final Activity activity, final String itemTitle, final long itemId) {
         new MaterialDialog.Builder(activity)
-                .title(R.string.dialog_txt_rename)
+                .title(R.string.rename)
                 .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
                 .titleColor(ContextCompat.getColor(activity, R.color.dialog_title))
                 .positiveColor(ContextCompat.getColor(activity, R.color.dialog_submit_positive))
@@ -161,7 +161,7 @@ public class OverFlowMenuUtils {
                 .contentColor(ContextCompat.getColor(activity, R.color.dialog_content))
                 .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .cancelable(true)
-                .positiveText(activity.getResources().getString(R.string.dialog_txt_done))
+                .positiveText(activity.getResources().getString(R.string.done))
                 .negativeText(activity.getResources().getString(R.string.dialog_txt_cancel))
                 .input(null, itemTitle, new MaterialDialog.InputCallback() {
                     @Override
