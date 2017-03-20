@@ -234,7 +234,8 @@
     <string name="title_settings">Settings</string>
     <string name="settings_button">Settings</string>
 
-    <string name="delete_dialog_txt">Do you want to delete</string>
+    <string name="delete_dialog_txt">Do you want to delete "\""%1$s"\"" ?</string>
     <string name="delete_dialog_title">Delete Playlist</string>
     <string name="share_pop_up_text">Share Boom with your loved ones,\n and #FeelYourMusic without ads \n for 5 days</string>
+    <string name="error_in_playing">Error in playing song</string>
 </resources>

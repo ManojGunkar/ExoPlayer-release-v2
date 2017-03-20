@@ -36,9 +36,6 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
     public static final String ACTION_UPNEXT_UPDATE = "ACTION_UPNEXT_UPDATE";
     public static final String ACTION_PLAYING_ITEM_CLICKED ="ACTION_PLAYING_ITEM_CLICKED";
 
-    public static final String ACTION_CREATE_PLAYER_SCREEN = "ACTION_CREATE_PLAYER_SCREEN";
-    public static final String ACTION_DESTROY_PLAYER_SCREEN ="ACTION_DESTROY_PLAYER_SCREEN";
-
     private static PlayerServiceReceiver receiverHandler;
     private static IPlayerService mPlayerService;
 
@@ -73,8 +70,6 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
         filter.addAction(ACTION_UPNEXT_UPDATE);
         filter.addAction(ACTION_PLAYING_ITEM_CLICKED);
         filter.addAction(ACTION_LAST_PLAYED_SONG);
-        filter.addAction(ACTION_CREATE_PLAYER_SCREEN);
-        filter.addAction(ACTION_DESTROY_PLAYER_SCREEN);
         service.registerReceiver(receiverHandler, filter);
     }
 
@@ -149,14 +144,6 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 if(null != mPlayerService)
                     mPlayerService.onPlayingItemClicked(intent);
                 break;
-            case ACTION_CREATE_PLAYER_SCREEN :
-                if(null != mPlayerService)
-                    mPlayerService.onCreateLibrary();
-                break;
-            case ACTION_DESTROY_PLAYER_SCREEN :
-                if(null != mPlayerService)
-                    mPlayerService.onDestroyLibrary();
-                break;
         }
     }
 
@@ -179,8 +166,5 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
         void onTrackPositionUpdate(Intent intent);
         void onUpNextListUpdate();
         void onPlayingItemClicked(Intent intent);
-
-        void onCreateLibrary();
-        void onDestroyLibrary();
     }
 }

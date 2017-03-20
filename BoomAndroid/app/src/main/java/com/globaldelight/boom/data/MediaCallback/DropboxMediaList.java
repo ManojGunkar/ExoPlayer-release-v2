@@ -45,7 +45,7 @@ public class DropboxMediaList {
         postMessage.post(new Runnable() {
             @Override
             public void run() {
-                if ( dropboxUpdater != null )
+                if ( null != dropboxUpdater )
                     dropboxUpdater.UpdateDropboxEntryList();
             }
         });
