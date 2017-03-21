@@ -26,6 +26,7 @@ import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.ActivityContainer;
+import com.globaldelight.boom.ui.musiclist.activity.WebViewActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.utils.HeadPhoneItemAdapter;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
@@ -45,7 +46,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     private GoogleDriveHandler googleDriveHandler;
     private PermissionChecker permissionChecker;
     Activity mActivity;
-
     public SettingFragment(){}
 
     @Override
@@ -130,9 +130,13 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 startCompoundActivities(R.string.header_about);
                 break;
             case R.id.feedback_panel:
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://apimboom2.globaldelight.net/feedback.php ")));
-                }catch (Exception e){}
+//                try {
+//                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://apimboom2.globaldelight.net/feedback.php ")));
+//                }catch (Exception e){}
+                if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
+                    Intent intent = new Intent(mActivity, WebViewActivity.class);
+                    startActivity(intent);
+                }
                 break;
         }
     }

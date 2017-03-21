@@ -148,7 +148,7 @@ public class LibraryFragment extends Fragment {
     }
 
     public void chooseCoachMarkWindow(boolean isPlayerExpended, boolean isLibraryRendered) {
-        if (null != getActivity() && !Preferences.readBoolean(mActivity, TOLLTIP_USE_HEADPHONE_LIBRARY, true) && Preferences.readBoolean(mActivity, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, true) && !isPlayerExpended && HeadPhonePlugReceiver.isHeadsetConnected() && isLibraryRendered ) {
+        if (null != getActivity() &&  Preferences.readBoolean(mActivity, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, true) && !isPlayerExpended && HeadPhonePlugReceiver.isHeadsetConnected() && isLibraryRendered ) {
             if(null != coachMarkUseHeadPhone)
                 coachMarkUseHeadPhone.dismissTooltip();
             coachMarkChooseHeadPhone = new CoachMarkerWindow(mActivity, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.choose_headphone_tooltip));
