@@ -122,7 +122,7 @@ public class UpNextPlayingQueue {
     /**************************************************************************************************************************/
 //    Callbacks to update UI
     public void PlayPause() {
-        if (mUpNextMediaEvent != null) {
+        if (null != mUpNextMediaEvent) {
             eventHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -134,7 +134,7 @@ public class UpNextPlayingQueue {
 
     //  Queue and Playing Item Update
     public void PlayingItemChanged() {
-        if (mUpNextMediaEvent != null) {
+        if (null != mUpNextMediaEvent) {
             eventHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -146,7 +146,7 @@ public class UpNextPlayingQueue {
 
     //  Only Queue update
     public void QueueUpdated() {
-        if (mUpNextMediaEvent != null) {
+        if (null != mUpNextMediaEvent) {
             eventHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -491,14 +491,18 @@ public class UpNextPlayingQueue {
     }
 
     public void SaveUpNextItems() {
-        Log.d("mPlayingItemIndex", mPlayingItemIndex+"");
-        if(mShuffle == SHUFFLE.all) {
-            insertUpNextList(SHUFFLED);
-        }else{
-            insertUpNextList(UNSHUFFLE);
-            Preferences.writeString(context, SHUFFLED, null);
-        }
-        savePlayingItemIndex();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(mShuffle == SHUFFLE.all) {
+                    insertUpNextList(SHUFFLED);
+                }else{
+                    insertUpNextList(UNSHUFFLE);
+                    Preferences.writeString(context, SHUFFLED, null);
+                }
+                savePlayingItemIndex();
+            }
+        }).start();
     }
 
     private void savePlayingItemIndex() {

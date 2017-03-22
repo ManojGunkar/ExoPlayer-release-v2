@@ -48,7 +48,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     private PlayerEventHandler musicPlayerHandler;
     private Context context;
     private NotificationHandler notificationHandler;
-    private static boolean isPlayerScreenResume = false;
     private HeadPhonePlugReceiver headPhonePlugReceiver;
     private DropboxAPI<AndroidAuthSession> dropboxAPI;
     private PlayerServiceReceiver serviceReceiver;
@@ -107,7 +106,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         if (musicPlayerHandler == null)
             musicPlayerHandler = App.getPlayerEventHandler();
 
@@ -163,13 +161,13 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             i.putExtra("is_next", musicPlayerHandler.isNext());
 
             sendBroadcast(i);
-            updateNotificationPlayer(musicPlayerHandler.getPlayingItem(), true, false);
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             updateNotificationPlayer(musicPlayerHandler.getPlayingItem(), true, false);
+            updateUpNextDB();
         }else{
             Intent i = new Intent();
             i.setAction(PlayerEvents.ACTION_LAST_PLAYED_SONG);
@@ -196,9 +194,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             notificationHandler.setNotificationPlayer(false);
         }
         notificationHandler.changeNotificationDetails(playingItem, playing, isLastPlayed);
-        if(playingItem == null && !isLastPlayed){
-            updateUpNextDB();
-        }
     }
 
     @Nullable
@@ -231,9 +226,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     @Override
     public void onNotificationRemove() {
         notificationHandler.setNotificationActive(false);
-        if(!isPlayerScreenResume) {
-            updateUpNextDB();
-        }
     }
 
     @Override
@@ -305,12 +297,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             if (!musicPlayerHandler.isPaused() && !musicPlayerHandler.isPlaying()  ) {
                 musicPlayerHandler.onPlayingItemChanged();
             } else {
-                PlayerEventHandler.PlayState state = musicPlayerHandler.PlayPause();
-                if (state != PlayerEventHandler.PlayState.play && !isPlayerScreenResume) {
-                    updateUpNextDB();
-                } else {
-                    updatePlayPause(state == PlayerEventHandler.PlayState.play ? true : false);
-                }
+                updatePlayPause(musicPlayerHandler.PlayPause() == PlayerEventHandler.PlayState.play ? true : false);
             }
         }
     }
@@ -328,7 +315,8 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     @Override
     public void onStopPlaying() {
         sendBroadcast(new Intent(PlayerEvents.ACTION_TRACK_STOPPED));
-        updateNotificationPlayer(App.getPlayerEventHandler().getPlayingItem(), false, false);
+        notificationHandler.setNotificationPlayer(false);
+        notificationHandler.changeNotificationDetails(App.getPlayerEventHandler().getPlayingItem(), false, false);
     }
 
     @Override
@@ -344,22 +332,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     @Override
     public void onPlayingItemClicked(Intent intent) {
         updatePlayPause(intent.getBooleanExtra("play_pause", false));
-    }
-
-    @Override
-    public void onCreateLibrary() {
-        isPlayerScreenResume = true;
-    }
-
-    @Override
-    public void onDestroyLibrary() {
-        isPlayerScreenResume = false;
-        if(null != notificationHandler && !App.getPlayerEventHandler().isPlaying()) {
-            stopForeground(true);
-            notificationHandler.setNotificationPlayer(true);
-            notificationHandler.changeNotificationDetails(null, false , false);
-            App.getPlayingQueueHandler().getUpNextList().SaveUpNextItems();
-        }
     }
 
     @Override
@@ -382,16 +354,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     }
 
     private void updateUpNextDB() {
-        if(notificationHandler.isNotificationActive()) {
-            notificationHandler.removeNotification();
-            stopForeground(true);
-        }
         App.getPlayingQueueHandler().getUpNextList().SaveUpNextItems();
-        if (musicPlayerHandler.getPlayer() != null) {
-            musicPlayerHandler.stop();
-//            musicPlayerHandler.release();
-        }
-        App.getService().stopSelf();
     }
 
     private void initBusinessModel() {

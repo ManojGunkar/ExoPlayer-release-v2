@@ -2,6 +2,7 @@ package com.globaldelight.boom.utils;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -83,7 +84,7 @@ public class OverFlowMenuUtils {
     }
 
     private static void deletePlaylistDialog(final Activity activity, final String itemTitle, final long itemId) {
-        String content = activity.getResources().getString(R.string.delete_dialog_txt) +" \""+itemTitle+"\" ?";
+        String content = activity.getResources().getString(R.string.delete_dialog_txt, itemTitle);
         new MaterialDialog.Builder(activity)
                 .title(R.string.delete_dialog_title)
                 .titleColor(ContextCompat.getColor(activity, R.color.dialog_title))

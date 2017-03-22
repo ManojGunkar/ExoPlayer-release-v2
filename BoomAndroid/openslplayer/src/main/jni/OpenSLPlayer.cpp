@@ -4,7 +4,6 @@
 
 #include <assert.h>
 #include <logger/log.h>
-#include <stdint.h>
 #include "OpenSLPlayer.hpp"
 
 #define LOG_TAG "OpenSLPlayer"

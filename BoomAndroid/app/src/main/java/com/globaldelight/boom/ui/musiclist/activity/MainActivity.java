@@ -176,8 +176,6 @@ public class MainActivity extends MasterActivity
     }
 
     private void initView() {
-        App.startPlayerService();
-        sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_CREATE_PLAYER_SCREEN));
         setLibraryAddsUpdater(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbarTitle = (RegularTextView) findViewById(R.id.toolbar_txt);
@@ -369,38 +367,32 @@ public class MainActivity extends MasterActivity
     @Override
     public boolean onNavigationItemSelected(final MenuItem item) {
         runnable = null;
+        switch (item.getItemId()){
+            case R.id.music_library:
+                runnable = navigateLibrary;
+                break;
+            case R.id.google_drive:
+                runnable = navigateGoogleDrive;
+                break;
+            case R.id.drop_box:
+                runnable = navigateDropbox;
+                break;
+            case R.id.nav_setting:
+                startCompoundActivities(R.string.title_settings);
+                break;
+            case R.id.nav_store:
+                startCompoundActivities(R.string.store_title);
+                break;
+            case R.id.nav_share:
+                Utils.shareStart(MainActivity.this);
+                break;
+        }
+        if (runnable != null) {
+            item.setChecked(true);
+            Handler handler = new Handler();
+            handler.postDelayed(runnable, 300);
+        }
         drawerLayout.closeDrawer(GravityCompat.START);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                switch (item.getItemId()){
-                    case R.id.music_library:
-                        runnable = navigateLibrary;
-                        break;
-                    case R.id.google_drive:
-                        runnable = navigateGoogleDrive;
-                        break;
-                    case R.id.drop_box:
-                        runnable = navigateDropbox;
-                        break;
-                    case R.id.nav_setting:
-                        startCompoundActivities(R.string.title_settings);
-                        break;
-                    case R.id.nav_store:
-                        startCompoundActivities(R.string.store_title);
-                        break;
-                    case R.id.nav_share:
-                        Utils.shareStart(MainActivity.this);
-                        break;
-                }
-                if (runnable != null) {
-                    item.setChecked(true);
-                    Handler handler = new Handler();
-                    handler.post(runnable);
-                }
-            }
-        }, 150);
-
         return true;
     }
 
@@ -442,15 +434,7 @@ public class MainActivity extends MasterActivity
 
     @Override
     protected void onDestroy() {
-        updateUpNextDB();
         super.onDestroy();
-    }
-
-    private void updateUpNextDB() {
-        sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_DESTROY_PLAYER_SCREEN));
-        if(!App.getPlayerEventHandler().isPlaying() && null != App.getService()) {
-            App.getService().stopSelf();
-        }
     }
 
     @Override

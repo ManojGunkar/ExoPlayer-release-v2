@@ -235,7 +235,8 @@
     <string name="settings_button">设置</string>
     <string name="title_settings">设置</string>
 
-    <string name="delete_dialog_txt">Do you want to delete</string>
-    <string name="delete_dialog_title">Delete Playlist</string>
-    <string name="share_pop_up_text">Share Boom with your loved ones,\n and #FeelYourMusic without ads \n for 5 days</string>
+    <string name="delete_dialog_txt">是否要删除 "\""%1$s"\"" ?</string>
+    <string name="delete_dialog_title">删除播放列表</string>
+    <string name="share_pop_up_text">与您所爱之人分享 Boom，\n 并且 #FeelYourMusic 可以\n 5 天免广告使用</string>
+    <string name="error_in_playing">播放歌曲时出错</string>
 </resources>

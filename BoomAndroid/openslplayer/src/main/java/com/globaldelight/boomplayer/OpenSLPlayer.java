@@ -25,9 +25,9 @@ public class OpenSLPlayer {
 
     public native int write(ByteBuffer buf, int offset, int frameCount);
 
-    public native void setPlayingAudioPlayer(boolean isPlaying);
+    public native void setPlayingState(boolean isPlaying);
 
-    public native void seekTo(long position);
+    public native void flush();
 
     public native void enableAudioEffect(boolean enable);
 
@@ -39,7 +39,7 @@ public class OpenSLPlayer {
 
     public native void enableEqualizer(boolean enable);
 
-    public native void setIntensity(double value);
+    public native void setIntensity(float value);
 
     public native void setEqualizer(int id, float []bandGains);
 
@@ -53,7 +53,7 @@ public class OpenSLPlayer {
 
     public native boolean getEffectsState();
 
-    public native boolean getIntensity();
+    public native float getIntensity();
 
     public native int getEqualizerId();
 
