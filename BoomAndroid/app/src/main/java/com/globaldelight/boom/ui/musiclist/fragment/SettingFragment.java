@@ -130,9 +130,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 startCompoundActivities(R.string.header_about);
                 break;
             case R.id.feedback_panel:
-//                try {
-//                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://apimboom2.globaldelight.net/feedback.php ")));
-//                }catch (Exception e){}
                 if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
                     Intent intent = new Intent(mActivity, WebViewActivity.class);
                     startActivity(intent);
