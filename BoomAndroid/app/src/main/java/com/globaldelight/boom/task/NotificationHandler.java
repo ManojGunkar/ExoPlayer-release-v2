@@ -67,24 +67,54 @@ public class NotificationHandler {
     }
 
     public void setNotificationPlayer(boolean removable) {
-        notificationCompat = createBuiderNotification(removable).build();
-        notiLayoutBig = new RemoteViews(context.getPackageName(),
-                R.layout.notification_layout);
-        notiCollapsedView = new RemoteViews(context.getPackageName(),
-                R.layout.notification_small);
-        if (Build.VERSION.SDK_INT >= 16) {
-            notificationCompat.bigContentView = notiLayoutBig;
+        if ( notificationCompat == null ) {
+            notificationCompat = createBuiderNotification(true).build();
+            notiLayoutBig = new RemoteViews(context.getPackageName(),
+                    R.layout.notification_layout);
+            notiCollapsedView = new RemoteViews(context.getPackageName(),
+                    R.layout.notification_small);
+            if (Build.VERSION.SDK_INT >= 16) {
+                notificationCompat.bigContentView = notiLayoutBig;
+            }
+            notificationCompat.contentView = notiCollapsedView;
+
+            Intent playClick = new Intent();
+            playClick.setAction(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG);
+            PendingIntent playClickIntent = PendingIntent.getBroadcast(context, 10101, playClick, 0);
+            notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
+            notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
+
+            Intent nextClick = new Intent();
+            nextClick.setAction(PlayerServiceReceiver.ACTION_NEXT_SONG);
+            PendingIntent nextClickIntent = PendingIntent.getBroadcast(context, 10102, nextClick, 0);
+            notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
+            notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
+
+            Intent prevClick = new Intent();
+            prevClick.setAction(PlayerServiceReceiver.ACTION_PREV_SONG);
+            PendingIntent prevClickIntent = PendingIntent.getBroadcast(context, 10103, prevClick, 0);
+            notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
+            notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
+
+            notificationCompat.priority = Notification.PRIORITY_MAX;
         }
-        notificationCompat.contentView = notiCollapsedView;
-        notificationCompat.priority = Notification.PRIORITY_MAX;
-        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (!removable)
+
+        final int stickyFlag = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
+        if ( !removable ) {
+            notificationCompat.flags = notificationCompat.flags | stickyFlag;
             service.startForeground(NOTIFICATION_ID, notificationCompat);
+        }
+        else {
+            notificationCompat.flags = notificationCompat.flags & ~stickyFlag;
+        }
+
+        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID, notificationCompat);
         notificationActive = true;
     }
 
     public void changeNotificationDetails(IMediaItem item, boolean playing, boolean isLastPlayed) {
+
         if(item == null && !isLastPlayed){
             removeNotification();
             return;
@@ -101,11 +131,6 @@ public class NotificationHandler {
 
         notificationCompat.bigContentView.setViewVisibility(R.id.noti_play_button, VISIBLE);
         notificationCompat.contentView.setViewVisibility(R.id.noti_play_button, VISIBLE);
-        Intent playClick = new Intent();
-        playClick.setAction(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG);
-        PendingIntent playClickIntent = PendingIntent.getBroadcast(context, 10101, playClick, 0);
-        notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
-        notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
         Log.d("Playing : ", ""+playing);
         if (playing) {
             notificationCompat.bigContentView
@@ -118,18 +143,6 @@ public class NotificationHandler {
             notificationCompat.contentView
                     .setImageViewResource(R.id.noti_play_button, R.drawable.ic_play_notification);
         }
-
-        Intent nextClick = new Intent();
-        nextClick.setAction(PlayerServiceReceiver.ACTION_NEXT_SONG);
-        PendingIntent nextClickIntent = PendingIntent.getBroadcast(context, 10102, nextClick, 0);
-        notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
-        notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
-
-        Intent prevClick = new Intent();
-        prevClick.setAction(PlayerServiceReceiver.ACTION_PREV_SONG);
-        PendingIntent prevClickIntent = PendingIntent.getBroadcast(context, 10103, prevClick, 0);
-        notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
-        notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
 
         if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
             Picasso.with(context).load(new File(item.getItemArtUrl())).into(new Target() {
