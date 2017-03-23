@@ -908,10 +908,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 switchEqualizer();
                 break;
             case R.id.eq_dialog_panel:
+            case R.id.equalizer_txt:
                 if(isEffectOn && audioEffectPreferenceHandler.isEqualizerOn())
                     onEqDialogOpen();
                 break;
             case R.id.speaker_btn :
+            case R.id.three_surround_txt :
                 if(isEffectOn && audioEffectPreferenceHandler.is3DSurroundOn())
                     openSpeakerDialog();
                 break;
@@ -1031,6 +1033,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         m3DSurroundTxt = (RegularTextView) mInflater.findViewById(R.id.three_surround_txt);
         mSpeakerBtn = (ImageView) mInflater.findViewById(R.id.speaker_btn) ;
         mSpeakerBtn.setOnClickListener(this);
+        m3DSurroundTxt.setOnClickListener(this);
 
         mFullBassCheck = (AppCompatCheckBox) mInflater.findViewById(R.id.fullbass_chk);
         mFullBassCheck.setChecked(audioEffectPreferenceHandler.isFullBassOn());
@@ -1066,6 +1069,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mEqualizerTxt = (RegularTextView) mInflater.findViewById(R.id.equalizer_txt);
         mEqDialogPanel = (LinearLayout) mInflater.findViewById(R.id.eq_dialog_panel);
         mEqDialogPanel.setOnClickListener(this);
+        mEqualizerTxt.setOnClickListener(this);
 
         mSelectedEqImg = (ImageView) mInflater.findViewById(R.id.selected_eq_img);
         mSelectedEqTxt = (RegularTextView) mInflater.findViewById(R.id.selected_eq_txt);

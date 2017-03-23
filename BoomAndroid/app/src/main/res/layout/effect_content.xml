@@ -72,6 +72,7 @@
                 android:layout_marginLeft="@dimen/effect_title_margin"
                 android:textSize="@dimen/effect_title_size"
                 android:textStyle="normal"
+                android:clickable="true"
                 android:textColor="@color/effect_inactive"
                 android:layout_weight="0"
                 android:text="@string/three_d_surround"/>

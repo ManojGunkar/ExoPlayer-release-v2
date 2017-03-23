@@ -238,4 +238,5 @@
     <string name="delete_dialog_title">Delete Playlist</string>
     <string name="share_pop_up_text">Share Boom with your loved ones,\n and #FeelYourMusic without ads \n for 5 days</string>
     <string name="error_in_playing">Error in playing song</string>
+    <string name="ask_reset_timer">Do you wants to reset sleeping time?</string>
 </resources>

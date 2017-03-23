@@ -50,81 +50,93 @@ public class TimerUtils {
     private static CountDownTimer mCountDownTimer;;
 
     public static void customMaterialTimepicker(final Context mContext, final RegularTextView txtDescTimer, boolean running) {
-        MaterialDialog dialog = new MaterialDialog.Builder(mContext)
-                .customView(R.layout.custom_time_picker, false)
-                .backgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background))
-                .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
-                .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
-                .neutralColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
-                .widgetColor(ContextCompat.getColor(mContext, R.color.dialog_widget))
-                .contentColor(ContextCompat.getColor(mContext, R.color.dialog_content))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                .positiveText(R.string.timer_start)
-                .negativeText(R.string.timer_cancel)
-                .neutralText(R.string.timer_reset)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        setTimer(mContext, txtDescTimer);
-                        materialDialog.dismiss();
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                        resetTimer(mContext, txtDescTimer);
-                        materialDialog.dismiss();
-                    }
-                })
-                .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
+        if(running) {
+            new MaterialDialog.Builder(mContext)
+                    .backgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background))
+                    .title(mContext.getResources().getString(R.string.title_sleep_timer))
+                    .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
+                    .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
+                    .negativeColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
+                    .neutralColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
+                    .widgetColor(ContextCompat.getColor(mContext, R.color.dialog_widget))
+                    .contentColor(ContextCompat.getColor(mContext, R.color.dialog_widget))
+                    .content(mContext.getResources().getString(R.string.ask_reset_timer))
+                    .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+                    .negativeText(R.string.timer_cancel)
+                    .neutralText(R.string.timer_reset)
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                            resetTimer(mContext, txtDescTimer);
+                            materialDialog.dismiss();
+                        }
+                    })
+                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        }else {
+            MaterialDialog dialog = new MaterialDialog.Builder(mContext)
+                    .customView(R.layout.custom_time_picker, false)
+                    .backgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background))
+                    .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
+                    .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
+                    .negativeColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
+                    .neutralColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
+                    .widgetColor(ContextCompat.getColor(mContext, R.color.dialog_widget))
+                    .contentColor(ContextCompat.getColor(mContext, R.color.dialog_content))
+                    .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+                    .positiveText(R.string.timer_start)
+                    .neutralText(R.string.timer_reset)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                            setTimer(mContext, txtDescTimer);
+                            materialDialog.dismiss();
+                        }
+                    })
+                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
 
-        View dialogView = dialog.getCustomView();
-        timePicker = (TimePicker) dialogView.findViewById(R.id.timePickerdialog);
-        RegularButton timerStart = (RegularButton) dialogView.findViewById(R.id.tmstart);
-        RegularButton timerReset = (RegularButton) dialogView.findViewById(R.id.tmreset);//close
-        final RegularButton timerCancel = (RegularButton) dialogView.findViewById(R.id.tmcancel);
-        timerStart.setTransformationMethod(null);
-        timerReset.setTransformationMethod(null);
-        timerCancel.setTransformationMethod(null);
-        View negative = dialog.getActionButton(DialogAction.NEGATIVE);
-        View positive = dialog.getActionButton(DialogAction.POSITIVE);
-        if (running) {
-            positive.setVisibility(View.GONE);
-            negative.setVisibility(View.VISIBLE);
-        } else {
+            View dialogView = dialog.getCustomView();
+            timePicker = (TimePicker) dialogView.findViewById(R.id.timePickerdialog);
+            RegularButton timerStart = (RegularButton) dialogView.findViewById(R.id.tmstart);
+            final RegularButton timerCancel = (RegularButton) dialogView.findViewById(R.id.tmcancel);
+            timerStart.setTransformationMethod(null);
+            timerCancel.setTransformationMethod(null);
+            View positive = dialog.getActionButton(DialogAction.POSITIVE);
             positive.setVisibility(View.VISIBLE);
-            negative.setVisibility(View.GONE);
+
+            timePicker.setIs24HourView(true);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                timePicker.setHour(0);
+                timePicker.setMinute(0);
+            } else {
+                timePicker.setCurrentHour(0);
+                timePicker.setCurrentMinute(0);
+            }
+            system = Resources.getSystem();
+            int hour_numberpicker_id = system.getIdentifier("hour", "id", "android");
+            int minute_numberpicker_id = system.getIdentifier("minute", "id", "android");
+            int ampm_numberpicker_id = system.getIdentifier("amPm", "id", "android");
+
+            NumberPicker hour_numberpicker = (NumberPicker) timePicker.findViewById(hour_numberpicker_id);
+            NumberPicker minute_numberpicker = (NumberPicker) timePicker.findViewById(minute_numberpicker_id);
+            NumberPicker ampm_numberpicker = (NumberPicker) timePicker.findViewById(ampm_numberpicker_id);
+
+            set_numberpicker_text_colour(mContext, hour_numberpicker);
+            set_numberpicker_text_colour(mContext, minute_numberpicker);
+            set_numberpicker_text_colour(mContext, ampm_numberpicker);
         }
-
-        timePicker.setIs24HourView(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            timePicker.setHour(0);
-            timePicker.setMinute(0);
-        } else {
-            timePicker.setCurrentHour(0);
-            timePicker.setCurrentMinute(0);
-        }
-        system = Resources.getSystem();
-        int hour_numberpicker_id = system.getIdentifier("hour", "id", "android");
-        int minute_numberpicker_id = system.getIdentifier("minute", "id", "android");
-        int ampm_numberpicker_id = system.getIdentifier("amPm", "id", "android");
-
-        NumberPicker hour_numberpicker = (NumberPicker) timePicker.findViewById(hour_numberpicker_id);
-        NumberPicker minute_numberpicker = (NumberPicker) timePicker.findViewById(minute_numberpicker_id);
-        NumberPicker ampm_numberpicker = (NumberPicker) timePicker.findViewById(ampm_numberpicker_id);
-
-        set_numberpicker_text_colour(mContext, hour_numberpicker);
-        set_numberpicker_text_colour(mContext, minute_numberpicker);
-        set_numberpicker_text_colour(mContext, ampm_numberpicker);
-
     }
 
 

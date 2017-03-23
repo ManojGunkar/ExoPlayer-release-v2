@@ -87,7 +87,6 @@
             android:text="@string/timer_start"
             android:textColor="@color/white" />
 
-
     </LinearLayout>
 
 </LinearLayout>
