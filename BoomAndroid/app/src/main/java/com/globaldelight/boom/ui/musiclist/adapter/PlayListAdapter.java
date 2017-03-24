@@ -299,7 +299,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
             artImg4 = (ImageView) itemView.findViewById(R.id.card_grid_art_img4);
             artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
             gridBottomBg = itemView.findViewById(R.id.card_grid_bottom);
-            grid_menu = itemView.findViewById(R.id.card_grid_menu);
+            grid_menu = itemView.findViewById(R.id.card_grid_overflow_menu);
             imgPanel = (FrameLayout) itemView.findViewById(R.id.card_grid_img_panel);
         }
     }

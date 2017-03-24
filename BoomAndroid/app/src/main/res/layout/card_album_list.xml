@@ -43,20 +43,21 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/album_item_overflow_menu"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="11"
-            android:gravity="center">
+            android:background="@drawable/unbounded_ripple"
+            android:foregroundTint="#434343"
+            android:gravity="center"
+            android:elevation="12dp"
+            android:theme="@style/Theme.AppCompat.Light" >
             <ImageView
                 android:id="@+id/album_item_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/unbounded_ripple"
-                android:foregroundTint="#434343"
                 android:padding="5dp"
-                android:elevation="12dp"
-                android:src="@drawable/over_flow_menu"
-                android:theme="@style/Theme.AppCompat.Light" />
+                android:src="@drawable/over_flow_menu" />
         </LinearLayout>
     </LinearLayout>
     <View

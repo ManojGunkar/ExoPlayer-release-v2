@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.Toast;
@@ -574,7 +575,8 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
 
         //For Song Lists
         public RegularTextView name, artistName;
-        public ImageView img, menu, art_overlay_play;
+        public ImageView img, art_overlay_play;
+        public LinearLayout menu;
 
 //        For Album grid
         public RegularTextView title, subTitle;
@@ -593,7 +595,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
 
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
             name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
-            menu = (ImageView)itemView.findViewById(R.id.song_item_menu);
+            menu = (LinearLayout)itemView.findViewById(R.id.song_item_overflow_menu);
             artistName = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
             art_overlay_play = (ImageView) itemView.findViewById(R.id.song_item_img_overlay_play);
             art_overlay = itemView.findViewById(R.id.song_item_img_overlay);
@@ -603,7 +605,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
             gridBottomBg = itemView.findViewById(R.id.card_grid_bottom);
-            grid_menu = itemView.findViewById(R.id.card_grid_menu);
+            grid_menu = itemView.findViewById(R.id.card_grid_overflow_menu);
             imgPanel = (FrameLayout) itemView.findViewById(R.id.card_grid_img_panel);
         }
     }

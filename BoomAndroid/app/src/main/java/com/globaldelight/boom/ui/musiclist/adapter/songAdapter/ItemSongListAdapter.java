@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.globaldelight.boom.App;
@@ -374,7 +375,8 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
         public RegularTextView name, artistName;
         public View mainView, art_overlay;
-        public ImageView img, menu, art_overlay_play;
+        public ImageView img, art_overlay_play;
+        public LinearLayout menu;
         public ProgressBar loadCloud;
 
         public RegularTextView headerSubTitle, headerDetail;
@@ -390,7 +392,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             art_overlay = itemView.findViewById(R.id.song_item_img_overlay);
             loadCloud = (ProgressBar) itemView.findViewById(R.id.load_cloud );
             name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
-            menu = (ImageView) itemView.findViewById(R.id.song_item_menu);
+            menu = (LinearLayout) itemView.findViewById(R.id.song_item_overflow_menu);
             artistName = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
             undoButton = (Button) itemView.findViewById(R.id.undo_button);
             imgHandle = (ImageView) itemView.findViewById(R.id.song_item_handle);
