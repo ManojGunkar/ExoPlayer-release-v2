@@ -239,4 +239,6 @@
     <string name="delete_dialog_title">删除播放列表</string>
     <string name="share_pop_up_text">与您所爱之人分享 Boom，\n 并且 #FeelYourMusic 可以\n 5 天免广告使用</string>
     <string name="error_in_playing">播放歌曲时出错</string>
+
+    <string name="ask_reset_timer">Do you wants to reset sleeping time?</string>
 </resources>
