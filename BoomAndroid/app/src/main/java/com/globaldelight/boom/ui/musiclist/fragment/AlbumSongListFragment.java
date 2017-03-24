@@ -214,10 +214,10 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         }
     }
 
-    public void updateOnBackPressed(){
+    public void updateBoomPlaylistIfOrderChanged(){
         if(collection.getParentType() == BOOM_PLAYLIST && isMoved && collection.getMediaElement().size() > 0){
-            MediaController.getInstance(mActivity).addSongToBoomPlayList(collection.getItemId(), collection.getMediaElement(), true);
             isMoved= false;
+            MediaController.getInstance(mActivity).addSongToBoomPlayList(collection.getItemId(), collection.getMediaElement(), true);
         }
     }
 

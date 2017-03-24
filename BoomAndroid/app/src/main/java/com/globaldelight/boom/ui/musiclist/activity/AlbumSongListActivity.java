@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -48,17 +47,6 @@ public class AlbumSongListActivity extends MasterActivity {
     private ImageView artImg1, artImg2, artImg3, artImg4;
     private TableLayout tblAlbumArt;
     private static int screenWidth= 0;
-
-    private BroadcastReceiver mUpdateAlbumSongListReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
-                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
-                    fragment.updateAdapter();
-                    break;
-            }
-        }
-    };
 
     public void updateAlbumArt() {
         final ArrayList<String> urlList = MediaController.getInstance(this).getArtUrlList((MediaItemCollection) currentItem);
@@ -138,10 +126,6 @@ public class AlbumSongListActivity extends MasterActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.item_detail_container, fragment)
                 .commitAllowingStateLoss();
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
-        registerReceiver(mUpdateAlbumSongListReceiver, intentFilter);
     }
 
     @Override
@@ -251,7 +235,7 @@ public class AlbumSongListActivity extends MasterActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            fragment.updateOnBackPressed();
+            fragment.updateBoomPlaylistIfOrderChanged();
             super.onBackPressed();
             return true;
         }
@@ -262,13 +246,13 @@ public class AlbumSongListActivity extends MasterActivity {
     public void onBackPressed() {
         if(getSupportFragmentManager().getBackStackEntryCount() > 0)
             getSupportFragmentManager().popBackStack();
-        fragment.updateOnBackPressed();
+        fragment.updateBoomPlaylistIfOrderChanged();
         super.onBackPressed();
     }
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(mUpdateAlbumSongListReceiver);
+        fragment.updateBoomPlaylistIfOrderChanged();
         super.onDestroy();
     }
 }
