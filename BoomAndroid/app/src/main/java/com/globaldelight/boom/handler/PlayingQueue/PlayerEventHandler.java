@@ -142,7 +142,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
 
         @Override
         public void onStop() {
-            handler.stopPlayer();
+            onPause();
         }
     };
 

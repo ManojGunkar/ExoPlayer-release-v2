@@ -188,7 +188,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     private void updateNotificationPlayer(IMediaItem playingItem, boolean playing, boolean isLastPlayed) {
         if(!playing){
-            stopForeground(true);
+            stopForeground(false);
             notificationHandler.setNotificationPlayer(true);
         }else{
             notificationHandler.setNotificationPlayer(false);
