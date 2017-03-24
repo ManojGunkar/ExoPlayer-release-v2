@@ -24,6 +24,7 @@ import com.globaldelight.boom.ui.widgets.RegularTextView;
  * Created by Rahul Agarwal on 26-01-17.
  */
 
+
 public class ActivityContainer extends AppCompatActivity {
 
     private Toolbar toolbar;
