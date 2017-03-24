@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -191,7 +192,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
 
         public RegularTextView name, artistName;
         public View mainView, art_overlay;
-        public ImageView img, menu, art_overlay_play;
+        public ImageView img, art_overlay_play;
+        public LinearLayout menu;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
@@ -200,7 +202,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
             art_overlay_play = (ImageView) itemView.findViewById(R.id.song_item_img_overlay_play);
             art_overlay = itemView.findViewById(R.id.song_item_img_overlay);
             name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
-            menu = (ImageView) itemView.findViewById(R.id.song_item_menu);
+            menu = (LinearLayout) itemView.findViewById(R.id.song_item_overflow_menu);
             artistName = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
         }
     }

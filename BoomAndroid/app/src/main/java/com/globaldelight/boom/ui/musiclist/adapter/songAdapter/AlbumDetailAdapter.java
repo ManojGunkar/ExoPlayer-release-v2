@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 import com.globaldelight.boom.App;
@@ -294,7 +295,8 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
 
         public RegularTextView name, count, duration;
         public View mainView, art_overlay;
-        public ImageView menu, art_overlay_play;
+        public ImageView art_overlay_play;
+        public LinearLayout menu;
 
         public RegularTextView headerSubTitle, headerDetail;
         ImageView mShuffle, mMore;
@@ -307,7 +309,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
             name = (RegularTextView) itemView.findViewById(R.id.album_item_name);
             duration = (RegularTextView) itemView.findViewById(R.id.album_item_duration);
             count = (RegularTextView) itemView.findViewById(R.id.album_item_count);
-            menu = (ImageView) itemView.findViewById(R.id.album_item_menu);
+            menu = (LinearLayout) itemView.findViewById(R.id.album_item_overflow_menu);
 
             headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
             headerDetail = (RegularTextView) itemView.findViewById(R.id.header_detail);

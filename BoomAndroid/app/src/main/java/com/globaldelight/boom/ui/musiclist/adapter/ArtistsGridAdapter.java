@@ -191,7 +191,7 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
             gridBottomBg = itemView.findViewById(R.id.card_grid_bottom);
-            grid_menu = itemView.findViewById(R.id.card_grid_menu);
+            grid_menu = itemView.findViewById(R.id.card_grid_overflow_menu);
             imgPanel = (FrameLayout) itemView.findViewById(R.id.card_grid_img_panel);
         }
     }

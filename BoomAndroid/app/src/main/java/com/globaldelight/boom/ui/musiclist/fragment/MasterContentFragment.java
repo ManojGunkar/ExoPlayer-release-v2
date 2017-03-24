@@ -197,7 +197,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
                     long totalMillis = intent.getLongExtra("totalms", 0);
                     long currentMillis = intent.getLongExtra("currentms", 0);
-                    updateTrackPlayTime(totalMillis, currentMillis);
+                    if(!isUser)
+                        updateTrackPlayTime(totalMillis, currentMillis);
                     break;
                 case ACTION_UPDATE_SHUFFLE:
                     updateShuffle();
@@ -426,8 +427,16 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }
     }
 
-    private void updateTrackPlayTime(long totalMillis, long currentMillis) {
+    private void changeProgress(int progress){
+        if(null != mPlayingMediaItem) {
+            long totalTime = mPlayingMediaItem.getDurationLong();
+            int totalProgress = 100;
+            long currentTime = (totalTime / totalProgress) * progress;
+            updateTrackPlayTime(totalTime, currentTime);
+        }
+    }
 
+    private void updateTrackPlayTime(long totalMillis, long currentMillis) {
         if(null != mCurrentSeekTime)
             mCurrentSeekTime.setText(String.format("%02d:%02d",
                     TimeUnit.MILLISECONDS.toMinutes(currentMillis),
@@ -480,7 +489,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
                 if(fromUser) {
                     isUser = true;
+
                     mTrackSeek.setProgress(progress);
+
+                    changeProgress(progress);
+
+
                     if(App.getPlayerEventHandler().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB){
                         showProgressLoader();
                     }
@@ -576,7 +590,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 long totalMillis = item.getDurationLong();
                 long currentMillis = 0;
 
-                updateTrackPlayTime(totalMillis, currentMillis);
+                if(!isUser)
+                    updateTrackPlayTime(totalMillis, currentMillis);
 
             }else {
                 boolean isMediaItem = item.getMediaType() == MediaType.DEVICE_MEDIA_LIB;
