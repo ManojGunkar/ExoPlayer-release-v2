@@ -241,4 +241,5 @@
     <string name="error_in_playing">播放歌曲时出错</string>
 
     <string name="ask_reset_timer">Do you wants to reset sleeping time?</string>
+    <string name="empty_search_result">No Search Result !</string>
 </resources>

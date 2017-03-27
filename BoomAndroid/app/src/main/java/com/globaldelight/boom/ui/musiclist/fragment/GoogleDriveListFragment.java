@@ -154,6 +154,9 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
             listIsEmpty(true);
             Utils.dismissProgressLoader();
         }
+
+        if(null != adapter)
+            adapter.notifyDataSetChanged();
     }
 
     public void checkPermissions() {

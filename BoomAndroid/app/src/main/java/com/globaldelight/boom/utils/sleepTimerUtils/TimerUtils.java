@@ -24,6 +24,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.handlers.Preferences;
@@ -35,6 +36,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
 
 /**
  * Created by Rahul Agarwal on 03-02-17.
@@ -243,10 +246,17 @@ public class TimerUtils {
             }
 
             public void onFinish() {
-                txtDescTimer.setText("00:00:00" + mContext.getResources().getString(R.string.remaning));
                 txtDescTimer.setText(mContext.getResources().getString(R.string.sleep_timer_description));
+                Preferences.writeBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
+                sendMessagePlayerStop(mContext);
             }
         }.start();
+    }
+
+    public static void sendMessagePlayerStop(Context mContext) {
+        if(App.getPlayerEventHandler().isPlaying())
+            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
+        mContext.sendBroadcast(new Intent(ACTION_ITEM_CLICKED));
     }
 
 

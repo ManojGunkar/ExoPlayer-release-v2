@@ -23,15 +23,9 @@ public class SleepAlarm extends BroadcastReceiver {
         PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
         wl.acquire();
         if(Preferences.getPreferences(context).getBoolean(Preferences.SLEEP_TIMER_ENABLED, false)) {
-            sendMessagePlayerStop(context);
+            TimerUtils.sendMessagePlayerStop(context);
             Preferences.writeBoolean(context, Preferences.SLEEP_TIMER_ENABLED, false);
         }
         wl.release();
-    }
-
-    public void sendMessagePlayerStop(Context mContext) {
-        if(App.getPlayerEventHandler().isPlaying())
-            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
-        mContext.sendBroadcast(new Intent(ACTION_ITEM_CLICKED));
     }
 }
