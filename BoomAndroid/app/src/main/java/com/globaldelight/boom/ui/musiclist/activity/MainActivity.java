@@ -55,8 +55,6 @@ public class MainActivity extends MasterActivity
     private CoordinatorLayout mainContainer;
     private NavigationView navigationView;
     private Fragment mSearchResult, mLibraryFragment;
-    private int fade_in = android.R.anim.fade_in;
-    private int fade_out = android.R.anim.fade_out;
     private boolean isLibraryRendered = false;
     private RegularTextView toolbarTitle;
     public SearchView searchView;
@@ -101,7 +99,7 @@ public class MainActivity extends MasterActivity
             Intent dropboxIntent = new Intent(MainActivity.this, CloudListActivity.class);
             dropboxIntent.putExtra("title", getResources().getString(R.string.drop_box));
             startActivity(dropboxIntent);
-            overridePendingTransition(fade_in, fade_out);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
     };
 
@@ -111,7 +109,7 @@ public class MainActivity extends MasterActivity
             Intent driveIntent = new Intent(MainActivity.this, CloudListActivity.class);
             driveIntent.putExtra("title", getResources().getString(R.string.google_drive));
             startActivity(driveIntent);
-            overridePendingTransition(fade_in, fade_out);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
     };
 
@@ -286,7 +284,7 @@ public class MainActivity extends MasterActivity
             public boolean onMenuItemActionExpand(MenuItem item) {
                 mSearchResult = new SearchViewFragment();
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(fade_in, fade_out).replace(R.id.search_container, mSearchResult).commitAllowingStateLoss();
+                transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.search_container, mSearchResult).commitAllowingStateLoss();
                 setVisibleLibrary(false);
                 return true;
             }
@@ -400,7 +398,7 @@ public class MainActivity extends MasterActivity
         Intent intent = new Intent(this, ActivityContainer.class);
         intent.putExtra("container",activityName);
         startActivity(intent);
-        overridePendingTransition(fade_in, fade_out);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     public void setVisibleLibrary(boolean visible){

@@ -173,7 +173,7 @@ public class UserPreferenceHandler {
         shp.edit().putLong(PLAYER_REMAINS_TIME, remainsTime).apply();
     }
 
-    public long getRemainsTime(){
-        return shp.getLong(PLAYER_REMAINS_TIME, 0);
+    public long getRemainsTime(long defaultTime){
+        return shp.getLong(PLAYER_REMAINS_TIME, defaultTime);
     }
 }

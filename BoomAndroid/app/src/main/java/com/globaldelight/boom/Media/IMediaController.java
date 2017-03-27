@@ -76,7 +76,7 @@ public interface IMediaController {
 
     ArrayList<? extends IMediaItem> getAlbumTrackList(long itemId, String itemTitle) ;
 
-    ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(long parentId, String parentTitle, long itemId, String itemTitle) ;
+    ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(long parentId, long itemId) ;
 
     ArrayList<? extends IMediaItemBase> getArtistTrackList(long parentId, String parentTitle) ;
 

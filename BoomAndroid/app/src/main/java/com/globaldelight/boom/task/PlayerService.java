@@ -83,6 +83,8 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             mServiceStartTime = SystemClock.currentThreadTimeMillis();
         }catch (Exception e){}
 
+        Preferences.writeBoolean(this, Preferences.SLEEP_TIMER_ENABLED, false);
+
         connectivityReceiver = new ConnectivityReceiver(this);
 
         if(connectivityReceiver.isNetworkAvailable(this, false)){
@@ -129,7 +131,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
             App.getUserPreferenceHandler().setPlayerSeekPosition(intent.getIntExtra("percent", 0));
             App.getUserPreferenceHandler().setPlayedTime(intent.getLongExtra("currentms", 0));
-            App.getUserPreferenceHandler().setRemainsTime(intent.getLongExtra("totalms", 0));
+            App.getUserPreferenceHandler().setRemainsTime(intent.getLongExtra("totalms", musicPlayerHandler.getPlayingItem().getDurationLong()));
         }else{
             musicPlayerHandler.seek(intent.getIntExtra("seek", 0));
         }
@@ -337,7 +339,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     @Override
     public void onDestroy() {
         unregisterReceiver(headPhonePlugReceiver);
-        Preferences.writeBoolean(this, Preferences.SLEEP_TIMER_ENABLED, false);
         serviceReceiver.unregisterPlayerServiceReceiver(this);
         try {
             mServiceStopTime = SystemClock.currentThreadTimeMillis();

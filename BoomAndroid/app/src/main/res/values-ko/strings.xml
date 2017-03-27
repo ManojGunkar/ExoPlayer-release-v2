@@ -159,7 +159,7 @@
     <string name="loading_problem">로드하지 못했습니다.</string>
     <string name="more">&#160;더</string>
     <string name="dropbox_authenticate_problem">Dropbox로 인증할 수 없습니다.</string>
-    <string name="google_drive_loading_error">Google Drive에서 로드 오류:\\n</string>
+    <string name="google_drive_loading_error">Google Drive에서 로드 오류:\n</string>
     <string name="empty_list">목록이 비어 있습니다.</string>
     <string name="require_google_play_service">이 앱은 Google Play 서비스가 필요합니다. 기기에 Google Play 서비스를 설치하고 이 앱을 다시 실행하십시오.</string>
     <string name="remaning">&#160;남음.</string>

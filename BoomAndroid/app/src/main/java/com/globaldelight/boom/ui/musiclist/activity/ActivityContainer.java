@@ -25,7 +25,7 @@ import com.globaldelight.boom.ui.widgets.RegularTextView;
  */
 
 
-public class ActivityContainer extends AppCompatActivity {
+public class ActivityContainer extends MasterActivity {
 
     private Toolbar toolbar;
     private int container;
@@ -42,6 +42,7 @@ public class ActivityContainer extends AppCompatActivity {
     }
 
     private void initViews() {
+        setDrawerLocked(true);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         if(container == R.string.store_title)
             toolbar.showOverflowMenu();
@@ -110,6 +111,18 @@ public class ActivityContainer extends AppCompatActivity {
         }else{
             getSupportFragmentManager().findFragmentById(R.id.item_detail_container).onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        registerPlayerReceiver(ActivityContainer.this);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterPlayerReceiver(ActivityContainer.this);
+        super.onPause();
     }
 
     @Override

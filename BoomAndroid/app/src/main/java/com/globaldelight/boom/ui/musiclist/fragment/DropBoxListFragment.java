@@ -22,22 +22,16 @@ import android.widget.Toast;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.App;
-import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
-import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.task.MediaLoader.LoadDropBoxList;
-import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
+import com.globaldelight.boom.ui.musiclist.activity.CloudListActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
-import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
-
-import java.util.ArrayList;
 
 import io.fabric.sdk.android.services.concurrency.AsyncTask;
 
@@ -119,6 +113,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     private void initViews() {
+        ((CloudListActivity)mActivity).setTitle(getResources().getString(R.string.drop_box));
         Utils.showProgressLoader(getContext());
         emptyPlaceholderIcon = (ImageView) rootView.findViewById(R.id.list_empty_placeholder_icon);
         emptyPlaceholderTitle = (RegularTextView) rootView.findViewById(R.id.list_empty_placeholder_txt);

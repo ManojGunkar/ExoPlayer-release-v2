@@ -159,7 +159,7 @@
     <string name="loading_problem">載入失敗。</string>
     <string name="more">&#160;更多</string>
     <string name="dropbox_authenticate_problem">無法驗證 Dropbox：</string>
-    <string name="google_drive_loading_error">Google Drive:\\n 載入失敗</string>
+    <string name="google_drive_loading_error">Google Drive:\n 載入失敗</string>
     <string name="empty_list">清單是空的。</string>
     <string name="require_google_play_service">該應用程式需要 Google Play 服務。請在您的裝置上安裝 Google Play 服務，並重新啟動該應用程式。</string>
     <string name="remaning">&#160;剩餘。</string>

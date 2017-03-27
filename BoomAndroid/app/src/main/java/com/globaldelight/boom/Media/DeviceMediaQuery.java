@@ -416,7 +416,7 @@ public class DeviceMediaQuery {
         return urlList;
     }
 
-    public static ArrayList<? extends IMediaItem> getSongListOfArtistsAlbum(Context context, long parentId, String parentTitle, long itemId, String itemTitle) {
+    public static ArrayList<? extends IMediaItem> getSongListOfArtistsAlbum(Context context, long parentId, long itemId) {
         System.gc();
         ArrayList<IMediaItem> songList = new ArrayList<>();
 

@@ -29,6 +29,7 @@ import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
+import com.globaldelight.boom.ui.musiclist.activity.CloudListActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
@@ -117,6 +118,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     private void initViews() {
         Preferences.writeBoolean(mActivity, Preferences.GOOGLE_DRIVE_ACCOUNT_CHANGED, false);
+        ((CloudListActivity)mActivity).setTitle(getResources().getString(R.string.google_drive));
         emptyPlaceholderIcon = (ImageView) rootView.findViewById(R.id.list_empty_placeholder_icon);
         emptyPlaceholderTitle = (RegularTextView) rootView.findViewById(R.id.list_empty_placeholder_txt);
         emptyPlaceHolder = (LinearLayout) rootView.findViewById(R.id.list_empty_placeholder);
@@ -172,6 +174,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
             if(googleDriveMediaList.getGoogleDriveMediaList().size() <= 0){
                 if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
                     googleDriveHandler.getResultsFromApi();
+                }else{
+                    Utils.dismissProgressLoader();
                 }
             }else if(googleDriveMediaList.getGoogleDriveMediaList().size() > 0){
                 setSongListAdapter(true);

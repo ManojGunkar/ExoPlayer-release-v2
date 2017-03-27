@@ -33,8 +33,6 @@ public class CloudListActivity extends MasterActivity
         implements NavigationView.OnNavigationItemSelectedListener{
 
     private NavigationView navigationView;
-    private int fade_in = android.R.anim.fade_in;
-    private int fade_out = android.R.anim.fade_out;
     private RegularTextView toolbarTitle;
     public MenuItem cloudSyncItem;
     Runnable runnable;
@@ -52,13 +50,12 @@ public class CloudListActivity extends MasterActivity
             Intent libraryIntent = new Intent(CloudListActivity.this, MainActivity.class);
             libraryIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(libraryIntent);
-            overridePendingTransition(fade_in, fade_out);
+            overridePendingTransition(R.anim.com_mixpanel_android_fade_in, R.anim.com_mixpanel_android_fade_out);
         }
     };
 
     Runnable navigateDropbox= new Runnable() {
         public void run() {
-            setTitle(getResources().getString(R.string.drop_box));
             navigationView.getMenu().findItem(R.id.drop_box).setChecked(true);
             Fragment fragment = new DropBoxListFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -68,7 +65,6 @@ public class CloudListActivity extends MasterActivity
 
     Runnable navigateGoogleDrive = new Runnable() {
         public void run() {
-            setTitle(getResources().getString(R.string.google_drive));
             navigationView.getMenu().findItem(R.id.google_drive).setChecked(true);
             Fragment fragment = new GoogleDriveListFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -95,8 +91,8 @@ public class CloudListActivity extends MasterActivity
         navigationView.setItemIconTintList(null);
         navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
-
-        loadEveryThing(getIntent().getStringExtra("title"));
+        setTitle(getIntent().getStringExtra("title"));
+        loadEveryThing(getIntent().getStringExtra("title"), false);
     }
 
     @Override
@@ -171,7 +167,7 @@ public class CloudListActivity extends MasterActivity
         Intent intent = new Intent(this, ActivityContainer.class);
         intent.putExtra("container",activityName);
         startActivity(intent);
-        overridePendingTransition(fade_in, fade_out);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     @Override
@@ -189,14 +185,14 @@ public class CloudListActivity extends MasterActivity
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        loadEveryThing(intent.getStringExtra("title"));
+        loadEveryThing(intent.getStringExtra("title"), true);
     }
 
-    private void loadEveryThing(String title){
+    private void loadEveryThing(String title, boolean anim){
         if(null != title && title.equals(getResources().getString(R.string.drop_box))){
-            new Handler().postDelayed(navigateDropbox, 300);
+            new Handler().postDelayed(navigateDropbox, anim ? 300 : 0);
         }else if(title.equals(getResources().getString(R.string.google_drive))){
-            new Handler().postDelayed(navigateGoogleDrive, 300);
+            new Handler().postDelayed(navigateGoogleDrive, anim ? 300 : 0);
         }
     }
 }

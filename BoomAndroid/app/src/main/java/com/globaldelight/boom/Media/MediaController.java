@@ -159,7 +159,7 @@ public class MediaController implements IMediaController {
 
     @Override
     public ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(IMediaItemCollection collection) {
-        return DeviceMediaQuery.getSongListOfArtistsAlbum(context, collection.getItemId(), collection.getItemTitle(), collection.getMediaElement().get(collection.getCurrentIndex()).getItemId(), collection.getMediaElement().get(collection.getCurrentIndex()).getItemTitle());
+        return DeviceMediaQuery.getSongListOfArtistsAlbum(context, collection.getItemId(), collection.getMediaElement().get(collection.getCurrentIndex()).getItemId());
     }
 
     @Override
@@ -221,8 +221,8 @@ public class MediaController implements IMediaController {
     }
 
     @Override
-    public ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(long parentId, String parentTitle, long itemId, String itemTitle) {
-        return DeviceMediaQuery.getSongListOfArtistsAlbum(context, itemId, itemTitle, parentId, parentTitle);
+    public ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(long parentId, long itemId) {
+        return DeviceMediaQuery.getSongListOfArtistsAlbum(context, itemId, parentId);
     }
 
     @Override

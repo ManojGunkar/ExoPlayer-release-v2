@@ -59,6 +59,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     private static final String[] SCOPES = {DriveScopes.DRIVE_METADATA, DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPDATA, DriveScopes.DRIVE};
 //    private Activity mActivity;
     private Fragment mFragment;
+    private static LoadGoogleDriveList loadGoogleDriveList;
     private Context mContext;
 
     public GoogleDriveHandler(Context context){
@@ -145,7 +146,8 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
         } else if (!isDeviceOnline()) {
             GoogleDriveMediaList.geGoogleDriveMediaListInstance(mContext).onErrorOccurred(mFragment.getResources().getString(R.string.network_error));
         } else {
-            new LoadGoogleDriveList(mFragment, mCredential, 0).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            loadGoogleDriveList  = new LoadGoogleDriveList(mFragment, mCredential, 0);
+            loadGoogleDriveList.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -325,7 +327,10 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
                 result.startResolutionForResult(mFragment.getActivity(), GoogleDriveHandler.REQUEST_CODE_RESOLUTION);
             } catch (IntentSender.SendIntentException e) {
                 Log.e(TAG, "Exception while starting resolution activity", e);
-            } catch (Exception e){}
+            } catch (Exception e){ }
+            if(null != loadGoogleDriveList){
+                loadGoogleDriveList.setCancelLoading();
+            }
         }
     }
 }

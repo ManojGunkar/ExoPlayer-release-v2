@@ -299,10 +299,28 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mIsLastPlayed = (null != App.getPlayerEventHandler().getPlayingItem() ?
                 (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false) :
                 false);
+
+        updatePlayerSeekAndTime();
         try {
             updatePlayerUI();
         }catch (Exception e){
 
+        }
+    }
+
+    private void updatePlayerSeekAndTime() {
+        if(null != mPlayingMediaItem && !mIsPlaying && !mIsLastPlayed){
+            int progress = App.getUserPreferenceHandler().getPlayerSeekPosition();
+            long currentMillis= App.getUserPreferenceHandler().getPlayedTime();
+            long totalMillis = App.getUserPreferenceHandler().getRemainsTime(mPlayingMediaItem.getDurationLong());
+
+            if(null != mTrackSeek)
+                mTrackSeek.setProgress(progress);
+
+            if(null != mMiniPlayerSeek)
+                mMiniPlayerSeek.setProgress(progress);
+
+            updateTrackPlayTime(totalMillis, currentMillis);
         }
     }
 

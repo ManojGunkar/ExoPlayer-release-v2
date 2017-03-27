@@ -9,6 +9,10 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.R;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
 /**
  * Created by Venkata N M on 2/8/2017.
  */
@@ -32,7 +36,7 @@ public class ConnectivityReceiver
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null
-                && activeNetwork.isConnectedOrConnecting();
+                && activeNetwork.isConnected();
 
         if (connectivityReceiverListener != null && isNWConnected != isConnected) {
             connectivityReceiverListener.onNetworkConnectionChanged(isConnected);
@@ -48,7 +52,7 @@ public class ConnectivityReceiver
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             isConnect = activeNetwork != null
-                    && activeNetwork.isConnectedOrConnecting();
+                    && activeNetwork.isConnected() && activeNetwork.isAvailable();
             if (!isConnect && showToast)
                 Toast.makeText(context, context.getResources().getString(R.string.network_error), Toast.LENGTH_SHORT).show();
             return isConnect;
