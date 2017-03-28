@@ -144,14 +144,27 @@ public class CloudListActivity extends MasterActivity
                 runnable = navigateDropbox;
                 break;
             case R.id.nav_setting:
-                startCompoundActivities(R.string.title_settings);
-                break;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startCompoundActivities(R.string.title_settings);
+                    }
+                }, 300);
+                drawerLayout.closeDrawer(GravityCompat.START);
+                return true;
             case R.id.nav_store:
-                startCompoundActivities(R.string.store_title);
-                break;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startCompoundActivities(R.string.store_title);
+                    }
+                }, 300);
+                drawerLayout.closeDrawer(GravityCompat.START);
+                return true;
             case R.id.nav_share:
                 Utils.shareStart(CloudListActivity.this);
-                break;
+                drawerLayout.closeDrawer(GravityCompat.START);
+                return true;
         }
 
         if (runnable != null) {
@@ -167,7 +180,6 @@ public class CloudListActivity extends MasterActivity
         Intent intent = new Intent(this, ActivityContainer.class);
         intent.putExtra("container",activityName);
         startActivity(intent);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     @Override

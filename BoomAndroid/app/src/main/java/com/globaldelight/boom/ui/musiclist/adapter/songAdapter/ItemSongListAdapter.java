@@ -115,7 +115,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             holder.artistName.setText(currentItem.getItemArtist());
             holder.mainView.setElevation(0);
 
-            if(null != currentItem.getItemArtUrl())
+            if(null == currentItem.getItemArtUrl())
                 currentItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(currentItem.getItemAlbum()));
 
             if(null == currentItem.getItemArtUrl())

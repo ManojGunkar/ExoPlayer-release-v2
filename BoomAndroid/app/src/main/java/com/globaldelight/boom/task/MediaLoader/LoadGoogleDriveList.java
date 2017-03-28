@@ -128,19 +128,23 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
 
     @Override
     protected void onCancelled() {
-        if (mLastError != null) {
-            if (null != GoogleDriveMediaList.getGoogleDriveHandler() && mLastError instanceof GooglePlayServicesAvailabilityIOException) {
-                GoogleDriveMediaList.getGoogleDriveHandler().showGooglePlayServicesAvailabilityErrorDialog(((GooglePlayServicesAvailabilityIOException) mLastError)
-                        .getConnectionStatusCode());
-            } else if (mLastError instanceof UserRecoverableAuthIOException) {
-                fragment.startActivityForResult(
-                        ((UserRecoverableAuthIOException) mLastError).getIntent(),
-                        GoogleDriveHandler.REQUEST_AUTHORIZATION);
+        try {
+            if (mLastError != null) {
+                if (null != GoogleDriveMediaList.getGoogleDriveHandler() && mLastError instanceof GooglePlayServicesAvailabilityIOException) {
+                    GoogleDriveMediaList.getGoogleDriveHandler().showGooglePlayServicesAvailabilityErrorDialog(((GooglePlayServicesAvailabilityIOException) mLastError)
+                            .getConnectionStatusCode());
+                } else if (mLastError instanceof UserRecoverableAuthIOException) {
+                    fragment.startActivityForResult(
+                            ((UserRecoverableAuthIOException) mLastError).getIntent(),
+                            GoogleDriveHandler.REQUEST_AUTHORIZATION);
+                } else {
+                    mediaListInstance.onErrorOccurred(null == mLastError.getMessage() ? fragment.getResources().getString(R.string.error_fetch_data) : mLastError.getMessage());
+                }
             } else {
-                mediaListInstance.onErrorOccurred(null == mLastError.getMessage() ? fragment.getResources().getString(R.string.error_fetch_data) : mLastError.getMessage());
+                mediaListInstance.onRequestCancelled();
             }
-        } else {
-            mediaListInstance.onRequestCancelled();
+        }catch (Exception e){
+
         }
     }
 

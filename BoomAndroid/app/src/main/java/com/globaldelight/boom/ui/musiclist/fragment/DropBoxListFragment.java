@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -114,7 +115,6 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
 
     private void initViews() {
         ((CloudListActivity)mActivity).setTitle(getResources().getString(R.string.drop_box));
-        Utils.showProgressLoader(getContext());
         emptyPlaceholderIcon = (ImageView) rootView.findViewById(R.id.list_empty_placeholder_icon);
         emptyPlaceholderTitle = (RegularTextView) rootView.findViewById(R.id.list_empty_placeholder_txt);
         emptyPlaceHolder = (LinearLayout) rootView.findViewById(R.id.list_empty_placeholder);
@@ -125,6 +125,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
             isDropboxAccountConfigured = false;
             listIsEmpty(true);
         }
+
         dropboxMediaList = DropboxMediaList.getDropboxListInstance(mActivity);
         dropboxMediaList.setDropboxUpdater(this);
         DropBoxUtills.checkDropboxAuthentication(mActivity);
@@ -162,6 +163,8 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
 
     private void LoadDropboxList(){
         if(null != getActivity()) {
+            if(!Utils.isProgressLoaderActive())
+                Utils.showProgressLoader(mActivity);
             boolean isListEmpty = dropboxMediaList.getDropboxMediaList().size() <= 0;
             resetAuthentication();
             if (null != prefs.getString(ACCESS_KEY_NAME, null) &&
@@ -170,17 +173,20 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                 if (null != App.getDropboxAPI()
                         && ConnectivityReceiver.isNetworkAvailable(mActivity, true) && isListEmpty) {
                     listIsEmpty(false);
-                    if(!Utils.isProgressLoaderActive())
-                        Utils.showProgressLoader(mActivity);
                     new LoadDropBoxList(mActivity).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 } else if (!isListEmpty) {
                     listIsEmpty(false);
                     setSongListAdapter();
+                    finishDropboxLoading();
+                }else{
+                    Utils.dismissProgressLoader();
                 }
             } else if (null == prefs.getString(ACCESS_KEY_NAME, null) &&
                     null == prefs.getString(ACCESS_SECRET_NAME, null)) {
                 isDropboxAccountConfigured = false;
                 listIsEmpty(true);
+                Utils.dismissProgressLoader();
+            }else{
                 Utils.dismissProgressLoader();
             }
             setForAnimation();
@@ -220,7 +226,6 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
 
     private void setSongListAdapter() {
         boolean isEmpty = dropboxMediaList.getDropboxMediaList().size() <= 0;
-
         if(!isEmpty && null != adapter){
             notifyAdapter();
         }else if(!isEmpty){
@@ -233,7 +238,6 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
             recyclerView.setAdapter(adapter);
             recyclerView.setHasFixedSize(true);
         }
-        Utils.dismissProgressLoader();
     }
 
     private void notifyAdapter() {
@@ -253,7 +257,12 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     public void finishDropboxLoading() {
         if(null != adapter)
             notifyAdapter();
-        Utils.dismissProgressLoader();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Utils.dismissProgressLoader();
+            }
+        }, 3000);
     }
 
     @Override

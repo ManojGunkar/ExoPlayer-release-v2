@@ -33,7 +33,7 @@ public class ActivityContainer extends MasterActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        overridePendingTransition(0, 0);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
 
@@ -93,6 +93,7 @@ public class ActivityContainer extends MasterActivity {
         switch (id){
             case android.R.id.home:
                 super.onBackPressed();
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -101,6 +102,7 @@ public class ActivityContainer extends MasterActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     @Override

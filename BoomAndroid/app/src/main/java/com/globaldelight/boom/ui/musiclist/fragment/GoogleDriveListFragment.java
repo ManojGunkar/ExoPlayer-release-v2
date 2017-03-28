@@ -262,8 +262,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     @Override
     public void onFinishListLoading() {
-        setSongListAdapter(true);
-        Utils.dismissProgressLoader();
+        if(null != adapter)
+            adapter.notifyDataSetChanged();
     }
 
     @Override
