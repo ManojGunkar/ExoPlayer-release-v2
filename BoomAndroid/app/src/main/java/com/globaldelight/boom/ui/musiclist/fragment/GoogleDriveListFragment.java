@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.Media.ItemType;
@@ -114,6 +115,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         super.onActivityCreated(savedInstanceState);
         initViews();
         checkPermissions();
+        FlurryAnalyticHelper.init(mActivity);
     }
 
     private void initViews() {
@@ -253,6 +255,19 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         if(null != mActivity)
             mActivity.registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
+
+    @Override
+    public  void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(mActivity);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(mActivity);
+    }
+
 
     @Override
     public void onGoogleDriveMediaListUpdate() {

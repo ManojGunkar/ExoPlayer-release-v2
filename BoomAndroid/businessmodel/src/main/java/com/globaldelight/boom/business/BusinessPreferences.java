@@ -20,6 +20,7 @@ public class BusinessPreferences {
     public static final String ACTION_APP_INTERNET_DIALOG_SHOWN = "ACTION_APP_INTERNET_DIALOG_SHOWN";
     public static final String ACTION_APP_EXPIRE_DIALOG_SHOWN = "ACTION_APP_EXPIRE_DIALOG_SHOWN";
     public static final String ACTION_EMAIL_DIALOG_SHOWN = "ACTION_EMAIL_DIALOG_SHOWN";
+    public static final String STORE_CLOSED_WITH_PURCHASE = "STORE_CLOSED_WITH_PURCHASE";
 
     public static void writeBoolean(Context context, String key, boolean value) {
         getEditor(context).putBoolean(key, value).commit();

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
@@ -67,6 +68,7 @@ public class AlbumDetailItemFragment extends Fragment {
         setListDetail();
         new LoadAlbumItems().execute();
         setForAnimation();
+        FlurryAnalyticHelper.init(mActivity);
     }
 
     private void setListDetail() {
@@ -144,4 +146,16 @@ public class AlbumDetailItemFragment extends Fragment {
     public void listIsEmpty() {
         rootView.setVisibility(View.GONE);
     }
+    @Override
+    public  void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(mActivity);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(mActivity);
+    }
+
 }

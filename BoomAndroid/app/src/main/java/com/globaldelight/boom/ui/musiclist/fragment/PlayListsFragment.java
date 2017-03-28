@@ -21,6 +21,7 @@ import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.task.PlayerEvents;
@@ -81,6 +82,7 @@ public class PlayListsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
+        FlurryAnalyticHelper.init(mActivity);
     }
 
     private View getItemView(LayoutInflater inflater, ViewGroup container){
@@ -150,4 +152,18 @@ public class PlayListsFragment extends Fragment {
             }
         }
     }
+
+
+    @Override
+    public  void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(mActivity);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(mActivity);
+    }
+
 }

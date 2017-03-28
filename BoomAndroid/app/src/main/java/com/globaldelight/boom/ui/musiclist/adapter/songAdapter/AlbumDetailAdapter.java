@@ -15,6 +15,8 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaController;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
@@ -192,6 +194,13 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                             notifyDataSetChanged();
                         }
                     }, 500);
+                }
+                if (item.getItemType().toString().trim() == "GENRE") {
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Genere_Thumbnail);
+                } else if (item.getItemType().toString().trim() == "ARTIST") {
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Artist_Thumbnail);
+                } else if (item.getItemType().toString().trim() == "ALBUM") {
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Alumb_Thumbnail);
                 }
             }
         });

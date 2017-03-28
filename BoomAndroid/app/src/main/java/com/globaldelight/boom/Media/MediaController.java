@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
@@ -49,6 +52,7 @@ public class MediaController implements IMediaController {
     @Override
     public void createBoomPlaylist(String playlist) {
         App.getBoomPlayListHelper().createPlaylist(playlist);
+        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
         context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
@@ -176,12 +180,14 @@ public class MediaController implements IMediaController {
     public void removeItemToFavoriteList(long trackId){
         App.getFavoriteDBHelper().removeSong(trackId);
         context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+        FlurryAnalyticHelper.logEvent(UtilAnalytics.Remove_Favorites);
     }
 
     @Override
     public void addItemToFavoriteList(IMediaItem item){
         App.getFavoriteDBHelper().addSong(item);
         context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+        FlurryAnalyticHelper.logEvent(UtilAnalytics.Add_To_Favorites);
     }
 
     @Override

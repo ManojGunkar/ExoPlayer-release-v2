@@ -64,6 +64,7 @@ public class SongsListFragment extends Fragment{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
+        FlurryAnalyticHelper.init(mActivity);
     }
 
     private BroadcastReceiver mPlayerEventBroadcastReceiver = new BroadcastReceiver() {
@@ -145,5 +146,16 @@ public class SongsListFragment extends Fragment{
             recyclerView.setAdapter(songListAdapter);
             listIsEmpty(iMediaItemList.size());
         }
+    }
+    @Override
+    public  void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(mActivity);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(mActivity);
     }
 }

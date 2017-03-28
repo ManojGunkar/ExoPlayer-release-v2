@@ -25,12 +25,21 @@ public static void init(Context context){
     new FlurryAgent.Builder()
             .withLogEnabled(true)
             .withLogLevel(Log.DEBUG)
-            .build(context, "PX85XVXZH4HVWST8Z7V3");
+            .build(context, UtilAnalytics.FLURRY_API_KEY);
 
     Logger.LOGD("Initialized FLurry Agent");
 
 
 }
+
+
+    public static void flurryStartSession(Context context) {
+        FlurryAgent.onStartSession(context);
+    }
+
+    public static void flurryStopSession(Context context) {
+        FlurryAgent.onEndSession(context);
+    }
 
 
     public static FlurryEventRecordStatus logEvent(String event) {

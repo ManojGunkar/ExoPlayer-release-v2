@@ -26,6 +26,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.App;
@@ -80,6 +82,7 @@ public class MainActivity extends MasterActivity
         setContentView(R.layout.activity_main);
         initView();
         checkPermissions();
+        FlurryAnalyticHelper.init(this);
     }
 
     Runnable navigateLibrary = new Runnable() {
@@ -156,6 +159,19 @@ public class MainActivity extends MasterActivity
             navigateLibrary.run();
         }
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(this);
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -368,12 +384,15 @@ public class MainActivity extends MasterActivity
         switch (item.getItemId()){
             case R.id.music_library:
                 runnable = navigateLibrary;
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_library_Opened_From_Drawer);
                 break;
             case R.id.google_drive:
                 runnable = navigateGoogleDrive;
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_OPENED_FROM_DRAWER);
                 break;
             case R.id.drop_box:
                 runnable = navigateDropbox;
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.DROP_BOX_OPENED_FROM_DRAWER);
                 break;
             case R.id.nav_setting:
                 new Handler().postDelayed(new Runnable() {
@@ -383,6 +402,7 @@ public class MainActivity extends MasterActivity
                     }
                 }, 300);
                 drawerLayout.closeDrawer(GravityCompat.START);
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
                 return true;
             case R.id.nav_store:
                 new Handler().postDelayed(new Runnable() {
@@ -392,10 +412,12 @@ public class MainActivity extends MasterActivity
                     }
                 }, 300);
                 drawerLayout.closeDrawer(GravityCompat.START);
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer); FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
                 return  true;
             case R.id.nav_share:
                 Utils.shareStart(MainActivity.this);
                 drawerLayout.closeDrawer(GravityCompat.START);
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
                 return true;
         }
         if (runnable != null) {

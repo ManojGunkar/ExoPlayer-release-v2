@@ -41,6 +41,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.Media.MediaType;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.MasterActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.utils.EqualizerDialogAdapter;
@@ -65,7 +66,9 @@ import com.globaldelight.boomplayer.AudioEffect;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
@@ -264,6 +267,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         initEffectControl();
 
         setPlayerInfo();
+        FlurryAnalyticHelper.init(mActivity);
     }
 
     @Override
@@ -280,6 +284,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mPlayerContent.setVisibility(View.VISIBLE);
             mEffectContent.setVisibility(View.GONE);
             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_PLAYER_TAB);
+            Map<String, String> articleParams = new HashMap<String, String>();
+            articleParams.put("Effect_Tab_TimeStarted",String.valueOf(System.currentTimeMillis()));
+            FlurryAnalyticHelper.logEvent(UtilAnalytics.User_Spend_time_ON_Effect_Screen, articleParams, true);
+            FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_spent_time_onPlayer_Screen);
         }else{
             mPlayerContent.setVisibility(View.GONE);
             mEffectContent.setVisibility(View.VISIBLE);
@@ -290,6 +298,11 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             if(null != msg)
                 Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_EFFECT_TAB);
+            Map<String, String> articleParams = new HashMap<String, String>();
+            articleParams.put("Player_Tab_TimeStarted",String.valueOf(System.currentTimeMillis()));
+            FlurryAnalyticHelper.logEvent(UtilAnalytics.User_spent_time_onPlayer_Screen, articleParams, true);
+            FlurryAnalyticHelper.logEvent(UtilAnalytics.User_Spend_time_ON_Effect_Screen, articleParams, true);
+            FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_Spend_time_ON_Effect_Screen);
         }
     }
 
@@ -517,6 +530,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         showProgressLoader();
                     }
                 }
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Playing_SeekBar_Used_in_Effects_screen);
             }
 
             @Override
@@ -787,6 +801,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     public void onStart() {
         setPlayerInfo();
         super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(mActivity);
     }
 
     @Override
@@ -835,6 +850,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     setPlayerEnable(false);
                 }
                 mActivity.sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Effects_Screen_Opened_from_Mini_Player);
                 break;
             case R.id.mini_player_title_panel:
             case R.id.player_title_panel:
@@ -848,6 +864,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 }else{*/
                     setPlayerEnable(true);
                 mActivity.sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+
                 /*}*/
                 break;
             case R.id.player_upnext_button:
@@ -866,6 +883,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         }
                     });
                 }
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.UpNext_Button_Tapped);
                 break;
             case R.id.player_overflow_button:
                 if(MasterActivity.isPlayerExpended()) {
@@ -880,6 +898,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 }
                 break;
             case R.id.mini_player_play_pause_btn:
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Play_Pause_Button_tapped_Mini_Player);
             case R.id.controller_play:
                 postMessage.post(new Runnable() {
                     @Override
@@ -888,6 +907,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     }
                 });
                 showProgressLoader();
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Songs_Pause_Or_Play_From_Effects_Screen);
                 break;
             case R.id.controller_prev:
                 postMessage.post(new Runnable() {
@@ -897,6 +917,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     }
                 });
                 showProgressLoader();
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Previous_button_tapped_From_effect_screen);
                 break;
             case R.id.controller_next:
                 postMessage.post(new Runnable() {
@@ -906,6 +927,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     }
                 });
                 showProgressLoader();
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Next_button_tapped_From_effect_screen);
                 break;
             case R.id.controller_repeat:
                 postMessage.post(new Runnable() {
@@ -926,10 +948,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             case R.id.player_tab:
                 setPlayerEnable(true);
                 showEffectSwitchTip();
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Player_Tab_PLayer_screen);
                 break;
             case R.id.effect_tab:
                 setPlayerEnable(false);
                 showEffectSwitchTip();
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Effects_Opened_From_Player_Screen);
                 break;
             case R.id.three_surround_btn:
                 switch3DSurround();
@@ -946,6 +970,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     onEqDialogOpen();
                 break;
             case R.id.speaker_btn :
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Speaker_Button_Clicked_from_Effects_Screen);
             case R.id.three_surround_txt :
                 if(isEffectOn && audioEffectPreferenceHandler.is3DSurroundOn())
                     openSpeakerDialog();
@@ -1085,7 +1110,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         }
                     });
 
-                    FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FULL_BASS_ENABLED, audioEffectPreferenceHandler.isFullBassOn());
+                    FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FULL_BASS, audioEffectPreferenceHandler.isFullBassOn());
                 }
             }
         });
@@ -1141,6 +1166,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     });
                     MixPanelAnalyticHelper.track(mActivity, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
                     FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffectPreferenceHandler.isAudioEffectOn());
+                    FlurryAnalyticHelper.logEvent(enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
                 }
                 Preferences.writeBoolean(mActivity, Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, false);
                 Preferences.writeBoolean(mActivity, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, false);
@@ -1428,6 +1454,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             }
         });
         MixPanelAnalyticHelper.track(mActivity, audioEffectPreferenceHandler.isEqualizerOn() ? AnalyticsHelper.EVENT_EQ_TURNED_ON : AnalyticsHelper.EVENT_EQ_TURNED_OFF);
+        FlurryAnalyticHelper.logEventWithStatus(UtilAnalytics.Equalizer_status, audioEffectPreferenceHandler.isEqualizerOn());
     }
 
     private void setEffectIntensity() {
@@ -1464,6 +1491,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_Spend_time_ON_Effect_Screen);
+        FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_spent_time_onPlayer_Screen);
+        FlurryAnalyticHelper.flurryStopSession(mActivity);
+    }
+    @Override
     public void onChangeEqualizerValue(final int position) {
         setChangeEqualizerValue(position);
         postMessage.post(new Runnable() {
@@ -1484,6 +1518,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 audioEffectPreferenceHandler.setSelectedEqualizerPosition(position);
             }
         });
+        HashMap<String, String> articleParams = new HashMap<>();
+        articleParams.put(UtilAnalytics.Type_Equalizer_selected, eq_names.get(position));
+        FlurryAnalyticHelper.logEvent(UtilAnalytics.Equalizer_selected, articleParams);
     }
 
     private void updateSpeakers(final AudioEffect.Speaker speakerType){

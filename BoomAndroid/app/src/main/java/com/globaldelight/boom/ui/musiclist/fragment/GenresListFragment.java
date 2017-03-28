@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 
 import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.ui.musiclist.adapter.AlbumsGridAdapter;
 import com.globaldelight.boom.ui.musiclist.adapter.GenreGridAdapter;
@@ -59,6 +60,8 @@ public class GenresListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
+        FlurryAnalyticHelper.init(mActivity);
+
     }
 
     private View getItemView(LayoutInflater inflater, ViewGroup container){
@@ -118,5 +121,17 @@ public class GenresListFragment extends Fragment {
                 listIsEmpty(iMediaCollectionList.size());
             }
         }
+    }
+
+    @Override
+    public  void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(mActivity);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(mActivity);
     }
 }

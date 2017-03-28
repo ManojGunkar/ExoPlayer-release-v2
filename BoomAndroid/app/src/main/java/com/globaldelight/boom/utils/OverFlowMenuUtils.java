@@ -20,6 +20,7 @@ import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
@@ -70,6 +71,7 @@ public class OverFlowMenuUtils {
                             break;
                         case R.id.popup_playlist_rename:
                             renameDialog(activity, itemBase.getItemTitle(), itemBase.getItemId());
+                            FlurryAnalyticHelper.logEvent(UtilAnalytics.Playlist_Edit_Button_Tapped);
                             break;
                         case R.id.popup_playlist_delete:
                             deletePlaylistDialog(activity, itemBase.getItemTitle(), itemBase.getItemId());

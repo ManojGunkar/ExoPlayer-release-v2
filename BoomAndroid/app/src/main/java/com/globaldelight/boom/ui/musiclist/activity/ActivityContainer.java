@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.ui.musiclist.fragment.FavouriteListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.RecentPlayedFragment;
 import com.globaldelight.boom.utils.Utils;
@@ -39,6 +41,7 @@ public class ActivityContainer extends MasterActivity {
 
         container = getIntent().getIntExtra("container", R.string.header_about);
         initViews();
+        FlurryAnalyticHelper.init(this);
     }
 
     private void initViews() {
@@ -74,9 +77,11 @@ public class ActivityContainer extends MasterActivity {
                 break;
             case R.string.title_settings:
                 mFragment =  new SettingFragment();
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
                 break;
             case R.string.store_title:
                 mFragment =  new StoreFragment();
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
                 break;
             case R.string.header_about:
                 mFragment =  new AboutFragment();
@@ -138,6 +143,17 @@ public class ActivityContainer extends MasterActivity {
                 e.printStackTrace();
             }
         }
+    }
+    @Override
+    public  void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(this);
     }
 }
 
