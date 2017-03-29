@@ -2,6 +2,7 @@ package com.globaldelight.boom.ui.musiclist.activity;
 
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -15,6 +16,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.UtilAnalytics;
@@ -38,6 +43,9 @@ public class CloudListActivity extends MasterActivity
     private RegularTextView toolbarTitle;
     public MenuItem cloudSyncItem;
     Runnable runnable;
+    ImageView emptyPlaceholderIcon;
+    RegularTextView emptyPlaceholderTitle;
+    LinearLayout emptyPlaceHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +102,11 @@ public class CloudListActivity extends MasterActivity
         navigationView.setItemIconTintList(null);
         navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
+
+        emptyPlaceholderIcon = (ImageView) findViewById(R.id.list_empty_placeholder_icon);
+        emptyPlaceholderTitle = (RegularTextView) findViewById(R.id.list_empty_placeholder_txt);
+        emptyPlaceHolder = (LinearLayout) findViewById(R.id.list_empty_placeholder);
+
         setTitle(getIntent().getStringExtra("title"));
         loadEveryThing(getIntent().getStringExtra("title"), false);
     }
@@ -236,7 +249,24 @@ public class CloudListActivity extends MasterActivity
     public void onStop() {
             super.onStop();
             FlurryAnalyticHelper.flurryStopSession(this);
+    }
+
+    public void listIsEmpty(boolean enable, boolean isAccountConfigured) {
+        if (enable) {
+            emptyPlaceHolder.setVisibility(View.VISIBLE);
+            Drawable imgResource = null;
+            String placeHolderTxt = null;
+            if(isAccountConfigured){
+                imgResource = getResources().getDrawable(R.drawable.ic_no_music_placeholder, null);
+                placeHolderTxt = getResources().getString(R.string.no_music_placeholder_txt);
+            }else {
+                imgResource = getResources().getDrawable(R.drawable.ic_cloud_placeholder, null);
+                placeHolderTxt = getResources().getString(R.string.cloud_configure_placeholder_txt);
+            }
+            emptyPlaceholderIcon.setImageDrawable(imgResource);
+            emptyPlaceholderTitle.setText(placeHolderTxt);
+        } else {
+            emptyPlaceHolder.setVisibility(View.GONE);
         }
-
-
+    }
 }

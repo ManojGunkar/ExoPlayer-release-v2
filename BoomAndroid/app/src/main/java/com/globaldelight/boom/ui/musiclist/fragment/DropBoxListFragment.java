@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -17,8 +16,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.session.TokenPair;
@@ -31,7 +28,6 @@ import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.task.MediaLoader.LoadDropBoxList;
 import com.globaldelight.boom.ui.musiclist.activity.CloudListActivity;
 import com.globaldelight.boom.ui.musiclist.adapter.songAdapter.CloudItemListAdapter;
-import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 
@@ -54,11 +50,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     private boolean isDropboxAccountConfigured = true;
     private CloudItemListAdapter adapter;
     SharedPreferences prefs;
-    private View rootView;
-    private RecyclerView recyclerView;
-    ImageView emptyPlaceholderIcon;
-    RegularTextView emptyPlaceholderTitle;
-    LinearLayout emptyPlaceHolder;
+    private RecyclerView rootView;
     Activity mActivity;
 
     /**
@@ -100,7 +92,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_cloud_list, container, false);
+        rootView = (RecyclerView)  inflater.inflate(R.layout.recycler_view_layout, container, false);
         if(null == mActivity)
             mActivity = getActivity();
         return rootView;
@@ -119,11 +111,6 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     private void initViews() {
         ((CloudListActivity)mActivity).setTitle(getResources().getString(R.string.drop_box));
         Utils.showProgressLoader(getContext());
-        emptyPlaceholderIcon = (ImageView) rootView.findViewById(R.id.list_empty_placeholder_icon);
-        emptyPlaceholderTitle = (RegularTextView) rootView.findViewById(R.id.list_empty_placeholder_txt);
-        emptyPlaceHolder = (LinearLayout) rootView.findViewById(R.id.list_empty_placeholder);
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.cloud_item_list);
-        recyclerView.setNestedScrollingEnabled(false);
         if (null == prefs.getString(ACCESS_KEY_NAME, null) &&
                 null == prefs.getString(ACCESS_SECRET_NAME, null)){
             isDropboxAccountConfigured = false;
@@ -242,10 +229,10 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                     new GridLayoutManager(mActivity, 1);
             gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             gridLayoutManager.scrollToPosition(0);
-            recyclerView.setLayoutManager(gridLayoutManager);
+            rootView.setLayoutManager(gridLayoutManager);
             adapter = new CloudItemListAdapter(mActivity, DropBoxListFragment.this, dropboxMediaList.getDropboxMediaList(), ItemType.SONGS);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setHasFixedSize(true);
+            rootView.setAdapter(adapter);
+            rootView.setHasFixedSize(true);
         }
     }
 
@@ -294,24 +281,12 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
 
     public void listIsEmpty(boolean enable) {
         if(null != getActivity()) {
-            if (enable) {
-                emptyPlaceHolder.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
-                Drawable imgResource = null;
-                String placeHolderTxt = null;
-                if(isDropboxAccountConfigured){
-                    imgResource = getResources().getDrawable(R.drawable.ic_no_music_placeholder, null);
-                    placeHolderTxt = getResources().getString(R.string.no_music_placeholder_txt);
-                }else {
-                    imgResource = getResources().getDrawable(R.drawable.ic_cloud_placeholder, null);
-                    placeHolderTxt = getResources().getString(R.string.cloud_configure_placeholder_txt);
-                }
-                emptyPlaceholderIcon.setImageDrawable(imgResource);
-                emptyPlaceholderTitle.setText(placeHolderTxt);
-            } else {
-                recyclerView.setVisibility(View.VISIBLE);
-                emptyPlaceHolder.setVisibility(View.GONE);
+            if(enable){
+                rootView.setVisibility(View.GONE);
+            }else{
+                rootView.setVisibility(View.VISIBLE);
             }
+            ((CloudListActivity)getActivity()).listIsEmpty(enable, isDropboxAccountConfigured);
         }
     }
 }
