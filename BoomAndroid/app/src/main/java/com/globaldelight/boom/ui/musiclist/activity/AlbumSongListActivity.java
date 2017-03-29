@@ -110,7 +110,16 @@ public class AlbumSongListActivity extends MasterActivity {
         mFloatPlayAlbumSongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_played_from_playlist_section);
+                if (currentItem.getItemType() == ItemType.BOOM_PLAYLIST) {
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_Boom_playlist_section);
+                } else if (currentItem.getItemType() == ItemType.PLAYLIST) {
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_playlist_section);
+                }
+                if (currentItem.getItemType() == ItemType.ARTIST) {
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_ARTIST_ALL_SONGS_section);
+                }else if(currentItem.getItemType() == ItemType.GENRE){
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_GENERE_ALL_SONGS_section);
+                }
                 if(null != fragment && !App.getPlayerEventHandler().isTrackWaitingForPlay()){
                     fragment.onFloatPlayAlbumSongs();
                     sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));

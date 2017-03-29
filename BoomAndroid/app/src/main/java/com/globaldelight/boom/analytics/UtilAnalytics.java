@@ -7,7 +7,7 @@ package com.globaldelight.boom.analytics;
 
 public class UtilAnalytics {
 
-    public static final String FLURRY_API_KEY = "PX85XVXZH4HVWST8Z7V3";
+    public static final String FLURRY_API_KEY = "H5233SKSJY9B67SRVBRG";
 
 
     //    public static final String Created_New_Playlist = "Created New Playlist";
@@ -99,7 +99,15 @@ public class UtilAnalytics {
     public static final String Music_played_from_album_section = "music played from album section";
     public static final String Music_played_from_artist_section = "music played from artist section";
     public static final String Music_played_from_genre_section = "music played from genre section";
-    public static final String Music_played_from_playlist_section = "music played from playlist section";
+    public static final String FAB_Tapped_from_Boom_playlist_section = "FAB Button Tapped  from Boom playlist section";
+    public static final String FAB_Tapped_from_ARTIST_ALL_SONGS_section = "FAB Button Tapped  from ARTIST All Songs Section";
+    public static final String FAB_Tapped_from_GENERE_ALL_SONGS_section = "FAB Button Tapped  from GENERE All Songs Section";
+    public static final String Tapped_from_Boom_playlist_Thumbnail = " Tapped  from Boom playlist Thumbnail";
+    public static final String Tapped_from_playlist_Thumbnail = " Tapped from  playlist Thumbnail";
+    public static final String Tapped_from_ARTIST_AllSongs_Thumbnail = " Tapped  from ARTIST ALLSONGS Thumbnail";
+    public static final String Tapped_from_GENERE_AllSongs_Thumbnail = " Tapped  from GENERE ALLSONGS Thumbnail";
+
+    public static final String FAB_Tapped_from_playlist_section = "FAB Button Tapped  from  playlist section";
     public static final String Music_played_from_Boom_Playlist_Section = "music played from Boom Playlist Section";
     public static final String Music_played_from_songs_section = "Music played from songs section";
     public static final String Song_Music_Source = "Song Music Source";
