@@ -154,7 +154,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
             listIsEmpty(true);
             Utils.dismissProgressLoader();
         }
-
         if(null != adapter)
             adapter.notifyDataSetChanged();
     }
@@ -167,6 +166,15 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     @Override
     public void onAccepted() {
         LoadGoogleDriveList();
+    }
+
+    private void dismissProgressWithDelay() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Utils.dismissProgressLoader();
+            }
+        }, 3000);
     }
 
     private void LoadGoogleDriveList(){
@@ -182,6 +190,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                 }
             }else if(googleDriveMediaList.getGoogleDriveMediaList().size() > 0){
                 setSongListAdapter(true);
+                dismissProgressWithDelay();
             }
         }else{
             Utils.dismissProgressLoader();
@@ -217,13 +226,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
             } else {
                 listIsEmpty(false);
             }
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (isUpdate)
-                        Utils.dismissProgressLoader();
-                }
-            }, 3000);
         }
     }
 
@@ -262,8 +264,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
 
     @Override
     public void onFinishListLoading() {
-        if(null != adapter)
-            adapter.notifyDataSetChanged();
+        dismissProgressWithDelay();
     }
 
     @Override
@@ -276,7 +277,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     @Override
     public void onError(String e) {
         Utils.dismissProgressLoader();
-        if(null != getActivity())
+        if(null != getActivity() && googleDriveMediaList.getGoogleDriveMediaList().size() <= 0)
             Toast.makeText(mActivity, getResources().getString(R.string.google_drive_loading_error)
                 + e, Toast.LENGTH_SHORT).show();
     }

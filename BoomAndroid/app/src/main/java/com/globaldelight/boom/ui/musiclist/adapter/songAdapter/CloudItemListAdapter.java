@@ -152,10 +152,9 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
             public void onClick(View view) {
                 animate(holder);
                 if (!App.getPlayerEventHandler().isTrackLoading()) {
-                    if(itemList.get(position).getMediaType() != MediaType.DEVICE_MEDIA_LIB && null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem()
-                            && App.getPlayingQueueHandler().getUpNextList().getPlayingItem().getItemId() != itemList.get(position).getItemId())
-                        holder.loadCloud.setVisibility(View.VISIBLE);
-
+//                    if(itemList.get(position).getMediaType() != MediaType.DEVICE_MEDIA_LIB && null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem()
+//                            && App.getPlayingQueueHandler().getUpNextList().getPlayingItem().getItemId() != itemList.get(position).getItemId())
+//                        holder.loadCloud.setVisibility(View.VISIBLE);
                     App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(itemList, position);
                     new Handler().postDelayed(new Runnable() {
                         @Override

@@ -90,9 +90,6 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
      */
     private List<String> getDataFromApi() throws IOException {
         // Get a list of up to 10 files.
-        if(isCancelled()){
-            mediaListInstance.onErrorOccurred("");
-        }
         List<String> fileInfo = new ArrayList<String>();
         FileList result = mService.files().list()
                 .execute();

@@ -235,7 +235,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
                 dataSource = ((MediaItem)mediaItemBase).getItemUrl();
                 mediaItemBase.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem)mediaItemBase).getItemAlbum()));
             }else if(mediaItemBase.getMediaType() == MediaType.DROP_BOX){
-                if(null != App.getDropboxAPI().getSession()){
+                if(null != App.getDropboxAPI()){
                     return DropBoxUtills.getDropboxItemUrl(((MediaItem)mediaItemBase).getItemUrl());
                 }
                 return null;
