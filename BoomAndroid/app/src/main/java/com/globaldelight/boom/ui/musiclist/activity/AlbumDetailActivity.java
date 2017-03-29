@@ -12,6 +12,8 @@ import android.widget.ImageView;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.Media.ItemType;
@@ -43,6 +45,7 @@ public class AlbumDetailActivity extends MasterActivity {
         initValues();
 
         initViews();
+        FlurryAnalyticHelper.init(this);
     }
 
     private void initValues() {
@@ -67,6 +70,19 @@ public class AlbumDetailActivity extends MasterActivity {
         mFloatPlayAllAlbums.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (null != currentItem) {
+                    if (currentItem.getItemType().toString().trim() == "GENRE") {
+                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Genere_Details_Section);
+                    } else if (currentItem.getItemType().toString().trim() == "ARTIST") {
+                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Artist_details_Section);
+
+                    }else if (currentItem.getItemType().toString().trim() == "ALBUM") {
+                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Button_Tapped_from_Album_Section);
+
+                    }
+                }
+
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_played_from_album_section);
                 if(null != fragment && !App.getPlayerEventHandler().isTrackWaitingForPlay()){
                     fragment.onFloatPlayAlbums();
                     sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
@@ -137,5 +153,18 @@ public class AlbumDetailActivity extends MasterActivity {
     public void onBackPressed() {
         super.onBackPressed();
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(this);
+    }
+
 }
 

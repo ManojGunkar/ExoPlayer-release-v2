@@ -24,6 +24,8 @@ import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.ActivityContainer;
 import com.globaldelight.boom.ui.musiclist.activity.WebViewActivity;
@@ -69,7 +71,19 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
+        FlurryAnalyticHelper.init(mActivity);
         TimerUtils.resumeTimerState(mActivity, sleepTimerTxt);
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(mActivity);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(mActivity);
     }
 
     private void initViews() {
@@ -110,9 +124,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                     DropBoxUtills.checkAppKeySetup(App.getApplication());
                     DropBoxUtills.checkDropboxAuthentication(mActivity);
                 }
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Drop_Box_Tapped_From_Setting_Page);
                 break;
             case R.id.setting_google_drive_panel:
                 checkPermissions();
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_Tapped_From_Setting_Page);
                 break;
             case R.id.seeting_sleep_timer:
             case R.id.seeting_sleep_timer_panel:
@@ -128,8 +144,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.about_panel:
                 startCompoundActivities(R.string.header_about);
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.About_Page_opened);
                 break;
             case R.id.feedback_panel:
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.FeedBack_Page_opened);
                 if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
                     Intent intent = new Intent(mActivity, WebViewActivity.class);
                     startActivity(intent);

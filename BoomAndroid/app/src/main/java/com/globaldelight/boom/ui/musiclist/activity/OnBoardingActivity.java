@@ -12,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.ui.widgets.onBoarding.PagerAdapter;
@@ -38,6 +40,8 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboarding);
         initComp();
+        FlurryAnalyticHelper.init(this);
+        FlurryAnalyticHelper.logEvent(UtilAnalytics.Started_OnBoarding);
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -96,8 +100,13 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_boomin_onboard:
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Completed_Onboarding);
+                if (Preferences.readBoolean(this, Preferences.ON_BOARDING_COMPLETED_ON_FIRST_ATTEMPT, true)) {
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.OnBoarding_Completed_on_First_Attempt);
+                }
             case R.id.txt_skip_onboard:
                 jumpToHome();
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Completed_Onboarding_by_Tapping_Skip);
                 break;
 
             case R.id.txt_next_onboard:
@@ -116,6 +125,25 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
             txtSkip.setVisibility(View.VISIBLE);
             txtNext.setVisibility(View.VISIBLE);
         }
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Preferences.writeBoolean(this, Preferences.ON_BOARDING_COMPLETED_ON_FIRST_ATTEMPT, false);
     }
 
 }

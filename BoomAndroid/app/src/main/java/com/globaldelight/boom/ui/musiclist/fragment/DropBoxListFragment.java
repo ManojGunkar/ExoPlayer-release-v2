@@ -24,6 +24,7 @@ import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
 import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
@@ -105,12 +106,14 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         return rootView;
     }
 
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         prefs = mActivity.getSharedPreferences(
                 ACCOUNT_PREFS_NAME, 0);
         initViews();
+        FlurryAnalyticHelper.init(mActivity);
     }
 
     private void initViews() {
@@ -258,6 +261,17 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     @Override
     public void finishDropboxLoading() {
         dismissProgressWithDelay();
+    }
+    @Override
+    public  void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(mActivity);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(mActivity);
     }
 
     @Override

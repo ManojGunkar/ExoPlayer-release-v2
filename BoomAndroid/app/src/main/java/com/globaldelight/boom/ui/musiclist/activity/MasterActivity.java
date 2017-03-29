@@ -19,6 +19,8 @@ import android.widget.LinearLayout;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.business.client.IFBAddsUpdater;
 import com.globaldelight.boom.business.client.IGoogleAddsUpdater;
 import com.globaldelight.boom.business.BusinessUtils;
@@ -75,6 +77,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         contentFragment = new MasterContentFragment();
         initContainer();
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
+        FlurryAnalyticHelper.init(this);
         super.setContentView(activity);
     }
 
@@ -169,6 +172,21 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         super.onResume();
     }
 
+
+    @Override
+    public  void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(this);
+    }
+
+
+
     private void initBusinessReceiver(){
         App.getBusinessHandler().setFBNativeAddListener(this);
         App.getBusinessHandler().setGoogleNativeAddListener(this);
@@ -229,6 +247,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
                 iPlayerSliderControl.onPanelCollapsed(panel);
             }
         });
+        FlurryAnalyticHelper.logEvent(UtilAnalytics.PLayer_Screen_Expanded_From_Mini_Player);
     }
 
     @Override

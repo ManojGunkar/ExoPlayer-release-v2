@@ -23,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
@@ -216,6 +218,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             @Override
             public void onClick(View view) {
                 animate(holder);
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_played_from_playlist_section);
                 if (!App.getPlayerEventHandler().isTrackLoading()) {
                     if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                         App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(collection.getMediaElement(), position);

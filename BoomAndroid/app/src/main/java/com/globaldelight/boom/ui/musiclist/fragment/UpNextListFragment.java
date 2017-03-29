@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.handler.UpNextPlayingQueue;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.adapter.UpNextListAdapter;
@@ -88,6 +89,7 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
+        FlurryAnalyticHelper.init(mActivity);
     }
 
     private void initViews() {
@@ -256,5 +258,16 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
     public void onDestroy() {
         mActivity.unregisterReceiver(upnextBroadcastReceiver);
         super.onDestroy();
+    }
+    @Override
+    public  void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(mActivity);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(mActivity);
     }
 }

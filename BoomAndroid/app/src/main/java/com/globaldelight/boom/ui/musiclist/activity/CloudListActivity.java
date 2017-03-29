@@ -16,6 +16,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.globaldelight.boom.ui.musiclist.fragment.DropBoxListFragment;
 import com.globaldelight.boom.ui.musiclist.fragment.GoogleDriveListFragment;
@@ -42,6 +44,7 @@ public class CloudListActivity extends MasterActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cloud);
         initView();
+        FlurryAnalyticHelper.init(this);
     }
 
     Runnable navigateLibrary= new Runnable() {
@@ -121,6 +124,15 @@ public class CloudListActivity extends MasterActivity
         int id = item.getItemId();
         if(id == R.id.action_cloud_sync){
             sendBroadcast(new Intent(PlayerEvents.ACTION_CLOUD_SYNC));
+            if (null != toolbarTitle.getText().toString()) {
+                if (toolbarTitle.getText().toString() == getResources().getString(R.string.drop_box)) {
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Sync_Button_tapped_from_Drop_BOx);
+
+                } else if (toolbarTitle.getText().toString() == getResources().getString(R.string.google_drive))
+                {
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Sync_Button_tapped_from_Google_Drive);
+                }
+            }
             return true;
         }
         return false;
@@ -133,15 +145,18 @@ public class CloudListActivity extends MasterActivity
         switch (item.getItemId()){
             case R.id.music_library:
                 getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_library_Opened_From_Drawer);
                 runnable = navigateLibrary;
                 break;
             case R.id.google_drive:
                 getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 runnable = navigateGoogleDrive;
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_OPENED_FROM_DRAWER);
                 break;
             case R.id.drop_box:
                 getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 runnable = navigateDropbox;
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.DROP_BOX_OPENED_FROM_DRAWER);
                 break;
             case R.id.nav_setting:
                 new Handler().postDelayed(new Runnable() {
@@ -151,6 +166,7 @@ public class CloudListActivity extends MasterActivity
                     }
                 }, 300);
                 drawerLayout.closeDrawer(GravityCompat.START);
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
                 return true;
             case R.id.nav_store:
                 new Handler().postDelayed(new Runnable() {
@@ -160,10 +176,12 @@ public class CloudListActivity extends MasterActivity
                     }
                 }, 300);
                 drawerLayout.closeDrawer(GravityCompat.START);
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
                 return true;
             case R.id.nav_share:
                 Utils.shareStart(CloudListActivity.this);
                 drawerLayout.closeDrawer(GravityCompat.START);
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
                 return true;
         }
 
@@ -207,4 +225,18 @@ public class CloudListActivity extends MasterActivity
             new Handler().postDelayed(navigateGoogleDrive, anim ? 300 : 0);
         }
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(this);
+    }
+
+    @Override
+    public void onStop() {
+            super.onStop();
+            FlurryAnalyticHelper.flurryStopSession(this);
+        }
+
+
 }

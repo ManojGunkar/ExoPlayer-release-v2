@@ -107,7 +107,7 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
                         context.startActivity(i);
                     }
                 }, 100);
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_ARTIST_SECTION);
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_ARTIST_SECTION);
 
             }
         });

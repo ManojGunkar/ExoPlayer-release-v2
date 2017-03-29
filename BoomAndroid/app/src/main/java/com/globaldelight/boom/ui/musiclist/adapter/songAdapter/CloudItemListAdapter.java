@@ -28,6 +28,7 @@ import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
@@ -163,7 +164,21 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                         }
                     }, 500);
                 }
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_FAVOURITE_SECTION);
+                if(itemList.get(position).getMediaType()==MediaType.DROP_BOX){
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_from_DropBox_thum_Nail);
+
+                }else if(itemList.get(position).getMediaType()==MediaType.GOOGLE_DRIVE){
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_from_GoogleDrive_thum_Nail);
+
+                }
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_FAVOURITE_SECTION);
+                if(listItemType == ItemType.RECENT_PLAYED){
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_Recent_Playlist);
+                }else if(listItemType == ItemType.FAVOURITE){
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_favourite_Playlist);
+                }else{
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_Other_Playlist);
+                }
             }
         });
 

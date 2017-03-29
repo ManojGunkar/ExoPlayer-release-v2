@@ -33,6 +33,7 @@ public class Preferences {
     public static final String INAPP_PURCHASE_PRICE_VALUE = "INAPP_PURCHASE_PRICE_VALUE";
 
     public static final String PLAYING_ITEM_INDEX_IN_UPNEXT= "PLAYING_ITEM_INDEX_IN_UPNEXT";
+    public static final String ON_BOARDING_COMPLETED_ON_FIRST_ATTEMPT = "OnBoarding Completed on First Attempt";
 
     public static void writeBoolean(Context context, String key, boolean value) {
         getEditor(context).putBoolean(key, value).commit();

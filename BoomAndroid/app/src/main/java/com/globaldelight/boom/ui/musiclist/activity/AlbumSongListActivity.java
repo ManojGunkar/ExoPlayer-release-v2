@@ -22,6 +22,8 @@ import android.widget.TableRow;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.Media.ItemType;
@@ -75,6 +77,7 @@ public class AlbumSongListActivity extends MasterActivity {
         setSupportActionBar(toolbar);
 
         initViews();
+        FlurryAnalyticHelper.init(this);
     }
 
     private void initViews() {
@@ -107,6 +110,7 @@ public class AlbumSongListActivity extends MasterActivity {
         mFloatPlayAlbumSongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_played_from_playlist_section);
                 if(null != fragment && !App.getPlayerEventHandler().isTrackWaitingForPlay()){
                     fragment.onFloatPlayAlbumSongs();
                     sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
@@ -126,6 +130,18 @@ public class AlbumSongListActivity extends MasterActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.item_detail_container, fragment)
                 .commitAllowingStateLoss();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(this);
     }
 
     @Override

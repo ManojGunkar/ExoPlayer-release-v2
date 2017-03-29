@@ -16,6 +16,8 @@ import android.widget.ProgressBar;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaType;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.handler.UpNextPlayingQueue;
@@ -140,6 +142,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                         || MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_SCROLL) {
                     mOnStartDragListener.onStartDrag(holder);
                 }
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Dragg_Animation_usedIn_Up_next);
                 return false;
             }
         });
@@ -157,6 +160,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                     recyclerView.scrollToPosition(itemPosition);
                 } catch (Exception e) {
                 }
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_Up_next);
             }
         });
     }

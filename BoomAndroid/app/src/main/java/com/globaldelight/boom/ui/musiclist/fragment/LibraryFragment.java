@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.manager.HeadPhonePlugReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
@@ -65,6 +66,7 @@ public class LibraryFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
+        FlurryAnalyticHelper.init(mActivity);
     }
 
     private void initViews() {
@@ -157,4 +159,16 @@ public class LibraryFragment extends Fragment {
             Preferences.writeBoolean(mActivity, TOLLTIP_CHOOSE_HEADPHONE_LIBRARY, false);
         }
     }
+    @Override
+    public  void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(mActivity);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(mActivity);
+    }
+
 }

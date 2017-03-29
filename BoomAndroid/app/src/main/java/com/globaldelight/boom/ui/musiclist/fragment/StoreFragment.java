@@ -22,6 +22,8 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.business.inapp.IabBroadcastReceiver;
@@ -40,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_IN_APP_PURCHASE;
+import static com.globaldelight.boom.business.BusinessPreferences.STORE_CLOSED_WITH_PURCHASE;
 import static com.globaldelight.boom.business.BusinessUtils.SKU_INAPPITEM;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 import static com.globaldelight.boom.utils.handlers.Preferences.INAPP_PURCHASE_PRICE_VALUE;
@@ -79,6 +82,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         mActivity = getActivity();
         progressBar = new ProgressBar(mActivity);
         initViews();
+        FlurryAnalyticHelper.init(mActivity);
         return rootView;
     }
 
@@ -123,6 +127,19 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 purchasedStoreUI();
             }
         }
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(mActivity);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(mActivity);
     }
 
     private void intiStoreStartup() {
@@ -172,6 +189,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         if (Utils.isBusinessModelEnable()) {
             switch (view.getId()) {
                 case R.id.store_share_text:
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Store);
                     try {
                         Utils.shareStart(mActivity, StoreFragment.this);
                     } catch (Exception e) {
@@ -217,6 +235,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
             try {
                 startInAppFlow();
+
             } catch (Exception e) {
             }
         }
@@ -225,6 +244,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     public void startInAppFlow() {
         String payload = BusinessUtils.getDeviceID(mContext);
 //        String payload = "test1";
+        FlurryAnalyticHelper.logEvent(UtilAnalytics.Tap_on_Buy);
         try {
             mHelper.launchPurchaseFlow(mActivity, SKU_INAPPITEM, Utils.PURCHASE_FLOW_LAUNCH,
                     mPurchaseFinishedListener, payload);
@@ -241,6 +261,11 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     public void onDestroy() {
         mActivity.unregisterReceiver(mUpdateInAppItemReceiver);
         super.onDestroy();
+        if(BusinessPreferences.readBoolean(mContext, STORE_CLOSED_WITH_PURCHASE, true)){
+            FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Closed_With_Purchase);
+        }else{
+            FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Closed_Without_Purchase);
+        }
     }
 
     public void restorePurchase() {
@@ -285,6 +310,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
             if (mHelper == null) return;
             if (result.isFailure()) {
                 onErrorAppPurchase();
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Purchase_Failed);
                 return;
             }
             Purchase premiumPurchase = inventory.getPurchase(SKU_INAPPITEM);
@@ -324,6 +350,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 } else {
                     onErrorAppPurchase();
                 }
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Purchase_Failed);
                 return;
             }
             if (!verifyDeveloperPayload(purchase)) {
@@ -333,7 +360,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
             if (purchase.getSku().equals(SKU_INAPPITEM)) {
                 mIsPremium = true;
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.PurchaseCompleted);
                 BusinessPreferences.writeBoolean(mContext, ACTION_IN_APP_PURCHASE, true);
+                BusinessPreferences.writeBoolean(mContext, STORE_CLOSED_WITH_PURCHASE, true);
                 onSuccessAppPurchase();
             }
 

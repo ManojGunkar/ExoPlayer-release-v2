@@ -12,6 +12,8 @@ import android.widget.ImageView;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.data.DeviceMediaCollection.MediaItemCollection;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
 import com.globaldelight.boom.task.PlayerEvents;
@@ -42,6 +44,7 @@ public class AlbumDetailItemActivity extends MasterActivity {
         initValues();
 
         initViews();
+        FlurryAnalyticHelper.init(this);
     }
 
     private void initValues() {
@@ -60,6 +63,13 @@ public class AlbumDetailItemActivity extends MasterActivity {
         mFloatPlayAlbums.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (null != currentItem) {
+                    if (currentItem.getItemType().toString().trim() == "GENRE") {
+                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Genere_Section);
+                    } else if (currentItem.getItemType().toString().trim() == "ARTIST") {
+                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Artist_Section);
+                    }
+                }
             if(null != fragment && !App.getPlayerEventHandler().isTrackWaitingForPlay()){
                 fragment.onFloatPlayAlbums();
                 sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
@@ -129,5 +139,16 @@ public class AlbumDetailItemActivity extends MasterActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(this);
     }
 }
