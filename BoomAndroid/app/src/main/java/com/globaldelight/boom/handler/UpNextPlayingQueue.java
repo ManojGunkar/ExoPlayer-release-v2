@@ -14,6 +14,7 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.handler.PlayingQueue.IUpNextMediaEvent;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.utils.handlers.Preferences;
+import com.globaldelight.boomplayer.AudioPlayer;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import java.util.ArrayList;
@@ -417,7 +418,9 @@ public class UpNextPlayingQueue {
 
     public void addItemToPlay(final IMediaItemBase item){
         long mTime = System.currentTimeMillis();
-        if(null != item && null != getPlayingItem() && item.getItemId() == getPlayingItem().getItemId()){
+        AudioPlayer player = App.getPlayerEventHandler().getPlayer();
+        boolean isPlayPause = null != player ? (player.getDataSourceId() == item.getItemId() ? true : false) : false;
+        if(null != item && null != getPlayingItem() && item.getItemId() == getPlayingItem().getItemId() && isPlayPause){
           PlayPause();
         } else if(null != mUpNextList && null != item && mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
@@ -436,7 +439,9 @@ public class UpNextPlayingQueue {
 
     public void addItemListToPlay(final ArrayList<? extends IMediaItemBase> itemList, final int position){
         long mTime = System.currentTimeMillis();
-        if(null != itemList && null != getPlayingItem() && itemList.get(position).getItemId() == getPlayingItem().getItemId()){
+        AudioPlayer player = App.getPlayerEventHandler().getPlayer();
+        boolean isPlayPause = null != player ? (player.getDataSourceId() == itemList.get(position).getItemId() ? true : false) : false;
+        if(null != itemList && null != getPlayingItem() && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isPlayPause){
             PlayPause();
         } else if(null != mUpNextList && null != itemList && itemList.size() > 0 && mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;

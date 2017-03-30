@@ -25,6 +25,7 @@ public class AudioPlayer implements Runnable {
     private IPlayerEvents events = null;
     private PlayerStates state = new PlayerStates();
     private String sourcePath = null;
+    private long sourceId = -1;
     private Context mContext;
     private boolean stop = false;
     private Thread playerThread;
@@ -92,6 +93,16 @@ public class AudioPlayer implements Runnable {
     public String getDataSource(){
         return sourcePath;
     }
+
+    public void setDataSourceId(long srcId) {
+        sourceId = srcId;
+    }
+
+    public long getDataSourceId(){
+        return sourceId;
+    }
+
+
 
     public synchronized void play() {
         if (state.get() == PlayerStates.STOPPED) {
