@@ -101,7 +101,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
                 context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
             }
             context.sendBroadcast(new Intent(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
-            Toast.makeText(context, "Error in playing Song", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getResources().getString(R.string.error_in_playing), Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -256,15 +256,11 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
             if(null != mPlayer && null != mediaItemBase && null != dataSource) {
                 if ( requestAudioFocus() ) {
                     mPlayer.setDataSource(dataSource);
+                    mPlayer.setDataSourceId(mediaItemBase.getItemId());
                     setSessionState(PlaybackState.STATE_PLAYING);
                     AnalyticsHelper.songSelectionChanged(context, mediaItemBase);
                 }
             }else{
-                if(null == dataSource && mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){
-                    Toast.makeText(context, context.getResources().getString(R.string.loading_problem), Toast.LENGTH_SHORT).show();
-                }else if(null == dataSource && mediaItemBase.getMediaType() == MediaType.DROP_BOX){
-                    Toast.makeText(context, context.getResources().getString(R.string.loading_problem), Toast.LENGTH_SHORT).show();
-                }
                 isTrackWaiting = false;
                 context.sendBroadcast(new Intent(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
                 context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
