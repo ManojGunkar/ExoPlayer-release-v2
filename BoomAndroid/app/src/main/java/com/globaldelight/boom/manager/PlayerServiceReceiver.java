@@ -4,11 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
+import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.task.PlayerService;
 
 /**
@@ -79,6 +83,10 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
     }
 
     private void handleBroadcastReceived(Context context, final Intent intent) {
+        Bundle bundle=intent.getExtras();
+        int requestCode=0;
+        if(bundle!=null){
+          requestCode=bundle.getInt("requestCode");}
         switch (intent.getAction()){
             case ACTION_NOTI_CLICK :
                 if(null != mPlayerService)
@@ -109,14 +117,28 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                     mPlayerService.onSeekSongTrack(intent);
                 break;
             case ACTION_NEXT_SONG :
+                if(requestCode==10102){
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Next_Button_Tapped_from_Notification_bar);
+                    Log.d("notifi","1");
+                }
                 if(null != mPlayerService)
                     mPlayerService.onNextTrack();
                 break;
             case ACTION_PREV_SONG :
+                if(requestCode==10103){
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.previous_Button_Tapped_from_Notification_bar);
+                    Log.d("notifi","2");
+                }
+
                 if(null != mPlayerService)
                     mPlayerService.onPreviousTrack();
                 break;
             case ACTION_PLAY_PAUSE_SONG :
+                if(requestCode==10101){
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.play_pause_Button_Tapped_from_Notification_bar);
+                    Log.d("notifi","3");
+                }
+
                 if(null != mPlayerService)
                     mPlayerService.onPlayPauseTrack();
                 break;

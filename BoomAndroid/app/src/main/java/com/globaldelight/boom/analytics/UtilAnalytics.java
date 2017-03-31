@@ -48,6 +48,9 @@ public class UtilAnalytics {
     public static final String Previous_button_tapped_From_effect_screen = "Previous Button Tapped From Palyer Screen";
     public static final String Equalizer_selected = "Equalizer selected from Effect Screen";
     public static final String Type_Equalizer_selected = "Equalizer Name Selected From Effect Screen";
+    public static final String Next_Button_Tapped_from_Notification_bar = "Next Button Tapped From NotificationBar";
+    public static final String previous_Button_Tapped_from_Notification_bar = "Previous Button Tapped From NotificationBar";
+    public static final String play_pause_Button_Tapped_from_Notification_bar = "Play/Pause Button Tapped From NotificationBar";
 
 
 
@@ -125,7 +128,8 @@ public class UtilAnalytics {
     public static final String Player_Tab_PLayer_screen = "Player Tab Opened From Player Screen";
     public static final String Play_Pause_Button_tapped_Mini_Player = "Play OR Pause Button Used From Mini PLayer ";
     public static final String Playing_SeekBar_Used_in_Effects_screen = "Playing SeekBar Used In Effects Screen";
-    public static final String Speaker_Button_Clicked_from_Effects_Screen = "Speakers Dialog Opened From Effects Screen";
+    public static final String Speaker_Dialog_Opened_From_Arrow = "Speakers Dialog Opened From Arrow";
+    public static final String Speaker_Dialog_Opened_From_Text = "Speakers Dialog Opened From Text";
     public static final String User_Spend_time_ON_Effect_Screen= "Event Duration on Effect Screen";
     public static final String User_spent_time_onPlayer_Screen= "Event Duration on PLayer Screen";
     public static final String FAB_BUtton_Tapped_from_Artist_Section= "FAB Button Tapped From Artist Section";
@@ -141,9 +145,12 @@ public class UtilAnalytics {
     public static final String Song_Played_Other_Playlist= "Song Played From Others PlayList";
     public static final String Song_Played_Up_next= "Song Played From UpNext Listt";
     public static final String Dragg_Animation_usedIn_Up_next= "Drag Animation Used UpNext Listt";
-    public static final String Song_Played_from_GoogleDrive_thum_Nail= "Song Played From Google Drive ThumbNail";
-    public static final String Song_Played_from_DropBox_thum_Nail= "Song Played From Drop Box ThumbNail";
-
+    public static final String Song_Played_from_GoogleDrive_thum_Nail= "Tapped on Google Songs List ThumNail";
+    public static final String Song_Played_from_DropBox_thum_Nail= "Tapped on DropBox Songs List ThumNail";
+    public static final String Open_Equalizer_Dailog_from_text= "Open Equalizer Dailog from Equalizer Text";
+    public static final String Open_Equalizer_Dailog_from_DropDown= "Open Equalizer Dailog from EqualizerDropDown";
+    public static final String Type_of_Equalizer_selected= "Type of Equalizer Selected";
+    public static final String PARAM_SELECTED_EQUALIZER = "selected Equalizer Type";
 
     /* Store Screen  */
     public static final String Share_Opened_from_Store = "Share Opened from Store";

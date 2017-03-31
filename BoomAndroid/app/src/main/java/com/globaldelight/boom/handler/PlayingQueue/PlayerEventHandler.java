@@ -264,7 +264,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
                     mPlayer.setDataSource(dataSource);
                     mPlayer.setDataSourceId(mediaItemBase.getItemId());
                     setSessionState(PlaybackState.STATE_PLAYING);
-                    AnalyticsHelper.songSelectionChanged(context, mediaItemBase);
+//                    AnalyticsHelper.songSelectionChanged(context, mediaItemBase);
                 }
             }else{
                 isTrackWaiting = false;
@@ -277,13 +277,11 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
     public void playNextSong(boolean isUser) {
         PLAYER_DIRECTION = NEXT;
         App.getPlayingQueueHandler().getUpNextList().setNextPlayingItem(isUser);
-        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MOVE_TO_NEXT_SONG);
     }
 
     public void playPrevSong() {
         PLAYER_DIRECTION = PREVIOUS;
         App.getPlayingQueueHandler().getUpNextList().setPreviousPlayingItem();
-        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MOVE_TO_PRE_SONG);
     }
 
     @Override

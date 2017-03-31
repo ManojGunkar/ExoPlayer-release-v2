@@ -21,17 +21,13 @@ public class AnalyticsHelper {
     /*  app common*/
     public static final String EVENT_APP_OPEN = "app_open";
     public static final String EVENT_FIRST_VISIT = "first_visit";
-
     public static final String EVENT_LAST_APP_OPEN = "last_app_open";
-    public static final String EVENT_NUMBER_OF_TIMES_APP_OPEN = "number_of_times_app_open";
     public static final String PARAM_STATUS = "status";//active or inactive
     public static final String PARAM_STATUS_OFF = "on";//active or
     public static final String PARAM_STATUS_ON = "off";//active or inactive
 
 
     /* Effect screen*/
-    public static final String EVENT_OPEN_EFFECT_TAB = "OpenEffects";
-    public static final String EVENT_OPEN_PLAYER_TAB = "open_player";
     public static final String EVENT_FRONT_LEFT_SPEAKER = "Front left speaker (ON/OFF)";
     public static final String EVENT_FRONT_LEFT_SPEAKER_OFF = "Front left speaker OFF";
     public static final String EVENT_FRONT_RIGHT_SPEAKER = "Front right speaker (ON/OFF)";
@@ -51,17 +47,17 @@ public class AnalyticsHelper {
     public static final String EVENT_FULL_BASS = "Full bass(Enabled/Disabled)";
     public static final String EVENT_FULL_BASS_DISABLED = "full_bass_disabled";
 
-    public static final String EVENT_EFFECT_STATE_CHANGED = "Effect state changed(ON/OFF)";
-    public static final String EVENT_3D_STATE_CHANGED = "3d_state_changed";
+    public static final String EVENT_EFFECT_STATE_CHANGED = "Effect status changed(ON/OFF)";
+    public static final String EVENT_3D_STATE_CHANGED = "3D Surround Status Changed";
     public static final String EVENT_EQ_STATE_CHANGED = "eq_state_changed";
-    public static final String EVENT_INTENSITY_STATE_CHANGED = "intensity_state_changed";
+    public static final String EVENT_INTENSITY_STATE_CHANGED = "Intensity Status Changed ";
     public static final String EVENT_EFFECTS_BACK_BUTTON_TAPPED = "effects_back_button_tapped";
     //public static final String EVENT_PREVIOUS_BUTTON_TAPPED_FROM_EFFECTS= "previous_button_tapped_from_effect";
 
 
     /*about*/
 
-    public static final String EVENT_ABOUT_RATE_BUTTON_TAPPED = "about:rate_button_tapped";
+    public static final String EVENT_ABOUT_RATE_BUTTON_TAPPED = "about:Rate Button Tapped";
     public static final String EVENT_ABOUT_SHARE_BUTTON_TAPPED = "about:share_button_tapped";
     public static final String EVENT_ABOUT_CONTACT_US_BUTTON_TAPPED = "about:contact_us_button_tapped";
 
@@ -69,16 +65,16 @@ public class AnalyticsHelper {
     /*settings*/
     public static final String EVENT_SORT_BY_ARTIST = "sort_by_artist";
     public static final String EVENT_SORT_BY_ALBUM = "sort_by_album";
-    public static final String EVENT_HEADPHONE_TYPE_CHANGED = "headphone_type_changed";
+    public static final String EVENT_HEADPHONE_TYPE_CHANGED = "Headphone  Type Changed";
 
-    public static final String PARAM_SELECTED_HEADPHONE_TYPE = "selected_headphone_type";
+    public static final String PARAM_SELECTED_HEADPHONE_TYPE = "Selected Headphone Type";
 
 
     /*library*/
-    public static final String EVENT_SONG_COUNT = "song_count";
+    public static final String EVENT_SONG_COUNT = "song Count";
     public static final String EVENT_CREATED_NEW_PLAYLIST = "Created New Playlist";
     public static final String EVENT_LIBRARY_CLOSE_BUTTON_TAPPED = "library_close_button_tapped";
-    public static final String EVENT_MUSIC_PLAYED_FROM_SONG_SECTION = "music_played_from_song_section";
+    public static final String EVENT_MUSIC_PLAYED_FROM_SONG_SECTION = "Music Played Song Section ";
     public static final String EVENT_MUSIC_PLAYED_FROM_ARTIST_SECTION = "music played from artist section";
 
 
@@ -100,43 +96,23 @@ public class AnalyticsHelper {
 
     //Mixpanel
 
-    public static final String EVENT_EFFECTS_TURNED_ON = "effects_turned_on";
-    public static final String EVENT_EFFECTS_TURNED_OFF = "effects_turned_off";
-    public static final String EVENT_EFFECTS_BACK_BUTTON = "effects_back_button_pressed";
+    public static final String EVENT_EFFECTS_TURNED_ON = "Effects Turned On";
+    public static final String EVENT_EFFECTS_TURNED_OFF = "Effects Turned Off";
+    public static final String EVENT_EFFECTS_BACK_BUTTON = "Effects BackButton Pressed";
 
-    public static final String EVENT_3D_TURNED_ON = "3d_turned_on";
-    public static final String EVENT_3D_TURNED_OFF = "3d_turned_on";
+    public static final String EVENT_3D_TURNED_ON = "3D Turned On";
+    public static final String EVENT_3D_TURNED_OFF = "3D Surround Turned OFF";
 
 
-    public static final String EVENT_EQ_TURNED_ON = "eq_turned_on";
-    public static final String EVENT_EQ_TURNED_OFF = "eq_turned_off";
+    public static final String EVENT_EQ_TURNED_ON = "Equalizer Turned ON";
+    public static final String EVENT_EQ_TURNED_OFF = "Equalizer Turned OFF";
 
     public static final String EVENT_INTENSITY_TURNED_ON = "intensity_turned_on";
     public static final String EVENT_INTENSITY_TURNED_OFF = "intensity_turned_off";
-    public static final String EVENT_MOVE_TO_NEXT_SONG = "NextSongButtonTapped";
-    public static final String EVENT_MOVE_TO_PRE_SONG = "PreviousSongButtonTapped";
     public static final String PARAM_SONG_WITH_EQ = "Song_with_effect_eq";
     public static final String PARAM_SONG_WITH_3D = "Song_with_effect_3d";
     public static final String PARAM_SONG_WITH_INTENSITY = "Song_with_effect_intensity";
-    public static final String PARAM_ARTIST_NAME = "artist_name";
-    public static final String PARAM_GENRE = "song_genre";
-    public static final String PARAM_SONG_SELECTED = "Song_selected";
-    public static final String EVENT_UPDATE_PLAYBACK_SESSION = "update_playback_session";
-   /* public static final String EVENT_HEAD_PHONE_PROFILE_NAME = "headphone_profile_name";
-    public static final String PARAM_IN_CANAL = "in_canal";
-    public static final String PARAM_OVER_EAR = "over_ear";
-    public static final String PARAM_ON_EAR = "on_ear";*/
-    //public static final String EVENT_CREATED_NEW_PLAYLIST = "created_new_playlist";
 
-    public static final String EVENT_OPEN_STORE = "store_opened";
-    public static final String PARAM_DATE = "date";
-    public static final String EVENT_PURCHASE_FAILED = "purchase_failed";
-    public static final String EVENT_PURCHASE_CANCELLED = "purchase_cancelled";
-    public static final String EVENT_PURCHASE_RESTORED = "purchase_restored";
-    public static final String EVENT_PURCHASE_SUCCESS = "purchase_success";
-    public static final String PARAM_PURCHASED_ITEM = "purchased_item";
-    public static final String PARAM_REMAINING_DAYS = "remiaining_days";
-    public static final String EVENT_EFFECT_PACK_PURCHASE = "effect_pack_purchase";
 
     public static void logCommonEventWithStatus(Context ctx, String eventName, boolean status) {
         //flurry
@@ -224,10 +200,5 @@ public class AnalyticsHelper {
         MixPanelAnalyticHelper.getInstance(context).track(event);
     }
 
-    public void storeOpened(Context context, String event) {
-        FlurryAnalyticHelper.logEvent(EVENT_OPEN_STORE);
-        JSONObject properties = new JSONObject();
-        //properties.put(PARAM_DATE, headPhoneType);
-    }
 }
 
