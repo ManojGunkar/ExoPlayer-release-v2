@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class AnalyticsHelper {
     /*  app common*/
-    public static final String EVENT_APP_OPEN = "app_open";
+    public static final String EVENT_APP_OPEN = "App Open (Splash Screen Launch)";
     public static final String EVENT_FIRST_VISIT = "first_visit";
     public static final String EVENT_LAST_APP_OPEN = "last_app_open";
     public static final String PARAM_STATUS = "status";//active or inactive
@@ -74,7 +74,7 @@ public class AnalyticsHelper {
     public static final String EVENT_SONG_COUNT = "song Count";
     public static final String EVENT_CREATED_NEW_PLAYLIST = "Created New Playlist";
     public static final String EVENT_LIBRARY_CLOSE_BUTTON_TAPPED = "library_close_button_tapped";
-    public static final String EVENT_MUSIC_PLAYED_FROM_SONG_SECTION = "Music Played Song Section ";
+    public static final String EVENT_MUSIC_PLAYED_FROM_SONG_SECTION = "Music Played from Songs Section ";
     public static final String EVENT_MUSIC_PLAYED_FROM_ARTIST_SECTION = "music played from artist section";
 
 
@@ -85,7 +85,7 @@ public class AnalyticsHelper {
     public static final String EVENT_TRACK_SELECTION_CHANGED = "track_selection_changed";
     public static final String EVENT_MUSIC_SESSION_DURATION = " music_session_duration";
     public static final String EVENT_TOTAL_USAGE_IN_MINUTES = "total_usage_in_minutes";
-    public static final String EVENT_QUEUE_BUTTON_FROM_PLAYER_SCREEN = "Queue Button From Player Screen";
+//    public static final String EVENT_QUEUE_BUTTON_FROM_PLAYER_SCREEN = "Queue Button From Player Screen";
     public static final String EVENT_PLAY_PLAYING = "event_play_song";
     public static final String EVENT_PAUSE_PLAYING = "event_pause_song";
     public static final String EVENT_REPEAT_ONE_PLAYING = "RepeatModeOnce";
@@ -100,7 +100,7 @@ public class AnalyticsHelper {
     public static final String EVENT_EFFECTS_TURNED_OFF = "Effects Turned Off";
     public static final String EVENT_EFFECTS_BACK_BUTTON = "Effects BackButton Pressed";
 
-    public static final String EVENT_3D_TURNED_ON = "3D Turned On";
+    public static final String EVENT_3D_TURNED_ON = "3D Surround Turned On";
     public static final String EVENT_3D_TURNED_OFF = "3D Surround Turned OFF";
 
 

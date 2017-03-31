@@ -223,5 +223,5 @@ public class UtilAnalytics {
     public static final String Feedback_given_from_alert = "Feedback given from alert";
     public static final String Feedback_ignored_from_alert = "Feedback ignored from alert";
 
-    public static String UpNext_Button_Tapped="Upnext Button Tapped";
+    public static final String UpNext_Button_Tapped="Upnext Button Tapped";
 }
