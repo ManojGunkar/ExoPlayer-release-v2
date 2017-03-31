@@ -174,7 +174,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
 
     public long getPlayerDataSourceId(){
         if (null != mPlayer )
-            mPlayer.getDataSourceId();
+            return mPlayer.getDataSourceId();
         return -1;
     }
 
