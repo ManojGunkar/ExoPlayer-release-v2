@@ -189,6 +189,12 @@
         <activity
             android:name=".ui.musiclist.activity.WebViewActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
+
+        <receiver android:name=".manager.BoomPlayTimeReceiver">
+            <intent-filter>
+                 <action android:name="com.globaldelight.boom.manager.TIME_LIMIT_COMPLETE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

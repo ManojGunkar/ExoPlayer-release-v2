@@ -14,6 +14,7 @@ import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.handler.PlayingQueue.PlayingQueueHandler;
+import com.globaldelight.boom.manager.BoomPlayTimeReceiver;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.handlers.CloudMediaItemDBHelper;
 import com.globaldelight.boom.utils.handlers.FavoriteDBHelper;
@@ -46,6 +47,8 @@ public class App extends Application implements Application.ActivityLifecycleCal
     private static PlayerService service;
     private static UserPreferenceHandler userPreferenceHandler;
     private static DropboxAPI<AndroidAuthSession> dropboxAPI;
+
+    private static BoomPlayTimeReceiver boomPlayTimeReceiver;
 
     private static BusinessHandler businessHandler;
 
@@ -86,6 +89,8 @@ public class App extends Application implements Application.ActivityLifecycleCal
         try{
             businessHandler = BusinessHandler.getBusinessHandlerInstance(application);
         }catch (Exception e){}
+
+        boomPlayTimeReceiver = new BoomPlayTimeReceiver(application);
 
         FlurryAnalyticHelper.init(this);
 
@@ -180,6 +185,10 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     public void onActivityDestroyed(Activity var1) {
 
+    }
+
+    public static BoomPlayTimeReceiver getBoomPlayTimeReceiver() {
+        return boomPlayTimeReceiver;
     }
 
     private boolean isExpired(){

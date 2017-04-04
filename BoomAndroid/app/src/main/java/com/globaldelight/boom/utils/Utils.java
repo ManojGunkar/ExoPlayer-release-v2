@@ -367,8 +367,6 @@ public class Utils {
         return "Defeult";
     }
 
-
-
     public static void SharePopup(final Context context) {
         if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED_DIALOG_SHOWN, false) &&
                 !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false) &&
@@ -515,7 +513,7 @@ public class Utils {
     }
 
     public static boolean isBusinessModelEnable(){
-        return true;
+        return false;
     }
 
     public static boolean isAppExpireEnable(){

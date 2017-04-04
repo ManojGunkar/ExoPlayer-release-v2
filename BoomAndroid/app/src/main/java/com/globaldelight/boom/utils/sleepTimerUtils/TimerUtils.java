@@ -208,11 +208,11 @@ public class TimerUtils {
 
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");//yyyy:MM:dd:HH:mm
 
-        String currentDateandTime = sdf.format(new Date(System.currentTimeMillis()));
+        String currentDateTime = sdf.format(new Date(System.currentTimeMillis()));
 
         Date date = null;
         try {
-            date = sdf.parse(currentDateandTime);
+            date = sdf.parse(currentDateTime);
         } catch (ParseException e) {
             e.printStackTrace();
         }

@@ -143,8 +143,10 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         i.putExtra("play_pause", play_pause);
         sendBroadcast(i);
 
-        updateNotificationPlayer((IMediaItem) musicPlayerHandler.getPlayingItem(), play_pause, false);
+        updateNotificationPlayer(musicPlayerHandler.getPlayingItem(), play_pause, false);
         sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
+
+        App.getBoomPlayTimeReceiver().setPlayingStartTime(play_pause);
     }
 
     private void updatePlayingQueue() {
