@@ -81,8 +81,6 @@ public class AlbumDetailActivity extends MasterActivity {
 
                     }
                 }
-
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_played_from_album_section);
                 if(null != fragment && !App.getPlayerEventHandler().isTrackWaitingForPlay()){
                     fragment.onFloatPlayAlbums();
                     sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));

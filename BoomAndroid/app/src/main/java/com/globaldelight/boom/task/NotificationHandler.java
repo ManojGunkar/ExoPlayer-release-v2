@@ -79,20 +79,23 @@ public class NotificationHandler {
             notificationCompat.contentView = notiCollapsedView;
 
             Intent playClick = new Intent();
+            playClick.putExtra("requestCode",10101);
             playClick.setAction(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG);
-            PendingIntent playClickIntent = PendingIntent.getBroadcast(context, 10101, playClick, 0);
+            PendingIntent playClickIntent = PendingIntent.getBroadcast(context, 10101, playClick, PendingIntent.FLAG_UPDATE_CURRENT);
             notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
             notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
 
             Intent nextClick = new Intent();
+            nextClick.putExtra("requestCode",10102);
             nextClick.setAction(PlayerServiceReceiver.ACTION_NEXT_SONG);
-            PendingIntent nextClickIntent = PendingIntent.getBroadcast(context, 10102, nextClick, 0);
+            PendingIntent nextClickIntent = PendingIntent.getBroadcast(context, 10102, nextClick, PendingIntent.FLAG_UPDATE_CURRENT);
             notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
             notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
 
             Intent prevClick = new Intent();
+            prevClick.putExtra("requestCode",10103);
             prevClick.setAction(PlayerServiceReceiver.ACTION_PREV_SONG);
-            PendingIntent prevClickIntent = PendingIntent.getBroadcast(context, 10103, prevClick, 0);
+            PendingIntent prevClickIntent = PendingIntent.getBroadcast(context, 10103, prevClick, PendingIntent.FLAG_UPDATE_CURRENT);
             notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
             notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
 

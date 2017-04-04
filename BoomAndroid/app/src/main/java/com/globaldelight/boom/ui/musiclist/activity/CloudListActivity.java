@@ -137,15 +137,6 @@ public class CloudListActivity extends MasterActivity
         int id = item.getItemId();
         if(id == R.id.action_cloud_sync){
             sendBroadcast(new Intent(PlayerEvents.ACTION_CLOUD_SYNC));
-            if (null != toolbarTitle.getText().toString()) {
-                if (toolbarTitle.getText().toString() == getResources().getString(R.string.drop_box)) {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Sync_Button_tapped_from_Drop_BOx);
-
-                } else if (toolbarTitle.getText().toString() == getResources().getString(R.string.google_drive))
-                {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Sync_Button_tapped_from_Google_Drive);
-                }
-            }
             return true;
         }
         return false;

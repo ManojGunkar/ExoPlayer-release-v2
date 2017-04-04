@@ -22,6 +22,7 @@ import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
 import com.globaldelight.boom.Media.ItemType;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
@@ -76,6 +77,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                         dropboxMediaList.clearDropboxContent();
                     }
                     LoadDropboxList();
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Sync_Button_tapped_from_Drop_BOx);
                     break;
             }
         }

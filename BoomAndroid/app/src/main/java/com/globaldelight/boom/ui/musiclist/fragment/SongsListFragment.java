@@ -138,7 +138,7 @@ public class SongsListFragment extends Fragment{
         @Override
         protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
             super.onPostExecute(iMediaItemList);
-            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SONG_COUNT);
+//            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SONG_COUNT);
             final LinearLayoutManager llm = new LinearLayoutManager(mActivity);
             recyclerView.setLayoutManager(llm);
             recyclerView.setHasFixedSize(true);

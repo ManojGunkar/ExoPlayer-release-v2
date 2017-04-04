@@ -283,9 +283,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mEffectTab.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_effects_normal, null));
             mPlayerContent.setVisibility(View.VISIBLE);
             mEffectContent.setVisibility(View.GONE);
-            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_PLAYER_TAB);
             Map<String, String> articleParams = new HashMap<String, String>();
-            articleParams.put("Effect_Tab_TimeStarted",String.valueOf(System.currentTimeMillis()));
+            articleParams.put("Effect_Tab_TimeStarted","Effect_Tab_TimeStarted"+"-"+String.valueOf(System.currentTimeMillis()));
             FlurryAnalyticHelper.logEvent(UtilAnalytics.User_Spend_time_ON_Effect_Screen, articleParams, true);
             FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_spent_time_onPlayer_Screen);
         }else{
@@ -297,11 +296,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             String msg = isAllSpeakersAreOff();
             if(null != msg)
                 Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
-            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_OPEN_EFFECT_TAB);
             Map<String, String> articleParams = new HashMap<String, String>();
-            articleParams.put("Player_Tab_TimeStarted",String.valueOf(System.currentTimeMillis()));
+            articleParams.put("Player_Tab_TimeStarted","Player_Tab_TimeStarted"+"-"+String.valueOf(System.currentTimeMillis()));
             FlurryAnalyticHelper.logEvent(UtilAnalytics.User_spent_time_onPlayer_Screen, articleParams, true);
-            FlurryAnalyticHelper.logEvent(UtilAnalytics.User_Spend_time_ON_Effect_Screen, articleParams, true);
             FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_Spend_time_ON_Effect_Screen);
         }
     }
@@ -965,15 +962,21 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 switchEqualizer();
                 break;
             case R.id.eq_dialog_panel:
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Open_Equalizer_Dailog_from_DropDown);
+                if(isEffectOn && audioEffectPreferenceHandler.isEqualizerOn())
+                    onEqDialogOpen();
+                break;
             case R.id.equalizer_txt:
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Open_Equalizer_Dailog_from_text);
                 if(isEffectOn && audioEffectPreferenceHandler.isEqualizerOn())
                     onEqDialogOpen();
                 break;
             case R.id.speaker_btn :
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Speaker_Button_Clicked_from_Effects_Screen);
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Speaker_Dialog_Opened_From_Arrow);
             case R.id.three_surround_txt :
                 if(isEffectOn && audioEffectPreferenceHandler.is3DSurroundOn())
                     openSpeakerDialog();
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Speaker_Dialog_Opened_From_Text);
                 break;
             case R.id.speaker_left_front:
                 updateSpeakers(AudioEffect.Speaker.FrontLeft);
@@ -1515,6 +1518,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             public void run() {
                 mSelectedEqImg.setImageDrawable(eq_active_off.getDrawable(position));
                 mSelectedEqTxt.setText(eq_names.get(position));
+                HashMap<String, String> articleParams = new HashMap<>();
+                articleParams.put(UtilAnalytics.PARAM_SELECTED_EQUALIZER, eq_names.get(position));
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Type_of_Equalizer_selected, articleParams);
                 audioEffectPreferenceHandler.setSelectedEqualizerPosition(position);
             }
         });

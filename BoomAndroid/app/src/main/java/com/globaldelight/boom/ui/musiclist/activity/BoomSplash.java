@@ -35,6 +35,7 @@ public class BoomSplash extends AppCompatActivity {
             finish();
             return;
         }
+        FlurryAnalyticHelper.init(this);
     }
 
     @Override
@@ -125,4 +126,18 @@ public class BoomSplash extends AppCompatActivity {
         MixPanelAnalyticHelper.getInstance(this).flush();
         super.onDestroy();
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FlurryAnalyticHelper.flurryStartSession(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FlurryAnalyticHelper.flurryStopSession(this);
+    }
+
+
 }

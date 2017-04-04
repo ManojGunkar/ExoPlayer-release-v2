@@ -82,7 +82,6 @@ public class MainActivity extends MasterActivity
         setContentView(R.layout.activity_main);
         initView();
         checkPermissions();
-        FlurryAnalyticHelper.init(this);
     }
 
     Runnable navigateLibrary = new Runnable() {
@@ -159,19 +158,6 @@ public class MainActivity extends MasterActivity
             navigateLibrary.run();
         }
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(this);
-    }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

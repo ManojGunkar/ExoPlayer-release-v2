@@ -80,7 +80,6 @@ public class PlayerUIController implements IPlayerUIController {
     @Override
     public void OnUpNextClick(Activity activity) {
         startUpNextActivity(activity);
-        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_QUEUE_BUTTON_FROM_PLAYER_SCREEN);
     }
 
     private void startUpNextActivity(Activity activity) {

@@ -176,8 +176,6 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                     FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_Recent_Playlist);
                 }else if(listItemType == ItemType.FAVOURITE){
                     FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_favourite_Playlist);
-                }else{
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_Other_Playlist);
                 }
             }
         });

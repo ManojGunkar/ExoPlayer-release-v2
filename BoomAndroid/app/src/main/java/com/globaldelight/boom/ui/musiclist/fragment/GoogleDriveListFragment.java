@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
 import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.Media.ItemType;
@@ -84,6 +85,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                         googleDriveMediaList.clearGoogleDriveMediaContent();
                     }
                     checkPermissions();
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Sync_Button_tapped_from_Google_Drive);
                     break;
             }
         }

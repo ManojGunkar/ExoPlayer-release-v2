@@ -7,7 +7,7 @@ package com.globaldelight.boom.analytics;
 
 public class UtilAnalytics {
 
-    public static final String FLURRY_API_KEY = "PX85XVXZH4HVWST8Z7V3";
+    public static final String FLURRY_API_KEY = "H5233SKSJY9B67SRVBRG";
 
 
     //    public static final String Created_New_Playlist = "Created New Playlist";
@@ -48,6 +48,9 @@ public class UtilAnalytics {
     public static final String Previous_button_tapped_From_effect_screen = "Previous Button Tapped From Palyer Screen";
     public static final String Equalizer_selected = "Equalizer selected from Effect Screen";
     public static final String Type_Equalizer_selected = "Equalizer Name Selected From Effect Screen";
+    public static final String Next_Button_Tapped_from_Notification_bar = "Next Button Tapped From NotificationBar";
+    public static final String previous_Button_Tapped_from_Notification_bar = "Previous Button Tapped From NotificationBar";
+    public static final String play_pause_Button_Tapped_from_Notification_bar = "Play/Pause Button Tapped From NotificationBar";
 
 
 
@@ -99,7 +102,15 @@ public class UtilAnalytics {
     public static final String Music_played_from_album_section = "music played from album section";
     public static final String Music_played_from_artist_section = "music played from artist section";
     public static final String Music_played_from_genre_section = "music played from genre section";
-    public static final String Music_played_from_playlist_section = "music played from playlist section";
+    public static final String FAB_Tapped_from_Boom_playlist_section = "FAB Button Tapped  from Boom playlist section";
+    public static final String FAB_Tapped_from_ARTIST_ALL_SONGS_section = "FAB Button Tapped  from ARTIST All Songs Section";
+    public static final String FAB_Tapped_from_GENERE_ALL_SONGS_section = "FAB Button Tapped  from GENERE All Songs Section";
+    public static final String Tapped_from_Boom_playlist_Thumbnail = " Tapped  from Boom playlist Thumbnail";
+    public static final String Tapped_from_playlist_Thumbnail = " Tapped from  playlist Thumbnail";
+    public static final String Tapped_from_ARTIST_AllSongs_Thumbnail = " Tapped  from ARTIST ALLSONGS Thumbnail";
+    public static final String Tapped_from_GENERE_AllSongs_Thumbnail = " Tapped  from GENERE ALLSONGS Thumbnail";
+
+    public static final String FAB_Tapped_from_playlist_section = "FAB Button Tapped  from  playlist section";
     public static final String Music_played_from_Boom_Playlist_Section = "music played from Boom Playlist Section";
     public static final String Music_played_from_songs_section = "Music played from songs section";
     public static final String Song_Music_Source = "Song Music Source";
@@ -117,7 +128,8 @@ public class UtilAnalytics {
     public static final String Player_Tab_PLayer_screen = "Player Tab Opened From Player Screen";
     public static final String Play_Pause_Button_tapped_Mini_Player = "Play OR Pause Button Used From Mini PLayer ";
     public static final String Playing_SeekBar_Used_in_Effects_screen = "Playing SeekBar Used In Effects Screen";
-    public static final String Speaker_Button_Clicked_from_Effects_Screen = "Speakers Dialog Opened From Effects Screen";
+    public static final String Speaker_Dialog_Opened_From_Arrow = "Speakers Dialog Opened From Arrow";
+    public static final String Speaker_Dialog_Opened_From_Text = "Speakers Dialog Opened From Text";
     public static final String User_Spend_time_ON_Effect_Screen= "Event Duration on Effect Screen";
     public static final String User_spent_time_onPlayer_Screen= "Event Duration on PLayer Screen";
     public static final String FAB_BUtton_Tapped_from_Artist_Section= "FAB Button Tapped From Artist Section";
@@ -133,9 +145,12 @@ public class UtilAnalytics {
     public static final String Song_Played_Other_Playlist= "Song Played From Others PlayList";
     public static final String Song_Played_Up_next= "Song Played From UpNext Listt";
     public static final String Dragg_Animation_usedIn_Up_next= "Drag Animation Used UpNext Listt";
-    public static final String Song_Played_from_GoogleDrive_thum_Nail= "Song Played From Google Drive ThumbNail";
-    public static final String Song_Played_from_DropBox_thum_Nail= "Song Played From Drop Box ThumbNail";
-
+    public static final String Song_Played_from_GoogleDrive_thum_Nail= "Tapped on Google Songs List ThumNail";
+    public static final String Song_Played_from_DropBox_thum_Nail= "Tapped on DropBox Songs List ThumNail";
+    public static final String Open_Equalizer_Dailog_from_text= "Open Equalizer Dailog from Equalizer Text";
+    public static final String Open_Equalizer_Dailog_from_DropDown= "Open Equalizer Dailog from EqualizerDropDown";
+    public static final String Type_of_Equalizer_selected= "Type of Equalizer Selected";
+    public static final String PARAM_SELECTED_EQUALIZER = "selected Equalizer Type";
 
     /* Store Screen  */
     public static final String Share_Opened_from_Store = "Share Opened from Store";
@@ -208,5 +223,5 @@ public class UtilAnalytics {
     public static final String Feedback_given_from_alert = "Feedback given from alert";
     public static final String Feedback_ignored_from_alert = "Feedback ignored from alert";
 
-    public static String UpNext_Button_Tapped="Upnext Button Tapped";
+    public static final String UpNext_Button_Tapped="Upnext Button Tapped";
 }
