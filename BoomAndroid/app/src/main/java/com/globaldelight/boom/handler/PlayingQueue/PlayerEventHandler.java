@@ -3,8 +3,10 @@ package com.globaldelight.boom.handler.PlayingQueue;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.media.MediaMetadata;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -263,6 +265,11 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
                 if ( requestAudioFocus() ) {
                     mPlayer.setDataSource(dataSource);
                     mPlayer.setDataSourceId(mediaItemBase.getItemId());
+
+                    MediaMetadata.Builder builder = new MediaMetadata.Builder();
+                    builder.putString(MediaMetadata.METADATA_KEY_TITLE, mediaItemBase.getItemTitle());
+                    session.setMetadata(builder.build());
+
                     setSessionState(PlaybackState.STATE_PLAYING);
 //                    AnalyticsHelper.songSelectionChanged(context, mediaItemBase);
                 }
