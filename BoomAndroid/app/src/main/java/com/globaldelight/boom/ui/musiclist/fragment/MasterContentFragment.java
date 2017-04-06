@@ -288,10 +288,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mEffectTab.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_effects_normal, null));
             mPlayerContent.setVisibility(View.VISIBLE);
             mEffectContent.setVisibility(View.GONE);
-            Map<String, String> articleParams = new HashMap<String, String>();
-            articleParams.put("Effect_Tab_TimeStarted","Effect_Tab_TimeStarted"+"-"+String.valueOf(System.currentTimeMillis()));
-            FlurryAnalyticHelper.logEvent(UtilAnalytics.User_Spend_time_ON_Effect_Screen, articleParams, true);
-            FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_spent_time_onPlayer_Screen);
         }else{
             mPlayerContent.setVisibility(View.GONE);
             mEffectContent.setVisibility(View.VISIBLE);
@@ -301,10 +297,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             String msg = isAllSpeakersAreOff();
             if(null != msg)
                 Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
-            Map<String, String> articleParams = new HashMap<String, String>();
-            articleParams.put("Player_Tab_TimeStarted","Player_Tab_TimeStarted"+"-"+String.valueOf(System.currentTimeMillis()));
-            FlurryAnalyticHelper.logEvent(UtilAnalytics.User_spent_time_onPlayer_Screen, articleParams, true);
-            FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_Spend_time_ON_Effect_Screen);
         }
     }
 
@@ -1502,8 +1494,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_Spend_time_ON_Effect_Screen);
-        FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_spent_time_onPlayer_Screen);
         FlurryAnalyticHelper.flurryStopSession(mActivity);
     }
     @Override

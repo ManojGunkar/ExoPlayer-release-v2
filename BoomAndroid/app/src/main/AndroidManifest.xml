@@ -21,7 +21,7 @@
     <!-- optional permission - highly recommended -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- optional permission -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
     <!-- Mixp permission -->
     <permission
         android:name="${applicationId}.permission.C2D_MESSAGE"
