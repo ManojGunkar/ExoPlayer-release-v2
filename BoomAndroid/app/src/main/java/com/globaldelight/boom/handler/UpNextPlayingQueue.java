@@ -3,7 +3,6 @@ package com.globaldelight.boom.handler;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.util.Log;
 
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaController;
@@ -14,7 +13,6 @@ import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
 import com.globaldelight.boom.handler.PlayingQueue.IUpNextMediaEvent;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.utils.handlers.Preferences;
-import com.globaldelight.boomplayer.AudioPlayer;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import java.util.ArrayList;
@@ -177,7 +175,7 @@ public class UpNextPlayingQueue {
         return false;
     }
 
-    public void updateRepeatShuffleOnAppStart(){
+    public void getRepeatShuffleOnAppStart(){
         mShuffle = App.getUserPreferenceHandler().getShuffle();
         mRepeat = App.getUserPreferenceHandler().getRepeat();
     }
@@ -471,7 +469,7 @@ public class UpNextPlayingQueue {
     }
 
     public void fetchSavedUpNextItems() {
-        updateRepeatShuffleOnAppStart();
+        getRepeatShuffleOnAppStart();
         mUpNextList = retrieveUpNextList(mShuffle == SHUFFLE.all ? SHUFFLED : UNSHUFFLE);
         nullCheck();
         retrievePlayingItemIndex();

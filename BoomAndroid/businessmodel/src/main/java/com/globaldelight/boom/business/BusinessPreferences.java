@@ -47,4 +47,12 @@ public class BusinessPreferences {
                                       long defValue) {
         return getPreferences(context).getLong(key, defValue);
     }
+
+    public static void writeInteger(Context context, String key, int value) {
+        getEditor(context).putInt(key, value).commit();
+    }
+
+    public static int readInteger(Context context, String key, int defValue) {
+        return getPreferences(context).getInt(key, defValue);
+    }
 }

@@ -111,7 +111,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         if (musicPlayerHandler == null)
             musicPlayerHandler = App.getPlayerEventHandler();
 
-        App.getPlayingQueueHandler().getUpNextList().updateRepeatShuffleOnAppStart();
+        App.getPlayingQueueHandler().getUpNextList().getRepeatShuffleOnAppStart();
 
         notificationHandler = new NotificationHandler(context, this);
         return START_NOT_STICKY;
@@ -353,6 +353,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             val.put(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, time);
             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, val);
         }catch (Exception e){}
+        android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
     }
 
