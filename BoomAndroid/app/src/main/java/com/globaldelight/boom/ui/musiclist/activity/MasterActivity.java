@@ -175,6 +175,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
 
         }
         initBusinessReceiver();
+//        BoomPlayTimeReceiver.showPopupIfTimeIsOver();
         super.onResume();
     }
 

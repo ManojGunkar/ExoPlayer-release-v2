@@ -130,8 +130,6 @@ public class UtilAnalytics {
     public static final String Playing_SeekBar_Used_in_Effects_screen = "Playing SeekBar Used In Effects Screen";
     public static final String Speaker_Dialog_Opened_From_Arrow = "Speakers Dialog Opened From Arrow";
     public static final String Speaker_Dialog_Opened_From_Text = "Speakers Dialog Opened From Text";
-    public static final String User_Spend_time_ON_Effect_Screen= "Event Duration on Effect Screen";
-    public static final String User_spent_time_onPlayer_Screen= "Event Duration on PLayer Screen";
     public static final String FAB_BUtton_Tapped_from_Artist_Section= "FAB Button Tapped From Artist Section";
     public static final String FAB_BUtton_Tapped_from_Artist_details_Section= "FAB Button Tapped From Artist Details Section";
     public static final String FAB_BUtton_Tapped_from_Genere_Section= "FAB Button Tapped From Genere Section";
@@ -176,7 +174,7 @@ public class UtilAnalytics {
     public static final String Google_Drive_Tapped_From_Setting_Page = "Google Drive Tapped From Setting Page";
     public static final String Drop_Box_Tapped_From_Setting_Page = "Drop Box Tapped From Setting Page";
     public static final String Cloud_service_Sync_Button_Tapped = "Cloud Service_Sync Button Tapped";
-    public static final String Sync_Button_tapped_from_Google_Drive = "Sync Button Tapped From DropBox";
+    public static final String Sync_Button_tapped_from_Google_Drive = "Sync Button Tapped From GoogleDrive";
     public static final String Sync_Button_tapped_from_Drop_BOx = "Sync Button Tapped From DropBox";
     public static final String Music_library_Opened_From_Drawer = "Music Library Opene From Drawer";
 

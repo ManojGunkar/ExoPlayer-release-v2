@@ -9,10 +9,7 @@ import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.ui.musiclist.activity.MasterActivity;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boomplayer.AudioEffect;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_IN_APP_PURCHASE;
 
@@ -42,6 +39,7 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
     private static final int SIXTY_MINUTE = 60 * 6;//60
     private static final int TWENTY_MINUTE = 60 * 2;//20
     private static final int FIVE_MINUTE = 60 * 1;//5
+    private static final int ONE_SECOND = 1000 * 1;
 
     public BoomPlayTimeReceiver(){}
 
@@ -109,7 +107,7 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
         }
 
         if(playing && null == countDownTimer){
-            setTimer(mContext, getRemainingTimeToShowPopup());
+            setStartTimer();
         } else {
             if(null != countDownTimer){
                 countDownTimer.cancel();
@@ -124,7 +122,7 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(intent.getAction() == TIME_LIMIT_COMPLETE){
+        if(intent.getAction() == TIME_LIMIT_COMPLETE && null != activityForPopup){
             if(isNoPopupShown()){
 //                showPrimaryPopup
                 Utils.businessPrimaryPopup(activityForPopup);
@@ -132,11 +130,12 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
 //                  showSecondaryPopup
                 Utils.businessSecondaryPopup(activityForPopup);
             }
+            BusinessPreferences.writeInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0);
         }
     }
 
-    public static void setTimer(final Context mContext, int time_in_minute) {
-        int hour = 0;
+    public static void setStartTimer() {
+        /*int hour = 0;
         int minute = time_in_minute;
 
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
@@ -155,9 +154,10 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
         calendar.add(Calendar.MINUTE, minute);
         Date endDate = calendar.getTime();
 
-        long endTime = endDate.getTime() - date.getTime();
+        long endTime = endDate.getTime() - date.getTime()*/
 
-        countDownTimer = new CountDownTimer(endTime, 1000) {
+        long endTime = getRemainingTimeToShowPopup() * ONE_SECOND;
+        countDownTimer = new CountDownTimer(endTime, ONE_SECOND) {
 
             public void onTick(long millisUntilFinished) {
                 BusinessPreferences.writeInteger(mContext, TIME_INTERVAL_FOR_POPUP,
@@ -175,9 +175,14 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
                 } else {
                     MAX_TIME_LIMIT_IN_SECOND = SIXTY_MINUTE;
                 }
-                BusinessPreferences.writeInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0);
                 mContext.sendBroadcast(new Intent(TIME_LIMIT_COMPLETE));
             }
         }.start();
+    }
+
+    public static void showPopupIfTimeIsOver(){
+        if(getRemainingTimeToShowPopup() <= 0){
+            setPlayingStartTime(true);
+        }
     }
 }
