@@ -49,7 +49,6 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
     private static int PREVIOUS = 1;
     private static int PLAYER_DIRECTION;
     private Context context;
-    private PlayerService service;
     private AudioManager audioManager;
     private MediaSession session;
     private GoogleDriveHandler googleDriveHandler;
@@ -148,14 +147,12 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         }
     };
 
-    private PlayerEventHandler(Context context, PlayerService service){
+    private PlayerEventHandler(Context context){
         this.context = context;
         if(null == mPlayer)
             mPlayer = new AudioPlayer(context, IPlayerEvents);
         if(null == audioManager)
             audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-        if(null == this.service)
-            this.service = service;
         App.getPlayingQueueHandler().getUpNextList().setUpNextMediaEvent(this);
         googleDriveHandler = new GoogleDriveHandler(context);
         googleDriveHandler.connectToGoogleAccount();
@@ -163,9 +160,9 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         registerSession();
     }
 
-    public static PlayerEventHandler getPlayerEventInstance(Context context, PlayerService service){
+    public static PlayerEventHandler getPlayerEventInstance(Context context){
         if(handler == null){
-            handler = new PlayerEventHandler(context, service);
+            handler = new PlayerEventHandler(context);
         }
         return handler;
     }

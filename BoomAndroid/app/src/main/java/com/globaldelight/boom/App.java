@@ -56,14 +56,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
         return application;
     }
 
-    public static void setService(PlayerService service) {
-        App.service = service;
-    }
-
-    public static PlayerService getService(){
-        return App.service;
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -102,7 +94,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public static PlayerEventHandler getPlayerEventHandler() {
-        return PlayerEventHandler.getPlayerEventInstance(application, service);
+        return PlayerEventHandler.getPlayerEventInstance(application);
     }
 
     public static UserPreferenceHandler getUserPreferenceHandler() {

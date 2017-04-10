@@ -21,7 +21,7 @@
     <!-- optional permission - highly recommended -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- optional permission -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
     <!-- Mixp permission -->
     <permission
         android:name="${applicationId}.permission.C2D_MESSAGE"
@@ -192,7 +192,7 @@
 
         <receiver android:name=".manager.BoomPlayTimeReceiver">
             <intent-filter>
-                 <action android:name="com.globaldelight.boom.manager.TIME_LIMIT_COMPLETE" />
+                 <action android:name="TIME_LIMIT_COMPLETE" />
             </intent-filter>
         </receiver>
     </application>

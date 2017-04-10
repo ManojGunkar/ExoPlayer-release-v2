@@ -242,4 +242,5 @@
 
     <string name="ask_reset_timer">Do you wants to reset sleeping time?</string>
     <string name="empty_search_result">No Search Result !</string>
+    <string name="dialog_turn_on_effect">Turn On Effects</string>
 </resources>

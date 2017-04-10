@@ -25,6 +25,7 @@ import com.globaldelight.boom.business.client.IFBAddsUpdater;
 import com.globaldelight.boom.business.client.IGoogleAddsUpdater;
 import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.business.BusinessUtils.AddSource;
+import com.globaldelight.boom.manager.BoomPlayTimeReceiver;
 import com.globaldelight.boom.manager.BusinessRequestReceiver;
 import com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment;
 import com.globaldelight.boom.ui.widgets.slidinguppanel.SlidingUpPanelLayout;
@@ -168,6 +169,11 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     @Override
     protected void onResume() {
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
+        try{
+            App.startPlayerService();
+        }catch (Exception e){
+
+        }
         initBusinessReceiver();
         super.onResume();
     }
@@ -176,12 +182,14 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     @Override
     public  void onStart() {
         super.onStart();
+        BoomPlayTimeReceiver.setActivityForPopup(MasterActivity.this);
         FlurryAnalyticHelper.flurryStartSession(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        BoomPlayTimeReceiver.setActivityForPopup(null);
         FlurryAnalyticHelper.flurryStopSession(this);
     }
 

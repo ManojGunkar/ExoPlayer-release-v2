@@ -57,7 +57,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     public void onCreate() {
         super.onCreate();
         context = this;
-        App.setService(this);
         AudioConfiguration.getInstance(this).load();
 
         serviceReceiver = new PlayerServiceReceiver();
@@ -249,6 +248,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     public void onSongReceived() {
         try {
             updatePlayer(false);
+            App.getBoomPlayTimeReceiver().setPlayingStartTime(true);
         } catch (ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
         }
@@ -353,7 +353,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             val.put(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, time);
             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, val);
         }catch (Exception e){}
-        android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
     }
 

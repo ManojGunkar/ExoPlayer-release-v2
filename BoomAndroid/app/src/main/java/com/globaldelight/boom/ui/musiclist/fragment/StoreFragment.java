@@ -220,7 +220,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
     private void updateShareContent() {
 //        if(BusinessPreferences.readBoolean(mActivity, ACTION_APP_SHARED, false)){
 //            rootView.findViewById(R.id.store_sub_discription).setVisibility(View.INVISIBLE);

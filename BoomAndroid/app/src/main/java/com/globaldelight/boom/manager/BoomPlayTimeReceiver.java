@@ -1,19 +1,18 @@
 package com.globaldelight.boom.manager;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
-
 import com.globaldelight.boom.business.BusinessPreferences;
-import com.globaldelight.boom.utils.handlers.Preferences;
+import com.globaldelight.boom.ui.musiclist.activity.MasterActivity;
+import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boomplayer.AudioEffect;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_IN_APP_PURCHASE;
 
@@ -25,28 +24,91 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
 
     public static final String TIME_LIMIT_COMPLETE = "TIME_LIMIT_COMPLETE";
 
-    private static int MAX_TIME_LIMIT_IN_MINUTE = 0;
+    private static int MAX_TIME_LIMIT_IN_SECOND = 0;
 
-    private static final int SHOW_POPUP_NONE = 0;
-    private static final int SHOW_POPUP_PRIMARY = 1;
-    private static final int SHOW_POPUP_SECONDARY = 2;
+    public static final int SHOW_POPUP_NONE = 0;
+    public static final int SHOW_POPUP_PRIMARY = 1;
+    public static final int SHOW_POPUP_SECONDARY = 2;
     private static CountDownTimer countDownTimer;
 
-    private static String LAST_TICK_TIME_IN_MILI_SECOND = "LAST_TICK_TIME_IN_MILI_SECOND";
+    private static String LAST_TICK_TIME_IN_MILLI_SECOND = "LAST_TICK_TIME_IN_MILLI_SECOND";
     public static final String TIME_INTERVAL_FOR_POPUP = "TIME_INTERVAL_FOR_POPUP";
     public static final String SHOW_POPUP = "SHOW_POPUP";
+    public static final String EFFECT_ON_AFTER_SECONDARY_POPUP = "EFFECT_ON_AFTER_SECONDARY_POPUP";
 
-    static Context mContext;
+    private static Context mContext;
+    private static Activity activityForPopup;
+
+    private static final int SIXTY_MINUTE = 60 * 6;//60
+    private static final int TWENTY_MINUTE = 60 * 2;//20
+    private static final int FIVE_MINUTE = 60 * 1;//5
+
+    public BoomPlayTimeReceiver(){}
+
+    public BoomPlayTimeReceiver(Context context){
+        this.mContext = context;
+    }
+
+    public static boolean isShared() {
+        // get Value from shared preferences
+        return BusinessPreferences.readBoolean(mContext, ACTION_APP_SHARED, false);
+    }
+
+    public static boolean isPurchased() {
+        // get Value from shared preferences
+        return BusinessPreferences.readBoolean(mContext, ACTION_IN_APP_PURCHASE, false);
+    }
+
+    private static boolean isNoPopupShown(){
+        if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_NONE)
+            return true;
+        return false;
+    }
+
+    private static boolean isPrimaryPopupShown(){
+        if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_PRIMARY)
+            return true;
+        return false;
+    }
+
+    public static boolean isSecondaryPopupShown(){
+        if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_SECONDARY)
+            return true;
+        return false;
+    }
+
+    private static boolean isEffectOnAfterSecondaryPopupShown(){
+        return BusinessPreferences.readBoolean(mContext, EFFECT_ON_AFTER_SECONDARY_POPUP, false);
+    }
+
+    private static int getRemainingTimeToShowPopup(){
+        long remainingTimeForSecondaryPopup;
+        int timeRemainToShowPopup = MAX_TIME_LIMIT_IN_SECOND - BusinessPreferences.readInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0);
+        if(isPrimaryPopupShown()){
+            remainingTimeForSecondaryPopup = System.currentTimeMillis() - BusinessPreferences.readLong(mContext, LAST_TICK_TIME_IN_MILLI_SECOND, 0);
+            return (int) ((remainingTimeForSecondaryPopup/1000) - timeRemainToShowPopup);
+        }
+        return timeRemainToShowPopup;
+    }
+
+    public static boolean getConditionToSwitchOffEffect() {
+        if (isShared() || isPurchased() || isNoPopupShown())
+            return false;
+        return true;
+    }
 
     public static void setPlayingStartTime(boolean playing) {
-        if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_SECONDARY){
+        if(isPurchased() || isShared()){
             return;
-        } else if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_PRIMARY){
-            MAX_TIME_LIMIT_IN_MINUTE = 60;
-        } else if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_NONE){
-            MAX_TIME_LIMIT_IN_MINUTE = 20;
+        } else if(isSecondaryPopupShown() && isEffectOnAfterSecondaryPopupShown()){
+            return;
+        } else if(isPrimaryPopupShown() || (isSecondaryPopupShown() && !isEffectOnAfterSecondaryPopupShown())){
+            MAX_TIME_LIMIT_IN_SECOND = SIXTY_MINUTE;
+        } else if(isNoPopupShown()){
+            MAX_TIME_LIMIT_IN_SECOND = TWENTY_MINUTE;
         }
-        if(playing){
+
+        if(playing && null == countDownTimer){
             setTimer(mContext, getRemainingTimeToShowPopup());
         } else {
             if(null != countDownTimer){
@@ -56,32 +118,19 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
         }
     }
 
-    private static int getRemainingTimeToShowPopup(){
-        long remainingTimeForSecondaryPopup;
-        int timeRemainToShowPopup = MAX_TIME_LIMIT_IN_MINUTE - BusinessPreferences.readInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0);
-        if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_PRIMARY){
-            remainingTimeForSecondaryPopup = BusinessPreferences.readLong(mContext, LAST_TICK_TIME_IN_MILI_SECOND, 0)
-                                            - System.currentTimeMillis();
-            return (int) ((remainingTimeForSecondaryPopup/(1000 * 60)) - timeRemainToShowPopup);
-        }
-        return timeRemainToShowPopup;
-    }
-
-    public BoomPlayTimeReceiver(){}
-
-    public BoomPlayTimeReceiver(Context context){
-        this.mContext = context;
+    public static void setActivityForPopup(MasterActivity activity) {
+        activityForPopup = activity;
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if(intent.getAction() == TIME_LIMIT_COMPLETE){
-            if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_SECONDARY){
-                return;
-            } else if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_PRIMARY){
-                //                showSecondaryPopup();
-            } else if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_NONE){
-//                showPrimaryPopup();
+            if(isNoPopupShown()){
+//                showPrimaryPopup
+                Utils.businessPrimaryPopup(activityForPopup);
+            } else {
+//                  showSecondaryPopup
+                Utils.businessSecondaryPopup(activityForPopup);
             }
         }
     }
@@ -113,48 +162,22 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
             public void onTick(long millisUntilFinished) {
                 BusinessPreferences.writeInteger(mContext, TIME_INTERVAL_FOR_POPUP,
                         BusinessPreferences.readInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0) + 1);
-                BusinessPreferences.writeLong(mContext, LAST_TICK_TIME_IN_MILI_SECOND, System.currentTimeMillis());
-                if(getConditionToSwitchOffEffect() && BusinessPreferences.readInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0) % 5 == 0){
+                BusinessPreferences.writeLong(mContext, LAST_TICK_TIME_IN_MILLI_SECOND, System.currentTimeMillis());
+                if(getConditionToSwitchOffEffect() && BusinessPreferences.readInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0) % FIVE_MINUTE == 0){
 //                    disable effects
                     AudioEffect.getAudioEffectInstance(mContext).setEnableAudioEffect(false);
                 }
             }
 
             public void onFinish() {
-                if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_NONE){
-                    BusinessPreferences.writeInteger(mContext, SHOW_POPUP, SHOW_POPUP_PRIMARY);
-                    BusinessPreferences.writeInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0);
-                } else if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_PRIMARY) {
-                    BusinessPreferences.writeInteger(mContext, SHOW_POPUP, SHOW_POPUP_SECONDARY);
-                    BusinessPreferences.writeInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0);
+                if(isNoPopupShown()){
+                    MAX_TIME_LIMIT_IN_SECOND = TWENTY_MINUTE;
+                } else {
+                    MAX_TIME_LIMIT_IN_SECOND = SIXTY_MINUTE;
                 }
-
-                if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_SECONDARY){
-                    return;
-                } else if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_PRIMARY){
-                    MAX_TIME_LIMIT_IN_MINUTE = 60;
-                } else if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_NONE){
-                    MAX_TIME_LIMIT_IN_MINUTE = 20;
-                }
+                BusinessPreferences.writeInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0);
                 mContext.sendBroadcast(new Intent(TIME_LIMIT_COMPLETE));
             }
         }.start();
-    }
-
-    public static boolean getConditionToSwitchOffEffect() {
-        if (isShared() || isPurchased() ||
-                BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_NONE)
-            return false;
-        return true;
-    }
-
-    public static boolean isShared() {
-        // get Value from shared preferences
-        return BusinessPreferences.readBoolean(mContext, ACTION_APP_SHARED, false);
-    }
-
-    public static boolean isPurchased() {
-        // get Value from shared preferences
-        return BusinessPreferences.readBoolean(mContext, ACTION_IN_APP_PURCHASE, false);
     }
 }
