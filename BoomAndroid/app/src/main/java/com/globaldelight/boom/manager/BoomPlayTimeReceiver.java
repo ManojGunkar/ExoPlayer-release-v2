@@ -5,13 +5,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
-import com.globaldelight.boom.business.BusinessPreferences;
-import com.globaldelight.boom.ui.musiclist.activity.MasterActivity;
-import com.globaldelight.boom.utils.Utils;
-import com.globaldelight.boomplayer.AudioEffect;
+import android.os.Handler;
 
+import com.globaldelight.boom.App;
+import com.globaldelight.boom.business.BusinessPreferences;
+import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
+import com.globaldelight.boom.ui.musiclist.activity.MasterActivity;
+import com.globaldelight.boomplayer.AudioEffect;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_IN_APP_PURCHASE;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_SWITCH_OFF_AUDIO_EFFECT;
 
 /**
  * Created by Rahul on 04-04-2017.
@@ -36,9 +39,9 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
     private static Context mContext;
     private static Activity activityForPopup;
 
-    private static final int SIXTY_MINUTE = 60 * 6;//60
-    private static final int TWENTY_MINUTE = 60 * 2;//20
-    private static final int FIVE_MINUTE = 60 * 1;//5
+    private static final int SIXTY_MINUTE = 60 * 60;
+    private static final int TWENTY_MINUTE = 60 * 20;
+    private static final int FIVE_MINUTE = 60 * 5;
     private static final int ONE_SECOND = 1000 * 1;
 
     public BoomPlayTimeReceiver(){}
@@ -122,40 +125,30 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(intent.getAction() == TIME_LIMIT_COMPLETE && null != activityForPopup){
-            if(isNoPopupShown()){
-//                showPrimaryPopup
-                Utils.businessPrimaryPopup(activityForPopup);
-            } else {
-//                  showSecondaryPopup
-                Utils.businessSecondaryPopup(activityForPopup);
+        if(intent.getAction() == TIME_LIMIT_COMPLETE){
+            if(null == activityForPopup){
+                final Intent i = new Intent();
+                i.setClass(context, MainActivity.class);
+                context.startActivity(i);
             }
-            BusinessPreferences.writeInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(isNoPopupShown()){
+//                showPrimaryPopup
+                        ((MainActivity)activityForPopup).startPrimaryPopup();
+                        setEffectOffIn5Minutes();
+                    } else {
+//                  showSecondaryPopup
+                        ((MainActivity)activityForPopup).startSecondaryPopup();
+                    }
+                    BusinessPreferences.writeInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0);
+                }
+            }, ONE_SECOND);
         }
     }
 
     public static void setStartTimer() {
-        /*int hour = 0;
-        int minute = time_in_minute;
-
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
-
-        String currentDateTime = sdf.format(new Date(System.currentTimeMillis()));
-
-        Date date = null;
-        try {
-            date = sdf.parse(currentDateTime);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(Calendar.HOUR, hour);
-        calendar.add(Calendar.MINUTE, minute);
-        Date endDate = calendar.getTime();
-
-        long endTime = endDate.getTime() - date.getTime()*/
-
         long endTime = getRemainingTimeToShowPopup() * ONE_SECOND;
         countDownTimer = new CountDownTimer(endTime, ONE_SECOND) {
 
@@ -163,10 +156,6 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
                 BusinessPreferences.writeInteger(mContext, TIME_INTERVAL_FOR_POPUP,
                         BusinessPreferences.readInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0) + 1);
                 BusinessPreferences.writeLong(mContext, LAST_TICK_TIME_IN_MILLI_SECOND, System.currentTimeMillis());
-                if(getConditionToSwitchOffEffect() && BusinessPreferences.readInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0) % FIVE_MINUTE == 0){
-//                    disable effects
-                    AudioEffect.getAudioEffectInstance(mContext).setEnableAudioEffect(false);
-                }
             }
 
             public void onFinish() {
@@ -180,9 +169,16 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
         }.start();
     }
 
-    public static void showPopupIfTimeIsOver(){
-        if(getRemainingTimeToShowPopup() <= 0){
-            setPlayingStartTime(true);
-        }
+    public static void setEffectOffIn5Minutes(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(getConditionToSwitchOffEffect()) {
+                    AudioEffect.getAudioEffectInstance(mContext).setEnableAudioEffect(false);
+                    App.getPlayerEventHandler().setEffectEnable(false);
+                    mContext.sendBroadcast(new Intent(ACTION_ON_SWITCH_OFF_AUDIO_EFFECT));
+                }
+            }
+        }, FIVE_MINUTE);
     }
 }

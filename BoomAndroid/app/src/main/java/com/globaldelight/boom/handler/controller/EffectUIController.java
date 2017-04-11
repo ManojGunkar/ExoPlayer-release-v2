@@ -35,6 +35,8 @@ public class EffectUIController implements IEffectUIController {
 
         if(enable && BoomPlayTimeReceiver.isSecondaryPopupShown())
             BusinessPreferences.writeBoolean(mContext, EFFECT_ON_AFTER_SECONDARY_POPUP, true);
+        if(enable)
+            BoomPlayTimeReceiver.setEffectOffIn5Minutes();
     }
 
     @Override

@@ -242,5 +242,9 @@
 
     <string name="ask_reset_timer">Do you wants to reset sleeping time?</string>
     <string name="empty_search_result">No Search Result !</string>
-    <string name="dialog_turn_on_effect">Turn On Effects</string>
+    <string name="continue_btn">CONTINUE</string>
+    <string name="business_primary_dialog_title">Like Boom for Effects?</string>
+    <string name="business_primary_dialog_content">Keep the effects on all the time with\n either a one-time purchase\n OR Sharing Boom with your friends.</string>
+    <string name="business_secondary_dialog_title">Title?</string>
+    <string name="business_secondary_dialog_content">Content?</string>
 </resources>

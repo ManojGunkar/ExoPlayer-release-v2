@@ -225,6 +225,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     break;
                 case ACTION_ON_SWITCH_OFF_AUDIO_EFFECT:
                     // update UI of effect (mini player effect button also)
+                    mEffectSwitch.setChecked(false);
+                    updateMiniPlayerEffectUI(false);
                     break;
             }
         }
@@ -664,12 +666,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updateMiniPlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
-        if(audioEffectPreferenceHandler.isAudioEffectOn()) {
-            mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects_on, null));
-        }else{
-            mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects, null));
-        }
-
+        updateMiniPlayerEffectUI(audioEffectPreferenceHandler.isAudioEffectOn());
         if(null != item){
             DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorFrom);
             mMiniSongTitle.setSelected(true);
@@ -683,6 +680,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 mMiniPlayerPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_play, null));
         }else if(!isLastPlayedItem){
             DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorTo);
+        }
+    }
+
+    private void updateMiniPlayerEffectUI(boolean enable){
+        if(enable) {
+            mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects_on, null));
+        }else{
+            mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects, null));
         }
     }
 

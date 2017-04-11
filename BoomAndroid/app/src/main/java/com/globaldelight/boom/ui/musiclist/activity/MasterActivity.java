@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.support.annotation.LayoutRes;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +14,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.globaldelight.boom.App;
@@ -25,18 +23,14 @@ import com.globaldelight.boom.business.client.IFBAddsUpdater;
 import com.globaldelight.boom.business.client.IGoogleAddsUpdater;
 import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.business.BusinessUtils.AddSource;
-import com.globaldelight.boom.manager.BoomPlayTimeReceiver;
 import com.globaldelight.boom.manager.BusinessRequestReceiver;
 import com.globaldelight.boom.ui.musiclist.fragment.MasterContentFragment;
 import com.globaldelight.boom.ui.widgets.slidinguppanel.SlidingUpPanelLayout;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.task.PlayerEvents;
 import com.google.android.gms.ads.NativeExpressAdView;
-
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.globaldelight.boom.business.BusinessUtils.AddSource.*;
 import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_APP_EXPIRE;
 import static com.globaldelight.boom.manager.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
@@ -175,7 +169,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
 
         }
         initBusinessReceiver();
-//        BoomPlayTimeReceiver.showPopupIfTimeIsOver();
         super.onResume();
     }
 
@@ -183,14 +176,12 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     @Override
     public  void onStart() {
         super.onStart();
-        BoomPlayTimeReceiver.setActivityForPopup(MasterActivity.this);
         FlurryAnalyticHelper.flurryStartSession(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        BoomPlayTimeReceiver.setActivityForPopup(null);
         FlurryAnalyticHelper.flurryStopSession(this);
     }
 

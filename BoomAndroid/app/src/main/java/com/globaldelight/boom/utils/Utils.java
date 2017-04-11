@@ -33,11 +33,13 @@ import android.text.Html;
 import android.text.Spanned;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
@@ -467,7 +469,7 @@ public class Utils {
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            jumpToStore(context);
+//                            jumpToStore(context);
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -509,7 +511,7 @@ public class Utils {
         }
     }
 
-    public static void jumpToStore(Context activity) {
+    public static void jumpToStore(Activity activity) {
         Intent intent = new Intent(activity, ActivityContainer.class);
         intent.putExtra("container", R.string.store_title);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -524,78 +526,78 @@ public class Utils {
         return true;
     }
 
-    public static void businessPrimaryPopup(final Context context){
-        if(null == context)
-            return;
-        new MaterialDialog.Builder(context.getApplicationContext())
-                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
-                .neutralColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
-                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .content("hi")
-                .title("popup")
-                .negativeText(R.string.buy_button)
-                .positiveText(R.string.share_button)
-                .neutralText(R.string.dialog_txt_cancel)
-//                .customView(R.layout.off_line_pop_up, false)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        SharePopup(context);
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        jumpToStore(context);
-                    }
-                })
-                .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) { businessSecondaryPopup(context);
-                    }
-                })
-                .autoDismiss(false)
-                .canceledOnTouchOutside(false)
-                .cancelable(false)
-                .show();
-        BusinessPreferences.writeInteger(context, SHOW_POPUP, SHOW_POPUP_PRIMARY);
-    }
-
-    public static void businessSecondaryPopup(final Context context){
-        if(null == context)
-            return;
+    public static void businessPrimaryPopup(final Activity context){
         new MaterialDialog.Builder(context)
                 .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
                 .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
+                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
                 .neutralColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
                 .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
                 .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .content("hi")
-                .title("popup")
-                .negativeText(R.string.buy_button)
-                .positiveText(R.string.share_button)
-                .neutralText(R.string.dialog_turn_on_effect)
-//                .customView(R.layout.off_line_pop_up, false)
+                .neutralText(R.string.dialog_txt_cancel)
+                .negativeText(R.string.share_button)
+                .positiveText(R.string.buy_button)
+                .customView(R.layout.business_primary_popup, false)
+                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+                .canceledOnTouchOutside(false)
+                .autoDismiss(false)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        SharePopup(context);
+                        jumpToStore(context);
+                        dialog.dismiss();
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        jumpToStore(context);
+                        SharePopup(context);
+                        dialog.dismiss();
                     }
                 })
                 .onNeutral(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        businessSecondaryPopup(context);
+                        dialog.dismiss();
+                    }
+                }).show();
+        BusinessPreferences.writeInteger(context, SHOW_POPUP, SHOW_POPUP_PRIMARY);
+    }
 
+    public static void businessSecondaryPopup(final Activity context){
+        new MaterialDialog.Builder(context)
+                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
+                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
+                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
+                .neutralColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
+                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
+                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                .neutralText(R.string.continue_btn)
+                .negativeText(R.string.share_button)
+                .positiveText(R.string.buy_button)
+                .customView(R.layout.business_secondary_popup, false)
+                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        jumpToStore(context);
+                        dialog.dismiss();
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        SharePopup(context);
+                        dialog.dismiss();
+                    }
+                })
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
                     }
                 })
                 .show();

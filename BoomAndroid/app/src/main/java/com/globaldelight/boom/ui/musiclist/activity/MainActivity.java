@@ -29,6 +29,7 @@ import android.view.View;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.business.BusinessUtils;
+import com.globaldelight.boom.manager.BoomPlayTimeReceiver;
 import com.globaldelight.boom.manager.PlayerServiceReceiver;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
@@ -81,6 +82,7 @@ public class MainActivity extends MasterActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        BoomPlayTimeReceiver.setActivityForPopup(MainActivity.this);
         checkPermissions();
     }
 
@@ -452,6 +454,7 @@ public class MainActivity extends MasterActivity
 
     @Override
     protected void onDestroy() {
+        BoomPlayTimeReceiver.setActivityForPopup(null);
         super.onDestroy();
     }
 
@@ -460,5 +463,13 @@ public class MainActivity extends MasterActivity
         if(null != mLibraryFragment){
             ((LibraryFragment)mLibraryFragment).updateAdds(addSources, isAddEnable, addContainer);
         }
+    }
+
+    public void startPrimaryPopup() {
+        Utils.businessPrimaryPopup(MainActivity.this);
+    }
+
+    public void startSecondaryPopup() {
+        Utils.businessSecondaryPopup(MainActivity.this);
     }
 }

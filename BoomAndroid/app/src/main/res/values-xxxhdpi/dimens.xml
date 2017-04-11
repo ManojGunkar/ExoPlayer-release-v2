@@ -165,4 +165,6 @@
     <dimen name="player_action_button">20dp</dimen>
     <dimen name="purchase_button_padding">8dp</dimen>
 
+    <dimen name="popup_margin_bottom">20dp</dimen>
+
 </resources>
