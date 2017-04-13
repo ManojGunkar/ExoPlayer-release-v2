@@ -31,6 +31,7 @@ import com.globaldelight.boom.business.inapp.IabHelper;
 import com.globaldelight.boom.business.inapp.IabResult;
 import com.globaldelight.boom.business.inapp.Inventory;
 import com.globaldelight.boom.business.inapp.Purchase;
+import com.globaldelight.boom.manager.BoomPlayTimeReceiver;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.ActivityContainer;
 import com.globaldelight.boom.ui.widgets.RegularButton;
@@ -41,6 +42,7 @@ import com.globaldelight.boom.utils.handlers.Preferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_IN_APP_PURCHASE;
 import static com.globaldelight.boom.business.BusinessPreferences.STORE_CLOSED_WITH_PURCHASE;
 import static com.globaldelight.boom.business.BusinessUtils.SKU_INAPPITEM;
@@ -101,6 +103,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         mStoreShareTxt.setOnClickListener(this);
         RegularButton mStoreBuyBtn = (RegularButton) rootView.findViewById(R.id.store_buyButton);
         mStoreBuyBtn.setOnClickListener(this);
+
         progressBar.setVisibility(View.GONE);
         updateShareContent();
 
@@ -221,13 +224,15 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateShareContent() {
-//        if(BusinessPreferences.readBoolean(mActivity, ACTION_APP_SHARED, false)){
-//            rootView.findViewById(R.id.store_sub_discription).setVisibility(View.INVISIBLE);
-//            rootView.findViewById(R.id.store_share_text).setVisibility(View.INVISIBLE);
-//        }else{
-//            rootView.findViewById(R.id.store_sub_discription).setVisibility(View.VISIBLE);
-//            rootView.findViewById(R.id.store_share_text).setVisibility(View.VISIBLE);
-//        }
+        if(BusinessPreferences.readBoolean(mContext, ACTION_IN_APP_PURCHASE, false) ||
+                BusinessPreferences.readBoolean(mActivity, ACTION_APP_SHARED, false) ||
+                BoomPlayTimeReceiver.isNoPopupShown() ){
+            rootView.findViewById(R.id.store_sub_discription).setVisibility(View.INVISIBLE);
+            rootView.findViewById(R.id.store_share_text).setVisibility(View.INVISIBLE);
+        }else {
+            rootView.findViewById(R.id.store_sub_discription).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.store_share_text).setVisibility(View.VISIBLE);
+        }
     }
 
     private void startPurchaseRestore() {

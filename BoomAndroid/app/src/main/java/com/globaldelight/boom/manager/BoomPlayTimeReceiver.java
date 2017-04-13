@@ -60,13 +60,13 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
         return BusinessPreferences.readBoolean(mContext, ACTION_IN_APP_PURCHASE, false);
     }
 
-    private static boolean isNoPopupShown(){
+    public static boolean isNoPopupShown(){
         if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_NONE)
             return true;
         return false;
     }
 
-    private static boolean isPrimaryPopupShown(){
+    public static boolean isPrimaryPopupShown(){
         if(BusinessPreferences.readInteger(mContext, SHOW_POPUP, SHOW_POPUP_NONE) == SHOW_POPUP_PRIMARY)
             return true;
         return false;

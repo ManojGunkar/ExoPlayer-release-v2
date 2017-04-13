@@ -574,7 +574,7 @@ public class Utils {
                 .neutralColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
                 .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
                 .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .neutralText(R.string.continue_btn)
+                .neutralText(R.string.close_button)
                 .negativeText(R.string.share_button)
                 .positiveText(R.string.buy_button)
                 .customView(R.layout.business_secondary_popup, false)
