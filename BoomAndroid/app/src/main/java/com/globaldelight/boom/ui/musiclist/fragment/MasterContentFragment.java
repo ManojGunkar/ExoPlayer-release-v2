@@ -1071,7 +1071,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 else
                     return true;
             case R.id.mini_player_progress :
-                return false;
+                return true;
         }
         return false;
     }

@@ -31,7 +31,7 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
     public static final int SHOW_POPUP_SECONDARY = 2;
     private static CountDownTimer countDownTimer;
 
-    private static String LAST_TICK_TIME_IN_MILLI_SECOND = "LAST_TICK_TIME_IN_MILLI_SECOND";
+    private static final String LAST_TICK_TIME_IN_MILLI_SECOND = "LAST_TICK_TIME_IN_MILLI_SECOND";
     public static final String TIME_INTERVAL_FOR_POPUP = "TIME_INTERVAL_FOR_POPUP";
     public static final String SHOW_POPUP = "SHOW_POPUP";
     public static final String EFFECT_ON_AFTER_SECONDARY_POPUP = "EFFECT_ON_AFTER_SECONDARY_POPUP";
@@ -39,10 +39,10 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
     private static Context mContext;
     private static Activity activityForPopup;
 
-    private static final int SIXTY_MINUTE = 60 * 60;
-    private static final int TWENTY_MINUTE = 60 * 20;
-    private static final int FIVE_MINUTE = 60 * 5;
+    private static final int SIXTY_MINUTE = 60 * 6;
+    private static final int TWENTY_MINUTE = 60 * 2;
     private static final int ONE_SECOND = 1000 * 1;
+    private static final int FIVE_MINUTE = ONE_SECOND * 60 * 1;
 
     public BoomPlayTimeReceiver(){}
 

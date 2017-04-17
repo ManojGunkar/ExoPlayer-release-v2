@@ -552,7 +552,8 @@ public class Utils {
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        SharePopup(context);
+                        FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
+                        shareStart(context);
                         dialog.dismiss();
                     }
                 })
@@ -590,7 +591,8 @@ public class Utils {
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        SharePopup(context);
+                        FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
+                        shareStart(context);
                         dialog.dismiss();
                     }
                 })
