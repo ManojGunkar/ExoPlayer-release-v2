@@ -195,6 +195,15 @@
                  <action android:name="TIME_LIMIT_COMPLETE" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name="com.globaldelight.boom.analytics.GCMHelper"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
