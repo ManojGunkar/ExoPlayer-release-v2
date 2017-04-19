@@ -111,6 +111,17 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
+    public void setVisibleMiniPlayer(boolean visible){
+        if(null != mSlidingPaneLayout) {
+            if (visible) {
+                mSlidingPaneLayout.showPanel();
+            } else {
+                mSlidingPaneLayout.hidePanel();
+
+            }
+        }
+    }
+
     @Override
     protected void onResumeFragments() {
         handler.post(new Runnable() {

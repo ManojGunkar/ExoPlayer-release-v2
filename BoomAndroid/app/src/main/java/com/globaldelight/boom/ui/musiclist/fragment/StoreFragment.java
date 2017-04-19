@@ -31,6 +31,7 @@ import com.globaldelight.boom.business.inapp.IabHelper;
 import com.globaldelight.boom.business.inapp.IabResult;
 import com.globaldelight.boom.business.inapp.Inventory;
 import com.globaldelight.boom.business.inapp.Purchase;
+import com.globaldelight.boom.manager.BoomPlayTimeReceiver;
 import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.ui.musiclist.activity.ActivityContainer;
 import com.globaldelight.boom.ui.widgets.RegularButton;
@@ -41,6 +42,7 @@ import com.globaldelight.boom.utils.handlers.Preferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_IN_APP_PURCHASE;
 import static com.globaldelight.boom.business.BusinessPreferences.STORE_CLOSED_WITH_PURCHASE;
 import static com.globaldelight.boom.business.BusinessUtils.SKU_INAPPITEM;
@@ -63,6 +65,8 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     private String boomPrice;
     private boolean intiStoreStartup;
     private ProgressBar progressBar;
+    private RegularTextView mStoreShareTxt;
+    private RegularButton mStoreBuyBtn;
     //    ConnectivityReceiver.isNetworkAvailable(mActivity, true)
     private BroadcastReceiver mUpdateInAppItemReceiver = new BroadcastReceiver() {
         @Override
@@ -97,10 +101,11 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         intentFilter.addAction(ACTION_IN_APP_PURCHASE_SUCCESSFUL);
         mActivity.registerReceiver(mUpdateInAppItemReceiver, intentFilter);
 
-        RegularTextView mStoreShareTxt = (RegularTextView) rootView.findViewById(R.id.store_share_text);
+        mStoreShareTxt = (RegularTextView) rootView.findViewById(R.id.store_share_text);
         mStoreShareTxt.setOnClickListener(this);
-        RegularButton mStoreBuyBtn = (RegularButton) rootView.findViewById(R.id.store_buyButton);
+        mStoreBuyBtn = (RegularButton) rootView.findViewById(R.id.store_buyButton);
         mStoreBuyBtn.setOnClickListener(this);
+
         progressBar.setVisibility(View.GONE);
         updateShareContent();
 
@@ -170,8 +175,8 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     private void purchasedStoreUI(){
         ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.after_purchase_store_page_header));
         ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.after_purchase_store_page_buy_description));
-        ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.after_purchase_buy_button));
-        (rootView.findViewById(R.id.store_share_text)).setVisibility(View.GONE);
+        mStoreBuyBtn.setText(getResources().getString(R.string.after_purchase_buy_button));
+        mStoreShareTxt.setVisibility(View.GONE);
         (rootView.findViewById(R.id.store_sub_discription)).setVisibility(View.GONE);
     }
 
@@ -179,33 +184,31 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.store_page_header));
         ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.store_page_buy_description));
         if (null != price)
-            ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.buy_button) + " @ " + price);
+            mStoreBuyBtn.setText(getResources().getString(R.string.buy_button) + " @ " + price);
         else
-            ((RegularButton) rootView.findViewById(R.id.store_buyButton)).setText(getResources().getString(R.string.buy_button));
+            mStoreBuyBtn.setText(getResources().getString(R.string.buy_button));
     }
 
     @Override
     public void onClick(View view) {
-        if (Utils.isBusinessModelEnable()) {
-            switch (view.getId()) {
-                case R.id.store_share_text:
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Store);
+        switch (view.getId()) {
+            case R.id.store_share_text:
+                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Store);
+                try {
+                    Utils.shareStart(mActivity, StoreFragment.this);
+                } catch (Exception e) {
+                }
+                break;
+            case R.id.store_buyButton:
+                if (mIsPremium == false) {
                     try {
-                        Utils.shareStart(mActivity, StoreFragment.this);
-                    } catch (Exception e) {
+                        Log.d("installdate",String.valueOf(mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).firstInstallTime));
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
                     }
-                    break;
-                case R.id.store_buyButton:
-                    if (mIsPremium == false) {
-                        try {
-                            Log.d("installdate",String.valueOf(mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).firstInstallTime));
-                        } catch (PackageManager.NameNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                        startPurchaseRestore();
-                    }
-                    break;
-            }
+                    startPurchaseRestore();
+                }
+                break;
         }
     }
 
@@ -221,13 +224,15 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateShareContent() {
-//        if(BusinessPreferences.readBoolean(mActivity, ACTION_APP_SHARED, false)){
-//            rootView.findViewById(R.id.store_sub_discription).setVisibility(View.INVISIBLE);
-//            rootView.findViewById(R.id.store_share_text).setVisibility(View.INVISIBLE);
-//        }else{
-//            rootView.findViewById(R.id.store_sub_discription).setVisibility(View.VISIBLE);
-//            rootView.findViewById(R.id.store_share_text).setVisibility(View.VISIBLE);
-//        }
+        if(BusinessPreferences.readBoolean(mContext, ACTION_IN_APP_PURCHASE, false) ||
+                BusinessPreferences.readBoolean(mActivity, ACTION_APP_SHARED, false) ||
+                BoomPlayTimeReceiver.isNoPopupShown() ){
+            rootView.findViewById(R.id.store_sub_discription).setVisibility(View.INVISIBLE);
+            mStoreShareTxt.setVisibility(View.INVISIBLE);
+        }else {
+            rootView.findViewById(R.id.store_sub_discription).setVisibility(View.VISIBLE);
+            mStoreShareTxt.setVisibility(View.VISIBLE);
+        }
     }
 
     private void startPurchaseRestore() {
@@ -253,7 +258,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateInApp() {
-        rootView.findViewById(R.id.store_buyButton).setVisibility(View.GONE);
+        mStoreBuyBtn.setVisibility(View.GONE);
     }
 
     @Override

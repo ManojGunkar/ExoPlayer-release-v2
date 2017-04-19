@@ -240,11 +240,17 @@
     <string name="share_pop_up_text">与您所爱之人分享 Boom，\n 并且 #FeelYourMusic 可以\n 5 天免广告使用</string>
     <string name="error_in_playing">播放歌曲时出错</string>
 
-    <string name="ask_reset_timer">Do you wants to reset sleeping time?</string>
-    <string name="empty_search_result">No Search Result !</string>
-    <string name="continue_btn">CONTINUE</string>
+    <string name="ask_reset_timer">Do you want to cancel sleeping timer?</string>
+    <string name="empty_search_result">No results found!</string>
+    <string name="close_button">CLOSE</string>
     <string name="business_primary_dialog_title">Like Boom for Effects?</string>
     <string name="business_primary_dialog_content">Keep the effects on all the time with\n either a one-time purchase\n OR Sharing Boom with your friends.</string>
-    <string name="business_secondary_dialog_title">Title?</string>
-    <string name="business_secondary_dialog_content">Content?</string>
+    <string name="business_secondary_dialog_title">Keep Effects on forever</string>
+    <string name="business_secondary_dialog_content">Your 3D effects have been turned off.\n You can manually turn them on for\n 5 minutes, or Share/Purchase\n to unlock and use effects as much\n as you wish.</string>
+
+    <string name="store_within_first_20_minutes">Buy now to #FeelYourMusic\n without any hassle.</string>
+    <string name="store_after_first_20_minutes">Buy now or Share to #FeelYourMusic\n without any hassle.</string>
+    <string name="store_after_purchase_title">Happy Boomin"\’"!</string>
+    <string name="store_after_purchase">Congratulations! You can now\n listen to your music the way it\n was intended!</string>
+
 </resources>

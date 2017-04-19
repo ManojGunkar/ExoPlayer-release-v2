@@ -721,7 +721,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onPanelCollapsed(View panel) {
         setMiniPlayerVisible(true);
-        updateMiniPlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
+        updateMiniPlayerUI(mPlayingMediaItem, App.getPlayerEventHandler().isPlaying(), mIsLastPlayed);
         showEffectShortCut();
         if (revealView.getVisibility() == View.VISIBLE) {
             revealView.setVisibility(View.INVISIBLE);
@@ -1071,7 +1071,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 else
                     return true;
             case R.id.mini_player_progress :
-                return false;
+                return true;
         }
         return false;
     }

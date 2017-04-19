@@ -552,7 +552,8 @@ public class Utils {
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        SharePopup(context);
+                        FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
+                        shareStart(context);
                         dialog.dismiss();
                     }
                 })
@@ -574,7 +575,7 @@ public class Utils {
                 .neutralColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
                 .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
                 .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .neutralText(R.string.continue_btn)
+                .neutralText(R.string.close_button)
                 .negativeText(R.string.share_button)
                 .positiveText(R.string.buy_button)
                 .customView(R.layout.business_secondary_popup, false)
@@ -590,7 +591,8 @@ public class Utils {
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        SharePopup(context);
+                        FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
+                        shareStart(context);
                         dialog.dismiss();
                     }
                 })
