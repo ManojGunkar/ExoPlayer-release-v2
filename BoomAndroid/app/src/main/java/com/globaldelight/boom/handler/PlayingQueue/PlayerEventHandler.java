@@ -3,8 +3,10 @@ package com.globaldelight.boom.handler.PlayingQueue;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.media.MediaMetadata;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -47,7 +49,6 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
     private static int PREVIOUS = 1;
     private static int PLAYER_DIRECTION;
     private Context context;
-    private PlayerService service;
     private AudioManager audioManager;
     private MediaSession session;
     private GoogleDriveHandler googleDriveHandler;
@@ -146,14 +147,12 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         }
     };
 
-    private PlayerEventHandler(Context context, PlayerService service){
+    private PlayerEventHandler(Context context){
         this.context = context;
         if(null == mPlayer)
             mPlayer = new AudioPlayer(context, IPlayerEvents);
         if(null == audioManager)
             audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-        if(null == this.service)
-            this.service = service;
         App.getPlayingQueueHandler().getUpNextList().setUpNextMediaEvent(this);
         googleDriveHandler = new GoogleDriveHandler(context);
         googleDriveHandler.connectToGoogleAccount();
@@ -161,9 +160,9 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         registerSession();
     }
 
-    public static PlayerEventHandler getPlayerEventInstance(Context context, PlayerService service){
+    public static PlayerEventHandler getPlayerEventInstance(Context context){
         if(handler == null){
-            handler = new PlayerEventHandler(context, service);
+            handler = new PlayerEventHandler(context);
         }
         return handler;
     }
@@ -263,6 +262,11 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
                 if ( requestAudioFocus() ) {
                     mPlayer.setDataSource(dataSource);
                     mPlayer.setDataSourceId(mediaItemBase.getItemId());
+
+                    MediaMetadata.Builder builder = new MediaMetadata.Builder();
+                    builder.putString(MediaMetadata.METADATA_KEY_TITLE, mediaItemBase.getItemTitle());
+                    session.setMetadata(builder.build());
+
                     setSessionState(PlaybackState.STATE_PLAYING);
 //                    AnalyticsHelper.songSelectionChanged(context, mediaItemBase);
                 }

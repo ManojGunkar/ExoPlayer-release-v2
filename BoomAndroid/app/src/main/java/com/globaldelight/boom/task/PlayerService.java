@@ -57,7 +57,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     public void onCreate() {
         super.onCreate();
         context = this;
-        App.setService(this);
         AudioConfiguration.getInstance(this).load();
 
         serviceReceiver = new PlayerServiceReceiver();
@@ -111,7 +110,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         if (musicPlayerHandler == null)
             musicPlayerHandler = App.getPlayerEventHandler();
 
-        App.getPlayingQueueHandler().getUpNextList().updateRepeatShuffleOnAppStart();
+        App.getPlayingQueueHandler().getUpNextList().getRepeatShuffleOnAppStart();
 
         notificationHandler = new NotificationHandler(context, this);
         return START_NOT_STICKY;
@@ -143,8 +142,10 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         i.putExtra("play_pause", play_pause);
         sendBroadcast(i);
 
-        updateNotificationPlayer((IMediaItem) musicPlayerHandler.getPlayingItem(), play_pause, false);
+        updateNotificationPlayer(musicPlayerHandler.getPlayingItem(), play_pause, false);
         sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
+
+        App.getBoomPlayTimeReceiver().setPlayingStartTime(play_pause);
     }
 
     private void updatePlayingQueue() {
@@ -247,6 +248,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     public void onSongReceived() {
         try {
             updatePlayer(false);
+            App.getBoomPlayTimeReceiver().setPlayingStartTime(true);
         } catch (ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
         }

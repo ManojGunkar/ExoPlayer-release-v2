@@ -3,7 +3,11 @@ package com.globaldelight.boom.handler.controller;
 import android.content.Context;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.business.BusinessPreferences;
+import com.globaldelight.boom.manager.BoomPlayTimeReceiver;
 import com.globaldelight.boomplayer.AudioEffect;
+
+import static com.globaldelight.boom.manager.BoomPlayTimeReceiver.EFFECT_ON_AFTER_SECONDARY_POPUP;
 
 /**
  * Created by Rahul Agarwal on 24-01-17.
@@ -28,6 +32,11 @@ public class EffectUIController implements IEffectUIController {
     @Override
     public void OnEffectEnable(boolean enable) {
         App.getPlayerEventHandler().setEffectEnable(enable);
+
+        if(enable && BoomPlayTimeReceiver.isSecondaryPopupShown())
+            BusinessPreferences.writeBoolean(mContext, EFFECT_ON_AFTER_SECONDARY_POPUP, true);
+        if(enable)
+            BoomPlayTimeReceiver.setEffectOffIn5Minutes();
     }
 
     @Override

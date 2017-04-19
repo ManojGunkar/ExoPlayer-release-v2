@@ -33,10 +33,13 @@ import android.text.Html;
 import android.text.Spanned;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.Media.MediaController;
 import com.globaldelight.boom.R;
@@ -63,6 +66,9 @@ import static android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED_DATE;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_EMAIL_DIALOG_SHOWN;
+import static com.globaldelight.boom.manager.BoomPlayTimeReceiver.SHOW_POPUP;
+import static com.globaldelight.boom.manager.BoomPlayTimeReceiver.SHOW_POPUP_PRIMARY;
+import static com.globaldelight.boom.manager.BoomPlayTimeReceiver.SHOW_POPUP_SECONDARY;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
@@ -367,8 +373,6 @@ public class Utils {
         return "Defeult";
     }
 
-
-
     public static void SharePopup(final Context context) {
         if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED_DIALOG_SHOWN, false) &&
                 !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false) &&
@@ -465,7 +469,7 @@ public class Utils {
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            jumpToStore(context);
+//                            jumpToStore(context);
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -507,7 +511,7 @@ public class Utils {
         }
     }
 
-    private static void jumpToStore(Context activity) {
+    public static void jumpToStore(Activity activity) {
         Intent intent = new Intent(activity, ActivityContainer.class);
         intent.putExtra("container", R.string.store_title);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -515,10 +519,90 @@ public class Utils {
     }
 
     public static boolean isBusinessModelEnable(){
-        return true;
+        return false;
     }
 
     public static boolean isAppExpireEnable(){
         return true;
+    }
+
+    public static void businessPrimaryPopup(final Activity context){
+        new MaterialDialog.Builder(context)
+                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
+                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
+                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
+                .neutralColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
+                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
+                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                .neutralText(R.string.dialog_txt_cancel)
+                .negativeText(R.string.share_button)
+                .positiveText(R.string.buy_button)
+                .customView(R.layout.business_primary_popup, false)
+                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+                .canceledOnTouchOutside(false)
+                .autoDismiss(false)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        jumpToStore(context);
+                        dialog.dismiss();
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
+                        shareStart(context);
+                        dialog.dismiss();
+                    }
+                })
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        businessSecondaryPopup(context);
+                        dialog.dismiss();
+                    }
+                }).show();
+        BusinessPreferences.writeInteger(context, SHOW_POPUP, SHOW_POPUP_PRIMARY);
+    }
+
+    public static void businessSecondaryPopup(final Activity context){
+        new MaterialDialog.Builder(context)
+                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
+                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
+                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
+                .neutralColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
+                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
+                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                .neutralText(R.string.close_button)
+                .negativeText(R.string.share_button)
+                .positiveText(R.string.buy_button)
+                .customView(R.layout.business_secondary_popup, false)
+                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        jumpToStore(context);
+                        dialog.dismiss();
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
+                        shareStart(context);
+                        dialog.dismiss();
+                    }
+                })
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+        BusinessPreferences.writeInteger(context, SHOW_POPUP, SHOW_POPUP_SECONDARY);
     }
 }

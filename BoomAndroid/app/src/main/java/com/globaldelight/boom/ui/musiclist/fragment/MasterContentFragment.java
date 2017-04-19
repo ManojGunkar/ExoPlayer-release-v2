@@ -74,6 +74,7 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_HOME_SCREEN_BACK_P
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_LAST_PLAYED_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_NETWORK_DISCONNECTED;
+import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_SWITCH_OFF_AUDIO_EFFECT;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_PLAYER_SCREEN_RESUME;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_RECEIVE_SONG;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB;
@@ -84,8 +85,8 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
 import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_BOTTOM_CENTER;
 import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_TOP_CENTER;
 import static com.globaldelight.boom.ui.widgets.CoachMarkerWindow.DRAW_TOP_LEFT;
-import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_OPEN_EFFECT_MINI_PLAYER;
-import static com.globaldelight.boom.utils.handlers.Preferences.TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
+import static com.globaldelight.boom.utils.handlers.Preferences.TOOLTIP_OPEN_EFFECT_MINI_PLAYER;
+import static com.globaldelight.boom.utils.handlers.Preferences.TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
 
 /**
  * Created by Rahul Agarwal on 16-01-17.
@@ -221,6 +222,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     break;
                 case ACTION_ON_NETWORK_DISCONNECTED:
                     stopLoadProgress();
+                    break;
+                case ACTION_ON_SWITCH_OFF_AUDIO_EFFECT:
+                    // update UI of effect (mini player effect button also)
+                    mEffectSwitch.setChecked(false);
+                    updateMiniPlayerEffectUI(false);
+                    break;
             }
         }
     };
@@ -283,10 +290,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mEffectTab.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_effects_normal, null));
             mPlayerContent.setVisibility(View.VISIBLE);
             mEffectContent.setVisibility(View.GONE);
-            Map<String, String> articleParams = new HashMap<String, String>();
-            articleParams.put("Effect_Tab_TimeStarted","Effect_Tab_TimeStarted"+"-"+String.valueOf(System.currentTimeMillis()));
-            FlurryAnalyticHelper.logEvent(UtilAnalytics.User_Spend_time_ON_Effect_Screen, articleParams, true);
-            FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_spent_time_onPlayer_Screen);
         }else{
             mPlayerContent.setVisibility(View.GONE);
             mEffectContent.setVisibility(View.VISIBLE);
@@ -296,10 +299,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             String msg = isAllSpeakersAreOff();
             if(null != msg)
                 Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
-            Map<String, String> articleParams = new HashMap<String, String>();
-            articleParams.put("Player_Tab_TimeStarted","Player_Tab_TimeStarted"+"-"+String.valueOf(System.currentTimeMillis()));
-            FlurryAnalyticHelper.logEvent(UtilAnalytics.User_spent_time_onPlayer_Screen, articleParams, true);
-            FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_Spend_time_ON_Effect_Screen);
         }
     }
 
@@ -667,12 +666,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updateMiniPlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
-        if(audioEffectPreferenceHandler.isAudioEffectOn()) {
-            mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects_on, null));
-        }else{
-            mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects, null));
-        }
-
+        updateMiniPlayerEffectUI(audioEffectPreferenceHandler.isAudioEffectOn());
         if(null != item){
             DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorFrom);
             mMiniSongTitle.setSelected(true);
@@ -686,6 +680,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 mMiniPlayerPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_play, null));
         }else if(!isLastPlayedItem){
             DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorTo);
+        }
+    }
+
+    private void updateMiniPlayerEffectUI(boolean enable){
+        if(enable) {
+            mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects_on, null));
+        }else{
+            mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects, null));
         }
     }
 
@@ -719,7 +721,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onPanelCollapsed(View panel) {
         setMiniPlayerVisible(true);
-        updateMiniPlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
+        updateMiniPlayerUI(mPlayingMediaItem, App.getPlayerEventHandler().isPlaying(), mIsLastPlayed);
         showEffectShortCut();
         if (revealView.getVisibility() == View.VISIBLE) {
             revealView.setVisibility(View.INVISIBLE);
@@ -748,14 +750,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void showEffectSwitchTip(){
-        if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
+        if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
             coachMarkEffectSwitcher = new CoachMarkerWindow(mActivity, DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
             coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
             coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
         }
 
-        if (null != mPlayerContent && mPlayerContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, true) && mPlayerContent.getVisibility() == View.VISIBLE &&
-                !App.getPlayerEventHandler().isStopped() && Preferences.readBoolean(mActivity, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
+        if (null != mPlayerContent && mPlayerContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, Preferences.TOOLTIP_SWITCH_EFFECT_LARGE_PLAYER, true) && mPlayerContent.getVisibility() == View.VISIBLE &&
+                !App.getPlayerEventHandler().isStopped() && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
             coachMarkEffectPager = new CoachMarkerWindow(mActivity, DRAW_TOP_CENTER, getResources().getString(R.string.switch_effect_screen_tooltip));
             coachMarkEffectPager.setAutoDismissBahaviour(true);
             coachMarkEffectPager.showCoachMark(mInflater.findViewById(R.id.effect_tab));
@@ -763,10 +765,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void showEffectShortCut(){
-        if(Preferences.readBoolean(mActivity, TOLLTIP_OPEN_EFFECT_MINI_PLAYER, true) && !Preferences.readBoolean(mActivity, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
+        if(Preferences.readBoolean(mActivity, TOOLTIP_OPEN_EFFECT_MINI_PLAYER, true) && !Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
             coachMarkEffectPlayer = new CoachMarkerWindow(mActivity, DRAW_TOP_LEFT, getResources().getString(R.string.library_switch_effect_screen_tooltip));
             coachMarkEffectPlayer.setAutoDismissBahaviour(true);
-            Preferences.writeBoolean(mActivity, Preferences.TOLLTIP_OPEN_EFFECT_MINI_PLAYER, false);
+            Preferences.writeBoolean(mActivity, Preferences.TOOLTIP_OPEN_EFFECT_MINI_PLAYER, false);
             coachMarkEffectPlayer.showCoachMark(mInflater.findViewById(R.id.mini_player_effect_img));
         }
     }
@@ -825,6 +827,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         intentFilter.addAction(ACTION_HOME_SCREEN_BACK_PRESSED);
         intentFilter.addAction(ACTION_PLAYER_SCREEN_RESUME);
         intentFilter.addAction(ACTION_ON_NETWORK_DISCONNECTED);
+        intentFilter.addAction(ACTION_ON_SWITCH_OFF_AUDIO_EFFECT);
         context.registerReceiver(mPlayerBroadcastReceiver, intentFilter);
 
         setPlayerInfo();
@@ -1068,7 +1071,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 else
                     return true;
             case R.id.mini_player_progress :
-                return false;
+                return true;
         }
         return false;
     }
@@ -1171,8 +1174,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffectPreferenceHandler.isAudioEffectOn());
                     FlurryAnalyticHelper.logEvent(enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
                 }
-                Preferences.writeBoolean(mActivity, Preferences.TOLLTIP_SWITCH_EFFECT_LARGE_PLAYER, false);
-                Preferences.writeBoolean(mActivity, TOLLTIP_SWITCH_EFFECT_SCREEN_EFFECT, false);
+                Preferences.writeBoolean(mActivity, Preferences.TOOLTIP_SWITCH_EFFECT_LARGE_PLAYER, false);
+                Preferences.writeBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, false);
             }
         });
     }
@@ -1496,8 +1499,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_Spend_time_ON_Effect_Screen);
-        FlurryAnalyticHelper.endTimedEvent(UtilAnalytics.User_spent_time_onPlayer_Screen);
         FlurryAnalyticHelper.flurryStopSession(mActivity);
     }
     @Override

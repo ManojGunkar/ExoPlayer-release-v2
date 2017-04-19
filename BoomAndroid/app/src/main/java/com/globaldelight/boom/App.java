@@ -14,6 +14,7 @@ import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler;
 import com.globaldelight.boom.handler.PlayingQueue.PlayingQueueHandler;
+import com.globaldelight.boom.manager.BoomPlayTimeReceiver;
 import com.globaldelight.boom.task.PlayerService;
 import com.globaldelight.boom.utils.handlers.CloudMediaItemDBHelper;
 import com.globaldelight.boom.utils.handlers.FavoriteDBHelper;
@@ -47,18 +48,12 @@ public class App extends Application implements Application.ActivityLifecycleCal
     private static UserPreferenceHandler userPreferenceHandler;
     private static DropboxAPI<AndroidAuthSession> dropboxAPI;
 
+    private static BoomPlayTimeReceiver boomPlayTimeReceiver;
+
     private static BusinessHandler businessHandler;
 
     public static App getApplication() {
         return application;
-    }
-
-    public static void setService(PlayerService service) {
-        App.service = service;
-    }
-
-    public static PlayerService getService(){
-        return App.service;
     }
 
     @Override
@@ -87,6 +82,8 @@ public class App extends Application implements Application.ActivityLifecycleCal
             businessHandler = BusinessHandler.getBusinessHandlerInstance(application);
         }catch (Exception e){}
 
+        boomPlayTimeReceiver = new BoomPlayTimeReceiver(application);
+
         FlurryAnalyticHelper.init(this);
 
         registerActivityLifecycleCallbacks(this);
@@ -97,7 +94,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public static PlayerEventHandler getPlayerEventHandler() {
-        return PlayerEventHandler.getPlayerEventInstance(application, service);
+        return PlayerEventHandler.getPlayerEventInstance(application);
     }
 
     public static UserPreferenceHandler getUserPreferenceHandler() {
@@ -180,6 +177,10 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     public void onActivityDestroyed(Activity var1) {
 
+    }
+
+    public static BoomPlayTimeReceiver getBoomPlayTimeReceiver() {
+        return boomPlayTimeReceiver;
     }
 
     private boolean isExpired(){

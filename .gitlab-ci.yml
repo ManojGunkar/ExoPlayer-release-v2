@@ -3,6 +3,7 @@ stages:
   - test
   - deploy
 
+
 before_script:
   - export BUILD_NUMBER=$(( $(git rev-list --first-parent --skip 7 --count Build_48.. HEAD) + 59 ))
 
