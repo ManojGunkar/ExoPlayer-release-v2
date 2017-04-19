@@ -77,14 +77,17 @@ public class ActivityContainer extends MasterActivity {
                 break;
             case R.string.title_settings:
                 mFragment =  new SettingFragment();
+                setVisibleMiniPlayer(false);
                 FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
                 break;
             case R.string.store_title:
                 mFragment =  new StoreFragment();
+                setVisibleMiniPlayer(false);
                 FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
                 break;
             case R.string.header_about:
                 mFragment =  new AboutFragment();
+                setVisibleMiniPlayer(false);
                 break;
         }
         getSupportFragmentManager().beginTransaction()

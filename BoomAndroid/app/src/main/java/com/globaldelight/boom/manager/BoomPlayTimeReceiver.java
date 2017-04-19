@@ -23,6 +23,7 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_SWITCH_OFF_AUDI
 public class BoomPlayTimeReceiver extends BroadcastReceiver {
 
     public static final String TIME_LIMIT_COMPLETE = "TIME_LIMIT_COMPLETE";
+    private static boolean isDisable = false;
 
     private static int MAX_TIME_LIMIT_IN_SECOND = 0;
 
@@ -99,6 +100,9 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
     }
 
     public static void setPlayingStartTime(boolean playing) {
+        if(isDisable){
+            return;
+        }
         if(isPurchased() || isShared()){
             return;
         } else if(isSecondaryPopupShown() && isEffectOnAfterSecondaryPopupShown()){
