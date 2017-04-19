@@ -155,6 +155,11 @@ public class BusinessHandler {
             public void onAdClicked(Ad ad) {
                 // Ad clicked callback
             }
+
+            @Override
+            public void onLoggingImpression(Ad ad) {
+
+            }
         });
 
         // Request an ad
@@ -209,6 +214,11 @@ public class BusinessHandler {
             @Override
             public void onAdClicked(Ad ad) {
                 // Ad clicked callback
+            }
+
+            @Override
+            public void onLoggingImpression(Ad ad) {
+
             }
 
         });
