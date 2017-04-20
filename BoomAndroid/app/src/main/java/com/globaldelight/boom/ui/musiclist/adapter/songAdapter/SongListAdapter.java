@@ -186,11 +186,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
         }
     }
 
-    @Override
-    public void onViewRecycled(SimpleItemViewHolder holder) {
-        Picasso.with(activity).cancelRequest(holder.img);
-        super.onViewRecycled(holder);
-    }
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public RegularTextView name, artistName;
