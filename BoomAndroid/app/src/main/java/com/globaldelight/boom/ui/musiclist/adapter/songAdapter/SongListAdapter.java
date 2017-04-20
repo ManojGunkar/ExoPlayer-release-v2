@@ -88,9 +88,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
             holder.art_overlay_play.setVisibility(itemId == nowPlayingItem.getItemId() ? View.VISIBLE : View.INVISIBLE);
             if(itemId == nowPlayingItem.getItemId()){
                 if(App.getPlayerEventHandler().isPlaying()){
-                    holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
+                    holder.art_overlay_play.setImageResource(R.drawable.ic_player_pause);
                 }else{
-                    holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
+                    holder.art_overlay_play.setImageResource(R.drawable.ic_player_play);
                 }
             }
         }
