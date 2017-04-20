@@ -97,11 +97,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
     }
 
     private void setAlbumArt(String path, SimpleItemViewHolder holder) {
-            if (PlayerUtils.isPathValid(path))
-                Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.img);
-            else {
-                holder.img.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null));
-            }
+        Picasso.with(activity).load(new File(path))
+                                .placeholder(R.drawable.ic_default_art_grid)
+                                .into(holder.img);
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {
@@ -188,6 +186,11 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
         }
     }
 
+    @Override
+    public void onViewRecycled(SimpleItemViewHolder holder) {
+        Picasso.with(activity).cancelRequest(holder.img);
+        super.onViewRecycled(holder);
+    }
     public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public RegularTextView name, artistName;
