@@ -23,6 +23,7 @@ import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boom.utils.handlers.UpNextDBHelper;
 import com.globaldelight.boom.utils.handlers.UserPreferenceHandler;
 import com.globaldelight.boom.utils.Utils;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,13 +45,14 @@ public class App extends Application implements Application.ActivityLifecycleCal
     private static FavoriteDBHelper favoriteDBHelper;
     private static UpNextDBHelper upNextDBHelper;
     private static CloudMediaItemDBHelper cloudMediaItemDBHelper;
-    private static PlayerService service;
+//    private static PlayerService service;
     private static UserPreferenceHandler userPreferenceHandler;
     private static DropboxAPI<AndroidAuthSession> dropboxAPI;
 
     private static BoomPlayTimeReceiver boomPlayTimeReceiver;
 
     private static BusinessHandler businessHandler;
+//    private static MixpanelAPI mixpanel;
 
     public static App getApplication() {
         return application;
@@ -59,10 +61,14 @@ public class App extends Application implements Application.ActivityLifecycleCal
     @Override
     public void onCreate() {
         super.onCreate();
+//        mixpanel = MixPanelAnalyticHelper.getInstance(this);
+        MixPanelAnalyticHelper.initPushNotification(this);
         try {
             Fabric.with(this, new Crashlytics());
         }catch (Exception e){}
         application = this;
+
+
 
         playingQueueHandler = PlayingQueueHandler.getHandlerInstance(application);
 
@@ -138,7 +144,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
         super.onTerminate();
         application = null;
         playingQueueHandler.Terminate();
-        MixPanelAnalyticHelper.getInstance(this).flush();
+       MixPanelAnalyticHelper.getInstance(this).flush();
     }
 
     public void onActivityCreated(Activity var1, Bundle var2) {

@@ -319,12 +319,16 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
         Log.i(TAG, "GoogleApiClient connection failed: " + result.toString());
         if(null != result) {
             if (!result.hasResolution()) {
-                // show the localized error dialog.
-                GoogleApiAvailability.getInstance().getErrorDialog(mFragment.getActivity(), result.getErrorCode(), 0).show();
+                if ( mFragment != null ) {
+                    GoogleApiAvailability.getInstance().getErrorDialog(mFragment.getActivity(), result.getErrorCode(), 0).show();
+                }
+                    // show the localized error dialog.
                 return;
             }
             try {
-                result.startResolutionForResult(mFragment.getActivity(), GoogleDriveHandler.REQUEST_CODE_RESOLUTION);
+                if ( mFragment != null ) {
+                    result.startResolutionForResult(mFragment.getActivity(), GoogleDriveHandler.REQUEST_CODE_RESOLUTION);
+                }
             } catch (IntentSender.SendIntentException e) {
                 Log.e(TAG, "Exception while starting resolution activity", e);
             } catch (Exception e){ }

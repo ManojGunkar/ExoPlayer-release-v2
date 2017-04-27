@@ -98,7 +98,7 @@ public class BoomSplash extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        MixPanelAnalyticHelper.initPushNotification(this);
+//        MixPanelAnalyticHelper.initPushNotification(this);
         MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
         MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_APP_OPEN, currentDate);
           /*  String android_id = Settings.Secure.getString(this.getContentResolver(),
@@ -125,6 +125,7 @@ public class BoomSplash extends AppCompatActivity {
     protected void onDestroy() {
         MixPanelAnalyticHelper.getInstance(this).flush();
         super.onDestroy();
+        MixPanelAnalyticHelper.getInstance(this).flush();
     }
 
     @Override

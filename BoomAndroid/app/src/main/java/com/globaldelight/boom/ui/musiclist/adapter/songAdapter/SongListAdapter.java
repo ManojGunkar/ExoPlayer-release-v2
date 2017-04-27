@@ -88,20 +88,18 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
             holder.art_overlay_play.setVisibility(itemId == nowPlayingItem.getItemId() ? View.VISIBLE : View.INVISIBLE);
             if(itemId == nowPlayingItem.getItemId()){
                 if(App.getPlayerEventHandler().isPlaying()){
-                    holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
+                    holder.art_overlay_play.setImageResource(R.drawable.ic_player_pause);
                 }else{
-                    holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
+                    holder.art_overlay_play.setImageResource(R.drawable.ic_player_play);
                 }
             }
         }
     }
 
     private void setAlbumArt(String path, SimpleItemViewHolder holder) {
-            if (PlayerUtils.isPathValid(path))
-                Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.img);
-            else {
-                holder.img.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null));
-            }
+        Picasso.with(activity).load(new File(path))
+                                .placeholder(R.drawable.ic_default_art_grid)
+                                .into(holder.img);
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {
