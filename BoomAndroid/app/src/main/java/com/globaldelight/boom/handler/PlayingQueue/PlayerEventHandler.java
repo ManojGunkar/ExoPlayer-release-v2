@@ -6,7 +6,6 @@ import android.media.AudioManager;
 import android.media.MediaMetadata;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -21,12 +20,8 @@ import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.data.MediaCollection.IMediaItem;
 import com.globaldelight.boom.Media.MediaType;
-import com.globaldelight.boom.task.PlayerService;
-import com.globaldelight.boom.utils.helpers.DropBoxUtills;
-import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.globaldelight.boomplayer.AudioPlayer;
-import com.globaldelight.boomplayer.IPlayerEvents;
 
 import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
 import static com.globaldelight.boom.handler.PlayingQueue.PlayerEventHandler.PlayState.pause;
@@ -55,7 +50,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
     private Handler seekEventHandler;
     private static boolean isSeeked = false;
 
-    IPlayerEvents IPlayerEvents = new IPlayerEvents() {
+    AudioPlayer.Callback IPlayerEvents = new AudioPlayer.Callback() {
         @Override
         public void onStop() {
             playingItem = null;
@@ -63,7 +58,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         }
 
         @Override
-        public void onStart(String mime, int sampleRate, int channels, long duration) {
+        public void onStart(long duration) {
             isTrackWaiting = false;
             context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_GET_SONG));
             if(null != getPlayingItem() && getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB){
@@ -72,10 +67,11 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         }
 
         @Override
-        public void onPlayUpdate(final int percent, final long currentms, final long totalms) {
+        public void onPlayTimeUpdate(final long currentms, final long totalms) {
+            int percent = (totalms == 0)? 100 : (int)(currentms * 100 / totalms);
             Intent intent = new Intent();
             intent.setAction(PlayerServiceReceiver.ACTION_TRACK_POSITION_UPDATE);
-            intent.putExtra("percent", percent);
+            intent.putExtra("percent",  percent);
             intent.putExtra("currentms", currentms);
             intent.putExtra("totalms", totalms);
             context.sendBroadcast(intent);
@@ -260,7 +256,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
             super.onPostExecute(dataSource);
             if(null != mPlayer && null != mediaItemBase && null != dataSource) {
                 if ( requestAudioFocus() ) {
-                    mPlayer.setDataSource(dataSource);
+                    mPlayer.setPath(dataSource);
                     mPlayer.setDataSourceId(mediaItemBase.getItemId());
 
                     MediaMetadata.Builder builder = new MediaMetadata.Builder();

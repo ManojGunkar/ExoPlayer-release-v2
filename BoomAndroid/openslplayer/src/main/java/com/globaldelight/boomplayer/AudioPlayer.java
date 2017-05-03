@@ -18,12 +18,12 @@ import java.util.List;
 
 public class AudioPlayer implements Runnable {
     /** Load jni .so on initialization */
-    private final String LOG_TAG = "OpenSLPlayer";
+    private final String LOG_TAG = "AudioPlayer";
     private OpenSLPlayer nativePlayer = new OpenSLPlayer();
     private AudioEffect audioEffect;
     private AudioTrackReader reader = null;
-    private IPlayerEvents events = null;
-    private PlayerStates state = new PlayerStates();
+    private Callback events = null;
+    private States state = new States();
     private String sourcePath = null;
     private long sourceId = -1;
     private Context mContext;
@@ -36,11 +36,11 @@ public class AudioPlayer implements Runnable {
 
     long duration = 0;
 
-    public void setEventsListener(IPlayerEvents events) {
+    public void setEventsListener(Callback events) {
         this.events = events;
     }
 
-    public AudioPlayer(Context context, IPlayerEvents events) {
+    public AudioPlayer(Context context, Callback events) {
         setEventsListener(events);
         mContext = context;
         audioEffect = AudioEffect.getAudioEffectInstance(context);
@@ -56,14 +56,6 @@ public class AudioPlayer implements Runnable {
         if ( isEngineInitalized ) {
             OpenSLPlayer.releaseEngine();
         }
-    }
-
-    /**
-     * For live streams, duration is 0
-     * @return
-     */
-    public boolean isLive() {
-        return (duration == 0);
     }
 
     public boolean isPlaying(){
@@ -82,16 +74,8 @@ public class AudioPlayer implements Runnable {
         return state.isStopped();
     }
 
-    /**
-     * set the data source, a file path or an url, or a file descriptor, to play encoded audio from
-     * @param src
-     */
-    public void setDataSource(String src) {
+    public void setPath(String src) {
         sourcePath = src;
-    }
-
-    public String getDataSource(){
-        return sourcePath;
     }
 
     public void setDataSourceId(long srcId) {
@@ -105,13 +89,13 @@ public class AudioPlayer implements Runnable {
 
 
     public synchronized void play() {
-        if (state.get() == PlayerStates.STOPPED) {
+        if (state.get() == States.STOPPED) {
             stop = false;
             playerThread = new Thread(this);
             playerThread.start();
-        }else if (state.get() == PlayerStates.PAUSED ) {
+        }else if (state.get() == States.PAUSED ) {
             nativePlayer.setPlayingState(true);
-            state.set(PlayerStates.PLAYING);
+            state.set(States.PLAYING);
             syncNotify();
             pauseSeek();
         }
@@ -132,8 +116,8 @@ public class AudioPlayer implements Runnable {
     }
 
     public void stop(){
-        if(state.get() == PlayerStates.PAUSED) {
-            state.set(PlayerStates.PLAYING);
+        if(state.get() == States.PAUSED) {
+            state.set(States.PLAYING);
             syncNotify();
         }
         stop = true;
@@ -151,7 +135,7 @@ public class AudioPlayer implements Runnable {
 
     public void pause() {
         nativePlayer.setPlayingState(false);
-        state.set(PlayerStates.PAUSED);
+        state.set(States.PAUSED);
     }
 
     private void seek(long pos) {
@@ -174,7 +158,7 @@ public class AudioPlayer implements Runnable {
      */
     private synchronized void waitPlay(){
         // if (duration == 0) return;
-        while(state.get() == PlayerStates.PAUSED) {
+        while(state.get() == States.PAUSED) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -192,7 +176,7 @@ public class AudioPlayer implements Runnable {
 
         try {
 
-            state.set(PlayerStates.LOADING);
+            state.set(States.LOADING);
 
             reader = new AudioTrackReader(sourcePath);
             reader.startReading();
@@ -200,7 +184,7 @@ public class AudioPlayer implements Runnable {
             MediaFormat inputFormat = reader.getInputFormat();
             duration = inputFormat.getLong(MediaFormat.KEY_DURATION);
 
-            state.set(PlayerStates.PLAYING);
+            state.set(States.PLAYING);
             startPlayer(reader.getOutputFormat(), true);
 
             postOnStart(inputFormat.getString(MediaFormat.KEY_MIME),
@@ -252,8 +236,8 @@ public class AudioPlayer implements Runnable {
                 isFinish = true;
 
             stop = true;
-            if(state.get() != PlayerStates.STOPPED) {
-                state.set(PlayerStates.STOPPED);
+            if(state.get() != States.STOPPED) {
+                state.set(States.STOPPED);
 
                 if (isShutdown && isFinish) {
                     postOnFinish();
@@ -265,11 +249,11 @@ public class AudioPlayer implements Runnable {
         }
         catch (InterruptedException e) {
             // This is not an error
-            state.set(PlayerStates.STOPPED);
+            state.set(States.STOPPED);
             stop = true;
         }
         catch (Exception e) {
-            state.set(PlayerStates.STOPPED);
+            state.set(States.STOPPED);
             stop = true;
             postError();
         }
@@ -347,7 +331,7 @@ public class AudioPlayer implements Runnable {
     private void onReadBuffer(AudioTrackReader.SampleBuffer buffer) {
         if (buffer.size > 0 && buffer.byteBuffer != null) {
             int i = 0;
-            while (i < buffer.size && !stop && state.get() == PlayerStates.PLAYING) {
+            while (i < buffer.size && !stop && state.get() == States.PLAYING) {
                 i += nativePlayer.write(buffer.byteBuffer, i, (int)buffer.size);
             }
         }
@@ -364,7 +348,7 @@ public class AudioPlayer implements Runnable {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    events.onPlayUpdate(percent, curTime / 1000, duration / 1000);
+                    events.onPlayTimeUpdate(curTime / 1000, duration / 1000);
                 }
             });
         }
@@ -384,7 +368,7 @@ public class AudioPlayer implements Runnable {
         if (events != null) {
             handler.post(new Runnable() {
                 @Override public void run() {
-                    events.onStart(mime, sampleRate, channels, duration);
+                    events.onStart(duration);
                 }
             });
         }
@@ -525,4 +509,54 @@ public class AudioPlayer implements Runnable {
                 nativePlayer.setHeadPhoneType(type);
         }catch (Exception e){}
     }
+
+
+    public interface Callback {
+        public void onStart(long duration);
+        public void onPlay();
+        public void onPlayTimeUpdate(long currentms, long totalms);
+        public void onFinish();
+        public void onStop();
+        public void onError();
+        public void onErrorPlayAgain();
+    }
+
+    public static class States {
+
+        public static final int LOADING = 0;
+        public static final int PLAYING = 1;
+        public static final int PAUSED = 2;
+        public static final int STOPPED = 3;
+        public int playerState = STOPPED;
+
+        public int get() {
+            return playerState;
+        }
+
+        public void set(int state) {
+            playerState = state;
+        }
+
+        public synchronized boolean isReadyToPlay() {
+            return playerState == States.PAUSED;
+        }
+
+        public synchronized boolean isLoading() {
+            return playerState == States.LOADING;
+        }
+
+        public synchronized boolean isPlaying() {
+            return playerState == States.PLAYING;
+        }
+
+        public boolean isPause() {
+            return playerState == States.PAUSED;
+        }
+
+        public synchronized boolean isStopped() {
+            return playerState == States.STOPPED;
+        }
+    }
+
+
 }
