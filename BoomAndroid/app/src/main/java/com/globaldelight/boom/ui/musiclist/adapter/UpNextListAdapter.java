@@ -171,11 +171,12 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
     }
 
     private void setArt(SimpleItemViewHolder holder, String path) {
-        if (PlayerUtils.isPathValid(path ))
-            Picasso.with(context).load(new File(path)).error(context.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.img);
-        else{
-            holder.img.setImageDrawable(context.getResources().getDrawable( R.drawable.ic_default_art_grid, null));
+        if ( path == null ) {
+            path = "";
         }
+        Picasso.with(context).load(new File(path))
+                .placeholder(R.drawable.ic_default_art_grid)
+                .into(holder.img);
     }
 
     @Override
