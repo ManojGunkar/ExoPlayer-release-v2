@@ -3,6 +3,7 @@ package com.globaldelight.boom;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -152,8 +153,19 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public void onActivityStarted(Activity activity) {
-        if(isExpired()) {
-            Toast.makeText(this, activity.getResources().getString(R.string.app_expire), Toast.LENGTH_LONG).show();
+        Boolean terminate = false;
+        int terminateReason = R.string.app_expire;
+        if( isExpired() ) {
+            terminateReason = R.string.app_expire;
+            terminate = true;
+        }
+        else if ( !isSupportedDevice() ) {
+            terminateReason = R.string.app_unsupported;
+            terminate = true;
+        }
+
+        if ( terminate ) {
+            Toast.makeText(this, activity.getResources().getString(terminateReason), Toast.LENGTH_LONG).show();
             activity.finishAndRemoveTask();
 
             // Terminate the App process after 2 seconds
@@ -206,5 +218,9 @@ public class App extends Application implements Application.ActivityLifecycleCal
             }
         }
         return false;
+    }
+
+    private boolean isSupportedDevice(){
+        return Build.MANUFACTURER.equalsIgnoreCase("Celkon");
     }
 }
