@@ -22,7 +22,9 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.analytics.UtilAnalytics;
 import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.BusinessUtils;
@@ -87,6 +89,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         progressBar = new ProgressBar(mActivity);
         initViews();
         FlurryAnalyticHelper.init(mActivity);
+        MixPanelAnalyticHelper.initPushNotification(mContext);
         return rootView;
     }
 
@@ -267,9 +270,11 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         super.onDestroy();
         if(BusinessPreferences.readBoolean(mContext, STORE_CLOSED_WITH_PURCHASE, true)){
             FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Closed_With_Purchase);
+            MixPanelAnalyticHelper.track(mActivity, UtilAnalytics.Store_Closed_With_Purchase);
         }else{
             FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Closed_Without_Purchase);
         }
+        MixPanelAnalyticHelper.getInstance(mContext).flush();
     }
 
     public void restorePurchase() {
