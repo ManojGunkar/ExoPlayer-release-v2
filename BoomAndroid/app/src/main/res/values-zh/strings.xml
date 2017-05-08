@@ -253,4 +253,8 @@
     <string name="store_after_purchase_title">Happy Boomin"\’"!</string>
     <string name="store_after_purchase">Congratulations! You can now\n listen to your music the way it\n was intended!</string>
 
+    <string name="cloud_setting_subtitle_change_account">Tap to change account.</string>
+    <string name="settings_change_account_message">If you change account, all data linked with the current account will be lost.</string>
+    <string name="conitnue_with_acc_change">CONTINUE</string>
+
 </resources>
