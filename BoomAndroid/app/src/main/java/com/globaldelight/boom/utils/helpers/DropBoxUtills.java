@@ -39,6 +39,7 @@ public class DropBoxUtills {
     final static public String ACCOUNT_PREFS_NAME = "dropbox_prefs";
     final static public String ACCESS_KEY_NAME = "dropbox_ACCESS_KEY";
     final static public String ACCESS_SECRET_NAME = "dropbox_ACCESS_SECRET";
+    final static public String ACCOUNT_NAME = "dropbox_ACCOUNT_NAME";
 
     public static void checkAppKeySetup(Context context) {
         if (DROPBOX_APP_KEY.startsWith("CHANGE")
@@ -159,5 +160,23 @@ public class DropBoxUtills {
 
     public static void setItemCount(int itemCount) {
         count = itemCount;
+    }
+
+    public static boolean isLoggedIn(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(
+                ACCOUNT_PREFS_NAME, 0);
+        return (null != prefs.getString(ACCESS_KEY_NAME, null) &&
+                null != prefs.getString(ACCESS_SECRET_NAME, null));
+    }
+
+
+    public static void setAccountName(Context context, String accountName) {
+        SharedPreferences prefs = context.getSharedPreferences(ACCOUNT_PREFS_NAME, 0);
+        prefs.edit().putString(ACCOUNT_NAME, accountName).commit();
+    }
+
+    public static String getAccountName(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(ACCOUNT_PREFS_NAME, 0);
+        return prefs.getString(ACCOUNT_NAME, null);
     }
 }
