@@ -26,7 +26,7 @@
         <item>METAL</item>
     </string-array>
 
-    <string-array name="mapped_eq_key">
+    <string-array name="mapped_eq_key" translatable="false">
         <item>BASSBOOST</item>
         <item>ACOUSTIC</item>
         <item>60\'s</item>
@@ -84,7 +84,7 @@
 
     </string-array>
 
-    <string-array name="mapped_eq_value">
+    <string-array name="mapped_eq_value" translatable="false">
         <item>BASSBOOST</item>
         <item>ACOUSTIC</item>
         <item>60\'s</item>
