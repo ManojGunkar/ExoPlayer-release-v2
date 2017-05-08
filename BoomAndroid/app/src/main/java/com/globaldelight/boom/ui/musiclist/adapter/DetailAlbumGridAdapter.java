@@ -229,13 +229,12 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
 //        holder.defaultImg.setImageDrawable(null);
     }
 
-    private void setArtistImg(final SimpleItemViewHolder holder, final int position, final int size, final String path) {
-
-        if (PlayerUtils.isPathValid(path))
-            Picasso.with(activity).load(new File(path)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).noFade()
-                    .into(holder.defaultImg);
-        else
-            setDefaultImage(holder.defaultImg, size, size);
+    private void setArtistImg(final SimpleItemViewHolder holder, final int position, final int size, String path) {
+        if ( path == null ) path = "";
+        Picasso.with(activity)
+                .load(new File(path))
+                .placeholder(R.drawable.ic_default_art_grid).noFade()
+                .into(holder.defaultImg);
     }
 
     private void setDefaultImage(ImageView img, int width, int height){

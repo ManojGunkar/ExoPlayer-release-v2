@@ -158,11 +158,11 @@ public class NotificationHandler {
 
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
-                    setDefaultImageView();
                 }
 
                 @Override
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    setDefaultImageView();
                 }
             });
         } else {
@@ -176,13 +176,12 @@ public class NotificationHandler {
     }
 
     private void setDefaultImageView() {
-        Utils utils = new Utils(context);
         notificationCompat.bigContentView.setImageViewBitmap(R.id.noti_album_art,
-                utils.getBitmapOfVector(context, R.drawable.ic_default_art_grid,
-                        utils.dpToPx(context, 100), utils.dpToPx(context, 100)));
+                Utils.getBitmapOfVector(context, R.drawable.ic_default_art_grid,
+                        Utils.dpToPx(context, 100), Utils.dpToPx(context, 100)));
         notificationCompat.contentView.setImageViewBitmap(R.id.noti_album_art,
-                utils.getBitmapOfVector(context, R.drawable.ic_default_art_grid,
-                        utils.dpToPx(context, 50), utils.dpToPx(context, 50)));
+                Utils.getBitmapOfVector(context, R.drawable.ic_default_art_grid,
+                        Utils.dpToPx(context, 50), Utils.dpToPx(context, 50)));
     }
 
     public boolean isNotificationActive() {
