@@ -124,6 +124,8 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
                 } else {
                     if(!isMediaItem && App.getPlayerEventHandler().isTrackWaitingForPlay() && !App.getPlayerEventHandler().isPaused())
                         holder.loadCloud.setVisibility(View.VISIBLE);
+                    else
+                        holder.loadCloud.setVisibility(View.GONE);
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
             } else {

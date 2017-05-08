@@ -89,6 +89,6 @@ public class AboutFragment extends Fragment {
                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ABOUT_RATE_BUTTON_TAPPED);
             }
         });
-        rateButton.setEnabled(false);
+        rateButton.setEnabled(true);
     }
 }

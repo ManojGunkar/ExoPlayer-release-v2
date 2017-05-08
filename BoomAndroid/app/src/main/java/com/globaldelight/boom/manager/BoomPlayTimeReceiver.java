@@ -40,10 +40,10 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
     private static Context mContext;
     private static Activity activityForPopup;
 
-    private static final int SIXTY_MINUTE = 60 * 6;
-    private static final int TWENTY_MINUTE = 60 * 2;
+    private static final int SIXTY_MINUTE = 60 * 60;
+    private static final int TWENTY_MINUTE = 60 * 20;
     private static final int ONE_SECOND = 1000 * 1;
-    private static final int FIVE_MINUTE = ONE_SECOND * 60 * 1;
+    private static final int FIVE_MINUTE = ONE_SECOND * 60 * 5;
 
     public BoomPlayTimeReceiver(){}
 

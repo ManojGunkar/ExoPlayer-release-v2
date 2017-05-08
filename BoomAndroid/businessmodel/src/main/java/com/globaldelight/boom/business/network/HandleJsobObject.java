@@ -135,11 +135,6 @@ public class HandleJsobObject {
         return null;
     }
 
-    /**
-     * http://possiblemobile.com/2013/06/context/
-     *
-     * @param context - activity should have its own unique context; so do not pass in application context
-     */
     protected void addToPendingRequests(Context context) {
         if (pendingRequests == null) {
             pendingRequests = new HashMap<Context, Integer>();
