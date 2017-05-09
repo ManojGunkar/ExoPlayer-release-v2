@@ -68,14 +68,18 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/dropbox_settings_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/drop_box"
                         android:textColor="@color/setting_item_title"
                         android:textSize="@dimen/settings_item_title_txt"
                         android:textStyle="normal"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:gravity="center_vertical|left"/>
                     <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/dropbox_settings_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/cloud_setting_dropbox_subtitle"
@@ -110,14 +114,18 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/google_drive_settings_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/google_drive"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textColor="@color/setting_item_title"
                         android:textSize="@dimen/settings_item_title_txt"
                         android:textStyle="normal"
                         android:gravity="center_vertical|left"/>
                     <com.globaldelight.boom.ui.widgets.RegularTextView
+                        android:id="@+id/google_drive_settings_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/cloud_setting_google_subtitle"

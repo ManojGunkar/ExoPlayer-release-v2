@@ -97,9 +97,10 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
     }
 
     private void setAlbumArt(String path, SimpleItemViewHolder holder) {
-        Picasso.with(activity).load(new File(path))
-                                .placeholder(R.drawable.ic_default_art_grid)
-                                .into(holder.img);
+        Picasso.with(activity)
+                .load(new File(path))
+                .placeholder(R.drawable.ic_default_art_grid)
+                .into(holder.img);
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {

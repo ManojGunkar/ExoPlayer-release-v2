@@ -116,14 +116,12 @@ public class AlbumDetailItemActivity extends MasterActivity {
     }
 
     public void setAlbumArt(String albumArt, int height) {
-                if (PlayerUtils.isPathValid(albumArt )) {
-                    Picasso.with(AlbumDetailItemActivity.this)
-                            .load(new File(albumArt)).resize(height, height)
-                            .error(getResources().getDrawable(R.drawable.ic_default_art_player_header, null)).noFade()
-                            .into(((ImageView) findViewById(R.id.activity_album_art)));
-                }else {
-                    ((ImageView) findViewById(R.id.activity_album_art)).setImageDrawable(getResources().getDrawable(R.drawable.ic_default_art_player_header, null));
-                }
+        if ( albumArt == null ) albumArt = "";
+        Picasso.with(AlbumDetailItemActivity.this)
+                .load(new File(albumArt)).resize(height, height)
+                .placeholder(R.drawable.ic_default_art_player_header)
+                .noFade()
+                .into(((ImageView) findViewById(R.id.activity_album_art)));
     }
 
     @Override
