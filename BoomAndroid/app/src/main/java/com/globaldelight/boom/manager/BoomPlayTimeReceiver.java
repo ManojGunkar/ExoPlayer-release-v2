@@ -40,10 +40,11 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
     private static Context mContext;
     private static Activity activityForPopup;
 
-    private static final int SIXTY_MINUTE = 60 * 60;
-    private static final int TWENTY_MINUTE = 60 * 20;
     private static final int ONE_SECOND = 1000 * 1;
-    private static final int FIVE_MINUTE = ONE_SECOND * 60 * 5;
+    private static final int PRIMARY_TRIAL_PERIOD = 60 * 2;
+    private static final int SECONDARY_TRIAL_PERIOD = 60 * 1;
+    private static final int REMINDER_PERIOD = 60 * 5;
+
 
     public BoomPlayTimeReceiver(){}
 
@@ -108,9 +109,9 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
         } else if(isSecondaryPopupShown() && isEffectOnAfterSecondaryPopupShown()){
             return;
         } else if(isPrimaryPopupShown() || (isSecondaryPopupShown() && !isEffectOnAfterSecondaryPopupShown())){
-            MAX_TIME_LIMIT_IN_SECOND = SIXTY_MINUTE;
+            MAX_TIME_LIMIT_IN_SECOND = REMINDER_PERIOD;
         } else if(isNoPopupShown()){
-            MAX_TIME_LIMIT_IN_SECOND = TWENTY_MINUTE;
+            MAX_TIME_LIMIT_IN_SECOND = PRIMARY_TRIAL_PERIOD;
         }
 
         if(playing && null == countDownTimer){
@@ -164,9 +165,9 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
 
             public void onFinish() {
                 if(isNoPopupShown()){
-                    MAX_TIME_LIMIT_IN_SECOND = TWENTY_MINUTE;
+                    MAX_TIME_LIMIT_IN_SECOND = PRIMARY_TRIAL_PERIOD;
                 } else {
-                    MAX_TIME_LIMIT_IN_SECOND = SIXTY_MINUTE;
+                    MAX_TIME_LIMIT_IN_SECOND = REMINDER_PERIOD;
                 }
                 mContext.sendBroadcast(new Intent(TIME_LIMIT_COMPLETE));
             }
@@ -183,6 +184,6 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
                     mContext.sendBroadcast(new Intent(ACTION_ON_SWITCH_OFF_AUDIO_EFFECT));
                 }
             }
-        }, FIVE_MINUTE);
+        }, SECONDARY_TRIAL_PERIOD * 1000);
     }
 }
