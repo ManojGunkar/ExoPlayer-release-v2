@@ -141,8 +141,8 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
                 public void run() {
                     if(isNoPopupShown()){
 //                showPrimaryPopup
+                        switchOffEffects();
                         ((MainActivity)activityForPopup).startPrimaryPopup();
-                        setEffectOffIn5Minutes();
                     } else {
 //                  showSecondaryPopup
                         ((MainActivity)activityForPopup).startSecondaryPopup();
@@ -179,11 +179,15 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
             @Override
             public void run() {
                 if(getConditionToSwitchOffEffect()) {
-                    AudioEffect.getAudioEffectInstance(mContext).setEnableAudioEffect(false);
-                    App.getPlayerEventHandler().setEffectEnable(false);
-                    mContext.sendBroadcast(new Intent(ACTION_ON_SWITCH_OFF_AUDIO_EFFECT));
+                    switchOffEffects();
                 }
             }
         }, SECONDARY_TRIAL_PERIOD * 1000);
+    }
+
+    private static void switchOffEffects() {
+        AudioEffect.getAudioEffectInstance(mContext).setEnableAudioEffect(false);
+        App.getPlayerEventHandler().setEffectEnable(false);
+        mContext.sendBroadcast(new Intent(ACTION_ON_SWITCH_OFF_AUDIO_EFFECT));
     }
 }
