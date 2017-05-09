@@ -189,7 +189,7 @@
     <string name="title_feedback">Feedback</string>
 
     <string name="library_switch_effect_screen_tooltip">Tap here to quickly open \n Boom Effects</string>
-    <string name="effect_player_tooltip">Tap to turn Effects On</string>
+    <string name="effect_player_tooltip">Tap to turn Effects On/Off</string>
 
     <string name="switch_effect_screen_tooltip">Tap here to switch to\n Boom Effects</string>
     <string name="use_headphone_tooltip">Use Headphones for \nbest experience</string>

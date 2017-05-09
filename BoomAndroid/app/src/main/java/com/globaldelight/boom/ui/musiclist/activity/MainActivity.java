@@ -72,8 +72,19 @@ public class MainActivity extends MasterActivity
     private BroadcastReceiver headPhoneReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction() == ACTION_HEADSET_PLUGGED && null != mLibraryFragment){
-                ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
+            switch ( intent.getAction() ) {
+                case ACTION_HEADSET_PLUGGED:
+                    if( null != mLibraryFragment) {
+                        ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
+                    }
+                    break;
+
+                case PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                    if ( mLibraryFragment != null ) {
+                        ((LibraryFragment)mLibraryFragment).useCoachMarkWindow();
+                        ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
+                    }
+                    break;
             }
         }
     };
@@ -130,6 +141,8 @@ public class MainActivity extends MasterActivity
         registerPlayerReceiver(MainActivity.this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
+        intentFilter.addAction(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+
         registerReceiver(headPhoneReceiver, intentFilter);
     }
 
@@ -214,8 +227,6 @@ public class MainActivity extends MasterActivity
     public void onPanelCollapsed(View panel) {
         super.onPanelCollapsed(panel);
         if(null != mLibraryFragment){
-            ((LibraryFragment)mLibraryFragment).useCoachMarkWindow();
-            ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
         }
     }
 
