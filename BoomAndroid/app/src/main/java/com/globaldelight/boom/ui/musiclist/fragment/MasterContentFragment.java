@@ -227,6 +227,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     // update UI of effect (mini player effect button also)
                     mEffectSwitch.setChecked(false);
                     updateMiniPlayerEffectUI(false);
+                    setEnableEffects();
                     break;
             }
         }
