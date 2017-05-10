@@ -74,12 +74,13 @@ public class BoomSplash extends AppCompatActivity {
                         @Override
                         public void onQueryInventoryFinished(IabResult result,
                                                              Inventory inventory) {
-                            if (mHelper == null) return;
-                            boolean isPurchased = inventory.hasPurchase(SKU_INAPPITEM);
-                            Log.d(TAG,"IS_PURCHASED-->"+isPurchased);
-                            if (isPurchased) {
-                                BusinessPreferences.writeBoolean(BoomSplash.this, ACTION_IN_APP_PURCHASE, true);
+                            if ( !result.isFailure() ) {
+                                boolean isPurchased = inventory.hasPurchase(SKU_INAPPITEM);
                                 Log.d(TAG,"IS_PURCHASED-->"+isPurchased);
+                                if (isPurchased) {
+                                    BusinessPreferences.writeBoolean(BoomSplash.this, ACTION_IN_APP_PURCHASE, true);
+                                    Log.d(TAG,"IS_PURCHASED-->"+isPurchased);
+                                }
                             }
                             startBoom();
                         }
