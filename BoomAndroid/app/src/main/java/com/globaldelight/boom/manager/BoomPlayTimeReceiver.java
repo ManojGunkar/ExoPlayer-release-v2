@@ -12,6 +12,9 @@ import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
 import com.globaldelight.boom.ui.musiclist.activity.MasterActivity;
 import com.globaldelight.boomplayer.AudioEffect;
+
+import java.util.Date;
+
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_IN_APP_PURCHASE;
 import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_SWITCH_OFF_AUDIO_EFFECT;
@@ -36,6 +39,7 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
     public static final String TIME_INTERVAL_FOR_POPUP = "TIME_INTERVAL_FOR_POPUP";
     public static final String SHOW_POPUP = "SHOW_POPUP";
     public static final String EFFECT_ON_AFTER_SECONDARY_POPUP = "EFFECT_ON_AFTER_SECONDARY_POPUP";
+    public static final String REMINDER_START_TIME = "REMINDER_START_TIME";
 
     private static Context mContext;
     private static Activity activityForPopup;
@@ -44,7 +48,6 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
     private static final int PRIMARY_TRIAL_PERIOD = 60 * 2;
     private static final int SECONDARY_TRIAL_PERIOD = 60 * 1;
     private static final int REMINDER_PERIOD = 60 * 5;
-
 
     public BoomPlayTimeReceiver(){}
 
@@ -104,15 +107,11 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
         if(isDisable){
             return;
         }
-        if(isPurchased() || isShared()){
+        if(isPurchased() || isShared() || isPrimaryPopupShown() ){
             return;
-        } else if(isSecondaryPopupShown() && isEffectOnAfterSecondaryPopupShown()){
-            return;
-        } else if(isPrimaryPopupShown() || (isSecondaryPopupShown() && !isEffectOnAfterSecondaryPopupShown())){
-            MAX_TIME_LIMIT_IN_SECOND = REMINDER_PERIOD;
-        } else if(isNoPopupShown()){
-            MAX_TIME_LIMIT_IN_SECOND = PRIMARY_TRIAL_PERIOD;
         }
+
+        MAX_TIME_LIMIT_IN_SECOND = PRIMARY_TRIAL_PERIOD;
 
         if(playing && null == countDownTimer){
             setStartTimer();
@@ -130,7 +129,11 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(intent.getAction() == TIME_LIMIT_COMPLETE){
+        if(intent.getAction() == TIME_LIMIT_COMPLETE) {
+            if ( isPurchased() ) {
+                return;
+            }
+
             if(null == activityForPopup){
                 final Intent i = new Intent();
                 i.setClass(context, MainActivity.class);
@@ -140,12 +143,8 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
                 @Override
                 public void run() {
                     if(isNoPopupShown()){
-//                showPrimaryPopup
                         switchOffEffects();
                         ((MainActivity)activityForPopup).startPrimaryPopup();
-                    } else {
-//                  showSecondaryPopup
-                        ((MainActivity)activityForPopup).startSecondaryPopup();
                     }
                     BusinessPreferences.writeInteger(mContext, TIME_INTERVAL_FOR_POPUP, 0);
                 }
@@ -166,8 +165,6 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
             public void onFinish() {
                 if(isNoPopupShown()){
                     MAX_TIME_LIMIT_IN_SECOND = PRIMARY_TRIAL_PERIOD;
-                } else {
-                    MAX_TIME_LIMIT_IN_SECOND = REMINDER_PERIOD;
                 }
                 mContext.sendBroadcast(new Intent(TIME_LIMIT_COMPLETE));
             }
@@ -175,19 +172,36 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
     }
 
     public static void setEffectOffIn5Minutes(){
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(getConditionToSwitchOffEffect()) {
-                    switchOffEffects();
+        if ( getConditionToSwitchOffEffect() ) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(getConditionToSwitchOffEffect()) {
+
+                        // Check if we need to remind the user
+                        long currentTime = new Date().getTime();
+                        long startTime = BusinessPreferences.readLong(mContext, REMINDER_START_TIME, currentTime);
+                        if ( currentTime - startTime  > (REMINDER_PERIOD * 1000) ) {
+                            ((MainActivity)activityForPopup).startSecondaryPopup();
+                            BusinessPreferences.writeLong(mContext, REMINDER_START_TIME, 0); // Reset reminder
+                        }
+
+                        switchOffEffects();
+                    }
                 }
-            }
-        }, SECONDARY_TRIAL_PERIOD * 1000);
+            }, SECONDARY_TRIAL_PERIOD * 1000);
+        }
     }
 
     private static void switchOffEffects() {
         AudioEffect.getAudioEffectInstance(mContext).setEnableAudioEffect(false);
         App.getPlayerEventHandler().setEffectEnable(false);
         mContext.sendBroadcast(new Intent(ACTION_ON_SWITCH_OFF_AUDIO_EFFECT));
+
+        // Set reminder if not already set.
+        long effectOnTime = BusinessPreferences.readLong(mContext, REMINDER_START_TIME, 0);
+        if ( effectOnTime == 0 ) {
+            BusinessPreferences.writeLong(mContext, REMINDER_START_TIME, new Date().getTime());
+        }
     }
 }
