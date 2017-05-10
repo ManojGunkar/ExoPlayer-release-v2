@@ -6,31 +6,48 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.Toast;
+
 import com.globaldelight.boom.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.analytics.AnalyticsHelper;
 import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.analytics.MixPanelAnalyticHelper;
+import com.globaldelight.boom.analytics.UtilAnalytics;
+import com.globaldelight.boom.business.BusinessPreferences;
+import com.globaldelight.boom.business.BusinessUtils;
+import com.globaldelight.boom.business.inapp.IabHelper;
+import com.globaldelight.boom.business.inapp.IabResult;
+import com.globaldelight.boom.business.inapp.Inventory;
+import com.globaldelight.boom.business.inapp.Purchase;
+import com.globaldelight.boom.manager.ConnectivityReceiver;
 import com.globaldelight.boom.utils.handlers.Preferences;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
+import static com.globaldelight.boom.business.BusinessPreferences.ACTION_IN_APP_PURCHASE;
+import static com.globaldelight.boom.business.BusinessUtils.SKU_INAPPITEM;
+import static com.globaldelight.boom.utils.handlers.Preferences.INAPP_PURCHASE_PRICE_VALUE;
+
 public class BoomSplash extends AppCompatActivity {
-    /*private View mSplashFrame;*/
     private static final long SPLASH_TIME_OUT = 2000;
     MixpanelAPI mixpanel;
     JSONObject propsFirst, propsLast;
     String currentDate;
     private AudioEffect audioEffectPreferenceHandler;
+    private IabHelper mHelper;
+    private String TAG="BoomSplash";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (!isTaskRoot()){
             finish();
             return;
@@ -41,28 +58,63 @@ public class BoomSplash extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
         initSplashCash();
-
         updateDataValues();
     }
 
     private void initSplashCash() {
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                App.startPlayerService();
-                startBoomLibrary();
-
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(BoomSplash.this);
-                if(null == preferences.getString("Tool_install_date", null)) {
-                    SharedPreferences.Editor edit = preferences.edit();
-                    edit.putString("Tool_install_date", String.valueOf(System.currentTimeMillis()));
-                    edit.commit();
+                if (ConnectivityReceiver.isNetworkAvailable(BoomSplash.this, true)) {
+                    mHelper = new IabHelper(BoomSplash.this, BusinessUtils.base64EncodedPublicKey);
+                    mHelper.enableDebugLogging(true);
+                    final IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+                        @Override
+                        public void onQueryInventoryFinished(IabResult result,
+                                                             Inventory inventory) {
+                            if (mHelper == null) return;
+                            boolean isPurchased = inventory.hasPurchase(SKU_INAPPITEM);
+                            Log.d(TAG,"IS_PURCHASED-->"+isPurchased);
+                            if (isPurchased) {
+                                BusinessPreferences.writeBoolean(BoomSplash.this, ACTION_IN_APP_PURCHASE, true);
+                                Log.d(TAG,"IS_PURCHASED-->"+isPurchased);
+                            }
+                            startBoom();
+                        }
+                    };
+                    mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+                        @Override
+                        public void onIabSetupFinished(IabResult result) {
+                            ArrayList<String> skuList = new ArrayList<>();
+                            skuList.add(SKU_INAPPITEM);
+                            Log.d(TAG,"SKU_ITEM_ADDED-->"+SKU_INAPPITEM);
+                            try {
+                                mHelper.queryInventoryAsync(true, skuList, null, mGotInventoryListener);
+                            } catch (IabHelper.IabAsyncInProgressException e) {
+                                e.printStackTrace();
+                                Log.d(TAG,"Error-->"+e.getMessage());
+                                startBoom();
+                            }
+                        }
+                    });
+                }
+                else {
+                    startBoom();
                 }
             }
         }, SPLASH_TIME_OUT);
+    }
+
+    private void startBoom() {
+        App.startPlayerService();
+        startBoomLibrary();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(BoomSplash.this);
+        if(null == preferences.getString("Tool_install_date", null)) {
+            SharedPreferences.Editor edit = preferences.edit();
+            edit.putString("Tool_install_date", String.valueOf(System.currentTimeMillis()));
+            edit.commit();
+        }
     }
 
     private void updateDataValues() {
