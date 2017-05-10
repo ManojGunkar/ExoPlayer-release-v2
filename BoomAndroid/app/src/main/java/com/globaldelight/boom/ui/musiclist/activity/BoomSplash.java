@@ -66,7 +66,8 @@ public class BoomSplash extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (ConnectivityReceiver.isNetworkAvailable(BoomSplash.this, true)) {
+                boolean isAlreadyPurchased = BusinessPreferences.readBoolean(BoomSplash.this, ACTION_IN_APP_PURCHASE, false);
+                if ( !isAlreadyPurchased && ConnectivityReceiver.isNetworkAvailable(BoomSplash.this, true) ) {
                     mHelper = new IabHelper(BoomSplash.this, BusinessUtils.base64EncodedPublicKey);
                     mHelper.enableDebugLogging(true);
                     final IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
