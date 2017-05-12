@@ -88,12 +88,22 @@ public class BoomSplash extends AppCompatActivity {
                     mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
                         @Override
                         public void onIabSetupFinished(IabResult result) {
+                            if ( !result.isSuccess() ) {
+                                startBoom();
+                                return;
+                            }
+
                             ArrayList<String> skuList = new ArrayList<>();
                             skuList.add(SKU_INAPPITEM);
                             Log.d(TAG,"SKU_ITEM_ADDED-->"+SKU_INAPPITEM);
                             try {
                                 mHelper.queryInventoryAsync(true, skuList, null, mGotInventoryListener);
                             } catch (IabHelper.IabAsyncInProgressException e) {
+                                e.printStackTrace();
+                                Log.d(TAG,"Error-->"+e.getMessage());
+                                startBoom();
+                            }
+                            catch (IllegalStateException e) {
                                 e.printStackTrace();
                                 Log.d(TAG,"Error-->"+e.getMessage());
                                 startBoom();
