@@ -68,7 +68,7 @@
                 android:id="@+id/controller_repeat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:padding="5dp"
                 style="@style/MediaController"
                 android:src="@drawable/ic_repeat_off" />
         </LinearLayout>
@@ -111,7 +111,7 @@
                 android:id="@+id/controller_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:padding="10dp"
                 style="@style/MediaController"
                 android:src="@drawable/ic_player_next" />
         </LinearLayout>
@@ -125,7 +125,7 @@
                 android:id="@+id/controller_shuffle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:padding="5dp"
                 style="@style/MediaController"
                 android:src="@drawable/ic_shuffle_off" />
         </LinearLayout>
