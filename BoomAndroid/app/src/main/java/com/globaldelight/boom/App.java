@@ -165,17 +165,20 @@ public class App extends Application implements Application.ActivityLifecycleCal
                 }
             }, 2000);
         }
+
+        BoomPlayTimeReceiver.setActivityForPopup(activity);
     }
 
     public void onActivityResumed(Activity activity) {
     }
 
     public void onActivityPaused(Activity var1) {
-
     }
 
     public void onActivityStopped(Activity var1) {
-
+        if ( var1 == BoomPlayTimeReceiver.getActivityForPopup() ) {
+            BoomPlayTimeReceiver.setActivityForPopup(null);
+        }
     }
 
     public void onActivitySaveInstanceState(Activity var1, Bundle var2) {
