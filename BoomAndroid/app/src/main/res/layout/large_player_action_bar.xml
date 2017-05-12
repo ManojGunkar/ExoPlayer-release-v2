@@ -62,12 +62,12 @@
         android:weightSum="1"
         android:gravity="right|center_vertical">
         <LinearLayout
-            android:id="@+id/player_upnext_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_marginEnd="@dimen/player_action_button_margin">
             <ImageView
+                android:id="@+id/player_upnext_button"
                 android:layout_width="@dimen/player_action_button"
                 android:layout_height="@dimen/player_action_button"
                 style="@style/MediaController"
@@ -75,11 +75,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/player_overflow_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center">
             <ImageView
+                android:id="@+id/player_overflow_button"
                 android:layout_width="@dimen/player_action_button"
                 android:layout_height="@dimen/player_action_button"
                 style="@style/MediaController"

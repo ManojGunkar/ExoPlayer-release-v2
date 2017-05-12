@@ -118,7 +118,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private int colorTo , colorFrom, colorFromActive;
     private AppCompatSeekBar mTrackSeek;
     private ImageView mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mEffectTab, mPlayerTab, mPlayerBackBtn, mLargeAlbumArt;
-    private LinearLayout mEffectContent, mPlayerLarge, mPlayerTitlePanel, mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
+    private ImageView mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
+    private LinearLayout mEffectContent, mPlayerLarge, mPlayerTitlePanel;
     private FrameLayout mPlayerContent;
     private FrameLayout mPlayerBackground;
 
@@ -476,9 +477,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mPlayerTitlePanel.setOnClickListener(this);
         mLargeSongTitle = (RegularTextView) mInflater.findViewById(R.id.large_player_title);
         mLargeSongSubTitle = (RegularTextView) mInflater.findViewById(R.id.large_player_sub_title);
-        mUpNextBtnPanel = (LinearLayout) mInflater.findViewById(R.id.player_upnext_button);
+        mUpNextBtnPanel = (ImageView) mInflater.findViewById(R.id.player_upnext_button);
         mUpNextBtnPanel.setOnClickListener(this);
-        mPlayerOverFlowMenuPanel = (LinearLayout) mInflater.findViewById(R.id.player_overflow_button);
+        mPlayerOverFlowMenuPanel = (ImageView) mInflater.findViewById(R.id.player_overflow_button);
         mPlayerOverFlowMenuPanel.setOnClickListener(this);
 
         mLargeAlbumArt = (ImageView) mInflater.findViewById(R.id.player_album_art);
@@ -691,9 +692,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         if(isMiniPlayerVisible){
             miniController.setAlpha(1);
             mPlayerActionPanel.setAlpha(0);
+            mPlayerActionPanel.setVisibility(View.INVISIBLE);
+            miniController.setVisibility(View.VISIBLE);
         }else{
             miniController.setAlpha(0);
             mPlayerActionPanel.setAlpha(1);
+            mPlayerActionPanel.setVisibility(View.VISIBLE);
+            miniController.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -702,11 +707,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onPanelSlide(View panel, float slideOffset, boolean isEffectOpened) {
         if(slideOffset < 0.1){
-            setMiniPlayerAlpha(1);
-            mPlayerActionPanel.setAlpha(0);
+            setMiniPlayerVisible(true);
         }else {
-            setMiniPlayerAlpha(0);
-            mPlayerActionPanel.setAlpha(1);
+            setMiniPlayerVisible(false);
         }
     }
 
@@ -861,35 +864,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 /*}*/
                 break;
             case R.id.player_upnext_button:
-                if(MasterActivity.isPlayerExpended()) {
-                    postMessage.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            playerUIController.OnUpNextClick(mActivity);
-                        }
-                    });
-                }else{
-                    postMessage.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            playerUIController.OnPlayPause();
-                        }
-                    });
-                }
+                playerUIController.OnUpNextClick(mActivity);
                 FlurryAnalyticHelper.logEvent(UtilAnalytics.UpNext_Button_Tapped);
                 break;
+
             case R.id.player_overflow_button:
-                if(MasterActivity.isPlayerExpended()) {
-                    overFlowMenu(mActivity, view);
-                }else{
-                    postMessage.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            playerUIController.OnPlayPause();
-                        }
-                    });
-                }
+                overFlowMenu(mActivity, view);
                 break;
+
             case R.id.mini_player_play_pause_btn:
                 FlurryAnalyticHelper.logEvent(UtilAnalytics.Play_Pause_Button_tapped_Mini_Player);
             case R.id.controller_play:
