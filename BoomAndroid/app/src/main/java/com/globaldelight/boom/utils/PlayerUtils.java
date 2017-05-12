@@ -25,7 +25,7 @@ import com.dropbox.client2.session.Session.AccessType;
 
 public class PlayerUtils {
     private static final float BITMAP_SCALE = 1.0f;
-    private static final float BLUR_RADIUS = 25.0f;
+    private static final float BLUR_RADIUS = 2.0f;
 
     public static void ImageViewAnimatedChange(Context context, final ImageView v, final Bitmap new_image) {
         final Animation anim_out = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
@@ -104,11 +104,29 @@ public class PlayerUtils {
         return imgFile.exists();
     }
 
-    public static Bitmap blur(Context activity, Bitmap bitmap) {
-        int width = Math.round(bitmap.getWidth() * BITMAP_SCALE);
-        int height = Math.round(bitmap.getHeight() * BITMAP_SCALE);
+    public static Bitmap createBackgoundBitmap(Context context, Bitmap bitmap, int dstWidth, int dstHeight) {
+        int imgWidth = dstWidth;
+        int imgHeight = dstHeight;
 
-        Bitmap inputBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
+        float scaleX = (float)imgWidth / (float)bitmap.getWidth();
+        float scaleY = (float)imgHeight / (float)bitmap.getHeight();
+        float scale = Math.max(scaleX, scaleY);
+
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, (int)(bitmap.getWidth() * scale),
+                (int)(bitmap.getHeight() * scale), false);
+
+        Bitmap tempBitmap = Bitmap.createBitmap(scaledBitmap,
+                (scaledBitmap.getWidth() - imgWidth)/2,
+                (scaledBitmap.getHeight() - imgHeight)/2,
+                imgWidth, imgHeight);
+
+        scaledBitmap.recycle();
+
+        return PlayerUtils.blur(context, tempBitmap);
+
+    }
+
+    public static Bitmap blur(Context activity, Bitmap inputBitmap) {
         Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
 
         RenderScript rs = RenderScript.create(activity);

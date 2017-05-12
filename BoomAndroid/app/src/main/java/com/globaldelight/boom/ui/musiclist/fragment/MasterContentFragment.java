@@ -415,9 +415,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         public void run() {
                             try {
                                 Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
-                                bitmap = Bitmap.createScaledBitmap(bitmap, ScreenWidth,
-                                        ScreenWidth, false);
-                                Bitmap blurredBitmap = PlayerUtils.blur(mActivity, bitmap);
+                                Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(mActivity, bitmap, ScreenWidth/10, ScreenHeight/10);
                                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
                                     PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, bitmap);
                                     mItemId = item.getItemId();
@@ -433,7 +431,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                                 }else{
                                     mLargeAlbumArt.setImageBitmap(albumArt);
                                 }
-                                Bitmap blurredBitmap = PlayerUtils.blur(mActivity, albumArt);
+                                Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(mActivity, albumArt, ScreenWidth/10, ScreenHeight/10);
                                 mPlayerBackground.setBackground(new BitmapDrawable(mActivity.getResources(), blurredBitmap));
                             }
                         }
@@ -442,14 +440,15 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             }.execute();
         } else {
             if(item != null) {
-                Bitmap albumArt = Utils.getBitmapOfVector(mActivity, R.drawable.ic_default_art_player_header, ScreenWidth, ScreenWidth);
+                Bitmap albumArt = BitmapFactory.decodeResource(mActivity.getResources(),
+                        R.drawable.ic_default_art_player_header);
                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
                     PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, albumArt);
                     mItemId = item.getItemId();
                 }else {
-                    mLargeAlbumArt.setImageBitmap(albumArt);
+                    mLargeAlbumArt.setImageResource(R.drawable.ic_default_art_player_header);
                 }
-                Bitmap blurredBitmap = PlayerUtils.blur(mActivity, albumArt);
+                Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(mActivity, albumArt, ScreenWidth/10, ScreenHeight/10);
                 mPlayerBackground.setBackground(new BitmapDrawable(mActivity.getResources(), blurredBitmap));
             }
         }

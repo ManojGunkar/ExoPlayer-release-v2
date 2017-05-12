@@ -7,7 +7,7 @@
     <ImageView android:id="@+id/player_album_art"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY"/>
+        android:scaleType="centerCrop"/>
 
     <ProgressBar
         android:id="@+id/load_cloud"
