@@ -25,7 +25,7 @@ import com.dropbox.client2.session.Session.AccessType;
 
 public class PlayerUtils {
     private static final float BITMAP_SCALE = 1.0f;
-    private static final float BLUR_RADIUS = 2.0f;
+    private static final float BLUR_RADIUS = 4.0f;
 
     public static void ImageViewAnimatedChange(Context context, final ImageView v, final Bitmap new_image) {
         final Animation anim_out = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
