@@ -97,7 +97,6 @@
                 android:id="@+id/controller_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
                 style="@style/MediaController"
                 android:src="@drawable/ic_player_play" />
         </LinearLayout>
