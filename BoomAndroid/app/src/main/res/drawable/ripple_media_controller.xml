@@ -2,6 +2,6 @@
 <layer-list
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
-        <ripple android:color="@color/colorAccent"/>
+        <ripple android:color="#383838"/>
     </item>
 </layer-list>
