@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -186,7 +187,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
                     mIsPlaying = false;
                     mIsLastPlayed = false;
-                    updatePlayerUI();
+                    updatePlayerUI(false);
                     showProgressLoader();
                     break;
                 case ACTION_UPDATE_TRACK_SEEK :
@@ -377,6 +378,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }else{
             DrawableCompat.setTint(mPrevious.getDrawable(), colorTo);
         }
+        mPrevious.setClickable(prev_enable);
+
 
         DrawableCompat.setTint(mNext.getDrawable(), ContextCompat.getColor(mActivity, R.color.black));
         if(next_enable){
@@ -384,19 +387,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }else{
             DrawableCompat.setTint(mNext.getDrawable(), colorTo);
         }
+        mNext.setClickable(next_enable);
     }
 
     private void updateAlbumArt(final IMediaItem item){
-        new Action<Bitmap []>() {
-            @NonNull
+        new AsyncTask<Void, Void, Bitmap []>() {
             @Override
-            public String id() {
-                return TAG;
-            }
-
-            @Nullable
-            @Override
-            protected Bitmap[] run() throws InterruptedException {
+            protected Bitmap[] doInBackground(Void... params) {
                 Bitmap[] result = new Bitmap[2];
                 boolean failed = false;
                 if ( PlayerUtils.isPathValid(item.getItemArtUrl()) ) {
@@ -425,13 +422,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             }
 
             @Override
-            protected void done(@Nullable final Bitmap[] result) {
-                if ( result.length != 2 ) {
+            protected void onPostExecute(Bitmap[] bitmaps) {
+                if ( bitmaps.length != 2 ) {
                     return;
                 }
 
-                final Bitmap bitmap = result[0];
-                final Bitmap blurredBitmap = result[1];
+                final Bitmap bitmap = bitmaps[0];
+                final Bitmap blurredBitmap = bitmaps[1];
                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
                     PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, bitmap);
                     mItemId = item.getItemId();
@@ -556,12 +553,16 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updatePlayerUI(){
+        updatePlayerUI(true);
+    }
+
+    private void updatePlayerUI(boolean mediaChanged) {
 //        if(MasterActivity.isPlayerExpended()){
-            updateLargePlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
+        updateLargePlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
 //        }else {
-            updateMiniPlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
+        updateMiniPlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
 //        }
-        if(null != mPlayingMediaItem)
+        if(null != mPlayingMediaItem && mediaChanged)
             updateAlbumArt(mPlayingMediaItem);
         setEnableEffects();
 
