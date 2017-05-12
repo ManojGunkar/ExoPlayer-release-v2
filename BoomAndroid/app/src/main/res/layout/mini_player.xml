@@ -28,7 +28,7 @@
                 android:id="@+id/mini_player_effect_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/unbounded_ripple"
+                style="@style/MediaController"
                 android:src="@drawable/ic_miniplayer_effects" />
         </LinearLayout>
         <LinearLayout
@@ -73,7 +73,7 @@
                 android:id="@+id/mini_player_play_pause_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/unbounded_ripple"
+                style="@style/MediaController"
                 android:src="@drawable/ic_miniplayer_play" />
         </LinearLayout>
     </LinearLayout>

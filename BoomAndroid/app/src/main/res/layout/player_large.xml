@@ -52,7 +52,7 @@
                         android:id="@+id/effect_tab"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/unbounded_ripple"
+                        style="@style/MediaController"
                         android:src="@drawable/ic_effects_normal" />
                 </LinearLayout>
 
@@ -65,7 +65,7 @@
                         android:id="@+id/player_tab"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/unbounded_ripple"
+                        style="@style/MediaController"
                         android:src="@drawable/ic_player_active" />
                 </LinearLayout>
 

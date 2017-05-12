@@ -13,7 +13,9 @@
 
     <color name="onBoardingBG">#0d0c12</color>
 
-    <color name="player_background">#D9000000</color>
+    <color name="player_background">#D9101011</color>
+    <color name="seperator_color">@color/black</color>
+
 
     <color name="toolbar_txt">@color/white</color>
 

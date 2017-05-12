@@ -171,7 +171,9 @@
 
 
     <string name="store_page_header">Hassle free Boomin\'</string>
-    <string name="store_page_buy_description">Buy now to #FeelYourMusic \n without any hassle. Without any ad.</string>
+    <string name="store_page_buy_description">Buy now to #FeelYourMusic \n without any hassle.</string>
+    <string name="store_page_buy_share_description">Buy or Share now to #FeelYourMusic \n without any hassle.</string>
+
     <string name="store_page_share_description">You may also share Boom to discontinue ads \n for 5 days.</string>
     <string name="share_text">Share Boom</string>
     <string name="menu_restore">Restore Purchase</string>
@@ -189,7 +191,7 @@
     <string name="title_feedback">Feedback</string>
 
     <string name="library_switch_effect_screen_tooltip">Tap here to quickly open \n Boom Effects</string>
-    <string name="effect_player_tooltip">Tap to turn Effects On</string>
+    <string name="effect_player_tooltip">Tap to turn Effects On/Off</string>
 
     <string name="switch_effect_screen_tooltip">Tap here to switch to\n Boom Effects</string>
     <string name="use_headphone_tooltip">Use Headphones for \nbest experience</string>

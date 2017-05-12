@@ -50,7 +50,7 @@
             android:layout_weight="11"
             android:gravity="center"
             android:clickable="true"
-            android:background="@drawable/unbounded_ripple"
+            style="@style/MediaController"
             android:foregroundTint="#f73d5c"
             android:elevation="12dp"
             android:theme="@style/Theme.AppCompat.Light">

@@ -111,8 +111,7 @@ public class LibraryFragment extends Fragment {
             Preferences.writeBoolean(mActivity, HEADPHONE_CONNECTED, false);
         }
         if (null != getActivity() && (Preferences.readBoolean(mActivity, TOOLTIP_USE_HEADPHONE_LIBRARY, true) || Preferences.readBoolean(mActivity, TOOLTIP_USE_24_HEADPHONE_LIBRARY, true))
-                && Preferences.readBoolean(mActivity, HEADPHONE_CONNECTED, true) && !Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)
-                && !Preferences.readBoolean(mActivity, TOOLTIP_OPEN_EFFECT_MINI_PLAYER, true)) {
+                && Preferences.readBoolean(mActivity, HEADPHONE_CONNECTED, true) ) {
 
             if(Utils.isMoreThan24Hour() || Preferences.readBoolean(mActivity, TOOLTIP_USE_HEADPHONE_LIBRARY, true)) {
                 coachMarkUseHeadPhone = new CoachMarkerWindow(mActivity, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));

@@ -40,19 +40,6 @@
             android:textSize="@dimen/store_page_descript_text_size"
             android:textStyle="bold" />
 
-        <com.globaldelight.boom.ui.widgets.RegularTextView
-            android:id="@+id/store_sub_discription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_marginTop="@dimen/store_page_spacing_betw_lines"
-            android:lineSpacingExtra="@dimen/store_page_spacing_betw_lines"
-            android:text="@string/store_page_share_description"
-            android:textColor="@color/store_page_description_text_color"
-            android:textSize="@dimen/store_page_descript_text_size"
-            android:textStyle="normal" />
-
 
         <com.globaldelight.boom.ui.widgets.RegularButton
             android:id="@+id/store_buyButton"

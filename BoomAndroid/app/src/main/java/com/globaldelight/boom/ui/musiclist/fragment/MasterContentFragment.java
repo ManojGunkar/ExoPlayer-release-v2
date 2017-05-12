@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -117,7 +118,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private int colorTo , colorFrom, colorFromActive;
     private AppCompatSeekBar mTrackSeek;
     private ImageView mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mEffectTab, mPlayerTab, mPlayerBackBtn, mLargeAlbumArt;
-    private LinearLayout mEffectContent, mPlayerLarge, mPlayerTitlePanel, mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
+    private ImageView mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
+    private LinearLayout mEffectContent, mPlayerLarge, mPlayerTitlePanel;
     private FrameLayout mPlayerContent;
     private FrameLayout mPlayerBackground;
 
@@ -186,7 +188,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
                     mIsPlaying = false;
                     mIsLastPlayed = false;
-                    updatePlayerUI();
+                    updatePlayerUI(false);
                     showProgressLoader();
                     break;
                 case ACTION_UPDATE_TRACK_SEEK :
@@ -227,6 +229,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     // update UI of effect (mini player effect button also)
                     mEffectSwitch.setChecked(false);
                     updateMiniPlayerEffectUI(false);
+                    setEnableEffects();
                     break;
             }
         }
@@ -376,6 +379,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }else{
             DrawableCompat.setTint(mPrevious.getDrawable(), colorTo);
         }
+        mPrevious.setClickable(prev_enable);
+
 
         DrawableCompat.setTint(mNext.getDrawable(), ContextCompat.getColor(mActivity, R.color.black));
         if(next_enable){
@@ -383,75 +388,57 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }else{
             DrawableCompat.setTint(mNext.getDrawable(), colorTo);
         }
+        mNext.setClickable(next_enable);
     }
 
     private void updateAlbumArt(final IMediaItem item){
-        if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
-            new Action() {
-                private Bitmap img;
-
-                @NonNull
-                @Override
-                public String id() {
-                    return TAG;
-                }
-
-                @Nullable
-                @Override
-                protected Object run() throws InterruptedException {
-                    if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
-                        return null;
-                    } else {
-                        return img = BitmapFactory.decodeResource(mActivity.getResources(),
-                                R.drawable.ic_default_art_player_header);
+        new AsyncTask<Void, Void, Bitmap []>() {
+            @Override
+            protected Bitmap[] doInBackground(Void... params) {
+                Bitmap[] result = new Bitmap[2];
+                boolean failed = false;
+                if ( PlayerUtils.isPathValid(item.getItemArtUrl()) ) {
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
+                        Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(mActivity, bitmap, ScreenWidth/10, ScreenHeight/10);
+                        result[0] = bitmap;
+                        result[1] = blurredBitmap;
+                    }catch (Exception e){
+                        failed = true;
                     }
                 }
+                else {
+                    failed = true;
+                }
 
-                @Override
-                protected void done(@Nullable final Object result) {
-                    postMessage.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
-                                bitmap = Bitmap.createScaledBitmap(bitmap, ScreenWidth,
-                                        ScreenWidth, false);
-                                Bitmap blurredBitmap = PlayerUtils.blur(mActivity, bitmap);
-                                if ( mItemId == -1 || mItemId != item.getItemId() ) {
-                                    PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, bitmap);
-                                    mItemId = item.getItemId();
-                                }else{
-                                    mLargeAlbumArt.setImageBitmap(bitmap);
-                                }
-                                mPlayerBackground.setBackground(new BitmapDrawable(mActivity.getResources(), blurredBitmap));
-                            }catch (Exception e){
-                                Bitmap albumArt = BitmapFactory.decodeResource(mActivity.getResources(),
-                                        R.drawable.ic_default_art_player_header);
-                                if ( mItemId == -1 || mItemId != item.getItemId() ) {
-                                    PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, albumArt);
-                                }else{
-                                    mLargeAlbumArt.setImageBitmap(albumArt);
-                                }
-                                Bitmap blurredBitmap = PlayerUtils.blur(mActivity, albumArt);
-                                mPlayerBackground.setBackground(new BitmapDrawable(mActivity.getResources(), blurredBitmap));
-                            }
-                        }
-                    });
+                if ( failed ) {
+                    Bitmap bitmap = BitmapFactory.decodeResource(mActivity.getResources(),
+                            R.drawable.ic_default_art_player_header);
+                    Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(mActivity, bitmap, ScreenWidth/10, ScreenHeight/10);
+                    result[0] = bitmap;
+                    result[1] = blurredBitmap;
                 }
-            }.execute();
-        } else {
-            if(item != null) {
-                Bitmap albumArt = Utils.getBitmapOfVector(mActivity, R.drawable.ic_default_art_player_header, ScreenWidth, ScreenWidth);
+
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap[] bitmaps) {
+                if ( bitmaps.length != 2 ) {
+                    return;
+                }
+
+                final Bitmap bitmap = bitmaps[0];
+                final Bitmap blurredBitmap = bitmaps[1];
                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
-                    PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, albumArt);
+                    PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, bitmap);
                     mItemId = item.getItemId();
-                }else {
-                    mLargeAlbumArt.setImageBitmap(albumArt);
+                }else{
+                    mLargeAlbumArt.setImageBitmap(bitmap);
                 }
-                Bitmap blurredBitmap = PlayerUtils.blur(mActivity, albumArt);
                 mPlayerBackground.setBackground(new BitmapDrawable(mActivity.getResources(), blurredBitmap));
             }
-        }
+        }.execute();
     }
 
     private void changeProgress(int progress){
@@ -490,9 +477,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mPlayerTitlePanel.setOnClickListener(this);
         mLargeSongTitle = (RegularTextView) mInflater.findViewById(R.id.large_player_title);
         mLargeSongSubTitle = (RegularTextView) mInflater.findViewById(R.id.large_player_sub_title);
-        mUpNextBtnPanel = (LinearLayout) mInflater.findViewById(R.id.player_upnext_button);
+        mUpNextBtnPanel = (ImageView) mInflater.findViewById(R.id.player_upnext_button);
         mUpNextBtnPanel.setOnClickListener(this);
-        mPlayerOverFlowMenuPanel = (LinearLayout) mInflater.findViewById(R.id.player_overflow_button);
+        mPlayerOverFlowMenuPanel = (ImageView) mInflater.findViewById(R.id.player_overflow_button);
         mPlayerOverFlowMenuPanel.setOnClickListener(this);
 
         mLargeAlbumArt = (ImageView) mInflater.findViewById(R.id.player_album_art);
@@ -567,12 +554,16 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updatePlayerUI(){
+        updatePlayerUI(true);
+    }
+
+    private void updatePlayerUI(boolean mediaChanged) {
 //        if(MasterActivity.isPlayerExpended()){
-            updateLargePlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
+        updateLargePlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
 //        }else {
-            updateMiniPlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
+        updateMiniPlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
 //        }
-        if(null != mPlayingMediaItem)
+        if(null != mPlayingMediaItem && mediaChanged)
             updateAlbumArt(mPlayingMediaItem);
         setEnableEffects();
 
@@ -657,6 +648,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mMiniPlayerEffectPanel = (LinearLayout) mInflater.findViewById(R.id.mini_player_boom_effect);
         mMiniPlayerEffectPanel.setOnClickListener(this);
         mMiniPlayerEffect = (ImageView) mInflater.findViewById(R.id.mini_player_effect_img);
+        mMiniPlayerEffect.setOnClickListener(this);
+
         mMiniPlayerPlayPause = (ImageView) mInflater.findViewById(R.id.mini_player_play_pause_btn);
         mMiniPlayerPlayPause.setOnClickListener(this);
         mMiniTitlePanel = (LinearLayout) mInflater.findViewById(R.id.mini_player_title_panel);
@@ -699,9 +692,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         if(isMiniPlayerVisible){
             miniController.setAlpha(1);
             mPlayerActionPanel.setAlpha(0);
+            mPlayerActionPanel.setVisibility(View.INVISIBLE);
+            miniController.setVisibility(View.VISIBLE);
         }else{
             miniController.setAlpha(0);
             mPlayerActionPanel.setAlpha(1);
+            mPlayerActionPanel.setVisibility(View.VISIBLE);
+            miniController.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -710,11 +707,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onPanelSlide(View panel, float slideOffset, boolean isEffectOpened) {
         if(slideOffset < 0.1){
-            setMiniPlayerAlpha(1);
-            mPlayerActionPanel.setAlpha(0);
+            setMiniPlayerVisible(true);
         }else {
-            setMiniPlayerAlpha(0);
-            mPlayerActionPanel.setAlpha(1);
+            setMiniPlayerVisible(false);
         }
     }
 
@@ -845,6 +840,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.player_back_button:
+            case R.id.mini_player_effect_img:
             case R.id.mini_player_boom_effect:
                 if(!MasterActivity.isPlayerExpended()){
                     setPlayerEnable(false);
@@ -868,35 +864,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 /*}*/
                 break;
             case R.id.player_upnext_button:
-                if(MasterActivity.isPlayerExpended()) {
-                    postMessage.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            playerUIController.OnUpNextClick(mActivity);
-                        }
-                    });
-                }else{
-                    postMessage.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            playerUIController.OnPlayPause();
-                        }
-                    });
-                }
+                playerUIController.OnUpNextClick(mActivity);
                 FlurryAnalyticHelper.logEvent(UtilAnalytics.UpNext_Button_Tapped);
                 break;
+
             case R.id.player_overflow_button:
-                if(MasterActivity.isPlayerExpended()) {
-                    overFlowMenu(mActivity, view);
-                }else{
-                    postMessage.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            playerUIController.OnPlayPause();
-                        }
-                    });
-                }
+                overFlowMenu(mActivity, view);
                 break;
+
             case R.id.mini_player_play_pause_btn:
                 FlurryAnalyticHelper.logEvent(UtilAnalytics.Play_Pause_Button_tapped_Mini_Player);
             case R.id.controller_play:

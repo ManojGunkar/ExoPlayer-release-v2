@@ -33,21 +33,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
-                android:maxLines="1"
                 android:ellipsize="end"
-                android:textStyle="normal"
+                android:maxLines="1"
                 android:textColor="@color/noti_track_title"
-                android:textSize="@dimen/noti_title_txt" />
+                android:textSize="@dimen/noti_title_txt"
+                android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/noti_artist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
                 android:ellipsize="end"
-                android:textStyle="normal"
+                android:maxLines="1"
                 android:textColor="@color/noti_track_sub_title"
-                android:textSize="@dimen/noti_sub_title_txt" />
+                android:textSize="@dimen/noti_sub_title_txt"
+                android:textStyle="normal" />
 
         </LinearLayout>
 
@@ -65,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/unbounded_ripple"
+                style="@style/MediaController"
                 android:src="@drawable/ic_previous_notification" />
 
             <ImageView
@@ -73,15 +73,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/unbounded_ripple"
-                android:src="@drawable/ic_play_notification"/>
+                style="@style/MediaController"
+                android:src="@drawable/ic_play_notification" />
 
             <ImageView
                 android:id="@+id/noti_next_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/unbounded_ripple"
+                style="@style/MediaController"
                 android:src="@drawable/ic_next_notification" />
         </LinearLayout>
 
