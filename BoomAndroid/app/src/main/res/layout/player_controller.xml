@@ -68,7 +68,8 @@
                 android:id="@+id/controller_repeat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/unbounded_ripple"
+                android:padding="10dp"
+                style="@style/MediaController"
                 android:src="@drawable/ic_repeat_off" />
         </LinearLayout>
 
@@ -81,7 +82,8 @@
                 android:id="@+id/controller_prev"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/unbounded_ripple"
+                android:padding="10dp"
+                style="@style/MediaController"
                 android:src="@drawable/ic_player_previous" />
         </LinearLayout>
 
@@ -90,11 +92,13 @@
             android:layout_height="@dimen/player_control_height"
             android:layout_weight="1.8"
             android:gravity="center">
+
             <ImageView
                 android:id="@+id/controller_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/unbounded_ripple"
+                android:padding="10dp"
+                style="@style/MediaController"
                 android:src="@drawable/ic_player_play" />
         </LinearLayout>
 
@@ -107,7 +111,8 @@
                 android:id="@+id/controller_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/unbounded_ripple"
+                android:padding="5dp"
+                style="@style/MediaController"
                 android:src="@drawable/ic_player_next" />
         </LinearLayout>
 
@@ -120,7 +125,8 @@
                 android:id="@+id/controller_shuffle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/unbounded_ripple"
+                android:padding="10dp"
+                style="@style/MediaController"
                 android:src="@drawable/ic_shuffle_off" />
         </LinearLayout>
 
