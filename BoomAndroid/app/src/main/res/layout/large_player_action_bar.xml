@@ -17,7 +17,7 @@
             android:layout_width="@dimen/player_action_button"
             android:layout_height="@dimen/player_action_button"
             android:layout_marginStart="@dimen/player_back_button_margin_start"
-            android:background="@drawable/unbounded_ripple"
+            style="@style/MediaController"
             android:src="@drawable/ic_player_title_dropdown"  />
     </LinearLayout>
 
@@ -70,7 +70,7 @@
             <ImageView
                 android:layout_width="@dimen/player_action_button"
                 android:layout_height="@dimen/player_action_button"
-                android:background="@drawable/unbounded_ripple"
+                style="@style/MediaController"
                 android:src="@drawable/ic_upnext"/>
         </LinearLayout>
 
@@ -82,7 +82,7 @@
             <ImageView
                 android:layout_width="@dimen/player_action_button"
                 android:layout_height="@dimen/player_action_button"
-                android:background="@drawable/unbounded_ripple"
+                style="@style/MediaController"
                 android:tint="@color/white"
                 android:src="@drawable/ic_player_more_button"/>
         </LinearLayout>
