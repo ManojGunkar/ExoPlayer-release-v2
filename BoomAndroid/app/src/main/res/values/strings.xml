@@ -171,7 +171,9 @@
 
 
     <string name="store_page_header">Hassle free Boomin\'</string>
-    <string name="store_page_buy_description">Buy now to #FeelYourMusic \n without any hassle. Without any ad.</string>
+    <string name="store_page_buy_description">Buy now to #FeelYourMusic \n without any hassle.</string>
+    <string name="store_page_buy_share_description">Buy or Share now to #FeelYourMusic \n without any hassle.</string>
+
     <string name="store_page_share_description">You may also share Boom to discontinue ads \n for 5 days.</string>
     <string name="share_text">Share Boom</string>
     <string name="menu_restore">Restore Purchase</string>
