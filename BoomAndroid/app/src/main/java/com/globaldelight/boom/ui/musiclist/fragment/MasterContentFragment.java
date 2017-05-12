@@ -647,6 +647,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mMiniPlayerEffectPanel = (LinearLayout) mInflater.findViewById(R.id.mini_player_boom_effect);
         mMiniPlayerEffectPanel.setOnClickListener(this);
         mMiniPlayerEffect = (ImageView) mInflater.findViewById(R.id.mini_player_effect_img);
+        mMiniPlayerEffect.setOnClickListener(this);
+
         mMiniPlayerPlayPause = (ImageView) mInflater.findViewById(R.id.mini_player_play_pause_btn);
         mMiniPlayerPlayPause.setOnClickListener(this);
         mMiniTitlePanel = (LinearLayout) mInflater.findViewById(R.id.mini_player_title_panel);
@@ -835,6 +837,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.player_back_button:
+            case R.id.mini_player_effect_img:
             case R.id.mini_player_boom_effect:
                 if(!MasterActivity.isPlayerExpended()){
                     setPlayerEnable(false);
