@@ -387,71 +387,60 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updateAlbumArt(final IMediaItem item){
-        if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
-            new Action() {
-                private Bitmap img;
+        new Action<Bitmap []>() {
+            @NonNull
+            @Override
+            public String id() {
+                return TAG;
+            }
 
-                @NonNull
-                @Override
-                public String id() {
-                    return TAG;
-                }
-
-                @Nullable
-                @Override
-                protected Object run() throws InterruptedException {
-                    if (item.getItemArtUrl() != null && (new File(item.getItemArtUrl())).exists()) {
-                        return null;
-                    } else {
-                        return img = BitmapFactory.decodeResource(mActivity.getResources(),
-                                R.drawable.ic_default_art_player_header);
+            @Nullable
+            @Override
+            protected Bitmap[] run() throws InterruptedException {
+                Bitmap[] result = new Bitmap[2];
+                boolean failed = false;
+                if ( PlayerUtils.isPathValid(item.getItemArtUrl()) ) {
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
+                        Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(mActivity, bitmap, ScreenWidth/10, ScreenHeight/10);
+                        result[0] = bitmap;
+                        result[1] = blurredBitmap;
+                    }catch (Exception e){
+                        failed = true;
                     }
                 }
+                else {
+                    failed = true;
+                }
 
-                @Override
-                protected void done(@Nullable final Object result) {
-                    postMessage.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
-                                Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(mActivity, bitmap, ScreenWidth/10, ScreenHeight/10);
-                                if ( mItemId == -1 || mItemId != item.getItemId() ) {
-                                    PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, bitmap);
-                                    mItemId = item.getItemId();
-                                }else{
-                                    mLargeAlbumArt.setImageBitmap(bitmap);
-                                }
-                                mPlayerBackground.setBackground(new BitmapDrawable(mActivity.getResources(), blurredBitmap));
-                            }catch (Exception e){
-                                Bitmap albumArt = BitmapFactory.decodeResource(mActivity.getResources(),
-                                        R.drawable.ic_default_art_player_header);
-                                if ( mItemId == -1 || mItemId != item.getItemId() ) {
-                                    PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, albumArt);
-                                }else{
-                                    mLargeAlbumArt.setImageBitmap(albumArt);
-                                }
-                                Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(mActivity, albumArt, ScreenWidth/10, ScreenHeight/10);
-                                mPlayerBackground.setBackground(new BitmapDrawable(mActivity.getResources(), blurredBitmap));
-                            }
-                        }
-                    });
+                if ( failed ) {
+                    Bitmap bitmap = BitmapFactory.decodeResource(mActivity.getResources(),
+                            R.drawable.ic_default_art_player_header);
+                    Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(mActivity, bitmap, ScreenWidth/10, ScreenHeight/10);
+                    result[0] = bitmap;
+                    result[1] = blurredBitmap;
                 }
-            }.execute();
-        } else {
-            if(item != null) {
-                Bitmap albumArt = BitmapFactory.decodeResource(mActivity.getResources(),
-                        R.drawable.ic_default_art_player_header);
+
+                return result;
+            }
+
+            @Override
+            protected void done(@Nullable final Bitmap[] result) {
+                if ( result.length != 2 ) {
+                    return;
+                }
+
+                final Bitmap bitmap = result[0];
+                final Bitmap blurredBitmap = result[1];
                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
-                    PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, albumArt);
+                    PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, bitmap);
                     mItemId = item.getItemId();
-                }else {
-                    mLargeAlbumArt.setImageResource(R.drawable.ic_default_art_player_header);
+                }else{
+                    mLargeAlbumArt.setImageBitmap(bitmap);
                 }
-                Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(mActivity, albumArt, ScreenWidth/10, ScreenHeight/10);
                 mPlayerBackground.setBackground(new BitmapDrawable(mActivity.getResources(), blurredBitmap));
             }
-        }
+        }.execute();
     }
 
     private void changeProgress(int progress){
