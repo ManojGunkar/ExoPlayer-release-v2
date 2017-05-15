@@ -512,8 +512,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     if(App.getPlayerEventHandler().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB){
                         showProgressLoader();
                     }
+
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Playing_SeekBar_Used_in_Effects_screen);
                 }
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Playing_SeekBar_Used_in_Effects_screen);
             }
 
             @Override
