@@ -257,6 +257,7 @@
     <string name="settings_change_account_message">If you change account, all data linked with the current account will be lost.</string>
     <string name="conitnue_with_acc_change">CONTINUE</string>
     <string name="store_page_buy_share_description">Buy or Share now to #FeelYourMusic \n without any hassle.</string>
+    <string name="app_unsupported">App doesn\'t support this device.</string>
 
 
 
