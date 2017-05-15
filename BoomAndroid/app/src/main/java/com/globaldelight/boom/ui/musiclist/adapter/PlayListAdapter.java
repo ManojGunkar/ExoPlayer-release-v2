@@ -207,6 +207,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
                     break;
             }
         }else{
+            holder.artTable.setVisibility(View.INVISIBLE);
             holder.defaultImg.setVisibility(View.VISIBLE);
             setDefaultImage(holder.defaultImg);
         }
