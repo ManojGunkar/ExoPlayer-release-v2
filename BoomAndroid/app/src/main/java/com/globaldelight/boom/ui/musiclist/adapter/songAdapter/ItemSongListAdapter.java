@@ -39,6 +39,7 @@ import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.PlayerUtils;
+import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
 import com.squareup.picasso.Picasso;
 
@@ -65,6 +66,8 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     private IMediaItem currentItem;
     private ListDetail listDetail;
     private AlbumSongListFragment fragment;
+    private int WIDTH, HEIGHT;
+
 
     public ItemSongListAdapter(Activity activity, AlbumSongListFragment fragment, IMediaItemCollection collection, ListDetail listDetail, OnStartDragListener dragListener) {
         this.activity = activity;
@@ -72,6 +75,8 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         this.collection = (MediaItemCollection) collection;
         this.listDetail = listDetail;
         this.mOnStartDragListener = dragListener;
+        WIDTH = Utils.dpToPx(activity, 62);
+        HEIGHT = Utils.dpToPx(activity, 62);
     }
     @Override
     public ItemSongListAdapter.SimpleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -189,6 +194,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                 .load(new File(path))
                 .placeholder(R.drawable.ic_default_art_grid)
                 .noFade()
+                .resize(WIDTH, HEIGHT)
                 .into(holder.img);
     }
 
