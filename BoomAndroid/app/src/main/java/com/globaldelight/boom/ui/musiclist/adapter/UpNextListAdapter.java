@@ -25,6 +25,7 @@ import com.globaldelight.boom.ui.widgets.RegularButton;
 import com.globaldelight.boom.ui.widgets.RegularTextView;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.PlayerUtils;
+import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 
@@ -42,11 +43,14 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
     OnStartDragListener mOnStartDragListener;
     private RecyclerView recyclerView;
     private Context context;
+    private int WIDTH, HEIGHT;
 
     public UpNextListAdapter(Context context, OnStartDragListener dragListener, RecyclerView recyclerView) {
         this.context = context;
         this.mOnStartDragListener = dragListener;
         this.recyclerView = recyclerView;
+        WIDTH = Utils.dpToPx(context, 62);
+        HEIGHT = Utils.dpToPx(context, 62);
     }
 
     public void updateList(UpNextPlayingQueue playingQueue) {
@@ -176,6 +180,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
         }
         Picasso.with(context).load(new File(path))
                 .placeholder(R.drawable.ic_default_art_grid)
+                .resize(WIDTH, HEIGHT)
                 .into(holder.img);
     }
 

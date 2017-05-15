@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -37,12 +38,12 @@ public class NotificationHandler {
     private PlayerService service;
     private boolean notificationActive;
     RemoteViews notiLayoutBig, notiCollapsedView;
-    private static Notification notificationCompat;
     private static NotificationManager notificationManager;
 
     public NotificationHandler(Context context, PlayerService service) {
         this.context = context;
         this.service = service;
+        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     private Notification.Builder createBuiderNotification(boolean removable) {
@@ -67,53 +68,6 @@ public class NotificationHandler {
     }
 
     public void setNotificationPlayer(boolean removable) {
-        if ( notificationCompat == null ) {
-            notificationCompat = createBuiderNotification(true).build();
-            notiLayoutBig = new RemoteViews(context.getPackageName(),
-                    R.layout.notification_layout);
-            notiCollapsedView = new RemoteViews(context.getPackageName(),
-                    R.layout.notification_small);
-            if (Build.VERSION.SDK_INT >= 16) {
-                notificationCompat.bigContentView = notiLayoutBig;
-            }
-            notificationCompat.contentView = notiCollapsedView;
-
-            Intent playClick = new Intent();
-            playClick.putExtra("requestCode",10101);
-            playClick.setAction(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG);
-            PendingIntent playClickIntent = PendingIntent.getBroadcast(context, 10101, playClick, PendingIntent.FLAG_UPDATE_CURRENT);
-            notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
-            notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
-
-            Intent nextClick = new Intent();
-            nextClick.putExtra("requestCode",10102);
-            nextClick.setAction(PlayerServiceReceiver.ACTION_NEXT_SONG);
-            PendingIntent nextClickIntent = PendingIntent.getBroadcast(context, 10102, nextClick, PendingIntent.FLAG_UPDATE_CURRENT);
-            notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
-            notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
-
-            Intent prevClick = new Intent();
-            prevClick.putExtra("requestCode",10103);
-            prevClick.setAction(PlayerServiceReceiver.ACTION_PREV_SONG);
-            PendingIntent prevClickIntent = PendingIntent.getBroadcast(context, 10103, prevClick, PendingIntent.FLAG_UPDATE_CURRENT);
-            notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
-            notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
-
-            notificationCompat.priority = Notification.PRIORITY_MAX;
-        }
-
-        final int stickyFlag = Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
-        if ( !removable ) {
-            notificationCompat.flags = notificationCompat.flags | stickyFlag;
-            service.startForeground(NOTIFICATION_ID, notificationCompat);
-        }
-        else {
-            notificationCompat.flags = notificationCompat.flags & ~stickyFlag;
-        }
-
-        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID, notificationCompat);
-        notificationActive = true;
     }
 
     public void changeNotificationDetails(IMediaItem item, boolean playing, boolean isLastPlayed) {
@@ -122,6 +76,39 @@ public class NotificationHandler {
             removeNotification();
             return;
         }
+        Notification notificationCompat = createBuiderNotification(!playing).build();
+        RemoteViews notiLayoutBig = new RemoteViews(context.getPackageName(),
+                R.layout.notification_layout);
+        RemoteViews notiCollapsedView = new RemoteViews(context.getPackageName(),
+                R.layout.notification_small);
+        if (Build.VERSION.SDK_INT >= 16) {
+            notificationCompat.bigContentView = notiLayoutBig;
+        }
+        notificationCompat.contentView = notiCollapsedView;
+
+        Intent playClick = new Intent();
+        playClick.putExtra("requestCode",10101);
+        playClick.setAction(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG);
+        PendingIntent playClickIntent = PendingIntent.getBroadcast(context, 10101, playClick, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
+        notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_play_button, playClickIntent);
+
+        Intent nextClick = new Intent();
+        nextClick.putExtra("requestCode",10102);
+        nextClick.setAction(PlayerServiceReceiver.ACTION_NEXT_SONG);
+        PendingIntent nextClickIntent = PendingIntent.getBroadcast(context, 10102, nextClick, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
+        notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_next_button, nextClickIntent);
+
+        Intent prevClick = new Intent();
+        prevClick.putExtra("requestCode",10103);
+        prevClick.setAction(PlayerServiceReceiver.ACTION_PREV_SONG);
+        PendingIntent prevClickIntent = PendingIntent.getBroadcast(context, 10103, prevClick, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationCompat.bigContentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
+        notificationCompat.contentView.setOnClickPendingIntent(R.id.noti_prev_button, prevClickIntent);
+
+        notificationCompat.priority = Notification.PRIORITY_MAX;
+
         notificationCompat.bigContentView.setViewVisibility(R.id.noti_name, VISIBLE);
         notificationCompat.bigContentView.setViewVisibility(R.id.noti_artist, null != item.getItemArtist() ? VISIBLE : GONE);
         notificationCompat.bigContentView.setTextViewText(R.id.noti_name, item.getItemTitle());
@@ -148,40 +135,26 @@ public class NotificationHandler {
         }
 
         if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
-            Picasso.with(context).load(new File(item.getItemArtUrl())).into(new Target() {
-                @Override
-                public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                    notificationCompat.bigContentView.setImageViewBitmap(R.id.noti_album_art, bitmap);
-                    notificationCompat.contentView.setImageViewBitmap(R.id.noti_album_art, bitmap);
-                    notificationManager.notify(NOTIFICATION_ID, notificationCompat);
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    setDefaultImageView();
-                }
-            });
+            Uri bitmapUri = Uri.parse(item.getItemArtUrl());
+            notificationCompat.bigContentView.setImageViewUri(R.id.noti_album_art, bitmapUri);
+            notificationCompat.contentView.setImageViewUri(R.id.noti_album_art, bitmapUri);
         } else {
-            setDefaultImageView();
+            notificationCompat.bigContentView.setImageViewResource(R.id.noti_album_art,
+                    R.drawable.ic_default_art_grid);
+            notificationCompat.contentView.setImageViewResource(R.id.noti_album_art,
+                    R.drawable.ic_default_art_grid);
         }
+
+        if ( playing ) {
+            service.startForeground(NOTIFICATION_ID, notificationCompat);
+        }
+
         notificationManager.notify(NOTIFICATION_ID, notificationCompat);
+        notificationActive = true;
     }
 
     public void removeNotification(){
         notificationManager.cancel(NOTIFICATION_ID);
-    }
-
-    private void setDefaultImageView() {
-        notificationCompat.bigContentView.setImageViewBitmap(R.id.noti_album_art,
-                Utils.getBitmapOfVector(context, R.drawable.ic_default_art_grid,
-                        Utils.dpToPx(context, 100), Utils.dpToPx(context, 100)));
-        notificationCompat.contentView.setImageViewBitmap(R.id.noti_album_art,
-                Utils.getBitmapOfVector(context, R.drawable.ic_default_art_grid,
-                        Utils.dpToPx(context, 50), Utils.dpToPx(context, 50)));
     }
 
     public boolean isNotificationActive() {

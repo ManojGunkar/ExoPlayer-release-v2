@@ -44,11 +44,15 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
     ArrayList<IMediaItem> itemList;
     private Activity activity;
     private Fragment fragment;
+    private int WIDTH, HEIGHT;
+
 
     public SongListAdapter(Activity activity, Fragment fragment, ArrayList<? extends IMediaItemBase> itemList) {
         this.activity = activity;
         this.fragment = fragment;
         this.itemList = (ArrayList<IMediaItem>) itemList;
+        WIDTH = Utils.dpToPx(activity, 62);
+        HEIGHT = Utils.dpToPx(activity, 62);
     }
 
     @Override
@@ -100,6 +104,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
         Picasso.with(activity)
                 .load(new File(path))
                 .placeholder(R.drawable.ic_default_art_grid)
+                .resize(WIDTH, HEIGHT)
                 .into(holder.img);
     }
 
