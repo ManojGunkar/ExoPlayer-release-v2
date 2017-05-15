@@ -221,6 +221,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     private boolean isSupportedDevice(){
-        return Build.MANUFACTURER.equalsIgnoreCase("Celkon");
+        return true; //Build.MANUFACTURER.equalsIgnoreCase("Celkon");
     }
 }
