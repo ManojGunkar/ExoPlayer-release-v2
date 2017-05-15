@@ -59,12 +59,16 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
     private Activity activity;
     private ItemType listItemType;
     Fragment fragment;
+    private int WIDTH, HEIGHT;
+
 
     public CloudItemListAdapter(Activity activity, Fragment fragment, ArrayList<? extends IMediaItemBase> itemList, ItemType listItemType) {
         this.activity = activity;
         this.fragment = fragment;
         this.itemList = itemList;
         this.listItemType = listItemType;
+        WIDTH = Utils.dpToPx(activity, 62);
+        HEIGHT = Utils.dpToPx(activity, 62);
     }
 
     @Override
@@ -142,6 +146,7 @@ public class CloudItemListAdapter extends RecyclerView.Adapter<CloudItemListAdap
         Picasso.with(activity)
                 .load(new File(path))
                 .placeholder(R.drawable.ic_default_art_grid)
+                .resize(WIDTH, HEIGHT)
                 .into(holder.img);
 
     }
