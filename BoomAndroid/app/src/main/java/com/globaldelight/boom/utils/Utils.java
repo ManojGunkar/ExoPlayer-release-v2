@@ -250,17 +250,13 @@ public class Utils {
         return false;
     }
 
-    public static void showNetworkAlert(Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(context.getResources().getString(R.string.network_alart));
-        builder.setMessage(context.getResources().getString(R.string.check_network));
-        builder.setNeutralButton(context.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+    public static void networkAlert(Context context) {
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(context, R.style.DialogTheme);
+        builder.setTitle(R.string.title_internet_alert);
+        builder.setMessage(R.string.check_network);
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", null);
         builder.show();
     }
 

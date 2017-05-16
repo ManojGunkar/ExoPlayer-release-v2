@@ -385,12 +385,22 @@ public class MainActivity extends MasterActivity
                 FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_library_Opened_From_Drawer);
                 break;
             case R.id.google_drive:
-                runnable = navigateGoogleDrive;
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_OPENED_FROM_DRAWER);
+                if (Utils.isOnline(this)){
+                    runnable = navigateGoogleDrive;
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_OPENED_FROM_DRAWER);
+                }else {
+                    Utils.networkAlert(this);
+                    return false;
+                }
                 break;
             case R.id.drop_box:
-                runnable = navigateDropbox;
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.DROP_BOX_OPENED_FROM_DRAWER);
+                if (Utils.isOnline(this)){
+                    runnable = navigateDropbox;
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.DROP_BOX_OPENED_FROM_DRAWER);
+                }else {
+                    Utils.networkAlert(this);
+                    return false;
+                }
                 break;
             case R.id.nav_setting:
                 new Handler().postDelayed(new Runnable() {

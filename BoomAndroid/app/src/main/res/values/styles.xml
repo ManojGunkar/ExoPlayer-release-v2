@@ -173,4 +173,10 @@
         <item name="android:minHeight">0dip</item>
     </style>
 
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:background">#1f1f20</item>
+    </style>
+
 </resources>
