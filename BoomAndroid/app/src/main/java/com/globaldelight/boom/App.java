@@ -205,11 +205,10 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     private boolean isExpired(){
-        if(Utils.isAppExpireEnable()) {
-            String expiryDateString = "JUN-20-2017";
+        if( BuildConfig.EXPIRY_ENABLED ) {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd-yyyy");
-                Date expiryDate = sdf.parse(expiryDateString);
+                Date expiryDate = sdf.parse(BuildConfig.EXPIRY_DATE);
                 Date today = new Date();
                 return today.after(expiryDate);
             } catch (ParseException e) {
