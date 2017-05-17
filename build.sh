@@ -3,6 +3,7 @@
 ROOT_DIR=$(pwd)
 BUILD_TOOLS="${ANDROID_HOME}/build-tools/24.0.3"
 APK_DIR=app/build/outputs/apk
+EXPIRY_DATE=$(date -v+1m '+"%d-%m-%Y"')
 
 check_error() {
 	if [ $1 -ne 0 ]; then
@@ -23,7 +24,7 @@ fi
 cd BoomAndroid
 chmod +x gradlew
 
-./gradlew assembleRelease -PbuildNumber=$BUILD_NUMBER
+./gradlew assembleRelease -PbuildNumber=$BUILD_NUMBER -PexpiryDate=$EXPIRY_DATE
 check_error $?
 
 $BUILD_TOOLS/zipalign -v -p 4 "${APK_DIR}/app-release-unsigned.apk" "${BUILD_DIR}/app-unsigned-aligned.apk"
