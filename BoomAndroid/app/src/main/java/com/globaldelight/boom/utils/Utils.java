@@ -518,10 +518,6 @@ public class Utils {
         return false;
     }
 
-    public static boolean isAppExpireEnable(){
-        return true;
-    }
-
     public static void businessPrimaryPopup(final Activity context){
         new MaterialDialog.Builder(context)
                 .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
