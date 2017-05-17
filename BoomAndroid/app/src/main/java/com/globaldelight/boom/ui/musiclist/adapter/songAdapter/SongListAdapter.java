@@ -88,8 +88,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
         if(null != nowPlayingItem){
             holder.name.setTextColor(itemId == nowPlayingItem.getItemId() ? ContextCompat.getColor(activity, R.color.track_selected_title)
             : ContextCompat.getColor(activity, R.color.track_title));
-            holder.art_overlay.setVisibility(itemId == nowPlayingItem.getItemId() ? View.VISIBLE : View.INVISIBLE);
-            holder.art_overlay_play.setVisibility(itemId == nowPlayingItem.getItemId() ? View.VISIBLE : View.INVISIBLE);
+            holder.art_overlay.setVisibility(itemId == nowPlayingItem.getItemId() ? View.VISIBLE : View.GONE);
+            holder.art_overlay_play.setVisibility(itemId == nowPlayingItem.getItemId() ? View.VISIBLE : View.GONE);
             if(itemId == nowPlayingItem.getItemId()){
                 if(App.getPlayerEventHandler().isPlaying()){
                     holder.art_overlay_play.setImageResource(R.drawable.ic_player_pause);
