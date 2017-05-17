@@ -685,19 +685,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }
     }
 
-    public void setMiniPlayerAlpha(float alpha) {
-        miniController.setAlpha(alpha);
-    }
 
     public void setMiniPlayerVisible(boolean isMiniPlayerVisible) {
         if(isMiniPlayerVisible){
-            miniController.setAlpha(1);
-            mPlayerActionPanel.setAlpha(0);
             mPlayerActionPanel.setVisibility(View.INVISIBLE);
             miniController.setVisibility(View.VISIBLE);
         }else{
-            miniController.setAlpha(0);
-            mPlayerActionPanel.setAlpha(1);
             mPlayerActionPanel.setVisibility(View.VISIBLE);
             miniController.setVisibility(View.INVISIBLE);
         }
