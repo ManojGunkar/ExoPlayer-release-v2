@@ -27,14 +27,13 @@ android {
         multiDexEnabled true
 
         buildConfigField("String", EXPIRY_DATE,     expiryDate as String);
-        buildConfigField("Boolean", EXPIRY_ENABLED, expiryDateEnabled);
-        buildConfigField("Boolean", BUSINESS_MODEL_ENABLED, businessModelEnabled)
+        buildConfigField("boolean", BUSINESS_MODEL_ENABLED, businessModelEnabled)
     }
 
     buildTypes {
 
         debug {
-            buildConfigField("boolean", EXPIRY_ENABLED, "false");
+            buildConfigField("String", EXPIRY_DATE, "null");
         }
 
         release {
