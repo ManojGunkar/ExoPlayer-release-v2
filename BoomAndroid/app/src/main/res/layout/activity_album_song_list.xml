@@ -43,7 +43,7 @@
                         android:id="@+id/activity_album_art"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="fitXY"
+                        android:scaleType="centerCrop"
                         android:visibility="gone"/>
 
                     <TableLayout
@@ -60,13 +60,13 @@
                                 android:id="@+id/song_detail_list_art_img1"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:scaleType="fitXY"/>
+                                android:scaleType="centerCrop"/>
 
                             <ImageView
                                 android:id="@+id/song_detail_list_art_img2"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:scaleType="fitXY"/>
+                                android:scaleType="centerCrop"/>
 
                         </TableRow>
 
@@ -78,13 +78,13 @@
                                 android:id="@+id/song_detail_list_art_img3"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:scaleType="fitXY"/>
+                                android:scaleType="centerCrop"/>
 
                             <ImageView
                                 android:id="@+id/song_detail_list_art_img4"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:scaleType="fitXY"/>
+                                android:scaleType="centerCrop"/>
 
                         </TableRow>
 
