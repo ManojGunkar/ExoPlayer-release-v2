@@ -114,7 +114,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     public View miniController, mPlayerActionPanel;
 
     private RegularTextView mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
-    private View mInflater, revealView;
+    private View mInflater;
     private int colorTo , colorFrom, colorFromActive;
     private AppCompatSeekBar mTrackSeek;
     private ImageView mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mEffectTab, mPlayerTab, mPlayerBackBtn, mLargeAlbumArt;
@@ -538,7 +538,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 }, 300);
             }
         });
-        revealView = mInflater.findViewById(R.id.player_reveal_view);
         mCurrentSeekTime = (RegularTextView) mInflater.findViewById(R.id.played_time);
         mTotalSeekTime = (RegularTextView) mInflater.findViewById(R.id.remain_time);
 
@@ -719,9 +718,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         setMiniPlayerVisible(true);
         updateMiniPlayerUI(mPlayingMediaItem, App.getPlayerEventHandler().isPlaying(), mIsLastPlayed);
         showEffectShortCut();
-        if (revealView.getVisibility() == View.VISIBLE) {
-            revealView.setVisibility(View.INVISIBLE);
-        }
 
         if(null != coachMarkEffectSwitcher){
             coachMarkEffectSwitcher.dismissTooltip();
