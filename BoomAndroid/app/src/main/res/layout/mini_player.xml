@@ -44,10 +44,9 @@
                 android:id="@+id/mini_player_song_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
                 android:textStyle="normal"
-                android:singleLine="true"
-                android:ellipsize="marquee"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textColor="@color/player_track_title"
                 android:textSize="16sp" />
 
@@ -55,10 +54,9 @@
                 android:id="@+id/mini_player_song_sub_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:ellipsize="marquee"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textStyle="normal"
-                android:gravity="center_horizontal"
                 android:textColor="@color/player_track_sub_title"
                 android:textSize="16sp"/>
         </LinearLayout>
