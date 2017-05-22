@@ -61,7 +61,7 @@ public class AlbumDetailActivity extends MasterActivity {
         int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
         int height = Utils.getWindowHeight(this) - panelSize * 4;
         setAlbumArtSize(width, width);
-        setAlbumArt(currentItem.getItemArtUrl(), width);
+        setAlbumArt(currentItem.getItemArtUrl());
     }
 
     private void initViews() {
@@ -126,13 +126,14 @@ public class AlbumDetailActivity extends MasterActivity {
         findViewById(R.id.activity_album_art).setLayoutParams(lp);
     }
 
-    public void setAlbumArt(String albumArt, int height) {
+    public void setAlbumArt(String albumArt) {
+        ImageView imageView = (ImageView) findViewById(R.id.activity_album_art);
         if ( albumArt == null ) albumArt = "";
         Picasso.with(AlbumDetailActivity.this)
-                .load(new File(albumArt)).resize(height, height)
+                .load(new File(albumArt))
                 .placeholder(R.drawable.ic_default_art_player_header)
                 .noFade()
-                .into(((ImageView) findViewById(R.id.activity_album_art)));
+                .into(imageView);
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 
 import com.globaldelight.boom.App;
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.ui.musiclist.activity.MainActivity;
 import com.globaldelight.boom.ui.musiclist.activity.MasterActivity;
@@ -27,8 +28,6 @@ import static com.globaldelight.boom.task.PlayerEvents.ACTION_ON_SWITCH_OFF_AUDI
 public class BoomPlayTimeReceiver extends BroadcastReceiver {
 
     public static final String TIME_LIMIT_COMPLETE = "TIME_LIMIT_COMPLETE";
-    private static boolean isDisable = false;
-
     private static int MAX_TIME_LIMIT_IN_SECOND = 0;
 
     public static final int SHOW_POPUP_NONE = 0;
@@ -103,7 +102,7 @@ public class BoomPlayTimeReceiver extends BroadcastReceiver {
     }
 
     public static void setPlayingStartTime(boolean playing) {
-        if( isDisable || isPurchased() || isShared() ){
+        if( !BuildConfig.BUSINESS_MODEL_ENABLED || isPurchased() || isShared() ){
             return;
         }
 

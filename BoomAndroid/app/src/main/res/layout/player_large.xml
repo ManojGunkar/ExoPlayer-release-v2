@@ -11,8 +11,7 @@
     <LinearLayout
         android:id="@+id/player_large"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
         <FrameLayout
             android:id="@+id/player_large_header"
@@ -28,70 +27,50 @@
 
         </FrameLayout>
         <!--mainView-->
-        <RelativeLayout
+
+        <LinearLayout
+            android:id="@+id/player_switcher_panel"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/player_control_margine">
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/player_control_margine"
+            android:layout_marginLeft="@dimen/player_switcher_margin_left"
+            android:layout_marginRight="@dimen/player_switcher_margin_right"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/player_switcher_panel"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="@dimen/player_switcher_margin_left"
-                android:layout_marginRight="@dimen/player_switcher_margin_right"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
+                android:gravity="center"
+                android:layout_weight=".5">
+                <ImageView
+                    android:id="@+id/effect_tab"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_weight=".5">
-                    <ImageView
-                        android:id="@+id/effect_tab"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/MediaController"
-                        android:src="@drawable/ic_effects_normal" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_weight=".5">
-                    <ImageView
-                        android:id="@+id/player_tab"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/MediaController"
-                        android:src="@drawable/ic_player_active" />
-                </LinearLayout>
-
+                    style="@style/MediaController"
+                    android:src="@drawable/ic_effects_normal" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_below="@+id/player_switcher_panel">
-
-                <include layout="@layout/player_controller"/>
-
+                android:gravity="center"
+                android:layout_weight=".5">
+                <ImageView
+                    android:id="@+id/player_tab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/MediaController"
+                    android:src="@drawable/ic_player_active" />
             </LinearLayout>
 
-        </RelativeLayout>
+        </LinearLayout>
+
 
     </LinearLayout>
 
+    <include layout="@layout/player_controller"/>
 
-    <LinearLayout
-        android:id="@+id/player_reveal_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
-        android:orientation="vertical"
-        android:visibility="invisible" />
 </LinearLayout>
 

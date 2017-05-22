@@ -70,6 +70,7 @@ class AudioTrackReader extends MediaCodec.Callback {
 
         @Override
         public void run() {
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
             final long kTimeOutUs = 1000;
             try {
                 while ( !quit && !this.isInterrupted() ) {

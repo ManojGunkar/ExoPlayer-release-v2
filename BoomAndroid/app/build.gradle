@@ -11,6 +11,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 android {
+    def EXPIRY_DATE = "EXPIRY_DATE"
+    def EXPIRY_ENABLED = "EXPIRY_ENABLED"
+    def BUSINESS_MODEL_ENABLED = "BUSINESS_MODEL_ENABLED"
+
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
 
@@ -21,8 +25,17 @@ android {
         versionCode buildNumber as Integer
         versionName "1.0.0"
         multiDexEnabled true
+
+        buildConfigField("String", EXPIRY_DATE,     expiryDate as String);
+        buildConfigField("boolean", BUSINESS_MODEL_ENABLED, businessModelEnabled)
     }
+
     buildTypes {
+
+        debug {
+            buildConfigField("String", EXPIRY_DATE, "null");
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

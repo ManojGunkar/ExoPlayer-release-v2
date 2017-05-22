@@ -1,134 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:layout_gravity="bottom">
 
     <LinearLayout
         android:id="@+id/progress_panel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/player_controller_holder"
-        android:layout_marginLeft="@dimen/player_seek_margin"
-        android:layout_marginRight="@dimen/player_seek_margin"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="20dp"
+        android:paddingLeft="@dimen/player_seek_margin"
+        android:paddingRight="@dimen/player_seek_margin">
+
         <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/played_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/large_player_seek_time"
+            android:layout_weight="0"
             android:maxLines="1"
-            android:textStyle="normal"
+            android:textColor="@color/large_player_seek_time"
             android:textSize="@dimen/player_seek_time_size"
-            android:layout_weight="0"/>
+            android:textStyle="normal" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1">
+
             <android.support.v7.widget.AppCompatSeekBar
                 android:id="@+id/control_seek_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layoutDirection="inherit"
-                android:progress="100"/>
+                android:progress="100" />
         </LinearLayout>
 
         <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/remain_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:maxLines="1"
-            android:textStyle="normal"
             android:textColor="@color/large_player_seek_time"
             android:textSize="@dimen/player_seek_time_size"
-            android:layout_weight="0"/>
+            android:textStyle="normal" />
 
     </LinearLayout>
 
 
-    <LinearLayout
-        android:id="@+id/player_controller_holder"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="@dimen/player_control_margin_left"
-        android:layout_marginRight="@dimen/player_control_margin_right"
-        android:gravity="center"
-        android:weightSum="5.8"
-        android:orientation="horizontal">
+        android:padding="10dp"
+        android:layout_gravity="bottom"
+        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="@dimen/player_control_height"
-            android:layout_weight="1"
-            android:gravity="center">
-            <ImageView
-                android:id="@+id/controller_repeat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                style="@style/MediaController"
-                android:src="@drawable/ic_repeat_off" />
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/controller_repeat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            style="@style/MediaController"
+            android:src="@drawable/ic_repeat_off"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/player_control_margin_left"
+            android:layout_toLeftOf="@+id/controller_prev"/>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="@dimen/player_control_height"
-            android:layout_weight="1"
-            android:gravity="center">
-            <ImageView
-                android:id="@+id/controller_prev"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                style="@style/MediaController"
-                android:src="@drawable/ic_player_previous" />
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/controller_prev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            style="@style/MediaController"
+            android:src="@drawable/ic_player_previous"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/player_control_margin_left"
+            android:layout_toLeftOf="@+id/controller_play"/>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="@dimen/player_control_height"
-            android:layout_weight="1.8"
-            android:gravity="center">
+        <ImageView
+            android:id="@+id/controller_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            style="@style/MediaController"
+            android:src="@drawable/ic_player_play"/>
 
-            <ImageView
-                android:id="@+id/controller_play"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/MediaController"
-                android:src="@drawable/ic_player_play" />
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/controller_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/MediaController"
+            android:padding="10dp"
+            android:src="@drawable/ic_player_next"
+            android:layout_marginLeft="@dimen/player_control_margin_left"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/controller_play"/>
+        <ImageView
+            android:id="@+id/controller_shuffle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            style="@style/MediaController"
+            android:src="@drawable/ic_shuffle_off"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/player_control_margin_left"
+            android:layout_toEndOf="@+id/controller_next"/>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="@dimen/player_control_height"
-            android:layout_weight="1"
-            android:gravity="center">
-            <ImageView
-                android:id="@+id/controller_next"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                style="@style/MediaController"
-                android:src="@drawable/ic_player_next" />
-        </LinearLayout>
+    </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="@dimen/player_control_height"
-            android:layout_weight="1"
-            android:gravity="center">
-            <ImageView
-                android:id="@+id/controller_shuffle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                style="@style/MediaController"
-                android:src="@drawable/ic_shuffle_off" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>

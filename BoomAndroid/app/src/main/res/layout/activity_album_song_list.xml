@@ -30,20 +30,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fitsSystemWindows="true"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                app:layout_collapseMode="parallax">
 
                 <FrameLayout
                     android:id="@+id/song_detail_list_img_panel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:layout_collapseMode="parallax">
+                    android:layout_weight="1" >
 
                     <ImageView
                         android:id="@+id/activity_album_art"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="fitXY"
+                        android:scaleType="centerCrop"
                         android:visibility="gone"/>
 
                     <TableLayout
@@ -60,13 +60,13 @@
                                 android:id="@+id/song_detail_list_art_img1"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:scaleType="fitXY"/>
+                                android:scaleType="centerCrop"/>
 
                             <ImageView
                                 android:id="@+id/song_detail_list_art_img2"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:scaleType="fitXY"/>
+                                android:scaleType="centerCrop"/>
 
                         </TableRow>
 
@@ -78,13 +78,13 @@
                                 android:id="@+id/song_detail_list_art_img3"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:scaleType="fitXY"/>
+                                android:scaleType="centerCrop"/>
 
                             <ImageView
                                 android:id="@+id/song_detail_list_art_img4"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:scaleType="fitXY"/>
+                                android:scaleType="centerCrop"/>
 
                         </TableRow>
 
@@ -92,13 +92,17 @@
 
                 </FrameLayout>
 
-                <LinearLayout
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="top"
+                    android:background="@drawable/scrim_top" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
                     android:layout_gravity="bottom"
-                    android:layout_weight="0"
-                    android:background="#4D000000"
-                    android:orientation="horizontal" />
+                    android:background="@drawable/scrim_bottom" />
             </FrameLayout>
 
             <android.support.v7.widget.Toolbar
@@ -112,7 +116,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/item_detail_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

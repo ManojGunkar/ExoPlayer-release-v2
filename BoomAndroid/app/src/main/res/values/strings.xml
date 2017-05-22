@@ -259,4 +259,6 @@
     <string name="settings_change_account_message">If you change account, all data linked with the current account will be lost.</string>
     <string name="conitnue_with_acc_change">CONTINUE</string>
 
+    <string name="title_internet_alert">No Internet Connection</string>
+
     </resources>

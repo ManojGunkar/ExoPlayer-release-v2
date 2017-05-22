@@ -6,6 +6,7 @@ import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
 import android.os.Build;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -174,8 +175,11 @@ public class AudioPlayer implements Runnable {
             setAutoEqualizer();
         }
 
-        try {
+        PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
+        wakeLock.acquire();
 
+        try {
             state.set(States.LOADING);
 
             reader = new AudioTrackReader(sourcePath);
@@ -245,7 +249,6 @@ public class AudioPlayer implements Runnable {
                     postOnStop();
                 }
             }
-
         }
         catch (InterruptedException e) {
             // This is not an error
@@ -256,6 +259,9 @@ public class AudioPlayer implements Runnable {
             state.set(States.STOPPED);
             stop = true;
             postError();
+        }
+        finally {
+            wakeLock.release();
         }
     }
 

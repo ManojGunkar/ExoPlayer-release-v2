@@ -153,14 +153,24 @@ public class CloudListActivity extends MasterActivity
                 runnable = navigateLibrary;
                 break;
             case R.id.google_drive:
-                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                runnable = navigateGoogleDrive;
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_OPENED_FROM_DRAWER);
+                if (Utils.isOnline(this)){
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    runnable = navigateGoogleDrive;
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_OPENED_FROM_DRAWER);
+                }else {
+                    Utils.networkAlert(this);
+                    return false;
+                }
                 break;
             case R.id.drop_box:
-                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                runnable = navigateDropbox;
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.DROP_BOX_OPENED_FROM_DRAWER);
+                if (Utils.isOnline(this)){
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    runnable = navigateDropbox;
+                    FlurryAnalyticHelper.logEvent(UtilAnalytics.DROP_BOX_OPENED_FROM_DRAWER);
+                }else {
+                    Utils.networkAlert(this);
+                    return false;
+                }
                 break;
             case R.id.nav_setting:
                 new Handler().postDelayed(new Runnable() {
