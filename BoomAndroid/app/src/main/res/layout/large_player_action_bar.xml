@@ -1,90 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/player_action_bar"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/player_action_bar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:gravity="center_vertical"
-    android:elevation="2dp"
-    android:orientation="horizontal"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:gravity="center"
+    android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1.8"
-        android:gravity="left|center_vertical">
-        <ImageView
-            android:id="@+id/player_back_button"
-            android:layout_width="@dimen/player_action_button"
-            android:layout_height="@dimen/player_action_button"
-            android:layout_marginStart="@dimen/player_back_button_margin_start"
-            style="@style/MediaController"
-            android:src="@drawable/ic_player_title_dropdown"  />
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/player_back_button"
+        style="@style/MediaController"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:src="@drawable/ic_player_title_dropdown" />
 
     <LinearLayout
         android:id="@+id/player_title_panel"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_weight="6.6"
-        android:gravity="center">
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
         <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/large_player_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/player_track_title"
-            android:textStyle="normal"
-            android:singleLine="true"
-            android:ellipsize="marquee"
             android:layout_weight="1"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            android:singleLine="true"
+            android:textColor="@color/player_track_title"
             android:textSize="@dimen/player_title_size"
-            android:textAlignment="center"/>
+            android:textStyle="normal" />
 
         <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/large_player_sub_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/player_track_sub_title"
-            android:textStyle="normal"
-            android:singleLine="true"
-            android:ellipsize="marquee"
             android:layout_weight="1"
-            android:textAlignment="center"
-            android:textSize="@dimen/player_sub_title_size"/>
+            android:ellipsize="marquee"
+            android:gravity="center_horizontal|top"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            android:singleLine="true"
+            android:textColor="@color/player_track_sub_title"
+            android:textSize="@dimen/player_sub_title_size"
+            android:textStyle="normal" />
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1.7"
-        android:layout_marginEnd="@dimen/player_menu_button_margin_end"
-        android:weightSum="1"
-        android:gravity="right|center_vertical">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_marginEnd="@dimen/player_action_button_margin">
-            <ImageView
-                android:id="@+id/player_upnext_button"
-                android:layout_width="@dimen/player_action_button"
-                android:layout_height="@dimen/player_action_button"
-                style="@style/MediaController"
-                android:src="@drawable/ic_upnext"/>
-        </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center">
-            <ImageView
-                android:id="@+id/player_overflow_button"
-                android:layout_width="@dimen/player_action_button"
-                android:layout_height="@dimen/player_action_button"
-                style="@style/MediaController"
-                android:tint="@color/white"
-                android:src="@drawable/ic_player_more_button"/>
-        </LinearLayout>
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/player_upnext_button"
+        style="@style/MediaController"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:src="@drawable/ic_upnext" />
+
+    <ImageView
+        android:id="@+id/player_overflow_button"
+        style="@style/MediaController"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:src="@drawable/ic_player_more_button"
+        android:tint="@color/white" />
+
 </LinearLayout>
