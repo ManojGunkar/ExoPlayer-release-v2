@@ -3,12 +3,14 @@
     android:id="@+id/small_panel"
     android:layout_width="match_parent"
     android:layout_height="@dimen/player_mini_height"
+    android:elevation="20dp"
     android:orientation="vertical">
     <android.support.v7.widget.AppCompatSeekBar
         android:id="@+id/mini_player_progress"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mini_player_progress_height"
         android:thumb="@null"
+        android:enabled="false"
         android:layout_weight="0"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,6 +50,7 @@
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:textColor="@color/player_track_title"
+                android:textAlignment="center"
                 android:textSize="16sp" />
 
             <com.globaldelight.boom.ui.widgets.RegularTextView
@@ -58,6 +61,7 @@
                 android:ellipsize="end"
                 android:textStyle="normal"
                 android:textColor="@color/player_track_sub_title"
+                android:textAlignment="center"
                 android:textSize="16sp"/>
         </LinearLayout>
         <LinearLayout

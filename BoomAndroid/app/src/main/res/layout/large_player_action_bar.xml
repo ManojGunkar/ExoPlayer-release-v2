@@ -38,7 +38,7 @@
             android:ellipsize="marquee"
             android:layout_weight="1"
             android:textSize="@dimen/player_title_size"
-            android:gravity="center"/>
+            android:textAlignment="center"/>
 
         <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/large_player_sub_title"
@@ -49,7 +49,7 @@
             android:singleLine="true"
             android:ellipsize="marquee"
             android:layout_weight="1"
-            android:gravity="center_horizontal|top"
+            android:textAlignment="center"
             android:textSize="@dimen/player_sub_title_size"/>
 
     </LinearLayout>
