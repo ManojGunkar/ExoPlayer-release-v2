@@ -26,31 +26,25 @@
 
         <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/large_player_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ellipsize="marquee"
-            android:gravity="center"
-            android:paddingEnd="5dp"
-            android:paddingStart="5dp"
             android:singleLine="true"
             android:textColor="@color/player_track_title"
             android:textSize="@dimen/player_title_size"
-            android:textStyle="normal" />
+            android:textStyle="normal"
+            android:textAlignment="center" />
 
         <com.globaldelight.boom.ui.widgets.RegularTextView
             android:id="@+id/large_player_sub_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ellipsize="marquee"
-            android:gravity="center_horizontal|top"
-            android:paddingEnd="5dp"
-            android:paddingStart="5dp"
             android:singleLine="true"
             android:textColor="@color/player_track_sub_title"
             android:textSize="@dimen/player_sub_title_size"
-            android:textStyle="normal" />
+            android:textStyle="normal"
+            android:textAlignment="center"/>
 
     </LinearLayout>
 
