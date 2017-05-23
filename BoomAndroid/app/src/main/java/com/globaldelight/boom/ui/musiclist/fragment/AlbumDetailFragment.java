@@ -115,7 +115,9 @@ public class AlbumDetailFragment extends Fragment {
         } else if (dataCollection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() > 0) {
             App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement(), 0);
         }
-        albumDetailAdapter.notifyDataSetChanged();
+        if ( albumDetailAdapter != null ) {
+            albumDetailAdapter.notifyDataSetChanged();
+        }
     }
 
     private class LoadAlbumSongs extends AsyncTask<Void, Integer, IMediaItemCollection> {
