@@ -7,6 +7,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -33,6 +37,7 @@ public class AlbumDetailActivity extends MasterActivity {
 
     IMediaItemCollection collection, currentItem;
     AlbumDetailFragment fragment;
+    private FloatingActionButton mFloatPlayAllAlbums;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +71,7 @@ public class AlbumDetailActivity extends MasterActivity {
 
     private void initViews() {
         setDrawerLocked(true);
-        final FloatingActionButton mFloatPlayAllAlbums = (FloatingActionButton) findViewById(R.id.fab);
+        mFloatPlayAllAlbums = (FloatingActionButton) findViewById(R.id.fab);
         mFloatPlayAllAlbums.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,6 +118,10 @@ public class AlbumDetailActivity extends MasterActivity {
     protected void onResume() {
         registerPlayerReceiver(AlbumDetailActivity.this);
         super.onResume();
+
+        final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
+
+        mFloatPlayAllAlbums.startAnimation(anim_in);
     }
 
     @Override
