@@ -14,13 +14,11 @@ import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session;
-import com.globaldelight.boom.App;
-import com.globaldelight.boom.data.DeviceMediaCollection.MediaItem;
-import com.globaldelight.boom.data.MediaCallback.DropboxMediaList;
-import com.globaldelight.boom.Media.ItemType;
-import com.globaldelight.boom.Media.MediaType;
-
-import java.util.ArrayList;
+import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.collection.local.MediaItem;
+import com.globaldelight.boom.collection.cloud.DropboxMediaList;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
 
 /**
  * Created by Rahul Agarwal on 09-01-17.

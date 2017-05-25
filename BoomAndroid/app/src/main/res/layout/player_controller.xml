@@ -17,7 +17,7 @@
         android:paddingLeft="@dimen/player_seek_margin"
         android:paddingRight="@dimen/player_seek_margin">
 
-        <com.globaldelight.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/played_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                 android:progress="100" />
         </LinearLayout>
 
-        <com.globaldelight.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/remain_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

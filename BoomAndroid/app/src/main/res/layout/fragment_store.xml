@@ -16,7 +16,7 @@
             android:layout_height="@dimen/store_page_img_height"
             app:srcCompat="@drawable/ic_store_banner_img" />
 
-        <com.globaldelight.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/header_free_boomin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
             android:textSize="@dimen/store_page_header_text_size"
             android:textStyle="bold" />
 
-        <com.globaldelight.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/store_buy_desription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
             android:textStyle="bold" />
 
 
-        <com.globaldelight.boom.ui.widgets.RegularButton
+        <com.globaldelight.boom.view.RegularButton
             android:id="@+id/store_buyButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
             android:textSize="@dimen/store_page_buy_button_text_size"
             android:typeface="normal" />
 
-        <com.globaldelight.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/store_share_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -42,7 +42,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:orientation="vertical">
-            <com.globaldelight.boom.ui.widgets.RegularTextView
+            <com.globaldelight.boom.view.RegularTextView
                 android:id="@+id/mini_player_song_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                 android:textAlignment="center"
                 android:textSize="16sp" />
 
-            <com.globaldelight.boom.ui.widgets.RegularTextView
+            <com.globaldelight.boom.view.RegularTextView
                 android:id="@+id/mini_player_song_sub_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

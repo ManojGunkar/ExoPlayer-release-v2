@@ -2,30 +2,26 @@ package com.globaldelight.boom.utils;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.globaldelight.boom.App;
-import com.globaldelight.boom.Media.MediaController;
+import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.analytics.AnalyticsHelper;
-import com.globaldelight.boom.analytics.FlurryAnalyticHelper;
-import com.globaldelight.boom.analytics.UtilAnalytics;
-import com.globaldelight.boom.data.MediaCollection.IMediaItem;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemBase;
-import com.globaldelight.boom.data.MediaCollection.IMediaItemCollection;
-import com.globaldelight.boom.manager.PlayerServiceReceiver;
-import com.globaldelight.boom.ui.widgets.RegularTextView;
+import com.globaldelight.boom.app.analytics.AnalyticsHelper;
+import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.app.analytics.UtilAnalytics;
+import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 
 import java.util.ArrayList;
 

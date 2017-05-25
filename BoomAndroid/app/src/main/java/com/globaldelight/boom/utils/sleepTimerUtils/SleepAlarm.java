@@ -5,11 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 
-import com.globaldelight.boom.App;
-import com.globaldelight.boom.manager.PlayerServiceReceiver;
-import com.globaldelight.boom.utils.handlers.Preferences;
-
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
+import com.globaldelight.boom.app.sharedPreferences.Preferences;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.

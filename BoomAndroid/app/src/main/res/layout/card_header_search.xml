@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:gravity="left|center_vertical"
         android:layout_weight=".5">
-        <com.globaldelight.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/search_header_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/round_corner_button">
-        <com.globaldelight.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/search_header_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -33,13 +33,13 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
-        android:name=".App"
+        android:name=".app.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <service
-            android:name=".task.PlayerService"
+            android:name=".app.service.PlayerService"
             android:enabled="true" />
 
         <receiver android:name=".utils.sleepTimerUtils.SleepAlarm" />
@@ -90,7 +90,7 @@
         </activity>
 
         <receiver
-            android:name=".manager.ConnectivityReceiver"
+            android:name=".app.receivers.ConnectivityReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -100,7 +100,7 @@
         </receiver>
 
         <activity
-            android:name=".ui.musiclist.activity.MainActivity"
+            android:name=".app.activities.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -111,7 +111,7 @@
         </activity>
 
         <activity
-            android:name=".ui.musiclist.activity.CloudListActivity"
+            android:name=".app.activities.CloudListActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -122,62 +122,62 @@
         </activity>
 
         <activity
-            android:name=".ui.musiclist.activity.AlbumSongListActivity"
+            android:name=".app.activities.AlbumSongListActivity"
             android:label="@string/title_activity_child"
-            android:parentActivityName=".ui.musiclist.activity.MainActivity"
+            android:parentActivityName=".app.activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.musiclist.activity.MainActivity" />
+                android:value=".app.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.musiclist.activity.AlbumDetailItemActivity"
+            android:name=".app.activities.AlbumDetailItemActivity"
             android:label="@string/title_item_detail"
-            android:parentActivityName=".ui.musiclist.activity.MainActivity"
+            android:parentActivityName=".app.activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.musiclist.activity.MainActivity" />
+                android:value=".app.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.musiclist.activity.AlbumDetailActivity"
-            android:parentActivityName=".ui.musiclist.activity.MainActivity"
+            android:name=".app.activities.AlbumDetailActivity"
+            android:parentActivityName=".app.activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.musiclist.activity.MainActivity" />
+                android:value=".app.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.musiclist.activity.SearchDetailActivity"
-            android:parentActivityName=".ui.musiclist.activity.MainActivity"
+            android:name=".app.activities.SearchDetailActivity"
+            android:parentActivityName=".app.activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.musiclist.activity.MainActivity" />
-        </activity>
-
-        <activity
-            android:name=".ui.musiclist.activity.ActivityContainer"
-            android:parentActivityName=".ui.musiclist.activity.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.musiclist.activity.MainActivity" />
+                android:value=".app.activities.MainActivity" />
         </activity>
 
         <activity
-            android:name=".ui.musiclist.activity.OnBoardingActivity"
+            android:name=".app.activities.ActivityContainer"
+            android:parentActivityName=".app.activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".app.activities.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".app.activities.OnBoardingActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
-            android:name=".ui.musiclist.activity.BoomSplash"
+            android:name=".app.activities.BoomSplash"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
@@ -189,16 +189,16 @@
         </activity>
 
         <activity
-            android:name=".ui.musiclist.activity.WebViewActivity"
+            android:name=".app.activities.WebViewActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
 
-        <receiver android:name=".manager.BoomPlayTimeReceiver">
+        <receiver android:name=".app.receivers.BoomPlayTimeReceiver">
             <intent-filter>
                  <action android:name="TIME_LIMIT_COMPLETE" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.globaldelight.boom.analytics.GCMHelper"
+            android:name=".app.analytics.GCMHelper"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />

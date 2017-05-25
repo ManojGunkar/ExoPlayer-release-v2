@@ -12,7 +12,7 @@
         android:gravity="center_vertical"
         android:orientation="vertical">
 
-        <com.globaldelight.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/playlist_dialog_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
             android:textColor="@color/dialog_txt"
             android:textSize="@dimen/card_playlist_dialog_item_title_txt" />
 
-        <com.globaldelight.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/playlist_dialog_song_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
