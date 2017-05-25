@@ -364,7 +364,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 mRepeat.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_repeat_one, null));
                 break;
             case all:
-                mRepeat.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_repeat_all, null));
+                mRepeat.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_repeat_on, null));
                 break;
         }
     }
