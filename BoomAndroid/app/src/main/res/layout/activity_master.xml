@@ -11,7 +11,7 @@
         android:background="@color/app_background"
         tools:openDrawer="start">
 
-        <com.globaldelight.boom.ui.widgets.slidinguppanel.SlidingUpPanelLayout
+        <com.globaldelight.boom.view.slidinguppanel.SlidingUpPanelLayout
             xmlns:sothree="http://schemas.android.com/apk/res-auto"
             android:id="@+id/sliding_layout"
             android:layout_width="match_parent"
@@ -36,7 +36,7 @@
                 android:id="@+id/panel_holder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-        </com.globaldelight.boom.ui.widgets.slidinguppanel.SlidingUpPanelLayout>
+        </com.globaldelight.boom.view.slidinguppanel.SlidingUpPanelLayout>
 
         <android.support.design.widget.NavigationView
             android:id="@+id/nav_view"

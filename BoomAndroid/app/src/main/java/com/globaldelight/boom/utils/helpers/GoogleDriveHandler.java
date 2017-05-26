@@ -13,13 +13,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
-import com.globaldelight.boom.App;
+import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.data.MediaCallback.GoogleDriveMediaList;
-import com.globaldelight.boom.task.MediaLoader.LoadGoogleDriveList;
-import com.globaldelight.boom.ui.musiclist.fragment.GoogleDriveListFragment;
-import com.globaldelight.boom.ui.musiclist.fragment.SettingFragment;
-import com.globaldelight.boom.utils.handlers.Preferences;
+import com.globaldelight.boom.collection.cloud.GoogleDriveMediaList;
+import com.globaldelight.boom.app.loaders.LoadGoogleDriveList;
+import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
+import com.globaldelight.boom.app.fragments.SettingFragment;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.common.ConnectionResult;
@@ -34,7 +33,7 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.drive.DriveScopes;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
+
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 

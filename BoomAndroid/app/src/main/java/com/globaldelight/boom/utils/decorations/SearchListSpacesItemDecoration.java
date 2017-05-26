@@ -4,7 +4,7 @@ import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.globaldelight.boom.ui.musiclist.adapter.SearchListAdapter;
+import com.globaldelight.boom.app.adapters.search.SearchListAdapter;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.

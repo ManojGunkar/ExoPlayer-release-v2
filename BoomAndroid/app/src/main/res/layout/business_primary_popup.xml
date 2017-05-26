@@ -11,7 +11,7 @@
         android:adjustViewBounds="true"
         android:src="@drawable/ic_popup_image" />
 
-    <com.globaldelight.boom.ui.widgets.RegularTextView
+    <com.globaldelight.boom.view.RegularTextView
         android:id="@+id/expire_popup_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
         android:textStyle="bold"/>
 
 
-    <com.globaldelight.boom.ui.widgets.RegularTextView
+    <com.globaldelight.boom.view.RegularTextView
         android:id="@+id/expire_popup_body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

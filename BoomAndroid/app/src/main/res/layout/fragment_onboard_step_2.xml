@@ -15,7 +15,7 @@
             android:layout_centerHorizontal="true"
             android:src="@drawable/ic_on_boarding_streaming" />
 
-        <com.globaldelight.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/txt_title_2"
             android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
@@ -29,7 +29,7 @@
             android:textStyle="bold"
             android:text="@string/onboard_screen_2_main_tx"/>
 
-        <com.globaldelight.boom.ui.widgets.RegularTextView
+        <com.globaldelight.boom.view.RegularTextView
             android:layout_below="@+id/txt_title_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

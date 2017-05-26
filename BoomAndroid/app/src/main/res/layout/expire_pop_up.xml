@@ -12,7 +12,7 @@
         android:layout_marginTop="@dimen/share_popup_title_image_margin_top"
         android:src="@drawable/ic_icon_for_popup" />
 
-    <com.globaldelight.boom.ui.widgets.RegularTextView
+    <com.globaldelight.boom.view.RegularTextView
         android:id="@+id/expire_popup_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         android:textStyle="bold"/>
 
 
-    <com.globaldelight.boom.ui.widgets.RegularTextView
+    <com.globaldelight.boom.view.RegularTextView
         android:id="@+id/expire_popup_body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

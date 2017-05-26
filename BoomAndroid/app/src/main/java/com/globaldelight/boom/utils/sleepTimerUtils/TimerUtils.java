@@ -10,7 +10,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -22,12 +21,12 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.globaldelight.boom.App;
+import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.manager.PlayerServiceReceiver;
-import com.globaldelight.boom.ui.widgets.RegularButton;
-import com.globaldelight.boom.ui.widgets.RegularTextView;
-import com.globaldelight.boom.utils.handlers.Preferences;
+import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
+import com.globaldelight.boom.view.RegularButton;
+import com.globaldelight.boom.view.RegularTextView;
+import com.globaldelight.boom.app.sharedPreferences.Preferences;
 
 import java.lang.reflect.Field;
 import java.text.DateFormat;
@@ -37,7 +36,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import static com.globaldelight.boom.task.PlayerEvents.ACTION_ITEM_CLICKED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ITEM_CLICKED;
 
 /**
  * Created by Rahul Agarwal on 03-02-17.
