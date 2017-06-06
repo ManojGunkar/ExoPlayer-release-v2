@@ -81,8 +81,14 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
         }
 
         int size = setSize(holder);
-        if(null == mediaItem.getItemArtUrl())
-            mediaItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(mediaItem.getItemSubTitle()));
+        if(null == mediaItem.getItemArtUrl()) {
+            if ( mediaItem.getItemType() == ItemType.ARTIST ) {
+                mediaItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getArtistArtList().get(mediaItem.getItemId()));
+            }
+            else {
+                mediaItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(mediaItem.getItemSubTitle()));
+            }
+        }
 
         if(null == mediaItem.getItemArtUrl())
             mediaItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
