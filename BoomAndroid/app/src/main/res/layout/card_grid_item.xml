@@ -70,7 +70,9 @@
         android:background="@color/library_album_footer"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:padding="@dimen/card_grid_bottom_padding"
+        android:paddingLeft="@dimen/card_grid_bottom_padding"
+        android:paddingTop="@dimen/card_grid_bottom_padding"
+        android:paddingBottom="@dimen/card_grid_bottom_padding"
         android:weightSum="1">
 
         <LinearLayout
@@ -94,8 +96,11 @@
                 android:id="@+id/card_grid_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:layout_gravity="center_vertical|right"
+                android:paddingLeft="@dimen/card_grid_bottom_padding"
+                android:paddingRight="@dimen/card_grid_bottom_padding"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_gravity="right"
                 style="@style/MediaController"
                 android:src="@drawable/ic_more_button_playlists" />
 
@@ -103,6 +108,7 @@
 
         <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/card_grid_sub_title"
+            android:paddingRight="@dimen/card_grid_bottom_padding"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".5"
