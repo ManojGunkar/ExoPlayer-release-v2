@@ -18,13 +18,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.RecentPlayedMediaList;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.app.loaders.LoadRecentPlayedList;
-import com.globaldelight.boom.app.adapters.cloud.CloudItemListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.REQUEST_
 public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaList.IRecentPlayedUpdater, EasyPermissions.PermissionCallbacks  {
     private RecentPlayedMediaList recentPlayedMediaList;
     private RecyclerView rootView;
-    private CloudItemListAdapter adapter;
+    private SongListAdapter adapter;
     Activity mActivity;
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
@@ -119,7 +119,7 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         gridLayoutManager.scrollToPosition(0);
         rootView.setLayoutManager(gridLayoutManager);
-        adapter = new CloudItemListAdapter(mActivity, RecentPlayedFragment.this, recentPlayedMediaList, ItemType.RECENT_PLAYED);
+        adapter = new SongListAdapter(mActivity, RecentPlayedFragment.this, recentPlayedMediaList, ItemType.RECENT_PLAYED);
         rootView.setAdapter(adapter);
         rootView.setHasFixedSize(true);
         listIsEmpty(recentPlayedMediaList.size());

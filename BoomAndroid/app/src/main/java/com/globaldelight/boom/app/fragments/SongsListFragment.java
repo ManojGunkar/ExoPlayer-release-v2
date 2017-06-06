@@ -17,11 +17,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.app.adapters.song.SongListAdapter;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.view.RegularTextView;
 
 import java.util.ArrayList;
@@ -139,7 +140,7 @@ public class SongsListFragment extends Fragment{
             final LinearLayoutManager llm = new LinearLayoutManager(mActivity);
             recyclerView.setLayoutManager(llm);
             recyclerView.setHasFixedSize(true);
-            songListAdapter = new SongListAdapter(mActivity, SongsListFragment.this, iMediaItemList);
+            songListAdapter = new SongListAdapter(mActivity, SongsListFragment.this, iMediaItemList, ItemType.SONGS);
             recyclerView.setAdapter(songListAdapter);
             listIsEmpty(iMediaItemList.size());
         }

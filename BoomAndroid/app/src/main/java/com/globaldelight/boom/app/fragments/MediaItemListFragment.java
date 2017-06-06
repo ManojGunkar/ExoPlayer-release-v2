@@ -16,11 +16,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.app.adapters.song.SongListAdapter;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
 
 import java.util.ArrayList;
 
@@ -103,7 +104,7 @@ public class MediaItemListFragment extends Fragment {
         protected void onPostExecute(ArrayList<? extends IMediaItemBase> itemList) {
             super.onPostExecute(itemList);
             rootView.setLayoutManager(new LinearLayoutManager(mActivity));
-            songListAdapter = new SongListAdapter(mActivity, MediaItemListFragment.this, itemList);
+            songListAdapter = new SongListAdapter(mActivity, MediaItemListFragment.this, itemList, ItemType.SONGS);
             rootView.setAdapter(songListAdapter);
             rootView.setHasFixedSize(true);
             if (itemList.size() < 1) {
