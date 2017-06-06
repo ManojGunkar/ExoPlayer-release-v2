@@ -77,7 +77,7 @@ public class HeadPhoneItemAdapter extends RecyclerView.Adapter<HeadPhoneItemAdap
         return headPhoneList.length();
     }
 
-    public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+    public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public RegularTextView type;
         public ImageView earPhone;

@@ -194,11 +194,11 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                         }
                     }, 500);
                 }
-                if (item.getItemType().toString().trim() == "GENRE") {
+                if (item.getItemType() == ItemType.GENRE) {
                     FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Genere_Thumbnail);
-                } else if (item.getItemType().toString().trim() == "ARTIST") {
+                } else if (item.getItemType() == ItemType.ARTIST) {
                     FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Artist_Thumbnail);
-                } else if (item.getItemType().toString().trim() == "ALBUM") {
+                } else if (item.getItemType() == ItemType.ALBUM) {
                     FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Alumb_Thumbnail);
                 }
             }
@@ -299,7 +299,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
         }
     }
 
-    public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+    public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public RegularTextView name, count, duration;
         public View mainView, art_overlay;

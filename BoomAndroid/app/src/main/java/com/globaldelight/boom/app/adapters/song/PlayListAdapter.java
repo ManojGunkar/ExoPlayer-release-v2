@@ -279,7 +279,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
         return mBoomPlayList.size() + defaultPlayList.size() + 2;
     }
 
-    public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+    public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public RegularTextView title, subTitle;
         public ImageView defaultImg, artImg1, artImg2, artImg3, artImg4;
@@ -300,7 +300,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
             artImg4 = (ImageView) itemView.findViewById(R.id.card_grid_art_img4);
             artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
             gridBottomBg = itemView.findViewById(R.id.card_grid_bottom);
-            grid_menu = itemView.findViewById(R.id.card_grid_overflow_menu);
+            grid_menu = itemView.findViewById(R.id.card_grid_menu);
             imgPanel = (FrameLayout) itemView.findViewById(R.id.card_grid_img_panel);
         }
     }

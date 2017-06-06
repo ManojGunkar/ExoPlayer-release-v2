@@ -21,6 +21,7 @@ import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.collection.cloud.DropboxMediaList;
@@ -28,7 +29,6 @@ import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.loaders.LoadDropBoxList;
 import com.globaldelight.boom.app.activities.CloudListActivity;
-import com.globaldelight.boom.app.adapters.cloud.CloudItemListAdapter;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 
@@ -49,7 +49,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
 
     private DropboxMediaList dropboxMediaList;
     private boolean isDropboxAccountConfigured = true;
-    private CloudItemListAdapter adapter;
+    private SongListAdapter adapter;
     SharedPreferences prefs;
     private RecyclerView rootView;
     Activity mActivity;
@@ -232,7 +232,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
             gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             gridLayoutManager.scrollToPosition(0);
             rootView.setLayoutManager(gridLayoutManager);
-            adapter = new CloudItemListAdapter(mActivity, DropBoxListFragment.this, dropboxMediaList.getDropboxMediaList(), ItemType.SONGS);
+            adapter = new SongListAdapter(mActivity, DropBoxListFragment.this, dropboxMediaList.getDropboxMediaList(), ItemType.SONGS);
             rootView.setAdapter(adapter);
             rootView.setHasFixedSize(true);
         }

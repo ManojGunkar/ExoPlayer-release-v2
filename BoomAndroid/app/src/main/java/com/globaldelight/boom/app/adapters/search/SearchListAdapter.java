@@ -560,7 +560,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
         return whatView(position);
     }
 
-    public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+    public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public View mainView, art_overlay;
 
@@ -600,7 +600,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
             gridBottomBg = itemView.findViewById(R.id.card_grid_bottom);
-            grid_menu = itemView.findViewById(R.id.card_grid_overflow_menu);
+            grid_menu = itemView.findViewById(R.id.card_grid_menu);
             imgPanel = (FrameLayout) itemView.findViewById(R.id.card_grid_img_panel);
         }
     }

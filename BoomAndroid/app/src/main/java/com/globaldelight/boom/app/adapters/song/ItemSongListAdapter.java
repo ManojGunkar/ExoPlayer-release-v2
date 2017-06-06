@@ -386,7 +386,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         }
     }
 
-    public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+    public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public RegularTextView name, artistName;
         public View mainView, art_overlay;

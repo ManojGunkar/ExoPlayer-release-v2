@@ -32,7 +32,7 @@ public class MediaController implements IMediaController {
     }
     public static MediaController getInstance(Context context) {
         if(handler == null){
-            handler = new MediaController(context);
+            handler = new MediaController(context.getApplicationContext());
         }
         return handler;
     }

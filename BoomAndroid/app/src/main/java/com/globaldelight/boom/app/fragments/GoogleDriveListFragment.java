@@ -27,7 +27,7 @@ import com.globaldelight.boom.collection.cloud.GoogleDriveMediaList;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.activities.CloudListActivity;
-import com.globaldelight.boom.app.adapters.cloud.CloudItemListAdapter;
+import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
@@ -47,7 +47,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     private GoogleDriveMediaList googleDriveMediaList;
     private GoogleDriveHandler googleDriveHandler;
     private boolean isGoogleAccountConfigured = false;
-    private CloudItemListAdapter adapter;
+    private SongListAdapter adapter;
     private RecyclerView rootView;
     private PermissionChecker permissionChecker;
     Activity mActivity;
@@ -203,7 +203,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                 gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                 gridLayoutManager.scrollToPosition(0);
                 rootView.setLayoutManager(gridLayoutManager);
-                adapter = new CloudItemListAdapter(mActivity, GoogleDriveListFragment.this, googleDriveMediaList.getGoogleDriveMediaList(), ItemType.SONGS);
+                adapter = new SongListAdapter(mActivity, GoogleDriveListFragment.this, googleDriveMediaList.getGoogleDriveMediaList(), ItemType.SONGS);
                 rootView.setAdapter(adapter);
                 rootView.setHasFixedSize(true);
             } else {

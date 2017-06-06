@@ -87,7 +87,7 @@ public class EqualizerDialogAdapter extends RecyclerView.Adapter<EqualizerDialog
         this.dialog = dialog;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         public View mainView;
         public RegularTextView mEqName;
         public ImageView mEqIcon;

@@ -84,15 +84,14 @@ public class LibraryFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        int[] items = {R.string.artists, R.string.albums, R.string.songs, R.string.playlists, R.string.genres};
         mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
-        mSectionsPagerAdapter.addFragment(mActivity, new ArtistsListFragment(), items[0]);
-        mSectionsPagerAdapter.addFragment(mActivity, new AlbumsListFragment(), items[1]);
-        mSectionsPagerAdapter.addFragment(mActivity, new SongsListFragment(), items[2]);
-        mSectionsPagerAdapter.addFragment(mActivity, new PlayListsFragment(), items[3]);
-        mSectionsPagerAdapter.addFragment(mActivity, new GenresListFragment(), items[4]);
+        mSectionsPagerAdapter.addFragment(mActivity, new ArtistsListFragment(), R.string.artists);
+        mSectionsPagerAdapter.addFragment(mActivity, new AlbumsListFragment(), R.string.albums);
+        mSectionsPagerAdapter.addFragment(mActivity, new SongsListFragment(), R.string.songs);
+        mSectionsPagerAdapter.addFragment(mActivity, new PlayListsFragment(), R.string.playlists);
+        mSectionsPagerAdapter.addFragment(mActivity, new GenresListFragment(), R.string.genres);
         viewPager.setAdapter(mSectionsPagerAdapter);
-        viewPager.setOffscreenPageLimit(items.length);
+        viewPager.setOffscreenPageLimit(5);
         mTabBar.setupWithViewPager(mViewPager);
     }
 

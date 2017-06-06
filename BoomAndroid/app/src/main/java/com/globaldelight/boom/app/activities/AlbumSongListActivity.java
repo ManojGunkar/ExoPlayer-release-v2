@@ -11,6 +11,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TableLayout;
@@ -43,6 +45,7 @@ public class AlbumSongListActivity extends MasterActivity {
     IMediaItemCollection currentItem;
     private ImageView artImg1, artImg2, artImg3, artImg4;
     private TableLayout tblAlbumArt;
+    private FloatingActionButton mFloatPlayAlbumSongs;
     private static int screenWidth= 0;
 
     public void updateAlbumArt() {
@@ -101,7 +104,7 @@ public class AlbumSongListActivity extends MasterActivity {
         }
         setAlbumArt(artUrlList);
 
-        final FloatingActionButton mFloatPlayAlbumSongs = (FloatingActionButton) findViewById(R.id.fab);
+        mFloatPlayAlbumSongs = (FloatingActionButton) findViewById(R.id.fab);
         mFloatPlayAlbumSongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -159,6 +162,9 @@ public class AlbumSongListActivity extends MasterActivity {
         fragment.updateAdapter();
         registerPlayerReceiver(AlbumSongListActivity.this);
         super.onResume();
+
+        final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
+        mFloatPlayAlbumSongs.startAnimation(anim_in);
     }
 
     @Override

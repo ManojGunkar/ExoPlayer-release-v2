@@ -19,12 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.FavouriteMediaList;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.loaders.LoadFavouriteList;
-import com.globaldelight.boom.app.adapters.cloud.CloudItemListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.REQUEST_
 public class FavouriteListFragment extends Fragment implements FavouriteMediaList.IFavouriteUpdater, EasyPermissions.PermissionCallbacks  {
     private FavouriteMediaList favouriteMediaList;
     private RecyclerView rootView;
-    private CloudItemListAdapter adapter;
+    private SongListAdapter adapter;
     Activity mActivity;
 
     /**
@@ -120,7 +120,7 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         gridLayoutManager.scrollToPosition(0);
         rootView.setLayoutManager(gridLayoutManager);
-        adapter = new CloudItemListAdapter(mActivity, FavouriteListFragment.this, favouriteMediaList, ItemType.FAVOURITE);
+        adapter = new SongListAdapter(mActivity, FavouriteListFragment.this, favouriteMediaList, ItemType.FAVOURITE);
         rootView.setAdapter(adapter);
         rootView.setHasFixedSize(true);
         listIsEmpty(favouriteMediaList.size());
