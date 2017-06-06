@@ -279,7 +279,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
         return mBoomPlayList.size() + defaultPlayList.size() + 2;
     }
 
-    public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+    public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public RegularTextView title, subTitle;
         public ImageView defaultImg, artImg1, artImg2, artImg3, artImg4;

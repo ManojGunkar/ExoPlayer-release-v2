@@ -560,7 +560,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
         return whatView(position);
     }
 
-    public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+    public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public View mainView, art_overlay;
 

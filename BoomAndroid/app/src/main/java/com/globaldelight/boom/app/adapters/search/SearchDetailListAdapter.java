@@ -399,7 +399,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
         }
     }
 
-    public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+    public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
         public View mainView, art_overlay;
 
         //For Header View
