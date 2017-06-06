@@ -39,7 +39,7 @@ import java.util.ArrayList;
 /**
  * Created by Rahul Agarwal on 20-11-16.
  */
-public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SimpleItemViewHolder> {
+public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongViewHolder> {
 
     private static final String TAG = "SongListAdapter-TAG";
     ArrayList<? extends IMediaItemBase> itemList;
@@ -59,17 +59,17 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
     }
 
     @Override
-    public SongListAdapter.SimpleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.card_song_item, parent, false);
-        SimpleItemViewHolder holder = new SongListAdapter.SimpleItemViewHolder(itemView);
+        SongViewHolder holder = new SongViewHolder(itemView);
         setOnClicks(holder);
         return holder;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public void onBindViewHolder(final SongListAdapter.SimpleItemViewHolder holder, final int position) {
+    public void onBindViewHolder(final SongViewHolder holder, final int position) {
         MediaItem mediaItem = (MediaItem) itemList.get(position);
         holder.mainView.setElevation(0);
         holder.name.setText(mediaItem.getItemTitle());
@@ -87,7 +87,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
         updatePlayingTrack(holder, itemList.get(position).getItemId());
     }
 
-    private void updatePlayingTrack(SimpleItemViewHolder holder, long itemId){
+    private void updatePlayingTrack(SongViewHolder holder, long itemId){
         IMediaItemBase nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
         if(null != nowPlayingItem) {
             boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
@@ -114,7 +114,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
         }
     }
 
-    private void setAlbumArt(String path, SongListAdapter.SimpleItemViewHolder holder) {
+    private void setAlbumArt(String path, SongViewHolder holder) {
         if ( path == null ) path = "";
         Picasso.with(activity)
                 .load(new File(path))
@@ -123,7 +123,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
                 .into(holder.img);
     }
 
-    private void setOnClicks(final SongListAdapter.SimpleItemViewHolder holder) {
+    private void setOnClicks(final SongViewHolder holder) {
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -232,7 +232,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
         notifyDataSetChanged();
     }
 
-    public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+    public static class SongViewHolder extends RecyclerView.ViewHolder {
 
         public RegularTextView name, artistName;
         public View mainView, art_overlay;
@@ -240,7 +240,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.Simple
         public LinearLayout menu;
         public ProgressBar loadCloud;
 
-        public SimpleItemViewHolder(View itemView) {
+        public SongViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
