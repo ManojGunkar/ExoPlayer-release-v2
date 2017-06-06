@@ -73,12 +73,12 @@ public class AlbumDetailActivity extends MasterActivity {
             @Override
             public void onClick(View view) {
                 if (null != currentItem) {
-                    if (currentItem.getItemType().toString().trim() == "GENRE") {
+                    if (currentItem.getItemType() == ItemType.GENRE) {
                         FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Genere_Details_Section);
-                    } else if (currentItem.getItemType().toString().trim() == "ARTIST") {
+                    } else if (currentItem.getItemType() == ItemType.ARTIST) {
                         FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Artist_details_Section);
 
-                    }else if (currentItem.getItemType().toString().trim() == "ALBUM") {
+                    }else if (currentItem.getItemType() == ItemType.ALBUM ) {
                         FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Button_Tapped_from_Album_Section);
 
                     }
@@ -117,7 +117,6 @@ public class AlbumDetailActivity extends MasterActivity {
         super.onResume();
 
         final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
-
         mFloatPlayAllAlbums.startAnimation(anim_in);
     }
 

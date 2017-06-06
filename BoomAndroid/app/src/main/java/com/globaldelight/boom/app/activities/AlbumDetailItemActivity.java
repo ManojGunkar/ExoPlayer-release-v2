@@ -7,6 +7,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -18,6 +20,7 @@ import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.fragments.AlbumDetailItemFragment;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.utils.Utils;
 import com.squareup.picasso.Picasso;
 
@@ -31,6 +34,7 @@ public class AlbumDetailItemActivity extends MasterActivity {
 
     IMediaItemCollection currentItem;
     AlbumDetailItemFragment fragment;
+    private FloatingActionButton mFloatPlayAlbums;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +62,14 @@ public class AlbumDetailItemActivity extends MasterActivity {
 
     private void initViews() {
         setDrawerLocked(true);
-        final FloatingActionButton mFloatPlayAlbums = (FloatingActionButton) findViewById(R.id.fab);
+        mFloatPlayAlbums = (FloatingActionButton) findViewById(R.id.fab);
         mFloatPlayAlbums.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (null != currentItem) {
-                    if (currentItem.getItemType().toString().trim() == "GENRE") {
+                    if (currentItem.getItemType() == ItemType.GENRE) {
                         FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Genere_Section);
-                    } else if (currentItem.getItemType().toString().trim() == "ARTIST") {
+                    } else if (currentItem.getItemType() == ItemType.ARTIST) {
                         FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Artist_Section);
                     }
                 }
@@ -101,6 +105,10 @@ public class AlbumDetailItemActivity extends MasterActivity {
     protected void onResume() {
         registerPlayerReceiver(AlbumDetailItemActivity.this);
         super.onResume();
+
+        final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
+        mFloatPlayAlbums.startAnimation(anim_in);
+
     }
 
     @Override
