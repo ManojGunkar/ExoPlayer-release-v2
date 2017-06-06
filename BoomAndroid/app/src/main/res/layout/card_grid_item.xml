@@ -14,7 +14,7 @@
             android:id="@+id/card_grid_default_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             android:visibility="gone" />
 
         <TableLayout
@@ -78,36 +78,26 @@
             android:layout_height="0dp"
             android:layout_weight=".5"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:orientation="horizontal" >
 
             <com.globaldelight.boom.view.RegularTextView
                 android:id="@+id/card_grid_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:layout_weight=".8"
+                android:layout_weight="1"
                 android:maxLines="1"
                 android:textColor="@color/track_title"
                 android:textSize="@dimen/card_grid_item_title" />
 
-            <LinearLayout
-                android:id="@+id/card_grid_overflow_menu"
+            <ImageView
+                android:id="@+id/card_grid_menu"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight=".2"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_gravity="center_vertical|right"
                 style="@style/MediaController"
-                android:backgroundTint="@color/card_grid_item_title_background_tint"
-                android:theme="@style/Theme.AppCompat.Light"
-                android:gravity="right">
-                <ImageView
-                    android:id="@+id/card_grid_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_more_button_playlists" />
-            </LinearLayout>
+                android:src="@drawable/ic_more_button_playlists" />
 
         </LinearLayout>
 

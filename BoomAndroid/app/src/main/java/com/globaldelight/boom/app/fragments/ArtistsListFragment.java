@@ -14,11 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+
+import com.globaldelight.boom.app.adapters.media.MediaGridAdapter;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.app.adapters.artist.ArtistsGridAdapter;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
@@ -33,7 +34,7 @@ public class ArtistsListFragment extends Fragment {
     private Activity mActivity;
     private View mainView;
     private RecyclerView recyclerView;
-    private ArtistsGridAdapter artistsGridAdapter;
+    private MediaGridAdapter artistsGridAdapter;
     private ProgressBar mLibLoad;
 
     @Override
@@ -111,7 +112,7 @@ public class ArtistsListFragment extends Fragment {
                 recyclerView.setLayoutManager(gridLayoutManager);
                 recyclerView.addItemDecoration(new SimpleDividerItemDecoration(mActivity, Utils.getWindowWidth(mActivity)));
                 recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(mActivity, 0)));
-                artistsGridAdapter = new ArtistsGridAdapter(mActivity, mActivity, recyclerView, iMediaCollectionList, isPhone);
+                artistsGridAdapter = new MediaGridAdapter(mActivity, recyclerView, iMediaCollectionList, isPhone);
                 recyclerView.setAdapter(artistsGridAdapter);
                 recyclerView.setHasFixedSize(true);
                 listIsEmpty(iMediaCollectionList.size());

@@ -223,7 +223,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     @Override
     public void onViewRecycled(DetailAlbumGridAdapter.SimpleItemViewHolder holder) {
         super.onViewRecycled(holder);
-//        holder.defaultImg.setImageDrawable(null);
+//        holder.mediaImageView.setImageDrawable(null);
     }
 
     private void setArtistImg(final SimpleItemViewHolder holder, final int position, final int size, String path) {
@@ -391,7 +391,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
             artImg4 = (ImageView) itemView.findViewById(R.id.card_grid_art_img4);
             artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
             gridBottomBg = itemView.findViewById(R.id.card_grid_bottom);
-            grid_menu = itemView.findViewById(R.id.card_grid_overflow_menu);
+            grid_menu = itemView.findViewById(R.id.card_grid_menu);
             imgPanel = (FrameLayout) itemView.findViewById(R.id.card_grid_img_panel);
 
             headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
