@@ -72,9 +72,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     public void onBindViewHolder(final SongViewHolder holder, final int position) {
         MediaItem mediaItem = (MediaItem) itemList.get(position);
         holder.mainView.setElevation(0);
-        holder.name.setText(mediaItem.getItemTitle());
-        holder.artistName.setVisibility(null != mediaItem.getItemArtist() ? View.VISIBLE : View.GONE);
-        holder.artistName.setText(mediaItem.getItemArtist());
+        holder.title.setText(mediaItem.getItemTitle());
+        holder.description.setVisibility(null != mediaItem.getItemArtist() ? View.VISIBLE : View.GONE);
+        holder.description.setText(mediaItem.getItemArtist());
         if (null == mediaItem.getItemArtUrl()) {
             mediaItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(mediaItem.getItemAlbum()));
         }
@@ -92,24 +92,24 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         if(null != nowPlayingItem) {
             boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
             if (itemId == nowPlayingItem.getItemId()) {
-                holder.art_overlay.setVisibility(View.VISIBLE );
-                holder.art_overlay_play.setVisibility( View.VISIBLE );
-                holder.name.setTextColor( ContextCompat.getColor(activity, R.color.track_selected_title) );
+                holder.overlay.setVisibility(View.VISIBLE );
+                holder.overlayPlay.setVisibility( View.VISIBLE );
+                holder.title.setTextColor( ContextCompat.getColor(activity, R.color.track_selected_title) );
                 if (App.getPlayerEventHandler().isPlaying()) {
-                    holder.loadCloud.setVisibility(View.GONE);
-                    holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
+                    holder.progressIndicator.setVisibility(View.GONE);
+                    holder.overlayPlay.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
                 } else {
                     if(!isMediaItem && App.getPlayerEventHandler().isTrackWaitingForPlay() && !App.getPlayerEventHandler().isPaused())
-                        holder.loadCloud.setVisibility(View.VISIBLE);
+                        holder.progressIndicator.setVisibility(View.VISIBLE);
                     else
-                        holder.loadCloud.setVisibility(View.GONE);
-                    holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
+                        holder.progressIndicator.setVisibility(View.GONE);
+                    holder.overlayPlay.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
             } else {
-                holder.art_overlay.setVisibility( View.INVISIBLE );
-                holder.art_overlay_play.setVisibility( View.INVISIBLE );
-                holder.loadCloud.setVisibility(View.GONE);
-                holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_title));
+                holder.overlay.setVisibility( View.INVISIBLE );
+                holder.overlayPlay.setVisibility( View.INVISIBLE );
+                holder.progressIndicator.setVisibility(View.GONE);
+                holder.title.setTextColor(ContextCompat.getColor(activity, R.color.track_title));
             }
         }
     }
@@ -131,7 +131,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                 if (!App.getPlayerEventHandler().isTrackLoading()) {
 //                    if(itemList.get(position).getMediaType() != MediaType.DEVICE_MEDIA_LIB && null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem()
 //                            && App.getPlayingQueueHandler().getUpNextList().getPlayingItem().getItemId() != itemList.get(position).getItemId())
-//                        holder.loadCloud.setVisibility(View.VISIBLE);
+//                        holder.progressIndicator.setVisibility(View.VISIBLE);
                     App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(itemList, position);
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -234,22 +234,22 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
 
     public static class SongViewHolder extends RecyclerView.ViewHolder {
 
-        public RegularTextView name, artistName;
-        public View mainView, art_overlay;
-        public ImageView img, art_overlay_play;
+        public RegularTextView title, description;
+        public View mainView, overlay;
+        public ImageView img, overlayPlay;
         public LinearLayout menu;
-        public ProgressBar loadCloud;
+        public ProgressBar progressIndicator;
 
         public SongViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
-            art_overlay_play = (ImageView) itemView.findViewById(R.id.song_item_img_overlay_play);
-            art_overlay = itemView.findViewById(R.id.song_item_img_overlay);
-            loadCloud = (ProgressBar) itemView.findViewById(R.id.load_cloud );
-            name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
+            overlayPlay = (ImageView) itemView.findViewById(R.id.song_item_img_overlay_play);
+            overlay = itemView.findViewById(R.id.song_item_img_overlay);
+            progressIndicator = (ProgressBar) itemView.findViewById(R.id.load_cloud );
+            title = (RegularTextView) itemView.findViewById(R.id.song_item_name);
             menu = (LinearLayout) itemView.findViewById(R.id.song_item_overflow_menu);
-            artistName = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
+            description = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
         }
     }
 }
