@@ -37,7 +37,6 @@ public class BoomSplash extends AppCompatActivity {
     MixpanelAPI mixpanel;
     JSONObject propsFirst, propsLast;
     String currentDate;
-    private AudioEffect audioEffectPreferenceHandler;
     private IabHelper mHelper;
     private String TAG="BoomSplash";
 
@@ -126,7 +125,6 @@ public class BoomSplash extends AppCompatActivity {
     }
 
     private void updateDataValues() {
-        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
         //flurry
         FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_APP_OPEN);
 
@@ -136,7 +134,6 @@ public class BoomSplash extends AppCompatActivity {
         //new Launch of app.Use for tutorial
         if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true)) {
             Preferences.writeString(this, Preferences.INSTALL_DATE, currentDate);
-            audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.FIVE_DAY_OFFER);
             //register first app open once as super property
             propsFirst = new JSONObject();
             try {

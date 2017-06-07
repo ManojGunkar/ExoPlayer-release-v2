@@ -262,7 +262,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         ScreenWidth = point.x;
         ScreenHeight = point.y;
 
-        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(mActivity);
+        audioEffectPreferenceHandler = AudioEffect.getInstance(mActivity);
 
         playerUIController = new PlayerUIController(mActivity);
         PlayerUIController.registerPlayerUIController(playerUIController);

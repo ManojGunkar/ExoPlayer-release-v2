@@ -4,10 +4,8 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
-import android.os.Build;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import java.util.Arrays;
@@ -21,7 +19,6 @@ public class AudioPlayer implements Runnable {
     /** Load jni .so on initialization */
     private final String LOG_TAG = "AudioPlayer";
     private OpenSLPlayer nativePlayer = new OpenSLPlayer();
-    private AudioEffect audioEffect;
     private AudioTrackReader reader = null;
     private Callback events = null;
     private States state = new States();
@@ -44,7 +41,6 @@ public class AudioPlayer implements Runnable {
     public AudioPlayer(Context context, Callback events) {
         setEventsListener(events);
         mContext = context;
-        audioEffect = AudioEffect.getAudioEffectInstance(context);
         mAudioConfig = AudioConfiguration.getInstance(context);
     }
 
@@ -171,7 +167,7 @@ public class AudioPlayer implements Runnable {
     @Override
     public void run() {
         android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
-        if(audioEffect.getSelectedEqualizerPosition() == 0) {
+        if(AudioEffect.getInstance(mContext).getSelectedEqualizerPosition() == 0) {
             setAutoEqualizer();
         }
 
@@ -266,7 +262,7 @@ public class AudioPlayer implements Runnable {
     }
 
     private void setGenreType(String genreType) {
-
+        final AudioEffect audioEffect = AudioEffect.getInstance(mContext);
         if (null != genreType) {
             for (int i = 0; i <= mContext.getResources().getStringArray(R.array.mapped_eq_key).length - 1; i++) {
                 if (genreType.toUpperCase().contains(mContext.getResources().getStringArray(R.array.mapped_eq_key)[i].toUpperCase())) {
@@ -399,6 +395,7 @@ public class AudioPlayer implements Runnable {
     }
 
     public void updatePlayerEffect(){
+        final AudioEffect audioEffect = AudioEffect.getInstance(mContext);
         setEnableEffect(audioEffect.isAudioEffectOn());
         nativePlayer.setQuality(mAudioConfig.getQuality());
         if(audioEffect.isAudioEffectOn()) {
@@ -484,7 +481,7 @@ public class AudioPlayer implements Runnable {
 
     public synchronized void setEqualizerGain(int equalizerId) {
         if(equalizerId == 0){
-            equalizerId = AudioEffect.getAudioEffectInstance(mContext).getAutoEqualizerValue();
+            equalizerId = AudioEffect.getInstance(mContext).getAutoEqualizerValue();
         }
         try {
             if(isPlaying() || isPause()) {
@@ -518,22 +515,22 @@ public class AudioPlayer implements Runnable {
 
 
     public interface Callback {
-        public void onStart(long duration);
-        public void onPlay();
-        public void onPlayTimeUpdate(long currentms, long totalms);
-        public void onFinish();
-        public void onStop();
-        public void onError();
-        public void onErrorPlayAgain();
+        void onStart(long duration);
+        void onPlay();
+        void onPlayTimeUpdate(long currentms, long totalms);
+        void onFinish();
+        void onStop();
+        void onError();
+        void onErrorPlayAgain();
     }
 
     public static class States {
 
-        public static final int LOADING = 0;
-        public static final int PLAYING = 1;
-        public static final int PAUSED = 2;
-        public static final int STOPPED = 3;
-        public int playerState = STOPPED;
+        private static final int LOADING = 0;
+        private static final int PLAYING = 1;
+        private static final int PAUSED = 2;
+        private static final int STOPPED = 3;
+        private int playerState = STOPPED;
 
         public int get() {
             return playerState;

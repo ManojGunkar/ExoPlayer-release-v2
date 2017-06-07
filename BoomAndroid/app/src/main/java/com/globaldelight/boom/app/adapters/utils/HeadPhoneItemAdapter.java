@@ -34,7 +34,7 @@ public class HeadPhoneItemAdapter extends RecyclerView.Adapter<HeadPhoneItemAdap
         this.headPhoneList = headPhoneList;
         this.context = context;
         this.recyclerView = recyclerView;
-        audioEffectPreferenceHandler  = AudioEffect.getAudioEffectInstance(context);
+        audioEffectPreferenceHandler  = AudioEffect.getInstance(context);
         this.selectedHeadPhoneType = audioEffectPreferenceHandler.getHeadPhoneType();
     }
 

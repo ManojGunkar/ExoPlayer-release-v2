@@ -137,8 +137,7 @@ public class AnalyticsHelper {
     }
 
     public static void songSelectionChanged(Context context, IMediaItemBase songInfo) {
-        AudioEffect audioEffectPreferenceHandler;
-        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(context);
+        final AudioEffect audioEffectPreferenceHandler = AudioEffect.getInstance(context);
         FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_TRACK_SELECTION_CHANGED);
         MixpanelAPI mixpanel = MixPanelAnalyticHelper.getInstance(context);
         MixPanelAnalyticHelper.getInstance(context).getPeople().increment(EVENT_SONG_COUNT, 1);
