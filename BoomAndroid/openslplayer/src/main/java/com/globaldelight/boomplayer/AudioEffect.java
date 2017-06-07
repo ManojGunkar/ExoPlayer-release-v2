@@ -87,7 +87,7 @@ public class AudioEffect {
     }
 
     public boolean isAudioEffectOn(){
-        return shp.getBoolean(AUDIO_EFFECT_POWER, POWER_ON);
+        return shp.getBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
     }
 
     public void setEnableAudioEffect(boolean enableEffect) {

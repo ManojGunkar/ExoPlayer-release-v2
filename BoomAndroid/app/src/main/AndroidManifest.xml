@@ -192,11 +192,6 @@
             android:name=".app.activities.WebViewActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
 
-        <receiver android:name=".app.receivers.BoomPlayTimeReceiver">
-            <intent-filter>
-                 <action android:name="TIME_LIMIT_COMPLETE" />
-            </intent-filter>
-        </receiver>
         <receiver
             android:name=".app.analytics.GCMHelper"
             android:permission="com.google.android.c2dm.permission.SEND" >

@@ -30,7 +30,6 @@ import com.globaldelight.boom.business.inapp.IabHelper;
 import com.globaldelight.boom.business.inapp.IabResult;
 import com.globaldelight.boom.business.inapp.Inventory;
 import com.globaldelight.boom.business.inapp.Purchase;
-import com.globaldelight.boom.app.receivers.BoomPlayTimeReceiver;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.view.RegularButton;
 import com.globaldelight.boom.view.RegularTextView;
@@ -180,9 +179,8 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     private void normalStoreUI(String price){
         ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.store_page_header));
         ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_description);
-        if ( BoomPlayTimeReceiver.isNoPopupShown() ) {
-            ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_description);
-        }
+        ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_description);
+
         if (null != price)
             mStoreBuyBtn.setText(getResources().getString(R.string.buy_button) + " @ " + price);
         else
@@ -225,8 +223,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
     private void updateShareContent() {
         if(BusinessPreferences.readBoolean(mContext, ACTION_IN_APP_PURCHASE, false) ||
-                BusinessPreferences.readBoolean(mActivity, ACTION_APP_SHARED, false) ||
-                BoomPlayTimeReceiver.isNoPopupShown() ){
+                BusinessPreferences.readBoolean(mActivity, ACTION_APP_SHARED, false) ){
             mStoreShareTxt.setVisibility(View.GONE);
         }else {
             ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_share_description);

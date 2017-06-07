@@ -54,9 +54,6 @@ import static android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED_DATE;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_EMAIL_DIALOG_SHOWN;
-import static com.globaldelight.boom.app.receivers.BoomPlayTimeReceiver.SHOW_POPUP;
-import static com.globaldelight.boom.app.receivers.BoomPlayTimeReceiver.SHOW_POPUP_PRIMARY;
-import static com.globaldelight.boom.app.receivers.BoomPlayTimeReceiver.SHOW_POPUP_SECONDARY;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
@@ -506,83 +503,4 @@ public class Utils {
         return false;
     }
 
-    public static void businessPrimaryPopup(final Activity context){
-        new MaterialDialog.Builder(context)
-                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .neutralColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
-                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .neutralText(R.string.dialog_txt_cancel)
-                .negativeText(R.string.share_button)
-                .positiveText(R.string.buy_button)
-                .customView(R.layout.business_primary_popup, false)
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                .canceledOnTouchOutside(false)
-                .autoDismiss(false)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        jumpToStore(context);
-                        dialog.dismiss();
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
-                        shareStart(context);
-                        dialog.dismiss();
-                    }
-                })
-                .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        businessSecondaryPopup(context);
-                        dialog.dismiss();
-                    }
-                }).show();
-        BusinessPreferences.writeInteger(context, SHOW_POPUP, SHOW_POPUP_PRIMARY);
-    }
-
-    public static void businessSecondaryPopup(final Activity context){
-        new MaterialDialog.Builder(context)
-                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .neutralColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
-                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .neutralText(R.string.close_button)
-                .negativeText(R.string.share_button)
-                .positiveText(R.string.buy_button)
-                .customView(R.layout.business_secondary_popup, false)
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        jumpToStore(context);
-                        dialog.dismiss();
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
-                        shareStart(context);
-                        dialog.dismiss();
-                    }
-                })
-                .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
-        BusinessPreferences.writeInteger(context, SHOW_POPUP, SHOW_POPUP_SECONDARY);
-    }
-}
+ }

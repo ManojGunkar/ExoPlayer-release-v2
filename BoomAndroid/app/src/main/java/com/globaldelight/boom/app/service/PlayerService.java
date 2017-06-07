@@ -146,8 +146,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
         updateNotificationPlayer(musicPlayerHandler.getPlayingItem(), play_pause, false);
         sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
-
-        App.getBoomPlayTimeReceiver().setPlayingStartTime(play_pause);
     }
 
     private void updatePlayingQueue() {
@@ -250,7 +248,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     public void onSongReceived() {
         try {
             updatePlayer(false);
-            App.getBoomPlayTimeReceiver().setPlayingStartTime(true);
         } catch (ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
         }
