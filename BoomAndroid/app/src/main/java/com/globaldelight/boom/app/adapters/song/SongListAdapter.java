@@ -128,10 +128,11 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
             @Override
             public void onClick(View view) {
                 final int position = holder.getAdapterPosition();
+                if ( position == -1) {
+                    return;
+                }
+
                 if (!App.getPlayerEventHandler().isTrackLoading()) {
-//                    if(itemList.get(position).getMediaType() != MediaType.DEVICE_MEDIA_LIB && null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem()
-//                            && App.getPlayingQueueHandler().getUpNextList().getPlayingItem().getItemId() != itemList.get(position).getItemId())
-//                        holder.progressIndicator.setVisibility(View.VISIBLE);
                     App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(itemList, position);
                     new Handler().postDelayed(new Runnable() {
                         @Override
