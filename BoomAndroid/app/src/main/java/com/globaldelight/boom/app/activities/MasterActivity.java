@@ -14,26 +14,13 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
-import com.globaldelight.boom.business.client.IFBAddsUpdater;
-import com.globaldelight.boom.business.client.IGoogleAddsUpdater;
-import com.globaldelight.boom.business.BusinessUtils;
-import com.globaldelight.boom.business.BusinessUtils.AddSource;
-import com.globaldelight.boom.app.receivers.BusinessRequestReceiver;
 import com.globaldelight.boom.app.fragments.MasterContentFragment;
 import com.globaldelight.boom.view.slidinguppanel.SlidingUpPanelLayout;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
-import com.google.android.gms.ads.NativeExpressAdView;
-import java.util.Timer;
-import java.util.TimerTask;
-import static com.globaldelight.boom.business.BusinessUtils.AddSource.*;
-import static com.globaldelight.boom.app.receivers.BusinessRequestReceiver.ACTION_BUSINESS_APP_EXPIRE;
-import static com.globaldelight.boom.app.receivers.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
 
 /**
  * Created by Rahul Agarwal on 12-01-17.
@@ -50,13 +37,10 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     private IPlayerSliderControl iPlayerSliderControl;
     private FragmentManager fragmentManager;
     private Handler handler;
-    private static BusinessRequestReceiver businessRequestReceiver;
 
     private boolean isDrawerLocked = false;
     private static boolean isPlayerExpended = false, isEffectScreenExpended = false;
-
-    private static final long FIFTEEN_MINUTES = 15 * 60 * 1000;
-
+    
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         activity = (FrameLayout) getLayoutInflater().inflate(R.layout.activity_master, null);
@@ -178,7 +162,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         }catch (Exception e){
 
         }
-        initBusinessReceiver();
         super.onResume();
     }
 
@@ -195,18 +178,8 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         FlurryAnalyticHelper.flurryStopSession(this);
     }
 
-
-
-    private void initBusinessReceiver(){
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_BUSINESS_APP_EXPIRE);
-        filter.addAction(ACTION_BUSINESS_CONFIGURATION);
-        registerReceiver(businessRequestReceiver, filter);
-    }
-
     @Override
     protected void onPause() {
-        unregisterReceiver(businessRequestReceiver);
         super.onPause();
     }
 
