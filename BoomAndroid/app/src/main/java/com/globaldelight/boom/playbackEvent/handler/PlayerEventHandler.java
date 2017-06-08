@@ -161,7 +161,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
 
     public static PlayerEventHandler getPlayerEventInstance(Context context){
         if(handler == null){
-            handler = new PlayerEventHandler(context);
+            handler = new PlayerEventHandler(context.getApplicationContext());
         }
         return handler;
     }

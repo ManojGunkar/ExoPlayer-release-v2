@@ -35,8 +35,6 @@ public class UpNextPlayingQueue {
 
     Handler eventHandler = new Handler();
 
-    private static UpNextPlayingQueue upNextHandler;
-
     ArrayList<IMediaItemBase> mUpNextList;
 
     private HashMap<String, String> mAlbumArtList = new HashMap<>();
@@ -49,15 +47,9 @@ public class UpNextPlayingQueue {
     private static final String UNSHUFFLE = "unshuffle";
     private int playNextPosition;
 
-    private UpNextPlayingQueue(Context context){
+    public UpNextPlayingQueue(Context context){
         this.context = context;
         mUpNextList = new ArrayList<>();
-    }
-
-    public static UpNextPlayingQueue getUpNextInstance(Context context){
-        if(null == upNextHandler)
-            upNextHandler = new UpNextPlayingQueue(context);
-        return upNextHandler;
     }
 
     public void setUpNextMediaEvent(IUpNextMediaEvent event) {
@@ -508,10 +500,6 @@ public class UpNextPlayingQueue {
 
     private void savePlayingItemIndex() {
         Preferences.writeInteger(context, PLAYING_ITEM_INDEX_IN_UPNEXT, mPlayingItemIndex);
-    }
-
-    public void Terminate() {
-
     }
 
     public enum REPEAT {

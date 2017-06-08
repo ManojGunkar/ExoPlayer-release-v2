@@ -8,17 +8,15 @@ import android.content.Context;
 public class PlayingQueueHandler {
 
     private static PlayingQueueHandler handler;
-    private static UpNextPlayingQueue upNextList;
+    private UpNextPlayingQueue upNextList;
 
     private PlayingQueueHandler(Context context){
-        if(upNextList == null){
-            upNextList = UpNextPlayingQueue.getUpNextInstance(context);
-        }
+        upNextList = new UpNextPlayingQueue(context);
     }
 
-    public static PlayingQueueHandler getHandlerInstance(Context context) {
+    public static PlayingQueueHandler getInstance(Context context) {
         if(handler == null){
-            handler = new PlayingQueueHandler(context);
+            handler = new PlayingQueueHandler(context.getApplicationContext());
         }
         return handler;
     }
@@ -30,6 +28,5 @@ public class PlayingQueueHandler {
 
     public void Terminate() {
         handler = null;
-        getUpNextList().Terminate();
     }
 }

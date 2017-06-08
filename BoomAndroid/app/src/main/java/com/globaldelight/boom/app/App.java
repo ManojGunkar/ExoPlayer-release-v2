@@ -66,7 +66,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
 
 
-        playingQueueHandler = PlayingQueueHandler.getHandlerInstance(application);
+        playingQueueHandler = PlayingQueueHandler.getInstance(application);
 
         boomPlayListhelper = new PlaylistDBHelper(application);
 
