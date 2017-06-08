@@ -47,7 +47,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
     private static UserPreferenceHandler userPreferenceHandler;
     private static DropboxAPI<AndroidAuthSession> dropboxAPI;
 
-    private static BusinessHandler businessHandler;
 //    private static MixpanelAPI mixpanel;
 
     public static App getApplication() {
@@ -76,21 +75,11 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
         cloudMediaItemDBHelper = new CloudMediaItemDBHelper(application);
 
-        playingQueueHandler.getUpNextList();
-
         userPreferenceHandler = new UserPreferenceHandler(application);
-
-        try{
-            businessHandler = BusinessHandler.getBusinessHandlerInstance(application);
-        }catch (Exception e){}
 
         FlurryAnalyticHelper.init(this);
 
         registerActivityLifecycleCallbacks(this);
-    }
-
-    public static BusinessHandler getBusinessHandler(){
-        return businessHandler;
     }
 
     public static PlayerEventHandler getPlayerEventHandler() {

@@ -39,7 +39,7 @@ import static com.globaldelight.boom.app.receivers.BusinessRequestReceiver.ACTIO
  * Created by Rahul Agarwal on 12-01-17.
  */
 
-public class MasterActivity extends AppCompatActivity implements SlidingUpPanelLayout.PanelSlideListener, BusinessRequestReceiver.IUpdateBusinessRequest, IFBAddsUpdater, IGoogleAddsUpdater {
+public class MasterActivity extends AppCompatActivity implements SlidingUpPanelLayout.PanelSlideListener {
     private static final String TAG = "MasterActivity";
 
     private FrameLayout activity;
@@ -51,7 +51,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     private FragmentManager fragmentManager;
     private Handler handler;
     private static BusinessRequestReceiver businessRequestReceiver;
-    private static ILibraryAddsUpdater iLibraryAddsUpdater;
 
     private boolean isDrawerLocked = false;
     private static boolean isPlayerExpended = false, isEffectScreenExpended = false;
@@ -199,9 +198,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
 
 
     private void initBusinessReceiver(){
-        App.getBusinessHandler().setFBNativeAddListener(this);
-        App.getBusinessHandler().setGoogleNativeAddListener(this);
-        businessRequestReceiver = new BusinessRequestReceiver(this);
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_BUSINESS_APP_EXPIRE);
         filter.addAction(ACTION_BUSINESS_CONFIGURATION);
@@ -293,61 +289,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         });
     }
 
-    public static void setLibraryAddsUpdater(ILibraryAddsUpdater libraryAddsUpdater){
-        iLibraryAddsUpdater = libraryAddsUpdater;
-    }
-
-    @Override
-    public void onBusinessRequest(final AddSource addSources, final boolean libraryBannerEnable, boolean libraryVideoEnable) {
-        if(libraryBannerEnable) {
-            if (addSources == google) {
-                App.getBusinessHandler().loadGoogleNativeAdd(addSources, libraryBannerEnable);
-            } else {
-                App.getBusinessHandler().loadFbNativeAdds(addSources, libraryBannerEnable);
-            }
-        }
-        if(libraryVideoEnable) {
-            Timer timer = new Timer();
-            TimerTask launchVideoAdds = new TimerTask() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            FacebookSdk.sdkInitialize(getApplicationContext());
-                            AppEventsLogger.activateApp(getApplicationContext());
-                            if (addSources == google) {
-                                App.getBusinessHandler().loadGoogleFullScreenAdds();
-                            } else {
-                                App.getBusinessHandler().loadFullScreenFbAdds();
-                            }
-                        }
-                    });
-                }
-            };
-            timer.scheduleAtFixedRate(launchVideoAdds, 0, FIFTEEN_MINUTES);
-        }
-    }
-
-    @Override
-    public void onLoadFBNativeAdds(BusinessUtils.AddSource addSources, boolean libraryBannerEnable, final LinearLayout fbNativeAddContainer) {
-        LoadAdds(addSources, libraryBannerEnable, fbNativeAddContainer);
-    }
-
-    @Override
-    public void onLoadGoogleNativeAdds(BusinessUtils.AddSource addSources, boolean libraryBannerEnable, final NativeExpressAdView googleAddView) {
-        LoadAdds(addSources, libraryBannerEnable, googleAddView);
-    }
-
-    private void LoadAdds(final AddSource addSources, final boolean libraryBannerEnable, final View addView){
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                iLibraryAddsUpdater.onAddsUpdate(addSources, libraryBannerEnable, addView);
-            }
-        });
-    }
-
     public interface IPlayerSliderControl{
         void onPanelSlide(View panel, float slideOffset, boolean isEffectOpened);
         void onPanelCollapsed(View panel);
@@ -357,9 +298,5 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         void onResumeFragment(int alfa);
         void onVolumeUp();
         void onVolumeDown();
-    }
-
-    public interface ILibraryAddsUpdater{
-        void onAddsUpdate(AddSource addSources, boolean isLibraryAddsEnable, View addContainer);
     }
 }

@@ -50,7 +50,7 @@ import static com.globaldelight.boom.app.fragments.MasterContentFragment.isUpdat
  */
 
 public class MainActivity extends MasterActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MasterActivity.ILibraryAddsUpdater{
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private PermissionChecker permissionChecker;
     private CoordinatorLayout mainContainer;
@@ -188,7 +188,6 @@ public class MainActivity extends MasterActivity
     }
 
     private void initView() {
-        setLibraryAddsUpdater(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbarTitle = (RegularTextView) findViewById(R.id.toolbar_txt);
         setTitle(getResources().getString(R.string.music_library));
@@ -475,10 +474,4 @@ public class MainActivity extends MasterActivity
         super.onDestroy();
     }
 
-    @Override
-    public void onAddsUpdate(BusinessUtils.AddSource addSources, boolean isAddEnable, View addContainer) {
-        if(null != mLibraryFragment){
-            ((LibraryFragment)mLibraryFragment).updateAdds(addSources, isAddEnable, addContainer);
-        }
-    }
 }
