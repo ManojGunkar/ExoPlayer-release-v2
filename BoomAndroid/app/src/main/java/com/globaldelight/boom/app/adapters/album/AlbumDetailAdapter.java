@@ -142,8 +142,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                                     App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(item.getMediaElement());
                                     break;
                                 case R.id.album_header_add_to_playlist:
-                                    Utils util = new Utils(activity);
-                                    util.addToPlaylist(activity, item.getMediaElement(), null);
+                                    Utils.addToPlaylist(activity, item.getMediaElement(), null);
                                     break;
                                 case R.id.album_header_shuffle:
                                     activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
@@ -159,8 +158,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                                     App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement());
                                     break;
                                 case R.id.album_header_add_to_playlist:
-                                    Utils util = new Utils(activity);
-                                    util.addToPlaylist(activity, ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), null);
+                                    Utils.addToPlaylist(activity, ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), null);
                                     break;
                                 case R.id.album_header_shuffle:
                                     activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
@@ -220,10 +218,9 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                                         App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(item.getMediaElement().get(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
-                                        Utils util = new Utils(activity);
                                         ArrayList list = new ArrayList();
                                         list.add(item.getMediaElement().get(position));
-                                        util.addToPlaylist(activity, list, null);
+                                        Utils.addToPlaylist(activity, list, null);
                                         break;
                                     case R.id.popup_song_add_fav:
                                         if (MediaController.getInstance(activity).isFavoriteItem(item.getMediaElement().get(position).getItemId())) {
@@ -244,10 +241,9 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                                         App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
-                                        Utils util = new Utils(activity);
                                         ArrayList list = new ArrayList();
                                         list.add(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
-                                        util.addToPlaylist(activity, list, null);
+                                        Utils.addToPlaylist(activity, list, null);
                                         break;
                                     case R.id.popup_song_add_fav:
                                         if (MediaController.getInstance(activity).isFavoriteItem(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position).getItemId())) {

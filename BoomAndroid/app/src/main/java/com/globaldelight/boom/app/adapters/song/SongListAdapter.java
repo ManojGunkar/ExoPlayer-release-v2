@@ -176,10 +176,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                                         App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemList.get(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
-                                        Utils util = new Utils(activity);
                                         ArrayList list = new ArrayList();
                                         list.add(itemList.get(position));
-                                        util.addToPlaylist(activity, list, null);
+                                        Utils.addToPlaylist(activity, list, null);
                                         break;
                                     case R.id.popup_song_add_fav:
                                         if(MediaController.getInstance(activity).isFavoriteItem(itemList.get(position).getItemId())){

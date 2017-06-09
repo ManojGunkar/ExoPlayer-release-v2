@@ -188,10 +188,9 @@ public class OverFlowMenuUtils {
                             App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemBase);
                             break;
                         case R.id.popup_song_add_playlist:
-                            Utils util = new Utils(activity);
                             ArrayList list = new ArrayList();
                             list.add(itemBase);
-                            util.addToPlaylist(activity, list, null);
+                            Utils.addToPlaylist(activity, list, null);
                             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                             break;
                         case R.id.popup_song_add_fav:
@@ -235,10 +234,9 @@ public class OverFlowMenuUtils {
                             App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemBase);
                             break;
                         case R.id.popup_song_add_playlist:
-                            Utils util = new Utils(activity);
                             ArrayList list = new ArrayList();
                             list.add(itemBase);
-                            util.addToPlaylist(activity, list, null);
+                            Utils.addToPlaylist(activity, list, null);
                             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                             break;
                     }
@@ -270,10 +268,9 @@ public class OverFlowMenuUtils {
                             App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemBase);
                             break;
                         case R.id.popup_song_add_playlist:
-                            Utils util = new Utils(activity);
                             ArrayList list = new ArrayList();
                             list.add(itemBase);
-                            util.addToPlaylist(activity, list, null);
+                            Utils.addToPlaylist(activity, list, null);
                             FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                             break;
                         case R.id.popup_song_add_fav:
@@ -314,8 +311,7 @@ public class OverFlowMenuUtils {
                             App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(mediaElement);
                             break;
                         case R.id.album_header_add_to_playlist:
-                            Utils util = new Utils(activity);
-                            util.addToPlaylist(activity, mediaElement, null);
+                            Utils.addToPlaylist(activity, mediaElement, null);
                             break;
                         case R.id.album_header_shuffle:
                             App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(mediaElement, 0);
@@ -353,8 +349,7 @@ public class OverFlowMenuUtils {
                             App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(mediaElement);
                             break;
                         case R.id.album_header_add_to_playlist:
-                            Utils util = new Utils(activity);
-                            util.addToPlaylist(activity, mediaElement, null);
+                            Utils.addToPlaylist(activity, mediaElement, null);
                             break;
                         case R.id.album_header_shuffle:
                             App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(mediaElement, 0);
@@ -385,8 +380,7 @@ public class OverFlowMenuUtils {
                             App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(mediaElement);
                             break;
                         case R.id.album_header_add_to_playlist:
-                            Utils util = new Utils(activity);
-                            util.addToPlaylist(activity, mediaElement, null);
+                            Utils.addToPlaylist(activity, mediaElement, null);
                             break;
                         case R.id.album_header_shuffle:
                             App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(mediaElement, 0);

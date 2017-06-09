@@ -152,8 +152,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
     }
 
     private int setSize(SimpleItemViewHolder holder) {
-        Utils utils = new Utils(activity);
-        int size = (utils.getWindowWidth(activity) / (isPhone ? 2 : 3))
+        int size = (Utils.getWindowWidth(activity) / (isPhone ? 2 : 3))
                 - (int)activity.getResources().getDimension(R.dimen.card_grid_img_margin);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(size, size);

@@ -60,13 +60,12 @@ import static com.globaldelight.boom.business.BusinessPreferences.ACTION_EMAIL_D
  */
 
 public class Utils {
-    private Context context;
     private static BoomDialogView progressLoader;
     public static final int SHARE_COMPLETE = 1001;
     public static final int PURCHASE_FLOW_LAUNCH = 1002;
 
-    public Utils(Context context) {
-        this.context = context;
+    private Utils(Context context) {
+
     }
 
     public static int dpToPx(Context context, int dp) {
@@ -133,7 +132,8 @@ public class Utils {
         return resUri;
     }
 
-    public void addToPlaylist(final Activity activity, final ArrayList<? extends IMediaItemBase> songList, final String fromPlaylist) {
+    public static void  addToPlaylist(final Activity activity, final ArrayList<? extends IMediaItemBase> songList, final String fromPlaylist) {
+        Context context = activity;
         if(songList.size() == 0)
             return;
 
@@ -182,7 +182,8 @@ public class Utils {
         adapter.setDialog(dialog);
     }
 
-    public void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
+    public static void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
+        final Context context = activity;
         new MaterialDialog.Builder(context)
                 .title(R.string.new_playlist)
                 .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))

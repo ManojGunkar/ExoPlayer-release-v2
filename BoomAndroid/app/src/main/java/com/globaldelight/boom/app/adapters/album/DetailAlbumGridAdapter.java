@@ -259,8 +259,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                                 App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement());
                                 break;
                             case R.id.album_header_add_to_playlist:
-                                Utils util = new Utils(activity);
-                                util.addToPlaylist(activity, ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), null);
+                                Utils.addToPlaylist(activity, ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), null);
                                 break;
                             case R.id.album_header_shuffle:
                                 if (App.getPlayingQueueHandler().getUpNextList() != null) {
@@ -331,8 +330,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                                 App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection) collection.getMediaElement().get(position)).getMediaElement());
                                 break;
                             case R.id.popup_album_add_playlist:
-                                Utils util = new Utils(activity);
-                                util.addToPlaylist(activity, ((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement(), null);
+                                Utils.addToPlaylist(activity, ((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement(), null);
                                 FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                 break;
                         }
@@ -346,8 +344,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     }
 
     private int setSize(SimpleItemViewHolder holder) {
-        Utils utils = new Utils(activity);
-        int size = (utils.getWindowWidth(activity) / (isPhone ? 2 : 3))
+        int size = (Utils.getWindowWidth(activity) / (isPhone ? 2 : 3))
                 - (int)activity.getResources().getDimension(R.dimen.card_grid_img_margin);
 
 //        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));

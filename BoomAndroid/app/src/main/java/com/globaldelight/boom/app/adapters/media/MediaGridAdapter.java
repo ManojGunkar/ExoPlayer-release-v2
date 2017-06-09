@@ -131,8 +131,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
 
 
     private int setSize(ViewHolder holder) {
-        Utils utils = new Utils(context);
-        int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
+        int size = (Utils.getWindowWidth(context) / (isPhone ? 2 : 3))
                 - (int)context.getResources().getDimension(R.dimen.card_grid_img_margin);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(size, size);
@@ -231,8 +230,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
                     App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemToAdd);
                     break;
                 case R.id.popup_album_add_playlist:
-                    Utils util = new Utils(activity);
-                    util.addToPlaylist(activity, itemToAdd, null);
+                    Utils.addToPlaylist(activity, itemToAdd, null);
                     FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                     break;
             }

@@ -292,8 +292,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                                         App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection)((IMediaItemCollection) artists.get(getPosition(position))).getMediaElement().get(0)).getMediaElement());
                                         break;
                                     case R.id.popup_album_add_playlist:
-                                        Utils util = new Utils(context);
-                                        util.addToPlaylist(activity, ((IMediaItemCollection)((IMediaItemCollection) artists.get(getPosition(position))).getMediaElement().get(0)).getMediaElement(), null);
+                                        Utils.addToPlaylist(activity, ((IMediaItemCollection)((IMediaItemCollection) artists.get(getPosition(position))).getMediaElement().get(0)).getMediaElement(), null);
                                         FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                         break;
                                 }
@@ -347,8 +346,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                                         App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection)albums.get(getPosition(position))).getMediaElement());
                                         break;
                                     case R.id.popup_album_add_playlist:
-                                        Utils util = new Utils(context);
-                                        util.addToPlaylist(activity, ((MediaItemCollection) albums.get(getPosition(position))).getMediaElement(), null);
+                                        Utils.addToPlaylist(activity, ((MediaItemCollection) albums.get(getPosition(position))).getMediaElement(), null);
                                         FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                         break;
                                 }
@@ -409,10 +407,9 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                                             App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(songs.get(getPosition(position)));
                                             break;
                                         case R.id.popup_song_add_playlist:
-                                            Utils util = new Utils(context);
                                             ArrayList list = new ArrayList<IMediaItemBase>();
                                             list.add(songs.get(getPosition(position)));
-                                            util.addToPlaylist(activity, list, null);
+                                            Utils.addToPlaylist(activity, list, null);
                                             break;
                                         case R.id.popup_song_add_fav:
                                             if (MediaController.getInstance(context).isFavoriteItem(songs.get(getPosition(position)).getItemId())) {
@@ -523,8 +520,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
     }
 
     private int setSize(SimpleItemViewHolder holder) {
-        Utils utils = new Utils(context);
-        int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
+        int size = (Utils.getWindowWidth(context) / (isPhone ? 2 : 3))
                 - (int)context.getResources().getDimension(R.dimen.card_grid_img_margin);
 
 //        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));

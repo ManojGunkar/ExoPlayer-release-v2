@@ -1008,10 +1008,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                             }
                             break;
                         case R.id.popup_song_add_playlist:
-                            Utils util = new Utils(mActivity);
                             ArrayList list = new ArrayList();
                             list.add(App.getPlayerEventHandler().getPlayingItem());
-                            util.addToPlaylist(mActivity, list, null);
+                            Utils.addToPlaylist(mActivity, list, null);
                             break;
                     }
                 }catch (Exception e){
