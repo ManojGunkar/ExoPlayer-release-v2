@@ -2,54 +2,31 @@ package com.globaldelight.boom.app.sharedPreferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue;
-
-import java.util.ArrayList;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
  */
 
 public class UserPreferenceHandler {
-
-    private static final String LIBRARY_FROM = "com.boom.player.library";
     private static final String PREF_NAME = "com.boom";
     private static final String REPEAT_MODE_KEY = "repeat_mode";
     private static final String SHUFFLE_MODE_KEY = "shuffle_mode";
 
     private static final String ALBUM_SORTED = "album_sorted";
-    public static final int ALBUM_SORTED_BY_ARTIST = 0;
     public static final int ALBUM_SORTED_BY_TITLE = 1;
-    private static final boolean LIB_FROM_HOME = true;
 
     private static final String PLAYER_SEEK_POSITION = "player_seek_position";
     private static final String PLAYER_PLAYED_TIME = "played_time";
     private static final String PLAYER_REMAINS_TIME = "remains_time";
 
-    private static final String CURRENT_PLAYING_SONG = "CURRENT_PLAYING_SONG";
 
     private final SharedPreferences shp;
-    private final SharedPreferences.Editor editor;
 
-    private static ArrayList<IMediaItem> list = new ArrayList<>();
-    private static ArrayList<Long> idList = new ArrayList<>();
-    private static long boomPlayListId;
-
-    public static final String PREF_ACCOUNT_NAME = "accountName";
+    private static final String PREF_ACCOUNT_NAME = "accountName";
 
     public UserPreferenceHandler(Context context) {
         shp = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        editor = shp.edit();
-    }
-
-    public SharedPreferences.Editor getEditor(){
-        return editor;
-    }
-
-    public void commit(){
-        editor.commit();
     }
 
     public void setGoogleAccountName(String accountName){
@@ -65,15 +42,15 @@ public class UserPreferenceHandler {
         int repeatMode = shp.getInt(REPEAT_MODE_KEY, 0);
         switch (repeatMode) {
             case UpNextPlayingQueue.REPEAT_NONE:
-                shp.edit().putInt(REPEAT_MODE_KEY, UpNextPlayingQueue.REPEAT_ONE);
+                shp.edit().putInt(REPEAT_MODE_KEY, UpNextPlayingQueue.REPEAT_ONE).apply();
                 return UpNextPlayingQueue.REPEAT_ONE;
 
             case UpNextPlayingQueue.REPEAT_ONE:
-                shp.edit().putInt(REPEAT_MODE_KEY, UpNextPlayingQueue.REPEAT_ALL);
+                shp.edit().putInt(REPEAT_MODE_KEY, UpNextPlayingQueue.REPEAT_ALL).apply();
                 return UpNextPlayingQueue.REPEAT_ALL;
 
             case UpNextPlayingQueue.REPEAT_ALL:
-                shp.edit().putInt(REPEAT_MODE_KEY, UpNextPlayingQueue.REPEAT_NONE);
+                shp.edit().putInt(REPEAT_MODE_KEY, UpNextPlayingQueue.REPEAT_NONE).apply();
                 return UpNextPlayingQueue.REPEAT_NONE;
         }
 
@@ -84,11 +61,11 @@ public class UserPreferenceHandler {
         int shuffleMode = shp.getInt(SHUFFLE_MODE_KEY, 0);
         switch (shuffleMode) {
             case UpNextPlayingQueue.SHUFFLE_OFF:
-                shp.edit().putInt(SHUFFLE_MODE_KEY, UpNextPlayingQueue.SHUFFLE_ON);
+                shp.edit().putInt(SHUFFLE_MODE_KEY, UpNextPlayingQueue.SHUFFLE_ON).apply();
                 return UpNextPlayingQueue.SHUFFLE_ON;
 
             case UpNextPlayingQueue.SHUFFLE_ON:
-                shp.edit().putInt(SHUFFLE_MODE_KEY, UpNextPlayingQueue.SHUFFLE_OFF);
+                shp.edit().putInt(SHUFFLE_MODE_KEY, UpNextPlayingQueue.SHUFFLE_OFF).apply();
                 return UpNextPlayingQueue.SHUFFLE_OFF;
         }
 
