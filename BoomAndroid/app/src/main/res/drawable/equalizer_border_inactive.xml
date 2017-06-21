@@ -4,7 +4,7 @@
     <solid android:color="@android:color/transparent" />
     <corners android:radius="@dimen/equalizer_border_radius" />
     <stroke
-        android:color="@color/effect_inactive"
+        android:color="@color/equalizer_border_state"
         android:width="@dimen/equalizer_border" />
 
 </shape>

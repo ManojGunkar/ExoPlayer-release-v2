@@ -99,7 +99,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     Activity mActivity;
     private static ProgressBar mLoadingProgress;
     private static boolean isCloudSeek = false;
-    private AudioEffect audioEffectPreferenceHandler;
+    private AudioEffect audioEffects;
 
     public static boolean isUpdateUpnextDB = true;
 
@@ -114,7 +114,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private View mInflater;
     private int colorTo , colorFrom, colorFromActive;
     private AppCompatSeekBar mTrackSeek;
-    private ImageView mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mEffectTab, mPlayerTab, mPlayerBackBtn, mLargeAlbumArt;
+    private ImageView mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mPlayerBackBtn, mLargeAlbumArt;
+    private ImageView mEffectTab, mPlayerTab;
     private ImageView mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
     private LinearLayout mEffectContent, mPlayerLarge, mPlayerTitlePanel;
     private FrameLayout mPlayerContent;
@@ -262,7 +263,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         ScreenWidth = point.x;
         ScreenHeight = point.y;
 
-        audioEffectPreferenceHandler = AudioEffect.getInstance(mActivity);
+        audioEffects = AudioEffect.getInstance(mActivity);
 
         playerUIController = new PlayerUIController(mActivity);
         PlayerUIController.registerPlayerUIController(playerUIController);
@@ -285,17 +286,16 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void setPlayerEnable(boolean isEnable){
+        mPlayerTab.setSelected(isEnable);
+        mEffectTab.setSelected(!isEnable);
+
         if(isEnable){
-            mPlayerTab.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_active, null));
-            mEffectTab.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_effects_normal, null));
             mPlayerContent.setVisibility(View.VISIBLE);
             mEffectContent.setVisibility(View.GONE);
         }else{
             mPlayerContent.setVisibility(View.GONE);
             mEffectContent.setVisibility(View.VISIBLE);
-            mPlayerTab.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_normal, null));
-            mEffectTab.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_effects_active, null));
-            mEffectSwitch.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
+            mEffectSwitch.setChecked(audioEffects.isAudioEffectOn());
             String msg = isAllSpeakersAreOff();
             if(null != msg)
                 Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
@@ -370,22 +370,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updatePreviousNext(boolean prev_enable, boolean next_enable){
-        DrawableCompat.setTint(mPrevious.getDrawable(), ContextCompat.getColor(mActivity, R.color.black));
-        if(prev_enable){
-            DrawableCompat.setTint(mPrevious.getDrawable(), colorFrom);
-        }else{
-            DrawableCompat.setTint(mPrevious.getDrawable(), colorTo);
-        }
-        mPrevious.setClickable(prev_enable);
-
-
-        DrawableCompat.setTint(mNext.getDrawable(), ContextCompat.getColor(mActivity, R.color.black));
-        if(next_enable){
-            DrawableCompat.setTint(mNext.getDrawable(), colorFrom);
-        }else{
-            DrawableCompat.setTint(mNext.getDrawable(), colorTo);
-        }
-        mNext.setClickable(next_enable);
+        mPrevious.setEnabled(prev_enable);
+        mNext.setEnabled(next_enable);
     }
 
     private void updateAlbumArt(final IMediaItem item){
@@ -656,7 +642,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updateMiniPlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
-        updateMiniPlayerEffectUI(audioEffectPreferenceHandler.isAudioEffectOn());
+        updateMiniPlayerEffectUI(audioEffects.isAudioEffectOn());
         if(null != item){
             DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorFrom);
             mMiniSongTitle.setSelected(true);
@@ -935,18 +921,18 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 break;
             case R.id.eq_dialog_panel:
                 FlurryAnalyticHelper.logEvent(UtilAnalytics.Open_Equalizer_Dailog_from_DropDown);
-                if(isEffectOn && audioEffectPreferenceHandler.isEqualizerOn())
+                if(isEffectOn && audioEffects.isEqualizerOn())
                     onEqDialogOpen();
                 break;
             case R.id.equalizer_txt:
                 FlurryAnalyticHelper.logEvent(UtilAnalytics.Open_Equalizer_Dailog_from_text);
-                if(isEffectOn && audioEffectPreferenceHandler.isEqualizerOn())
+                if(isEffectOn && audioEffects.isEqualizerOn())
                     onEqDialogOpen();
                 break;
             case R.id.speaker_btn :
                 FlurryAnalyticHelper.logEvent(UtilAnalytics.Speaker_Dialog_Opened_From_Arrow);
             case R.id.three_surround_txt :
-                if(isEffectOn && audioEffectPreferenceHandler.is3DSurroundOn())
+                if(isEffectOn && audioEffects.is3DSurroundOn())
                     openSpeakerDialog();
                 FlurryAnalyticHelper.logEvent(UtilAnalytics.Speaker_Dialog_Opened_From_Text);
                 break;
@@ -1034,7 +1020,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             case R.id.player_large:
                 return true;
             case R.id.intensity_disable_img:
-                if(isEffectOn && audioEffectPreferenceHandler.isIntensityOn())
+                if(isEffectOn && audioEffects.isIntensityOn())
                     return false;
                 else
                     return true;
@@ -1058,7 +1044,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         mEffectSwitchTxt = (RegularTextView) mInflater.findViewById(R.id.effect_switch_txt);
         mEffectSwitch = (SwitchCompat) mInflater.findViewById(R.id.effect_switch);
-        mEffectSwitch.setChecked(audioEffectPreferenceHandler.isAudioEffectOn());
+        mEffectSwitch.setChecked(audioEffects.isAudioEffectOn());
 
         m3DSurroundBtn = (ImageView) mInflater.findViewById(R.id.three_surround_btn);
         m3DSurroundBtn.setOnClickListener(this);
@@ -1068,23 +1054,23 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         m3DSurroundTxt.setOnClickListener(this);
 
         mFullBassCheck = (AppCompatCheckBox) mInflater.findViewById(R.id.fullbass_chk);
-        mFullBassCheck.setChecked(audioEffectPreferenceHandler.isFullBassOn());
+        mFullBassCheck.setChecked(audioEffects.isFullBassOn());
 
         mFullBassCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
-                if(audioEffectPreferenceHandler.isAudioEffectOn() &&
-                        audioEffectPreferenceHandler.is3DSurroundOn()){
+                if(audioEffects.isAudioEffectOn() &&
+                        audioEffects.is3DSurroundOn()){
 
-                    audioEffectPreferenceHandler.setEnableFullBass(!audioEffectPreferenceHandler.isFullBassOn());
+                    audioEffects.setEnableFullBass(!audioEffects.isFullBassOn());
                     postMessage.post(new Runnable() {
                         @Override
                         public void run() {
-                            aaEffectUIController.OnFullBassEnable(audioEffectPreferenceHandler.isFullBassOn());
+                            aaEffectUIController.OnFullBassEnable(audioEffects.isFullBassOn());
                         }
                     });
 
-                    FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FULL_BASS, audioEffectPreferenceHandler.isFullBassOn());
+                    FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FULL_BASS, audioEffects.isFullBassOn());
                 }
             }
         });
@@ -1093,7 +1079,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mIntensityBtn.setOnClickListener(this);
         mIntensityTxt = (RegularTextView) mInflater.findViewById(R.id.intensity_txt);
         mIntensitySeek = (NegativeSeekBar) mInflater.findViewById(R.id.intensity_seek);
-        mIntensitySeek.setProgress(audioEffectPreferenceHandler.getIntensity());
+        mIntensitySeek.setProgress(audioEffects.getIntensity());
         mIntensitySeek.setOnClickListener(this);
 
         mEqualizerBtn = (ImageView) mInflater.findViewById(R.id.equalizer_btn);
@@ -1113,8 +1099,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         eq_active_on = mActivity.getResources().obtainTypedArray(R.array.eq_active_on);
         eq_active_off = mActivity.getResources().obtainTypedArray(R.array.eq_active_off);
 
-        mSelectedEqImg.setImageDrawable(eq_active_off.getDrawable(audioEffectPreferenceHandler.getSelectedEqualizerPosition()));
-        mSelectedEqTxt.setText(eq_names.get(audioEffectPreferenceHandler.getSelectedEqualizerPosition()));
+        mSelectedEqImg.setImageDrawable(eq_active_off.getDrawable(audioEffects.getSelectedEqualizerPosition()));
+        mSelectedEqTxt.setText(eq_names.get(audioEffects.getSelectedEqualizerPosition()));
 
 
         setEffectIntensity();
@@ -1129,8 +1115,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mEffectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
-                if(audioEffectPreferenceHandler.isAudioEffectOn() != enable) {
-                    audioEffectPreferenceHandler.setEnableAudioEffect(!audioEffectPreferenceHandler.isAudioEffectOn());
+                if(audioEffects.isAudioEffectOn() != enable) {
+                    audioEffects.setEnableAudioEffect(!audioEffects.isAudioEffectOn());
                     setEnableEffects();
                     postMessage.post(new Runnable() {
                         @Override
@@ -1139,7 +1125,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         }
                     });
                     MixPanelAnalyticHelper.track(mActivity, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
-                    FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffectPreferenceHandler.isAudioEffectOn());
+                    FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffects.isAudioEffectOn());
                     FlurryAnalyticHelper.logEvent(enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
                 }
                 Preferences.writeBoolean(mActivity, Preferences.TOOLTIP_SWITCH_EFFECT_LARGE_PLAYER, false);
@@ -1149,97 +1135,88 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void setEnableEffects(){
-        isEffectOn = audioEffectPreferenceHandler.isAudioEffectOn();
-        mOldIntensity = audioEffectPreferenceHandler.getIntensity()/(double)100;
+        isEffectOn = audioEffects.isAudioEffectOn();
+        mOldIntensity = audioEffects.getIntensity()/(double)100;
         if(isEffectOn){
             mEffectSwitchTxt.setText(mActivity.getString(R.string.on));
 
-            setEnable3DEffect(audioEffectPreferenceHandler.is3DSurroundOn());
+            setEnable3DEffect(audioEffects.is3DSurroundOn());
 
-            setEnableIntensity(audioEffectPreferenceHandler.isIntensityOn());
+            setEnableIntensity(audioEffects.isIntensityOn());
 
-            setEnableEqualizer(audioEffectPreferenceHandler.isEqualizerOn());
+            setEnableEqualizer(audioEffects.isEqualizerOn());
 
         }else{
             mEffectSwitchTxt.setText(mActivity.getString(R.string.off));
 
-            setEnable3DEffect(audioEffectPreferenceHandler.is3DSurroundOn());
+            setEnable3DEffect(audioEffects.is3DSurroundOn());
 
-            setEnableIntensity(audioEffectPreferenceHandler.isIntensityOn());
+            setEnableIntensity(audioEffects.isIntensityOn());
 
-            setEnableEqualizer(audioEffectPreferenceHandler.isEqualizerOn());
+            setEnableEqualizer(audioEffects.isEqualizerOn());
         }
     }
 
     private void setEnable3DEffect(boolean enable){
-        if(enable && audioEffectPreferenceHandler.isAudioEffectOn()) {
-            m3DSurroundBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_three_d_on, null));
-            m3DSurroundTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_active));
-            mSpeakerBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_three_d_dropdown, null));
-        }else{
-            m3DSurroundBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_three_d_off, null));
-            m3DSurroundTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_inactive));
-            mSpeakerBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_three_d_dropdown_off, null));
+        boolean effectsOn = audioEffects.isAudioEffectOn();
+        m3DSurroundBtn.setEnabled(effectsOn);
+        m3DSurroundTxt.setEnabled(effectsOn);
+        mSpeakerBtn.setEnabled(effectsOn);
+
+        if ( effectsOn ) {
+            m3DSurroundBtn.setSelected(enable);
+            m3DSurroundTxt.setSelected(enable);
+            mSpeakerBtn.setSelected(enable);
         }
 
-        setEnableFullBass(audioEffectPreferenceHandler.isFullBassOn());
+        setEnableFullBass(audioEffects.isFullBassOn());
     }
 
     private void setEnableFullBass(boolean enable){
-        if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()){
-            mFullBassCheck.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_active));
-            mFullBassCheck.setEnabled(true);
-        }else{
-            mFullBassCheck.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_inactive));
-            mFullBassCheck.setEnabled(false);
-        }
+        mFullBassCheck.setEnabled(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn());
     }
 
     private void setEnableIntensity(boolean enable) {
-        if(enable && audioEffectPreferenceHandler.isAudioEffectOn()){
-            mIntensityBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_intensity_on, null));
-            mIntensityTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_active));
-            mIntensitySeek.setDisable(false);
-        }else{
-            mIntensityBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_intensity_off, null));
-            mIntensityTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_inactive));
-            mIntensitySeek.setDisable(true);
+        boolean effectsOn = audioEffects.isAudioEffectOn();
+        mIntensityBtn.setEnabled(effectsOn);
+        mIntensityTxt.setEnabled(effectsOn);
+        mIntensitySeek.setDisable(!(enable && effectsOn));
+
+        if ( effectsOn ) {
+            mIntensityBtn.setSelected(enable);
+            mIntensityTxt.setSelected(enable);
         }
+
         FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_INTENSITY_STATE_CHANGED);
     }
 
-    private void setEnableEqualizer(boolean enable) {
-        setChangeEqualizerValue(audioEffectPreferenceHandler.getSelectedEqualizerPosition());
-        if(enable && audioEffectPreferenceHandler.isAudioEffectOn()){
-            mEqualizerBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_equalizer_on, null));
-            mEqualizerTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_active));
-            mEqDialogPanel.setBackground(mActivity.getResources().getDrawable(R.drawable.equalizer_border_active, null));
+    private void setEnableEqualizer(boolean active) {
+        setChangeEqualizerValue(audioEffects.getSelectedEqualizerPosition());
+        boolean enable = audioEffects.isAudioEffectOn();
+        mEqualizerBtn.setEnabled(enable);
+        mEqualizerTxt.setEnabled(enable);
+        mSelectedEqGoImg.setEnabled(enable);
+        mEqDialogPanel.setEnabled(enable);
+        mSelectedEqTxt.setEnabled(enable);
+        mSelectedEqImg.setEnabled(enable);
 
-            try {
-                DrawableCompat.setTint(mSelectedEqImg.getDrawable(), colorFrom);
-                mSelectedEqTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_active));
-                mSelectedEqGoImg.setImageDrawable(getResources().getDrawable(R.drawable.ic_eq_dropdown_on, null));
-            }catch (Exception e){}
-        }else{
-            mEqualizerBtn.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_equalizer_off, null));
-            mEqualizerTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_inactive));
-            mEqDialogPanel.setBackground(mActivity.getResources().getDrawable(R.drawable.equalizer_border_inactive, null));
-
-            try {
-                DrawableCompat.setTint(mSelectedEqImg.getDrawable(), colorTo);
-                mSelectedEqTxt.setTextColor(ContextCompat.getColor(mActivity, R.color.effect_inactive));
-                mSelectedEqGoImg.setImageDrawable(getResources().getDrawable(R.drawable.ic_eq_dropdown_off, null));
-            }catch (NullPointerException e){}
+        if ( enable ) {
+            mEqualizerBtn.setSelected(active);
+            mEqualizerTxt.setSelected(active);
+            mSelectedEqTxt.setSelected(active);
+            mSelectedEqImg.setSelected(active);
+            mSelectedEqGoImg.setSelected(active);
+            mEqDialogPanel.setSelected(active);
         }
     }
 
     private String isAllSpeakersAreOff(){
-        if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn()) {
-            if (!audioEffectPreferenceHandler.isLeftFrontSpeakerOn() && !audioEffectPreferenceHandler.isRightFrontSpeakerOn()
-                    && !audioEffectPreferenceHandler.isLeftSurroundSpeakerOn() && !audioEffectPreferenceHandler.isRightSurroundSpeakerOn()) {
+        if(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn()) {
+            if (!audioEffects.isLeftFrontSpeakerOn() && !audioEffects.isRightFrontSpeakerOn()
+                    && !audioEffects.isLeftSurroundSpeakerOn() && !audioEffects.isRightSurroundSpeakerOn()) {
                 return getResources().getString(R.string.all_speakers_off);
-            } else if (!audioEffectPreferenceHandler.isLeftFrontSpeakerOn() || !audioEffectPreferenceHandler.isRightFrontSpeakerOn()
-                    || !audioEffectPreferenceHandler.isLeftSurroundSpeakerOn() || !audioEffectPreferenceHandler.isRightSurroundSpeakerOn()) {
+            } else if (!audioEffects.isLeftFrontSpeakerOn() || !audioEffects.isRightFrontSpeakerOn()
+                    || !audioEffects.isLeftSurroundSpeakerOn() || !audioEffects.isRightSurroundSpeakerOn()) {
                 return getResources().getString(R.string.some_speakers_off);
             }
         }
@@ -1259,27 +1236,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mSurroundLeftSpeaker.setOnClickListener(this);
         mSurroundRightSpeaker.setOnClickListener(this);
 
-        if(!audioEffectPreferenceHandler.isLeftFrontSpeakerOn()){
-            mFrontLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_l_front_inactive, null));
-        }else {
-            mFrontLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_l_front_active, null));
-        }
-        if(!audioEffectPreferenceHandler.isRightFrontSpeakerOn()){
-            mFrontRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_r_front_inactive, null));
-        }else {
-            mFrontRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_r_front_active, null));
-        }
-        if(!audioEffectPreferenceHandler.isLeftSurroundSpeakerOn()){
-            mSurroundLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_l_surround_inactive, null));
-        }else {
-            mSurroundLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_l_surround_active, null));
-        }
-        if(!audioEffectPreferenceHandler.isRightSurroundSpeakerOn()){
-            mSurroundRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_r_surround_inactive, null));
-        }else {
-            mSurroundRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_speakers_r_surround_active, null));
-        }
-        updateTweeterAndWoofer(speakerPanel, audioEffectPreferenceHandler.isAllSpeakerOn());
+        mFrontLeftSpeaker.setSelected(audioEffects.isLeftFrontSpeakerOn());
+        mFrontRightSpeaker.setSelected(audioEffects.isRightFrontSpeakerOn());
+        mSurroundLeftSpeaker.setSelected(audioEffects.isLeftSurroundSpeakerOn());
+        mSurroundRightSpeaker.setSelected(audioEffects.isRightSurroundSpeakerOn());
+
+        updateTweeterAndWoofer(speakerPanel, audioEffects.isAllSpeakerOn());
     }
 
     private void updateTweeterAndWoofer(LinearLayout speakerPanel, boolean enable){
@@ -1292,34 +1254,25 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mTweeterRightSpeaker.setOnClickListener(this);
         mWoofer.setOnClickListener(this);
 
-        if(enable){
-            audioEffectPreferenceHandler.setOnAllSpeaker(true);
-            if(!audioEffectPreferenceHandler.isTweeterOn()){
-                mTweeterLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_tweeter_l_inactive, null));
-                mTweeterRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_tweeter_r_inactive, null));
-            }else {
-                mTweeterLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_tweeter_l_active, null));
-                mTweeterRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_tweeter_r_active, null));
-            }
-            if(!audioEffectPreferenceHandler.isWooferOn()){
-                mWoofer.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_woofer_inactive, null));
-            }else {
-                mWoofer.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_woofer_active, null));
-            }
-        }else{
-            audioEffectPreferenceHandler.setOnAllSpeaker(false);
-            mTweeterLeftSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_tweeter_l_disabled, null));
-            mTweeterRightSpeaker.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_tweeter_r_disabled, null));
-            mWoofer.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_woofer_disabled, null));
+        audioEffects.setOnAllSpeaker(enable);
+
+        mTweeterLeftSpeaker.setEnabled(enable);
+        mTweeterRightSpeaker.setEnabled(enable);
+        mWoofer.setEnabled(enable);
+
+        if ( enable ) {
+            mTweeterLeftSpeaker.setSelected(audioEffects.isTweeterOn());
+            mTweeterRightSpeaker.setSelected(audioEffects.isTweeterOn());
+            mWoofer.setSelected(audioEffects.isWooferOn());
         }
     }
 
     private void onEqDialogOpen(){
-        final EqualizerDialogAdapter adapter = new EqualizerDialogAdapter(mActivity, audioEffectPreferenceHandler.getSelectedEqualizerPosition(), eq_names, eq_active_on, eq_active_off, this);
+        final EqualizerDialogAdapter adapter = new EqualizerDialogAdapter(mActivity, audioEffects.getSelectedEqualizerPosition(), eq_names, eq_active_on, eq_active_off, this);
         RecyclerView recyclerView = (RecyclerView)mActivity.getLayoutInflater()
                 .inflate(R.layout.recycler_view_layout, null);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-        recyclerView.scrollToPosition(audioEffectPreferenceHandler.getSelectedEqualizerPosition());
+        recyclerView.scrollToPosition(audioEffects.getSelectedEqualizerPosition());
         recyclerView.setAdapter(adapter);
 
         MaterialDialog dialog = new MaterialDialog.Builder(mActivity)
@@ -1370,65 +1323,65 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void switch3DSurround(){
-        if(audioEffectPreferenceHandler.isAudioEffectOn()) {
-            audioEffectPreferenceHandler.setEnable3DSurround(!audioEffectPreferenceHandler.is3DSurroundOn());
+        if(audioEffects.isAudioEffectOn()) {
+            audioEffects.setEnable3DSurround(!audioEffects.is3DSurroundOn());
             postMessage.post(new Runnable() {
                 @Override
                 public void run() {
-                    aaEffectUIController.On3DSurroundEnable(audioEffectPreferenceHandler.is3DSurroundOn());
+                    aaEffectUIController.On3DSurroundEnable(audioEffects.is3DSurroundOn());
                 }
             });
-            setEnable3DEffect(audioEffectPreferenceHandler.is3DSurroundOn());
+            setEnable3DEffect(audioEffects.is3DSurroundOn());
 
-            if(audioEffectPreferenceHandler.is3DSurroundOn()) {
-                if (!audioEffectPreferenceHandler.isIntensityOn()) {
+            if(audioEffects.is3DSurroundOn()) {
+                if (!audioEffects.isIntensityOn()) {
                     switchIntensity();
                 }
-                if (!audioEffectPreferenceHandler.isEqualizerOn()) {
+                if (!audioEffects.isEqualizerOn()) {
                     switchEqualizer();
                 }
             }
-            MixPanelAnalyticHelper.track(mActivity, audioEffectPreferenceHandler.is3DSurroundOn() ? AnalyticsHelper.EVENT_3D_TURNED_ON : AnalyticsHelper.EVENT_3D_TURNED_OFF);
-            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_3D_STATE_CHANGED, audioEffectPreferenceHandler.is3DSurroundOn());
+            MixPanelAnalyticHelper.track(mActivity, audioEffects.is3DSurroundOn() ? AnalyticsHelper.EVENT_3D_TURNED_ON : AnalyticsHelper.EVENT_3D_TURNED_OFF);
+            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_3D_STATE_CHANGED, audioEffects.is3DSurroundOn());
         }
     }
 
     private void switchIntensity(){
-        if(audioEffectPreferenceHandler.isAudioEffectOn() && !audioEffectPreferenceHandler.is3DSurroundOn()){
-            setEnableIntensity(!audioEffectPreferenceHandler.isIntensityOn());
-            audioEffectPreferenceHandler.setEnableIntensity(!audioEffectPreferenceHandler.isIntensityOn());
-        }else if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn() && !audioEffectPreferenceHandler.isIntensityOn()){
-            setEnableIntensity(!audioEffectPreferenceHandler.isIntensityOn());
-            audioEffectPreferenceHandler.setEnableIntensity(!audioEffectPreferenceHandler.isIntensityOn());
-        }else if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn() && audioEffectPreferenceHandler.isIntensityOn()){
+        if(audioEffects.isAudioEffectOn() && !audioEffects.is3DSurroundOn()){
+            setEnableIntensity(!audioEffects.isIntensityOn());
+            audioEffects.setEnableIntensity(!audioEffects.isIntensityOn());
+        }else if(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && !audioEffects.isIntensityOn()){
+            setEnableIntensity(!audioEffects.isIntensityOn());
+            audioEffects.setEnableIntensity(!audioEffects.isIntensityOn());
+        }else if(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && audioEffects.isIntensityOn()){
             Toast.makeText(mActivity, mActivity.getResources().getString(R.string.req_intensity), Toast.LENGTH_LONG).show();
         }
         postMessage.post(new Runnable() {
             @Override
             public void run() {
-                aaEffectUIController.OnIntensityEnable(audioEffectPreferenceHandler.isIntensityOn());
+                aaEffectUIController.OnIntensityEnable(audioEffects.isIntensityOn());
             }
         });
     }
 
     private void switchEqualizer(){
-        if(audioEffectPreferenceHandler.isAudioEffectOn()  && !audioEffectPreferenceHandler.is3DSurroundOn()){
-            setEnableEqualizer(!audioEffectPreferenceHandler.isEqualizerOn());
-            audioEffectPreferenceHandler.setEnableEqualizer(!audioEffectPreferenceHandler.isEqualizerOn());
-        }else if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn() && !audioEffectPreferenceHandler.isEqualizerOn()){
-            setEnableEqualizer(!audioEffectPreferenceHandler.isEqualizerOn());
-            audioEffectPreferenceHandler.setEnableEqualizer(!audioEffectPreferenceHandler.isEqualizerOn());
-        } else if(audioEffectPreferenceHandler.isAudioEffectOn() && audioEffectPreferenceHandler.is3DSurroundOn() && audioEffectPreferenceHandler.isEqualizerOn()){
+        if(audioEffects.isAudioEffectOn()  && !audioEffects.is3DSurroundOn()){
+            setEnableEqualizer(!audioEffects.isEqualizerOn());
+            audioEffects.setEnableEqualizer(!audioEffects.isEqualizerOn());
+        }else if(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && !audioEffects.isEqualizerOn()){
+            setEnableEqualizer(!audioEffects.isEqualizerOn());
+            audioEffects.setEnableEqualizer(!audioEffects.isEqualizerOn());
+        } else if(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && audioEffects.isEqualizerOn()){
             Toast.makeText(mActivity, mActivity.getResources().getString(R.string.req_equlaizer), Toast.LENGTH_LONG).show();
         }
         postMessage.post(new Runnable() {
             @Override
             public void run() {
-                aaEffectUIController.OnEqualizerEnable(audioEffectPreferenceHandler.isEqualizerOn());
+                aaEffectUIController.OnEqualizerEnable(audioEffects.isEqualizerOn());
             }
         });
-        MixPanelAnalyticHelper.track(mActivity, audioEffectPreferenceHandler.isEqualizerOn() ? AnalyticsHelper.EVENT_EQ_TURNED_ON : AnalyticsHelper.EVENT_EQ_TURNED_OFF);
-        FlurryAnalyticHelper.logEventWithStatus(UtilAnalytics.Equalizer_status, audioEffectPreferenceHandler.isEqualizerOn());
+        MixPanelAnalyticHelper.track(mActivity, audioEffects.isEqualizerOn() ? AnalyticsHelper.EVENT_EQ_TURNED_ON : AnalyticsHelper.EVENT_EQ_TURNED_OFF);
+        FlurryAnalyticHelper.logEventWithStatus(UtilAnalytics.Equalizer_status, audioEffects.isEqualizerOn());
     }
 
     private void setEffectIntensity() {
@@ -1437,7 +1390,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean isUser) {
                 if((progress/(double)100 - mOldIntensity >= .1 || mOldIntensity - progress/(double)100 >= .1) || progress == 100  || progress == 0) {
                     mOldIntensity = progress / (double) 100;
-                    audioEffectPreferenceHandler.setIntensity(progress);
+                    audioEffects.setIntensity(progress);
 
                     if (isUser)
                         postMessage.post(new Runnable() {
@@ -1490,7 +1443,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 HashMap<String, String> articleParams = new HashMap<>();
                 articleParams.put(UtilAnalytics.PARAM_SELECTED_EQUALIZER, eq_names.get(position));
                 FlurryAnalyticHelper.logEvent(UtilAnalytics.Type_of_Equalizer_selected, articleParams);
-                audioEffectPreferenceHandler.setSelectedEqualizerPosition(position);
+                audioEffects.setSelectedEqualizerPosition(position);
             }
         });
         HashMap<String, String> articleParams = new HashMap<>();
@@ -1501,28 +1454,28 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private void updateSpeakers(final AudioEffect.Speaker speakerType){
         boolean enable = false;
         if(speakerType.ordinal() == AudioEffect.Speaker.FrontLeft.ordinal()){
-            enable = !audioEffectPreferenceHandler.isLeftFrontSpeakerOn();
-            audioEffectPreferenceHandler.setEnableLeftFrontSpeaker(enable);
+            enable = !audioEffects.isLeftFrontSpeakerOn();
+            audioEffects.setEnableLeftFrontSpeaker(enable);
             FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FRONT_LEFT_SPEAKER, enable);
         }else if(speakerType.ordinal() == AudioEffect.Speaker.FrontRight.ordinal()){
-            enable = !audioEffectPreferenceHandler.isRightFrontSpeakerOn();
-            audioEffectPreferenceHandler.setEnableRightFrontSpeaker(enable);
+            enable = !audioEffects.isRightFrontSpeakerOn();
+            audioEffects.setEnableRightFrontSpeaker(enable);
             FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FRONT_RIGHT_SPEAKER, enable);
         }else if(speakerType.ordinal() == AudioEffect.Speaker.RearLeft.ordinal()){
-            enable = !audioEffectPreferenceHandler.isLeftSurroundSpeakerOn();
-            audioEffectPreferenceHandler.setEnableLeftSurroundSpeaker(enable);
+            enable = !audioEffects.isLeftSurroundSpeakerOn();
+            audioEffects.setEnableLeftSurroundSpeaker(enable);
             FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_REAR_LEFT_SPEAKER, enable);
         }else if(speakerType.ordinal() == AudioEffect.Speaker.RearRight.ordinal()){
-            enable = !audioEffectPreferenceHandler.isRightSurroundSpeakerOn();
-            audioEffectPreferenceHandler.setEnableRightSurroundSpeaker(enable);
+            enable = !audioEffects.isRightSurroundSpeakerOn();
+            audioEffects.setEnableRightSurroundSpeaker(enable);
             FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_REAR_RIGHT_SPEAKER, enable);
         }else if(speakerType.ordinal() == AudioEffect.Speaker.Tweeter.ordinal()){
-            enable = !audioEffectPreferenceHandler.isTweeterOn();
-            audioEffectPreferenceHandler.setEnableTweeter(enable);
+            enable = !audioEffects.isTweeterOn();
+            audioEffects.setEnableTweeter(enable);
             FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_TWEETER, enable);
         }else if(speakerType.ordinal() == AudioEffect.Speaker.Woofer.ordinal()){
-            enable = !audioEffectPreferenceHandler.isWooferOn();
-            audioEffectPreferenceHandler.setEnableWoofer(enable);
+            enable = !audioEffects.isWooferOn();
+            audioEffects.setEnableWoofer(enable);
             FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_SUBWOOFER, enable);
         }
 
