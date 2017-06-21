@@ -80,6 +80,11 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_T
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_REPEAT;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_SHUFFLE;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
+import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_ALL;
+import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_NONE;
+import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_ONE;
+import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.SHUFFLE_OFF;
+import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.SHUFFLE_ON;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_BOTTOM_CENTER;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_TOP_CENTER;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_TOP_LEFT;
@@ -346,10 +351,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void updateShuffle(){
         switch (App.getUserPreferenceHandler().getShuffle()){
-            case none:
+            case SHUFFLE_OFF:
                 mShuffle.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_shuffle_off, null));
                 break;
-            case all:
+            case SHUFFLE_ON:
                 mShuffle.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_shuffle_on, null));
                 break;
         }
@@ -357,13 +362,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void updateRepeat(){
         switch (App.getUserPreferenceHandler().getRepeat()){
-            case none:
+            case REPEAT_NONE:
                 mRepeat.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_repeat_off, null));
                 break;
-            case one:
+            case REPEAT_ONE:
                 mRepeat.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_repeat_one, null));
                 break;
-            case all:
+            case REPEAT_ALL:
                 mRepeat.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_repeat_on, null));
                 break;
         }
@@ -556,15 +561,15 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private void updateLargePlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
         if(null != item){
             switch (App.getUserPreferenceHandler().getShuffle()){
-                case none:
+                case SHUFFLE_OFF:
                     DrawableCompat.setTint(mShuffle.getDrawable(), colorFrom);
                     break;
-                case all:
+                case SHUFFLE_ON:
                     DrawableCompat.setTint(mShuffle.getDrawable(), colorFromActive);
                     break;
             }
             switch (App.getUserPreferenceHandler().getRepeat()){
-                case none:
+                case REPEAT_NONE:
                     DrawableCompat.setTint(mRepeat.getDrawable(), colorFrom);
                     break;
                 default:
