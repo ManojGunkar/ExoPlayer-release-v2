@@ -205,7 +205,7 @@ public class UpNextPlayingQueue {
             if (mShuffle == UpNextPlayingQueue.SHUFFLE.all) {
                 insertUpNextList(UNSHUFFLE);
                 mUpNextList.remove(getPlayingItemIndex());
-                Collections.shuffle(mUpNextList, new Random(mUpNextList.size()));
+                Collections.shuffle(mUpNextList, new Random(System.currentTimeMillis()));
                 mUpNextList.add(0, playingItem);
                 mPlayingItemIndex = 0;
             } else {
@@ -453,7 +453,7 @@ public class UpNextPlayingQueue {
             if (mShuffle == UpNextPlayingQueue.SHUFFLE.all) {
                 insertUpNextList(UNSHUFFLE);
                 mUpNextList.remove(getPlayingItemIndex());
-                Collections.shuffle(mUpNextList, new Random(mUpNextList.size()));
+                Collections.shuffle(mUpNextList, new Random(System.currentTimeMillis()));
                 mUpNextList.add(0, playingItem);
                 mPlayingItemIndex = 0;
             }
