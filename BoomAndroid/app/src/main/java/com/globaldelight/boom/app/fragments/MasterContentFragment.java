@@ -136,7 +136,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private double mOldIntensity;
 
     private List<String> eq_names;
-    private TypedArray eq_active_on, eq_active_off;
+    private TypedArray eq_active_off;
 
     private int ScreenWidth, ScreenHeight;
     private boolean isEffectOn = false;
@@ -1096,7 +1096,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mDisableIntensity = (RegularTextView) mInflater.findViewById(R.id.intensity_disable_img);
         mDisableIntensity.setOnTouchListener(this);
         eq_names = Arrays.asList(mActivity.getResources().getStringArray(R.array.eq_names));
-        eq_active_on = mActivity.getResources().obtainTypedArray(R.array.eq_active_on);
         eq_active_off = mActivity.getResources().obtainTypedArray(R.array.eq_active_off);
 
         mSelectedEqImg.setImageDrawable(eq_active_off.getDrawable(audioEffects.getSelectedEqualizerPosition()));
@@ -1268,7 +1267,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void onEqDialogOpen(){
-        final EqualizerDialogAdapter adapter = new EqualizerDialogAdapter(mActivity, audioEffects.getSelectedEqualizerPosition(), eq_names, eq_active_on, eq_active_off, this);
+        final EqualizerDialogAdapter adapter = new EqualizerDialogAdapter(mActivity, audioEffects.getSelectedEqualizerPosition(), eq_names, eq_active_off, this);
         RecyclerView recyclerView = (RecyclerView)mActivity.getLayoutInflater()
                 .inflate(R.layout.recycler_view_layout, null);
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
@@ -1293,7 +1292,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 .canceledOnTouchOutside(false)
                 .show();
         dialog.getWindow().setLayout((ScreenWidth *80)/100, (ScreenHeight *70)/100);
-        adapter.setDialog(dialog);
     }
 
     private void openSpeakerDialog() {

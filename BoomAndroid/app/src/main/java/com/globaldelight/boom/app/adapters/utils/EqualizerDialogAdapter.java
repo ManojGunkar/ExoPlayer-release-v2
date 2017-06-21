@@ -22,17 +22,15 @@ import java.util.List;
 
 public class EqualizerDialogAdapter extends RecyclerView.Adapter<EqualizerDialogAdapter.ViewHolder> {
 
-    private List<String> eqNames;
-    TypedArray eq_active_on, eq_active_off;
+    private List<String> mEqNames;
+    private TypedArray mEqIcons;
     private Context mContext;
-    MaterialDialog dialog;
-    private static int eqPosition = 0;
+    private int eqPosition = 0;
     private IEqualizerSelect equalizerListener;
 
-    public EqualizerDialogAdapter(Context context, int eqPosition, List<String> eqNames, TypedArray eq_active_on, TypedArray eq_active_off, IEqualizerSelect equalizerListener){
-        this.eqNames = eqNames;
-        this.eq_active_on = eq_active_on;
-        this.eq_active_off = eq_active_off;
+    public EqualizerDialogAdapter(Context context, int eqPosition, List<String> eqNames, TypedArray eqIcons, IEqualizerSelect equalizerListener){
+        this.mEqNames = eqNames;
+        this.mEqIcons = eqIcons;
         this.mContext = context;
         this.eqPosition = eqPosition;
         this.equalizerListener = equalizerListener;
@@ -42,35 +40,28 @@ public class EqualizerDialogAdapter extends RecyclerView.Adapter<EqualizerDialog
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.card_equalizer_item, parent, false);
-        return new ViewHolder(itemView);
+        final ViewHolder holder = new ViewHolder(itemView);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final int position = holder.getAdapterPosition();
+                equalizerListener.onChangeEqualizerValue(position);
+                updateList(position);
+            }
+        });
+
+        return holder;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.mEqName.setText(eqNames.get(position));
+        holder.mEqName.setText(mEqNames.get(position));
+        holder.mEqIcon.setImageDrawable(mEqIcons.getDrawable(position));
 
-        if(position == eqPosition){
-            holder.mainView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.dialog_selection));
-            holder.mEqIcon.setImageDrawable(eq_active_on.getDrawable(position));
-            holder.mEqName.setTextColor(ContextCompat.getColor(mContext, R.color.dialog_selected_txt));
-        }else{
-            holder.mainView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background));
-            holder.mEqIcon.setImageDrawable(eq_active_off.getDrawable(position));
-            holder.mEqName.setTextColor(ContextCompat.getColor(mContext, R.color.dialog_txt));
-        }
-
-        holder.mainView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        equalizerListener.onChangeEqualizerValue(position);
-                    }
-                });
-                updateList(position);
-            }
-        });
+        boolean selected = (position == eqPosition);
+        holder.itemView.setSelected(selected);
+        holder.mEqIcon.setSelected(selected);
+        holder.mEqName.setSelected(selected);
     }
 
     private void updateList(int position) {
@@ -80,21 +71,15 @@ public class EqualizerDialogAdapter extends RecyclerView.Adapter<EqualizerDialog
 
     @Override
     public int getItemCount() {
-        return eqNames.size();
-    }
-
-    public void setDialog(MaterialDialog dialog) {
-        this.dialog = dialog;
+        return mEqNames.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        public View mainView;
         public RegularTextView mEqName;
         public ImageView mEqIcon;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mainView = itemView;
             mEqName = (RegularTextView) itemView.findViewById(R.id.eq_name);
             mEqIcon = (ImageView) itemView.findViewById(R.id.eq_icon);
         }
