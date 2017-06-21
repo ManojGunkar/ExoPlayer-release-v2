@@ -441,7 +441,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
         IMediaItemBase nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
         if(null != nowPlayingItem){
             if(itemId == nowPlayingItem.getItemId()){
-                holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
+                holder.name.setSelected(true);
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);
                 if(App.getPlayerEventHandler().isPlaying()){

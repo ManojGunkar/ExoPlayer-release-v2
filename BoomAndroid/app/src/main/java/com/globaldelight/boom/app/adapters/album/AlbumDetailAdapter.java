@@ -108,8 +108,8 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
 
     private void updatePlayingItem(boolean isPlayingItem, SimpleItemViewHolder holder) {
         if(isPlayingItem){
-            holder.count.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
-            holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
+            holder.count.setSelected(true);
+            holder.name.setSelected(true);
             holder.art_overlay.setVisibility(View.VISIBLE);
             holder.art_overlay_play.setVisibility(View.VISIBLE);
             if(App.getPlayerEventHandler().isPlaying()){
@@ -118,8 +118,8 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                 holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
             }
         }else{
-            holder.count.setTextColor(ContextCompat.getColor(activity, R.color.track_title));
-            holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_title));
+            holder.count.setSelected(false);
+            holder.name.setSelected(false);
             holder.art_overlay.setVisibility(View.INVISIBLE);
             holder.art_overlay_play.setVisibility(View.INVISIBLE);
         }

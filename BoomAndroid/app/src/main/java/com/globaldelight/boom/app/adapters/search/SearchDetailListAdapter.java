@@ -287,7 +287,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
         IMediaItemBase nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
         if(null != nowPlayingItem){
             if(itemId == nowPlayingItem.getItemId()){
-                holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
+                holder.name.setSelected(true);
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);
                 if(App.getPlayerEventHandler().isPlaying()){
@@ -296,7 +296,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
             }else{
-                holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_title));
+                holder.name.setSelected(false);
                 holder.art_overlay.setVisibility(View.INVISIBLE);
                 holder.art_overlay_play.setVisibility(View.INVISIBLE);
             }

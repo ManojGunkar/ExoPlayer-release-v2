@@ -94,7 +94,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
             if (itemId == nowPlayingItem.getItemId()) {
                 holder.overlay.setVisibility(View.VISIBLE );
                 holder.overlayPlay.setVisibility( View.VISIBLE );
-                holder.title.setTextColor( ContextCompat.getColor(activity, R.color.track_selected_title) );
+                holder.title.setSelected(true);
                 if (App.getPlayerEventHandler().isPlaying()) {
                     holder.progressIndicator.setVisibility(View.GONE);
                     holder.overlayPlay.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
@@ -109,7 +109,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                 holder.overlay.setVisibility( View.INVISIBLE );
                 holder.overlayPlay.setVisibility( View.INVISIBLE );
                 holder.progressIndicator.setVisibility(View.GONE);
-                holder.title.setTextColor(ContextCompat.getColor(activity, R.color.track_title));
+                holder.title.setSelected(false);
             }
         }
     }
