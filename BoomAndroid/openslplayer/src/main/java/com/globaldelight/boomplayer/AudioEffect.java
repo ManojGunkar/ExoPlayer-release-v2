@@ -2,9 +2,15 @@ package com.globaldelight.boomplayer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.IntDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**
  * Created by Rahul Agarwal on 08-10-16.
@@ -29,12 +35,12 @@ public class AudioEffect {
     private static final String EQUALIZER_POWER = "equalizer_power";
     private static final String AUTO_EQUALIZER = "auto_equalizer";
 
-    private static final String SPEAKER_LEFT_FRONT = "speaker_left_front";
-    private static final String SPEAKER_RIGHT_FRONT = "speaker_right_front";
-    private static final String SPEAKER_LEFT_SURROUND = "speaker_left_surround";
-    private static final String SPEAKER_RIGHT_SURROUND = "speaker_right_surround";
-    private static final String SPEAKER_SUB_WOOFER = "speaker_sub_woofer";
-    private static final String SPEAKER_TWEETER = "speaker_tweeter";
+    private static final String SPEAKER_LEFT_FRONT_KEY = "speaker_left_front";
+    private static final String SPEAKER_RIGHT_FRONT_KEY = "speaker_right_front";
+    private static final String SPEAKER_LEFT_SURROUND_KEY = "speaker_left_surround";
+    private static final String SPEAKER_RIGHT_SURROUND_KEY = "speaker_right_surround";
+    private static final String SPEAKER_SUB_WOOFER_KEY = "speaker_sub_woofer";
+    private static final String SPEAKER_TWEETER_KEY = "speaker_tweeter";
 
     private static final String INTENSITY_POSITION = "intensity_position";
     private static final String SELECTED_EQUALIZER_POSITION = "selected_equalizer_position";
@@ -143,56 +149,56 @@ public class AudioEffect {
 
 
     public boolean isLeftFrontSpeakerOn(){
-        return shp.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER);
+        return shp.getBoolean(SPEAKER_LEFT_FRONT_KEY, DEFAULT_POWER);
     }
 
     public void setEnableLeftFrontSpeaker(boolean enable) {
-        editor.putBoolean(SPEAKER_LEFT_FRONT, enable);
+        editor.putBoolean(SPEAKER_LEFT_FRONT_KEY, enable);
         editor.commit();
     }
 
     public boolean isRightFrontSpeakerOn(){
-        return shp.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER);
+        return shp.getBoolean(SPEAKER_RIGHT_FRONT_KEY, DEFAULT_POWER);
     }
 
     public void setEnableRightFrontSpeaker(boolean enable) {
-        editor.putBoolean(SPEAKER_RIGHT_FRONT, enable);
+        editor.putBoolean(SPEAKER_RIGHT_FRONT_KEY, enable);
         editor.commit();
     }
 
     public boolean isLeftSurroundSpeakerOn(){
-        return shp.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER);
+        return shp.getBoolean(SPEAKER_LEFT_SURROUND_KEY, DEFAULT_POWER);
     }
 
     public void setEnableLeftSurroundSpeaker(boolean enable) {
-        editor.putBoolean(SPEAKER_LEFT_SURROUND, enable);
+        editor.putBoolean(SPEAKER_LEFT_SURROUND_KEY, enable);
         editor.commit();
     }
 
     public boolean isRightSurroundSpeakerOn(){
-        return shp.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER);
+        return shp.getBoolean(SPEAKER_RIGHT_SURROUND_KEY, DEFAULT_POWER);
     }
 
     public void setEnableRightSurroundSpeaker(boolean enable) {
-        editor.putBoolean(SPEAKER_RIGHT_SURROUND, enable);
+        editor.putBoolean(SPEAKER_RIGHT_SURROUND_KEY, enable);
         editor.commit();
     }
 
     public boolean isWooferOn(){
-        return shp.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER);
+        return shp.getBoolean(SPEAKER_SUB_WOOFER_KEY, DEFAULT_POWER);
     }
 
     public void setEnableWoofer(boolean enable) {
-        editor.putBoolean(SPEAKER_SUB_WOOFER, enable);
+        editor.putBoolean(SPEAKER_SUB_WOOFER_KEY, enable);
         editor.commit();
     }
 
     public boolean isTweeterOn(){
-        return shp.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER);
+        return shp.getBoolean(SPEAKER_TWEETER_KEY, DEFAULT_POWER);
     }
 
     public void setEnableTweeter(boolean enable) {
-        editor.putBoolean(SPEAKER_TWEETER, enable);
+        editor.putBoolean(SPEAKER_TWEETER_KEY, enable);
         editor.commit();
     }
 
@@ -205,25 +211,15 @@ public class AudioEffect {
         return shp.getBoolean(ALL_SPEAKER_POWER, DEFAULT_POWER);
     }
 
-    public enum Speaker {
-        FrontLeft,
-        FrontRight,
-        RearLeft,
-        RearRight,
-        Woofer,
-        Tweeter;
-        private static final Map<Integer, Speaker> lookup = new HashMap<Integer, Speaker>();
+    @IntDef ({SPEAKER_FRONT_LEFT, SPEAKER_FRONT_RIGHT, SPEAKER_SURROUND_LEFT, SPEAKER_SURROUND_RIGHT, SPEAKER_WOOFER, SPEAKER_TWEETER })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Speaker {}
 
-        static {
-            int ordinal = 0;
-            for (Speaker suit : EnumSet.allOf(Speaker.class)) {
-                lookup.put(ordinal, suit);
-                ordinal += 1;
-            }
-        }
+    public static final int SPEAKER_FRONT_LEFT = 0;
+    public static final int SPEAKER_FRONT_RIGHT = 1;
+    public static final int SPEAKER_SURROUND_LEFT = 2;
+    public static final int SPEAKER_SURROUND_RIGHT = 3;
+    public static final int SPEAKER_WOOFER = 4;
+    public static final int SPEAKER_TWEETER = 5;
 
-        public static Speaker fromOrdinal(int ordinal) {
-            return lookup.get(ordinal);
-        }
-    }
 }

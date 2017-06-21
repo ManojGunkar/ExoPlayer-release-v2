@@ -62,7 +62,7 @@ public class EffectUIController implements IEffectUIController {
     }
 
     @Override
-    public void OnSpeakerEnable(AudioEffect.Speaker speakerType, boolean enable) {
-        App.getPlayerEventHandler().setSpeakerEnable(speakerType, enable);
+    public void OnSpeakerEnable(@AudioEffect.Speaker int speakerType, boolean enable) {
+        App.getPlayerEventHandler().setSpeakerEnable((int)speakerType, enable);
     }
 }

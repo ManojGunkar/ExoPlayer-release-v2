@@ -937,25 +937,25 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 FlurryAnalyticHelper.logEvent(UtilAnalytics.Speaker_Dialog_Opened_From_Text);
                 break;
             case R.id.speaker_left_front:
-                updateSpeakers(AudioEffect.Speaker.FrontLeft);
+                updateSpeakers(AudioEffect.SPEAKER_FRONT_LEFT);
                 break;
             case R.id.speaker_right_front:
-                updateSpeakers(AudioEffect.Speaker.FrontRight);
+                updateSpeakers(AudioEffect.SPEAKER_FRONT_RIGHT);
                 break;
             case R.id.speaker_left_surround:
-                updateSpeakers(AudioEffect.Speaker.RearLeft);
+                updateSpeakers(AudioEffect.SPEAKER_SURROUND_LEFT);
                 break;
             case R.id.speaker_right_surround:
-                updateSpeakers(AudioEffect.Speaker.RearRight);
+                updateSpeakers(AudioEffect.SPEAKER_SURROUND_RIGHT);
                 break;
             case R.id.speaker_left_tweeter:
-                updateSpeakers(AudioEffect.Speaker.Tweeter);
+                updateSpeakers(AudioEffect.SPEAKER_TWEETER);
                 break;
             case R.id.speaker_right_tweeter:
-                updateSpeakers(AudioEffect.Speaker.Tweeter);
+                updateSpeakers(AudioEffect.SPEAKER_TWEETER);
                 break;
             case R.id.speaker_sub_woofer:
-                updateSpeakers(AudioEffect.Speaker.Woofer);
+                updateSpeakers(AudioEffect.SPEAKER_WOOFER);
                 break;
         }
     }
@@ -1449,42 +1449,48 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         FlurryAnalyticHelper.logEvent(UtilAnalytics.Equalizer_selected, articleParams);
     }
 
-    private void updateSpeakers(final AudioEffect.Speaker speakerType){
+    private void updateSpeakers(@AudioEffect.Speaker final int speakerType){
         boolean enable = false;
-        if(speakerType.ordinal() == AudioEffect.Speaker.FrontLeft.ordinal()){
-            enable = !audioEffects.isLeftFrontSpeakerOn();
-            audioEffects.setEnableLeftFrontSpeaker(enable);
-            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FRONT_LEFT_SPEAKER, enable);
-        }else if(speakerType.ordinal() == AudioEffect.Speaker.FrontRight.ordinal()){
-            enable = !audioEffects.isRightFrontSpeakerOn();
-            audioEffects.setEnableRightFrontSpeaker(enable);
-            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FRONT_RIGHT_SPEAKER, enable);
-        }else if(speakerType.ordinal() == AudioEffect.Speaker.RearLeft.ordinal()){
-            enable = !audioEffects.isLeftSurroundSpeakerOn();
-            audioEffects.setEnableLeftSurroundSpeaker(enable);
-            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_REAR_LEFT_SPEAKER, enable);
-        }else if(speakerType.ordinal() == AudioEffect.Speaker.RearRight.ordinal()){
-            enable = !audioEffects.isRightSurroundSpeakerOn();
-            audioEffects.setEnableRightSurroundSpeaker(enable);
-            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_REAR_RIGHT_SPEAKER, enable);
-        }else if(speakerType.ordinal() == AudioEffect.Speaker.Tweeter.ordinal()){
-            enable = !audioEffects.isTweeterOn();
-            audioEffects.setEnableTweeter(enable);
-            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_TWEETER, enable);
-        }else if(speakerType.ordinal() == AudioEffect.Speaker.Woofer.ordinal()){
-            enable = !audioEffects.isWooferOn();
-            audioEffects.setEnableWoofer(enable);
-            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_SUBWOOFER, enable);
+        switch (speakerType) {
+            case AudioEffect.SPEAKER_FRONT_LEFT:
+                enable = !audioEffects.isLeftFrontSpeakerOn();
+                audioEffects.setEnableLeftFrontSpeaker(enable);
+                FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FRONT_LEFT_SPEAKER, enable);
+                break;
+
+            case AudioEffect.SPEAKER_FRONT_RIGHT:
+                enable = !audioEffects.isRightFrontSpeakerOn();
+                audioEffects.setEnableRightFrontSpeaker(enable);
+                FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FRONT_RIGHT_SPEAKER, enable);
+                break;
+
+            case AudioEffect.SPEAKER_SURROUND_LEFT:
+                enable = !audioEffects.isLeftSurroundSpeakerOn();
+                audioEffects.setEnableLeftSurroundSpeaker(enable);
+                FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_REAR_LEFT_SPEAKER, enable);
+                break;
+
+            case AudioEffect.SPEAKER_SURROUND_RIGHT:
+                enable = !audioEffects.isRightSurroundSpeakerOn();
+                audioEffects.setEnableRightSurroundSpeaker(enable);
+                FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_REAR_RIGHT_SPEAKER, enable);
+                break;
+
+            case AudioEffect.SPEAKER_TWEETER:
+                enable = !audioEffects.isTweeterOn();
+                audioEffects.setEnableTweeter(enable);
+                FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_TWEETER, enable);
+                break;
+
+            case AudioEffect.SPEAKER_WOOFER:
+                enable = !audioEffects.isWooferOn();
+                audioEffects.setEnableWoofer(enable);
+                FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_SUBWOOFER, enable);
+                break;
         }
 
         updateSpeakers(mSpeakerDialogPanel);
-        final boolean finalEnable = enable;
-        postMessage.post(new Runnable() {
-            @Override
-            public void run() {
-                aaEffectUIController.OnSpeakerEnable(speakerType, finalEnable);
-            }
-        });
+        aaEffectUIController.OnSpeakerEnable(speakerType, enable);
     }
 
     private void dismissTooltip() {

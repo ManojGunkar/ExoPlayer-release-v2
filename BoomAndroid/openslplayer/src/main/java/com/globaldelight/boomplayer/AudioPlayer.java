@@ -408,17 +408,12 @@ public class AudioPlayer implements Runnable {
             setEnableSuperBass(audioEffect.isFullBassOn());
             setEqualizerGain(audioEffect.getSelectedEqualizerPosition());
 
-            setSpeakerEnable(AudioEffect.Speaker.FrontLeft, audioEffect.isLeftFrontSpeakerOn());
-
-            setSpeakerEnable(AudioEffect.Speaker.FrontRight, audioEffect.isRightFrontSpeakerOn());
-
-            setSpeakerEnable(AudioEffect.Speaker.Tweeter, audioEffect.isTweeterOn());
-
-            setSpeakerEnable(AudioEffect.Speaker.RearLeft, audioEffect.isLeftSurroundSpeakerOn());
-
-            setSpeakerEnable(AudioEffect.Speaker.RearRight, audioEffect.isRightSurroundSpeakerOn());
-
-            setSpeakerEnable(AudioEffect.Speaker.Woofer, audioEffect.isWooferOn());
+            setSpeakerEnable(AudioEffect.SPEAKER_FRONT_LEFT, audioEffect.isLeftFrontSpeakerOn());
+            setSpeakerEnable(AudioEffect.SPEAKER_FRONT_RIGHT, audioEffect.isRightFrontSpeakerOn());
+            setSpeakerEnable(AudioEffect.SPEAKER_TWEETER, audioEffect.isTweeterOn());
+            setSpeakerEnable(AudioEffect.SPEAKER_SURROUND_LEFT, audioEffect.isLeftSurroundSpeakerOn());
+            setSpeakerEnable(AudioEffect.SPEAKER_SURROUND_RIGHT, audioEffect.isRightSurroundSpeakerOn());
+            setSpeakerEnable(AudioEffect.SPEAKER_WOOFER, audioEffect.isWooferOn());
 
             setHighQualityEnable(audioEffect.isIntensityOn());
 
@@ -492,10 +487,10 @@ public class AudioPlayer implements Runnable {
         }catch (Exception e){}
     }
 
-    public synchronized void setSpeakerEnable(AudioEffect.Speaker speaker, boolean value){
+    public synchronized void setSpeakerEnable(@AudioEffect.Speaker int speaker, boolean value){
         try {
             if(isPlaying() || isPause())
-                nativePlayer.setSpeakerState(speaker.ordinal(), value == true ? 1 : 0);
+                nativePlayer.setSpeakerState(speaker, value == true ? 1 : 0);
         }catch (Exception e){}
     }
 

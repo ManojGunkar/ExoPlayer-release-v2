@@ -378,7 +378,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
             mPlayer.setEqualizerGain(position);
     }
 
-    public void setSpeakerEnable(AudioEffect.Speaker speaker, boolean enable) {
+    public void setSpeakerEnable(@AudioEffect.Speaker int speaker, boolean enable) {
         if(null != mPlayer)
             mPlayer.setSpeakerEnable(speaker, enable);
     }
