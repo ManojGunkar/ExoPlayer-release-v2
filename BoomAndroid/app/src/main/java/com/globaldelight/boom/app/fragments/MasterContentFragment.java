@@ -1144,9 +1144,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         }
                     });
                     MixPanelAnalyticHelper.track(mActivity, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
-                  //  FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_EFFECT_STATE_CHANGED, audioEffectPreferenceHandler.isAudioEffectOn());
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_EFFECT_STATE_CHANGED, audioEffects.isAudioEffectOn());
-                   // FlurryAnalyticHelper.logEvent(enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
                     FlurryAnalytics.getInstance(getActivity()).setEvent(enable ? FlurryEvents.EVENT_EFFECTS_TURNED_ON : FlurryEvents.EVENT_EFFECTS_TURNED_OFF);
                 }
                 Preferences.writeBoolean(mActivity, Preferences.TOOLTIP_SWITCH_EFFECT_LARGE_PLAYER, false);
@@ -1364,6 +1362,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             MixPanelAnalyticHelper.track(mActivity, audioEffects.is3DSurroundOn() ? AnalyticsHelper.EVENT_3D_TURNED_ON : AnalyticsHelper.EVENT_3D_TURNED_OFF);
 //            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_3D_STATE_CHANGED, audioEffectPreferenceHandler.is3DSurroundOn());
             FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_3D_STATE_CHANGED, audioEffects.is3DSurroundOn());
+            FlurryAnalytics.getInstance(getActivity()).setEvent(audioEffects.is3DSurroundOn() ? FlurryEvents.EVENT_3D_TURNED_ON : FlurryEvents.EVENT_3D_TURNED_OFF);
         }
     }
 
@@ -1404,6 +1403,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         MixPanelAnalyticHelper.track(mActivity, audioEffects.isEqualizerOn() ? AnalyticsHelper.EVENT_EQ_TURNED_ON : AnalyticsHelper.EVENT_EQ_TURNED_OFF);
 //        FlurryAnalyticHelper.logEventWithStatus(UtilAnalytics.Equalizer_status, audioEffectPreferenceHandler.isEqualizerOn());
         FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_status,audioEffects.isEqualizerOn());
+        FlurryAnalytics.getInstance(getActivity()).setEvent(audioEffects.isEqualizerOn() ? FlurryEvents.EVENT_EQ_TURNED_ON : FlurryEvents.EVENT_EQ_TURNED_OFF);
     }
 
     private void setEffectIntensity() {
@@ -1484,37 +1484,37 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             case AudioEffect.SPEAKER_FRONT_LEFT:
                 enable = !audioEffects.isLeftFrontSpeakerOn();
                 audioEffects.setEnableLeftFrontSpeaker(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(AnalyticsHelper.EVENT_FRONT_LEFT_SPEAKER, enable);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FRONT_LEFT_SPEAKER, enable);
                 break;
 
             case AudioEffect.SPEAKER_FRONT_RIGHT:
                 enable = !audioEffects.isRightFrontSpeakerOn();
                 audioEffects.setEnableRightFrontSpeaker(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(AnalyticsHelper.EVENT_FRONT_RIGHT_SPEAKER, enable);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FRONT_RIGHT_SPEAKER, enable);
                 break;
 
             case AudioEffect.SPEAKER_SURROUND_LEFT:
                 enable = !audioEffects.isLeftSurroundSpeakerOn();
                 audioEffects.setEnableLeftSurroundSpeaker(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(AnalyticsHelper.EVENT_REAR_LEFT_SPEAKER, enable);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_REAR_LEFT_SPEAKER, enable);
                 break;
 
             case AudioEffect.SPEAKER_SURROUND_RIGHT:
                 enable = !audioEffects.isRightSurroundSpeakerOn();
                 audioEffects.setEnableRightSurroundSpeaker(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(AnalyticsHelper.EVENT_REAR_RIGHT_SPEAKER, enable);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_REAR_RIGHT_SPEAKER, enable);
                 break;
 
             case AudioEffect.SPEAKER_TWEETER:
                 enable = !audioEffects.isTweeterOn();
                 audioEffects.setEnableTweeter(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(AnalyticsHelper.EVENT_TWEETER, enable);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_TWEETER, enable);
                 break;
 
             case AudioEffect.SPEAKER_WOOFER:
                 enable = !audioEffects.isWooferOn();
                 audioEffects.setEnableWoofer(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(AnalyticsHelper.EVENT_SUBWOOFER, enable);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_SUBWOOFER, enable);
                 break;
         }
 
