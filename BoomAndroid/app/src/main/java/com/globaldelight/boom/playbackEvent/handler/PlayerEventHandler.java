@@ -13,11 +13,12 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
@@ -307,12 +308,14 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
     public PlayState PlayPause() {
         if(isPlaying()){
             setSessionState(PlaybackState.STATE_PAUSED);
-            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_PAUSE_PLAYING);
+//            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_PAUSE_PLAYING);
+            FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_PAUSE_PLAYING);
             return pause;
         } else {
             if ( requestAudioFocus() ) {
                 setSessionState(PlaybackState.STATE_PLAYING);
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_PLAY_PLAYING);
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_PLAY_PLAYING);
+                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_PLAY_PLAYING);
                 return play;
             }
             else {

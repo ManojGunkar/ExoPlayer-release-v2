@@ -14,8 +14,9 @@ import android.view.ViewGroup;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.view.RegularButton;
 
 /**
@@ -49,18 +50,18 @@ public class AboutFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
-        FlurryAnalyticHelper.init(mActivity);
     }
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(mActivity);
+        FlurryAnalytics.getInstance(mActivity.getApplicationContext()).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(mActivity);
+        FlurryAnalytics.getInstance(mActivity.getApplicationContext()).endSession();
+
     }
 
     private void initViews() {
@@ -69,7 +70,8 @@ public class AboutFragment extends Fragment {
         rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.About_Rate_Button_Tapped);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.About_Rate_Button_Tapped);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.About_Rate_Button_Tapped);
                 Uri uri = Uri.parse("market://details?id=" + mActivity.getPackageName());
                 Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
                 // To count with Play market backstack, After pressing back button,
@@ -83,7 +85,9 @@ public class AboutFragment extends Fragment {
                     startActivity(new Intent(Intent.ACTION_VIEW,
                             Uri.parse("http://play.google.com/store/apps/details?id=" + mActivity.getPackageName())));
                 }
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ABOUT_RATE_BUTTON_TAPPED);
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ABOUT_RATE_BUTTON_TAPPED);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_ABOUT_RATE_BUTTON_TAPPED);
+
             }
         });
         rateButton.setEnabled(true);

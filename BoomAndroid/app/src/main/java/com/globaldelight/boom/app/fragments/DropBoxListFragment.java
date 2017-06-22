@@ -22,8 +22,9 @@ import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.cloud.DropboxMediaList;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
@@ -77,7 +78,8 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                         dropboxMediaList.clearDropboxContent();
                     }
                     LoadDropboxList();
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Sync_Button_tapped_from_Drop_BOx);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Sync_Button_tapped_from_Drop_BOx);
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Sync_Button_tapped_from_Drop_BOx);
                     break;
             }
         }
@@ -107,7 +109,6 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         prefs = mActivity.getSharedPreferences(
                 ACCOUNT_PREFS_NAME, 0);
         initViews();
-        FlurryAnalyticHelper.init(mActivity);
     }
 
     private void initViews() {
@@ -254,13 +255,13 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     @Override
     public  void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(mActivity);
+        FlurryAnalytics.getInstance(getActivity()).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(mActivity);
+        FlurryAnalytics.getInstance(getActivity()).endSession();
     }
 
     @Override

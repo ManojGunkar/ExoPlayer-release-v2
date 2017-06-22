@@ -19,9 +19,10 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
@@ -75,7 +76,7 @@ public class AlbumSongListActivity extends MasterActivity {
         setSupportActionBar(toolbar);
 
         initViews();
-        FlurryAnalyticHelper.init(this);
+       // FlurryAnalyticHelper.init(this);
     }
 
     private void initViews() {
@@ -109,14 +110,18 @@ public class AlbumSongListActivity extends MasterActivity {
             @Override
             public void onClick(View view) {
                 if (currentItem.getItemType() == ItemType.BOOM_PLAYLIST) {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_Boom_playlist_section);
+         //           FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_Boom_playlist_section);
+                    FlurryAnalytics.getInstance(AlbumSongListActivity.this).setEvent(FlurryEvents.FAB_Tapped_from_Boom_playlist_section);
                 } else if (currentItem.getItemType() == ItemType.PLAYLIST) {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_playlist_section);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_playlist_section);
+                    FlurryAnalytics.getInstance(AlbumSongListActivity.this).setEvent(FlurryEvents.FAB_Tapped_from_playlist_section);
                 }
                 if (currentItem.getItemType() == ItemType.ARTIST) {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_ARTIST_ALL_SONGS_section);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_ARTIST_ALL_SONGS_section);
+                    FlurryAnalytics.getInstance(AlbumSongListActivity.this).setEvent(FlurryEvents.FAB_Tapped_from_ARTIST_ALL_SONGS_section);
                 }else if(currentItem.getItemType() == ItemType.GENRE){
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_GENERE_ALL_SONGS_section);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_GENERE_ALL_SONGS_section);
+                    FlurryAnalytics.getInstance(AlbumSongListActivity.this).setEvent(FlurryEvents.FAB_Tapped_from_GENERE_ALL_SONGS_section);
                 }
                 if(null != fragment && !App.getPlayerEventHandler().isTrackWaitingForPlay()){
                     fragment.onFloatPlayAlbumSongs();
@@ -142,13 +147,16 @@ public class AlbumSongListActivity extends MasterActivity {
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(this);
+//        FlurryAnalyticHelper.flurryStartSession(this);
+        FlurryAnalytics.getInstance(this).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(this);
+//        FlurryAnalyticHelper.flurryStopSession(this);
+          FlurryAnalytics.getInstance(this).endSession();
+
     }
 
     @Override

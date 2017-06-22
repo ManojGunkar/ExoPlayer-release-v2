@@ -11,8 +11,6 @@ import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.business.client.BusinessHandler;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.playbackEvent.handler.PlayerEventHandler;
 import com.globaldelight.boom.playbackEvent.handler.PlayingQueueHandler;
@@ -77,7 +75,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
         userPreferenceHandler = new UserPreferenceHandler(application);
 
-        FlurryAnalyticHelper.init(this);
+//        FlurryAnalyticHelper.init(this);
 
         registerActivityLifecycleCallbacks(this);
     }

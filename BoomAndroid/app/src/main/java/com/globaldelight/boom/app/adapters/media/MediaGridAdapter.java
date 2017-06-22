@@ -19,7 +19,8 @@ import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumDetailItemActivity;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
@@ -231,7 +232,9 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
                     break;
                 case R.id.popup_album_add_playlist:
                     Utils.addToPlaylist(activity, itemToAdd, null);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+//                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+
                     break;
             }
         }

@@ -21,10 +21,10 @@ public class MixPanelAnalyticHelper {
     public static String projectToken = "598c4011c2d961ef3b7f248459fa30c7";
 
     private static String SENDER_ID = "862807752058";
-    public static  MixpanelAPI mixpanel;
+    public static MixpanelAPI mixpanel;
 
     public static MixpanelAPI getInstance(Context context) {
-         mixpanel = MixpanelAPI.getInstance(context, projectToken);
+        mixpanel = MixpanelAPI.getInstance(context, projectToken);
         String android_id = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         mixpanel.identify(android_id);
@@ -44,7 +44,7 @@ public class MixPanelAnalyticHelper {
         return mixpanel;
     }
 
-        public void registerPush(GoogleCloudMessaging gcm){
+    public void registerPush(GoogleCloudMessaging gcm) {
         String registrationId = null;
         try {
             registrationId = gcm.register(SENDER_ID);
@@ -57,7 +57,7 @@ public class MixPanelAnalyticHelper {
     }
 
     public static void initPushNotification(Context context) {
-       getInstance(context);
+        getInstance(context);
 
     }
 

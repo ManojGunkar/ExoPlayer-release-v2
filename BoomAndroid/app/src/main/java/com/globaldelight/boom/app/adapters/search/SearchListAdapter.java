@@ -24,13 +24,14 @@ import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumDetailItemActivity;
 import com.globaldelight.boom.app.activities.SearchDetailActivity;
 import com.globaldelight.boom.app.fragments.SearchDetailFragment;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.app.adapters.search.utils.SearchResult;
@@ -293,7 +294,9 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                                         break;
                                     case R.id.popup_album_add_playlist:
                                         Utils.addToPlaylist(activity, ((IMediaItemCollection)((IMediaItemCollection) artists.get(getPosition(position))).getMediaElement().get(0)).getMediaElement(), null);
-                                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+//                                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                        FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+
                                         break;
                                 }
                             }catch (Exception e){}
@@ -347,7 +350,9 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                                         break;
                                     case R.id.popup_album_add_playlist:
                                         Utils.addToPlaylist(activity, ((MediaItemCollection) albums.get(getPosition(position))).getMediaElement(), null);
-                                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                      //  FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                        FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+
                                         break;
                                 }
                             }catch (Exception e){}

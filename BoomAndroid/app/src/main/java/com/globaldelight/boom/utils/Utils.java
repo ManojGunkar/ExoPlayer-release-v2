@@ -31,10 +31,11 @@ import android.view.WindowManager;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.business.BusinessPreferences;
@@ -199,7 +200,9 @@ public class Utils {
                         if (!input.toString().matches("")) {
                             MediaController.getInstance(context).createBoomPlaylist(input.toString());
                             addToPlaylist(activity, song, fromPlaylist);
-                            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
+                        //    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
+                            FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_CREATED_NEW_PLAYLIST);
+
                             MixPanelAnalyticHelper.getInstance(context).getPeople().set(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST, input.toString());
                         }
                     }
@@ -377,7 +380,9 @@ public class Utils {
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
+//                            FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
+                            FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Share_Opened_from_Dialog);
+
                             shareStart(context);
                         }
                     })

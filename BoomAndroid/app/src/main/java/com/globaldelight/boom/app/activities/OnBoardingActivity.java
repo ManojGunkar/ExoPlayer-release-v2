@@ -10,8 +10,9 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.view.RegularButton;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.view.onBoarding.PagerAdapter;
@@ -38,8 +39,7 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboarding);
         initComp();
-        FlurryAnalyticHelper.init(this);
-        FlurryAnalyticHelper.logEvent(UtilAnalytics.Started_OnBoarding);
+        FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Started_OnBoarding);
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -98,13 +98,15 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_boomin_onboard:
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Completed_Onboarding);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Completed_Onboarding);
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Completed_Onboarding);
                 if (Preferences.readBoolean(this, Preferences.ON_BOARDING_COMPLETED_ON_FIRST_ATTEMPT, true)) {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.OnBoarding_Completed_on_First_Attempt);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.OnBoarding_Completed_on_First_Attempt);
+                    FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.OnBoarding_Completed_on_First_Attempt);
                 }
             case R.id.txt_skip_onboard:
                 jumpToHome();
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Completed_Onboarding_by_Tapping_Skip);
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Completed_Onboarding_by_Tapping_Skip);
                 break;
 
             case R.id.txt_next_onboard:
@@ -129,13 +131,13 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(this);
+        FlurryAnalytics.getInstance(this).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(this);
+        FlurryAnalytics.getInstance(this).endSession();
     }
 
     @Override

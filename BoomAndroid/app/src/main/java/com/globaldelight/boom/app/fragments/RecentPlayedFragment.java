@@ -19,9 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.RecentPlayedMediaList;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.app.loaders.LoadRecentPlayedList;
@@ -82,7 +82,6 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
-        FlurryAnalyticHelper.init(mActivity);
     }
 
     @Override
@@ -192,12 +191,12 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(mActivity);
+        FlurryAnalytics.getInstance(getActivity()).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(mActivity);
+        FlurryAnalytics.getInstance(getActivity()).endSession();
     }
 }

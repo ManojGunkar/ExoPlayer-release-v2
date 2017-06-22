@@ -24,11 +24,12 @@ import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.Toast;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumDetailItemActivity;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
@@ -195,7 +196,9 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                                         break;
                                     case R.id.popup_album_add_playlist:
                                         Utils.addToPlaylist(activity, ((MediaItemCollection) resultItemList.get(position)).getMediaElement(), null);
-                                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                       // FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                        FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+
                                         break;
                                 }
                             }catch (Exception e){
@@ -267,7 +270,9 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                                         break;
                                     case R.id.popup_album_add_playlist:
                                         Utils.addToPlaylist(activity, ((IMediaItemCollection)((IMediaItemCollection) resultItemList.get(position)).getMediaElement().get(0)).getMediaElement(), null);
-                                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                     //   FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                        FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+
                                         break;
                                 }
                             }catch (Exception e){

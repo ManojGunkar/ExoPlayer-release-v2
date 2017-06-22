@@ -14,12 +14,14 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumSongListActivity;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.app.App;
@@ -331,7 +333,8 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                                 break;
                             case R.id.popup_album_add_playlist:
                                 Utils.addToPlaylist(activity, ((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement(), null);
-                                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                //FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                FlurryAnalytics.getInstance(activity.getApplicationContext()).startSession().setEvent(FlurryEvents.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                 break;
                         }
                         return false;

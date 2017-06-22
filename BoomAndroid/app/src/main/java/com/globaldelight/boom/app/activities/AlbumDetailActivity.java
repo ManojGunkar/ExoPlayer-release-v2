@@ -14,8 +14,9 @@ import android.widget.ImageView;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
@@ -47,7 +48,7 @@ public class AlbumDetailActivity extends MasterActivity {
         initValues();
 
         initViews();
-        FlurryAnalyticHelper.init(this);
+        //FlurryAnalyticHelper.init(this);
     }
 
     private void initValues() {
@@ -74,13 +75,14 @@ public class AlbumDetailActivity extends MasterActivity {
             public void onClick(View view) {
                 if (null != currentItem) {
                     if (currentItem.getItemType() == ItemType.GENRE) {
-                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Genere_Details_Section);
+                     //   FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Genere_Details_Section);
+                        FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Genere_Details_Section);
                     } else if (currentItem.getItemType() == ItemType.ARTIST) {
-                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Artist_details_Section);
-
+//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Artist_details_Section);
+                        FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Artist_details_Section);
                     }else if (currentItem.getItemType() == ItemType.ALBUM ) {
-                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Button_Tapped_from_Album_Section);
-
+//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Button_Tapped_from_Album_Section);
+                        FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_Button_Tapped_from_Album_Section);
                     }
                 }
                 if(null != fragment && !App.getPlayerEventHandler().isTrackWaitingForPlay()){
@@ -159,13 +161,15 @@ public class AlbumDetailActivity extends MasterActivity {
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(this);
+       // FlurryAnalyticHelper.flurryStartSession(this);
+        FlurryAnalytics.getInstance(this).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(this);
+//        FlurryAnalyticHelper.flurryStopSession(this);
+        FlurryAnalytics.getInstance(this).endSession();
     }
 
 }

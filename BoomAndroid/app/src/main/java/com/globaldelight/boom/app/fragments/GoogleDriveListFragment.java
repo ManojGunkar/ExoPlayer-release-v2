@@ -21,8 +21,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.cloud.GoogleDriveMediaList;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
@@ -79,7 +80,9 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
                         googleDriveMediaList.clearGoogleDriveMediaContent();
                     }
                     checkPermissions();
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Sync_Button_tapped_from_Google_Drive);
+                    //FlurryAnalyticHelper.logEvent(UtilAnalytics.Sync_Button_tapped_from_Google_Drive);
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Sync_Button_tapped_from_Google_Drive);
+
                     break;
             }
         }
@@ -107,7 +110,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         super.onActivityCreated(savedInstanceState);
         initViews();
         checkPermissions();
-        FlurryAnalyticHelper.init(mActivity);
     }
 
     private void initViews() {
@@ -248,13 +250,14 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     @Override
     public  void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(mActivity);
+        FlurryAnalytics.getInstance(getActivity()).startSession();
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(mActivity);
+        FlurryAnalytics.getInstance(getActivity()).endSession();
     }
 
 

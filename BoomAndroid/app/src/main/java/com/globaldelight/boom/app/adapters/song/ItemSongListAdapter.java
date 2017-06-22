@@ -23,8 +23,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.R;
@@ -221,15 +222,21 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             public void onClick(View view) {
                 animate(holder);
                 if(currentItem.getItemType()== ItemType.BOOM_PLAYLIST){
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Tapped_from_Boom_playlist_Thumbnail);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Tapped_from_Boom_playlist_Thumbnail);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_Boom_playlist_Thumbnail);
+
                 }else if(currentItem.getItemType()== ItemType.PLAYLIST){
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Tapped_from_playlist_Thumbnail);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Tapped_from_playlist_Thumbnail);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_playlist_Thumbnail);
                 }
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_played_from_playlist_section);
                 if (currentItem.getItemType() == ItemType.ARTIST) {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Tapped_from_ARTIST_AllSongs_Thumbnail);
+                  //  FlurryAnalyticHelper.logEvent(UtilAnalytics.Tapped_from_ARTIST_AllSongs_Thumbnail);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_ARTIST_AllSongs_Thumbnail);
                 } else if (currentItem.getItemType() == ItemType.GENRE) {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Tapped_from_GENERE_AllSongs_Thumbnail);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Tapped_from_GENERE_AllSongs_Thumbnail);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_GENERE_AllSongs_Thumbnail);
+
                 }
                 if (!App.getPlayerEventHandler().isTrackLoading()) {
                     if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {

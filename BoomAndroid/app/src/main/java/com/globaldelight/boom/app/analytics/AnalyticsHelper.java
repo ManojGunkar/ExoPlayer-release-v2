@@ -3,6 +3,8 @@ package com.globaldelight.boom.app.analytics;
 import android.content.Context;
 
 import com.flurry.android.FlurryAgent;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boomplayer.AudioEffect;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -138,7 +140,9 @@ public class AnalyticsHelper {
 
     public static void songSelectionChanged(Context context, IMediaItemBase songInfo) {
         final AudioEffect audioEffectPreferenceHandler = AudioEffect.getInstance(context);
-        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_TRACK_SELECTION_CHANGED);
+//        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_TRACK_SELECTION_CHANGED);
+  //      FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_TRACK_SELECTION_CHANGED);
+
         MixpanelAPI mixpanel = MixPanelAnalyticHelper.getInstance(context);
         MixPanelAnalyticHelper.getInstance(context).getPeople().increment(EVENT_SONG_COUNT, 1);
 
@@ -184,7 +188,8 @@ public class AnalyticsHelper {
 
         HashMap<String, String> articleParams = new HashMap<>();
         articleParams.put(AnalyticsHelper.PARAM_SELECTED_HEADPHONE_TYPE, "over_ear");
-        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_HEADPHONE_TYPE_CHANGED, articleParams);
+      //  FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_HEADPHONE_TYPE_CHANGED, articleParams);
+        FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_HEADPHONE_TYPE_CHANGED, articleParams);
 
         MixpanelAPI mixpanel = MixPanelAnalyticHelper.getInstance(context);
         JSONObject properties = new JSONObject();

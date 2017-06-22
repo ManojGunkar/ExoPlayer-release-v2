@@ -1,27 +1,25 @@
 package com.globaldelight.boom.app.service;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.util.Log;
+
 import com.globaldelight.boom.app.activities.BoomSplash;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.notification.NotificationHandler;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
-import com.globaldelight.boom.utils.Utils;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.app.App;
-import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.client.IBusinessNetworkInit;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.playbackEvent.handler.PlayerEventHandler;
@@ -342,7 +340,9 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(mServiceStartTime)));
             HashMap<String, String> val = new HashMap<>();
             val.put(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, time);
-            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, val);
+         //   FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, val);
+            FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.EVENT_MUSIC_SESSION_DURATION,val);
+
         }catch (Exception e){}
         super.onDestroy();
     }

@@ -9,8 +9,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.service.PlayerService;
 
 /**
@@ -116,7 +117,9 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 break;
             case ACTION_NEXT_SONG :
                 if(requestCode==10102){
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Next_Button_Tapped_from_Notification_bar);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Next_Button_Tapped_from_Notification_bar);
+                    FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Next_Button_Tapped_from_Notification_bar);
+
                     Log.d("notifi","1");
                 }
                 if(null != mPlayerService)
@@ -124,7 +127,9 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 break;
             case ACTION_PREV_SONG :
                 if(requestCode==10103){
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.previous_Button_Tapped_from_Notification_bar);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.previous_Button_Tapped_from_Notification_bar);
+                    FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.previous_Button_Tapped_from_Notification_bar);
+
                     Log.d("notifi","2");
                 }
 
@@ -133,7 +138,9 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 break;
             case ACTION_PLAY_PAUSE_SONG :
                 if(requestCode==10101){
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.play_pause_Button_Tapped_from_Notification_bar);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.play_pause_Button_Tapped_from_Notification_bar);
+                    FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.play_pause_Button_Tapped_from_Notification_bar);
+
                     Log.d("notifi","3");
                 }
 

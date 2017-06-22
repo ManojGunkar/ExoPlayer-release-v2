@@ -6,9 +6,10 @@ import android.os.Handler;
 import android.support.annotation.IntDef;
 
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
@@ -197,9 +198,13 @@ public class UpNextPlayingQueue {
         updateShuffleList();
         try {
             if (mShuffle == UpNextPlayingQueue.SHUFFLE_ON) {
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SHUFFLE_ON_PLAYING);
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SHUFFLE_ON_PLAYING);
+                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_SHUFFLE_ON_PLAYING);
+
             } else {
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SHUFFLE_OFF_PLAYING);
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SHUFFLE_OFF_PLAYING);
+                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_SHUFFLE_OFF_PLAYING);
+
             }
         }catch (Exception e){}
         return true;
@@ -209,11 +214,17 @@ public class UpNextPlayingQueue {
         mRepeat = App.getUserPreferenceHandler().resetRepeat();
         try {
             if (mRepeat == UpNextPlayingQueue.REPEAT_ONE) {
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_ONE_PLAYING);
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_ONE_PLAYING);
+                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_REPEAT_ONE_PLAYING);
+
             } else if (mRepeat == UpNextPlayingQueue.REPEAT_ALL) {
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_ALL_PLAYING);
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_ALL_PLAYING);
+                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_REPEAT_ALL_PLAYING);
+
             } else {
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_NONE_PLAYING);
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_NONE_PLAYING);
+                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_REPEAT_NONE_PLAYING);
+
             }
         }catch (Exception e){}
         return true;

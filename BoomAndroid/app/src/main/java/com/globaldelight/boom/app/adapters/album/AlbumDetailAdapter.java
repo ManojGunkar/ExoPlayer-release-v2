@@ -14,8 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
@@ -193,11 +194,15 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                     }, 500);
                 }
                 if (item.getItemType() == ItemType.GENRE) {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Genere_Thumbnail);
+                    //FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Genere_Thumbnail);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_On_Tapping_Genere_Thumbnail);
+
                 } else if (item.getItemType() == ItemType.ARTIST) {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Artist_Thumbnail);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Artist_Thumbnail);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_On_Tapping_Artist_Thumbnail);
                 } else if (item.getItemType() == ItemType.ALBUM) {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Alumb_Thumbnail);
+                   // FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Alumb_Thumbnail);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_On_Tapping_Alumb_Thumbnail);
                 }
             }
         });

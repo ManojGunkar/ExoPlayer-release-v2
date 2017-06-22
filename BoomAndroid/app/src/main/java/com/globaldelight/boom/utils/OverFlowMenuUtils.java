@@ -13,10 +13,11 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
@@ -67,7 +68,9 @@ public class OverFlowMenuUtils {
                             break;
                         case R.id.popup_playlist_rename:
                             renameDialog(activity, itemBase.getItemTitle(), itemBase.getItemId());
-                            FlurryAnalyticHelper.logEvent(UtilAnalytics.Playlist_Edit_Button_Tapped);
+//                            FlurryAnalyticHelper.logEvent(UtilAnalytics.Playlist_Edit_Button_Tapped);
+                            FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Playlist_Edit_Button_Tapped);
+
                             break;
                         case R.id.popup_playlist_delete:
                             deletePlaylistDialog(activity, itemBase.getItemTitle(), itemBase.getItemId());
@@ -191,7 +194,9 @@ public class OverFlowMenuUtils {
                             ArrayList list = new ArrayList();
                             list.add(itemBase);
                             Utils.addToPlaylist(activity, list, null);
-                            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+//                            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                            FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+
                             break;
                         case R.id.popup_song_add_fav:
                             if (MediaController.getInstance(activity).isFavoriteItem(itemBase.getItemId())) {
@@ -237,7 +242,9 @@ public class OverFlowMenuUtils {
                             ArrayList list = new ArrayList();
                             list.add(itemBase);
                             Utils.addToPlaylist(activity, list, null);
-                            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+//                            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                            FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+
                             break;
                     }
                 }catch (Exception e){
@@ -271,7 +278,9 @@ public class OverFlowMenuUtils {
                             ArrayList list = new ArrayList();
                             list.add(itemBase);
                             Utils.addToPlaylist(activity, list, null);
-                            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+//                            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                            FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+
                             break;
                         case R.id.popup_song_add_fav:
                             if (MediaController.getInstance(activity).isFavoriteItem(itemBase.getItemId())) {

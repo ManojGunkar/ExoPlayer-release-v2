@@ -4,11 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaQuery;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
@@ -56,7 +57,8 @@ public class MediaController implements IMediaController {
     @Override
     public void createBoomPlaylist(String playlist) {
         App.getBoomPlayListHelper().createPlaylist(playlist);
-        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
+//        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
+        FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_CREATED_NEW_PLAYLIST);
         context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
@@ -184,14 +186,17 @@ public class MediaController implements IMediaController {
     public void removeItemToFavoriteList(long trackId){
         App.getFavoriteDBHelper().removeSong(trackId);
         context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
-        FlurryAnalyticHelper.logEvent(UtilAnalytics.Remove_Favorites);
+//        FlurryAnalyticHelper.logEvent(UtilAnalytics.Remove_Favorites);
+        FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Remove_Favorites);
     }
 
     @Override
     public void addItemToFavoriteList(IMediaItem item){
         App.getFavoriteDBHelper().addSong(item);
         context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
-        FlurryAnalyticHelper.logEvent(UtilAnalytics.Add_To_Favorites);
+//        FlurryAnalyticHelper.logEvent(UtilAnalytics.Add_To_Favorites);
+        FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Add_To_Favorites);
+
     }
 
     @Override

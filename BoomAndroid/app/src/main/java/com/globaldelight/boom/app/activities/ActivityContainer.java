@@ -8,8 +8,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.fragments.FavouriteListFragment;
 import com.globaldelight.boom.app.fragments.RecentPlayedFragment;
 import com.globaldelight.boom.utils.Utils;
@@ -39,7 +40,7 @@ public class ActivityContainer extends MasterActivity {
 
         container = getIntent().getIntExtra("container", R.string.header_about);
         initViews();
-        FlurryAnalyticHelper.init(this);
+        //FlurryAnalyticHelper.init(this);
     }
 
     private void initViews() {
@@ -76,12 +77,15 @@ public class ActivityContainer extends MasterActivity {
             case R.string.title_settings:
                 mFragment =  new SettingFragment();
                 setVisibleMiniPlayer(false);
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
+               // FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Settings_Page_Opened);
                 break;
             case R.string.store_title:
                 mFragment =  new StoreFragment();
                 setVisibleMiniPlayer(false);
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
+               // FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Store_Page_Opened_from_Drawer);
+
                 break;
             case R.string.header_about:
                 mFragment =  new AboutFragment();
@@ -148,13 +152,15 @@ public class ActivityContainer extends MasterActivity {
     @Override
     public  void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(this);
+       // FlurryAnalyticHelper.flurryStartSession(this);
+        FlurryAnalytics.getInstance(this).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(this);
+      //  FlurryAnalyticHelper.flurryStopSession(this);
+        FlurryAnalytics.getInstance(this).endSession();
     }
 }
 

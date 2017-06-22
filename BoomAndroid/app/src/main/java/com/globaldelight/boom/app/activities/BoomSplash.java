@@ -11,8 +11,9 @@ import android.util.Log;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.business.inapp.IabHelper;
@@ -20,7 +21,6 @@ import com.globaldelight.boom.business.inapp.IabResult;
 import com.globaldelight.boom.business.inapp.Inventory;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
-import com.globaldelight.boomplayer.AudioEffect;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.json.JSONException;
@@ -47,7 +47,7 @@ public class BoomSplash extends AppCompatActivity {
             finish();
             return;
         }
-        FlurryAnalyticHelper.init(this);
+//        FlurryAnalyticHelper.init(this);
     }
 
     @Override
@@ -126,7 +126,8 @@ public class BoomSplash extends AppCompatActivity {
 
     private void updateDataValues() {
         //flurry
-        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_APP_OPEN);
+//        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_APP_OPEN);
+        FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.EVENT_APP_OPEN);
 
         //get current date
         currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
@@ -188,13 +189,13 @@ public class BoomSplash extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(this);
+        FlurryAnalytics.getInstance(this).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(this);
+        FlurryAnalytics.getInstance(this).endSession();
     }
 
 

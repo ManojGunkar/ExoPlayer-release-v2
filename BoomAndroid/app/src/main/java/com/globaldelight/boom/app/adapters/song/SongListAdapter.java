@@ -19,9 +19,10 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
@@ -142,19 +143,27 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                     }, 500);
                 }
                 if(itemList.get(position).getMediaType()==MediaType.DROP_BOX){
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_from_DropBox_thum_Nail);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_from_DropBox_thum_Nail);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_from_DropBox_thum_Nail);
+
 
                 }else if(itemList.get(position).getMediaType()==MediaType.GOOGLE_DRIVE){
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_from_GoogleDrive_thum_Nail);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_from_GoogleDrive_thum_Nail);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_from_GoogleDrive_thum_Nail);
+
                 }
                 else {
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_SONG_SECTION);
+//                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_SONG_SECTION);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.EVENT_MUSIC_PLAYED_FROM_SONG_SECTION);
+
                 }
 //                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_FAVOURITE_SECTION);
                 if(listItemType == ItemType.RECENT_PLAYED){
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_Recent_Playlist);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_Recent_Playlist);
+
                 }else if(listItemType == ItemType.FAVOURITE){
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_favourite_Playlist);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_favourite_Playlist);
+
                 }
             }
         });
