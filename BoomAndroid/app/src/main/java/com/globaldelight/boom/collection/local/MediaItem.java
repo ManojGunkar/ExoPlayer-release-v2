@@ -23,16 +23,16 @@ public class MediaItem implements IMediaItem, Parcelable {
     private long Duration;
     private long DateAdded;
     private String ItemArtUrl;
-    private ItemType itemType;
-    private MediaType mediaType;
-    private ItemType parentType;
+    private @ItemType int itemType;
+    private @MediaType int mediaType;
+    private @ItemType int parentType;
     private long parentId;
     private String parentTitle;
     public static String UNKNOWN_ART_URL = "unknown_art_url";
 
     /*Only for Device Media Item*/
     public MediaItem(long ItemId, String ItemTitle, String ItemDisplayName, String ItemUrl, long ItemAlbumId, String ItemAlbum, long ItemArtistId,
-                     String ItemArtist, long Duration, long DateAdded, String ItemArtUrl, ItemType itemType, MediaType mediaType, ItemType parentType, long parentId, String parentTitle){
+                     String ItemArtist, long Duration, long DateAdded, String ItemArtUrl, @ItemType int itemType, @MediaType int mediaType, @ItemType int parentType, long parentId, String parentTitle){
         this.ItemId = ItemId;
         this.ItemTitle = ItemTitle;
         this.ItemDisplayName = ItemDisplayName;
@@ -52,7 +52,7 @@ public class MediaItem implements IMediaItem, Parcelable {
     }
 
     /*Only for Dropbox*/
-    public MediaItem(long itemId, String ItemTitle, String  ItemUrl, ItemType itemType, MediaType mediaType, ItemType parentType) {
+    public MediaItem(long itemId, String ItemTitle, String  ItemUrl, @ItemType int itemType, @MediaType int mediaType, @ItemType int parentType) {
         this.ItemId = itemId;
         this.ItemUrl = ItemUrl;
         this.ItemTitle = ItemTitle;
@@ -73,9 +73,12 @@ public class MediaItem implements IMediaItem, Parcelable {
         Duration = in.readLong();
         DateAdded = in.readLong();
         ItemArtUrl = in.readString();
-        itemType = ItemType.valueOf(in.readString());
-        mediaType = MediaType.valueOf(in.readString());
-        parentType = ItemType.valueOf(in.readString());
+        //noinspection ResourceType
+        itemType = Integer.parseInt(in.readString());
+        //noinspection ResourceType
+        mediaType = Integer.parseInt(in.readString());
+        //noinspection ResourceType
+        parentType = Integer.parseInt(in.readString());
         parentId = in.readLong();
         parentTitle = in.readString();
     }
@@ -143,7 +146,7 @@ public class MediaItem implements IMediaItem, Parcelable {
     }
 
     @Override
-    public ItemType getItemType() {
+    public @ItemType int getItemType() {
         return itemType;
     }
 
@@ -158,16 +161,16 @@ public class MediaItem implements IMediaItem, Parcelable {
     }
 
     @Override
-    public void setParentItemType(ItemType parentType) {
+    public void setParentItemType(@ItemType int parentType) {
         this.parentType = parentType;
     }
 
     @Override
-    public ItemType getParentType(){
+    public @ItemType int getParentType(){
         return parentType;
     }
 
-    public MediaType getMediaType() {
+    public @MediaType int getMediaType() {
         return mediaType;
     }
 
@@ -237,9 +240,9 @@ public class MediaItem implements IMediaItem, Parcelable {
         dest.writeLong(Duration);
         dest.writeLong(DateAdded);
         dest.writeString(ItemArtUrl);
-        dest.writeString(itemType.name());
-        dest.writeString(mediaType.name());
-        dest.writeString(parentType.name());
+        dest.writeString(Integer.toString(itemType));
+        dest.writeString(Integer.toString(mediaType));
+        dest.writeString(Integer.toString(parentType));
         dest.writeLong(parentId);
         dest.writeString(parentTitle);
     }

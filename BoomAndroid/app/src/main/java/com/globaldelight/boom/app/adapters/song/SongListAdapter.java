@@ -44,12 +44,12 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     private static final String TAG = "SongListAdapter-TAG";
     ArrayList<? extends IMediaItemBase> itemList;
     private Activity activity;
-    private ItemType listItemType;
+    private @ItemType int listItemType;
     Fragment fragment;
     private int WIDTH, HEIGHT;
 
 
-    public SongListAdapter(Activity activity, Fragment fragment, ArrayList<? extends IMediaItemBase> itemList, ItemType listItemType) {
+    public SongListAdapter(Activity activity, Fragment fragment, ArrayList<? extends IMediaItemBase> itemList, @ItemType int listItemType) {
         this.activity = activity;
         this.fragment = fragment;
         this.itemList = itemList;

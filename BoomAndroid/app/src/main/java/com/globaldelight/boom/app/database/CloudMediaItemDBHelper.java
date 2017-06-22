@@ -59,13 +59,13 @@ public class CloudMediaItemDBHelper  extends SQLiteOpenHelper {
         values.put(SONG_KEY_REAL_ID, song.getItemId());
         values.put(TITLE, song.getItemTitle());
         values.put(DATA_PATH, ((IMediaItem)song).getItemUrl());
-        values.put(MEDIA_TYPE, song.getMediaType().ordinal());
+        values.put(MEDIA_TYPE, song.getMediaType());
 
         db.insert(TABLE_CLOUD_DATA, null, values);
         db.close();
     }
 
-    public synchronized void addSongs(MediaType mediaType, ArrayList<? extends IMediaItemBase> songs) {
+    public synchronized void addSongs(@MediaType int mediaType, ArrayList<? extends IMediaItemBase> songs) {
         clearList(mediaType);
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
@@ -75,32 +75,33 @@ public class CloudMediaItemDBHelper  extends SQLiteOpenHelper {
             values.put(SONG_KEY_REAL_ID, songs.get(i).getItemId());
             values.put(TITLE, songs.get(i).getItemTitle());
             values.put(DATA_PATH, ((IMediaItem)songs.get(i)).getItemUrl());
-            values.put(MEDIA_TYPE, songs.get(i).getMediaType().ordinal());
+            values.put(MEDIA_TYPE, songs.get(i).getMediaType());
 
             db.insert(TABLE_CLOUD_DATA, null, values);
         }
         db.close();
     }
 
-    public synchronized void clearList(MediaType mediaType){
+    public synchronized void clearList(@MediaType int mediaType){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_CLOUD_DATA+ " WHERE " +
-                MEDIA_TYPE + "='" + mediaType.ordinal() + "'");
+                MEDIA_TYPE + "='" + mediaType + "'");
         db.close();
     }
 
-    public synchronized ArrayList<? extends IMediaItemBase> getSongList(MediaType mediaType) {
+    public synchronized ArrayList<? extends IMediaItemBase> getSongList(@MediaType int mediaType) {
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<MediaItem> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_CLOUD_DATA + " WHERE " +
-                MEDIA_TYPE + "='" + mediaType.ordinal() + "'"/* + " ORDER BY "+SONG_KEY_ID*/;
+                MEDIA_TYPE + "='" + mediaType + "'"/* + " ORDER BY "+SONG_KEY_ID*/;
 
         Cursor cursor = db.rawQuery(query, null);
 
 //        try {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(4)), ItemType.SONGS));
+                    //noinspection ResourceType
+                    songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), ItemType.SONGS, cursor.getInt(4), ItemType.SONGS));
                 } while (cursor.moveToNext());
             }
 //        }catch (Exception e){

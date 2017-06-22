@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaQuery;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
@@ -135,7 +136,7 @@ public class MediaController implements IMediaController {
     }
 
     @Override
-    public ArrayList<? extends IMediaItemBase> getCloudList(MediaType mediaType) {
+    public ArrayList<? extends IMediaItemBase> getCloudList(@MediaType int mediaType) {
         return App.getCloudMediaItemDBHelper().getSongList(mediaType);
     }
 
@@ -196,17 +197,17 @@ public class MediaController implements IMediaController {
     @Override
     public ArrayList<String> getArtUrlList(MediaItemCollection collection) {
         switch (collection.getItemType()){
-            case ARTIST:
+            case ItemType.ARTIST:
                 return DeviceMediaQuery.getArtistsArtList(context, collection.getItemId(), collection.getItemTitle());
-            case PLAYLIST:
+            case ItemType.PLAYLIST:
                 return DeviceMediaQuery.getPlaylistArtList(context, collection.getItemId(), collection.getItemTitle());
-            case GENRE:
+            case ItemType.GENRE:
                 return DeviceMediaQuery.getGenreArtList(context, collection.getItemId(), collection.getItemTitle());
-            case BOOM_PLAYLIST:
+            case ItemType.BOOM_PLAYLIST:
                 return App.getBoomPlayListHelper().getBoomPlayListArtList(collection.getItemId());
-            case RECENT_PLAYED:
+            case ItemType.RECENT_PLAYED:
                 return App.getUPNEXTDBHelper().getRecentArtList();
-            case FAVOURITE:
+            case ItemType.FAVOURITE:
                 return App.getFavoriteDBHelper().getFavouriteArtList();
             default:
                 break;
@@ -215,12 +216,12 @@ public class MediaController implements IMediaController {
     }
 
     @Override
-    public void removeCloudMediaItemList(MediaType mediaType) {
+    public void removeCloudMediaItemList(@MediaType int mediaType) {
         App.getCloudMediaItemDBHelper().clearList(mediaType);
     }
 
     @Override
-    public void addSongsToCloudItemList(MediaType mediaType, ArrayList<IMediaItemBase> fileList) {
+    public void addSongsToCloudItemList(@MediaType int mediaType, ArrayList<IMediaItemBase> fileList) {
         App.getCloudMediaItemDBHelper().addSongs(mediaType, fileList);
     }
 

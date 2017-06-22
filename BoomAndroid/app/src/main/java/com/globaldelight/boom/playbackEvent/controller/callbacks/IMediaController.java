@@ -31,7 +31,7 @@ public interface IMediaController {
 
     ArrayList<? extends IMediaItemBase> getFavoriteList();
 
-    ArrayList<? extends IMediaItemBase> getCloudList(MediaType mediaType);
+    ArrayList<? extends IMediaItemBase> getCloudList(@MediaType int mediaType);
 
 
     ArrayList<? extends IMediaItemBase> getAlbumTrackList(IMediaItemCollection collection);
@@ -69,11 +69,11 @@ public interface IMediaController {
 
     void removeSongToPlayList(long itemId, int playlistId) ;
 
-    void removeCloudMediaItemList(MediaType mediaType) ;
+    void removeCloudMediaItemList(@MediaType int mediaType) ;
 
     void createBoomPlaylist(String playlist) ;
 
-    void addSongsToCloudItemList(MediaType mediaType, ArrayList<IMediaItemBase> fileList);
+    void addSongsToCloudItemList(@MediaType int mediaType, ArrayList<IMediaItemBase> fileList);
 
     ArrayList<? extends IMediaItem> getAlbumTrackList(long itemId, String itemTitle) ;
 

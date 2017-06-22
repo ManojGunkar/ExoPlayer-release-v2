@@ -242,7 +242,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
             final MediaController controller = MediaController.getInstance(activity);
 
             switch (mediaItem.getItemType()) {
-                case GENRE: {
+                case ItemType.GENRE: {
                     if(mediaItem.getParentType() == ItemType.GENRE && mediaItem.getMediaElement().size() == 0)
                         mediaItem.setMediaElement(controller.getGenreAlbumsList(mediaItem));
 
@@ -253,7 +253,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
                     return rootCollection.getMediaElement();
                 }
 
-                case ARTIST: {
+                case ItemType.ARTIST: {
                     if(mediaItem.getParentType() == ItemType.ARTIST && mediaItem.getMediaElement().size() == 0)
                         mediaItem.setMediaElement(controller.getArtistAlbumsList(mediaItem));
 
@@ -264,7 +264,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
                     return rootCollection.getMediaElement();
                 }
 
-                case ALBUM: {
+                case ItemType.ALBUM: {
                     if(mediaItem.getMediaElement().size() == 0)
                         mediaItem.setMediaElement(MediaController.getInstance(activity).getAlbumTrackList(mediaItem));
                     return mediaItem.getMediaElement();
