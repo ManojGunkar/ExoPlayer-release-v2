@@ -2,12 +2,15 @@ package com.globaldelight.boomplayer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import android.support.annotation.IntDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**
  * Created by Rahul Agarwal on 08-10-16.
@@ -15,55 +18,49 @@ import java.util.Map;
 
 public class AudioEffect {
     private static AudioEffect handler = null;
-    private static String AUDIO_EFFECT_SETTING = "audio_effect_settings";
+    private static final String AUDIO_EFFECT_SETTING = "audio_effect_settings";
 
-    private static boolean POWER_ON = true;
-    private static boolean POWER_OFF = false;
-    private static boolean DEFAULT_POWER = true;
-    private static boolean EFFECT_DEFAULT_POWER = false;
-    private static int DEFAULT_USER_PURCHASE_TYPE = 0;
-    private static int SPEAKER_COUNT = 6;
+    private static final boolean POWER_ON = true;
+    private static final boolean POWER_OFF = false;
+    private static final boolean DEFAULT_POWER = POWER_ON;
 
-    private static int EQUALIZER_POSITION = 0;
-    private static int AUTO_EQUALIZER_POSITION = 12;
+    private static final int EQUALIZER_POSITION = 0;
+    private static final int AUTO_EQUALIZER_POSITION = 12;
 
-    private static String USER_PURCHASE_TYPE = "user_purchase_type";
-    private static String HEAD_PHONE_TYPE = "audio_head_phone_type";
+    private static final String HEAD_PHONE_TYPE = "audio_head_phone_type";
 
-    private static String AUDIO_EFFECT_POWER = "audio_effect_power";
-    private static String THREE_D_SURROUND_POWER = "3d_surround_power";
-    private static String INTENSITY_POWER = "intensity_power";
-    private static String EQUALIZER_POWER = "equalizer_power";
-    private static String AUTO_EQUALIZER = "auto_equalizer";
+    private static final String AUDIO_EFFECT_POWER = "audio_effect_power";
+    private static final String THREE_D_SURROUND_POWER = "3d_surround_power";
+    private static final String INTENSITY_POWER = "intensity_power";
+    private static final String EQUALIZER_POWER = "equalizer_power";
+    private static final String AUTO_EQUALIZER = "auto_equalizer";
 
-    private static String SPEAKER_LEFT_FRONT = "speaker_left_front";
-    private static String SPEAKER_RIGHT_FRONT = "speaker_right_front";
-    private static String SPEAKER_LEFT_SURROUND = "speaker_left_surround";
-    private static String SPEAKER_RIGHT_SURROUND = "speaker_right_surround";
-    private static String SPEAKER_SUB_WOOFER = "speaker_sub_woofer";
-    private static String SPEAKER_TWEETER = "speaker_tweeter";
+    private static final String SPEAKER_LEFT_FRONT_KEY = "speaker_left_front";
+    private static final String SPEAKER_RIGHT_FRONT_KEY = "speaker_right_front";
+    private static final String SPEAKER_LEFT_SURROUND_KEY = "speaker_left_surround";
+    private static final String SPEAKER_RIGHT_SURROUND_KEY = "speaker_right_surround";
+    private static final String SPEAKER_SUB_WOOFER_KEY = "speaker_sub_woofer";
+    private static final String SPEAKER_TWEETER_KEY = "speaker_tweeter";
 
-    private static String HEADSET_PLUGGED_INFO = "headset_plugged";
-
-    private static String INTENSITY_POSITION = "intensity_position";
-    private static String SELECTED_EQUALIZER_POSITION = "selected_equalizer_position";
+    private static final String INTENSITY_POSITION = "intensity_position";
+    private static final String SELECTED_EQUALIZER_POSITION = "selected_equalizer_position";
 
 
-    private static String ALL_SPEAKER_POWER = "all_speaker_power";
+    private static final String ALL_SPEAKER_POWER = "all_speaker_power";
 
-    private static String FULL_BASS = "full_bass";
+    private static final String FULL_BASS = "full_bass";
 
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
     private Context context;
 
     private AudioEffect(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         shp = context.getSharedPreferences(AUDIO_EFFECT_SETTING, Context.MODE_PRIVATE);
         editor = shp.edit();
     }
 
-    public static AudioEffect getAudioEffectInstance(Context context) {
+    public static AudioEffect getInstance(Context context) {
         if (handler == null)
             handler = new AudioEffect(context);
         return handler;
@@ -77,17 +74,8 @@ public class AudioEffect {
         editor.putInt(HEAD_PHONE_TYPE, type).apply();
     }
 
-    public int getUserPurchaseType() {
-        return shp.getInt(USER_PURCHASE_TYPE, purchase.FIVE_DAY_OFFER.ordinal());
-    }
-
-    public void setUserPurchaseType(purchase purchaseType) {
-        editor.putInt(USER_PURCHASE_TYPE, purchaseType.ordinal());
-        editor.commit();
-    }
-
     public boolean isAudioEffectOn(){
-        return shp.getBoolean(AUDIO_EFFECT_POWER, POWER_ON);
+        return shp.getBoolean(AUDIO_EFFECT_POWER, POWER_OFF);
     }
 
     public void setEnableAudioEffect(boolean enableEffect) {
@@ -161,56 +149,56 @@ public class AudioEffect {
 
 
     public boolean isLeftFrontSpeakerOn(){
-        return shp.getBoolean(SPEAKER_LEFT_FRONT, DEFAULT_POWER);
+        return shp.getBoolean(SPEAKER_LEFT_FRONT_KEY, DEFAULT_POWER);
     }
 
     public void setEnableLeftFrontSpeaker(boolean enable) {
-        editor.putBoolean(SPEAKER_LEFT_FRONT, enable);
+        editor.putBoolean(SPEAKER_LEFT_FRONT_KEY, enable);
         editor.commit();
     }
 
     public boolean isRightFrontSpeakerOn(){
-        return shp.getBoolean(SPEAKER_RIGHT_FRONT, DEFAULT_POWER);
+        return shp.getBoolean(SPEAKER_RIGHT_FRONT_KEY, DEFAULT_POWER);
     }
 
     public void setEnableRightFrontSpeaker(boolean enable) {
-        editor.putBoolean(SPEAKER_RIGHT_FRONT, enable);
+        editor.putBoolean(SPEAKER_RIGHT_FRONT_KEY, enable);
         editor.commit();
     }
 
     public boolean isLeftSurroundSpeakerOn(){
-        return shp.getBoolean(SPEAKER_LEFT_SURROUND, DEFAULT_POWER);
+        return shp.getBoolean(SPEAKER_LEFT_SURROUND_KEY, DEFAULT_POWER);
     }
 
     public void setEnableLeftSurroundSpeaker(boolean enable) {
-        editor.putBoolean(SPEAKER_LEFT_SURROUND, enable);
+        editor.putBoolean(SPEAKER_LEFT_SURROUND_KEY, enable);
         editor.commit();
     }
 
     public boolean isRightSurroundSpeakerOn(){
-        return shp.getBoolean(SPEAKER_RIGHT_SURROUND, DEFAULT_POWER);
+        return shp.getBoolean(SPEAKER_RIGHT_SURROUND_KEY, DEFAULT_POWER);
     }
 
     public void setEnableRightSurroundSpeaker(boolean enable) {
-        editor.putBoolean(SPEAKER_RIGHT_SURROUND, enable);
+        editor.putBoolean(SPEAKER_RIGHT_SURROUND_KEY, enable);
         editor.commit();
     }
 
     public boolean isWooferOn(){
-        return shp.getBoolean(SPEAKER_SUB_WOOFER, DEFAULT_POWER);
+        return shp.getBoolean(SPEAKER_SUB_WOOFER_KEY, DEFAULT_POWER);
     }
 
     public void setEnableWoofer(boolean enable) {
-        editor.putBoolean(SPEAKER_SUB_WOOFER, enable);
+        editor.putBoolean(SPEAKER_SUB_WOOFER_KEY, enable);
         editor.commit();
     }
 
     public boolean isTweeterOn(){
-        return shp.getBoolean(SPEAKER_TWEETER, DEFAULT_POWER);
+        return shp.getBoolean(SPEAKER_TWEETER_KEY, DEFAULT_POWER);
     }
 
     public void setEnableTweeter(boolean enable) {
-        editor.putBoolean(SPEAKER_TWEETER, enable);
+        editor.putBoolean(SPEAKER_TWEETER_KEY, enable);
         editor.commit();
     }
 
@@ -223,58 +211,15 @@ public class AudioEffect {
         return shp.getBoolean(ALL_SPEAKER_POWER, DEFAULT_POWER);
     }
 
-    public void setEnableHeadsetPlugged(boolean enable){
-        editor.putBoolean(HEADSET_PLUGGED_INFO, enable);
-        editor.commit();
-    }
+    @IntDef ({SPEAKER_FRONT_LEFT, SPEAKER_FRONT_RIGHT, SPEAKER_SURROUND_LEFT, SPEAKER_SURROUND_RIGHT, SPEAKER_WOOFER, SPEAKER_TWEETER })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Speaker {}
 
+    public static final int SPEAKER_FRONT_LEFT = 0;
+    public static final int SPEAKER_FRONT_RIGHT = 1;
+    public static final int SPEAKER_SURROUND_LEFT = 2;
+    public static final int SPEAKER_SURROUND_RIGHT = 3;
+    public static final int SPEAKER_WOOFER = 4;
+    public static final int SPEAKER_TWEETER = 5;
 
-    public enum purchase {
-        NORMAL_USER,
-        FIVE_DAY_OFFER,
-        EXTENDED_FIVE_DAY_OFFER,
-        PAID_USER;
-
-
-        private static final Map<Integer, purchase> lookup = new HashMap<Integer, purchase>();
-
-        static {
-            int ordinal = 0;
-            for (purchase suit : EnumSet.allOf(purchase.class)) {
-                lookup.put(ordinal, suit);
-                ordinal += 1;
-            }
-        }
-
-        public static purchase fromOrdinal(int ordinal) {
-            return lookup.get(ordinal);
-        }
-    }
-
-    public enum equalizer {
-        on,
-        off,
-    }
-
-    public enum Speaker {
-        FrontLeft,
-        FrontRight,
-        RearLeft,
-        RearRight,
-        Woofer,
-        Tweeter;
-        private static final Map<Integer, Speaker> lookup = new HashMap<Integer, Speaker>();
-
-        static {
-            int ordinal = 0;
-            for (Speaker suit : EnumSet.allOf(Speaker.class)) {
-                lookup.put(ordinal, suit);
-                ordinal += 1;
-            }
-        }
-
-        public static Speaker fromOrdinal(int ordinal) {
-            return lookup.get(ordinal);
-        }
-    }
 }

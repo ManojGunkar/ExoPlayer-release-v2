@@ -14,9 +14,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue;
@@ -144,7 +145,9 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                         || MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_SCROLL) {
                     mOnStartDragListener.onStartDrag(holder);
                 }
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Dragg_Animation_usedIn_Up_next);
+              //  FlurryAnalyticHelper.logEvent(UtilAnalytics.Dragg_Animation_usedIn_Up_next);
+                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Dragg_Animation_usedIn_Up_next);
+
                 return false;
             }
         });
@@ -162,7 +165,9 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                     recyclerView.scrollToPosition(itemPosition);
                 } catch (Exception e) {
                 }
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_Up_next);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_Up_next);
+                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Song_Played_Up_next);
+
             }
         });
     }

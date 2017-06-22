@@ -25,7 +25,7 @@ public interface IMediaItem extends IMediaItemBase {
 
     String getItemUrl();
 
-    ItemType getItemType();
+    @ItemType int getItemType();
 
     long getParentId();
 
@@ -33,7 +33,7 @@ public interface IMediaItem extends IMediaItemBase {
 
     void setParentId(long parentId);
 
-    ItemType getParentType();
+    @ItemType int getParentType();
 
-    void setParentItemType(ItemType parentType);
+    void setParentItemType(@ItemType int parentType);
 }

@@ -16,7 +16,8 @@ import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.adapters.media.MediaGridAdapter;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
@@ -61,7 +62,7 @@ public abstract class MediaCollectionFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
-        FlurryAnalyticHelper.init(mActivity);
+//        FlurryAnalyticHelper.init(mActivity);
     }
 
     private View getItemView(LayoutInflater inflater, ViewGroup container){
@@ -94,13 +95,13 @@ public abstract class MediaCollectionFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(mActivity);
+        FlurryAnalytics.getInstance(getActivity()).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(mActivity);
+        FlurryAnalytics.getInstance(getActivity()).endSession();
     }
 
     protected abstract void loadCollection();

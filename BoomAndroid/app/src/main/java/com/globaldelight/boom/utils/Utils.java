@@ -31,10 +31,11 @@ import android.view.WindowManager;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.business.BusinessPreferences;
@@ -54,22 +55,18 @@ import static android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED_DATE;
 import static com.globaldelight.boom.business.BusinessPreferences.ACTION_EMAIL_DIALOG_SHOWN;
-import static com.globaldelight.boom.app.receivers.BoomPlayTimeReceiver.SHOW_POPUP;
-import static com.globaldelight.boom.app.receivers.BoomPlayTimeReceiver.SHOW_POPUP_PRIMARY;
-import static com.globaldelight.boom.app.receivers.BoomPlayTimeReceiver.SHOW_POPUP_SECONDARY;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
  */
 
 public class Utils {
-    private Context context;
     private static BoomDialogView progressLoader;
     public static final int SHARE_COMPLETE = 1001;
     public static final int PURCHASE_FLOW_LAUNCH = 1002;
 
-    public Utils(Context context) {
-        this.context = context;
+    private Utils(Context context) {
+
     }
 
     public static int dpToPx(Context context, int dp) {
@@ -136,7 +133,8 @@ public class Utils {
         return resUri;
     }
 
-    public void addToPlaylist(final Activity activity, final ArrayList<? extends IMediaItemBase> songList, final String fromPlaylist) {
+    public static void  addToPlaylist(final Activity activity, final ArrayList<? extends IMediaItemBase> songList, final String fromPlaylist) {
+        Context context = activity;
         if(songList.size() == 0)
             return;
 
@@ -185,7 +183,8 @@ public class Utils {
         adapter.setDialog(dialog);
     }
 
-    public void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
+    public static void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
+        final Context context = activity;
         new MaterialDialog.Builder(context)
                 .title(R.string.new_playlist)
                 .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
@@ -201,7 +200,9 @@ public class Utils {
                         if (!input.toString().matches("")) {
                             MediaController.getInstance(context).createBoomPlaylist(input.toString());
                             addToPlaylist(activity, song, fromPlaylist);
-                            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
+                        //    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
+                            FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_CREATED_NEW_PLAYLIST);
+
                             MixPanelAnalyticHelper.getInstance(context).getPeople().set(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST, input.toString());
                         }
                     }
@@ -379,7 +380,9 @@ public class Utils {
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
+//                            FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
+                            FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Share_Opened_from_Dialog);
+
                             shareStart(context);
                         }
                     })
@@ -506,83 +509,4 @@ public class Utils {
         return false;
     }
 
-    public static void businessPrimaryPopup(final Activity context){
-        new MaterialDialog.Builder(context)
-                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .neutralColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
-                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .neutralText(R.string.dialog_txt_cancel)
-                .negativeText(R.string.share_button)
-                .positiveText(R.string.buy_button)
-                .customView(R.layout.business_primary_popup, false)
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                .canceledOnTouchOutside(false)
-                .autoDismiss(false)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        jumpToStore(context);
-                        dialog.dismiss();
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
-                        shareStart(context);
-                        dialog.dismiss();
-                    }
-                })
-                .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        businessSecondaryPopup(context);
-                        dialog.dismiss();
-                    }
-                }).show();
-        BusinessPreferences.writeInteger(context, SHOW_POPUP, SHOW_POPUP_PRIMARY);
-    }
-
-    public static void businessSecondaryPopup(final Activity context){
-        new MaterialDialog.Builder(context)
-                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .neutralColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
-                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .neutralText(R.string.close_button)
-                .negativeText(R.string.share_button)
-                .positiveText(R.string.buy_button)
-                .customView(R.layout.business_secondary_popup, false)
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        jumpToStore(context);
-                        dialog.dismiss();
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
-                        shareStart(context);
-                        dialog.dismiss();
-                    }
-                })
-                .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
-        BusinessPreferences.writeInteger(context, SHOW_POPUP, SHOW_POPUP_SECONDARY);
-    }
-}
+ }

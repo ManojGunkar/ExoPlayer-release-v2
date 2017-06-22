@@ -1,27 +1,25 @@
 package com.globaldelight.boom.app.service;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.util.Log;
+
 import com.globaldelight.boom.app.activities.BoomSplash;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.notification.NotificationHandler;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
-import com.globaldelight.boom.utils.Utils;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.app.App;
-import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.client.IBusinessNetworkInit;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.playbackEvent.handler.PlayerEventHandler;
@@ -48,7 +46,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     private long mServiceStopTime = 0;
     private static long mShiftingTime = 0;
     private PlayerEventHandler musicPlayerHandler;
-    private Context context;
     private NotificationHandler notificationHandler;
     private HeadPhonePlugReceiver headPhonePlugReceiver;
     private DropboxAPI<AndroidAuthSession> dropboxAPI;
@@ -58,7 +55,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     @Override
     public void onCreate() {
         super.onCreate();
-        context = this;
         AudioConfiguration.getInstance(this).load();
 
         serviceReceiver = new PlayerServiceReceiver();
@@ -69,12 +65,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         }catch (Exception e){
 
         }
-
-        if (musicPlayerHandler == null) {
-            musicPlayerHandler = App.getPlayerEventHandler();
-            Log.d("Service : ", "onCreate");
-        }
-
+        musicPlayerHandler = App.getPlayerEventHandler();
         headPhonePlugReceiver = new HeadPhonePlugReceiver(this, this);
 
         IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
@@ -109,12 +100,11 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (musicPlayerHandler == null)
-            musicPlayerHandler = App.getPlayerEventHandler();
+        musicPlayerHandler = App.getPlayerEventHandler();
 
         App.getPlayingQueueHandler().getUpNextList().getRepeatShuffleOnAppStart();
 
-        notificationHandler = new NotificationHandler(context, this);
+        notificationHandler = new NotificationHandler(this, this);
         return START_NOT_STICKY;
     }
 
@@ -146,8 +136,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
         updateNotificationPlayer(musicPlayerHandler.getPlayingItem(), play_pause, false);
         sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
-
-        App.getBoomPlayTimeReceiver().setPlayingStartTime(play_pause);
     }
 
     private void updatePlayingQueue() {
@@ -221,7 +209,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     public void onNotificationClick() {
         sendBroadcast(new Intent(PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB));
         final Intent i = new Intent();
-        i.setClass(context, BoomSplash.class);
+        i.setClass(this, BoomSplash.class);
         if(!App.getPlayerEventHandler().isLibraryResumes) {
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
@@ -250,7 +238,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     public void onSongReceived() {
         try {
             updatePlayer(false);
-            App.getBoomPlayTimeReceiver().setPlayingStartTime(true);
         } catch (ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
         }
@@ -353,7 +340,9 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(mServiceStartTime)));
             HashMap<String, String> val = new HashMap<>();
             val.put(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, time);
-            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, val);
+         //   FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, val);
+            FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.EVENT_MUSIC_SESSION_DURATION,val);
+
         }catch (Exception e){}
         super.onDestroy();
     }
@@ -363,32 +352,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     }
 
     private void initBusinessModel() {
-        if(Utils.isBusinessModelEnable()) {
-            boolean isShownAdds = true;
-            if (BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_APP_SHARED, false)) {
-                if (BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
-                    isShownAdds = false;
-                } else {
-                    isShownAdds = Utils.isShareExpireHour(this);
-                }
-            } else if (BusinessPreferences.readBoolean(this, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
-                isShownAdds = false;
-            }
-
-            if (isShownAdds) {
-                App.getBusinessHandler().setBusinessNetworkListener(this);
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        App.getBusinessHandler().getBoomAccessToken();
-                        App.getBusinessHandler().registerAndroidDevice();
-                        App.getBusinessHandler().getConfigAppWithBoomServer();
-                        App.getBusinessHandler().isAppTrialVersion();
-                    }
-                }).start();
-            }
-        }
     }
 
     @Override

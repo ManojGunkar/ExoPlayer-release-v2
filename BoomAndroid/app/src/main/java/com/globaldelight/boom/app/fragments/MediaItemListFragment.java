@@ -17,9 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 
@@ -81,7 +81,6 @@ public class MediaItemListFragment extends Fragment {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
         mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
-        FlurryAnalyticHelper.init(mActivity);
     }
 
     private void setForAnimation() {
@@ -125,12 +124,11 @@ public class MediaItemListFragment extends Fragment {
     @Override
     public  void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(mActivity);
-    }
+        FlurryAnalytics.getInstance(getActivity()).startSession();    }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(mActivity);
+        FlurryAnalytics.getInstance(getActivity()).endSession();
     }
 }

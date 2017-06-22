@@ -14,8 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
@@ -108,8 +109,8 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
 
     private void updatePlayingItem(boolean isPlayingItem, SimpleItemViewHolder holder) {
         if(isPlayingItem){
-            holder.count.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
-            holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_selected_title));
+            holder.count.setSelected(true);
+            holder.name.setSelected(true);
             holder.art_overlay.setVisibility(View.VISIBLE);
             holder.art_overlay_play.setVisibility(View.VISIBLE);
             if(App.getPlayerEventHandler().isPlaying()){
@@ -118,8 +119,8 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                 holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
             }
         }else{
-            holder.count.setTextColor(ContextCompat.getColor(activity, R.color.track_title));
-            holder.name.setTextColor(ContextCompat.getColor(activity, R.color.track_title));
+            holder.count.setSelected(false);
+            holder.name.setSelected(false);
             holder.art_overlay.setVisibility(View.INVISIBLE);
             holder.art_overlay_play.setVisibility(View.INVISIBLE);
         }
@@ -142,8 +143,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                                     App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(item.getMediaElement());
                                     break;
                                 case R.id.album_header_add_to_playlist:
-                                    Utils util = new Utils(activity);
-                                    util.addToPlaylist(activity, item.getMediaElement(), null);
+                                    Utils.addToPlaylist(activity, item.getMediaElement(), null);
                                     break;
                                 case R.id.album_header_shuffle:
                                     activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
@@ -159,8 +159,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                                     App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement());
                                     break;
                                 case R.id.album_header_add_to_playlist:
-                                    Utils util = new Utils(activity);
-                                    util.addToPlaylist(activity, ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), null);
+                                    Utils.addToPlaylist(activity, ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), null);
                                     break;
                                 case R.id.album_header_shuffle:
                                     activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
@@ -195,11 +194,15 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                     }, 500);
                 }
                 if (item.getItemType() == ItemType.GENRE) {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Genere_Thumbnail);
+                    //FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Genere_Thumbnail);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_On_Tapping_Genere_Thumbnail);
+
                 } else if (item.getItemType() == ItemType.ARTIST) {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Artist_Thumbnail);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Artist_Thumbnail);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_On_Tapping_Artist_Thumbnail);
                 } else if (item.getItemType() == ItemType.ALBUM) {
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Alumb_Thumbnail);
+                   // FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_On_Tapping_Alumb_Thumbnail);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_On_Tapping_Alumb_Thumbnail);
                 }
             }
         });
@@ -220,10 +223,9 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                                         App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(item.getMediaElement().get(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
-                                        Utils util = new Utils(activity);
                                         ArrayList list = new ArrayList();
                                         list.add(item.getMediaElement().get(position));
-                                        util.addToPlaylist(activity, list, null);
+                                        Utils.addToPlaylist(activity, list, null);
                                         break;
                                     case R.id.popup_song_add_fav:
                                         if (MediaController.getInstance(activity).isFavoriteItem(item.getMediaElement().get(position).getItemId())) {
@@ -244,10 +246,9 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                                         App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
-                                        Utils util = new Utils(activity);
                                         ArrayList list = new ArrayList();
                                         list.add(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
-                                        util.addToPlaylist(activity, list, null);
+                                        Utils.addToPlaylist(activity, list, null);
                                         break;
                                     case R.id.popup_song_add_fav:
                                         if (MediaController.getInstance(activity).isFavoriteItem(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position).getItemId())) {

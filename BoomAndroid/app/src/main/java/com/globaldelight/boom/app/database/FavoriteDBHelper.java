@@ -78,7 +78,7 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         values.put(DURATION, ((IMediaItem)song).getDurationLong());
         values.put(DATE_ADDED, ((IMediaItem)song).getDateAdded());
         values.put(ALBUM_ART, ((IMediaItem)song).getItemArtUrl());
-        values.put(MEDIA_TYPE, ((IMediaItem)song).getMediaType().ordinal());
+        values.put(MEDIA_TYPE, ((IMediaItem)song).getMediaType());
 
         db.insert(TABLE_FAVORITE, null, values);
         db.close();
@@ -101,7 +101,7 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
             values.put(DURATION, ((IMediaItem)songs.get(i)).getDurationLong());
             values.put(DATE_ADDED, ((IMediaItem)songs.get(i)).getDateAdded());
             values.put(ALBUM_ART, ((IMediaItem)songs.get(i)).getItemArtUrl());
-            values.put(MEDIA_TYPE, ((IMediaItem)songs.get(i)).getMediaType().ordinal());
+            values.put(MEDIA_TYPE, ((IMediaItem)songs.get(i)).getMediaType());
 
             db.insert(TABLE_FAVORITE, null, values);
         }
@@ -140,10 +140,10 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
                 do {
                     String duration = cursor.getString(9);
                     String dateAdded = cursor.getString(10);
-
+                    //noinspection ResourceType
                     songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5),
                             cursor.getString(6), cursor.getInt(7), cursor.getString(8), Long.parseLong(duration),
-                            Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, MediaType.fromOrdinal(cursor.getInt(12)), ItemType.FAVOURITE, 0, null));
+                            Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, cursor.getInt(12), ItemType.FAVOURITE, 0, null));
                 } while (cursor.moveToNext());
             }
         }catch (Exception e){

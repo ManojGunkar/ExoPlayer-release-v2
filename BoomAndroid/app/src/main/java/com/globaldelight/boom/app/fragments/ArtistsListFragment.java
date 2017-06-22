@@ -1,29 +1,11 @@
 package com.globaldelight.boom.app.fragments;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 
-import com.globaldelight.boom.app.adapters.media.MediaGridAdapter;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
-import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.view.RegularTextView;
-import com.globaldelight.boom.utils.Utils;
-import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
-import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
+
 import java.util.ArrayList;
 
 /**

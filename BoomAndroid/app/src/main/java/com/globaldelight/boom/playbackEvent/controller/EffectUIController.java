@@ -3,7 +3,6 @@ package com.globaldelight.boom.playbackEvent.controller;
 import android.content.Context;
 
 import com.globaldelight.boom.app.App;
-import com.globaldelight.boom.app.receivers.BoomPlayTimeReceiver;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IEffectUIController;
 import com.globaldelight.boomplayer.AudioEffect;
 
@@ -30,7 +29,6 @@ public class EffectUIController implements IEffectUIController {
     @Override
     public void OnEffectEnable(boolean enable) {
         App.getPlayerEventHandler().setEffectEnable(enable);
-        BoomPlayTimeReceiver.onEffectStateChanged(enable);
     }
 
     @Override
@@ -64,7 +62,7 @@ public class EffectUIController implements IEffectUIController {
     }
 
     @Override
-    public void OnSpeakerEnable(AudioEffect.Speaker speakerType, boolean enable) {
-        App.getPlayerEventHandler().setSpeakerEnable(speakerType, enable);
+    public void OnSpeakerEnable(@AudioEffect.Speaker int speakerType, boolean enable) {
+        App.getPlayerEventHandler().setSpeakerEnable((int)speakerType, enable);
     }
 }

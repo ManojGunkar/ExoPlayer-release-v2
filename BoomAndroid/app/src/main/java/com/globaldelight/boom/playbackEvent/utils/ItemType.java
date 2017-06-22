@@ -1,32 +1,33 @@
 package com.globaldelight.boom.playbackEvent.utils;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
+import android.support.annotation.IntDef;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by Rahul Agarwal on 8/5/2016.
  */
-public enum ItemType {
-    SONGS,
-    ALBUM,
-    ARTIST,
-    PLAYLIST,
-    GENRE,
-    BOOM_PLAYLIST,
-    FAVOURITE,
-    RECENT_PLAYED;
-    private static final Map<Integer, ItemType> lookup = new HashMap<Integer, ItemType>();
 
-    static{
-        int ordinal = 0;
-        for (ItemType suit : EnumSet.allOf(ItemType.class)) {
-            lookup.put(ordinal, suit);
-            ordinal+= 1;
-        }
-    }
 
-    public static ItemType fromOrdinal(int ordinal) {
-        return lookup.get(ordinal);
-    }
+@IntDef ({
+        ItemType.SONGS,
+        ItemType.ALBUM,
+        ItemType.ARTIST,
+        ItemType.PLAYLIST,
+        ItemType.GENRE,
+        ItemType.BOOM_PLAYLIST,
+        ItemType.FAVOURITE,
+        ItemType.RECENT_PLAYED})
+@Retention(RetentionPolicy.SOURCE)
+
+public @interface ItemType {
+        int     SONGS = 0,
+                ALBUM = 1,
+                ARTIST = 2,
+                PLAYLIST = 4,
+                GENRE = 5,
+                BOOM_PLAYLIST = 6,
+                FAVOURITE = 7,
+                RECENT_PLAYED = 8;
 }
+

@@ -19,8 +19,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.fragments.DropBoxListFragment;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
@@ -47,7 +48,7 @@ public class CloudListActivity extends MasterActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cloud);
         initView();
-        FlurryAnalyticHelper.init(this);
+//        FlurryAnalyticHelper.init(this);
     }
 
     Runnable navigateLibrary= new Runnable() {
@@ -144,14 +145,17 @@ public class CloudListActivity extends MasterActivity
         switch (item.getItemId()){
             case R.id.music_library:
                 getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_library_Opened_From_Drawer);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_library_Opened_From_Drawer);
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Music_library_Opened_From_Drawer);
                 runnable = navigateLibrary;
                 break;
             case R.id.google_drive:
                 if (Utils.isOnline(this)){
                     getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     runnable = navigateGoogleDrive;
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_OPENED_FROM_DRAWER);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_OPENED_FROM_DRAWER);
+                    FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Google_Drive_OPENED_FROM_DRAWER);
+
                 }else {
                     Utils.networkAlert(this);
                     return false;
@@ -161,7 +165,9 @@ public class CloudListActivity extends MasterActivity
                 if (Utils.isOnline(this)){
                     getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     runnable = navigateDropbox;
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.DROP_BOX_OPENED_FROM_DRAWER);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.DROP_BOX_OPENED_FROM_DRAWER);
+                    FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.DROP_BOX_OPENED_FROM_DRAWER);
+
                 }else {
                     Utils.networkAlert(this);
                     return false;
@@ -175,7 +181,8 @@ public class CloudListActivity extends MasterActivity
                     }
                 }, 300);
                 drawerLayout.closeDrawer(GravityCompat.START);
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Settings_Page_Opened);
                 return true;
             case R.id.nav_store:
                 new Handler().postDelayed(new Runnable() {
@@ -185,12 +192,15 @@ public class CloudListActivity extends MasterActivity
                     }
                 }, 300);
                 drawerLayout.closeDrawer(GravityCompat.START);
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Store_Page_Opened_from_Drawer);
+
                 return true;
             case R.id.nav_share:
                 Utils.shareStart(CloudListActivity.this);
                 drawerLayout.closeDrawer(GravityCompat.START);
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Share_Opened_from_Boom);
                 return true;
         }
 
@@ -238,14 +248,13 @@ public class CloudListActivity extends MasterActivity
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(this);
+        FlurryAnalytics.getInstance(this).startSession();
     }
 
     @Override
     public void onStop() {
             super.onStop();
-            FlurryAnalyticHelper.flurryStopSession(this);
-    }
+        FlurryAnalytics.getInstance(this).endSession();    }
 
     public void listIsEmpty(boolean enable, boolean isAccountConfigured) {
         if (enable) {

@@ -17,9 +17,9 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
     private String mItemTitle;
     private String mItemSubTitle;
     private String mItemArtUrl;
-    private ItemType mItemType;
-    private MediaType mMediaType;
-    private ItemType mParentType;
+    private @ItemType int mItemType;
+    private @MediaType int mMediaType;
+    private @ItemType int mParentType;
     private int mItemCount;
     private int mItemListCount;
     protected ArrayList<? extends IMediaItemBase> mMediaElement = new ArrayList<>();
@@ -27,7 +27,7 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
     private int mCurrentIndex;
 
     public MediaItemCollection(long mItemId, String mItemTitle, String mItemSubTitle, String mItemArtUrl,
-                               int mItemCount, int mItemListCount, ItemType mItemType, MediaType mMediaType, ItemType mParentType){
+                               int mItemCount, int mItemListCount, @ItemType int mItemType, @MediaType int mMediaType, @ItemType int mParentType){
         this.mItemId = mItemId;
         this.mItemTitle = mItemTitle;
         this.mItemSubTitle = mItemSubTitle;
@@ -47,12 +47,14 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
         mItemCount = in.readInt();
         mItemListCount = in.readInt();
         mArtUrlList = in.createStringArrayList();
-        mItemType = mItemType.valueOf(in.readString());
-        mMediaType = mMediaType.valueOf(in.readString());
-        this.mParentType = mItemType.valueOf(in.readString());
+        //noinspection ResourceType
+        mItemType = Integer.parseInt(in.readString());
+        //noinspection ResourceType
+        mMediaType = Integer.parseInt(in.readString());
+        //noinspection ResourceType
+        this.mParentType = Integer.parseInt(in.readString());
         mCurrentIndex = in.readInt();
         mMediaElement = in.readArrayList(IMediaItemBase.class.getClassLoader());
-
     }
 
     public static final Creator<MediaItemCollection> CREATOR = new Creator<MediaItemCollection>() {
@@ -88,17 +90,17 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
     }
 
     @Override
-    public ItemType getItemType() {
+    public @ItemType int getItemType() {
         return mItemType;
     }
 
     @Override
-    public MediaType getMediaType(){
+    public @MediaType int getMediaType(){
         return mMediaType;
     }
 
     @Override
-    public ItemType getParentType(){
+    public @ItemType int getParentType(){
         return mParentType;
     }
 
@@ -184,9 +186,9 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
         dest.writeInt(mItemCount);
         dest.writeInt(mItemListCount);
         dest.writeStringList(mArtUrlList);
-        dest.writeString(mItemType.name());
-        dest.writeString(mMediaType.name());
-        dest.writeString(mParentType.name());
+        dest.writeString(Integer.toString(mItemType));
+        dest.writeString(Integer.toString(mMediaType));
+        dest.writeString(Integer.toString(mParentType));
         dest.writeInt(mCurrentIndex);
         dest.writeList(mMediaElement);
     }

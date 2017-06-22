@@ -1,5 +1,9 @@
 package com.globaldelight.boom.playbackEvent.utils;
 
+import android.support.annotation.IntDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,21 +11,15 @@ import java.util.Map;
 /**
  * Created by Rahul Agarwal on 8/5/2016.
  */
-
-public enum MediaType {
-    DEVICE_MEDIA_LIB, DROP_BOX, GOOGLE_DRIVE, SEARCH;
-
-    private static final Map<Integer, MediaType> lookup = new HashMap<Integer, MediaType>();
-
-    static{
-        int ordinal = 0;
-        for (MediaType suit : EnumSet.allOf(MediaType.class)) {
-            lookup.put(ordinal, suit);
-            ordinal+= 1;
-        }
-    }
-
-    public static MediaType fromOrdinal(int ordinal) {
-        return lookup.get(ordinal);
-    }
+@IntDef({
+        MediaType.DEVICE_MEDIA_LIB,
+        MediaType.DROP_BOX,
+        MediaType.GOOGLE_DRIVE,
+        MediaType.SEARCH})
+@Retention(RetentionPolicy.SOURCE)
+public @interface MediaType {
+    int     DEVICE_MEDIA_LIB = 0,
+            DROP_BOX = 1,
+            GOOGLE_DRIVE = 2,
+            SEARCH = 4;
 }

@@ -3,11 +3,13 @@ package com.globaldelight.boom.playbackEvent.handler;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.support.annotation.IntDef;
 
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
@@ -15,6 +17,9 @@ import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,6 +33,22 @@ import static com.globaldelight.boom.app.sharedPreferences.Preferences.PLAYING_I
  */
 
 public class UpNextPlayingQueue {
+
+    @IntDef ({REPEAT_ONE, REPEAT_ALL, REPEAT_NONE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface RepeatMode {}
+    public static final int REPEAT_NONE = 0;
+    public static final int REPEAT_ONE = 1;
+    public static final int REPEAT_ALL = 2;
+
+
+    @IntDef ({SHUFFLE_OFF, SHUFFLE_ON})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ShuffleMode {}
+    public static final int SHUFFLE_OFF = 0;
+    public static final int SHUFFLE_ON = 1;
+
+
     private Context context;
     private static int mPlayingItemIndex = -1;
     private long mShiftingTime = 0;
@@ -35,29 +56,21 @@ public class UpNextPlayingQueue {
 
     Handler eventHandler = new Handler();
 
-    private static UpNextPlayingQueue upNextHandler;
-
     ArrayList<IMediaItemBase> mUpNextList;
 
     private HashMap<String, String> mAlbumArtList = new HashMap<>();
     private HashMap<Long, String> mArtistArtList = new HashMap<>();
 
-    private static SHUFFLE mShuffle = SHUFFLE.none;
-    private static REPEAT mRepeat = REPEAT.none;
+    private static @ShuffleMode int mShuffle = SHUFFLE_OFF;
+    private static @RepeatMode int mRepeat = REPEAT_NONE;
 
     private static final String SHUFFLED = "shuffle";
     private static final String UNSHUFFLE = "unshuffle";
     private int playNextPosition;
 
-    private UpNextPlayingQueue(Context context){
+    public UpNextPlayingQueue(Context context){
         this.context = context;
         mUpNextList = new ArrayList<>();
-    }
-
-    public static UpNextPlayingQueue getUpNextInstance(Context context){
-        if(null == upNextHandler)
-            upNextHandler = new UpNextPlayingQueue(context);
-        return upNextHandler;
     }
 
     public void setUpNextMediaEvent(IUpNextMediaEvent event) {
@@ -159,7 +172,7 @@ public class UpNextPlayingQueue {
 
     public boolean isPrevious() {
         if(getUpNextItemCount() > 0) {
-            if (mRepeat == REPEAT.all)
+            if (mRepeat == REPEAT_ALL)
                 return mUpNextList.size() > 0 ? true : false;
             return mPlayingItemIndex > 0 ? true : false;
         }
@@ -168,7 +181,7 @@ public class UpNextPlayingQueue {
 
     public boolean isNext() {
         if(getUpNextItemCount() > 0) {
-            if (mRepeat == REPEAT.all)
+            if (mRepeat == REPEAT_ALL)
                 return mUpNextList.size() > 0 ? true : false;
             return mPlayingItemIndex < (mUpNextList.size() - 1) ? true : false;
         }
@@ -184,10 +197,14 @@ public class UpNextPlayingQueue {
         mShuffle = App.getUserPreferenceHandler().resetShuffle();
         updateShuffleList();
         try {
-            if (mShuffle == UpNextPlayingQueue.SHUFFLE.all) {
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SHUFFLE_ON_PLAYING);
+            if (mShuffle == UpNextPlayingQueue.SHUFFLE_ON) {
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SHUFFLE_ON_PLAYING);
+                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_SHUFFLE_ON_PLAYING);
+
             } else {
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SHUFFLE_OFF_PLAYING);
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SHUFFLE_OFF_PLAYING);
+                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_SHUFFLE_OFF_PLAYING);
+
             }
         }catch (Exception e){}
         return true;
@@ -196,12 +213,18 @@ public class UpNextPlayingQueue {
     public boolean resetRepeat(){
         mRepeat = App.getUserPreferenceHandler().resetRepeat();
         try {
-            if (mRepeat == UpNextPlayingQueue.REPEAT.one) {
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_ONE_PLAYING);
-            } else if (mRepeat == UpNextPlayingQueue.REPEAT.all) {
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_ALL_PLAYING);
+            if (mRepeat == UpNextPlayingQueue.REPEAT_ONE) {
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_ONE_PLAYING);
+                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_REPEAT_ONE_PLAYING);
+
+            } else if (mRepeat == UpNextPlayingQueue.REPEAT_ALL) {
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_ALL_PLAYING);
+                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_REPEAT_ALL_PLAYING);
+
             } else {
-                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_NONE_PLAYING);
+//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_REPEAT_NONE_PLAYING);
+                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_REPEAT_NONE_PLAYING);
+
             }
         }catch (Exception e){}
         return true;
@@ -210,10 +233,10 @@ public class UpNextPlayingQueue {
     public void updateShuffleList() {
         if(mUpNextList.size() > 0) {
             IMediaItemBase playingItem = getPlayingItem();
-            if (mShuffle == UpNextPlayingQueue.SHUFFLE.all) {
+            if (mShuffle == UpNextPlayingQueue.SHUFFLE_ON) {
                 insertUpNextList(UNSHUFFLE);
                 mUpNextList.remove(getPlayingItemIndex());
-                Collections.shuffle(mUpNextList, new Random(mUpNextList.size()));
+                Collections.shuffle(mUpNextList, new Random(System.currentTimeMillis()));
                 mUpNextList.add(0, playingItem);
                 mPlayingItemIndex = 0;
             } else {
@@ -300,7 +323,7 @@ public class UpNextPlayingQueue {
     public void removeItem(int itemPosition) {
         if(mUpNextList.size() > itemPosition) {
             IMediaItemBase item = mUpNextList.remove(itemPosition);
-            if(mShuffle == SHUFFLE.all) {
+            if(mShuffle == SHUFFLE_ON) {
                 removeItemFromUnShuffledList(item.getItemId());
             }
         }
@@ -330,14 +353,14 @@ public class UpNextPlayingQueue {
     }
 
     public void addItemAsUpNext(IMediaItemBase item){
-        if(mShuffle == SHUFFLE.all) {
+        if(mShuffle == SHUFFLE_ON) {
             updateUnshuffledList(mUpNextList.size() - 1, item);
         }
         mUpNextList.add(item);
     }
 
     public void addItemAsUpNext(ArrayList<? extends IMediaItemBase> itemList){
-        if(mShuffle == SHUFFLE.all) {
+        if(mShuffle == SHUFFLE_ON) {
 //            Collections.shuffle(itemList, new Random(itemList.size()));
             updateUnshuffledList(mUpNextList.size() - 1, itemList);
         }
@@ -345,14 +368,14 @@ public class UpNextPlayingQueue {
     }
 
     public void addItemAsPlayNext(IMediaItemBase item) {
-        if (mShuffle == SHUFFLE.all) {
+        if (mShuffle == SHUFFLE_ON) {
             updateUnshuffledList(getPlayNextPosition(), item);
         }
         mUpNextList.add(getPlayNextPosition(), item);
     }
 
     public void addItemAsPlayNext(ArrayList<? extends IMediaItemBase> itemList){
-        if(mShuffle == SHUFFLE.all) {
+        if(mShuffle == SHUFFLE_ON) {
             updateUnshuffledList(getPlayNextPosition(), itemList);
         }
         mUpNextList.addAll(getPlayNextPosition(), itemList);
@@ -370,13 +393,13 @@ public class UpNextPlayingQueue {
                 @Override
                 public void run() {
                     insertToHistory(getPlayingItem());
-                    if (mRepeat == REPEAT.all) {
+                    if (mRepeat == REPEAT_ALL) {
                         if (mPlayingItemIndex < (mUpNextList.size() - 1)) {
                             mPlayingItemIndex++;
                         } else {
                             mPlayingItemIndex = 0;
                         }
-                    } else if ((mRepeat == REPEAT.one && isUser) || mRepeat == REPEAT.none) {
+                    } else if ((mRepeat == REPEAT_ONE && isUser) || mRepeat == REPEAT_NONE) {
                         if (mPlayingItemIndex < (mUpNextList.size() - 1)) {
                             mPlayingItemIndex++;
                         }
@@ -397,7 +420,7 @@ public class UpNextPlayingQueue {
                 @Override
                 public void run() {
                     insertToHistory(getPlayingItem());
-                    if (mRepeat == REPEAT.all) {
+                    if (mRepeat == REPEAT_ALL) {
                         if (mPlayingItemIndex > 0) {
                             mPlayingItemIndex--;
                         } else {
@@ -458,10 +481,10 @@ public class UpNextPlayingQueue {
     private void newShuffleList() {
         if(mUpNextList.size() > 0) {
             IMediaItemBase playingItem = getPlayingItem();
-            if (mShuffle == UpNextPlayingQueue.SHUFFLE.all) {
+            if (mShuffle == UpNextPlayingQueue.SHUFFLE_ON) {
                 insertUpNextList(UNSHUFFLE);
                 mUpNextList.remove(getPlayingItemIndex());
-                Collections.shuffle(mUpNextList, new Random(mUpNextList.size()));
+                Collections.shuffle(mUpNextList, new Random(System.currentTimeMillis()));
                 mUpNextList.add(0, playingItem);
                 mPlayingItemIndex = 0;
             }
@@ -470,7 +493,7 @@ public class UpNextPlayingQueue {
 
     public void fetchSavedUpNextItems() {
         getRepeatShuffleOnAppStart();
-        mUpNextList = retrieveUpNextList(mShuffle == SHUFFLE.all ? SHUFFLED : UNSHUFFLE);
+        mUpNextList = retrieveUpNextList(mShuffle == SHUFFLE_ON ? SHUFFLED : UNSHUFFLE);
         nullCheck();
         retrievePlayingItemIndex();
     }
@@ -495,7 +518,7 @@ public class UpNextPlayingQueue {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if(mShuffle == SHUFFLE.all) {
+                if(mShuffle == SHUFFLE_ON) {
                     insertUpNextList(SHUFFLED);
                 }else{
                     insertUpNextList(UNSHUFFLE);
@@ -510,18 +533,4 @@ public class UpNextPlayingQueue {
         Preferences.writeInteger(context, PLAYING_ITEM_INDEX_IN_UPNEXT, mPlayingItemIndex);
     }
 
-    public void Terminate() {
-
-    }
-
-    public enum REPEAT {
-        one,
-        all,
-        none,
-    }
-
-    public enum SHUFFLE {
-        all,
-        none,
-    }
 }

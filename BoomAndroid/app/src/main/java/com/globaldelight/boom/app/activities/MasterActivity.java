@@ -14,32 +14,20 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.globaldelight.boom.app.App;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
-import com.globaldelight.boom.business.client.IFBAddsUpdater;
-import com.globaldelight.boom.business.client.IGoogleAddsUpdater;
-import com.globaldelight.boom.business.BusinessUtils;
-import com.globaldelight.boom.business.BusinessUtils.AddSource;
-import com.globaldelight.boom.app.receivers.BusinessRequestReceiver;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.fragments.MasterContentFragment;
 import com.globaldelight.boom.view.slidinguppanel.SlidingUpPanelLayout;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
-import com.google.android.gms.ads.NativeExpressAdView;
-import java.util.Timer;
-import java.util.TimerTask;
-import static com.globaldelight.boom.business.BusinessUtils.AddSource.*;
-import static com.globaldelight.boom.app.receivers.BusinessRequestReceiver.ACTION_BUSINESS_APP_EXPIRE;
-import static com.globaldelight.boom.app.receivers.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
 
 /**
  * Created by Rahul Agarwal on 12-01-17.
  */
 
-public class MasterActivity extends AppCompatActivity implements SlidingUpPanelLayout.PanelSlideListener, BusinessRequestReceiver.IUpdateBusinessRequest, IFBAddsUpdater, IGoogleAddsUpdater {
+public class MasterActivity extends AppCompatActivity implements SlidingUpPanelLayout.PanelSlideListener {
     private static final String TAG = "MasterActivity";
 
     private FrameLayout activity;
@@ -50,14 +38,10 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     private IPlayerSliderControl iPlayerSliderControl;
     private FragmentManager fragmentManager;
     private Handler handler;
-    private static BusinessRequestReceiver businessRequestReceiver;
-    private static ILibraryAddsUpdater iLibraryAddsUpdater;
 
     private boolean isDrawerLocked = false;
     private static boolean isPlayerExpended = false, isEffectScreenExpended = false;
-
-    private static final long FIFTEEN_MINUTES = 15 * 60 * 1000;
-
+    
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         activity = (FrameLayout) getLayoutInflater().inflate(R.layout.activity_master, null);
@@ -72,7 +56,8 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         contentFragment = new MasterContentFragment();
         initContainer();
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
-        FlurryAnalyticHelper.init(this);
+
+        //FlurryAnalyticHelper.init(this);
         super.setContentView(activity);
     }
 
@@ -179,7 +164,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         }catch (Exception e){
 
         }
-        initBusinessReceiver();
         super.onResume();
     }
 
@@ -187,30 +171,19 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     @Override
     public  void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(this);
+       // FlurryAnalyticHelper.flurryStartSession(this);
+        FlurryAnalytics.getInstance(this).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(this);
-    }
-
-
-
-    private void initBusinessReceiver(){
-        App.getBusinessHandler().setFBNativeAddListener(this);
-        App.getBusinessHandler().setGoogleNativeAddListener(this);
-        businessRequestReceiver = new BusinessRequestReceiver(this);
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_BUSINESS_APP_EXPIRE);
-        filter.addAction(ACTION_BUSINESS_CONFIGURATION);
-        registerReceiver(businessRequestReceiver, filter);
+       // FlurryAnalyticHelper.flurryStopSession(this);
+        FlurryAnalytics.getInstance(this).endSession();
     }
 
     @Override
     protected void onPause() {
-        unregisterReceiver(businessRequestReceiver);
         super.onPause();
     }
 
@@ -258,7 +231,8 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
                 iPlayerSliderControl.onPanelCollapsed(panel);
             }
         });
-        FlurryAnalyticHelper.logEvent(UtilAnalytics.PLayer_Screen_Expanded_From_Mini_Player);
+        FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.PLayer_Screen_Expanded_From_Mini_Player);
+        //FlurryAnalyticHelper.logEvent(UtilAnalytics.PLayer_Screen_Expanded_From_Mini_Player);
     }
 
     @Override
@@ -293,61 +267,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         });
     }
 
-    public static void setLibraryAddsUpdater(ILibraryAddsUpdater libraryAddsUpdater){
-        iLibraryAddsUpdater = libraryAddsUpdater;
-    }
-
-    @Override
-    public void onBusinessRequest(final AddSource addSources, final boolean libraryBannerEnable, boolean libraryVideoEnable) {
-        if(libraryBannerEnable) {
-            if (addSources == google) {
-                App.getBusinessHandler().loadGoogleNativeAdd(addSources, libraryBannerEnable);
-            } else {
-                App.getBusinessHandler().loadFbNativeAdds(addSources, libraryBannerEnable);
-            }
-        }
-        if(libraryVideoEnable) {
-            Timer timer = new Timer();
-            TimerTask launchVideoAdds = new TimerTask() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            FacebookSdk.sdkInitialize(getApplicationContext());
-                            AppEventsLogger.activateApp(getApplicationContext());
-                            if (addSources == google) {
-                                App.getBusinessHandler().loadGoogleFullScreenAdds();
-                            } else {
-                                App.getBusinessHandler().loadFullScreenFbAdds();
-                            }
-                        }
-                    });
-                }
-            };
-            timer.scheduleAtFixedRate(launchVideoAdds, 0, FIFTEEN_MINUTES);
-        }
-    }
-
-    @Override
-    public void onLoadFBNativeAdds(BusinessUtils.AddSource addSources, boolean libraryBannerEnable, final LinearLayout fbNativeAddContainer) {
-        LoadAdds(addSources, libraryBannerEnable, fbNativeAddContainer);
-    }
-
-    @Override
-    public void onLoadGoogleNativeAdds(BusinessUtils.AddSource addSources, boolean libraryBannerEnable, final NativeExpressAdView googleAddView) {
-        LoadAdds(addSources, libraryBannerEnable, googleAddView);
-    }
-
-    private void LoadAdds(final AddSource addSources, final boolean libraryBannerEnable, final View addView){
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                iLibraryAddsUpdater.onAddsUpdate(addSources, libraryBannerEnable, addView);
-            }
-        });
-    }
-
     public interface IPlayerSliderControl{
         void onPanelSlide(View panel, float slideOffset, boolean isEffectOpened);
         void onPanelCollapsed(View panel);
@@ -357,9 +276,5 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         void onResumeFragment(int alfa);
         void onVolumeUp();
         void onVolumeDown();
-    }
-
-    public interface ILibraryAddsUpdater{
-        void onAddsUpdate(AddSource addSources, boolean isLibraryAddsEnable, View addContainer);
     }
 }

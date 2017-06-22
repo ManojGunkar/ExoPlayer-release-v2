@@ -16,7 +16,7 @@ public interface IMediaItemBase {
 
     void setItemArtUrl(String url);
 
-    ItemType getItemType();
+    @ItemType int getItemType();
 
-    MediaType getMediaType();
+    @MediaType int getMediaType();
 }

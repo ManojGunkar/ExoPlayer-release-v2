@@ -75,6 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
+            android:tint="@color/effect_button_state"
             style="@style/MediaController"
             android:src="@drawable/ic_player_previous"
             android:layout_centerVertical="true"
@@ -91,6 +92,7 @@
 
         <ImageView
             android:id="@+id/controller_next"
+            android:tint="@color/effect_button_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/MediaController"

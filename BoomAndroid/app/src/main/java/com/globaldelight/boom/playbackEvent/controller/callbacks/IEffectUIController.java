@@ -21,5 +21,5 @@ public interface IEffectUIController {
 
     void OnEqualizerChange(int equalizer);
 
-    void OnSpeakerEnable(AudioEffect.Speaker speakerType, boolean enable);
+    void OnSpeakerEnable(@AudioEffect.Speaker int speakerType, boolean enable);
 }

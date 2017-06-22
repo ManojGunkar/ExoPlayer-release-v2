@@ -18,9 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
@@ -98,7 +98,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         setDetail(collection);
         new LoadAlbumSongListItems().execute();
         setForAnimation();
-        FlurryAnalyticHelper.init(mActivity);
+//        FlurryAnalyticHelper.init(mActivity);
     }
 
     private void setDetail(IMediaItemCollection collection) {
@@ -277,12 +277,13 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(mActivity);
+        FlurryAnalytics.getInstance(getActivity()).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(mActivity);
+        FlurryAnalytics.getInstance(getActivity()).endSession();
+
     }
 }

@@ -11,8 +11,9 @@ import android.util.Log;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.business.inapp.IabHelper;
@@ -20,7 +21,6 @@ import com.globaldelight.boom.business.inapp.IabResult;
 import com.globaldelight.boom.business.inapp.Inventory;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
-import com.globaldelight.boomplayer.AudioEffect;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.json.JSONException;
@@ -37,7 +37,6 @@ public class BoomSplash extends AppCompatActivity {
     MixpanelAPI mixpanel;
     JSONObject propsFirst, propsLast;
     String currentDate;
-    private AudioEffect audioEffectPreferenceHandler;
     private IabHelper mHelper;
     private String TAG="BoomSplash";
 
@@ -48,7 +47,7 @@ public class BoomSplash extends AppCompatActivity {
             finish();
             return;
         }
-        FlurryAnalyticHelper.init(this);
+//        FlurryAnalyticHelper.init(this);
     }
 
     @Override
@@ -126,9 +125,9 @@ public class BoomSplash extends AppCompatActivity {
     }
 
     private void updateDataValues() {
-        audioEffectPreferenceHandler = AudioEffect.getAudioEffectInstance(this);
         //flurry
-        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_APP_OPEN);
+//        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_APP_OPEN);
+        FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.EVENT_APP_OPEN);
 
         //get current date
         currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
@@ -136,7 +135,6 @@ public class BoomSplash extends AppCompatActivity {
         //new Launch of app.Use for tutorial
         if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true)) {
             Preferences.writeString(this, Preferences.INSTALL_DATE, currentDate);
-            audioEffectPreferenceHandler.setUserPurchaseType(AudioEffect.purchase.FIVE_DAY_OFFER);
             //register first app open once as super property
             propsFirst = new JSONObject();
             try {
@@ -191,13 +189,13 @@ public class BoomSplash extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(this);
+        FlurryAnalytics.getInstance(this).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(this);
+        FlurryAnalytics.getInstance(this).endSession();
     }
 
 

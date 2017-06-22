@@ -30,8 +30,9 @@ import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.session.TokenPair;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.app.activities.WebViewActivity;
@@ -105,19 +106,17 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
-        FlurryAnalyticHelper.init(mActivity);
         TimerUtils.resumeTimerState(mActivity, sleepTimerTxt);
     }
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalyticHelper.flurryStartSession(mActivity);
-    }
+        FlurryAnalytics.getInstance(getActivity()).startSession();    }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalyticHelper.flurryStopSession(mActivity);
+        FlurryAnalytics.getInstance(getActivity()).endSession();
         if ( mAccountLoader != null && mAccountLoader.getStatus() != AsyncTask.Status.FINISHED ) {
             mAccountLoader.cancel(false);
         }
@@ -219,10 +218,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.about_panel:
                 startCompoundActivities(R.string.header_about);
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.About_Page_opened);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.About_Page_opened);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.About_Page_opened);
                 break;
             case R.id.feedback_panel:
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.FeedBack_Page_opened);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.FeedBack_Page_opened);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.FeedBack_Page_opened);
                 if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
                     Intent intent = new Intent(mActivity, WebViewActivity.class);
                     startActivity(intent);
@@ -337,7 +338,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                     DropBoxUtills.checkAppKeySetup(App.getApplication());
                     DropBoxUtills.checkDropboxAuthentication(mActivity);
                 }
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Drop_Box_Tapped_From_Setting_Page);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Drop_Box_Tapped_From_Setting_Page);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Drop_Box_Tapped_From_Setting_Page);
             }
         };
 
@@ -355,7 +357,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
             @Override
             public void run() {
                 checkPermissions();
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_Tapped_From_Setting_Page);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_Tapped_From_Setting_Page);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Google_Drive_Tapped_From_Setting_Page);
             }
         };
 

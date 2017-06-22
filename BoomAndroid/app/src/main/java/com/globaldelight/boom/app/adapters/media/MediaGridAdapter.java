@@ -19,7 +19,8 @@ import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumDetailItemActivity;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
@@ -131,8 +132,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
 
 
     private int setSize(ViewHolder holder) {
-        Utils utils = new Utils(context);
-        int size = (utils.getWindowWidth(context) / (isPhone ? 2 : 3))
+        int size = (Utils.getWindowWidth(context) / (isPhone ? 2 : 3))
                 - (int)context.getResources().getDimension(R.dimen.card_grid_img_margin);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(size, size);
@@ -231,9 +231,10 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
                     App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemToAdd);
                     break;
                 case R.id.popup_album_add_playlist:
-                    Utils util = new Utils(activity);
-                    util.addToPlaylist(activity, itemToAdd, null);
-                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                    Utils.addToPlaylist(activity, itemToAdd, null);
+//                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                    FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+
                     break;
             }
         }
@@ -244,7 +245,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
             final MediaController controller = MediaController.getInstance(activity);
 
             switch (mediaItem.getItemType()) {
-                case GENRE: {
+                case ItemType.GENRE: {
                     if(mediaItem.getParentType() == ItemType.GENRE && mediaItem.getMediaElement().size() == 0)
                         mediaItem.setMediaElement(controller.getGenreAlbumsList(mediaItem));
 
@@ -255,7 +256,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
                     return rootCollection.getMediaElement();
                 }
 
-                case ARTIST: {
+                case ItemType.ARTIST: {
                     if(mediaItem.getParentType() == ItemType.ARTIST && mediaItem.getMediaElement().size() == 0)
                         mediaItem.setMediaElement(controller.getArtistAlbumsList(mediaItem));
 
@@ -266,7 +267,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
                     return rootCollection.getMediaElement();
                 }
 
-                case ALBUM: {
+                case ItemType.ALBUM: {
                     if(mediaItem.getMediaElement().size() == 0)
                         mediaItem.setMediaElement(MediaController.getInstance(activity).getAlbumTrackList(mediaItem));
                     return mediaItem.getMediaElement();

@@ -26,11 +26,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
-import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.adapters.search.SearchSuggestionAdapter;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
@@ -50,7 +50,7 @@ import static com.globaldelight.boom.app.fragments.MasterContentFragment.isUpdat
  */
 
 public class MainActivity extends MasterActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MasterActivity.ILibraryAddsUpdater{
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private PermissionChecker permissionChecker;
     private CoordinatorLayout mainContainer;
@@ -188,7 +188,6 @@ public class MainActivity extends MasterActivity
     }
 
     private void initView() {
-        setLibraryAddsUpdater(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbarTitle = (RegularTextView) findViewById(R.id.toolbar_txt);
         setTitle(getResources().getString(R.string.music_library));
@@ -380,12 +379,14 @@ public class MainActivity extends MasterActivity
         switch (item.getItemId()){
             case R.id.music_library:
                 runnable = navigateLibrary;
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_library_Opened_From_Drawer);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_library_Opened_From_Drawer);
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Music_library_Opened_From_Drawer);
                 break;
             case R.id.google_drive:
                 if (Utils.isOnline(this)){
                     runnable = navigateGoogleDrive;
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_OPENED_FROM_DRAWER);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_OPENED_FROM_DRAWER);
+                    FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Google_Drive_OPENED_FROM_DRAWER);
                 }else {
                     Utils.networkAlert(this);
                     return false;
@@ -394,7 +395,8 @@ public class MainActivity extends MasterActivity
             case R.id.drop_box:
                 if (Utils.isOnline(this)){
                     runnable = navigateDropbox;
-                    FlurryAnalyticHelper.logEvent(UtilAnalytics.DROP_BOX_OPENED_FROM_DRAWER);
+//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.DROP_BOX_OPENED_FROM_DRAWER);
+                    FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.DROP_BOX_OPENED_FROM_DRAWER);
                 }else {
                     Utils.networkAlert(this);
                     return false;
@@ -408,7 +410,8 @@ public class MainActivity extends MasterActivity
                     }
                 }, 300);
                 drawerLayout.closeDrawer(GravityCompat.START);
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Settings_Page_Opened);
                 return true;
             case R.id.nav_store:
                 new Handler().postDelayed(new Runnable() {
@@ -418,12 +421,14 @@ public class MainActivity extends MasterActivity
                     }
                 }, 300);
                 drawerLayout.closeDrawer(GravityCompat.START);
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer); FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Store_Page_Opened_from_Drawer);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
                 return  true;
             case R.id.nav_share:
                 Utils.shareStart(MainActivity.this);
                 drawerLayout.closeDrawer(GravityCompat.START);
-                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
+//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Share_Opened_from_Boom);
                 return true;
         }
         if (runnable != null) {
@@ -475,10 +480,4 @@ public class MainActivity extends MasterActivity
         super.onDestroy();
     }
 
-    @Override
-    public void onAddsUpdate(BusinessUtils.AddSource addSources, boolean isAddEnable, View addContainer) {
-        if(null != mLibraryFragment){
-            ((LibraryFragment)mLibraryFragment).updateAdds(addSources, isAddEnable, addContainer);
-        }
-    }
 }

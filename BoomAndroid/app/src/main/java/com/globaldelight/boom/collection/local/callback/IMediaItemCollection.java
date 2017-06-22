@@ -30,9 +30,9 @@ public interface IMediaItemCollection extends IMediaItemBase {
 
     ArrayList<? extends IMediaItemBase> getMediaElement();
 
-    ItemType getItemType();
+    @ItemType int getItemType();
 
-    MediaType getMediaType();
+    @MediaType int getMediaType();
 
-    ItemType getParentType();
+    @ItemType int getParentType();
 }

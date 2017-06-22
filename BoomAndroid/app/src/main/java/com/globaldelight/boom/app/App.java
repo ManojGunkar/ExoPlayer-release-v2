@@ -11,12 +11,9 @@ import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.business.client.BusinessHandler;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.playbackEvent.handler.PlayerEventHandler;
 import com.globaldelight.boom.playbackEvent.handler.PlayingQueueHandler;
-import com.globaldelight.boom.app.receivers.BoomPlayTimeReceiver;
 import com.globaldelight.boom.app.service.PlayerService;
 import com.globaldelight.boom.app.database.CloudMediaItemDBHelper;
 import com.globaldelight.boom.app.database.FavoriteDBHelper;
@@ -48,9 +45,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
     private static UserPreferenceHandler userPreferenceHandler;
     private static DropboxAPI<AndroidAuthSession> dropboxAPI;
 
-    private static BoomPlayTimeReceiver boomPlayTimeReceiver;
-
-    private static BusinessHandler businessHandler;
 //    private static MixpanelAPI mixpanel;
 
     public static App getApplication() {
@@ -69,7 +63,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
 
 
-        playingQueueHandler = PlayingQueueHandler.getHandlerInstance(application);
+        playingQueueHandler = PlayingQueueHandler.getInstance(application);
 
         boomPlayListhelper = new PlaylistDBHelper(application);
 
@@ -79,23 +73,11 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
         cloudMediaItemDBHelper = new CloudMediaItemDBHelper(application);
 
-        playingQueueHandler.getUpNextList();
-
         userPreferenceHandler = new UserPreferenceHandler(application);
 
-        try{
-            businessHandler = BusinessHandler.getBusinessHandlerInstance(application);
-        }catch (Exception e){}
-
-        boomPlayTimeReceiver = new BoomPlayTimeReceiver(application);
-
-        FlurryAnalyticHelper.init(this);
+//        FlurryAnalyticHelper.init(this);
 
         registerActivityLifecycleCallbacks(this);
-    }
-
-    public static BusinessHandler getBusinessHandler(){
-        return businessHandler;
     }
 
     public static PlayerEventHandler getPlayerEventHandler() {
@@ -175,8 +157,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
                 }
             }, 2000);
         }
-
-        BoomPlayTimeReceiver.setActivityForPopup(activity);
     }
 
     public void onActivityResumed(Activity activity) {
@@ -186,9 +166,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public void onActivityStopped(Activity var1) {
-        if ( var1 == BoomPlayTimeReceiver.getActivityForPopup() ) {
-            BoomPlayTimeReceiver.setActivityForPopup(null);
-        }
     }
 
     public void onActivitySaveInstanceState(Activity var1, Bundle var2) {
@@ -196,10 +173,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     public void onActivityDestroyed(Activity var1) {
 
-    }
-
-    public static BoomPlayTimeReceiver getBoomPlayTimeReceiver() {
-        return boomPlayTimeReceiver;
     }
 
     private boolean isExpired(){

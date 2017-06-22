@@ -14,12 +14,14 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumSongListActivity;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.app.App;
@@ -259,8 +261,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                                 App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement());
                                 break;
                             case R.id.album_header_add_to_playlist:
-                                Utils util = new Utils(activity);
-                                util.addToPlaylist(activity, ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), null);
+                                Utils.addToPlaylist(activity, ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), null);
                                 break;
                             case R.id.album_header_shuffle:
                                 if (App.getPlayingQueueHandler().getUpNextList() != null) {
@@ -331,9 +332,9 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                                 App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection) collection.getMediaElement().get(position)).getMediaElement());
                                 break;
                             case R.id.popup_album_add_playlist:
-                                Utils util = new Utils(activity);
-                                util.addToPlaylist(activity, ((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement(), null);
-                                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                Utils.addToPlaylist(activity, ((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement(), null);
+                                //FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                                FlurryAnalytics.getInstance(activity.getApplicationContext()).startSession().setEvent(FlurryEvents.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
                                 break;
                         }
                         return false;
@@ -346,8 +347,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     }
 
     private int setSize(SimpleItemViewHolder holder) {
-        Utils utils = new Utils(activity);
-        int size = (utils.getWindowWidth(activity) / (isPhone ? 2 : 3))
+        int size = (Utils.getWindowWidth(activity) / (isPhone ? 2 : 3))
                 - (int)activity.getResources().getDimension(R.dimen.card_grid_img_margin);
 
 //        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (size/(isPhone?2.5:3)));

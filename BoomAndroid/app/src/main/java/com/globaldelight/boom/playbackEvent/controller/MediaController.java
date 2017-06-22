@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaQuery;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.FlurryAnalyticHelper;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
@@ -55,7 +57,8 @@ public class MediaController implements IMediaController {
     @Override
     public void createBoomPlaylist(String playlist) {
         App.getBoomPlayListHelper().createPlaylist(playlist);
-        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
+//        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
+        FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_CREATED_NEW_PLAYLIST);
         context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
@@ -135,7 +138,7 @@ public class MediaController implements IMediaController {
     }
 
     @Override
-    public ArrayList<? extends IMediaItemBase> getCloudList(MediaType mediaType) {
+    public ArrayList<? extends IMediaItemBase> getCloudList(@MediaType int mediaType) {
         return App.getCloudMediaItemDBHelper().getSongList(mediaType);
     }
 
@@ -183,30 +186,33 @@ public class MediaController implements IMediaController {
     public void removeItemToFavoriteList(long trackId){
         App.getFavoriteDBHelper().removeSong(trackId);
         context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
-        FlurryAnalyticHelper.logEvent(UtilAnalytics.Remove_Favorites);
+//        FlurryAnalyticHelper.logEvent(UtilAnalytics.Remove_Favorites);
+        FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Remove_Favorites);
     }
 
     @Override
     public void addItemToFavoriteList(IMediaItem item){
         App.getFavoriteDBHelper().addSong(item);
         context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
-        FlurryAnalyticHelper.logEvent(UtilAnalytics.Add_To_Favorites);
+//        FlurryAnalyticHelper.logEvent(UtilAnalytics.Add_To_Favorites);
+        FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Add_To_Favorites);
+
     }
 
     @Override
     public ArrayList<String> getArtUrlList(MediaItemCollection collection) {
         switch (collection.getItemType()){
-            case ARTIST:
+            case ItemType.ARTIST:
                 return DeviceMediaQuery.getArtistsArtList(context, collection.getItemId(), collection.getItemTitle());
-            case PLAYLIST:
+            case ItemType.PLAYLIST:
                 return DeviceMediaQuery.getPlaylistArtList(context, collection.getItemId(), collection.getItemTitle());
-            case GENRE:
+            case ItemType.GENRE:
                 return DeviceMediaQuery.getGenreArtList(context, collection.getItemId(), collection.getItemTitle());
-            case BOOM_PLAYLIST:
+            case ItemType.BOOM_PLAYLIST:
                 return App.getBoomPlayListHelper().getBoomPlayListArtList(collection.getItemId());
-            case RECENT_PLAYED:
+            case ItemType.RECENT_PLAYED:
                 return App.getUPNEXTDBHelper().getRecentArtList();
-            case FAVOURITE:
+            case ItemType.FAVOURITE:
                 return App.getFavoriteDBHelper().getFavouriteArtList();
             default:
                 break;
@@ -215,12 +221,12 @@ public class MediaController implements IMediaController {
     }
 
     @Override
-    public void removeCloudMediaItemList(MediaType mediaType) {
+    public void removeCloudMediaItemList(@MediaType int mediaType) {
         App.getCloudMediaItemDBHelper().clearList(mediaType);
     }
 
     @Override
-    public void addSongsToCloudItemList(MediaType mediaType, ArrayList<IMediaItemBase> fileList) {
+    public void addSongsToCloudItemList(@MediaType int mediaType, ArrayList<IMediaItemBase> fileList) {
         App.getCloudMediaItemDBHelper().addSongs(mediaType, fileList);
     }
 

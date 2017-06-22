@@ -39,34 +39,25 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <LinearLayout
+            <ImageView
+                android:id="@+id/effect_tab"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_weight=".5">
-                <ImageView
-                    android:id="@+id/effect_tab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/MediaController"
-                    android:src="@drawable/ic_effects_normal" />
-            </LinearLayout>
+                android:layout_weight=".5"
+                style="@style/MediaController"
+                android:src="@drawable/effect_tab" />
 
-            <LinearLayout
+            <ImageView
+                android:id="@+id/player_tab"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_weight=".5">
-                <ImageView
-                    android:id="@+id/player_tab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/MediaController"
-                    android:src="@drawable/ic_player_active" />
-            </LinearLayout>
+                android:layout_weight=".5"
+                style="@style/MediaController"
+                android:src="@drawable/player_tab" />
 
         </LinearLayout>
-
 
     </LinearLayout>
 
