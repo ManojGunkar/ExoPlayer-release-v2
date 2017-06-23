@@ -31,7 +31,6 @@ import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumDetailItemActivity;
 import com.globaldelight.boom.app.activities.SearchDetailActivity;
 import com.globaldelight.boom.app.fragments.SearchDetailFragment;
-import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.app.adapters.search.utils.SearchResult;

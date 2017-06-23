@@ -15,9 +15,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import com.globaldelight.boom.app.App;
-import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
-import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.fragments.MasterContentFragment;
 import com.globaldelight.boom.view.slidinguppanel.SlidingUpPanelLayout;
 import com.globaldelight.boom.R;
@@ -171,14 +169,12 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     @Override
     public  void onStart() {
         super.onStart();
-       // FlurryAnalyticHelper.flurryStartSession(this);
         FlurryAnalytics.getInstance(this).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-       // FlurryAnalyticHelper.flurryStopSession(this);
         FlurryAnalytics.getInstance(this).endSession();
     }
 
@@ -231,8 +227,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
                 iPlayerSliderControl.onPanelCollapsed(panel);
             }
         });
-        FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.PLayer_Screen_Expanded_From_Mini_Player);
-        //FlurryAnalyticHelper.logEvent(UtilAnalytics.PLayer_Screen_Expanded_From_Mini_Player);
     }
 
     @Override

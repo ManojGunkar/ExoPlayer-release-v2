@@ -14,7 +14,7 @@ public class FlurryAnalytics {
 
     private Context context;
     private static FlurryAnalytics instance;
-    
+
     private final static String DEVELOPMENT_FLURRY_API_KEY = "MGGVKKG7JYXGC3N89B4V";
     private final static String PRODUCTION_FLURRY_API_KEY = "XRPWTN4PDGJJQX6NNJPN";
 
@@ -35,7 +35,7 @@ public class FlurryAnalytics {
         return this;
     }
 
-    public  FlurryAnalytics endSession() {
+    public FlurryAnalytics endSession() {
         FlurryAgent.onEndSession(context);
         return this;
     }

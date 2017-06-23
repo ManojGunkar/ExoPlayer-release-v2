@@ -17,7 +17,6 @@ import android.widget.ProgressBar;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.adapters.media.MediaGridAdapter;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
-import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;

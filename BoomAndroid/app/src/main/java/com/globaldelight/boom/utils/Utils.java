@@ -37,7 +37,6 @@ import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.business.BusinessPreferences;
 import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.business.client.BusinessHandler;

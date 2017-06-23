@@ -23,7 +23,6 @@ import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -493,16 +492,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
                 if(fromUser) {
                     isUser = true;
-
                     mTrackSeek.setProgress(progress);
-
                     changeProgress(progress);
-
-
-                    if(App.getPlayerEventHandler().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB){
+                    if(App.getPlayerEventHandler().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB)
                         showProgressLoader();
-                    }
-
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Playing_SeekBar_Used_in_Effects_screen);
                 }
             }
@@ -834,28 +827,17 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     setPlayerEnable(false);
                 }
                 mActivity.sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Effects_Screen_Opened_from_Mini_Player);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Effects_Screen_Opened_from_Mini_Player);
 
                 break;
             case R.id.mini_player_title_panel:
             case R.id.player_title_panel:
-               /* if(MasterActivity.isPlayerExpended()) {
-                    postMessage.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            playerUIController.OnPlayerTitleClick((MasterActivity) mActivity);
-                        }
-                    });
-                }else{*/
                     setPlayerEnable(true);
                 mActivity.sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
 
-                /*}*/
                 break;
             case R.id.player_upnext_button:
                 playerUIController.OnUpNextClick(mActivity);
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.UpNext_Button_Tapped);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.UpNext_Button_Tapped);
                 break;
 
@@ -864,7 +846,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 break;
 
             case R.id.mini_player_play_pause_btn:
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Play_Pause_Button_tapped_Mini_Player);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Play_Pause_Button_tapped_Mini_Player);
             case R.id.controller_play:
                 postMessage.post(new Runnable() {
@@ -874,7 +855,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     }
                 });
                 showProgressLoader();
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Songs_Pause_Or_Play_From_Effects_Screen);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Songs_Pause_Or_Play_From_Effects_Screen);
                 break;
             case R.id.controller_prev:
@@ -885,7 +865,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     }
                 });
                 showProgressLoader();
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Previous_button_tapped_From_effect_screen);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Previous_button_tapped_From_effect_screen);
                 break;
             case R.id.controller_next:
@@ -896,7 +875,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     }
                 });
                 showProgressLoader();
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Next_button_tapped_From_effect_screen);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Next_button_tapped_From_effect_screen);
                 break;
             case R.id.controller_repeat:
@@ -933,27 +911,24 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 break;
             case R.id.equalizer_btn:
                 switchEqualizer();
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_status,audioEffects.isEqualizerOn());
+                FlurryAnalytics.getInstance(getActivity()).setEvent(audioEffects.isEqualizerOn() ? FlurryEvents.EVENT_EQ_TURNED_ON : FlurryEvents.EVENT_EQ_TURNED_OFF);
                 break;
             case R.id.eq_dialog_panel:
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Open_Equalizer_Dailog_from_DropDown);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Open_Equalizer_Dailog_from_DropDown);
                 if (isEffectOn && audioEffects.isEqualizerOn())
                     onEqDialogOpen();
                 break;
             case R.id.equalizer_txt:
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Open_Equalizer_Dailog_from_text);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Open_Equalizer_Dailog_from_text);
                 if (isEffectOn && audioEffects.isEqualizerOn())
                     onEqDialogOpen();
                 break;
             case R.id.speaker_btn:
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Speaker_Dialog_Opened_From_Arrow);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Speaker_Dialog_Opened_From_Arrow);
             case R.id.three_surround_txt:
                 if (isEffectOn && audioEffects.is3DSurroundOn())
                     openSpeakerDialog();
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Speaker_Dialog_Opened_From_Text);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Speaker_Dialog_Opened_From_Text);
                 break;
             case R.id.speaker_left_front:
                 updateSpeakers(AudioEffect.SPEAKER_FRONT_LEFT);
@@ -979,17 +954,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }
     }
 
-    /*private void startCloudItemProgress() {
-        if(!App.getPlayerEventHandler().isPaused() && App.getPlayerEventHandler().isTrackWaitingForPlay()) {
-            mInflater.findViewById(R.id.load_cloud).setVisibility(View.VISIBLE);
-        }else{
-            mInflater.findViewById(R.id.load_cloud).setVisibility(View.GONE);
-        }
-    }
 
-    private void stopCloudItemProgress() {
-        mInflater.findViewById(R.id.load_cloud).setVisibility(View.GONE);
-    }*/
 
     private void overFlowMenu(Context context, View view) {
         PopupMenu pm = new PopupMenu(context, view);
@@ -1158,20 +1123,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mOldIntensity = audioEffects.getIntensity()/(double)100;
         if(isEffectOn){
             mEffectSwitchTxt.setText(mActivity.getString(R.string.on));
-
             setEnable3DEffect(audioEffects.is3DSurroundOn());
-
             setEnableIntensity(audioEffects.isIntensityOn());
-
             setEnableEqualizer(audioEffects.isEqualizerOn());
 
         }else{
             mEffectSwitchTxt.setText(mActivity.getString(R.string.off));
-
             setEnable3DEffect(audioEffects.is3DSurroundOn());
-
             setEnableIntensity(audioEffects.isIntensityOn());
-
             setEnableEqualizer(audioEffects.isEqualizerOn());
         }
     }
@@ -1206,11 +1165,16 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mIntensityTxt.setSelected(enable);
         }
 //        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_INTENSITY_STATE_CHANGED);
-        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
+
     }
 
     private void setEnableEqualizer(boolean active) {
         setChangeEqualizerValue(audioEffects.getSelectedEqualizerPosition());
+
+        HashMap<String, String> articleParams = new HashMap<>();
+        articleParams.put(UtilAnalytics.PARAM_SELECTED_EQUALIZER, eq_names.get(audioEffects.getSelectedEqualizerPosition()));
+        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Type_of_Equalizer_selected,articleParams);
+        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_selected,articleParams);
         boolean enable = audioEffects.isAudioEffectOn();
         mEqualizerBtn.setEnabled(enable);
         mEqualizerTxt.setEnabled(enable);
@@ -1218,7 +1182,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mEqDialogPanel.setEnabled(enable);
         mSelectedEqTxt.setEnabled(enable);
         mSelectedEqImg.setEnabled(enable);
-
         if ( enable ) {
             mEqualizerBtn.setSelected(active);
             mEqualizerTxt.setSelected(active);
@@ -1402,8 +1365,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         });
         MixPanelAnalyticHelper.track(mActivity, audioEffects.isEqualizerOn() ? AnalyticsHelper.EVENT_EQ_TURNED_ON : AnalyticsHelper.EVENT_EQ_TURNED_OFF);
 //        FlurryAnalyticHelper.logEventWithStatus(UtilAnalytics.Equalizer_status, audioEffectPreferenceHandler.isEqualizerOn());
-        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_status,audioEffects.isEqualizerOn());
-        FlurryAnalytics.getInstance(getActivity()).setEvent(audioEffects.isEqualizerOn() ? FlurryEvents.EVENT_EQ_TURNED_ON : FlurryEvents.EVENT_EQ_TURNED_OFF);
+
     }
 
     private void setEffectIntensity() {
@@ -1421,11 +1383,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                                 aaEffectUIController.OnIntensityChange(progress);
                             }
                         });
-                    try {
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
+
+                   /* try {
 //                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_INTENSITY_STATE_CHANGED);
-                        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
                     } catch (Exception e) {
-                    }
+                    }*/
                 }
             }
 
@@ -1444,7 +1407,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).startSession();
+        FlurryAnalytics.getInstance(getActivity()).endSession();
     }
     @Override
     public void onChangeEqualizerValue(final int position) {
@@ -1453,7 +1416,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             @Override
             public void run() {
                 aaEffectUIController.OnEqualizerChange(position);
-//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_EQ_STATE_CHANGED);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_EQ_STATE_CHANGED);
             }
         });
@@ -1465,17 +1427,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             public void run() {
                 mSelectedEqImg.setImageDrawable(eq_active_off.getDrawable(position));
                 mSelectedEqTxt.setText(eq_names.get(position));
-                HashMap<String, String> articleParams = new HashMap<>();
-                articleParams.put(UtilAnalytics.PARAM_SELECTED_EQUALIZER, eq_names.get(position));
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Type_of_Equalizer_selected, articleParams);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Type_of_Equalizer_selected,articleParams);
                 audioEffects.setSelectedEqualizerPosition(position);
             }
         });
-        HashMap<String, String> articleParams = new HashMap<>();
-        articleParams.put(UtilAnalytics.Type_Equalizer_selected, eq_names.get(position));
-//        FlurryAnalyticHelper.logEvent(UtilAnalytics.Equalizer_selected, articleParams);
-        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_selected,articleParams);
     }
 
     private void updateSpeakers(@AudioEffect.Speaker final int speakerType){
@@ -1517,7 +1471,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_SUBWOOFER, enable);
                 break;
         }
-
         updateSpeakers(mSpeakerDialogPanel);
         aaEffectUIController.OnSpeakerEnable(speakerType, enable);
     }
