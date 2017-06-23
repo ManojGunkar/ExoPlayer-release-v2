@@ -26,7 +26,6 @@ import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
-import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;

@@ -18,7 +18,6 @@ import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue;
 import com.globaldelight.boom.view.RegularButton;

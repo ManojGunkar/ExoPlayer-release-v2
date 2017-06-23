@@ -26,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;

@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
-import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.app.receivers.HeadPhonePlugReceiver;
 import com.globaldelight.boom.app.adapters.utils.SectionsPagerAdapter;

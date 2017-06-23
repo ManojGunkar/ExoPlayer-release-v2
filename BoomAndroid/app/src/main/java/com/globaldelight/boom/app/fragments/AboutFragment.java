@@ -13,8 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.view.RegularButton;

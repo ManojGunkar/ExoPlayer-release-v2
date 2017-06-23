@@ -21,7 +21,6 @@ import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumSongListActivity;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
-import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.app.App;
