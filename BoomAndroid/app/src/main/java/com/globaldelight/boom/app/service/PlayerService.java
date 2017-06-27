@@ -265,6 +265,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
                         musicPlayerHandler.playNextSong(true);
                     }
                 }, 500);
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Next_Button_Tapped_from_Notification_bar);
             }
         }
     }
@@ -281,6 +282,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
                     }
                 }, 500);
             }
+            FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.previous_Button_Tapped_from_Notification_bar);
         }
     }
 
@@ -289,6 +291,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         if (null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem() && !App.getPlayerEventHandler().isTrackWaitingForPlay() && !musicPlayerHandler.isLoading() ) {
             if (!musicPlayerHandler.isPaused() && !musicPlayerHandler.isPlaying()  ) {
                 musicPlayerHandler.onPlayingItemChanged();
+                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.play_pause_Button_Tapped_from_Notification_bar);
             } else {
                 updatePlayPause(musicPlayerHandler.PlayPause() == PlayerEventHandler.PlayState.play ? true : false);
             }
@@ -340,7 +343,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(mServiceStartTime)));
             HashMap<String, String> val = new HashMap<>();
             val.put(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, time);
-         //   FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, val);
             FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.EVENT_MUSIC_SESSION_DURATION,val);
 
         }catch (Exception e){}
