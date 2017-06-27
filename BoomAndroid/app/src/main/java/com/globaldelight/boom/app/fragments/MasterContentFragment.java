@@ -1376,14 +1376,15 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     mOldIntensity = progress / (double) 100;
                     audioEffects.setIntensity(progress);
 
-                    if (isUser)
+                    if (isUser) {
                         postMessage.post(new Runnable() {
                             @Override
                             public void run() {
                                 aaEffectUIController.OnIntensityChange(progress);
                             }
                         });
-                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
+                        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
+                    }
 
                    /* try {
 //                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_INTENSITY_STATE_CHANGED);
