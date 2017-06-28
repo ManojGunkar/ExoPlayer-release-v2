@@ -29,6 +29,7 @@ public final class FlurryEvents {
     public static final String Tapped_from_GENERE_AllSongs_Thumbnail = " Tapped  from GENERE ALLSONGS Thumbnail";
     public static final String FAB_Tapped_from_playlist_section = "FAB Button Tapped  from  playlist section";
     public static final String PLayer_Screen_Expanded_From_Mini_Player = "Player Screen Exapanded From Mini Player";
+    public static final String PARAM_SELECTED_EQUALIZER = "selected Equalizer Type";
     public static final String Effects_Screen_Opened_from_Mini_Player = "Effects Screen Opened from Mini Player";
     public static final String Effects_Opened_From_Player_Screen = "Effects  Opened Player Screen";
     public static final String Player_Tab_PLayer_screen = "Player Tab Opened From Player Screen";

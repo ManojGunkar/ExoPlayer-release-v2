@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.business.BusinessPreferences;
@@ -267,16 +266,10 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         mActivity.unregisterReceiver(mUpdateInAppItemReceiver);
         super.onDestroy();
         if(BusinessPreferences.readBoolean(mContext, STORE_CLOSED_WITH_PURCHASE, true)){
-//            FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Closed_With_Purchase);
             FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Store_Closed_With_Purchase);
-
-            MixPanelAnalyticHelper.track(mActivity, UtilAnalytics.Store_Closed_With_Purchase);
-        }else{
-//            FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Closed_Without_Purchase);
+        }else
             FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Store_Closed_Without_Purchase);
 
-        }
-        MixPanelAnalyticHelper.getInstance(mContext).flush();
     }
 
     public void restorePurchase() {
