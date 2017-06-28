@@ -90,6 +90,10 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:10.0.1'
     compile "com.mixpanel.android:mixpanel-android:5.+"
 
+    compile 'com.squareup.retrofit2:retrofit:2.0.0'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta1'
+    compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
+
 
 }
 
