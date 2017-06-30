@@ -1,1 +1,1 @@
-include ':app', ':openslplayer', ':businessmodel'
+include ':app'

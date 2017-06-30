@@ -62,7 +62,7 @@ import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
-import com.globaldelight.boomplayer.AudioEffect;
+import com.globaldelight.boom.player.AudioEffect;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -288,7 +288,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     public void onResume() {
         super.onResume();
         updateProgressLoader();
-        Utils.InternetPopup(mActivity);
     }
 
     private void setPlayerEnable(boolean isEnable){

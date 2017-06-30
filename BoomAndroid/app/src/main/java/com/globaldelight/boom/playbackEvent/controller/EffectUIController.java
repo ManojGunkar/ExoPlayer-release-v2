@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IEffectUIController;
-import com.globaldelight.boomplayer.AudioEffect;
+import com.globaldelight.boom.player.AudioEffect;
 
 /**
  * Created by Rahul Agarwal on 24-01-17.

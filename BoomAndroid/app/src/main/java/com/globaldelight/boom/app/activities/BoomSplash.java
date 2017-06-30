@@ -14,11 +14,6 @@ import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
-import com.globaldelight.boom.business.BusinessPreferences;
-import com.globaldelight.boom.business.BusinessUtils;
-import com.globaldelight.boom.business.inapp.IabHelper;
-import com.globaldelight.boom.business.inapp.IabResult;
-import com.globaldelight.boom.business.inapp.Inventory;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -29,15 +24,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.globaldelight.boom.business.BusinessPreferences.ACTION_IN_APP_PURCHASE;
-import static com.globaldelight.boom.business.BusinessUtils.SKU_INAPPITEM;
-
 public class BoomSplash extends AppCompatActivity {
     private static final long SPLASH_TIME_OUT = 2000;
     MixpanelAPI mixpanel;
     JSONObject propsFirst, propsLast;
     String currentDate;
-    private IabHelper mHelper;
     private String TAG="BoomSplash";
 
     @Override
@@ -61,54 +52,7 @@ public class BoomSplash extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                boolean isAlreadyPurchased = BusinessPreferences.readBoolean(BoomSplash.this, ACTION_IN_APP_PURCHASE, false);
-                if ( !isAlreadyPurchased && ConnectivityReceiver.isNetworkAvailable(BoomSplash.this, true) ) {
-                    mHelper = new IabHelper(BoomSplash.this, BusinessUtils.base64EncodedPublicKey);
-                    mHelper.enableDebugLogging(true);
-                    final IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
-                        @Override
-                        public void onQueryInventoryFinished(IabResult result,
-                                                             Inventory inventory) {
-                            if ( !result.isFailure() ) {
-                                boolean isPurchased = inventory.hasPurchase(SKU_INAPPITEM);
-                                Log.d(TAG,"IS_PURCHASED-->"+isPurchased);
-                                if (isPurchased) {
-                                    BusinessPreferences.writeBoolean(BoomSplash.this, ACTION_IN_APP_PURCHASE, true);
-                                    Log.d(TAG,"IS_PURCHASED-->"+isPurchased);
-                                }
-                            }
-                            startBoom();
-                        }
-                    };
-                    mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-                        @Override
-                        public void onIabSetupFinished(IabResult result) {
-                            if ( !result.isSuccess() ) {
-                                startBoom();
-                                return;
-                            }
-
-                            ArrayList<String> skuList = new ArrayList<>();
-                            skuList.add(SKU_INAPPITEM);
-                            Log.d(TAG,"SKU_ITEM_ADDED-->"+SKU_INAPPITEM);
-                            try {
-                                mHelper.queryInventoryAsync(true, skuList, null, mGotInventoryListener);
-                            } catch (IabHelper.IabAsyncInProgressException e) {
-                                e.printStackTrace();
-                                Log.d(TAG,"Error-->"+e.getMessage());
-                                startBoom();
-                            }
-                            catch (IllegalStateException e) {
-                                e.printStackTrace();
-                                Log.d(TAG,"Error-->"+e.getMessage());
-                                startBoom();
-                            }
-                        }
-                    });
-                }
-                else {
-                    startBoom();
-                }
+                startBoom();
             }
         }, SPLASH_TIME_OUT);
     }

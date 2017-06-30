@@ -84,7 +84,8 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
         Bundle bundle=intent.getExtras();
         int requestCode=0;
         if(bundle!=null){
-          requestCode=bundle.getInt("requestCode");}
+          requestCode=bundle.getInt("requestCode");
+        }
         switch (intent.getAction()){
             case ACTION_NOTI_CLICK :
                 if(null != mPlayerService)

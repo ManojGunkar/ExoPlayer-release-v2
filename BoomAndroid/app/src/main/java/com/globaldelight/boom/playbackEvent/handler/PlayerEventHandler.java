@@ -23,8 +23,8 @@ import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
-import com.globaldelight.boomplayer.AudioEffect;
-import com.globaldelight.boomplayer.AudioPlayer;
+import com.globaldelight.boom.player.AudioEffect;
+import com.globaldelight.boom.player.AudioPlayer;
 
 import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
 import static com.globaldelight.boom.playbackEvent.handler.PlayerEventHandler.PlayState.pause;

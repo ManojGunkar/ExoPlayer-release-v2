@@ -16,7 +16,6 @@ import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.app.App;
-import com.globaldelight.boom.business.client.IBusinessNetworkInit;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
@@ -26,7 +25,7 @@ import com.globaldelight.boom.playbackEvent.handler.PlayerEventHandler;
 import com.globaldelight.boom.app.receivers.HeadPhonePlugReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
-import com.globaldelight.boomplayer.AudioConfiguration;
+import com.globaldelight.boom.player.AudioConfiguration;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +39,7 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_O
  */
 
 public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpdateMusic, PlayerServiceReceiver.IPlayerService,
-        IBusinessNetworkInit, ConnectivityReceiver.ConnectivityReceiverListener {
+        ConnectivityReceiver.ConnectivityReceiverListener {
 
     private long mServiceStartTime = 0;
     private long mServiceStopTime = 0;
@@ -352,35 +351,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     }
 
     private void initBusinessModel() {
-    }
-
-    @Override
-    public void onGetAccessToken(boolean success) {
-
-    }
-
-    @Override
-    public void onRegisterDevice(boolean success) {
-
-    }
-
-    @Override
-    public void onGetBusinessConfiguration(boolean success) {
-        if (success)
-            sendBroadcast(new Intent(ACTION_BUSINESS_CONFIGURATION));
-    }
-
-    @Override
-    public void onAppTrailExpired(boolean expired) {
-        if(expired){
-//            Show dialog and get Email
-            sendBroadcast(new Intent(ACTION_BUSINESS_APP_EXPIRE));
-        }
-    }
-
-    @Override
-    public void onEmailSubmition(boolean success) {
-
     }
 
     @Override

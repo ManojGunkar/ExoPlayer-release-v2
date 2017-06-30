@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
-import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.app.receivers.HeadPhonePlugReceiver;
 import com.globaldelight.boom.app.adapters.utils.SectionsPagerAdapter;
 import com.globaldelight.boom.view.CoachMarkerWindow;
@@ -92,14 +91,6 @@ public class LibraryFragment extends Fragment {
         viewPager.setAdapter(mSectionsPagerAdapter);
         viewPager.setOffscreenPageLimit(5);
         mTabBar.setupWithViewPager(mViewPager);
-    }
-
-    public void updateAdds(BusinessUtils.AddSource addSources, boolean isAddEnable, View addContainer) {
-        if(null != getActivity()) {
-            mAddsContainer.removeAllViews();
-            mAddsContainer.addView(addContainer);
-            mAddsContainer.setVisibility(isAddEnable ? View.VISIBLE : View.GONE);
-        }
     }
 
     public void useCoachMarkWindow(){

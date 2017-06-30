@@ -13,7 +13,6 @@ import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.fragments.FavouriteListFragment;
 import com.globaldelight.boom.app.fragments.RecentPlayedFragment;
 import com.globaldelight.boom.utils.Utils;
-import com.globaldelight.boom.business.inapp.IabHelper;
 import com.globaldelight.boom.app.fragments.AboutFragment;
 import com.globaldelight.boom.app.fragments.SettingFragment;
 import com.globaldelight.boom.app.fragments.StoreFragment;
@@ -117,11 +116,12 @@ public class ActivityContainer extends MasterActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Utils.PURCHASE_FLOW_LAUNCH && null != mFragment && mFragment instanceof  StoreFragment &&
-                !((StoreFragment) mFragment).getPurchaseHelper().handleActivityResult(requestCode, resultCode, data)) {
-        }else{
-            getSupportFragmentManager().findFragmentById(R.id.item_detail_container).onActivityResult(requestCode, resultCode, data);
-        }
+        getSupportFragmentManager().findFragmentById(R.id.item_detail_container).onActivityResult(requestCode, resultCode, data);
+
+//        if (requestCode == Utils.PURCHASE_FLOW_LAUNCH && null != mFragment && mFragment instanceof  StoreFragment &&
+//                !((StoreFragment) mFragment).getPurchaseHelper().handleActivityResult(requestCode, resultCode, data)) {
+//        }else{
+//        }
     }
 
     @Override
@@ -139,14 +139,14 @@ public class ActivityContainer extends MasterActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(null != mFragment && mFragment instanceof  StoreFragment) {
-            IabHelper mHelper = ((StoreFragment) mFragment).getPurchaseHelper();
-            if (mHelper != null) try {
-                mHelper.dispose();
-            } catch (IabHelper.IabAsyncInProgressException e) {
-                e.printStackTrace();
-            }
-        }
+//        if(null != mFragment && mFragment instanceof  StoreFragment) {
+//            IabHelper mHelper = ((StoreFragment) mFragment).getPurchaseHelper();
+//            if (mHelper != null) try {
+//                mHelper.dispose();
+//            } catch (IabHelper.IabAsyncInProgressException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
     @Override
     public  void onStart() {

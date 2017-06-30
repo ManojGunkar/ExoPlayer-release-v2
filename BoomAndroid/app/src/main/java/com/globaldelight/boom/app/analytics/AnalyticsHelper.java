@@ -3,9 +3,8 @@ package com.globaldelight.boom.app.analytics;
 import android.content.Context;
 
 import com.flurry.android.FlurryAgent;
-import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boomplayer.AudioEffect;
+import com.globaldelight.boom.player.AudioEffect;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.json.JSONException;

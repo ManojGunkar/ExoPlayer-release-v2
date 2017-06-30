@@ -13,7 +13,7 @@ import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.view.RegularTextView;
-import com.globaldelight.boomplayer.AudioEffect;
+import com.globaldelight.boom.player.AudioEffect;
 
 import org.json.JSONException;
 
