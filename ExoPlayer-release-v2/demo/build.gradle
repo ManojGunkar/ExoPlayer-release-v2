@@ -44,12 +44,18 @@ android {
     }
 }
 
+repositories {
+    maven { url "https://jitpack.io" }
+}
+
 dependencies {
     compile project(':library-core')
     compile project(':library-dash')
     compile project(':library-hls')
     compile project(':library-smoothstreaming')
     compile project(':library-ui')
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    compile 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
     withExtensionsCompile project(path: ':extension-ffmpeg')
     withExtensionsCompile project(path: ':extension-flac')
     withExtensionsCompile project(path: ':extension-opus')

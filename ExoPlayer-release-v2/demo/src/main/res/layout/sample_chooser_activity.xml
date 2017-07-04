@@ -18,6 +18,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+  <Button
+      android:id = "@+id/youtube_button"
+      android:layout_height="wrap_content"
+      android:layout_width="match_parent"
+      android:text="Play Youtube Video"
+      />
   <ExpandableListView android:id="@+id/sample_list"
       android:layout_width="match_parent"
       android:layout_height="match_parent"/>

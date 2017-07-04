@@ -26,11 +26,9 @@
   <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="24"/>
 
   <application
-      android:label="@string/application_name"
       android:icon="@mipmap/ic_launcher"
       android:banner="@drawable/ic_banner"
       android:largeHeap="true"
-      android:allowBackup="false"
       android:name="com.google.android.exoplayer2.demo.DemoApplication">
 
     <activity android:name="com.google.android.exoplayer2.demo.SampleChooserActivity"
