@@ -17,10 +17,12 @@ package com.google.android.exoplayer2.demo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -82,6 +84,8 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.UUID;
 
+import static android.net.wifi.WifiManager.WIFI_MODE_FULL;
+
 /**
  * An activity that plays media using {@link SimpleExoPlayer}.
  */
@@ -139,6 +143,8 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
 
   private BoomAudioProcessor mBoomAudioProcessor;
   private SharedPreferences mPrefs;
+  private WifiManager.WifiLock mWifiLock;
+
 
   // Activity lifecycle
 
@@ -183,6 +189,10 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
   @Override
   public void onStart() {
     super.onStart();
+    WifiManager wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+    mWifiLock = wifiManager.createWifiLock(WIFI_MODE_FULL, "PlayerActivity");
+    mWifiLock.acquire();
+
     if (Util.SDK_INT > 23) {
       initializePlayer();
     }
@@ -207,6 +217,7 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
   @Override
   public void onStop() {
     super.onStop();
+    mWifiLock.release();
     if (Util.SDK_INT > 23) {
       releasePlayer();
     }
@@ -621,9 +632,11 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
     effectsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        mBoomAudioProcessor.setEffectState(effectsSwitch.isChecked());
-        mPrefs.edit().putBoolean(EFFECTS_STATE_KEY, effectsSwitch.isChecked()).apply();
-        updateEffectsView();
+        if ( mBoomAudioProcessor.getEffectState() != effectsSwitch.isChecked() ) {
+          mBoomAudioProcessor.setEffectState(effectsSwitch.isChecked());
+          mPrefs.edit().putBoolean(EFFECTS_STATE_KEY, effectsSwitch.isChecked()).apply();
+          updateEffectsView();
+        }
       }
     });
 
@@ -631,9 +644,11 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
     surroundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        mBoomAudioProcessor.set3DAudioState(surroundSwitch.isChecked());
-        mPrefs.edit().putBoolean(SURROUND_STATE_KEY, surroundSwitch.isChecked()).apply();
-        updateEffectsView();
+        if ( mBoomAudioProcessor.get3DAudioState() != surroundSwitch.isChecked() ) {
+          mBoomAudioProcessor.set3DAudioState(surroundSwitch.isChecked());
+          mPrefs.edit().putBoolean(SURROUND_STATE_KEY, surroundSwitch.isChecked()).apply();
+          updateEffectsView();
+        }
       }
     });
 
@@ -641,9 +656,11 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
     fullBassSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        mBoomAudioProcessor.setFullBassState(fullBassSwitch.isChecked());
-        mPrefs.edit().putBoolean(FULLBASS_STATE_KEY, fullBassSwitch.isChecked()).apply();
-        updateEffectsView();
+        if ( mBoomAudioProcessor.getFullBassState() != fullBassSwitch.isChecked() ) {
+          mBoomAudioProcessor.setFullBassState(fullBassSwitch.isChecked());
+          mPrefs.edit().putBoolean(FULLBASS_STATE_KEY, fullBassSwitch.isChecked()).apply();
+          updateEffectsView();
+        }
       }
     });
 

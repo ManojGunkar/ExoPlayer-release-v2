@@ -46,6 +46,9 @@ import retrofit.Response;
  */
 public class MainVideoListActivity extends AppCompatActivity {
 
+    private static final String DEFAULT_SEARCH_QUERY = "Trending Music";
+    private static final String SEARCH_HISTORY_KEY = "search_history_key";
+
     private ListView mListVIew;
     private MyListAdapter mAdapter;
     private ProgressDialog mDialog;
@@ -64,16 +67,24 @@ public class MainVideoListActivity extends AppCompatActivity {
                 loadYoutubeURL("https://www.youtube.com/watch?v="+videoId);
             }
         });
-        if (isNetworkConnected()){
-              getYoutubeFeeds();
-          //  openDialog();
-        }
-        else {
-            Toast.makeText(MainVideoListActivity.this, "No Internet Connection.", Toast.LENGTH_SHORT).show();
-            if (DataHolder.getInstance().getList() != null) {
-                mAdapter = new MyListAdapter(MainVideoListActivity.this, DataHolder.getInstance().getList());
-                mListVIew.setAdapter(mAdapter);
-            }
+//        if (isNetworkConnected()){
+//              getYoutubeFeeds();
+//        }
+//        else {
+//            Toast.makeText(MainVideoListActivity.this, "No Internet Connection.", Toast.LENGTH_SHORT).show();
+//            if (DataHolder.getInstance().getList() != null) {
+//                mAdapter = new MyListAdapter(MainVideoListActivity.this, DataHolder.getInstance().getList());
+//                mListVIew.setAdapter(mAdapter);
+//            }
+//        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if ( mList == null || mList.size() == 0 ) {
+            String query = getPreferences(MODE_PRIVATE).getString(SEARCH_HISTORY_KEY, DEFAULT_SEARCH_QUERY);
+            searchVideo(query);
         }
     }
 
@@ -123,7 +134,8 @@ public class MainVideoListActivity extends AppCompatActivity {
 
     private void searchVideo(String searchQuery) {
         if (searchQuery==null)
-            searchQuery="demo video";
+            searchQuery=DEFAULT_SEARCH_QUERY;
+        getPreferences(MODE_PRIVATE).edit().putString(SEARCH_HISTORY_KEY, searchQuery).apply();
         mDialog = new ProgressDialog(this);
         mDialog.setTitle("searching...");
         mDialog.setCancelable(false);
@@ -162,38 +174,6 @@ public class MainVideoListActivity extends AppCompatActivity {
                 Toast.makeText(MainVideoListActivity.this, "Failure", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void openDialog(){
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View subView = inflater.inflate(R.layout.search_dialog, null);
-        final EditText subEditText = (EditText)subView.findViewById(R.id.dialogEditText);
-        final ImageView subImageView = (ImageView)subView.findViewById(R.id.image);
-        Drawable drawable = getResources().getDrawable(R.mipmap.ic_launcher);
-        subImageView.setImageDrawable(drawable);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Search Youtube Video");
-        builder.setMessage("search");
-        builder.setView(subView);
-        AlertDialog alertDialog = builder.create();
-
-        builder.setPositiveButton("search", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                searchVideo(subEditText.getText().toString());
-            }
-        });
-
-        builder.setNegativeButton("latter", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(MainVideoListActivity.this, "Cancel", Toast.LENGTH_LONG).show();
-                getYoutubeFeeds();
-            }
-        });
-
-        builder.show();
     }
 
     private boolean isNetworkConnected() {
