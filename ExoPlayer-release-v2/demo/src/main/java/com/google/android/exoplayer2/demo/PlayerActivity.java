@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.demo;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -87,6 +88,14 @@ import java.util.UUID;
 public class PlayerActivity extends Activity implements OnClickListener, ExoPlayer.EventListener,
     PlaybackControlView.VisibilityListener {
 
+  public static final String EFFECTS_STATE_KEY="effects_state";
+  public static final String SURROUND_STATE_KEY="surround_state";
+  public static final String FULLBASS_STATE_KEY="fullbass_state";
+  public static final String INTENSITY_VALUE_KEY="intensity_state";
+
+
+
+
   public static final String DRM_SCHEME_UUID_EXTRA = "drm_scheme_uuid";
   public static final String DRM_LICENSE_URL = "drm_license_url";
   public static final String DRM_KEY_REQUEST_PROPERTIES = "drm_key_request_properties";
@@ -129,6 +138,7 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
   private long resumePosition;
 
   private BoomAudioProcessor mBoomAudioProcessor;
+  private SharedPreferences mPrefs;
 
   // Activity lifecycle
 
@@ -158,6 +168,8 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
     simpleExoPlayerView = (SimpleExoPlayerView) findViewById(R.id.player_view);
     simpleExoPlayerView.setControllerVisibilityListener(this);
     simpleExoPlayerView.requestFocus();
+
+    mPrefs = getSharedPreferences("effects", MODE_PRIVATE);
   }
 
   @Override
@@ -288,6 +300,10 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
           drmSessionManager, extensionRendererMode);
 
       mBoomAudioProcessor = renderersFactory.getBoomAudioProcessor();
+      mBoomAudioProcessor.setEffectState(mPrefs.getBoolean(EFFECTS_STATE_KEY,false));
+      mBoomAudioProcessor.set3DAudioState(mPrefs.getBoolean(SURROUND_STATE_KEY,true));
+      mBoomAudioProcessor.setFullBassState(mPrefs.getBoolean(SURROUND_STATE_KEY,false));
+      mBoomAudioProcessor.setIntensity(mPrefs.getFloat(INTENSITY_VALUE_KEY, 0.0f));
 
       player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector);
       player.addListener(this);
@@ -606,6 +622,7 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         mBoomAudioProcessor.setEffectState(effectsSwitch.isChecked());
+        mPrefs.edit().putBoolean(EFFECTS_STATE_KEY, effectsSwitch.isChecked()).apply();
         updateEffectsView();
       }
     });
@@ -615,6 +632,7 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         mBoomAudioProcessor.set3DAudioState(surroundSwitch.isChecked());
+        mPrefs.edit().putBoolean(SURROUND_STATE_KEY, surroundSwitch.isChecked()).apply();
         updateEffectsView();
       }
     });
@@ -624,6 +642,7 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         mBoomAudioProcessor.setFullBassState(fullBassSwitch.isChecked());
+        mPrefs.edit().putBoolean(FULLBASS_STATE_KEY, fullBassSwitch.isChecked()).apply();
         updateEffectsView();
       }
     });
@@ -632,7 +651,9 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
     intensitySeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        mBoomAudioProcessor.setIntensity((float)(progress - 10)/10);
+        float intensity = (float)(progress - 10)/10;
+        mPrefs.edit().putFloat(INTENSITY_VALUE_KEY, intensity).apply();
+        mBoomAudioProcessor.setIntensity(intensity);
       }
 
       @Override

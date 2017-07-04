@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.demo;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
+import android.app.ProgressDialog;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -48,6 +49,8 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+import com.manoj.youtube.MainVideoListActivity;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -84,7 +87,8 @@ public class SampleChooserActivity extends Activity {
         youtubeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showYoutubeDialog();
+                startActivity(new Intent(SampleChooserActivity.this, MainVideoListActivity.class));
+                // showYoutubeDialog();
             }
         });
 
@@ -542,12 +546,12 @@ public class SampleChooserActivity extends Activity {
 
     }
 
-    private AlertDialog progressDialog;
+    private ProgressDialog progressDialog;
     private void onLoadingStarted() {
-        View progressView = getLayoutInflater().inflate(R.layout.progress, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(progressView);
-        progressDialog = builder.show();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
     }
 
     private void onFinishLoading() {

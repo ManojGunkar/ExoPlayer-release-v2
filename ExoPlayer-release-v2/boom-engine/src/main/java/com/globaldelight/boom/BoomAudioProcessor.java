@@ -25,7 +25,7 @@ public class BoomAudioProcessor implements AudioProcessor {
     private boolean isFullbassEnabled = false;
     private float   intensity = 0.0f;
     private int     equalizerId = 0;
-    private @Constants.Headphone int headPhoneType = Constants.Headphone.IN_EAR;
+    private @Constants.Headphone int headPhoneType = Constants.Headphone.IN_CANAL;
     private @Constants.Quality int audioQuality = Constants.Quality.HIGH;
     private float[] speakerStates = new float[] { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 

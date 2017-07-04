@@ -1,14 +1,5 @@
 [
   {
-    "name": "YouTube",
-    "samples": [
-      {
-        "name": "Ganesh Kumaresh",
-        "uri": "https://r1---sn-h557snl6.googlevideo.com/videoplayback?requiressl=yes&signature=8287A24F7B25DA63106AC851849354D2ABC7BA95.3E3D4645BE03EF879A32FB0D6EE5D821F0BEB5E9&ms=au&ei=G5xUWc39FMLMowOLsbKQDA&mv=m&mt=1498717120&ipbits=0&mn=sn-h557snl6&mm=31&ratebypass=yes&sparams=dur%2Cei%2Cid%2Cinitcwndbps%2Cip%2Cipbits%2Citag%2Clmt%2Cmime%2Cmm%2Cmn%2Cms%2Cmv%2Cpl%2Cratebypass%2Crequiressl%2Csource%2Cexpire&id=o-AJjlJY0nnEuV6s3TcSVknORJFrPXQ9RkE3ZeQFgb4taI&itag=22&initcwndbps=150000&source=youtube&pl=24&expire=1498738811&dur=386.937&lmt=1472442908215120&key=yt6&ip=117.239.237.242&mime=video%2Fmp4"
-      }
-    ]
-  },
-  {
     "name": "WWDC 2017",
     "samples": [
       {

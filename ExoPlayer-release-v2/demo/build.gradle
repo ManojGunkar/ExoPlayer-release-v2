@@ -54,8 +54,14 @@ dependencies {
     compile project(':library-hls')
     compile project(':library-smoothstreaming')
     compile project(':library-ui')
-    compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    compile 'com.android.support:appcompat-v7:+'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta1'
+    compile 'com.squareup.okhttp:logging-interceptor:2.6.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:cardview-v7:+'
     compile 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
+    compile files('libs/YouTubeAndroidPlayerApi.jar')
     withExtensionsCompile project(path: ':extension-ffmpeg')
     withExtensionsCompile project(path: ':extension-flac')
     withExtensionsCompile project(path: ':extension-opus')
