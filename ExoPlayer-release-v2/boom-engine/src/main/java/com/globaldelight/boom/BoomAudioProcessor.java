@@ -66,7 +66,6 @@ public class BoomAudioProcessor implements AudioProcessor {
             int numBytes = buffer.remaining();
             outputBuffer.clear();
             engine.process(buffer, outputBuffer, numBytes);
-            buffer.position(buffer.position() + numBytes);
         }
     }
 
@@ -177,7 +176,7 @@ public class BoomAudioProcessor implements AudioProcessor {
     public void setQuality(@Constants.Quality int quality) {
         this.audioQuality = quality;
         if ( engine != null ) {
-            engine.setQuality(quality);
+            engine.setQuality(this.audioQuality);
         }
 
     }
@@ -185,6 +184,8 @@ public class BoomAudioProcessor implements AudioProcessor {
 
 
     private void applyEffects() {
+        engine.setQuality(audioQuality);
+        engine.setHeadPhoneType(headPhoneType);
         engine.enableAudioEffect(isEffectsEnbled);
         if ( isEffectsEnbled ) {
             onEffectEnabled();

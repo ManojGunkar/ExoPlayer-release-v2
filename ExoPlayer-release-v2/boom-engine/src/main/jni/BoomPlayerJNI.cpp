@@ -111,28 +111,26 @@ jint BOOM_ENGINE_METHOD(process)(
 
     ByteBuffer in(env, input);
     ByteBuffer out(env, output);
-    int reamining = size;
-    int bytesConverted = 0;
+
     const uint8_t* inPtr = in.bytes() + in.position();
+    int written = mProcessor->Write((uint8_t*)inPtr, size);
+    in.position(in.position() + written);
+
     uint8_t* outPtr = out.bytes() + out.position();
-    while ( reamining > 0 ) {
-        int written = mProcessor->Write((uint8_t*)inPtr, reamining);
-        reamining -= written;
-        inPtr += written;
+    AudioBufferProvider::Buffer buffer;
+    int converted = 0;
+    const int kBytesPerFrame = (CHANNEL_COUNT * BYTES_PER_CHANNEL);
+    int maxFrameCount = (out.capacity() - out.position()) / kBytesPerFrame;
+    do {
+        buffer.frameCount = maxFrameCount;
+        buffer.raw = outPtr + converted;
+        mProcessor->getOutputBuffer(&buffer);
+        maxFrameCount -= buffer.frameCount;
+        converted += (buffer.frameCount * kBytesPerFrame);
+    } while ( buffer.frameCount > 0);
+    out.limit(out.position() + converted);
 
-        AudioBufferProvider::Buffer buffer;
-        do {
-            buffer.frameCount = 0;
-            buffer.raw = outPtr;
-            mProcessor->getOutputBuffer(&buffer);
-            size_t size = buffer.frameCount * CHANNEL_COUNT * BYTES_PER_CHANNEL;
-            outPtr += size;
-            bytesConverted += size;
-        } while (buffer.frameCount > 0);
-    }
-    out.limit(out.position() + bytesConverted);
-
-    return bytesConverted;
+    return converted;
 }
 
 

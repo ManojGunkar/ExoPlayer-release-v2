@@ -79,7 +79,7 @@ void convert_mono_to_stereo(void* ioBuf, int frameCount)
     int remaining = frameCount;
     while ( remaining > 0 ) {
         *outPtr = *inPtr;
-        *(outPtr-1) = *inPtr;
+        *(outPtr+1) = *inPtr;
         outPtr-=2;
         inPtr--;
         remaining--;

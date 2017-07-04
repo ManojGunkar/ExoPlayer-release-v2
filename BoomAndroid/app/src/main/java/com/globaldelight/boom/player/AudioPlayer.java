@@ -36,6 +36,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
+import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON;
 
 /**
  * Created by adarsh on 20/01/17.
@@ -115,7 +116,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
             }
 
             if ( mExoPlayer == null ) {
-                BoomRenderersFactory renderersFactory = new BoomRenderersFactory(mContext, null, EXTENSION_RENDERER_MODE_OFF);
+                BoomRenderersFactory renderersFactory = new BoomRenderersFactory(mContext, null, EXTENSION_RENDERER_MODE_ON);
 
                 mAudioProcessor = renderersFactory.getBoomAudioProcessor();
                 mExoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, new DefaultTrackSelector(), new DefaultLoadControl());
@@ -146,7 +147,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         mPlaybackTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if ( mExoPlayer.getDuration() > 0 ) {
+                if ( mExoPlayer != null && mExoPlayer.getDuration() >= 0 ) {
                     events.onPlayTimeUpdate(mExoPlayer.getCurrentPosition(), mExoPlayer.getDuration());
                 }
             }
@@ -401,6 +402,8 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
     @Override
     public void onPlayerError(ExoPlaybackException e) {
+        state.set(States.STOPPED);
+        releasePlayer();
         postError();
     }
 

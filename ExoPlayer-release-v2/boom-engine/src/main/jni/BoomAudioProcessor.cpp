@@ -55,7 +55,7 @@ void gdpl::BoomAudioProcessor::getOutputBuffer(AudioBufferProvider::Buffer *buff
     assert(buffer != nullptr && buffer->raw != nullptr);
 
     // Check if we have enough data for processing
-    if ( mAvailableFrames < kOutputFrameCount ) {
+    if ( mAvailableFrames < kOutputFrameCount || buffer->frameCount < kOutputFrameCount ) {
         buffer->frameCount = 0;
         return;
     }
