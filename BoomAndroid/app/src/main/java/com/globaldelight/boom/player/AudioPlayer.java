@@ -416,12 +416,6 @@ public class AudioPlayer implements ExoPlayer.EventListener {
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         switch (playbackState) {
             case ExoPlayer.STATE_IDLE:
-                if ( state != PAUSED ) {
-                    state = PAUSED;
-                    postStateChange();
-                }
-                break;
-
             case ExoPlayer.STATE_BUFFERING:
                 break;
 
