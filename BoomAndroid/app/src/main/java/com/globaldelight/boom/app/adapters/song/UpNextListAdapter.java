@@ -107,17 +107,17 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 holder.name.setText(item.getItemTitle());
                 holder.artistName.setText(item.getItemArtist());
 
-                if (null != App.getPlayerEventHandler().getPlayingItem() && position == App.getPlayingQueueHandler().getUpNextList().getPlayingItemIndex()
-                       && item.getItemId() == App.getPlayerEventHandler().getPlayingItem().getItemId()) {
+                if (null != App.playbackManager().getPlayingItem() && position == App.getPlayingQueueHandler().getUpNextList().getPlayingItemIndex()
+                       && item.getItemId() == App.playbackManager().getPlayingItem().getItemId()) {
                     playingItemPosition = position;
                     holder.art_overlay.setVisibility(View.VISIBLE);
                     holder.art_overlay_play.setVisibility(View.VISIBLE);
                     holder.loadCloud.setVisibility(View.GONE);
                     holder.name.setTextColor(ContextCompat.getColor(context, R.color.upnext_playing_title));
                     boolean isMediaItem = item.getMediaType() == MediaType.DEVICE_MEDIA_LIB;
-                    if (App.getPlayerEventHandler().isTrackPlaying() ) {
+                    if (App.playbackManager().isTrackPlaying() ) {
                         holder.art_overlay_play.setImageResource(R.drawable.ic_player_pause);
-                        if (!isMediaItem && App.getPlayerEventHandler().isTrackLoading() )
+                        if (!isMediaItem && App.playbackManager().isTrackLoading() )
                             holder.loadCloud.setVisibility(View.VISIBLE);
                     } else {
                         holder.art_overlay_play.setImageResource(R.drawable.ic_player_play);
@@ -157,7 +157,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!App.getPlayerEventHandler().isTrackLoading()){
+                if (!App.playbackManager().isTrackLoading()){
                     App.getPlayingQueueHandler().getUpNextList().setNewItemAsPlayingItem(itemPosition);
                 }
                 try {

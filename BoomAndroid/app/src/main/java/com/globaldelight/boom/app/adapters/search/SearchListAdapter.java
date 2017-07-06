@@ -382,7 +382,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             holder.mainView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (!App.getPlayerEventHandler().isTrackLoading()) {
+                    if (!App.playbackManager().isTrackLoading()) {
                         animate(holder);
                         App.getPlayingQueueHandler().getUpNextList().addItemToPlay(songs.get(getPosition(position)));
                         new Handler().postDelayed(new Runnable() {
@@ -448,7 +448,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                 holder.name.setSelected(true);
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);
-                if(App.getPlayerEventHandler().isTrackPlaying()){
+                if(App.playbackManager().isTrackPlaying()){
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
                 }else{
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));

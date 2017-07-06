@@ -65,7 +65,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
     /** Load jni .so on initialization */
     private final String TAG = "AudioPlayer";
-    private Callback callback = null;
+    private Callback mCallback = null;
     private @State int  state = STOPPED;
     private String sourcePath = null;
     private long sourceId = -1;
@@ -83,7 +83,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
     public AudioPlayer(Context context, Callback callback) {
         mContext = context;
-        this.callback = callback;
+        mCallback = callback;
         mAudioConfig = AudioConfiguration.getInstance(context);
 
         PowerManager pm = (PowerManager)mContext.getSystemService(Context.POWER_SERVICE);
@@ -119,6 +119,20 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
     public long getDataSourceId(){
         return sourceId;
+    }
+
+    public long getDuration() {
+        if ( mExoPlayer != null ) {
+            return mExoPlayer.getDuration();
+        }
+        return 0;
+    }
+
+    public long getCurrentPosition() {
+        if ( mExoPlayer != null ) {
+            return mExoPlayer.getCurrentPosition();
+        }
+        return 0;
     }
 
 
@@ -158,7 +172,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
                             Uri.parse(sourcePath), dataSourceFactory, extractorsFactory, null, null);
 
             // Prepares media to play (happens on background thread) and triggers
-            // {@code onPlayerStateChanged} callback when the stream is ready to play.
+            // {@code onPlayerStateChanged} mCallback when the stream is ready to play.
             mExoPlayer.prepare(mediaSource, false, false);
         }
 
@@ -174,7 +188,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
             @Override
             public void run() {
                 if ( mExoPlayer != null && mExoPlayer.getDuration() >= 0 ) {
-                    callback.onPlayTimeUpdate(mExoPlayer.getCurrentPosition(), mExoPlayer.getDuration());
+                    mCallback.onPlayTimeUpdate(mExoPlayer.getCurrentPosition(), mExoPlayer.getDuration());
                 }
             }
         }, 0, 1000);
@@ -223,10 +237,10 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         }
 
         if ( state == PAUSED ) {
-            if (callback != null) handler.post(new Runnable() {
+            if (mCallback != null) handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    callback.onPlayTimeUpdate(mExoPlayer.getCurrentPosition(), mExoPlayer.getDuration());
+                    mCallback.onPlayTimeUpdate(mExoPlayer.getCurrentPosition(), mExoPlayer.getDuration());
                 }
             });
         }
@@ -259,30 +273,30 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
 
     private void postError() {
-        if (callback != null) {
+        if (mCallback != null) {
             handler.post(new Runnable() {
                 @Override public void run() {
-                    callback.onError();
+                    mCallback.onError();
                 }
             });
         }
     }
 
     private void postStateChange() {
-        if (callback != null) {
+        if (mCallback != null) {
             handler.post(new Runnable() {
                 @Override public void run() {
-                    callback.onStateChange(state);
+                    mCallback.onStateChange(state);
                 }
             });
         }
     }
 
     private void postOnFinish() {
-        if (callback != null) handler.post(new Runnable() {
+        if (mCallback != null) handler.post(new Runnable() {
             @Override
             public void run() {
-                callback.onComplete();
+                mCallback.onComplete();
             }
         });
     }
@@ -402,6 +416,12 @@ public class AudioPlayer implements ExoPlayer.EventListener {
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         switch (playbackState) {
             case ExoPlayer.STATE_IDLE:
+                if ( state != PAUSED ) {
+                    state = PAUSED;
+                    postStateChange();
+                }
+                break;
+
             case ExoPlayer.STATE_BUFFERING:
                 break;
 
@@ -441,7 +461,6 @@ public class AudioPlayer implements ExoPlayer.EventListener {
     }
 
 
-
     public interface Callback {
         void onStateChange(@State int state);
         void onPlayTimeUpdate(long currentms, long totalms);
@@ -450,7 +469,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
     }
 
     // Custom Factory that create only AudioRenderers
-    static class RenderersFactory extends BoomRenderersFactory {
+    private static class RenderersFactory extends BoomRenderersFactory {
 
         private Context mContext;
 
@@ -471,6 +490,4 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         }
 
     }
-
-
 }

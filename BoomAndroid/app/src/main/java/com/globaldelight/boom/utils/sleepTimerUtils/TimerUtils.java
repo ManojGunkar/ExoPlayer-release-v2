@@ -252,7 +252,7 @@ public class TimerUtils {
     }
 
     public static void sendMessagePlayerStop(Context mContext) {
-        if(App.getPlayerEventHandler().isPlaying())
+        if(App.playbackManager().isPlaying())
             mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
     }
 

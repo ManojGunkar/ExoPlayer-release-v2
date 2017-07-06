@@ -129,7 +129,7 @@ public class MainActivity extends MasterActivity
         if(null != navigationView)
             navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
         registerHeadSetReceiver();
-        App.getPlayerEventHandler().isLibraryResumes = true;
+        App.playbackManager().isLibraryResumes = true;
         super.onResume();
     }
 
@@ -470,7 +470,7 @@ public class MainActivity extends MasterActivity
     protected void onPause() {
         unregisterPlayerReceiver(MainActivity.this);
         unregisterReceiver(headPhoneReceiver);
-        App.getPlayerEventHandler().isLibraryResumes = false;
+        App.playbackManager().isLibraryResumes = false;
         super.onPause();
     }
 

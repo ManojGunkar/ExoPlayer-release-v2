@@ -93,10 +93,10 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                 holder.overlay.setVisibility(View.VISIBLE );
                 holder.overlayPlay.setVisibility( View.VISIBLE );
                 holder.title.setSelected(true);
-                if (App.getPlayerEventHandler().isTrackPlaying()) {
+                if (App.playbackManager().isTrackPlaying()) {
                     holder.progressIndicator.setVisibility(View.GONE);
                     holder.overlayPlay.setImageResource(R.drawable.ic_player_pause);
-                    if( !isMediaItem && App.getPlayerEventHandler().isTrackLoading() ) {
+                    if( !isMediaItem && App.playbackManager().isTrackLoading() ) {
                         holder.progressIndicator.setVisibility(View.VISIBLE);
                     } else {
                         holder.progressIndicator.setVisibility(View.GONE);
@@ -132,7 +132,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                     return;
                 }
 
-                if ( !App.getPlayerEventHandler().isTrackWaitingForPlay() ) {
+                if ( !App.playbackManager().isTrackWaitingForPlay() ) {
                     App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(itemList, position);
                     new Handler().postDelayed(new Runnable() {
                         @Override

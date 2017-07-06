@@ -34,7 +34,7 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_P
  * Created by Rahul Agarwal on 03-10-16.
  */
 
-public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAudioFocusChangeListener {
+public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioFocusChangeListener {
     public static boolean isLibraryResumes = false;
 
     private static final int NEXT = 0;
@@ -45,7 +45,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
     private static IMediaItemBase playingItem;
     private static boolean isTrackWaiting = false;
     private AudioPlayer mPlayer;
-    private static PlayerEventHandler handler;
+    private static PlaybackManager instance;
     private Context context;
     private AudioManager audioManager;
     private MediaSession session;
@@ -142,12 +142,12 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
 
         @Override
         public void onSkipToNext() {
-            handler.playNextSong(true);
+            playNextSong(true);
         }
 
         @Override
         public void onSkipToPrevious() {
-            handler.playPrevSong();
+            playPrevSong();
         }
 
         @Override
@@ -156,7 +156,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         }
     };
 
-    private PlayerEventHandler(Context context){
+    private PlaybackManager(Context context){
         this.context = context;
         mPlayer = new AudioPlayer(context, IPlayerEvents);
         audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
@@ -167,11 +167,11 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         registerSession();
     }
 
-    public static PlayerEventHandler getInstance(Context context){
-        if(handler == null){
-            handler = new PlayerEventHandler(context.getApplicationContext());
+    public static PlaybackManager getInstance(Context context){
+        if(instance == null){
+            instance = new PlaybackManager(context.getApplicationContext());
         }
-        return handler;
+        return instance;
     }
 
 
@@ -193,6 +193,14 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
 
     public boolean isStopped() {
         return mPlayer.isStopped();
+    }
+
+    public long getDuration() {
+        return mPlayer.getDuration();
+    }
+
+    public long getPosition() {
+        return mPlayer.getCurrentPosition();
     }
 
     @Override

@@ -21,7 +21,7 @@ import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
-import com.globaldelight.boom.playbackEvent.handler.PlayerEventHandler;
+import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.app.receivers.HeadPhonePlugReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
@@ -42,7 +42,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     private long mServiceStartTime = 0;
     private long mServiceStopTime = 0;
     private static long mShiftingTime = 0;
-    private PlayerEventHandler musicPlayerHandler;
+    private PlaybackManager musicPlayerHandler;
     private NotificationHandler notificationHandler;
     private HeadPhonePlugReceiver headPhonePlugReceiver;
     private DropboxAPI<AndroidAuthSession> dropboxAPI;
@@ -62,7 +62,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         }catch (Exception e){
 
         }
-        musicPlayerHandler = App.getPlayerEventHandler();
+        musicPlayerHandler = App.playbackManager();
         headPhonePlugReceiver = new HeadPhonePlugReceiver(this, this);
 
         IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
@@ -97,7 +97,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        musicPlayerHandler = App.getPlayerEventHandler();
+        musicPlayerHandler = App.playbackManager();
 
         App.getPlayingQueueHandler().getUpNextList().getRepeatShuffleOnAppStart();
 
@@ -185,7 +185,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         sendBroadcast(new Intent(PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB));
         final Intent i = new Intent();
         i.setClass(this, BoomSplash.class);
-        if(!App.getPlayerEventHandler().isLibraryResumes) {
+        if(!App.playbackManager().isLibraryResumes) {
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
         }
@@ -200,7 +200,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     public void onRepeatSongList() {
         musicPlayerHandler.resetRepeat();
         sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_REPEAT));
-        updateNotificationPlayer((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isTrackPlaying(), false);
+        updateNotificationPlayer((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.playbackManager().isTrackPlaying(), false);
     }
 
     @Override
@@ -231,7 +231,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     @Override
     public void onNextTrack() {
-        if (App.getPlayingQueueHandler().getUpNextList().isNext() && !App.getPlayerEventHandler().isTrackWaitingForPlay()) {
+        if (App.getPlayingQueueHandler().getUpNextList().isNext() && !App.playbackManager().isTrackWaitingForPlay()) {
             if (System.currentTimeMillis() - mShiftingTime > 1000) {
                 mShiftingTime = System.currentTimeMillis();
                 new Handler().postDelayed(new Runnable() {
@@ -246,7 +246,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     @Override
     public void onPreviousTrack() {
-        if (App.getPlayingQueueHandler().getUpNextList().isPrevious() && !App.getPlayerEventHandler().isTrackWaitingForPlay()) {
+        if (App.getPlayingQueueHandler().getUpNextList().isPrevious() && !App.playbackManager().isTrackWaitingForPlay()) {
             if (System.currentTimeMillis() - mShiftingTime > 1000) {
                 mShiftingTime = System.currentTimeMillis();
                 new Handler().postDelayed(new Runnable() {
@@ -280,7 +280,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     public void onStopPlaying() {
         sendBroadcast(new Intent(PlayerEvents.ACTION_TRACK_STOPPED));
         notificationHandler.setNotificationPlayer(false);
-        notificationHandler.changeNotificationDetails(App.getPlayerEventHandler().getPlayingItem(), false, false);
+        notificationHandler.changeNotificationDetails(App.playbackManager().getPlayingItem(), false, false);
     }
 
 

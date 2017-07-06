@@ -96,7 +96,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                 @Override
                 public void onClick(View view) {
                     animate(holder);
-                    if (!App.getPlayerEventHandler().isTrackLoading()) {
+                    if (!App.playbackManager().isTrackLoading()) {
                         App.getPlayingQueueHandler().getUpNextList().addItemToPlay(resultItemList.get(position));
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -293,7 +293,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                 holder.name.setSelected(true);
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);
-                if(App.getPlayerEventHandler().isTrackPlaying()){
+                if(App.playbackManager().isTrackPlaying()){
                     holder.art_overlay_play.setImageResource(R.drawable.ic_player_pause);
                 }else{
                     holder.art_overlay_play.setImageResource(R.drawable.ic_player_play);

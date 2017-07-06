@@ -172,9 +172,9 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);
                 holder.loadCloud.setVisibility(View.GONE);
-                if( App.getPlayerEventHandler().isTrackPlaying() ){
+                if( App.playbackManager().isTrackPlaying() ){
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
-                    if(!isMediaItem && App.getPlayerEventHandler().isTrackLoading())
+                    if(!isMediaItem && App.playbackManager().isTrackLoading())
                         holder.loadCloud.setVisibility(View.VISIBLE);
                 } else {
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
@@ -237,7 +237,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                     FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_GENERE_AllSongs_Thumbnail);
 
                 }
-                if (!App.getPlayerEventHandler().isTrackLoading()) {
+                if (!App.playbackManager().isTrackLoading()) {
                     if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
                         App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(collection.getMediaElement(), position);
                     }else{

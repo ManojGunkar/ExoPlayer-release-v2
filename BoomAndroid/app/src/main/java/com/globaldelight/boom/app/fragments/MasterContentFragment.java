@@ -178,7 +178,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     break;
                 case ACTION_PLAYER_STATE_CHANGED:
                     try {
-                        if ( App.getPlayerEventHandler().isTrackPlaying() ) {
+                        if ( App.playbackManager().isTrackPlaying() ) {
                             mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_pause);
                             mPlayPause.setImageResource(R.drawable.ic_player_pause);
                         } else {
@@ -309,9 +309,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void setPlayerInfo(){
         mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
-        mIsPlaying = App.getPlayerEventHandler().isPlaying();
-        mIsLastPlayed = (null != App.getPlayerEventHandler().getPlayingItem() ?
-                (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false) :
+        mIsPlaying = App.playbackManager().isPlaying();
+        mIsLastPlayed = (null != App.playbackManager().getPlayingItem() ?
+                (!App.playbackManager().isPlaying() && !App.playbackManager().isPaused() ? true : false) :
                 false);
 
         updatePlayerSeekAndTime();
@@ -493,7 +493,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     isUser = true;
                     mTrackSeek.setProgress(progress);
                     changeProgress(progress);
-                    if(App.getPlayerEventHandler().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB)
+                    if(App.playbackManager().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB)
                         showProgressLoader();
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Playing_SeekBar_Used_in_Effects_screen);
                 }
@@ -698,7 +698,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onPanelCollapsed(View panel) {
         setMiniPlayerVisible(true);
-        updateMiniPlayerUI(mPlayingMediaItem, App.getPlayerEventHandler().isTrackPlaying(), mIsLastPlayed);
+        updateMiniPlayerUI(mPlayingMediaItem, App.playbackManager().isTrackPlaying(), mIsLastPlayed);
         showEffectShortCut();
 
         if(null != coachMarkEffectSwitcher){
@@ -724,14 +724,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void showEffectSwitchTip(){
-        if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
+        if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.playbackManager().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
             coachMarkEffectSwitcher = new CoachMarkerWindow(mActivity, DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
             coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
             coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
         }
 
         if (null != mPlayerContent && mPlayerContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, Preferences.TOOLTIP_SWITCH_EFFECT_LARGE_PLAYER, true) && mPlayerContent.getVisibility() == View.VISIBLE &&
-                !App.getPlayerEventHandler().isStopped() && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
+                !App.playbackManager().isStopped() && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
             coachMarkEffectPager = new CoachMarkerWindow(mActivity, DRAW_TOP_CENTER, getResources().getString(R.string.switch_effect_screen_tooltip));
             coachMarkEffectPager.setAutoDismissBahaviour(true);
             coachMarkEffectPager.showCoachMark(mInflater.findViewById(R.id.effect_tab));
@@ -764,7 +764,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updateProgressLoader(){
-        if( App.getPlayerEventHandler().isTrackLoading() )
+        if( App.playbackManager().isTrackLoading() )
             showProgressLoader();
         else
             stopLoadProgress();
@@ -958,8 +958,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private void overFlowMenu(Context context, View view) {
         PopupMenu pm = new PopupMenu(context, view);
         boolean isCurrentTrackFav= false;
-        if(App.getPlayerEventHandler().getPlayingItem() != null) {
-            isCurrentTrackFav = MediaController.getInstance(mActivity).isFavoriteItem(App.getPlayerEventHandler().getPlayingItem().getItemId());
+        if(App.playbackManager().getPlayingItem() != null) {
+            isCurrentTrackFav = MediaController.getInstance(mActivity).isFavoriteItem(App.playbackManager().getPlayingItem().getItemId());
         }
         final boolean isFav = isCurrentTrackFav;
         pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -969,16 +969,16 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     switch (item.getItemId()) {
                         case R.id.popup_song_add_fav:
                             if(isFav){
-                                MediaController.getInstance(mActivity).removeItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem().getItemId());
+                                MediaController.getInstance(mActivity).removeItemToFavoriteList(App.playbackManager().getPlayingItem().getItemId());
                                 Toast.makeText(mActivity, mActivity.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                             }else{
-                                MediaController.getInstance(mActivity).addItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem());
+                                MediaController.getInstance(mActivity).addItemToFavoriteList(App.playbackManager().getPlayingItem());
                                 Toast.makeText(mActivity, mActivity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                             }
                             break;
                         case R.id.popup_song_add_playlist:
                             ArrayList list = new ArrayList();
-                            list.add(App.getPlayerEventHandler().getPlayingItem());
+                            list.add(App.playbackManager().getPlayingItem());
                             Utils.addToPlaylist(mActivity, list, null);
                             break;
                     }

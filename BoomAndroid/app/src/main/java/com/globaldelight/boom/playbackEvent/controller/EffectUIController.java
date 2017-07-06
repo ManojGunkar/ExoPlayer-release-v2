@@ -28,41 +28,41 @@ public class EffectUIController implements IEffectUIController {
 
     @Override
     public void OnEffectEnable(boolean enable) {
-        App.getPlayerEventHandler().setEffectEnable(enable);
+        App.playbackManager().setEffectEnable(enable);
     }
 
     @Override
     public void On3DSurroundEnable(boolean enable) {
-        App.getPlayerEventHandler().set3DAudioEnable(enable);
+        App.playbackManager().set3DAudioEnable(enable);
     }
 
     @Override
     public void OnFullBassEnable(boolean enable) {
-        App.getPlayerEventHandler().setSuperBassEnable(enable);
+        App.playbackManager().setSuperBassEnable(enable);
     }
 
     @Override
     public void OnIntensityEnable(boolean enable) {
-        App.getPlayerEventHandler().setHighQualityEnable(enable);
+        App.playbackManager().setHighQualityEnable(enable);
     }
 
     @Override
     public void OnIntensityChange(int intensity) {
-        App.getPlayerEventHandler().setIntensityValue(intensity/(double)100);
+        App.playbackManager().setIntensityValue(intensity/(double)100);
     }
 
     @Override
     public void OnEqualizerEnable(boolean enable) {
-        App.getPlayerEventHandler().setEqualizerEnable(enable);
+        App.playbackManager().setEqualizerEnable(enable);
     }
 
     @Override
     public void OnEqualizerChange(int equalizer) {
-        App.getPlayerEventHandler().setEqualizerGain(equalizer);
+        App.playbackManager().setEqualizerGain(equalizer);
     }
 
     @Override
     public void OnSpeakerEnable(@AudioEffect.Speaker int speakerType, boolean enable) {
-        App.getPlayerEventHandler().setSpeakerEnable((int)speakerType, enable);
+        App.playbackManager().setSpeakerEnable((int)speakerType, enable);
     }
 }

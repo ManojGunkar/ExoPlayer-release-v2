@@ -111,7 +111,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
             holder.name.setSelected(true);
             holder.art_overlay.setVisibility(View.VISIBLE);
             holder.art_overlay_play.setVisibility(View.VISIBLE);
-            if(App.getPlayerEventHandler().isTrackPlaying() ){
+            if(App.playbackManager().isTrackPlaying() ){
                 holder.art_overlay_play.setImageResource(R.drawable.ic_player_pause);
             }else{
                 holder.art_overlay_play.setImageResource(R.drawable.ic_player_play);
@@ -178,7 +178,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (App.getPlayingQueueHandler().getUpNextList() != null && !App.getPlayerEventHandler().isTrackLoading()) {
+                if (App.getPlayingQueueHandler().getUpNextList() != null && !App.playbackManager().isTrackLoading()) {
                     if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
                         App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(item.getMediaElement(), position);
                     } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {

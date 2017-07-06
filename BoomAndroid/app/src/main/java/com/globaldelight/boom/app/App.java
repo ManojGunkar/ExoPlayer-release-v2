@@ -12,7 +12,7 @@ import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.playbackEvent.handler.PlayerEventHandler;
+import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.handler.PlayingQueueHandler;
 import com.globaldelight.boom.app.service.PlayerService;
 import com.globaldelight.boom.app.database.CloudMediaItemDBHelper;
@@ -80,8 +80,8 @@ public class App extends Application implements Application.ActivityLifecycleCal
         registerActivityLifecycleCallbacks(this);
     }
 
-    public static PlayerEventHandler getPlayerEventHandler() {
-        return PlayerEventHandler.getInstance(application);
+    public static PlaybackManager playbackManager() {
+        return PlaybackManager.getInstance(application);
     }
 
     public static UserPreferenceHandler getUserPreferenceHandler() {

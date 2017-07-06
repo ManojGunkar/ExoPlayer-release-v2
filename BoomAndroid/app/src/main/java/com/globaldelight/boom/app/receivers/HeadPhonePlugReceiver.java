@@ -69,7 +69,7 @@ public class HeadPhonePlugReceiver extends BroadcastReceiver {
 
         switch (state) {
             case 0:
-                if( App.getPlayerEventHandler().isPlaying() )
+                if( App.playbackManager().isPlaying() )
                     context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
 
                 handler.post(new Runnable() {
