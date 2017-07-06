@@ -21,7 +21,11 @@ android {
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion project.ext.targetSdkVersion
         consumerProguardFiles 'proguard-rules.txt'
+        ndk {
+            abiFilters = ['armeabi-v7a']
+        }
     }
+
 
     sourceSets.main {
         jniLibs.srcDir 'src/main/libs'
