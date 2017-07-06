@@ -2,30 +2,22 @@ package com.manoj.youtube;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.SparseArray;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.exoplayer2.demo.PlayerActivity;
 import com.google.android.exoplayer2.demo.R;
-import com.google.android.exoplayer2.demo.SampleChooserActivity;
 import com.manoj.youtube.adapter.MyListAdapter;
 import com.manoj.youtube.modal.YoutubeModal;
 import com.manoj.youtube.utils.Config;
@@ -49,9 +41,9 @@ public class MainVideoListActivity extends AppCompatActivity {
     private static final String DEFAULT_SEARCH_QUERY = "Trending Music";
     private static final String SEARCH_HISTORY_KEY = "search_history_key";
 
-    private ListView mListVIew;
+    private ListView mListView;
     private MyListAdapter mAdapter;
-    private ProgressDialog mDialog;
+    private View mProgressView;
     private ArrayList<YoutubeModal.Item> mList;
 
     @Override
@@ -59,14 +51,19 @@ public class MainVideoListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_video_list);
 
-        mListVIew = (ListView) findViewById(R.id.list_home);
-        mListVIew.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView = (ListView) findViewById(R.id.list_home);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String videoId = mList.get(position).getId().getVideoId();
                 loadYoutubeURL("https://www.youtube.com/watch?v="+videoId);
             }
         });
+        mListView.setVisibility(View.GONE);
+
+        mProgressView = findViewById(R.id.progress_view);
+        mProgressView.setVisibility(View.VISIBLE);
+
 //        if (isNetworkConnected()){
 //              getYoutubeFeeds();
 //        }
@@ -74,7 +71,7 @@ public class MainVideoListActivity extends AppCompatActivity {
 //            Toast.makeText(MainVideoListActivity.this, "No Internet Connection.", Toast.LENGTH_SHORT).show();
 //            if (DataHolder.getInstance().getList() != null) {
 //                mAdapter = new MyListAdapter(MainVideoListActivity.this, DataHolder.getInstance().getList());
-//                mListVIew.setAdapter(mAdapter);
+//                mListView.setAdapter(mAdapter);
 //            }
 //        }
     }
@@ -89,10 +86,6 @@ public class MainVideoListActivity extends AppCompatActivity {
     }
 
     private void getYoutubeFeeds() {
-        mDialog = new ProgressDialog(this);
-        mDialog.setTitle("loading...");
-        mDialog.setCancelable(false);
-        mDialog.show();
         RestClient.GitApiInterface service = RestClient.getClient();
         Call<YoutubeModal> call = service.getYoutubeVideosList(Config.API_KEY,
                 Config.CHANNEL_ID,
@@ -102,32 +95,20 @@ public class MainVideoListActivity extends AppCompatActivity {
             @Override
             public void onResponse(Response<YoutubeModal> response) {
                 if (response.isSuccess()) {
-                    if (mDialog != null) {
-                        mDialog.cancel();
-                        mDialog = null;
-                    }
                     Toast.makeText(MainVideoListActivity.this, "Successful", Toast.LENGTH_SHORT).show();
                     ArrayList<YoutubeModal.Item> list = (ArrayList<YoutubeModal.Item>) response.body().getItems();
                     mList = list;
                     DataHolder.getInstance().setList(list);
                     mAdapter = new MyListAdapter(MainVideoListActivity.this, list);
-                    mListVIew.setAdapter(mAdapter);
+                    mListView.setAdapter(mAdapter);
                 } else {
-                    if (mDialog != null) {
-                        mDialog.cancel();
-                        mDialog = null;
-                    }
                     Toast.makeText(MainVideoListActivity.this, "Error", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                if (mDialog != null) {
-                    mDialog.cancel();
-                    mDialog = null;
-                }
-                Toast.makeText(MainVideoListActivity.this, "Failure", Toast.LENGTH_SHORT).show();
+                 Toast.makeText(MainVideoListActivity.this, "Failure", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -136,41 +117,29 @@ public class MainVideoListActivity extends AppCompatActivity {
         if (searchQuery==null)
             searchQuery=DEFAULT_SEARCH_QUERY;
         getPreferences(MODE_PRIVATE).edit().putString(SEARCH_HISTORY_KEY, searchQuery).apply();
-        mDialog = new ProgressDialog(this);
-        mDialog.setTitle("searching...");
-        mDialog.setCancelable(false);
-        mDialog.show();
+        showSearchingProgress(true);
+
         RestClient.GitApiInterface service = RestClient.getClient();
-        Call<YoutubeModal> call = service.searchYoutubeVideo(Config.API_KEY,"snippet", "snippet",searchQuery, "20");
+        Call<YoutubeModal> call = service.searchYoutubeVideo(Config.API_KEY,"snippet", "video",searchQuery, "20");
         call.enqueue(new Callback<YoutubeModal>() {
             @Override
             public void onResponse(Response<YoutubeModal> response) {
+                showSearchingProgress(false);
                 if (response.isSuccess()) {
-                    if (mDialog != null) {
-                        mDialog.cancel();
-                        mDialog = null;
-                    }
                     Toast.makeText(MainVideoListActivity.this, "Successful", Toast.LENGTH_SHORT).show();
                     ArrayList<YoutubeModal.Item> list = (ArrayList<YoutubeModal.Item>) response.body().getItems();
                     mList = list;
                     DataHolder.getInstance().setList(list);
                     mAdapter = new MyListAdapter(MainVideoListActivity.this, list);
-                    mListVIew.setAdapter(mAdapter);
+                    mListView.setAdapter(mAdapter);
                 } else {
-                    if (mDialog != null) {
-                        mDialog.cancel();
-                        mDialog = null;
-                    }
                     Toast.makeText(MainVideoListActivity.this, "Error", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                if (mDialog != null) {
-                    mDialog.cancel();
-                    mDialog = null;
-                }
+                showSearchingProgress(false);
                 Toast.makeText(MainVideoListActivity.this, "Failure", Toast.LENGTH_SHORT).show();
             }
         });
@@ -234,6 +203,18 @@ public class MainVideoListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void showSearchingProgress(boolean show) {
+        if ( show ) {
+            mProgressView.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.GONE);
+        }
+        else {
+            mProgressView.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+        }
+
+    }
+
 
     private void loadYoutubeURL(String url) {
         onLoadingStarted();
@@ -243,7 +224,7 @@ public class MainVideoListActivity extends AppCompatActivity {
                 onFinishLoading();
                 String downloadUrl = null;
                 if (sparseArray != null) {
-                    int preferredFormats[] = {18, 22, 36, 43};
+                    int preferredFormats[] = {18, 43, 22, 36};
                     for ( int i = 0; i < preferredFormats.length; i++ ) {
                         downloadUrl = sparseArray.get(preferredFormats[i]).getUrl();
                         if ( downloadUrl != null ) {

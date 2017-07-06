@@ -1,5 +1,24 @@
 [
   {
+    "name": "Samples",
+    "samples": [
+      {
+        "name": "Sample MKV 720p",
+        "uri": "file:/storage/emulated/0/SampleVideo_1280x720_30mb.mkv"
+      },
+      {
+        "name": "Sample MP4 360x240",
+        "uri": "file:/storage/emulated/0/SampleVideo_360x240_30mb.mp4"
+      },
+      {
+        "name": "Sample FLV 360x240",
+        "uri": "file:/storage/emulated/0/SampleVideo_360x240_30mb.flv"
+      }
+
+    ]
+  },
+
+  {
     "name": "WWDC 2017",
     "samples": [
       {
