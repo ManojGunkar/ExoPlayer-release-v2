@@ -29,8 +29,6 @@ import com.globaldelight.boom.player.AudioConfiguration;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-import static com.globaldelight.boom.app.receivers.BusinessRequestReceiver.ACTION_BUSINESS_APP_EXPIRE;
-import static com.globaldelight.boom.app.receivers.BusinessRequestReceiver.ACTION_BUSINESS_CONFIGURATION;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_DISCONNECTED;
 
@@ -289,7 +287,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             if (!musicPlayerHandler.isPaused() && !musicPlayerHandler.isPlaying()  ) {
                 musicPlayerHandler.onPlayingItemChanged();
             } else {
-                updatePlayPause(musicPlayerHandler.PlayPause() == PlayerEventHandler.PlayState.play ? true : false);
+                updatePlayPause(musicPlayerHandler.playPause());
             }
         }
     }

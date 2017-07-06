@@ -8,7 +8,6 @@ import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.globaldelight.boom.app.App;
@@ -27,9 +26,6 @@ import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.player.AudioPlayer;
 
 import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
-import static com.globaldelight.boom.playbackEvent.handler.PlayerEventHandler.PlayState.pause;
-import static com.globaldelight.boom.playbackEvent.handler.PlayerEventHandler.PlayState.play;
-import static com.globaldelight.boom.playbackEvent.handler.PlayerEventHandler.PlayState.stop;
 import static com.globaldelight.boom.app.receivers.PlayerServiceReceiver.ACTION_PLAY_STOP;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
 
@@ -39,13 +35,16 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_U
 
 public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAudioFocusChangeListener {
     public static boolean isLibraryResumes = false;
+
+    private static final int NEXT = 0;
+    private static final int PREVIOUS = 1;
+    private static int PLAYER_DIRECTION;
+
+
     private static IMediaItemBase playingItem;
     private static boolean isTrackWaiting = false;
-    private static AudioPlayer mPlayer;
+    private AudioPlayer mPlayer;
     private static PlayerEventHandler handler;
-    private static int NEXT = 0;
-    private static int PREVIOUS = 1;
-    private static int PLAYER_DIRECTION;
     private Context context;
     private AudioManager audioManager;
     private MediaSession session;
@@ -61,7 +60,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         }
 
         @Override
-        public void onStart(long duration) {
+        public void onStart() {
             isTrackWaiting = false;
             context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_GET_SONG));
             if(null != getPlayingItem() && getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB){
@@ -86,10 +85,6 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
             playNextSong(false);
         }
 
-        @Override
-        public void onPlay() {
-            Log.d("Start : ","Playing");
-        }
 
         @Override
         public void onError() {
@@ -103,12 +98,8 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
             context.sendBroadcast(new Intent(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
             Toast.makeText(context, context.getResources().getString(R.string.error_in_playing), Toast.LENGTH_SHORT).show();
         }
-
-        @Override
-        public void onErrorPlayAgain() {
-            onPlayingItemChanged();
-        }
     };
+
     private MediaSession.Callback mediaSessionCallback = new MediaSession.Callback(){
         @Override
         public void onPlay() {
@@ -148,10 +139,8 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
 
     private PlayerEventHandler(Context context){
         this.context = context;
-        if(null == mPlayer)
-            mPlayer = new AudioPlayer(context, IPlayerEvents);
-        if(null == audioManager)
-            audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        mPlayer = new AudioPlayer(context, IPlayerEvents);
+        audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
         App.getPlayingQueueHandler().getUpNextList().setUpNextMediaEvent(this);
         googleDriveHandler = new GoogleDriveHandler(context);
         googleDriveHandler.connectToGoogleAccount();
@@ -159,45 +148,32 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         registerSession();
     }
 
-    public static PlayerEventHandler getPlayerEventInstance(Context context){
+    public static PlayerEventHandler getInstance(Context context){
         if(handler == null){
             handler = new PlayerEventHandler(context.getApplicationContext());
         }
         return handler;
     }
 
-    public AudioPlayer getPlayer(){
-        return mPlayer;
-    }
 
     public long getPlayerDataSourceId(){
-        if (null != mPlayer )
-            return mPlayer.getDataSourceId();
-        return -1;
+        return mPlayer.getDataSourceId();
     }
 
     public boolean isPlaying(){
-        if(null != mPlayer)
-            return mPlayer.isPlaying();
-        return false;
+        return mPlayer.isPlaying();
     }
 
     public boolean isPaused(){
-        if(null != mPlayer)
-            return mPlayer.isPause();
-        return false;
+        return mPlayer.isPause();
     }
 
     public boolean isLoading() {
-        if(null != mPlayer)
-            return mPlayer.isLoading();
-        return false;
+        return mPlayer.isLoading();
     }
 
     public boolean isStopped() {
-        if(null != mPlayer)
-            return mPlayer.isStopped();
-        return false;
+        return mPlayer.isStopped();
     }
 
     @Override
@@ -218,9 +194,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
     }
 
     public boolean isTrackLoading(){
-        if(null != mPlayer)
-            mPlayer.isLoading();
-        return false;
+        return mPlayer.isLoading();
     }
 
     private class PlayingItemChanged extends AsyncTask<IMediaItemBase, Void, String>{
@@ -257,7 +231,7 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         @Override
         protected void onPostExecute(String dataSource) {
             super.onPostExecute(dataSource);
-            if(null != mPlayer && null != mediaItemBase && null != dataSource) {
+            if( null != mediaItemBase && null != dataSource) {
                 if ( requestAudioFocus() ) {
                     mPlayer.setPath(dataSource);
                     mPlayer.setDataSourceId(mediaItemBase.getItemId());
@@ -290,10 +264,10 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
 
     @Override
     public void onPlayingItemClicked() {
-        PlayState state = PlayPause();
+        boolean playing = playPause();
         Intent intent = new Intent();
         intent.setAction(PlayerServiceReceiver.ACTION_PLAYING_ITEM_CLICKED);
-        intent.putExtra("play_pause", state == play ? true : false );
+        intent.putExtra("play_pause", playing );
         context.sendBroadcast(intent);
     }
 
@@ -304,21 +278,21 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         context.sendBroadcast(intent);
     }
 
-    public PlayState PlayPause() {
+    public boolean playPause() {
         if(isPlaying()){
             setSessionState(PlaybackState.STATE_PAUSED);
 //            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_PAUSE_PLAYING);
             FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_PAUSE_PLAYING);
-            return pause;
+            return false;
         } else {
             if ( requestAudioFocus() ) {
                 setSessionState(PlaybackState.STATE_PLAYING);
 //                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_PLAY_PLAYING);
                 FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_PLAY_PLAYING);
-                return play;
+                return true;
             }
             else {
-                return stop;
+                return false;
             }
         }
     }
@@ -329,16 +303,12 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         }
     }
 
-    public void release() {
-        mPlayer = null;
-    }
-
     public IMediaItem getPlayingItem() {
         return (IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
     }
 
     public void seek(final int progress) {
-        if(null != mPlayer && !isSeeked && !isTrackWaiting){
+        if( !isSeeked && !isTrackWaiting){
             isSeeked = true;
             seekEventHandler.post(new Runnable() {
                 @Override
@@ -351,57 +321,43 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
 
 
     public void setEffectEnable(boolean enable) {
-        if(null != mPlayer)
-            mPlayer.setEnableEffect(enable);
+        mPlayer.setEnableEffect(enable);
     }
 
     public void set3DAudioEnable(boolean enable) {
-        if(null != mPlayer)
-            mPlayer.setEnable3DAudio(enable);
+        mPlayer.setEnable3DAudio(enable);
     }
 
     public void setIntensityValue(double value) {
-        if(null != mPlayer)
-            mPlayer.setIntensityValue(value);
+        mPlayer.setIntensityValue(value);
     }
 
     public void setEqualizerEnable(boolean enable) {
-        if(null != mPlayer)
-            mPlayer.setEnableEqualizer(enable);
+        mPlayer.setEnableEqualizer(enable);
     }
 
     public void setSuperBassEnable(boolean enable) {
-        if(null != mPlayer)
-            mPlayer.setEnableSuperBass(enable);
+        mPlayer.setEnableSuperBass(enable);
     }
 
     public void setEqualizerGain(int position) {
-        if(null != mPlayer)
-            mPlayer.setEqualizerGain(position);
+        mPlayer.setEqualizerGain(position);
     }
 
     public void setSpeakerEnable(@AudioEffect.Speaker int speaker, boolean enable) {
-        if(null != mPlayer)
-            mPlayer.setSpeakerEnable(speaker, enable);
+        mPlayer.setSpeakerEnable(speaker, enable);
     }
 
     public void setHighQualityEnable(boolean highQualityEnable) {
-        if(null != mPlayer)
-            mPlayer.setHighQualityEnable(highQualityEnable);
+        mPlayer.setHighQualityEnable(highQualityEnable);
     }
 
     public void stopPlayer() {
         setSessionState(PlaybackState.STATE_STOPPED);
     }
 
-    public void updateEffect() {
-        if(null != mPlayer)
-            mPlayer.updatePlayerEffect();
-    }
-
     public void setHeadPhoneType(int headPhoneType) {
-        if(null != mPlayer)
-            mPlayer.setHeadPhone(headPhoneType);
+        mPlayer.setHeadPhone(headPhoneType);
     }
 
 
@@ -437,8 +393,6 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
 
     void setSessionState(int state)
     {
-        if(null == mPlayer)
-            return;
         PlaybackState pbState = new PlaybackState.Builder()
                 .setActions(PlaybackState.ACTION_PAUSE | PlaybackState.ACTION_PLAY | PlaybackState.ACTION_PLAY_PAUSE | PlaybackState.ACTION_SKIP_TO_NEXT | PlaybackState.ACTION_SKIP_TO_PREVIOUS | PlaybackState.ACTION_STOP)
                 .setState(state, 0, 1, 0)
@@ -478,8 +432,6 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
 
     @Override
     public void onAudioFocusChange(int focusChange) {
-        if(null == mPlayer)
-            return;
         Intent intent = new Intent();
         intent.setAction(PlayerServiceReceiver.ACTION_PLAYING_ITEM_CLICKED);
         if (focusChange == AUDIOFOCUS_LOSS_TRANSIENT) {
@@ -500,11 +452,5 @@ public class PlayerEventHandler implements IUpNextMediaEvent, AudioManager.OnAud
         if ( intent != null ) {
             context.sendBroadcast(intent);
         }
-    }
-
-    public enum PlayState {
-        play,
-        pause,
-        stop
     }
 }

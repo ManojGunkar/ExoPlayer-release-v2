@@ -81,7 +81,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public static PlayerEventHandler getPlayerEventHandler() {
-        return PlayerEventHandler.getPlayerEventInstance(application);
+        return PlayerEventHandler.getInstance(application);
     }
 
     public static UserPreferenceHandler getUserPreferenceHandler() {

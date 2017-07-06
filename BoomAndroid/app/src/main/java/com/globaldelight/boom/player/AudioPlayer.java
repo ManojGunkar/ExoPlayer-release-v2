@@ -4,7 +4,10 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
+import android.os.PowerManager;
+import android.support.annotation.IntDef;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -17,36 +20,53 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.metadata.MetadataRenderer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.text.TextRenderer;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
-import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON;
 
 /**
  * Created by adarsh on 20/01/17.
  */
 
 public class AudioPlayer implements ExoPlayer.EventListener {
+
+    // Player states
+    @IntDef({LOADING, PLAYING, PAUSED, STOPPED})
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface PlayerStates {}
+
+    private static final int LOADING = 0;
+    private static final int PLAYING = 1;
+    private static final int PAUSED = 2;
+    private static final int STOPPED = 3;
+
+
     /** Load jni .so on initialization */
-    private final String LOG_TAG = "AudioPlayer";
-    private Callback events = null;
-    private States state = new States();
+    private final String TAG = "AudioPlayer";
+    private Callback callback = null;
+    private @PlayerStates int  state = STOPPED;
     private String sourcePath = null;
     private long sourceId = -1;
     private Context mContext;
@@ -57,36 +77,36 @@ public class AudioPlayer implements ExoPlayer.EventListener {
     private BoomAudioProcessor mAudioProcessor;
     private String mCurrentSourcePath;
     private Timer mPlaybackTimer = null;
+    private PowerManager.WakeLock mWakeLock;
+    private WifiManager.WifiLock  mWifiLock;
 
-    public void setEventsListener(Callback events) {
-        this.events = events;
-    }
 
-    public AudioPlayer(Context context, Callback events) {
-        setEventsListener(events);
+    public AudioPlayer(Context context, Callback callback) {
         mContext = context;
+        this.callback = callback;
         mAudioConfig = AudioConfiguration.getInstance(context);
 
-    }
+        PowerManager pm = (PowerManager)mContext.getSystemService(Context.POWER_SERVICE);
+        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
 
-    private boolean floatAudioSupported() {
-        return (mAudioConfig.getFormat() == AudioConfiguration.FORMAT_FLOAT);
+        WifiManager wm = (WifiManager)mContext.getSystemService(Context.WIFI_SERVICE);
+        mWifiLock = wm.createWifiLock(WifiManager.WIFI_MODE_FULL, TAG);
     }
 
     public boolean isPlaying(){
-        return state.isPlaying();
+        return state == PLAYING;
     }
 
     public boolean isLoading() {
-        return state.isLoading();
+        return state == LOADING;
     }
 
     public boolean isPause(){
-        return state.isPause();
+        return state == PAUSED;
     }
 
     public boolean isStopped() {
-        return state.isStopped();
+        return state == STOPPED;
     }
 
     public void setPath(String src) {
@@ -103,27 +123,27 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
 
 
-    public synchronized void play() {
+    public void play() {
 
         boolean mediaHasChanged = !TextUtils.equals(sourcePath, mCurrentSourcePath);
         if (mediaHasChanged) {
-            mCurrentSourcePath = new String(sourcePath);
+            mCurrentSourcePath = sourcePath;
         }
 
-        if ( mediaHasChanged || mExoPlayer == null || state.get() != States.PAUSED ) {
+        if ( mediaHasChanged || mExoPlayer == null || state != PAUSED ) {
             if(AudioEffect.getInstance(mContext).getSelectedEqualizerPosition() == 0) {
                 setAutoEqualizer();
             }
 
             if ( mExoPlayer == null ) {
-                BoomRenderersFactory renderersFactory = new BoomRenderersFactory(mContext, null, EXTENSION_RENDERER_MODE_ON);
+                BoomRenderersFactory renderersFactory = new RenderersFactory(mContext);
 
                 mAudioProcessor = renderersFactory.getBoomAudioProcessor();
                 mExoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, new DefaultTrackSelector(), new DefaultLoadControl());
                 mExoPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mExoPlayer.addListener(this);
 
-                state.set(States.LOADING);
+                state = LOADING;
                 updatePlayerEffect();
             }
             // Produces DataSource instances through which media data is loaded.
@@ -142,43 +162,57 @@ public class AudioPlayer implements ExoPlayer.EventListener {
             mExoPlayer.prepare(mediaSource, false, false);
         }
 
+        mWakeLock.acquire();
+
+        if ( sourcePath.startsWith("http") ) {
+            mWifiLock.acquire();
+        }
+
         mExoPlayer.setPlayWhenReady(true);
         mPlaybackTimer = new Timer();
         mPlaybackTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 if ( mExoPlayer != null && mExoPlayer.getDuration() >= 0 ) {
-                    events.onPlayTimeUpdate(mExoPlayer.getCurrentPosition(), mExoPlayer.getDuration());
+                    callback.onPlayTimeUpdate(mExoPlayer.getCurrentPosition(), mExoPlayer.getDuration());
                 }
             }
         }, 0, 1000);
-
     }
 
     public void stop(){
-        releasePlayer();
-        state.set(States.STOPPED);
+        releaseResources(STOPPED);
         postOnStop();
     }
 
-    private void releasePlayer() {
-        mExoPlayer.release();
-        mExoPlayer.removeListener(this);
-        mExoPlayer = null;
+    private void releaseResources(int newState) {
+        state = newState;
+        if ( state == STOPPED ) {
+            mExoPlayer.release();
+            mExoPlayer.removeListener(this);
+            mExoPlayer = null;
+        }
 
-        mPlaybackTimer.cancel();
-        mPlaybackTimer = null;
+        if ( mPlaybackTimer != null ) {
+            mPlaybackTimer.cancel();
+            mPlaybackTimer = null;
+        }
 
+        if ( mWifiLock.isHeld() ) {
+            mWifiLock.release();
+        }
+
+        if ( mWakeLock.isHeld() ) {
+            mWakeLock.release();
+        }
     }
-
 
     public void pause() {
         if ( mExoPlayer != null ) {
             mExoPlayer.setPlayWhenReady(false);
         }
 
-        mPlaybackTimer.cancel();
-        state.set(States.PAUSED);
+        releaseResources(PAUSED);
     }
 
     private void seek(long pos) {
@@ -186,11 +220,11 @@ public class AudioPlayer implements ExoPlayer.EventListener {
             mExoPlayer.seekTo(pos);
         }
 
-        if ( state.get() == States.PAUSED ) {
-            if (events != null) handler.post(new Runnable() {
+        if ( state == PAUSED ) {
+            if (callback != null) handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    events.onPlayTimeUpdate(mExoPlayer.getCurrentPosition(), mExoPlayer.getDuration());
+                    callback.onPlayTimeUpdate(mExoPlayer.getCurrentPosition(), mExoPlayer.getDuration());
                 }
             });
         }
@@ -223,39 +257,39 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
 
     private void postError() {
-        if (events != null) {
+        if (callback != null) {
             handler.post(new Runnable() {
                 @Override public void run() {
-                    events.onError();
+                    callback.onError();
                 }
             });
         }
     }
 
-    private void postOnStart(final String mime, final int sampleRate, final int channels, final long duration ) {
-        if (events != null) {
+    private void postOnStart() {
+        if (callback != null) {
             handler.post(new Runnable() {
                 @Override public void run() {
-                    events.onStart(duration);
+                    callback.onStart();
                 }
             });
         }
     }
 
     private void postOnStop() {
-        if (events != null) handler.post(new Runnable() {
+        if (callback != null) handler.post(new Runnable() {
             @Override
             public void run() {
-                events.onStop();
+                callback.onStop();
             }
         });
     }
 
     private void postOnFinish() {
-        if (events != null) handler.post(new Runnable() {
+        if (callback != null) handler.post(new Runnable() {
             @Override
             public void run() {
-                events.onFinish();
+                callback.onFinish();
             }
         });
     }
@@ -380,19 +414,18 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
             case ExoPlayer.STATE_READY:
                 if ( mExoPlayer.getPlayWhenReady() ) {
-                    if ( state.get() == States.LOADING ) {
-                        postOnStart(null, 0, 0, mExoPlayer.getDuration());
+                    if ( state == LOADING ) {
+                        postOnStart();
                     }
-                    state.set(States.PLAYING);
+                    state = PLAYING;
                 }
                 else {
-                    state.set(States.PAUSED);
+                    state = PAUSED;
                 }
                 break;
 
             case ExoPlayer.STATE_ENDED:
-                state.set(States.STOPPED);
-                releasePlayer();
+                releaseResources(STOPPED);
                 postOnFinish();
 
                 break;
@@ -402,8 +435,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
     @Override
     public void onPlayerError(ExoPlaybackException e) {
-        state.set(States.STOPPED);
-        releasePlayer();
+        releaseResources(STOPPED);
         postError();
     }
 
@@ -420,50 +452,34 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
 
     public interface Callback {
-        void onStart(long duration);
-        void onPlay();
+        void onStart();
         void onPlayTimeUpdate(long currentms, long totalms);
         void onFinish();
         void onStop();
         void onError();
-        void onErrorPlayAgain();
     }
 
-    public static class States {
+    // Custom Factory that create only AudioRenderers
+    static class RenderersFactory extends BoomRenderersFactory {
 
-        private static final int LOADING = 0;
-        private static final int PLAYING = 1;
-        private static final int PAUSED = 2;
-        private static final int STOPPED = 3;
-        private int playerState = STOPPED;
+        private Context mContext;
 
-        public int get() {
-            return playerState;
+        public RenderersFactory(Context context) {
+            super(context, null, EXTENSION_RENDERER_MODE_ON);
+            mContext = context;
         }
 
-        public void set(int state) {
-            playerState = state;
+        @Override
+        public Renderer[] createRenderers(Handler eventHandler,
+                                          VideoRendererEventListener videoRendererEventListener,
+                                          AudioRendererEventListener audioRendererEventListener,
+                                          TextRenderer.Output textRendererOutput, MetadataRenderer.Output metadataRendererOutput) {
+            ArrayList<Renderer> renderersList = new ArrayList<>();
+            buildAudioRenderers(mContext, null, buildAudioProcessors(),
+                    eventHandler, audioRendererEventListener, EXTENSION_RENDERER_MODE_ON, renderersList);
+            return renderersList.toArray(new Renderer[renderersList.size()]);
         }
 
-        public synchronized boolean isReadyToPlay() {
-            return playerState == States.PAUSED;
-        }
-
-        public synchronized boolean isLoading() {
-            return playerState == States.LOADING;
-        }
-
-        public synchronized boolean isPlaying() {
-            return playerState == States.PLAYING;
-        }
-
-        public boolean isPause() {
-            return playerState == States.PAUSED;
-        }
-
-        public synchronized boolean isStopped() {
-            return playerState == States.STOPPED;
-        }
     }
 
 
