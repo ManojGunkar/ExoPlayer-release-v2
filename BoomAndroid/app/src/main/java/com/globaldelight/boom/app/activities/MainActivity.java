@@ -76,7 +76,7 @@ public class MainActivity extends MasterActivity
                     }
                     break;
 
-                case PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                case PlayerEvents.ACTION_PLAYER_STATE_CHANGED:
                     if ( mLibraryFragment != null ) {
                         ((LibraryFragment)mLibraryFragment).useCoachMarkWindow();
                         ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
@@ -137,7 +137,7 @@ public class MainActivity extends MasterActivity
         registerPlayerReceiver(MainActivity.this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
-        intentFilter.addAction(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(PlayerEvents.ACTION_PLAYER_STATE_CHANGED);
 
         registerReceiver(headPhoneReceiver, intentFilter);
     }

@@ -172,11 +172,11 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);
                 holder.loadCloud.setVisibility(View.GONE);
-                if(App.getPlayerEventHandler().isPlaying()){
+                if( App.getPlayerEventHandler().isTrackPlaying() ){
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
-                } else {
-                    if(!isMediaItem && App.getPlayerEventHandler().isTrackWaitingForPlay() && !App.getPlayerEventHandler().isPaused())
+                    if(!isMediaItem && App.getPlayerEventHandler().isTrackLoading())
                         holder.loadCloud.setVisibility(View.VISIBLE);
+                } else {
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
             }else{

@@ -141,6 +141,8 @@ void BOOM_ENGINE_METHOD(flush)(
 {
     gdpl::AutoLock lock(&mLock);
     mProcessor->Flush();
+    mEngine->ResetEngine();
+    RinseEngine();
 }
 
 

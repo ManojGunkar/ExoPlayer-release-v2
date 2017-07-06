@@ -115,12 +115,12 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                     holder.loadCloud.setVisibility(View.GONE);
                     holder.name.setTextColor(ContextCompat.getColor(context, R.color.upnext_playing_title));
                     boolean isMediaItem = item.getMediaType() == MediaType.DEVICE_MEDIA_LIB;
-                    if (App.getPlayerEventHandler().isPlaying()) {
-                        holder.art_overlay_play.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_pause, null));
-                    } else {
-                        if (!isMediaItem && App.getPlayerEventHandler().isTrackWaitingForPlay() && !App.getPlayerEventHandler().isPaused())
+                    if (App.getPlayerEventHandler().isTrackPlaying() ) {
+                        holder.art_overlay_play.setImageResource(R.drawable.ic_player_pause);
+                        if (!isMediaItem && App.getPlayerEventHandler().isTrackLoading() )
                             holder.loadCloud.setVisibility(View.VISIBLE);
-                        holder.art_overlay_play.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_play, null));
+                    } else {
+                        holder.art_overlay_play.setImageResource(R.drawable.ic_player_play);
                     }
                 } else {
                     holder.art_overlay.setVisibility(View.GONE);

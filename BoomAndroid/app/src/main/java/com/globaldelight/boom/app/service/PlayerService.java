@@ -109,30 +109,8 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         updatePlayer(true);
     }
 
-    private synchronized void trackSeekUpdate(boolean isUser, Intent intent){
-        if(isUser){
-            Intent seek = new Intent(PlayerEvents.ACTION_UPDATE_TRACK_SEEK);
-            seek.putExtra("percent", intent.getIntExtra("percent", 0));
-            seek.putExtra("currentms", intent.getLongExtra("currentms", 0));
-            seek.putExtra("totalms", intent.getLongExtra("totalms", 0));
-            sendBroadcast(seek);
-
-            App.getUserPreferenceHandler().setPlayerSeekPosition(intent.getIntExtra("percent", 0));
-            App.getUserPreferenceHandler().setPlayedTime(intent.getLongExtra("currentms", 0));
-            App.getUserPreferenceHandler().setRemainsTime(intent.getLongExtra("totalms", musicPlayerHandler.getPlayingItem().getDurationLong()));
-        }else{
-            musicPlayerHandler.seek(intent.getIntExtra("seek", 0));
-        }
-    }
-
     private void updatePlayPause(boolean play_pause) {
-        Intent i = new Intent();
-        i.setAction(PlayerEvents.ACTION_ITEM_CLICKED);
-        i.putExtra("play_pause", play_pause);
-        sendBroadcast(i);
-
         updateNotificationPlayer(musicPlayerHandler.getPlayingItem(), play_pause, false);
-        sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
     }
 
     private void updatePlayingQueue() {
@@ -173,7 +151,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
             }
             updateNotificationPlayer( musicPlayerHandler.getPlayingItem(), false, true);
         }
-        sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY));
+        sendBroadcast(new Intent(PlayerEvents.ACTION_PLAYER_STATE_CHANGED));
     }
 
     private void updateNotificationPlayer(IMediaItem playingItem, boolean playing, boolean isLastPlayed) {
@@ -222,7 +200,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
     public void onRepeatSongList() {
         musicPlayerHandler.resetRepeat();
         sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_REPEAT));
-        updateNotificationPlayer((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isPlaying(), false);
+        updateNotificationPlayer((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.getPlayerEventHandler().isTrackPlaying(), false);
     }
 
     @Override
@@ -248,7 +226,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     @Override
     public void onSeekSongTrack(Intent intent) {
-        trackSeekUpdate(false, intent);
+        musicPlayerHandler.seek(intent.getIntExtra("seek", 0));
     }
 
     @Override
@@ -283,12 +261,8 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     @Override
     public void onPlayPauseTrack() {
-        if (null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem() && !App.getPlayerEventHandler().isTrackWaitingForPlay() && !musicPlayerHandler.isLoading() ) {
-            if (!musicPlayerHandler.isPaused() && !musicPlayerHandler.isPlaying()  ) {
-                musicPlayerHandler.onPlayingItemChanged();
-            } else {
-                updatePlayPause(musicPlayerHandler.playPause());
-            }
+        if (null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem() && !musicPlayerHandler.isTrackWaitingForPlay() ) {
+            updatePlayPause(musicPlayerHandler.playPause());
         }
     }
 
@@ -309,10 +283,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
         notificationHandler.changeNotificationDetails(App.getPlayerEventHandler().getPlayingItem(), false, false);
     }
 
-    @Override
-    public void onTrackPositionUpdate(Intent intent) {
-        trackSeekUpdate(true, intent);
-    }
 
     @Override
     public void onUpNextListUpdate() {

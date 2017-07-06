@@ -23,7 +23,7 @@ import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
 import java.util.ArrayList;
 
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 
 /**
  * Created by Rahul Agarwal on 27-01-17.
@@ -45,7 +45,7 @@ public class SearchDetailFragment extends Fragment{
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
-                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                case ACTION_PLAYER_STATE_CHANGED:
                     if(null != adapter)
                         adapter.notifyDataSetChanged();
                     break;
@@ -88,7 +88,7 @@ public class SearchDetailFragment extends Fragment{
         }
 
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
     }
 

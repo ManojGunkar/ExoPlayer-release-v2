@@ -36,7 +36,7 @@ import io.fabric.sdk.android.services.concurrency.AsyncTask;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_CLOUD_SYNC;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.utils.helpers.DropBoxUtills.ACCESS_KEY_NAME;
 import static com.globaldelight.boom.utils.helpers.DropBoxUtills.ACCESS_SECRET_NAME;
 import static com.globaldelight.boom.utils.helpers.DropBoxUtills.ACCOUNT_PREFS_NAME;
@@ -65,7 +65,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
-                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                case ACTION_PLAYER_STATE_CHANGED:
                     if(null != adapter)
                         adapter.notifyDataSetChanged();
                     break;
@@ -146,7 +146,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
 
     private void registerReceiver(){
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_ON_NETWORK_CONNECTED);
         intentFilter.addAction(ACTION_CLOUD_SYNC);
         if(null != mActivity)

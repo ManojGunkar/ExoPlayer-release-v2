@@ -111,10 +111,10 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
             holder.name.setSelected(true);
             holder.art_overlay.setVisibility(View.VISIBLE);
             holder.art_overlay_play.setVisibility(View.VISIBLE);
-            if(App.getPlayerEventHandler().isPlaying()){
-                holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
+            if(App.getPlayerEventHandler().isTrackPlaying() ){
+                holder.art_overlay_play.setImageResource(R.drawable.ic_player_pause);
             }else{
-                holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
+                holder.art_overlay_play.setImageResource(R.drawable.ic_player_play);
             }
         }else{
             holder.count.setSelected(false);

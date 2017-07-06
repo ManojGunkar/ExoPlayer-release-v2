@@ -448,7 +448,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                 holder.name.setSelected(true);
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);
-                if(App.getPlayerEventHandler().isPlaying()){
+                if(App.getPlayerEventHandler().isTrackPlaying()){
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
                 }else{
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));

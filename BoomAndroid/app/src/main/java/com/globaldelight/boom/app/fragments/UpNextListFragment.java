@@ -58,7 +58,7 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
                     if (upNextListAdapter != null)
                         upNextListAdapter.updateList(App.getPlayingQueueHandler().getUpNextList());
                     break;
-                case PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                case PlayerEvents.ACTION_PLAYER_STATE_CHANGED:
                     if (upNextListAdapter != null)
                         upNextListAdapter.updateList(App.getPlayingQueueHandler().getUpNextList());
                     break;
@@ -95,7 +95,7 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
     private void initViews() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(PlayerEvents.ACTION_UPDATE_QUEUE);
-        filter.addAction(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        filter.addAction(PlayerEvents.ACTION_PLAYER_STATE_CHANGED);
         mActivity.registerReceiver(upnextBroadcastReceiver, filter);
 
         checkPermissions();

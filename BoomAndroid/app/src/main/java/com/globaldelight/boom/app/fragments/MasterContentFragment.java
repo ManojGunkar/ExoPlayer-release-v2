@@ -70,7 +70,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ITEM_CLICKED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_LAST_PLAYED_SONG;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_DISCONNECTED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_SWITCH_OFF_AUDIO_EFFECT;
@@ -78,9 +77,10 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_P
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_RECEIVE_SONG;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_TRACK_STOPPED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_REPEAT;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_SHUFFLE;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_TRACK_POSITION;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_ALL;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_NONE;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_ONE;
@@ -176,15 +176,15 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     mIsLastPlayed = intent.getBooleanExtra("last_played_song", true);
                     updatePlayerUI();
                     break;
-                case ACTION_ITEM_CLICKED :
+                case ACTION_PLAYER_STATE_CHANGED:
                     try {
-                        if (intent.getBooleanExtra("play_pause", false) == false) {
-                            mMiniPlayerPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_miniplayer_play, null));
-                            mPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_play, null));
+                        if ( App.getPlayerEventHandler().isTrackPlaying() ) {
+                            mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_pause);
+                            mPlayPause.setImageResource(R.drawable.ic_player_pause);
                         } else {
-                            mMiniPlayerPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_miniplayer_pause, null));
-                            mPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_pause, null));
-                        }
+                            mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_play);
+                            mPlayPause.setImageResource(R.drawable.ic_player_play);
+                         }
                     }catch (Exception e){}
                     stopLoadProgress();
                     break;
@@ -195,7 +195,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     updatePlayerUI(false);
                     showProgressLoader();
                     break;
-                case ACTION_UPDATE_TRACK_SEEK :
+                case ACTION_UPDATE_TRACK_POSITION:
                     if(!isUser) {
                         mTrackSeek.setProgress(intent.getIntExtra("percent", 0));
                         mMiniPlayerSeek.setProgress(intent.getIntExtra("percent", 0));
@@ -698,7 +698,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onPanelCollapsed(View panel) {
         setMiniPlayerVisible(true);
-        updateMiniPlayerUI(mPlayingMediaItem, App.getPlayerEventHandler().isPlaying(), mIsLastPlayed);
+        updateMiniPlayerUI(mPlayingMediaItem, App.getPlayerEventHandler().isTrackPlaying(), mIsLastPlayed);
         showEffectShortCut();
 
         if(null != coachMarkEffectSwitcher){
@@ -764,7 +764,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updateProgressLoader(){
-        if(App.getPlayerEventHandler().isTrackWaitingForPlay())
+        if( App.getPlayerEventHandler().isTrackLoading() )
             showProgressLoader();
         else
             stopLoadProgress();
@@ -793,9 +793,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_RECEIVE_SONG);
         intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
-        intentFilter.addAction(ACTION_ITEM_CLICKED);
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_TRACK_STOPPED);
-        intentFilter.addAction(ACTION_UPDATE_TRACK_SEEK);
+        intentFilter.addAction(ACTION_UPDATE_TRACK_POSITION);
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);

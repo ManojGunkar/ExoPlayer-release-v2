@@ -27,7 +27,7 @@ import com.globaldelight.boom.view.RegularTextView;
 
 import java.util.ArrayList;
 
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 
 /**
  * Created by Rahul Agarwal on 28-02-17.
@@ -68,7 +68,7 @@ public class SongsListFragment extends Fragment{
         @Override
         public void onReceive(Context mActivity, Intent intent) {
             switch (intent.getAction()){
-                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY :
+                case ACTION_PLAYER_STATE_CHANGED:
                     if(null != songListAdapter){
                         songListAdapter.notifyDataSetChanged();
                     }
@@ -83,7 +83,7 @@ public class SongsListFragment extends Fragment{
         if(null != songListAdapter)
             songListAdapter.notifyDataSetChanged();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         if(null != mActivity)
             mActivity.registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
     }

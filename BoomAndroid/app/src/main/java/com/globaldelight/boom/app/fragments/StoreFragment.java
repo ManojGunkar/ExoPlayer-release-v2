@@ -2,7 +2,6 @@
 
 package com.globaldelight.boom.app.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,7 +21,6 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
@@ -31,9 +29,7 @@ import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 
-import java.util.ArrayList;
-
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.sharedPreferences.Preferences.INAPP_PURCHASE_PRICE_VALUE;
 
 /**
@@ -58,7 +54,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
-                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                case ACTION_PLAYER_STATE_CHANGED:
                     updateInApp();
                     break;
             }

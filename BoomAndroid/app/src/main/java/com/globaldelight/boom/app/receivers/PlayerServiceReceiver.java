@@ -34,7 +34,6 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
     public static final String ACTION_LAST_PLAYED_SONG = "ACTION_LAST_PLAYED_SONG";
 
     public static final String ACTION_PLAY_STOP = "ACTION_PLAY_STOP";
-    public static final String ACTION_TRACK_POSITION_UPDATE = "ACTION_TRACK_POSITION_UPDATE";
     public static final String ACTION_UPNEXT_UPDATE = "ACTION_UPNEXT_UPDATE";
     public static final String ACTION_PLAYING_ITEM_CLICKED ="ACTION_PLAYING_ITEM_CLICKED";
 
@@ -68,7 +67,6 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
         filter.addAction(ACTION_NOTI_REMOVE);
         filter.addAction(ACTION_ADD_QUEUE);
         filter.addAction(ACTION_PLAY_STOP);
-        filter.addAction(ACTION_TRACK_POSITION_UPDATE);
         filter.addAction(ACTION_UPNEXT_UPDATE);
         filter.addAction(ACTION_PLAYING_ITEM_CLICKED);
         filter.addAction(ACTION_LAST_PLAYED_SONG);
@@ -159,10 +157,6 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
                 if (null != mPlayerService)
                     mPlayerService.onStopPlaying();
                 break;
-            case ACTION_TRACK_POSITION_UPDATE :
-                if(null != mPlayerService)
-                    mPlayerService.onTrackPositionUpdate(intent);
-                break;
             case ACTION_UPNEXT_UPDATE :
                 if (null != mPlayerService)
                     mPlayerService.onUpNextListUpdate();
@@ -190,7 +184,6 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
         void onLastPlayedTrack();
 
         void onStopPlaying();
-        void onTrackPositionUpdate(Intent intent);
         void onUpNextListUpdate();
         void onPlayingItemClicked(Intent intent);
     }

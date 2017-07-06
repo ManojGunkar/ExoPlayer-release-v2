@@ -55,18 +55,18 @@ public class AudioPlayer implements ExoPlayer.EventListener {
     // Player states
     @IntDef({LOADING, PLAYING, PAUSED, STOPPED})
     @Retention(RetentionPolicy.SOURCE)
-    private @interface PlayerStates {}
+    public @interface State {}
 
-    private static final int LOADING = 0;
-    private static final int PLAYING = 1;
-    private static final int PAUSED = 2;
-    private static final int STOPPED = 3;
+    public static final int LOADING = 0;
+    public static final int PLAYING = 1;
+    public static final int PAUSED = 2;
+    public static final int STOPPED = 3;
 
 
     /** Load jni .so on initialization */
     private final String TAG = "AudioPlayer";
     private Callback callback = null;
-    private @PlayerStates int  state = STOPPED;
+    private @State int  state = STOPPED;
     private String sourcePath = null;
     private long sourceId = -1;
     private Context mContext;
@@ -178,11 +178,12 @@ public class AudioPlayer implements ExoPlayer.EventListener {
                 }
             }
         }, 0, 1000);
+        postStateChange();
     }
 
     public void stop(){
         releaseResources(STOPPED);
-        postOnStop();
+        postStateChange();
     }
 
     private void releaseResources(int newState) {
@@ -213,6 +214,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         }
 
         releaseResources(PAUSED);
+        postStateChange();
     }
 
     private void seek(long pos) {
@@ -266,30 +268,21 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         }
     }
 
-    private void postOnStart() {
+    private void postStateChange() {
         if (callback != null) {
             handler.post(new Runnable() {
                 @Override public void run() {
-                    callback.onStart();
+                    callback.onStateChange(state);
                 }
             });
         }
-    }
-
-    private void postOnStop() {
-        if (callback != null) handler.post(new Runnable() {
-            @Override
-            public void run() {
-                callback.onStop();
-            }
-        });
     }
 
     private void postOnFinish() {
         if (callback != null) handler.post(new Runnable() {
             @Override
             public void run() {
-                callback.onFinish();
+                callback.onComplete();
             }
         });
     }
@@ -414,20 +407,18 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
             case ExoPlayer.STATE_READY:
                 if ( mExoPlayer.getPlayWhenReady() ) {
-                    if ( state == LOADING ) {
-                        postOnStart();
-                    }
                     state = PLAYING;
                 }
                 else {
                     state = PAUSED;
                 }
+                postStateChange();
                 break;
 
             case ExoPlayer.STATE_ENDED:
                 releaseResources(STOPPED);
+                postStateChange();
                 postOnFinish();
-
                 break;
         }
 
@@ -452,10 +443,9 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
 
     public interface Callback {
-        void onStart();
+        void onStateChange(@State int state);
         void onPlayTimeUpdate(long currentms, long totalms);
-        void onFinish();
-        void onStop();
+        void onComplete();
         void onError();
     }
 

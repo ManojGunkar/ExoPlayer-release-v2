@@ -36,7 +36,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ITEM_CLICKED;
 
 /**
  * Created by Rahul Agarwal on 03-02-17.
@@ -255,7 +254,6 @@ public class TimerUtils {
     public static void sendMessagePlayerStop(Context mContext) {
         if(App.getPlayerEventHandler().isPlaying())
             mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
-        mContext.sendBroadcast(new Intent(ACTION_ITEM_CLICKED));
     }
 
 

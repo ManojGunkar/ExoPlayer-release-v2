@@ -32,7 +32,7 @@ import com.globaldelight.boom.utils.OnStartDragListener;
 import java.util.Collections;
 import static com.globaldelight.boom.playbackEvent.utils.ItemType.BOOM_PLAYLIST;
 import static com.globaldelight.boom.playbackEvent.utils.ItemType.PLAYLIST;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_BOOM_ITEM_LIST;
 
 /**
@@ -59,7 +59,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
-                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                case ACTION_PLAYER_STATE_CHANGED:
                     if(null != itemSongListAdapter)
                         itemSongListAdapter.notifyDataSetChanged();
                     break;
@@ -91,7 +91,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_UPDATE_BOOM_ITEM_LIST);
         mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
         collection = (MediaItemCollection) this.mActivity.getIntent().getParcelableExtra("mediaItemCollection");

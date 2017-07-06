@@ -26,7 +26,7 @@ import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.app.adapters.album.AlbumDetailAdapter;
 
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -50,7 +50,7 @@ public class AlbumDetailFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
-                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                case ACTION_PLAYER_STATE_CHANGED:
                     if(null != albumDetailAdapter)
                         albumDetailAdapter.notifyDataSetChanged();
                     break;
@@ -88,7 +88,7 @@ public class AlbumDetailFragment extends Fragment {
 
     private void initValues(){
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         if(null != mActivity) {
             mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
 
