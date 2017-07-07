@@ -109,11 +109,11 @@ public class AlbumDetailFragment extends Fragment {
 
     public void onFloatPlayAlbums() {
         if (dataCollection.getParentType() == ItemType.ALBUM && dataCollection.getMediaElement().size() > 0) {
-            App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(dataCollection.getMediaElement(), 0);
+            App.playbackManager().queue().addItemListToPlay(dataCollection.getMediaElement(), 0);
         } else if (dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() > 0) {
-            App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement(), 0);
+            App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement(), 0);
         } else if (dataCollection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() > 0) {
-            App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement(), 0);
+            App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement(), 0);
         }
         if ( albumDetailAdapter != null ) {
             albumDetailAdapter.notifyDataSetChanged();

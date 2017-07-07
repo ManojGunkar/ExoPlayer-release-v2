@@ -123,7 +123,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             holder.mainView.setElevation(0);
 
             if(null == currentItem.getItemArtUrl())
-                currentItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(currentItem.getItemAlbum()));
+                currentItem.setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(currentItem.getItemAlbum()));
 
             if(null == currentItem.getItemArtUrl())
                 currentItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -146,7 +146,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             holder.artistName.setVisibility(null != currentItem.getItemArtist() ? View.VISIBLE : View.GONE);
             holder.artistName.setText(currentItem.getItemArtist());
 
-            setAlbumArt(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(currentItem.getItemAlbum()), holder);
+            setAlbumArt(App.playbackManager().queue().getAlbumArtList().get(currentItem.getItemAlbum()), holder);
 
             if (selectedHolder != null)
                 selectedHolder.mainView.setBackgroundColor(ContextCompat
@@ -164,7 +164,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     }
 
     private void updatePlayingTrack(SimpleItemViewHolder holder){
-        IMediaItemBase nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        IMediaItemBase nowPlayingItem = App.playbackManager().queue().getPlayingItem();
         if(null != nowPlayingItem ){
             boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
             if(currentItem.getItemId() == nowPlayingItem.getItemId()){
@@ -239,9 +239,9 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                 }
                 if (!App.playbackManager().isTrackLoading()) {
                     if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
-                        App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(collection.getMediaElement(), position);
+                        App.playbackManager().queue().addItemListToPlay(collection.getMediaElement(), position);
                     }else{
-                        App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), position);
+                        App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), position);
                     }
                     new Handler().postDelayed(new Runnable() {
                         @Override

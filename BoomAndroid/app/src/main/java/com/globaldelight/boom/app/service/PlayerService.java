@@ -1,9 +1,12 @@
 package com.globaldelight.boom.app.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
@@ -28,6 +31,7 @@ import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boom.player.AudioConfiguration;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
@@ -51,6 +55,32 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
     private PlayerServiceReceiver serviceReceiver;
     private ConnectivityReceiver connectivityReceiver;
 
+    private static PlayerService instance = null;
+    private static Object[] sWait = new Object[0];
+    public static synchronized PlayerService getInstance(Context context) {
+        if ( instance == null ) {
+            context.startService(new Intent(context, PlayerService.class));
+            while ( instance == null ) {
+                if ( Looper.getMainLooper() == Looper.myLooper() ) {
+                    Looper.loop();
+                }
+                try {
+                    Thread.sleep(10);
+                }
+                catch (InterruptedException  e) {
+
+                }
+            }
+        }
+
+        return instance;
+    }
+
+    public PlaybackManager getPlayback() {
+        return mPlayback;
+    }
+
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -59,13 +89,14 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
         serviceReceiver = new PlayerServiceReceiver();
         serviceReceiver.registerPlayerServiceReceiver(this, serviceReceiver, this);
 
+        mPlayback = new PlaybackManager(this);
+        mPlayback.registerListener(this);
+
         try {
-            App.getPlayingQueueHandler().getUpNextList().fetchSavedUpNextItems();
+            mPlayback.queue().fetchSavedUpNextItems();
         }catch (Exception e){
 
         }
-        mPlayback = App.playbackManager();
-        mPlayback.registerListener(this);
 
         headPhonePlugReceiver = new HeadPhonePlugReceiver(this, this);
 
@@ -83,6 +114,8 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
         if(connectivityReceiver.isNetworkAvailable(this, false)){
             LoadNetworkCalls();
         }
+
+        instance = this;
     }
 
     private void LoadNetworkCalls() {
@@ -95,15 +128,13 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
                 DropBoxUtills.checkAppKeySetup(App.getApplication());
             }
         }).start();
-
-        initBusinessModel();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mPlayback = App.playbackManager();
 
-        App.getPlayingQueueHandler().getUpNextList().getRepeatShuffleOnAppStart();
+        mPlayback.queue().getRepeatShuffleOnAppStart();
 
         notificationHandler = new NotificationHandler(this, this);
         return START_NOT_STICKY;
@@ -162,7 +193,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
     public void onRepeatSongList() {
         mPlayback.resetRepeat();
         sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_REPEAT));
-        updateNotificationPlayer((IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem(), App.playbackManager().isTrackPlaying(), false);
+        updateNotificationPlayer((IMediaItem) mPlayback.queue().getPlayingItem(), App.playbackManager().isTrackPlaying(), false);
     }
 
     @Override
@@ -178,27 +209,28 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
 
     @Override
     public void onNextTrack() {
-        if (App.getPlayingQueueHandler().getUpNextList().isNext() && !App.playbackManager().isTrackWaitingForPlay()) {
+        if (mPlayback.queue().isNext() && !mPlayback.isTrackWaitingForPlay()) {
             mPlayback.playNextSong(true);
         }
     }
 
     @Override
     public void onPreviousTrack() {
-        if (App.getPlayingQueueHandler().getUpNextList().isPrevious() && !App.playbackManager().isTrackWaitingForPlay()) {
+        if (mPlayback.queue().isPrevious() && !mPlayback.isTrackWaitingForPlay()) {
             mPlayback.playPrevSong();
         }
     }
 
     @Override
     public void onPlayPauseTrack() {
-        if (null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem() && !mPlayback.isTrackWaitingForPlay() ) {
+        if (null != mPlayback.queue().getPlayingItem() && !mPlayback.isTrackWaitingForPlay() ) {
             mPlayback.playPause();
         }
     }
 
     @Override
     public void onDestroy() {
+        instance = null;
         unregisterReceiver(headPhonePlugReceiver);
         serviceReceiver.unregisterPlayerServiceReceiver(this);
         try {
@@ -217,11 +249,9 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
     }
 
     private void updateUpNextDB() {
-        App.getPlayingQueueHandler().getUpNextList().SaveUpNextItems();
+        mPlayback.queue().SaveUpNextItems();
     }
 
-    private void initBusinessModel() {
-    }
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {

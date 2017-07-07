@@ -47,12 +47,12 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     private static IMediaItemBase playingItem;
     private static boolean isTrackWaiting = false;
     private AudioPlayer mPlayer;
-    private static PlaybackManager instance;
     private Context context;
     private AudioManager audioManager;
     private MediaSession session;
     private GoogleDriveHandler googleDriveHandler;
     private Handler seekEventHandler;
+    private UpNextPlayingQueue mQueue = new UpNextPlayingQueue(context);
 
     AudioPlayer.Callback IPlayerEvents = new AudioPlayer.Callback() {
 
@@ -131,22 +131,21 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         }
     };
 
-    private PlaybackManager(Context context){
+    public PlaybackManager(Context context){
         this.context = context;
         mPlayer = new AudioPlayer(context, IPlayerEvents);
+        mQueue = new UpNextPlayingQueue(context);
         audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-        App.getPlayingQueueHandler().getUpNextList().setUpNextMediaEvent(this);
+        mQueue.setUpNextMediaEvent(this);
         googleDriveHandler = new GoogleDriveHandler(context);
         googleDriveHandler.connectToGoogleAccount();
         seekEventHandler = new Handler();
         registerSession();
     }
 
-    public static PlaybackManager getInstance(Context context){
-        if(instance == null){
-            instance = new PlaybackManager(context.getApplicationContext());
-        }
-        return instance;
+
+    public UpNextPlayingQueue queue() {
+        return mQueue;
     }
 
     public void registerListener(Listener listener) {
@@ -229,7 +228,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         }
 
         notifyMediaChanged();
-        playingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        playingItem = mQueue.getPlayingItem();
         if ( playingItem != null ) {
             isTrackWaiting = true;
             new PlayingItemChanged().execute(playingItem);
@@ -265,7 +264,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
             mediaItemBase = params[0];
             if(mediaItemBase.getMediaType() == MediaType.DEVICE_MEDIA_LIB){
                 dataSource = ((MediaItem)mediaItemBase).getItemUrl();
-                mediaItemBase.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem)mediaItemBase).getItemAlbum()));
+                mediaItemBase.setItemArtUrl(mQueue.getAlbumArtList().get(((MediaItem)mediaItemBase).getItemAlbum()));
             }else if(mediaItemBase.getMediaType() == MediaType.DROP_BOX){
                 if(null != App.getDropboxAPI()){
                     return DropBoxUtills.getDropboxItemUrl(((MediaItem)mediaItemBase).getItemUrl());
@@ -308,7 +307,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     public void playNextSong(boolean isUser) {
         PLAYER_DIRECTION = NEXT;
         if ( isNext() ) {
-            App.getPlayingQueueHandler().getUpNextList().setNextPlayingItem(isUser);
+            mQueue.setNextPlayingItem(isUser);
         }
         else {
             setSessionState(PlaybackState.STATE_STOPPED);
@@ -318,7 +317,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     public void playPrevSong() {
         PLAYER_DIRECTION = PREVIOUS;
-        App.getPlayingQueueHandler().getUpNextList().setPreviousPlayingItem();
+        mQueue.setPreviousPlayingItem();
     }
 
     @Override
@@ -358,7 +357,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     }
 
     public IMediaItem getPlayingItem() {
-        return (IMediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        return (IMediaItem) mQueue.getPlayingItem();
     }
 
     public void seek(final int progress) {
@@ -415,19 +414,19 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
 
     public boolean resetShuffle() {
-        return App.getPlayingQueueHandler().getUpNextList().resetShuffle();
+        return mQueue.resetShuffle();
     }
 
     public boolean resetRepeat() {
-        return App.getPlayingQueueHandler().getUpNextList().resetRepeat();
+        return mQueue.resetRepeat();
     }
 
     public boolean isPrevious() {
-        return App.getPlayingQueueHandler().getUpNextList().isPrevious();
+        return mQueue.isPrevious();
     }
 
     public boolean isNext() {
-        return App.getPlayingQueueHandler().getUpNextList().isNext();
+        return mQueue.isNext();
     }
 
     void registerSession() {

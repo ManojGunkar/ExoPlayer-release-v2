@@ -135,7 +135,7 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
         if (albumListCursor != null) {
             albumListCursor.close();
         }
-        App.getPlayingQueueHandler().getUpNextList().setAlbumArtList(artWthAlbumName);
+        App.playbackManager().queue().setAlbumArtList(artWthAlbumName);
         return;
     }
 
@@ -161,7 +161,7 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
         if (artistListCursor != null) {
             artistListCursor.close();
         }
-        App.getPlayingQueueHandler().getUpNextList().setArtistArtList(artistList);
+        App.playbackManager().queue().setArtistArtList(artistList);
         return;
     }
 

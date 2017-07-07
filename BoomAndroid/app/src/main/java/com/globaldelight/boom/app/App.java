@@ -13,7 +13,6 @@ import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
-import com.globaldelight.boom.playbackEvent.handler.PlayingQueueHandler;
 import com.globaldelight.boom.app.service.PlayerService;
 import com.globaldelight.boom.app.database.CloudMediaItemDBHelper;
 import com.globaldelight.boom.app.database.FavoriteDBHelper;
@@ -36,7 +35,6 @@ import io.fabric.sdk.android.Fabric;
 public class App extends Application implements Application.ActivityLifecycleCallbacks {
 
     private static App application;
-    private static PlayingQueueHandler playingQueueHandler;
     private static PlaylistDBHelper boomPlayListhelper;
     private static FavoriteDBHelper favoriteDBHelper;
     private static UpNextDBHelper upNextDBHelper;
@@ -63,8 +61,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
 
 
-        playingQueueHandler = PlayingQueueHandler.getInstance(application);
-
         boomPlayListhelper = new PlaylistDBHelper(application);
 
         favoriteDBHelper = new FavoriteDBHelper(application);
@@ -81,7 +77,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public static PlaybackManager playbackManager() {
-        return PlaybackManager.getInstance(application);
+        return PlayerService.getInstance(application).getPlayback();
     }
 
     public static UserPreferenceHandler getUserPreferenceHandler() {
@@ -94,10 +90,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     public static CloudMediaItemDBHelper getCloudMediaItemDBHelper() {
         return cloudMediaItemDBHelper;
-    }
-
-    public static PlayingQueueHandler getPlayingQueueHandler() {
-        return playingQueueHandler;
     }
 
     public static PlaylistDBHelper getBoomPlayListHelper() {
@@ -124,8 +116,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     public void onTerminate() {
         super.onTerminate();
         application = null;
-        playingQueueHandler.Terminate();
-       MixPanelAnalyticHelper.getInstance(this).flush();
+        MixPanelAnalyticHelper.getInstance(this).flush();
     }
 
     public void onActivityCreated(Activity var1, Bundle var2) {

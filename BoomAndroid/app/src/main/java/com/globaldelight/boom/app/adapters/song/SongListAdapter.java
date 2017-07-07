@@ -74,7 +74,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         holder.description.setVisibility(null != mediaItem.getItemArtist() ? View.VISIBLE : View.GONE);
         holder.description.setText(mediaItem.getItemArtist());
         if (null == mediaItem.getItemArtUrl()) {
-            mediaItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(mediaItem.getItemAlbum()));
+            mediaItem.setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(mediaItem.getItemAlbum()));
         }
         if (null == mediaItem.getItemArtUrl()) {
             mediaItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -86,7 +86,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     }
 
     private void updatePlayingTrack(SongViewHolder holder, long itemId){
-        IMediaItemBase nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        IMediaItemBase nowPlayingItem = App.playbackManager().queue().getPlayingItem();
         if(null != nowPlayingItem) {
             boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
             if (itemId == nowPlayingItem.getItemId()) {
@@ -133,7 +133,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                 }
 
                 if ( !App.playbackManager().isTrackWaitingForPlay() ) {
-                    App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(itemList, position);
+                    App.playbackManager().queue().addItemListToPlay(itemList, position);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -178,10 +178,10 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                             try {
                                 switch (item.getItemId()) {
                                     case R.id.popup_song_play_next:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(itemList.get(position));
+                                        App.playbackManager().queue().addItemAsPlayNext(itemList.get(position));
                                         break;
                                     case R.id.popup_song_add_queue:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemList.get(position));
+                                        App.playbackManager().queue().addItemAsUpNext(itemList.get(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
                                         ArrayList list = new ArrayList();

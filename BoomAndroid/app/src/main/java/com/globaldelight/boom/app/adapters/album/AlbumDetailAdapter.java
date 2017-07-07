@@ -78,7 +78,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
             String title = null;
             String duration = null;
             int pos = position -1;
-            MediaItem nowPlayingItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+            MediaItem nowPlayingItem = (MediaItem) App.playbackManager().queue().getPlayingItem();
             if (item.getItemType() == ItemType.ALBUM) {
                 title = item.getMediaElement().get(pos).getItemTitle();
                 duration = ((MediaItem) item.getMediaElement().get(pos)).getDuration();
@@ -135,33 +135,33 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                         if(item.getParentType() == ItemType.ALBUM && item.getMediaElement().size() > 0){
                             switch (menuItem.getItemId()) {
                                 case R.id.album_header_add_play_next:
-                                    App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(item.getMediaElement());
+                                    App.playbackManager().queue().addItemAsPlayNext(item.getMediaElement());
                                     break;
                                 case R.id.album_header_add_to_upnext:
-                                    App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(item.getMediaElement());
+                                    App.playbackManager().queue().addItemAsUpNext(item.getMediaElement());
                                     break;
                                 case R.id.album_header_add_to_playlist:
                                     Utils.addToPlaylist(activity, item.getMediaElement(), null);
                                     break;
                                 case R.id.album_header_shuffle:
                                     activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(item.getMediaElement(), 0);
+                                    App.playbackManager().queue().addItemListToPlay(item.getMediaElement(), 0);
                                     break;
                             }
                         }else if(((IMediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0){
                             switch (menuItem.getItemId()) {
                                 case R.id.album_header_add_play_next:
-                                    App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement());
+                                    App.playbackManager().queue().addItemAsPlayNext(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement());
                                     break;
                                 case R.id.album_header_add_to_upnext:
-                                    App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement());
+                                    App.playbackManager().queue().addItemAsUpNext(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement());
                                     break;
                                 case R.id.album_header_add_to_playlist:
                                     Utils.addToPlaylist(activity, ((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), null);
                                     break;
                                 case R.id.album_header_shuffle:
                                     activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), 0);
+                                    App.playbackManager().queue().addItemListToPlay(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), 0);
                                     break;
                             }
                         }
@@ -178,11 +178,11 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (App.getPlayingQueueHandler().getUpNextList() != null && !App.playbackManager().isTrackLoading()) {
+                if (App.playbackManager().queue() != null && !App.playbackManager().isTrackLoading()) {
                     if (item.getItemType() == ItemType.ALBUM && item.getMediaElement().size() > 0) {
-                        App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(item.getMediaElement(), position);
+                        App.playbackManager().queue().addItemListToPlay(item.getMediaElement(), position);
                     } else if (item.getItemType() != ItemType.ALBUM && ((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().size() > 0) {
-                        App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), position);
+                        App.playbackManager().queue().addItemListToPlay(((MediaItemCollection)item.getMediaElement().get(item.getCurrentIndex())).getMediaElement(), position);
                     }
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -215,10 +215,10 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                             if(item.getParentType() == ItemType.ALBUM && item.getMediaElement().size() > 0){
                                 switch (menuItem.getItemId()) {
                                     case R.id.popup_song_play_next:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(item.getMediaElement().get(position));
+                                        App.playbackManager().queue().addItemAsPlayNext(item.getMediaElement().get(position));
                                         break;
                                     case R.id.popup_song_add_queue:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(item.getMediaElement().get(position));
+                                        App.playbackManager().queue().addItemAsUpNext(item.getMediaElement().get(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
                                         ArrayList list = new ArrayList();
@@ -238,10 +238,10 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                             }else {
                                 switch (menuItem.getItemId()) {
                                     case R.id.popup_song_play_next:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                        App.playbackManager().queue().addItemAsPlayNext(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
                                         break;
                                     case R.id.popup_song_add_queue:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
+                                        App.playbackManager().queue().addItemAsUpNext(((MediaItemCollection) item.getMediaElement().get(item.getCurrentIndex())).getMediaElement().get(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
                                         ArrayList list = new ArrayList();

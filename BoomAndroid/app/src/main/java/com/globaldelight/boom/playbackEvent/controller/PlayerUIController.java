@@ -33,7 +33,7 @@ public class PlayerUIController implements IPlayerUIController {
 
     @Override
     public void OnPlayPause() {
-        IMediaItemBase item =  App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        IMediaItemBase item =  App.playbackManager().queue().getPlayingItem();
         if(null != item && !App.playbackManager().isTrackWaitingForPlay()) {
             mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
         }
@@ -41,7 +41,7 @@ public class PlayerUIController implements IPlayerUIController {
 
     @Override
     public void OnPlayerSeekChange(int progress) {
-        IMediaItemBase item =  App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        IMediaItemBase item =  App.playbackManager().queue().getPlayingItem();
         if(null != item && !App.playbackManager().isTrackWaitingForPlay()) {
             Intent intent = new Intent(PlayerServiceReceiver.ACTION_SEEK_SONG);
             intent.putExtra("seek", progress);
@@ -51,26 +51,26 @@ public class PlayerUIController implements IPlayerUIController {
 
     @Override
     public void OnRepeatClick() {
-        if(null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem())
+        if(null != App.playbackManager().queue().getPlayingItem())
             mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_REPEAT_SONG));
 
     }
 
     @Override
     public void OnShuffleClick() {
-        if(null != App.getPlayingQueueHandler().getUpNextList().getPlayingItem())
+        if(null != App.playbackManager().queue().getPlayingItem())
             mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
     }
 
     @Override
     public void OnNextTrackClick() {
-        if(App.getPlayingQueueHandler().getUpNextList().isNext() && !App.playbackManager().isTrackWaitingForPlay())
+        if(App.playbackManager().queue().isNext() && !App.playbackManager().isTrackWaitingForPlay())
             mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_NEXT_SONG));
     }
 
     @Override
     public void OnPreviousTrackClick() {
-        if(App.getPlayingQueueHandler().getUpNextList().isPrevious() && !App.playbackManager().isTrackWaitingForPlay())
+        if(App.playbackManager().queue().isPrevious() && !App.playbackManager().isTrackWaitingForPlay())
             mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PREV_SONG));
     }
 

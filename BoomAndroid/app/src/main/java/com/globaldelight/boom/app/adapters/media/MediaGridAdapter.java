@@ -83,10 +83,10 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
         int size = setSize(holder);
         if(null == mediaItem.getItemArtUrl()) {
             if ( mediaItem.getItemType() == ItemType.ARTIST ) {
-                mediaItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getArtistArtList().get(mediaItem.getItemId()));
+                mediaItem.setItemArtUrl(App.playbackManager().queue().getArtistArtList().get(mediaItem.getItemId()));
             }
             else {
-                mediaItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(mediaItem.getItemSubTitle()));
+                mediaItem.setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(mediaItem.getItemSubTitle()));
             }
         }
 
@@ -224,10 +224,10 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
             ArrayList<? extends IMediaItemBase> itemToAdd = getMediaListToAdd(mediaItem);
             switch (itemId) {
                 case R.id.popup_album_play_next:
-                    App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(itemToAdd);
+                    App.playbackManager().queue().addItemAsPlayNext(itemToAdd);
                     break;
                 case R.id.popup_album_add_queue:
-                    App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemToAdd);
+                    App.playbackManager().queue().addItemAsUpNext(itemToAdd);
                     break;
                 case R.id.popup_album_add_playlist:
                     Utils.addToPlaylist(activity, itemToAdd, null);

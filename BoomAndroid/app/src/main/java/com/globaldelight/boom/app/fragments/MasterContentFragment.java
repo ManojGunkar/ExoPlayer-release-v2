@@ -182,7 +182,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     stopLoadProgress();
                     break;
                 case ACTION_QUEUE_COMPLETED:
-                    mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+                    mPlayingMediaItem = (MediaItem) App.playbackManager().queue().getPlayingItem();
                     mIsPlaying = false;
                     mIsLastPlayed = true;
                     mTrackSeek.setProgress(0);
@@ -212,7 +212,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     break;
                 case ACTION_UPDATE_REPEAT :
                     updateRepeat();
-                    updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
+                    updatePreviousNext(App.playbackManager().queue().isPrevious(), App.playbackManager().queue().isNext());
                     break;
                 case ACTION_STOP_UPDATING_UPNEXT_DB:
                     isUpdateUpnextDB = false;
@@ -305,7 +305,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void setPlayerInfo(){
-        mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        mPlayingMediaItem = (MediaItem) App.playbackManager().queue().getPlayingItem();
         mIsPlaying = App.playbackManager().isPlaying();
         mIsLastPlayed = (null != App.playbackManager().getPlayingItem() ?
                 (!App.playbackManager().isPlaying() && !App.playbackManager().isPaused() ? true : false) :
@@ -338,7 +338,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     /* Large Player UI and Functionality*/
     private void updateActionBarButtons() {
-        if(App.getPlayingQueueHandler().getUpNextList().getUpNextItemCount() > 0 ){
+        if(App.playbackManager().queue().getUpNextItemCount() > 0 ){
             mUpNextBtnPanel.setVisibility(View.VISIBLE);
             mPlayerOverFlowMenuPanel.setVisibility(View.VISIBLE);
         }else{
@@ -611,7 +611,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mTotalSeekTime.setVisibility(View.INVISIBLE);
             mCurrentSeekTime.setVisibility(View.INVISIBLE);
         }
-        updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
+        updatePreviousNext(App.playbackManager().queue().isPrevious(), App.playbackManager().queue().isNext());
         updateShuffle();
         updateRepeat();
     }

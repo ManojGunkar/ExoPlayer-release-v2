@@ -89,8 +89,8 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                         holder.undoButton.setVisibility(View.VISIBLE);
                 }
             }, 500);
-        } else if(App.getPlayingQueueHandler().getUpNextList().getUpNextItemCount() > 0){
-            MediaItem item = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getUpNextItemList().get(position);
+        } else if(App.playbackManager().queue().getUpNextItemCount() > 0){
+            MediaItem item = (MediaItem) App.playbackManager().queue().getUpNextItemList().get(position);
             if(null != item) {
                 // we need to show the "normal" state
                 holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.app_background));
@@ -98,7 +98,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 holder.undoButton.setVisibility(View.GONE);
                 holder.undoButton.setOnClickListener(null);
                 if (null == item.getItemArtUrl())
-                    item.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(item.getItemAlbum()));
+                    item.setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(item.getItemAlbum()));
 
                 if (null == item.getItemArtUrl())
                     item.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -107,7 +107,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 holder.name.setText(item.getItemTitle());
                 holder.artistName.setText(item.getItemArtist());
 
-                if (null != App.playbackManager().getPlayingItem() && position == App.getPlayingQueueHandler().getUpNextList().getPlayingItemIndex()
+                if (null != App.playbackManager().getPlayingItem() && position == App.playbackManager().queue().getPlayingItemIndex()
                        && item.getItemId() == App.playbackManager().getPlayingItem().getItemId()) {
                     playingItemPosition = position;
                     holder.art_overlay.setVisibility(View.VISIBLE);
@@ -158,7 +158,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
             @Override
             public void onClick(View view) {
                 if (!App.playbackManager().isTrackLoading()){
-                    App.getPlayingQueueHandler().getUpNextList().setNewItemAsPlayingItem(itemPosition);
+                    App.playbackManager().queue().setNewItemAsPlayingItem(itemPosition);
                 }
                 try {
                     recyclerView.scrollToPosition(itemPosition);
@@ -188,7 +188,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
 
     @Override
     public int getItemCount() {
-        return App.getPlayingQueueHandler().getUpNextList().getUpNextItemCount();
+        return App.playbackManager().queue().getUpNextItemCount();
     }
 
     public boolean isSwipeDeleteAllowed(int postion) {
@@ -208,10 +208,10 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 public void run() {
                     if (itemDeletePosition >= 0) {
                         try {
-                            App.getPlayingQueueHandler().getUpNextList().removeItem(itemDeletePosition);
+                            App.playbackManager().queue().removeItem(itemDeletePosition);
 
                             if(playingItemPosition > itemDeletePosition){
-                                App.getPlayingQueueHandler().getUpNextList().setPlayingItemIndex(playingItemPosition-1);
+                                App.playbackManager().queue().setPlayingItemIndex(playingItemPosition-1);
                             }
                         } catch (ArrayIndexOutOfBoundsException e) {
                             e.printStackTrace();
