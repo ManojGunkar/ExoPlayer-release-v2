@@ -196,19 +196,20 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     showProgressLoader();
                     break;
                 case ACTION_UPDATE_TRACK_POSITION:
+                    long duration = App.playbackManager().getDuration();
+                    long current = App.playbackManager().getPosition();
                     if(!isUser) {
-                        mTrackSeek.setProgress(intent.getIntExtra("percent", 0));
-                        mMiniPlayerSeek.setProgress(intent.getIntExtra("percent", 0));
+                        int percent = duration > 0 ? (int)((current * 100) / duration) : 0;
+                        mTrackSeek.setProgress(percent);
+                        mMiniPlayerSeek.setProgress(percent);
                     }
                     if(isCloudSeek){
                         stopLoadProgress();
                         isCloudSeek = false;
                     }
 
-                    long totalMillis = intent.getLongExtra("totalms", 0);
-                    long currentMillis = intent.getLongExtra("currentms", 0);
                     if(!isUser)
-                        updateTrackPlayTime(totalMillis, currentMillis);
+                        updateTrackPlayTime(duration, current);
                     break;
                 case ACTION_UPDATE_SHUFFLE:
                     updateShuffle();
@@ -324,9 +325,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void updatePlayerSeekAndTime() {
         if(null != mPlayingMediaItem && !mIsPlaying && !mIsLastPlayed){
-            int progress = App.getUserPreferenceHandler().getPlayerSeekPosition();
-            long currentMillis= App.getUserPreferenceHandler().getPlayedTime();
-            long totalMillis = App.getUserPreferenceHandler().getRemainsTime(mPlayingMediaItem.getDurationLong());
+            long currentMillis= App.playbackManager().getPosition();
+            long totalMillis = App.playbackManager().getDuration();
+            int progress = totalMillis > 0? (int)(currentMillis * 100 / totalMillis) : 0;
+
 
             if(null != mTrackSeek)
                 mTrackSeek.setProgress(progress);

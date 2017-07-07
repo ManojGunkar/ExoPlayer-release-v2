@@ -84,17 +84,8 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
         @Override
         public void onPlayTimeUpdate(final long currentms, final long totalms) {
-            int percent = (totalms == 0)? 100 : (int)(currentms * 100 / totalms);
             Intent intent = new Intent();
             intent.setAction(PlayerEvents.ACTION_UPDATE_TRACK_POSITION);
-            intent.putExtra("percent",  percent);
-            intent.putExtra("currentms", currentms);
-            intent.putExtra("totalms", totalms);
-
-            App.getUserPreferenceHandler().setPlayerSeekPosition(percent);
-            App.getUserPreferenceHandler().setPlayedTime(currentms);
-            App.getUserPreferenceHandler().setRemainsTime(totalms);
-
             context.sendBroadcast(intent);
             isSeeked = false;
         }
