@@ -135,16 +135,22 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         return 0;
     }
 
+    public void setVolume(float volume) {
+        if ( mExoPlayer != null ) {
+            mExoPlayer.setVolume(volume);
+        }
+    }
+
 
 
     public void play() {
-
         boolean mediaHasChanged = !TextUtils.equals(sourcePath, mCurrentSourcePath);
         if (mediaHasChanged) {
             mCurrentSourcePath = sourcePath;
+            releaseResources(true);
         }
 
-        if ( mediaHasChanged || mExoPlayer == null || state != PAUSED ) {
+        if ( mediaHasChanged || mExoPlayer == null  ) {
             if(AudioEffect.getInstance(mContext).getSelectedEqualizerPosition() == 0) {
                 setAutoEqualizer();
             }
@@ -156,10 +162,10 @@ public class AudioPlayer implements ExoPlayer.EventListener {
                 mExoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, new DefaultTrackSelector(), new DefaultLoadControl());
                 mExoPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mExoPlayer.addListener(this);
-
-                state = LOADING;
-                updatePlayerEffect();
             }
+
+            updatePlayerEffect();
+
             // Produces DataSource instances through which media data is loaded.
             DataSource.Factory dataSourceFactory =
                     new DefaultDataSourceFactory(
@@ -173,7 +179,11 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
             // Prepares media to play (happens on background thread) and triggers
             // {@code onPlayerStateChanged} mCallback when the stream is ready to play.
-            mExoPlayer.prepare(mediaSource, false, false);
+            mExoPlayer.prepare(mediaSource);
+
+
+            state = LOADING;
+            postStateChange();
         }
 
         mWakeLock.acquire();
@@ -192,17 +202,16 @@ public class AudioPlayer implements ExoPlayer.EventListener {
                 }
             }
         }, 0, 1000);
-        postStateChange();
     }
 
     public void stop(){
-        releaseResources(STOPPED);
+        state = STOPPED;
+        releaseResources(true);
         postStateChange();
     }
 
-    private void releaseResources(int newState) {
-        state = newState;
-        if ( state == STOPPED ) {
+    private void releaseResources(boolean releasePlayer) {
+        if ( releasePlayer && mExoPlayer != null ) {
             mExoPlayer.release();
             mExoPlayer.removeListener(this);
             mExoPlayer = null;
@@ -226,9 +235,9 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         if ( mExoPlayer != null ) {
             mExoPlayer.setPlayWhenReady(false);
         }
-
-        releaseResources(PAUSED);
+        state = PAUSED;
         postStateChange();
+        releaseResources(false);
     }
 
     private void seek(long pos) {
@@ -325,7 +334,6 @@ public class AudioPlayer implements ExoPlayer.EventListener {
             setHighQualityEnable(audioEffect.isIntensityOn());
 
             setHeadPhone(audioEffect.getHeadPhoneType());
-
         }
     }
 
@@ -430,17 +438,15 @@ public class AudioPlayer implements ExoPlayer.EventListener {
                 break;
 
             case ExoPlayer.STATE_ENDED:
-                releaseResources(STOPPED);
-                postStateChange();
+                releaseResources(true);
                 postOnFinish();
                 break;
         }
-
     }
 
     @Override
     public void onPlayerError(ExoPlaybackException e) {
-        releaseResources(STOPPED);
+        releaseResources(true);
         postError();
     }
 

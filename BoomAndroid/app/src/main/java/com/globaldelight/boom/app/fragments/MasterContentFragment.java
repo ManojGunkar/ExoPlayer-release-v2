@@ -70,13 +70,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_LAST_PLAYED_SONG;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_DISCONNECTED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_SWITCH_OFF_AUDIO_EFFECT;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_SCREEN_RESUME;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_RECEIVE_SONG;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_TRACK_STOPPED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_QUEUE_COMPLETED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_REPEAT;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_SHUFFLE;
@@ -157,7 +156,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         public void onReceive(Context context, Intent intent) {
             IMediaItem item;
             switch (intent.getAction()){
-                case ACTION_RECEIVE_SONG :
+                case ACTION_SONG_CHANGED:
                     item = intent.getParcelableExtra("playing_song");
                     if(item != null){
                         mPlayingMediaItem = (MediaItem) item;
@@ -169,13 +168,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     }
                     stopLoadProgress();
                     break;
-                case ACTION_LAST_PLAYED_SONG:
-                    item = intent.getParcelableExtra("playing_song");
-                    mPlayingMediaItem = (MediaItem) item;
-                    mIsPlaying = false;
-                    mIsLastPlayed = intent.getBooleanExtra("last_played_song", true);
-                    updatePlayerUI();
-                    break;
+
                 case ACTION_PLAYER_STATE_CHANGED:
                     try {
                         if ( App.playbackManager().isTrackPlaying() ) {
@@ -188,10 +181,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     }catch (Exception e){}
                     stopLoadProgress();
                     break;
-                case ACTION_TRACK_STOPPED :
+                case ACTION_QUEUE_COMPLETED:
                     mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
                     mIsPlaying = false;
-                    mIsLastPlayed = false;
+                    mIsLastPlayed = true;
+                    mTrackSeek.setProgress(0);
+                    mMiniPlayerSeek.setProgress(0);
+                    updateTrackPlayTime(0, 0);
                     updatePlayerUI(false);
                     showProgressLoader();
                     break;
@@ -793,10 +789,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     public void registerPlayerReceiver(Context context){
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_RECEIVE_SONG);
-        intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
+        intentFilter.addAction(ACTION_SONG_CHANGED);
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
-        intentFilter.addAction(ACTION_TRACK_STOPPED);
+        intentFilter.addAction(ACTION_QUEUE_COMPLETED);
         intentFilter.addAction(ACTION_UPDATE_TRACK_POSITION);
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);

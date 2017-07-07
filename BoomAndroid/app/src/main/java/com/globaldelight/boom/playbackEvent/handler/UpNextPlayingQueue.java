@@ -406,8 +406,6 @@ public class UpNextPlayingQueue {
                     PlayingItemChanged();
                 }
             }, 200);
-        } else {
-            context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_LAST_PLAYED_SONG));
         }
     }
 

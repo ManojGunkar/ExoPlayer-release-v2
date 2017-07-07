@@ -14,10 +14,8 @@ import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
-import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
@@ -26,9 +24,12 @@ import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.player.AudioPlayer;
 
+import java.util.ArrayList;
+
+import static android.media.AudioManager.AUDIOFOCUS_GAIN;
+import static android.media.AudioManager.AUDIOFOCUS_GAIN_TRANSIENT;
+import static android.media.AudioManager.AUDIOFOCUS_LOSS;
 import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
-import static com.globaldelight.boom.app.receivers.PlayerServiceReceiver.ACTION_PLAY_STOP;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 
 /**
  * Created by Rahul Agarwal on 03-10-16.
@@ -42,6 +43,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     private static int PLAYER_DIRECTION;
 
 
+    private ArrayList<Listener> mListeners = new ArrayList<>();
     private static IMediaItemBase playingItem;
     private static boolean isTrackWaiting = false;
     private AudioPlayer mPlayer;
@@ -51,7 +53,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     private MediaSession session;
     private GoogleDriveHandler googleDriveHandler;
     private Handler seekEventHandler;
-    private static boolean isSeeked = false;
 
     AudioPlayer.Callback IPlayerEvents = new AudioPlayer.Callback() {
 
@@ -60,23 +61,22 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
             switch (state) {
                 case AudioPlayer.LOADING:
                     isTrackWaiting = false;
-                    context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_GET_SONG));
+                    notifyMediaChanged();
                     if(null != getPlayingItem() && getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB){
-                        context.sendBroadcast(new Intent(ACTION_PLAYER_STATE_CHANGED));
+                        notifyPlayerStateChanged();
                     }
                     break;
 
                 case AudioPlayer.PLAYING:
-                    context.sendBroadcast(new Intent(ACTION_PLAYER_STATE_CHANGED));
+                    notifyPlayerStateChanged();
                     break;
 
                 case AudioPlayer.PAUSED:
-                    context.sendBroadcast(new Intent(ACTION_PLAYER_STATE_CHANGED));
+                    notifyPlayerStateChanged();
                     break;
 
                 case AudioPlayer.STOPPED:
-                    playingItem = null;
-                    context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
+                    notifyPlayerStateChanged();
                     break;
             }
 
@@ -84,10 +84,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
         @Override
         public void onPlayTimeUpdate(final long currentms, final long totalms) {
-            Intent intent = new Intent();
-            intent.setAction(PlayerEvents.ACTION_UPDATE_TRACK_POSITION);
-            context.sendBroadcast(intent);
-            isSeeked = false;
+            notifyPositionUpdate();
         }
 
         @Override
@@ -102,11 +99,8 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 playNextSong(false);
             }else if(isPrevious() && PLAYER_DIRECTION == PREVIOUS) {
                 playPrevSong();
-            }else {
-                context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
             }
-            context.sendBroadcast(new Intent(ACTION_PLAYER_STATE_CHANGED));
-            Toast.makeText(context, context.getResources().getString(R.string.error_in_playing), Toast.LENGTH_SHORT).show();
+            notifyError();
         }
     };
 
@@ -114,21 +108,11 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         @Override
         public void onPlay() {
             setSessionState(PlaybackState.STATE_PLAYING);
-
-            Intent intent = new Intent();
-            intent.setAction(PlayerServiceReceiver.ACTION_PLAYING_ITEM_CLICKED);
-            intent.putExtra("play_pause", true );
-            context.sendBroadcast(intent);
         }
 
         @Override
         public void onPause() {
             setSessionState(PlaybackState.STATE_PAUSED);
-
-            Intent intent = new Intent();
-            intent.setAction(PlayerServiceReceiver.ACTION_PLAYING_ITEM_CLICKED);
-            intent.putExtra("play_pause", false );
-            context.sendBroadcast(intent);
         }
 
         @Override
@@ -165,6 +149,50 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         return instance;
     }
 
+    public void registerListener(Listener listener) {
+        if ( mListeners.indexOf(listener) == -1) {
+            mListeners.add(listener);
+        }
+
+    }
+
+    public void unregisterListener(Listener listener) {
+        if ( mListeners.indexOf(listener) != -1) {
+            mListeners.remove(listener);
+        }
+    }
+
+    private void notifyMediaChanged() {
+        for ( Listener aListener: mListeners ) {
+            aListener.onMediaChanged();
+        }
+    }
+
+    private void notifyPlayerStateChanged() {
+        for ( Listener aListener: mListeners ) {
+            aListener.onPlayerStateChanged();
+        }
+    }
+
+    private void notifyError() {
+        for ( Listener aListener: mListeners ) {
+            aListener.onPlayerError();
+        }
+    }
+
+    private void notifyComplete() {
+        for ( Listener aListener: mListeners ) {
+            aListener.onPlaybackCompleted();
+        }
+    }
+
+    private void notifyPositionUpdate() {
+        for ( Listener aListener: mListeners ) {
+            aListener.onUpdatePlayerPosition();
+        }
+    }
+
+
 
     public long getPlayerDataSourceId(){
         return mPlayer.getDataSourceId();
@@ -187,24 +215,28 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     }
 
     public long getDuration() {
-        return mPlayer.getDuration();
+        return Math.max(0, mPlayer.getDuration());
     }
 
     public long getPosition() {
-        return mPlayer.getCurrentPosition();
+        return Math.max(0,mPlayer.getCurrentPosition());
     }
 
     @Override
     public synchronized void onPlayingItemChanged() {
-        if(isPlaying() || isPaused() || isLoading() ) {
+        if ( isPlaying() ) {
+            setSessionState(PlaybackState.STATE_PAUSED);
+        }
+
+        notifyMediaChanged();
+        playingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        if ( playingItem != null ) {
+            isTrackWaiting = true;
+            new PlayingItemChanged().execute(playingItem);
+        }
+        else {
             setSessionState(PlaybackState.STATE_STOPPED);
         }
-        context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
-        context.sendBroadcast(new Intent(ACTION_PLAYER_STATE_CHANGED));
-
-        playingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
-        isTrackWaiting = true;
-        new PlayingItemChanged().execute(playingItem);
     }
 
     public  boolean isTrackWaitingForPlay(){
@@ -267,8 +299,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 }
             }else{
                 isTrackWaiting = false;
-                context.sendBroadcast(new Intent(ACTION_PLAY_STOP));
-                context.sendBroadcast(new Intent(ACTION_PLAYER_STATE_CHANGED));
+                setSessionState(PlaybackState.STATE_STOPPED);
                 Toast.makeText(context, context.getResources().getString(R.string.loading_problem), Toast.LENGTH_SHORT).show();
             }
         }
@@ -276,7 +307,13 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     public void playNextSong(boolean isUser) {
         PLAYER_DIRECTION = NEXT;
-        App.getPlayingQueueHandler().getUpNextList().setNextPlayingItem(isUser);
+        if ( isNext() ) {
+            App.getPlayingQueueHandler().getUpNextList().setNextPlayingItem(isUser);
+        }
+        else {
+            setSessionState(PlaybackState.STATE_STOPPED);
+            notifyComplete();
+        }
     }
 
     public void playPrevSong() {
@@ -286,41 +323,31 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     @Override
     public void onPlayingItemClicked() {
-        boolean playing = playPause();
-        Intent intent = new Intent();
-        intent.setAction(PlayerServiceReceiver.ACTION_PLAYING_ITEM_CLICKED);
-        intent.putExtra("play_pause", playing );
-        context.sendBroadcast(intent);
+        playPause();
     }
 
     @Override
     public void onQueueUpdated() {
-        Intent intent = new Intent();
-        intent.setAction(PlayerServiceReceiver.ACTION_UPNEXT_UPDATE);
-        context.sendBroadcast(intent);
+        for (Listener aListener: mListeners ) {
+            aListener.onQueueUpdated();
+        }
     }
 
-    public boolean playPause() {
+    public void playPause() {
         if(isPlaying()){
             setSessionState(PlaybackState.STATE_PAUSED);
-//            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_PAUSE_PLAYING);
-            FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_PAUSE_PLAYING);
-            return false;
         } else {
             if ( requestAudioFocus() ) {
                 setSessionState(PlaybackState.STATE_PLAYING);
-//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_PLAY_PLAYING);
-                FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_PLAY_PLAYING);
-                return true;
             }
             else {
-                return false;
+                setSessionState(PlaybackState.STATE_STOPPED);
             }
         }
     }
 
     public void stop() {
-        if(!isStopped() && null != mPlayer){
+        if(!isStopped() ){
             setSessionState(PlaybackState.STATE_STOPPED);
         }
     }
@@ -330,8 +357,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     }
 
     public void seek(final int progress) {
-        if( !isSeeked && !isTrackWaiting){
-            isSeeked = true;
+        if( !isTrackWaiting ){
             seekEventHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -403,20 +429,25 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         if ( session == null ) {
             session = new MediaSession(context, context.getPackageName());
             session.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
-            setSessionState(PlaybackState.STATE_STOPPED);
+            setSessionState(PlaybackState.STATE_NONE);
             session.setCallback(mediaSessionCallback);
         }
         session.setActive(true);
     }
 
-    void unregisterSession() {
-        session.release();
-    }
 
     void setSessionState(int state)
     {
+        long actions = PlaybackState.ACTION_PLAY_PAUSE | PlaybackState.ACTION_SKIP_TO_NEXT | PlaybackState.ACTION_SKIP_TO_PREVIOUS;
+        if ( state == PlaybackState.STATE_PLAYING ) {
+            actions |= (PlaybackState.ACTION_PAUSE | PlaybackState.ACTION_STOP);
+        }
+        else {
+            actions |= PlaybackState.ACTION_PLAY;
+        }
+
         PlaybackState pbState = new PlaybackState.Builder()
-                .setActions(PlaybackState.ACTION_PAUSE | PlaybackState.ACTION_PLAY | PlaybackState.ACTION_PLAY_PAUSE | PlaybackState.ACTION_SKIP_TO_NEXT | PlaybackState.ACTION_SKIP_TO_PREVIOUS | PlaybackState.ACTION_STOP)
+                .setActions(actions)
                 .setState(state, 0, 1, 0)
                 .build();
         session.setPlaybackState(pbState);
@@ -430,9 +461,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 break;
 
             case PlaybackState.STATE_STOPPED:
-                if (mPlayer.isPlaying() || mPlayer.isPause() || mPlayer.isLoading()) {
-                    mPlayer.stop();
-                }
+                mPlayer.stop();
                 break;
         }
     }
@@ -452,27 +481,54 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         session.setActive(false);
     }
 
+    private static final float VOLUME_DUCK = 0.05f;
+    private static final float VOLUME_FULL = 1.0f;
+    private boolean mIsVolumeDucked = false;
+
     @Override
     public void onAudioFocusChange(int focusChange) {
-        Intent intent = new Intent();
-        intent.setAction(PlayerServiceReceiver.ACTION_PLAYING_ITEM_CLICKED);
-        if (focusChange == AUDIOFOCUS_LOSS_TRANSIENT) {
-            intent.putExtra("play_pause", false );
-            mPlayer.pause();
-        } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN_TRANSIENT) {
-            intent.putExtra("play_pause", true );
-            mPlayer.play();
-        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-            releaseAudioFocus();
-            intent.putExtra("play_pause", false );
-            mPlayer.pause();
-        }
-        else {
-            intent = null;
-        }
 
-        if ( intent != null ) {
-            context.sendBroadcast(intent);
+        switch ( focusChange ) {
+            case AUDIOFOCUS_LOSS_TRANSIENT:
+                if ( isPlaying() ) {
+                    mPlayer.setVolume(VOLUME_DUCK);
+                    mIsVolumeDucked = true;
+                }
+                break;
+
+            case AUDIOFOCUS_GAIN_TRANSIENT:
+                mPlayer.setVolume(VOLUME_FULL);
+                break;
+
+            case AUDIOFOCUS_LOSS:
+                setSessionState(PlaybackState.STATE_PAUSED);
+                releaseAudioFocus();
+                break;
+
+            case AUDIOFOCUS_GAIN:
+                if ( isPlaying() && mIsVolumeDucked ) {
+                    mPlayer.setVolume(VOLUME_FULL);
+                    mIsVolumeDucked = false;
+                }
         }
+    }
+
+    public interface Listener {
+        // when the song changes
+        void onMediaChanged();
+
+        // when all items in the queue are played
+        void onPlaybackCompleted();
+
+        // when player state changes
+        void onPlayerStateChanged();
+
+        // when there is an error in playing the song
+        void onPlayerError();
+
+        // when song is being played
+        void onUpdatePlayerPosition();
+
+        void onQueueUpdated();
     }
 }
