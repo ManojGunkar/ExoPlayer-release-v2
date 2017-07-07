@@ -139,6 +139,7 @@ void BOOM_ENGINE_METHOD(flush)(
         JNIEnv *env,
         jobject obj)
 {
+    LOGD("Flush");
     gdpl::AutoLock lock(&mLock);
     mProcessor->Flush();
     mEngine->ResetEngine();
