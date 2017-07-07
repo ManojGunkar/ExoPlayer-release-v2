@@ -6,22 +6,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.os.Handler;
 import android.util.Log;
-
-import com.globaldelight.boom.app.App;
 
 /**
  * Created by Rahul Agarwal on 05-10-16.
  */
 
 public class HeadPhonePlugReceiver extends BroadcastReceiver {
-    public static boolean isPlugged = false;
-    private Handler handler;
-    private IUpdateMusic listener=null;
+    private Callback listener=null;
     private AudioManager mAudioManager;
-    public static boolean HEADSET_PLUGGED = true;
-    public static boolean HEADSET_UNPLUGGED = false;
     private static boolean isWiredHeadsetConnected;
     private static boolean isBluetoothHeadsetConnected;
 
@@ -69,49 +62,34 @@ public class HeadPhonePlugReceiver extends BroadcastReceiver {
 
         switch (state) {
             case 0:
-                if( App.playbackManager().isPlaying() )
-                    context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onHeadsetUnplugged();
-                        Log.d("HeadsetState:", "Disconnected");
-                    }
-                });
+                listener.onHeadsetUnplugged();
+                Log.d("HeadsetState:", "Disconnected");
                 break;
 
             case 1:
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onHeadsetPlugged();
-                        Log.d("HeadsetState:", "Connected");
-                    }
-                });
+                listener.onHeadsetPlugged();
+                Log.d("HeadsetState:", "Connected");
                 break;
+
             default:
-//                    Toast.makeText(context, "No Idea", Toast.LENGTH_LONG).show();
+                break;
         }
 
-        isPlugged = isHeadsetConnected();
     }
 
-    public HeadPhonePlugReceiver(Context context, IUpdateMusic listener){
-        handler = new Handler();
+    public HeadPhonePlugReceiver(Context context, Callback listener){
         this.listener = listener;
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         isBluetoothHeadsetConnected = mAudioManager.isBluetoothA2dpOn() || mAudioManager.isBluetoothScoOn();
         isWiredHeadsetConnected = mAudioManager.isWiredHeadsetOn();
-        isPlugged = isHeadsetConnected();
     }
 
     public static boolean isHeadsetConnected() {
         return isWiredHeadsetConnected || isBluetoothHeadsetConnected;
     }
 
-    public interface IUpdateMusic {
-        public void onHeadsetUnplugged();
-        public void onHeadsetPlugged();
+    public interface Callback {
+        void onHeadsetUnplugged();
+        void onHeadsetPlugged();
     }
 }

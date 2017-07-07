@@ -38,7 +38,7 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_P
  * Created by Rahul Kumar Agrawal on 6/14/2016.
  */
 
-public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpdateMusic, PlayerServiceReceiver.IPlayerService,
+public class PlayerService extends Service implements HeadPhonePlugReceiver.Callback, PlayerServiceReceiver.IPlayerService,
         ConnectivityReceiver.ConnectivityReceiverListener, PlaybackManager.Listener {
 
     private long mServiceStartTime = 0;
@@ -132,7 +132,9 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.IUpd
 
     @Override
     public void onHeadsetUnplugged() {
-
+        if ( mPlayback.isPlaying() ) {
+            onPlayPauseTrack();
+        }
     }
 
     @Override

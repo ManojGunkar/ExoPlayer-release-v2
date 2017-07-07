@@ -334,6 +334,11 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     }
 
     public void playPause() {
+        if ( mPlayer.getDataSourceId() == -1 ) {
+            onPlayingItemChanged();
+            return;
+        }
+
         if(isPlaying()){
             setSessionState(PlaybackState.STATE_PAUSED);
         } else {
