@@ -60,7 +60,6 @@ public class HeadPhoneItemAdapter extends RecyclerView.Adapter<HeadPhoneItemAdap
             public void onClick(View view) {
                 audioEffectPreferenceHandler.setHeadPhoneType(position);
                 selectedHeadPhoneType = position;
-                App.playbackManager().setHeadPhoneType(position);
                 notifyDataSetChanged();
                 recyclerView.scrollToPosition(position);
                 try {

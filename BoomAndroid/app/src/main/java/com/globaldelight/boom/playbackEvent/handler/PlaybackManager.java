@@ -1,7 +1,6 @@
 package com.globaldelight.boom.playbackEvent.handler;
 
 import android.content.Context;
-import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaMetadata;
 import android.media.session.MediaSession;
@@ -12,8 +11,6 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
-import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
@@ -25,6 +22,8 @@ import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.player.AudioPlayer;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import static android.media.AudioManager.AUDIOFOCUS_GAIN;
 import static android.media.AudioManager.AUDIOFOCUS_GAIN_TRANSIENT;
@@ -35,7 +34,7 @@ import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
  * Created by Rahul Agarwal on 03-10-16.
  */
 
-public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioFocusChangeListener {
+public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioFocusChangeListener, Observer {
     public static boolean isLibraryResumes = false;
 
     private static final int NEXT = 0;
@@ -140,6 +139,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         googleDriveHandler = new GoogleDriveHandler(context);
         googleDriveHandler.connectToGoogleAccount();
         seekEventHandler = new Handler();
+        AudioEffect.getInstance(context).addObserver(this);
         registerSession();
     }
 
@@ -248,6 +248,66 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     public boolean isTrackPlaying() {
         return isPlaying() || isTrackLoading();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        String changed = (String)arg;
+        AudioEffect effect = AudioEffect.getInstance(context);
+
+        switch (changed) {
+            case AudioEffect.AUDIO_EFFECT_PROPERTY:
+                mPlayer.setEnableEffect(effect.isAudioEffectOn());
+                break;
+            case AudioEffect.SURROUND_SOUND_PROPERTY:
+                mPlayer.setEnable3DAudio(effect.is3DSurroundOn());
+                break;
+            case AudioEffect.FULL_BASS_PROPERTY:
+                mPlayer.setEnableSuperBass(effect.isFullBassOn());
+                break;
+            case AudioEffect.INTENSITY_STATE_PROPERTY:
+                if ( effect.isIntensityOn() ) {
+                    mPlayer.setIntensityValue(effect.getIntensity()/100.0);
+                }
+                else {
+                    mPlayer.setIntensityValue(0.5);
+                }
+                break;
+            case AudioEffect.INTENSITY_PROPERTY:
+                mPlayer.setIntensityValue(effect.getIntensity()/100.0);
+                break;
+            case AudioEffect.EQUALIZER_STATE_PROPERTY:
+                if ( effect.isEqualizerOn() ) {
+                    mPlayer.setEqualizerGain(effect.getSelectedEqualizerPosition());
+                }
+                else {
+                    mPlayer.setEqualizerGain(7); // FLAT
+                }
+                break;
+            case AudioEffect.EQUALIZER_PROPERTY:
+                mPlayer.setEqualizerGain(effect.getSelectedEqualizerPosition());
+                break;
+
+            case AudioEffect.SPEAKER_LEFT_FRONT_PROPERTY:
+                mPlayer.setSpeakerEnable(AudioEffect.SPEAKER_FRONT_LEFT, effect.isLeftFrontSpeakerOn());
+                break;
+            case AudioEffect.SPEAKER_RIGHT_FRONT_PROPERTY:
+                mPlayer.setSpeakerEnable(AudioEffect.SPEAKER_FRONT_RIGHT, effect.isRightFrontSpeakerOn());
+                break;
+            case AudioEffect.SPEAKER_LEFT_SURROUND_PROPERTY:
+                mPlayer.setSpeakerEnable(AudioEffect.SPEAKER_SURROUND_LEFT, effect.isLeftSurroundSpeakerOn());
+                break;
+            case AudioEffect.SPEAKER_RIGHT_SURROUND_PROPERTY:
+                mPlayer.setSpeakerEnable(AudioEffect.SPEAKER_SURROUND_RIGHT, effect.isRightFrontSpeakerOn());
+                break;
+            case AudioEffect.SPEAKER_TWEETER_PROPERTY:
+                mPlayer.setSpeakerEnable(AudioEffect.SPEAKER_TWEETER, effect.isTweeterOn());
+                break;
+            case AudioEffect.SPEAKER_WOOFER_PROPERTY:
+                mPlayer.setSpeakerEnable(AudioEffect.SPEAKER_WOOFER, effect.isWooferOn());
+                break;
+        }
+
     }
 
     private class PlayingItemChanged extends AsyncTask<IMediaItemBase, Void, String>{
@@ -371,45 +431,12 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         }
     }
 
-
-    public void setEffectEnable(boolean enable) {
-        mPlayer.setEnableEffect(enable);
-    }
-
-    public void set3DAudioEnable(boolean enable) {
-        mPlayer.setEnable3DAudio(enable);
-    }
-
-    public void setIntensityValue(double value) {
-        mPlayer.setIntensityValue(value);
-    }
-
-    public void setEqualizerEnable(boolean enable) {
-        mPlayer.setEnableEqualizer(enable);
-    }
-
-    public void setSuperBassEnable(boolean enable) {
-        mPlayer.setEnableSuperBass(enable);
-    }
-
-    public void setEqualizerGain(int position) {
-        mPlayer.setEqualizerGain(position);
-    }
-
-    public void setSpeakerEnable(@AudioEffect.Speaker int speaker, boolean enable) {
-        mPlayer.setSpeakerEnable(speaker, enable);
-    }
-
     public void setHighQualityEnable(boolean highQualityEnable) {
         mPlayer.setHighQualityEnable(highQualityEnable);
     }
 
     public void stopPlayer() {
         setSessionState(PlaybackState.STATE_STOPPED);
-    }
-
-    public void setHeadPhoneType(int headPhoneType) {
-        mPlayer.setHeadPhone(headPhoneType);
     }
 
 
