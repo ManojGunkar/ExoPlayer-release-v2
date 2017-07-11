@@ -312,29 +312,19 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
     public void updatePlayerEffect(){
         final AudioEffect audioEffect = AudioEffect.getInstance(mContext);
-        setEnableEffect(audioEffect.isAudioEffectOn());
         mAudioProcessor.setQuality(mAudioConfig.getQuality());
-        if(audioEffect.isAudioEffectOn()) {
-            setEnable3DAudio(audioEffect.is3DSurroundOn());
-            if (audioEffect.isIntensityOn()) {
-                setIntensityValue(audioEffect.getIntensity() / (double) 100);
-            }
-
-            setEnableEqualizer(audioEffect.isEqualizerOn());
-            setEnableSuperBass(audioEffect.isFullBassOn());
-            setEqualizerGain(audioEffect.getSelectedEqualizerPosition());
-
-            setSpeakerEnable(AudioEffect.SPEAKER_FRONT_LEFT, audioEffect.isLeftFrontSpeakerOn());
-            setSpeakerEnable(AudioEffect.SPEAKER_FRONT_RIGHT, audioEffect.isRightFrontSpeakerOn());
-            setSpeakerEnable(AudioEffect.SPEAKER_TWEETER, audioEffect.isTweeterOn());
-            setSpeakerEnable(AudioEffect.SPEAKER_SURROUND_LEFT, audioEffect.isLeftSurroundSpeakerOn());
-            setSpeakerEnable(AudioEffect.SPEAKER_SURROUND_RIGHT, audioEffect.isRightSurroundSpeakerOn());
-            setSpeakerEnable(AudioEffect.SPEAKER_WOOFER, audioEffect.isWooferOn());
-
-            setHighQualityEnable(audioEffect.isIntensityOn());
-
-            setHeadPhone(audioEffect.getHeadPhoneType());
-        }
+        setHeadPhone(audioEffect.getHeadPhoneType());
+        setEnableEffect(audioEffect.isAudioEffectOn());
+        setEnable3DAudio(audioEffect.is3DSurroundOn());
+        setIntensityValue(audioEffect.isIntensityOn()? audioEffect.getIntensity() / (double) 100 : 0.5);
+        setEnableSuperBass(audioEffect.isFullBassOn());
+        setEqualizerGain(audioEffect.isEqualizerOn()? audioEffect.getSelectedEqualizerPosition() : 7);
+        setSpeakerEnable(AudioEffect.SPEAKER_FRONT_LEFT, audioEffect.isLeftFrontSpeakerOn());
+        setSpeakerEnable(AudioEffect.SPEAKER_FRONT_RIGHT, audioEffect.isRightFrontSpeakerOn());
+        setSpeakerEnable(AudioEffect.SPEAKER_TWEETER, audioEffect.isTweeterOn());
+        setSpeakerEnable(AudioEffect.SPEAKER_SURROUND_LEFT, audioEffect.isLeftSurroundSpeakerOn());
+        setSpeakerEnable(AudioEffect.SPEAKER_SURROUND_RIGHT, audioEffect.isRightSurroundSpeakerOn());
+        setSpeakerEnable(AudioEffect.SPEAKER_WOOFER, audioEffect.isWooferOn());
     }
 
 
@@ -368,9 +358,6 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         }
     }
 
-    public synchronized void setEnableEqualizer(boolean enable){
-
-    }
 
     public synchronized void setEnableSuperBass(boolean enableSuperBass) {
         if ( mAudioProcessor != null ) {
@@ -391,11 +378,6 @@ public class AudioPlayer implements ExoPlayer.EventListener {
     public synchronized void setSpeakerEnable(@AudioEffect.Speaker int speaker, boolean value){
         if ( mAudioProcessor != null ) {
             mAudioProcessor.setSpeakerState(speaker, value == true ? 1 : 0);
-        }
-    }
-
-    public void setHighQualityEnable(boolean highQualityEnable) {
-        if (mAudioProcessor != null) {
         }
     }
 

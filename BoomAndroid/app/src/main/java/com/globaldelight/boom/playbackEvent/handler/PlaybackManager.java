@@ -434,10 +434,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         }
     }
 
-    public void setHighQualityEnable(boolean highQualityEnable) {
-        mPlayer.setHighQualityEnable(highQualityEnable);
-    }
-
     public void stopPlayer() {
         setSessionState(PlaybackState.STATE_STOPPED);
     }

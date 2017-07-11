@@ -114,7 +114,7 @@ public class AudioEffect extends Observable {
     }
 
     public boolean isIntensityOn(){
-        return shp.getBoolean(INTENSITY_STATE_PROPERTY, DEFAULT_POWER);
+        return shp.getBoolean(INTENSITY_STATE_PROPERTY, DEFAULT_POWER) || is3DSurroundOn();
     }
 
     public int getIntensity(){
@@ -136,7 +136,7 @@ public class AudioEffect extends Observable {
     }
 
     public boolean isEqualizerOn(){
-        return shp.getBoolean(EQUALIZER_STATE_PROPERTY, DEFAULT_POWER);
+        return shp.getBoolean(EQUALIZER_STATE_PROPERTY, DEFAULT_POWER) || is3DSurroundOn();
     }
 
     public void setEnableEqualizer(boolean enableEq) {
