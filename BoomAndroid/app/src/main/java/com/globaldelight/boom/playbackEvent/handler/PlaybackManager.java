@@ -256,6 +256,9 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         AudioEffect effect = AudioEffect.getInstance(context);
 
         switch (changed) {
+            case AudioEffect.HEAD_PHONE_TYPE_PROPERTY:
+                mPlayer.setHeadPhone(effect.getHeadPhoneType());
+                break;
             case AudioEffect.AUDIO_EFFECT_PROPERTY:
                 mPlayer.setEnableEffect(effect.isAudioEffectOn());
                 break;
