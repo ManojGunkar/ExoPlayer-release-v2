@@ -269,23 +269,13 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 mPlayer.setEnableSuperBass(effect.isFullBassOn());
                 break;
             case AudioEffect.INTENSITY_STATE_PROPERTY:
-                if ( effect.isIntensityOn() ) {
-                    mPlayer.setIntensityValue(effect.getIntensity()/100.0);
-                }
-                else {
-                    mPlayer.setIntensityValue(0.5);
-                }
+                mPlayer.setIntensity(effect.isIntensityOn()? effect.getIntensity() : 0);
                 break;
             case AudioEffect.INTENSITY_PROPERTY:
-                mPlayer.setIntensityValue(effect.getIntensity()/100.0);
+                mPlayer.setIntensity(effect.getIntensity());
                 break;
             case AudioEffect.EQUALIZER_STATE_PROPERTY:
-                if ( effect.isEqualizerOn() ) {
-                    mPlayer.setEqualizerGain(effect.getSelectedEqualizerPosition());
-                }
-                else {
-                    mPlayer.setEqualizerGain(7); // FLAT
-                }
+                mPlayer.setEqualizerGain(effect.isEqualizerOn()? effect.getSelectedEqualizerPosition() : 7);
                 break;
             case AudioEffect.EQUALIZER_PROPERTY:
                 mPlayer.setEqualizerGain(effect.getSelectedEqualizerPosition());

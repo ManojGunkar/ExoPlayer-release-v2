@@ -316,7 +316,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         setHeadPhone(audioEffect.getHeadPhoneType());
         setEnableEffect(audioEffect.isAudioEffectOn());
         setEnable3DAudio(audioEffect.is3DSurroundOn());
-        setIntensityValue(audioEffect.isIntensityOn()? audioEffect.getIntensity() / (double) 100 : 0.5);
+        setIntensity(audioEffect.isIntensityOn()? audioEffect.getIntensity() : 0);
         setEnableSuperBass(audioEffect.isFullBassOn());
         setEqualizerGain(audioEffect.isEqualizerOn()? audioEffect.getSelectedEqualizerPosition() : 7);
         setSpeakerEnable(AudioEffect.SPEAKER_FRONT_LEFT, audioEffect.isLeftFrontSpeakerOn());
@@ -340,9 +340,9 @@ public class AudioPlayer implements ExoPlayer.EventListener {
     }
 
 
-    public synchronized void setIntensityValue(double intensity) {
+    public synchronized void setIntensity(float intensity) {
         if ( mAudioProcessor != null ) {
-            mAudioProcessor.setIntensity((float)((intensity-0.5)/0.5));
+            mAudioProcessor.setIntensity(intensity);
         }
     }
 

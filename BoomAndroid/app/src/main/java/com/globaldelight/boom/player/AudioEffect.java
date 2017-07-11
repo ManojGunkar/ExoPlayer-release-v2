@@ -114,16 +114,16 @@ public class AudioEffect extends Observable {
     }
 
     public boolean isIntensityOn(){
-        return shp.getBoolean(INTENSITY_STATE_PROPERTY, DEFAULT_POWER) || is3DSurroundOn();
+        return shp.getBoolean(INTENSITY_STATE_PROPERTY, DEFAULT_POWER);
     }
 
-    public int getIntensity(){
-        return shp.getInt(INTENSITY_PROPERTY, 50);
+    public float getIntensity(){
+        return shp.getFloat(INTENSITY_PROPERTY, 0);
     }
 
-    public void setIntensity(int intensity) {
+    public void setIntensity(float intensity) {
         if ( getIntensity() != intensity ) {
-            editor.putInt(INTENSITY_PROPERTY, intensity).apply();
+            editor.putFloat(INTENSITY_PROPERTY, intensity).apply();
             notify(INTENSITY_PROPERTY);
         }
     }
@@ -136,7 +136,7 @@ public class AudioEffect extends Observable {
     }
 
     public boolean isEqualizerOn(){
-        return shp.getBoolean(EQUALIZER_STATE_PROPERTY, DEFAULT_POWER) || is3DSurroundOn();
+        return shp.getBoolean(EQUALIZER_STATE_PROPERTY, DEFAULT_POWER);
     }
 
     public void setEnableEqualizer(boolean enableEq) {

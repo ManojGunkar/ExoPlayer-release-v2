@@ -138,7 +138,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private RegularTextView mEffectSwitchTxt, m3DSurroundTxt, mIntensityTxt, mEqualizerTxt, mSelectedEqTxt;
     private ImageView m3DSurroundBtn, mIntensityBtn, mEqualizerBtn, mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
     private LinearLayout mEqDialogPanel, mSpeakerDialogPanel;
-    private double mOldIntensity;
 
     private List<String> eq_names;
     private TypedArray eq_active_off;
@@ -1043,7 +1042,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mIntensityBtn.setOnClickListener(this);
         mIntensityTxt = (RegularTextView) mInflater.findViewById(R.id.intensity_txt);
         mIntensitySeek = (NegativeSeekBar) mInflater.findViewById(R.id.intensity_seek);
-        mIntensitySeek.setProgress(audioEffects.getIntensity());
+        mIntensitySeek.setProgress((int)(audioEffects.getIntensity() * 50 + 50));
         mIntensitySeek.setOnClickListener(this);
 
         mEqualizerBtn = (ImageView) mInflater.findViewById(R.id.equalizer_btn);
@@ -1121,7 +1120,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mIntensityTxt.setSelected(isIntensityOn);
         }
 
-        mOldIntensity = audioEffects.getIntensity()/(double)100;
 
         boolean isEqualizerOn = audioEffects.isEqualizerOn();
         mEqualizerBtn.setEnabled(isEffectOn);
@@ -1315,18 +1313,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mIntensitySeek.setOnSeekBarChangeListener(new NegativeSeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean isUser) {
-                if((progress/(double)100 - mOldIntensity >= .1 || mOldIntensity - progress/(double)100 >= .1) || progress == 100  || progress == 0) {
-                    mOldIntensity = progress / (double) 100;
-                    audioEffects.setIntensity(progress);
+                audioEffects.setIntensity((progress - 50)/50.0f );
 
-                    if (isUser) {
-                        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
-                    }
-
-                   /* try {
-//                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_INTENSITY_STATE_CHANGED);
-                    } catch (Exception e) {
-                    }*/
+                if (isUser) {
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
                 }
             }
 
