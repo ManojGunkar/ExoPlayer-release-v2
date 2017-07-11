@@ -5,6 +5,7 @@ import android.media.AudioManager;
 import android.media.MediaMetadata;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.player.AudioPlayer;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -342,8 +344,11 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                     mPlayer.setPath(dataSource);
                     mPlayer.setDataSourceId(mediaItemBase.getItemId());
 
+                    String artUrl = new File(mediaItemBase.getItemArtUrl()).toURI().toString();
                     MediaMetadata.Builder builder = new MediaMetadata.Builder();
                     builder.putString(MediaMetadata.METADATA_KEY_TITLE, mediaItemBase.getItemTitle());
+                    builder.putString(MediaMetadata.METADATA_KEY_ALBUM_ART_URI, artUrl);
+
                     session.setMetadata(builder.build());
 
                     setSessionState(PlaybackState.STATE_PLAYING);
