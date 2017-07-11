@@ -42,6 +42,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
+import com.globaldelight.boom.app.dialogs.EqualizerDialog;
+import com.globaldelight.boom.app.dialogs.SpeakerDialog;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
@@ -95,7 +97,7 @@ import static com.globaldelight.boom.app.sharedPreferences.Preferences.TOOLTIP_S
  * Created by Rahul Agarwal on 16-01-17.
  */
 
-public class MasterContentFragment extends Fragment implements MasterActivity.IPlayerSliderControl, View.OnClickListener, View.OnTouchListener, EqualizerDialogAdapter.IEqualizerSelect, Observer {
+public class MasterContentFragment extends Fragment implements MasterActivity.IPlayerSliderControl, View.OnClickListener, View.OnTouchListener, Observer {
     private final String TAG = "PlayerFragment-TAG";
 
     private long mItemId=-1;
@@ -137,7 +139,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private AppCompatCheckBox mFullBassCheck;
     private RegularTextView mEffectSwitchTxt, m3DSurroundTxt, mIntensityTxt, mEqualizerTxt, mSelectedEqTxt;
     private ImageView m3DSurroundBtn, mIntensityBtn, mEqualizerBtn, mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
-    private LinearLayout mEqDialogPanel, mSpeakerDialogPanel;
+    private LinearLayout mEqDialogPanel;
 
     private List<String> eq_names;
     private TypedArray eq_active_off;
@@ -917,27 +919,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 if (audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn())
                     openSpeakerDialog();
                 break;
-            case R.id.speaker_left_front:
-                updateSpeakers(AudioEffect.SPEAKER_FRONT_LEFT);
-                break;
-            case R.id.speaker_right_front:
-                updateSpeakers(AudioEffect.SPEAKER_FRONT_RIGHT);
-                break;
-            case R.id.speaker_left_surround:
-                updateSpeakers(AudioEffect.SPEAKER_SURROUND_LEFT);
-                break;
-            case R.id.speaker_right_surround:
-                updateSpeakers(AudioEffect.SPEAKER_SURROUND_RIGHT);
-                break;
-            case R.id.speaker_left_tweeter:
-                updateSpeakers(AudioEffect.SPEAKER_TWEETER);
-                break;
-            case R.id.speaker_right_tweeter:
-                updateSpeakers(AudioEffect.SPEAKER_TWEETER);
-                break;
-            case R.id.speaker_sub_woofer:
-                updateSpeakers(AudioEffect.SPEAKER_WOOFER);
-                break;
         }
     }
 
@@ -1140,27 +1121,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         int eqPosition = audioEffects.getSelectedEqualizerPosition();
         mSelectedEqImg.setImageDrawable(eq_active_off.getDrawable(eqPosition));
         mSelectedEqTxt.setText(eq_names.get(eqPosition));
-
-    }
-
-    private void setEnableEqualizer(boolean active) {
-        setChangeEqualizerValue(audioEffects.getSelectedEqualizerPosition());
-
-        boolean enable = audioEffects.isAudioEffectOn();
-        mEqualizerBtn.setEnabled(enable);
-        mEqualizerTxt.setEnabled(enable);
-        mSelectedEqGoImg.setEnabled(enable);
-        mEqDialogPanel.setEnabled(enable);
-        mSelectedEqTxt.setEnabled(enable);
-        mSelectedEqImg.setEnabled(enable);
-        if ( enable ) {
-            mEqualizerBtn.setSelected(active);
-            mEqualizerTxt.setSelected(active);
-            mSelectedEqTxt.setSelected(active);
-            mSelectedEqImg.setSelected(active);
-            mSelectedEqGoImg.setSelected(active);
-            mEqDialogPanel.setSelected(active);
-        }
     }
 
     private String isAllSpeakersAreOff(){
@@ -1176,102 +1136,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         return null;
     }
 
-    private void updateSpeakers(LinearLayout speakerPanel){
-        ImageView mFrontLeftSpeaker, mFrontRightSpeaker, mSurroundLeftSpeaker, mSurroundRightSpeaker;
 
-        mFrontLeftSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_left_front);
-        mFrontRightSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_right_front);
-        mSurroundLeftSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_left_surround);
-        mSurroundRightSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_right_surround);
-
-        mFrontLeftSpeaker.setOnClickListener(this);
-        mFrontRightSpeaker.setOnClickListener(this);
-        mSurroundLeftSpeaker.setOnClickListener(this);
-        mSurroundRightSpeaker.setOnClickListener(this);
-
-        mFrontLeftSpeaker.setSelected(audioEffects.isLeftFrontSpeakerOn());
-        mFrontRightSpeaker.setSelected(audioEffects.isRightFrontSpeakerOn());
-        mSurroundLeftSpeaker.setSelected(audioEffects.isLeftSurroundSpeakerOn());
-        mSurroundRightSpeaker.setSelected(audioEffects.isRightSurroundSpeakerOn());
-
-        updateTweeterAndWoofer(speakerPanel, audioEffects.isAllSpeakerOn());
-    }
-
-    private void updateTweeterAndWoofer(LinearLayout speakerPanel, boolean enable){
-        ImageView mTweeterLeftSpeaker, mTweeterRightSpeaker, mWoofer;
-        mTweeterLeftSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_left_tweeter);
-        mTweeterRightSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_right_tweeter);
-        mWoofer = (ImageView) speakerPanel.findViewById(R.id.speaker_sub_woofer);
-
-        mTweeterLeftSpeaker.setOnClickListener(this);
-        mTweeterRightSpeaker.setOnClickListener(this);
-        mWoofer.setOnClickListener(this);
-
-        audioEffects.setOnAllSpeaker(enable);
-
-        mTweeterLeftSpeaker.setEnabled(enable);
-        mTweeterRightSpeaker.setEnabled(enable);
-        mWoofer.setEnabled(enable);
-
-        if ( enable ) {
-            mTweeterLeftSpeaker.setSelected(audioEffects.isTweeterOn());
-            mTweeterRightSpeaker.setSelected(audioEffects.isTweeterOn());
-            mWoofer.setSelected(audioEffects.isWooferOn());
-        }
-    }
 
     private void onEqDialogOpen(){
-        final EqualizerDialogAdapter adapter = new EqualizerDialogAdapter(mActivity, audioEffects.getSelectedEqualizerPosition(), eq_names, eq_active_off, this);
-        RecyclerView recyclerView = (RecyclerView)mActivity.getLayoutInflater()
-                .inflate(R.layout.recycler_view_layout, null);
-        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-        recyclerView.scrollToPosition(audioEffects.getSelectedEqualizerPosition());
-        recyclerView.setAdapter(adapter);
-
-        MaterialDialog dialog = new MaterialDialog.Builder(mActivity)
-                .title(R.string.eq_dialog_title)
-                .backgroundColor(ContextCompat.getColor(mActivity, R.color.dialog_background))
-                .titleColor(ContextCompat.getColor(mActivity, R.color.dialog_title))
-                .positiveColor(ContextCompat.getColor(mActivity, R.color.dialog_submit_positive))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                .customView(recyclerView, false)
-                .positiveText(R.string.done)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                    }
-                })
-                .autoDismiss(false)
-                .canceledOnTouchOutside(false)
-                .show();
-        dialog.getWindow().setLayout((ScreenWidth *80)/100, (ScreenHeight *70)/100);
+        new EqualizerDialog(mActivity).show();
     }
 
     private void openSpeakerDialog() {
-        mSpeakerDialogPanel = (LinearLayout) mActivity.getLayoutInflater()
-                .inflate(R.layout.speaker_panel, null);
-
-        updateSpeakers(mSpeakerDialogPanel);
-
-        MaterialDialog dialog = new MaterialDialog.Builder(mActivity)
-                .title(R.string.speaker_dialog_title)
-                .backgroundColor(ContextCompat.getColor(mActivity, R.color.dialog_background))
-                .titleColor(ContextCompat.getColor(mActivity, R.color.dialog_title))
-                .positiveColor(ContextCompat.getColor(mActivity, R.color.dialog_submit_positive))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                .customView(mSpeakerDialogPanel, false)
-                .positiveText(R.string.done)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                    }
-                })
-                .autoDismiss(false)
-                .canceledOnTouchOutside(false)
-                .show();
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        new SpeakerDialog(mActivity).show();
     }
 
     private void switch3DSurround(){
@@ -1338,64 +1210,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         audioEffects.deleteObserver(this);
         FlurryAnalytics.getInstance(getActivity()).endSession();
     }
-    @Override
-    public void onChangeEqualizerValue(final int position) {
-        setChangeEqualizerValue(position);
-        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_EQ_STATE_CHANGED);
-    }
 
-    public void setChangeEqualizerValue(final int position) {
-        postMessage.post(new Runnable() {
-            @Override
-            public void run() {
-                mSelectedEqImg.setImageDrawable(eq_active_off.getDrawable(position));
-                mSelectedEqTxt.setText(eq_names.get(position));
-                audioEffects.setSelectedEqualizerPosition(position);
-            }
-        });
-    }
-
-    private void updateSpeakers(@AudioEffect.Speaker final int speakerType){
-        boolean enable = false;
-        switch (speakerType) {
-            case AudioEffect.SPEAKER_FRONT_LEFT:
-                enable = !audioEffects.isLeftFrontSpeakerOn();
-                audioEffects.setEnableLeftFrontSpeaker(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FRONT_LEFT_SPEAKER, enable);
-                break;
-
-            case AudioEffect.SPEAKER_FRONT_RIGHT:
-                enable = !audioEffects.isRightFrontSpeakerOn();
-                audioEffects.setEnableRightFrontSpeaker(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FRONT_RIGHT_SPEAKER, enable);
-                break;
-
-            case AudioEffect.SPEAKER_SURROUND_LEFT:
-                enable = !audioEffects.isLeftSurroundSpeakerOn();
-                audioEffects.setEnableLeftSurroundSpeaker(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_REAR_LEFT_SPEAKER, enable);
-                break;
-
-            case AudioEffect.SPEAKER_SURROUND_RIGHT:
-                enable = !audioEffects.isRightSurroundSpeakerOn();
-                audioEffects.setEnableRightSurroundSpeaker(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_REAR_RIGHT_SPEAKER, enable);
-                break;
-
-            case AudioEffect.SPEAKER_TWEETER:
-                enable = !audioEffects.isTweeterOn();
-                audioEffects.setEnableTweeter(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_TWEETER, enable);
-                break;
-
-            case AudioEffect.SPEAKER_WOOFER:
-                enable = !audioEffects.isWooferOn();
-                audioEffects.setEnableWoofer(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_SUBWOOFER, enable);
-                break;
-        }
-        updateSpeakers(mSpeakerDialogPanel);
-    }
 
     private void dismissTooltip() {
         if (null != coachMarkEffectPager) {
