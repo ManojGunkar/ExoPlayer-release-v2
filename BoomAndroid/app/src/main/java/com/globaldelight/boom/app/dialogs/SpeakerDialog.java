@@ -80,16 +80,17 @@ public class SpeakerDialog implements View.OnClickListener {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
+    private boolean isSomeSpeakersOn() {
+        return audioEffects.isLeftFrontSpeakerOn() || audioEffects.isRightFrontSpeakerOn() || audioEffects.isRightSurroundSpeakerOn() || audioEffects.isLeftSurroundSpeakerOn();
+    }
+
     private void updateSpeakers(){
         mFrontLeftSpeaker.setSelected(audioEffects.isLeftFrontSpeakerOn());
         mFrontRightSpeaker.setSelected(audioEffects.isRightFrontSpeakerOn());
         mSurroundLeftSpeaker.setSelected(audioEffects.isLeftSurroundSpeakerOn());
         mSurroundRightSpeaker.setSelected(audioEffects.isRightSurroundSpeakerOn());
 
-        updateTweeterAndWoofer(audioEffects.isAllSpeakerOn());
-    }
-
-    private void updateTweeterAndWoofer(boolean enable){
+        boolean enable = isSomeSpeakersOn();
         mTweeterLeftSpeaker.setEnabled(enable);
         mTweeterRightSpeaker.setEnabled(enable);
         mWoofer.setEnabled(enable);
@@ -99,6 +100,7 @@ public class SpeakerDialog implements View.OnClickListener {
             mTweeterRightSpeaker.setSelected(audioEffects.isTweeterOn());
             mWoofer.setSelected(audioEffects.isWooferOn());
         }
+
     }
 
     private void updateSpeakers(@AudioEffect.Speaker final int speakerType){

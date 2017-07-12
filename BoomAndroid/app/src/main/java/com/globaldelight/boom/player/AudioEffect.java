@@ -232,10 +232,6 @@ public class AudioEffect extends Observable {
         }
     }
 
-    public boolean isAllSpeakerOn(){
-        return isLeftFrontSpeakerOn() && isLeftFrontSpeakerOn() && isRightFrontSpeakerOn() && isLeftSurroundSpeakerOn();
-    }
-
 
     public void notify(final String property) {
         new Handler().post(new Runnable() {
