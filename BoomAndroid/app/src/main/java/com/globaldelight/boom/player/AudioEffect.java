@@ -232,13 +232,8 @@ public class AudioEffect extends Observable {
         }
     }
 
-    public void setOnAllSpeaker(boolean enable) {
-        editor.putBoolean(ALL_SPEAKER_POWER, enable);
-        editor.commit();
-    }
-
     public boolean isAllSpeakerOn(){
-        return shp.getBoolean(ALL_SPEAKER_POWER, DEFAULT_POWER);
+        return isLeftFrontSpeakerOn() && isLeftFrontSpeakerOn() && isRightFrontSpeakerOn() && isLeftSurroundSpeakerOn();
     }
 
 

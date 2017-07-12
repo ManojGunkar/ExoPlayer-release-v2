@@ -24,6 +24,9 @@ public class SpeakerDialog implements View.OnClickListener {
     private Activity mActivity;
     private AudioEffect audioEffects;
     private LinearLayout mSpeakerDialogPanel;
+    ImageView mFrontLeftSpeaker, mFrontRightSpeaker, mSurroundLeftSpeaker, mSurroundRightSpeaker;
+    ImageView mTweeterLeftSpeaker, mTweeterRightSpeaker, mWoofer;
+
 
 
     public SpeakerDialog(Activity activity) {
@@ -39,7 +42,23 @@ public class SpeakerDialog implements View.OnClickListener {
         mSpeakerDialogPanel = (LinearLayout) mActivity.getLayoutInflater()
                 .inflate(R.layout.speaker_panel, null);
 
-        updateSpeakers(mSpeakerDialogPanel);
+        mFrontLeftSpeaker = (ImageView) mSpeakerDialogPanel.findViewById(R.id.speaker_left_front);
+        mFrontRightSpeaker = (ImageView) mSpeakerDialogPanel.findViewById(R.id.speaker_right_front);
+        mSurroundLeftSpeaker = (ImageView) mSpeakerDialogPanel.findViewById(R.id.speaker_left_surround);
+        mSurroundRightSpeaker = (ImageView) mSpeakerDialogPanel.findViewById(R.id.speaker_right_surround);
+        mTweeterLeftSpeaker = (ImageView) mSpeakerDialogPanel.findViewById(R.id.speaker_left_tweeter);
+        mTweeterRightSpeaker = (ImageView) mSpeakerDialogPanel.findViewById(R.id.speaker_right_tweeter);
+        mWoofer = (ImageView) mSpeakerDialogPanel.findViewById(R.id.speaker_sub_woofer);
+
+        mFrontLeftSpeaker.setOnClickListener(this);
+        mFrontRightSpeaker.setOnClickListener(this);
+        mSurroundLeftSpeaker.setOnClickListener(this);
+        mSurroundRightSpeaker.setOnClickListener(this);
+        mTweeterLeftSpeaker.setOnClickListener(this);
+        mTweeterRightSpeaker.setOnClickListener(this);
+        mWoofer.setOnClickListener(this);
+
+        updateSpeakers();
 
         MaterialDialog dialog = new MaterialDialog.Builder(mActivity)
                 .title(R.string.speaker_dialog_title)
@@ -61,39 +80,16 @@ public class SpeakerDialog implements View.OnClickListener {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
-    private void updateSpeakers(LinearLayout speakerPanel){
-        ImageView mFrontLeftSpeaker, mFrontRightSpeaker, mSurroundLeftSpeaker, mSurroundRightSpeaker;
-
-        mFrontLeftSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_left_front);
-        mFrontRightSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_right_front);
-        mSurroundLeftSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_left_surround);
-        mSurroundRightSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_right_surround);
-
-        mFrontLeftSpeaker.setOnClickListener(this);
-        mFrontRightSpeaker.setOnClickListener(this);
-        mSurroundLeftSpeaker.setOnClickListener(this);
-        mSurroundRightSpeaker.setOnClickListener(this);
-
+    private void updateSpeakers(){
         mFrontLeftSpeaker.setSelected(audioEffects.isLeftFrontSpeakerOn());
         mFrontRightSpeaker.setSelected(audioEffects.isRightFrontSpeakerOn());
         mSurroundLeftSpeaker.setSelected(audioEffects.isLeftSurroundSpeakerOn());
         mSurroundRightSpeaker.setSelected(audioEffects.isRightSurroundSpeakerOn());
 
-        updateTweeterAndWoofer(speakerPanel, audioEffects.isAllSpeakerOn());
+        updateTweeterAndWoofer(audioEffects.isAllSpeakerOn());
     }
 
-    private void updateTweeterAndWoofer(LinearLayout speakerPanel, boolean enable){
-        ImageView mTweeterLeftSpeaker, mTweeterRightSpeaker, mWoofer;
-        mTweeterLeftSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_left_tweeter);
-        mTweeterRightSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_right_tweeter);
-        mWoofer = (ImageView) speakerPanel.findViewById(R.id.speaker_sub_woofer);
-
-        mTweeterLeftSpeaker.setOnClickListener(this);
-        mTweeterRightSpeaker.setOnClickListener(this);
-        mWoofer.setOnClickListener(this);
-
-        audioEffects.setOnAllSpeaker(enable);
-
+    private void updateTweeterAndWoofer(boolean enable){
         mTweeterLeftSpeaker.setEnabled(enable);
         mTweeterRightSpeaker.setEnabled(enable);
         mWoofer.setEnabled(enable);
@@ -144,7 +140,7 @@ public class SpeakerDialog implements View.OnClickListener {
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_SUBWOOFER, enable);
                 break;
         }
-        updateSpeakers(mSpeakerDialogPanel);
+        updateSpeakers();
     }
 
     @Override
