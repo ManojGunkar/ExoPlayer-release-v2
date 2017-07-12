@@ -1,6 +1,11 @@
 package com.globaldelight.boom.playbackEvent.handler;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaMetadata;
 import android.media.session.MediaSession;
@@ -8,6 +13,8 @@ import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.widget.Toast;
 
 import com.globaldelight.boom.app.App;
@@ -23,6 +30,7 @@ import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.player.AudioPlayer;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -305,8 +313,64 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     }
 
+    public static Uri getImageContentUri(Context context, File imageFile) {
+        String filePath = imageFile.getAbsolutePath();
+        Cursor cursor = context.getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                new String[] { MediaStore.Images.Media._ID },
+                MediaStore.Images.Media.DATA + "=? ",
+                new String[] { filePath }, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            cursor.close();
+            return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id);
+        } else {
+            if (imageFile.exists()) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DATA, filePath);
+                return context.getContentResolver().insert(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    public Bitmap getAlbumart(Context context, Long album_id) {
+        Bitmap albumArtBitMap = null;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        try {
+
+            final Uri sArtworkUri = Uri
+                    .parse("content://media/external/audio/albumart");
+
+            Uri uri = ContentUris.withAppendedId(sArtworkUri, album_id);
+
+            ParcelFileDescriptor pfd = context.getContentResolver()
+                    .openFileDescriptor(uri, "r");
+
+            if (pfd != null) {
+                FileDescriptor fd = pfd.getFileDescriptor();
+                albumArtBitMap = BitmapFactory.decodeFileDescriptor(fd, null,
+                        options);
+                pfd = null;
+                fd = null;
+            }
+        } catch (Error ee) {
+        } catch (Exception e) {
+        }
+
+        if (null != albumArtBitMap) {
+            return albumArtBitMap;
+        }
+        return null;
+    }
+
+
+
     private class PlayingItemChanged extends AsyncTask<IMediaItemBase, Void, String>{
         IMediaItemBase mediaItemBase;
+
 
         @Override
         protected void onPreExecute() {
@@ -344,15 +408,20 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                     mPlayer.setPath(dataSource);
                     mPlayer.setDataSourceId(mediaItemBase.getItemId());
 
-                    String artUrl = new File(mediaItemBase.getItemArtUrl()).toURI().toString();
+                    MediaItem item = (MediaItem)mediaItemBase;
+
                     MediaMetadata.Builder builder = new MediaMetadata.Builder();
-                    builder.putString(MediaMetadata.METADATA_KEY_TITLE, mediaItemBase.getItemTitle());
-                    builder.putString(MediaMetadata.METADATA_KEY_ALBUM_ART_URI, artUrl);
+                    builder.putString(MediaMetadata.METADATA_KEY_TITLE, item.getItemTitle());
+                    builder.putString(MediaMetadata.METADATA_KEY_ALBUM, item.getItemAlbum());
+                    builder.putString(MediaMetadata.METADATA_KEY_ARTIST, item.getItemArtist());
+                    Bitmap bitmap = getAlbumart(context,item.getItemAlbumId());
+                    if ( bitmap != null ) {
+                        builder.putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, bitmap);
+                    }
+
 
                     session.setMetadata(builder.build());
-
                     setSessionState(PlaybackState.STATE_PLAYING);
-//                    AnalyticsHelper.songSelectionChanged(context, mediaItemBase);
                 }
             }else{
                 isTrackWaiting = false;
