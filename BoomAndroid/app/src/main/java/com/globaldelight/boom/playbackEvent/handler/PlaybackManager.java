@@ -49,19 +49,20 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     private static final int NEXT = 0;
     private static final int PREVIOUS = 1;
-    private static int PLAYER_DIRECTION;
 
 
     private ArrayList<Listener> mListeners = new ArrayList<>();
-    private static IMediaItemBase playingItem;
-    private static boolean isTrackWaiting = false;
+    private IMediaItemBase playingItem;
+    private boolean isTrackWaiting = false;
     private AudioPlayer mPlayer;
     private Context context;
     private AudioManager audioManager;
     private MediaSession session;
     private GoogleDriveHandler googleDriveHandler;
     private Handler seekEventHandler;
-    private UpNextPlayingQueue mQueue = new UpNextPlayingQueue(context);
+    private UpNextPlayingQueue mQueue;
+    private int skipDirection;
+
 
     AudioPlayer.Callback IPlayerEvents = new AudioPlayer.Callback() {
 
@@ -104,9 +105,9 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
         @Override
         public void onError() {
-            if(isNext() && PLAYER_DIRECTION == NEXT) {
+            if(isNext() && skipDirection == NEXT) {
                 playNextSong(false);
-            }else if(isPrevious() && PLAYER_DIRECTION == PREVIOUS) {
+            }else if(isPrevious() && skipDirection == PREVIOUS) {
                 playPrevSong();
             }
             notifyError();
@@ -136,7 +137,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
         @Override
         public void onStop() {
-            onPause();
+            setSessionState(PlaybackState.STATE_STOPPED);
         }
     };
 
@@ -290,7 +291,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
             case AudioEffect.EQUALIZER_PROPERTY:
                 mPlayer.setEqualizerGain(effect.getSelectedEqualizerPosition());
                 break;
-
             case AudioEffect.SPEAKER_LEFT_FRONT_PROPERTY:
                 mPlayer.setSpeakerEnable(AudioEffect.SPEAKER_FRONT_LEFT, effect.isLeftFrontSpeakerOn());
                 break;
@@ -313,36 +313,12 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     }
 
-    public static Uri getImageContentUri(Context context, File imageFile) {
-        String filePath = imageFile.getAbsolutePath();
-        Cursor cursor = context.getContentResolver().query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                new String[] { MediaStore.Images.Media._ID },
-                MediaStore.Images.Media.DATA + "=? ",
-                new String[] { filePath }, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
-            cursor.close();
-            return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id);
-        } else {
-            if (imageFile.exists()) {
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.Images.Media.DATA, filePath);
-                return context.getContentResolver().insert(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-            } else {
-                return null;
-            }
-        }
-    }
-
-    public Bitmap getAlbumart(Context context, Long album_id) {
+    private Bitmap getAlbumart(Context context, Long album_id) {
         Bitmap albumArtBitMap = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
         try {
 
-            final Uri sArtworkUri = Uri
-                    .parse("content://media/external/audio/albumart");
+            final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
 
             Uri uri = ContentUris.withAppendedId(sArtworkUri, album_id);
 
@@ -353,8 +329,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 FileDescriptor fd = pfd.getFileDescriptor();
                 albumArtBitMap = BitmapFactory.decodeFileDescriptor(fd, null,
                         options);
-                pfd = null;
-                fd = null;
             }
         } catch (Error ee) {
         } catch (Exception e) {
@@ -365,7 +339,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         }
         return null;
     }
-
 
 
     private class PlayingItemChanged extends AsyncTask<IMediaItemBase, Void, String>{
@@ -390,7 +363,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 }
                 return null;
             }else if(mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){
-
                 String access_token = googleDriveHandler.getAccessTokenApi();
                 if(null != access_token) {
                     return ((MediaItem)mediaItemBase).getItemUrl() + access_token;
@@ -419,7 +391,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                         builder.putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, bitmap);
                     }
 
-
                     session.setMetadata(builder.build());
                     setSessionState(PlaybackState.STATE_PLAYING);
                 }
@@ -432,7 +403,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     }
 
     public void playNextSong(boolean isUser) {
-        PLAYER_DIRECTION = NEXT;
+        skipDirection = NEXT;
         if ( isNext() ) {
             mQueue.setNextPlayingItem(isUser);
         }
@@ -443,7 +414,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     }
 
     public void playPrevSong() {
-        PLAYER_DIRECTION = PREVIOUS;
+        skipDirection = PREVIOUS;
         mQueue.setPreviousPlayingItem();
     }
 
@@ -477,12 +448,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         }
     }
 
-    public void stop() {
-        if(!isStopped() ){
-            setSessionState(PlaybackState.STATE_STOPPED);
-        }
-    }
-
     public IMediaItem getPlayingItem() {
         return (IMediaItem) mQueue.getPlayingItem();
     }
@@ -497,11 +462,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
             });
         }
     }
-
-    public void stopPlayer() {
-        setSessionState(PlaybackState.STATE_STOPPED);
-    }
-
 
     public boolean resetShuffle() {
         return mQueue.resetShuffle();
