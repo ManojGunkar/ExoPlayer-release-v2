@@ -301,7 +301,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 mPlayer.setSpeakerEnable(AudioEffect.SPEAKER_SURROUND_LEFT, effect.isLeftSurroundSpeakerOn());
                 break;
             case AudioEffect.SPEAKER_RIGHT_SURROUND_PROPERTY:
-                mPlayer.setSpeakerEnable(AudioEffect.SPEAKER_SURROUND_RIGHT, effect.isRightFrontSpeakerOn());
+                mPlayer.setSpeakerEnable(AudioEffect.SPEAKER_SURROUND_RIGHT, effect.isRightSurroundSpeakerOn());
                 break;
             case AudioEffect.SPEAKER_TWEETER_PROPERTY:
                 mPlayer.setSpeakerEnable(AudioEffect.SPEAKER_TWEETER, effect.isTweeterOn());
