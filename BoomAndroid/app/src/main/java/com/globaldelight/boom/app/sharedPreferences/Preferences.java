@@ -36,7 +36,7 @@ public class Preferences {
     public static final String ON_BOARDING_COMPLETED_ON_FIRST_ATTEMPT = "OnBoarding Completed on First Attempt";
 
     public static void writeBoolean(Context context, String key, boolean value) {
-        getEditor(context).putBoolean(key, value).commit();
+        getEditor(context).putBoolean(key, value).apply();
     }
 
     public static boolean readBoolean(Context context, String key,
@@ -45,7 +45,7 @@ public class Preferences {
     }
 
     public static void writeString(Context context, String key, String value) {
-        getEditor(context).putString(key, value).commit();
+        getEditor(context).putString(key, value).apply();
 
     }
 
@@ -54,7 +54,7 @@ public class Preferences {
     }
 
     public static void writeLong(Context context, String key, long value) {
-        getEditor(context).putLong(key, value).commit();
+        getEditor(context).putLong(key, value).apply();
     }
 
     public static long readLong(Context context, String key, long defValue) {
@@ -62,7 +62,7 @@ public class Preferences {
     }
 
     public static void writeInteger(Context context, String key, int value) {
-        getEditor(context).putInt(key, value).commit();
+        getEditor(context).putInt(key, value).apply();
     }
 
     public static int readInteger(Context context, String key, int defValue) {
