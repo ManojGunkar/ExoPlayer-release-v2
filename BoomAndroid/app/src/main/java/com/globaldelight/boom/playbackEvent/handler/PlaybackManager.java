@@ -1,9 +1,7 @@
 package com.globaldelight.boom.playbackEvent.handler;
 
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
@@ -14,7 +12,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
 import android.widget.Toast;
 
 import com.globaldelight.boom.app.App;
@@ -29,7 +26,6 @@ import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.player.AudioPlayer;
 
-import java.io.File;
 import java.io.FileDescriptor;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -59,7 +55,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     private AudioManager audioManager;
     private MediaSession session;
     private GoogleDriveHandler googleDriveHandler;
-    private Handler seekEventHandler;
+    private Handler mHandler;
     private UpNextPlayingQueue mQueue;
     private int skipDirection;
 
@@ -149,7 +145,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         mQueue.setUpNextMediaEvent(this);
         googleDriveHandler = new GoogleDriveHandler(context);
         googleDriveHandler.connectToGoogleAccount();
-        seekEventHandler = new Handler();
+        mHandler = new Handler();
         AudioEffect.getInstance(context).addObserver(this);
         registerSession();
     }
@@ -454,7 +450,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     public void seek(final int progress) {
         if( !isTrackWaiting ){
-            seekEventHandler.post(new Runnable() {
+            mHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     mPlayer.seek(progress);

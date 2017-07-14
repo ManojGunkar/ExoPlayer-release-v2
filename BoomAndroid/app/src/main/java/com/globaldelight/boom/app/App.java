@@ -11,7 +11,9 @@ import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.activities.BoomSplash;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
+import com.globaldelight.boom.business.BusinessStrategy;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.app.service.PlayerService;
 import com.globaldelight.boom.app.database.CloudMediaItemDBHelper;
@@ -124,6 +126,10 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public void onActivityStarted(Activity activity) {
+        if ( !(activity instanceof BoomSplash) ) {
+            BusinessStrategy.getInstance(this).setCurrentActivity(activity);
+        }
+
         Boolean terminate = false;
         int terminateReason = R.string.app_expire;
         if( isExpired() ) {
@@ -156,7 +162,10 @@ public class App extends Application implements Application.ActivityLifecycleCal
     public void onActivityPaused(Activity var1) {
     }
 
-    public void onActivityStopped(Activity var1) {
+    public void onActivityStopped(Activity activity) {
+        if ( BusinessStrategy.getInstance(this).getCurrentActivity() == activity ) {
+            BusinessStrategy.getInstance(this).setCurrentActivity(null);
+        }
     }
 
     public void onActivitySaveInstanceState(Activity var1, Bundle var2) {
