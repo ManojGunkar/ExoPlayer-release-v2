@@ -48,19 +48,19 @@ void BOOM_ENGINE_METHOD(init)(
         jclass clazz,
         jobject assetManager,
         jint sampleRate,
-        jint inFrameCount,
-        jboolean useFloat)
+        jint inFrameCount)
 {
     globalJavaAssetManager = env->NewGlobalRef(assetManager);
     InitAssetManager(AAssetManager_fromJava(env, globalJavaAssetManager));
     mNativeSampleRate = sampleRate;
+    pthread_mutex_init(&mLock, nullptr);
 }
 
 extern "C" JNIEXPORT
 void BOOM_ENGINE_METHOD(finish)(JNIEnv *env, jclass clazz)
 {
     env->DeleteGlobalRef(globalJavaAssetManager);
-//    delete mEngine;
+    pthread_mutex_destroy(&mLock);
 }
 
 extern "C" JNIEXPORT
@@ -68,19 +68,19 @@ void BOOM_ENGINE_METHOD(start)(
         JNIEnv *env,
         jobject obj,
         jint sampleRate,
-        jint channel)
+        jint channel,
+        jboolean useFloat)
 {
     //ALOGD("createAudioPlayer start");
-    pthread_mutex_init(&mLock, nullptr);
+    gdpl::AutoLock lock(&mLock);
 
     mEngine = new AudioEngine(sampleRate, DEFAULT_FRAME_COUNT);
     mEngine->SetHeadPhoneType(eOnEar);
-//    bool useFloat = true;
-//    if ( !useFloat ) {
-//        mEngine->SetOutputType(SAMPLE_TYPE_SHORT);
-//    }
-    /*Iitialize AudioEngine*/
+    if ( !useFloat ) {
+        mEngine->SetOutputType(SAMPLE_TYPE_SHORT);
+    }
 
+    /*Iitialize AudioEngine*/
     mEngine->ResetEngine();
     RinseEngine();
 
@@ -93,9 +93,10 @@ void BOOM_ENGINE_METHOD(stop)(
         JNIEnv *env,
         jobject obj)
 {
+    gdpl::AutoLock lock(&mLock);
+
     delete mEngine;
     delete mProcessor;
-    pthread_mutex_destroy(&mLock);
 }
 
 

@@ -308,7 +308,7 @@ public class PlayerActivity extends Activity implements OnClickListener, ExoPlay
               : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
               : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
       BoomRenderersFactory renderersFactory = new BoomRenderersFactory(this,
-          drmSessionManager, extensionRendererMode);
+          drmSessionManager, extensionRendererMode, true);
 
       mBoomAudioProcessor = renderersFactory.getBoomAudioProcessor();
       mBoomAudioProcessor.setEffectState(mPrefs.getBoolean(EFFECTS_STATE_KEY,false));

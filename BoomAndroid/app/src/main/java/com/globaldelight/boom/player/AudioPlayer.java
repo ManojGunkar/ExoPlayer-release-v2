@@ -156,7 +156,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
             }
 
             if ( mExoPlayer == null ) {
-                BoomRenderersFactory renderersFactory = new RenderersFactory(mContext);
+                BoomRenderersFactory renderersFactory = new RenderersFactory(mContext, (mAudioConfig.getFormat() == AudioConfiguration.FORMAT_FLOAT) );
 
                 mAudioProcessor = renderersFactory.getBoomAudioProcessor();
                 mExoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, new DefaultTrackSelector(), new DefaultLoadControl());
@@ -455,8 +455,8 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
         private Context mContext;
 
-        public RenderersFactory(Context context) {
-            super(context, null, EXTENSION_RENDERER_MODE_ON);
+        public RenderersFactory(Context context, boolean floatAudio) {
+            super(context, null, EXTENSION_RENDERER_MODE_ON, floatAudio);
             mContext = context;
         }
 

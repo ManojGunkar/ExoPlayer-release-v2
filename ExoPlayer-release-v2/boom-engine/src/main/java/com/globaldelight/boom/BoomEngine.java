@@ -39,7 +39,7 @@ public class BoomEngine {
 
         boolean isFloatAudio = (getFormat() == AudioFormat.ENCODING_PCM_FLOAT);
 
-        init(context.getAssets(), sampleRate, frameCount, isFloatAudio);
+        init(context.getAssets(), sampleRate, frameCount);
     }
 
     public static int getFormat() {
@@ -54,19 +54,19 @@ public class BoomEngine {
         return frameCount;
     }
 
-    public native static void init(AssetManager assetManager, int sampleRate, int frameCount, boolean isFloat);
+    public native static void init(AssetManager assetManager, int sampleRate, int frameCount);
 
     public native static void finish();
 
-    public BoomEngine(int sampleRate, int channelCount) {
-        start(sampleRate, channelCount);
+    public BoomEngine(int sampleRate, int channelCount, boolean floatAudio) {
+        start(sampleRate, channelCount, floatAudio);
     }
 
     public void release() {
         stop();
     }
 
-    public native void start(int sampleRate, int channelCount);
+    public native void start(int sampleRate, int channelCount, boolean floatAudio);
 
     public native int process(ByteBuffer inBuffer, ByteBuffer outBuffer, int size);
 

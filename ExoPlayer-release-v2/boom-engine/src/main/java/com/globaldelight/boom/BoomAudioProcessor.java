@@ -28,6 +28,12 @@ public class BoomAudioProcessor implements AudioProcessor {
     private @Constants.Headphone int headPhoneType = Constants.Headphone.IN_CANAL;
     private @Constants.Quality int audioQuality = Constants.Quality.HIGH;
     private float[] speakerStates = new float[] { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+    private boolean mFloatAudio = false;
+
+
+    public BoomAudioProcessor(boolean floatAudio) {
+        mFloatAudio = floatAudio;
+    }
 
 
     @Override
@@ -39,7 +45,7 @@ public class BoomAudioProcessor implements AudioProcessor {
         sampleRate = sampleRateHz;
         inputChannelCount = channelCount;
 
-        engine = new BoomEngine(sampleRate, inputChannelCount);
+        engine = new BoomEngine(sampleRate, inputChannelCount, mFloatAudio);
         applyEffects();
 
         return true;
@@ -57,7 +63,7 @@ public class BoomAudioProcessor implements AudioProcessor {
 
     @Override
     public int getOutputEncoding() {
-        return C.ENCODING_PCM_FLOAT;
+        return mFloatAudio? C.ENCODING_PCM_FLOAT : C.ENCODING_PCM_16BIT;
     }
 
     @Override

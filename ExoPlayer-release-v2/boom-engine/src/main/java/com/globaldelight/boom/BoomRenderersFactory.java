@@ -23,17 +23,18 @@ public class BoomRenderersFactory extends DefaultRenderersFactory {
 
     public BoomRenderersFactory(Context context,
                                    DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
-                                   @ExtensionRendererMode int extensionRendererMode, long allowedVideoJoiningTimeMs) {
+                                   @ExtensionRendererMode int extensionRendererMode, long allowedVideoJoiningTimeMs,
+                                boolean floatAudio) {
         super(context, drmSessionManager, extensionRendererMode, allowedVideoJoiningTimeMs);
         BoomEngine.init(context);
-        mBoomAudioProcessor = new BoomAudioProcessor();
+        mBoomAudioProcessor = new BoomAudioProcessor(floatAudio);
     }
 
     public BoomRenderersFactory(Context context,
                                    DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
-                                   @ExtensionRendererMode int extensionRendererMode) {
+                                   @ExtensionRendererMode int extensionRendererMode, boolean flaotAudio) {
         this(context, drmSessionManager, extensionRendererMode,
-                DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS);
+                DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS, flaotAudio);
     }
 
 
