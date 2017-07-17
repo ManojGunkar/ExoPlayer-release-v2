@@ -132,7 +132,7 @@ public class ShareFragment extends Fragment {
             ShareLinkContent linkContent = new ShareLinkContent.Builder()
                     .setContentUrl(Uri.parse("http://developers.facebook.com/android"))
                     .build();
-            shareDialog.show(linkContent);
+            shareDialog.show(linkContent, ShareDialog.Mode.FEED);
         }
         shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
             @Override
