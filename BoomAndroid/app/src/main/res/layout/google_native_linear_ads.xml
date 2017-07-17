@@ -84,4 +84,10 @@
             android:textColor="@color/track_sub_title"
             android:textStyle="italic" />
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:background="@color/library_separator"/>
+
 </com.google.android.gms.ads.formats.NativeContentAdView>
