@@ -69,6 +69,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     @Override
     public void onBindViewHolder(final SongViewHolder holder, final int position) {
         MediaItem mediaItem = (MediaItem) itemList.get(position);
+        holder.position = position;
         holder.mainView.setElevation(0);
         holder.title.setText(mediaItem.getItemTitle());
         holder.description.setVisibility(null != mediaItem.getItemArtist() ? View.VISIBLE : View.GONE);
@@ -127,7 +128,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final int position = holder.getAdapterPosition();
+                final int position = holder.position;
                 if ( position == -1) {
                     return;
                 }
@@ -170,7 +171,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         holder.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-                    final int position = holder.getAdapterPosition();
+                    final int position = holder.position;
                     PopupMenu pm = new PopupMenu(activity, anchorView);
                     pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
@@ -247,6 +248,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         public ImageView img, overlayPlay;
         public LinearLayout menu;
         public ProgressBar progressIndicator;
+        public int position;
 
         public SongViewHolder(View itemView) {
             super(itemView);

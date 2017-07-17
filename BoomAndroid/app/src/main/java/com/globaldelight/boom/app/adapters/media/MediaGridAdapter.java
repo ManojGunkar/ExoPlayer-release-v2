@@ -70,6 +70,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mediaImageView.setVisibility(View.VISIBLE);
+        holder.position = position;
         MediaItemCollection mediaItem = itemList.get(position);
 
         holder.title.setText(mediaItem.getItemTitle());
@@ -147,7 +148,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
             @Override
             public void onClick(View view) {
 
-                final int position = holder.getAdapterPosition();
+                final int position = holder.position;
                 final MediaItemCollection mediaItem = itemList.get(position);
 
                 recyclerView.smoothScrollToPosition(position);
@@ -164,7 +165,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
             @Override
             public void onClick(View view) {
 
-                final int position = holder.getAdapterPosition();
+                final int position = holder.position;
                 final MediaItemCollection mediaItem = itemList.get(position);
 
                 PopupMenu pm = new PopupMenu(context, view);
@@ -187,6 +188,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
         public ImageView mediaImageView;
         public View overflowMenu, mainView;
         public TableLayout artTable;
+        public int position = -1;
 
         public ViewHolder(View itemView) {
             super(itemView);
