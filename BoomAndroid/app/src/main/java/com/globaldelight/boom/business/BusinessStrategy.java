@@ -2,8 +2,11 @@ package com.globaldelight.boom.business;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -12,6 +15,8 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.activities.ShareActivity;
+import com.globaldelight.boom.app.fragments.ShareFragment;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.player.AudioEffect;
 
@@ -33,8 +38,24 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     private Activity mCurrentActivity;
     private Runnable mPendingAlert = null;
     private Handler  mHandler = new Handler();
-    private int mAllowedSongs = 0;
+    private boolean mWasEffectsOnWhenLocked = false;
+    private boolean mWasPlaying = false;
     private VideoAd mVideoAd;
+    private int mSongsPlayed = 0;
+
+    private BroadcastReceiver mShareStatusReciever = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case ShareFragment.ACTION_SHARE_SUCCESS:
+                    onShareSuccess();
+                    break;
+                case ShareFragment.ACTION_SHARE_FAILED:
+                    onShareFailed();
+                    break;
+            }
+        }
+    };
 
 
     private static BusinessStrategy instance;
@@ -51,6 +72,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         config = new BusinessConfig();
         AudioEffect.getInstance(mContext).addObserver(this);
         App.playbackManager().registerListener(this);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ShareFragment.ACTION_SHARE_SUCCESS);
+        filter.addAction(ShareFragment.ACTION_SHARE_FAILED);
+        mContext.registerReceiver(mShareStatusReciever, filter);
     }
 
 
@@ -87,26 +113,28 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
             case BusinessData.STATE_SHARED:
                 if ( isShareExpired() && isExtendedShareExpired() ) {
-                    data.setState(BusinessData.STATE_LOCKED);
-                    AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
-                    showPopup("TODO: Sharing expired! Buy", buyResponse);
+                    lockEffects();
+                    showPopup("Sharing expired! Buy", buyResponse);
                 }
                 break;
 
 
             case BusinessData.STATE_VIDOE_REWARD:
                 if ( isVideoRewardExpired() ) {
-                    data.setState(BusinessData.STATE_LOCKED);
-                    AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
-                    showPopup("TODO: Video reward expired!", buyResponse);
+                    lockEffects();
+                    showPopup("Video reward expired!", buyResponse);
                 }
                 break;
 
             case BusinessData.STATE_TRIAL:
                 if ( isTrialExpired() ) {
-                    showPopup("TODO: Trial Expired! Share", shareResponse);
-                    data.setState(BusinessData.STATE_LOCKED);
-                    AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
+                    lockEffects();
+                    if ( isSharingAllowed() ) {
+                        showPopup("TODO: Trial Expired! Share", shareResponse);
+                    }
+                    else {
+                        showPopup("TODO: Trial Expired! Buy", buyResponse);
+                    }
                 }
                 break;
 
@@ -114,9 +142,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             case BusinessData.STATE_UNDEFINED:
                 if ( !isTrialExpired() ) {
                     data.setState(BusinessData.STATE_TRIAL);
-                }
-                else {
-                    mAllowedSongs = 1;
                 }
                 break;
         }
@@ -146,15 +171,30 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         return ( data.getState() != BusinessData.STATE_PURCHASED && data.getState() != BusinessData.STATE_SHARED && data.getSharedDate() == null );
     }
 
-    private void onPurchased() {
-        data.setState(BusinessData.STATE_PURCHASED);
+    private void onPurchase() {
+
     }
 
+    private void onPurchased() {
+        data.setState(BusinessData.STATE_PURCHASED);
+        AudioEffect.getInstance(mContext).setEnableAudioEffect(mWasEffectsOnWhenLocked);
+    }
+
+    private boolean isSharingAllowed() {
+        return data.getSharedDate() == null && !isTimeExpired(data.installDate(), config.sharePeriod()*2 + config.extendedSharePeriod());
+    }
+
+    private void onShare() {
+        if ( mCurrentActivity != null ) {
+            mCurrentActivity.startActivity(new Intent(mCurrentActivity, ShareActivity.class));
+        }
+    }
 
     private void onShareSuccess() {
         if ( rewardUserForSharing() ) {
             data.setSharedDate(new Date());
             state = BusinessData.STATE_SHARED;
+            AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
             showPopup("TODO: Shared!", null);
         }
     }
@@ -166,8 +206,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         }
     }
 
-
-    private boolean mWasPlaying;
 
     @Override
     public void onVideoAdCompleted() {
@@ -188,6 +226,102 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         // TODO: Should we show any popup?
     }
 
+
+    private void onRemindLater() {
+    }
+
+    private void postUpdate() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                update();
+            }
+        });
+    }
+
+
+    @Override
+    public void update(Observable o, Object arg) {
+        String property = (String)arg;
+        if ( property.equals(AudioEffect.AUDIO_EFFECT_PROPERTY) ) {
+            update();
+            if ( data.getState() == BusinessData.STATE_LOCKED && AudioEffect.getInstance(mContext).isAudioEffectOn() ) {
+                if ( App.playbackManager().isTrackPlaying() ) {
+                    mWasPlaying = true;
+                    App.playbackManager().playPause();
+                }
+                mVideoAd.show(mCurrentActivity);
+            }
+            else if ( (data.getState() == BusinessData.STATE_TRIAL || data.getState() == BusinessData.STATE_UNDEFINED) && data.getStartDate() == null ) {
+                data.setStartDate(new Date());
+            }
+        }
+    }
+
+    private void lockEffects() {
+        mWasEffectsOnWhenLocked = AudioEffect.getInstance(mContext).isAudioEffectOn();
+        data.setState(BusinessData.STATE_LOCKED);
+        AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
+    }
+
+    @Override
+    public void onMediaChanged() {
+        if ( data.getState() == BusinessData.STATE_UNDEFINED && data.getStartDate() != null ) {
+            if ( mSongsPlayed > 1 ) {
+                lockEffects();
+                if ( isSharingAllowed() ) {
+                    showPopup("Share to unlock effects", shareResponse);
+                }
+                else {
+                    showPopup("Buy to unlock effects", buyResponse);
+                }
+            }
+            mSongsPlayed++;
+        }
+        postUpdate();
+    }
+
+    @Override
+    public void onPlaybackCompleted() {
+        postUpdate();
+    }
+
+    @Override
+    public void onPlayerStateChanged() {
+        postUpdate();
+    }
+
+    @Override
+    public void onPlayerError() {
+
+    }
+
+    @Override
+    public void onUpdatePlayerPosition() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if ( data.getState() == BusinessData.STATE_TRIAL ) {
+                    if ( !data.isInitialPopupShown() && data.getStartDate() != null && isTimeExpired(data.getStartDate(), config.initialPopupDelay())) {
+                        data.setInitialPopupShown();
+                        data.setLastPopupDate(new Date());
+                        showPopup("Initial Popup", trialResponse);
+                    }
+                    else if ( data.isInitialPopupShown() && isTimeExpired(data.getLastPopupDate(), config.reminderInterval()) ) {
+                        data.setLastPopupDate(new Date());
+                        showPopup("Reminder", trialResponse);
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onQueueUpdated() {
+
+    }
+
+
     private void showPopup(final String message, final PopupResponse callback) {
         mPendingAlert = new Runnable() {
             @Override
@@ -202,10 +336,12 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                         .negativeColor(ContextCompat.getColor(mContext, R.color.dialog_submit_negative))
                         .widgetColor(ContextCompat.getColor(mContext, R.color.dialog_widget))
                         .contentColor(ContextCompat.getColor(mContext, R.color.dialog_content))
-                        .content(message);
+                        .content(message)
+                        .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
+                        .title("TODO");
                 if ( callback != null ) {
-                    builder.negativeText("Cancel")
-                            .positiveText("Accept")
+                    builder.negativeText(callback != null ? callback.cancelTitle() : "Cancel")
+                            .positiveText(callback != null ? callback.okTitle() : "Accept")
                             .onNegative(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -237,118 +373,78 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         }
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        String property = (String)arg;
-        if ( property.equals(AudioEffect.AUDIO_EFFECT_PROPERTY) ) {
-            update();
-            if ( data.getState() == BusinessData.STATE_LOCKED && AudioEffect.getInstance(mContext).isAudioEffectOn() ) {
-                if ( App.playbackManager().isTrackPlaying() ) {
-                    mWasPlaying = true;
-                    App.playbackManager().playPause();
-                }
-                mVideoAd.show(mCurrentActivity);
-            }
-            else if ( data.getState() == BusinessData.STATE_TRIAL && data.getStartDate() == null ) {
-                data.setStartDate(new Date());
-            }
-        }
-    }
-
-    private void postUpdate() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                update();
-            }
-        });
-    }
-
-    @Override
-    public void onMediaChanged() {
-        postUpdate();
-    }
-
-    @Override
-    public void onPlaybackCompleted() {
-        postUpdate();
-    }
-
-    @Override
-    public void onPlayerStateChanged() {
-        postUpdate();
-    }
-
-    @Override
-    public void onPlayerError() {
-
-    }
-
-    @Override
-    public void onUpdatePlayerPosition() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if ( data.getState() == BusinessData.STATE_TRIAL ) {
-                    if ( !data.isInitialPopupShown() && data.getStartDate() != null && isTimeExpired(data.getStartDate(), config.initialPopupDelay())) {
-                        data.setInitialPopupShown();
-                        data.setLastPopupDate(new Date());
-                        showPopup("TODO: Initial Popup", buyResponse);
-                    }
-                    else if ( data.isInitialPopupShown() && isTimeExpired(data.getLastPopupDate(), config.reminderInterval()) ) {
-                        data.setLastPopupDate(new Date());
-                        showPopup("TODO: Reminder", buyResponse);
-                    }
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onQueueUpdated() {
-
-    }
-
 
     private interface PopupResponse {
+
+        String okTitle();
+        String cancelTitle();
+
         void onOk();
         void onCancel();
     }
 
-    private PopupResponse videoResponse = new PopupResponse() {
-        @Override
-        public void onOk() {
-            onVideoAdCompleted();
-        }
-
-        @Override
-        public void onCancel() {
-            onVideoAdCancelled();
-        }
-    };
-
 
     private PopupResponse shareResponse = new PopupResponse() {
+
+        public String okTitle() {
+            return "Share";
+        }
+
+        public String cancelTitle() {
+            return "Cancel";
+        }
+
         @Override
         public void onOk() {
-            onShareSuccess();
+            onShare();
         }
 
         @Override
         public void onCancel() {
-            onShareFailed();
+
         }
     };
 
     private PopupResponse buyResponse = new PopupResponse() {
+
+        public String okTitle() {
+            return "Buy";
+        }
+
+        public String cancelTitle() {
+            return "Cancel";
+        }
+
         @Override
         public void onOk() {
-            onPurchased();
+            onPurchase();
         }
 
         @Override
         public void onCancel() {
 
+        }
+    };
+
+    private PopupResponse trialResponse = new PopupResponse() {
+        @Override
+        public String okTitle() {
+            return "Share";
+        }
+
+        @Override
+        public String cancelTitle() {
+            return "Remind Me Later";
+        }
+
+        @Override
+        public void onOk() {
+            onShare();
+        }
+
+        @Override
+        public void onCancel() {
+            onRemindLater();
         }
     };
 }

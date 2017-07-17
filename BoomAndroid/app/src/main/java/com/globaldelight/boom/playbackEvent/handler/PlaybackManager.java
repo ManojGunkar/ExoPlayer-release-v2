@@ -113,6 +113,11 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     private MediaSession.Callback mediaSessionCallback = new MediaSession.Callback(){
         @Override
         public void onPlay() {
+            if ( mPlayer.getDataSourceId() == -1 ) {
+                onPlayingItemChanged();
+                return;
+            }
+
             setSessionState(PlaybackState.STATE_PLAYING);
         }
 
@@ -479,7 +484,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         if ( session == null ) {
             session = new MediaSession(context, context.getPackageName());
             session.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
-            setSessionState(PlaybackState.STATE_NONE);
+            setSessionState(PlaybackState.STATE_STOPPED);
             session.setCallback(mediaSessionCallback);
         }
         session.setActive(true);
@@ -488,7 +493,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     void setSessionState(int state)
     {
-        long actions = PlaybackState.ACTION_PLAY_PAUSE | PlaybackState.ACTION_SKIP_TO_NEXT | PlaybackState.ACTION_SKIP_TO_PREVIOUS;
+        long actions = PlaybackState.ACTION_PLAY_PAUSE | PlaybackState.ACTION_SKIP_TO_NEXT | PlaybackState.ACTION_SKIP_TO_PREVIOUS ;
         if ( state == PlaybackState.STATE_PLAYING ) {
             actions |= (PlaybackState.ACTION_PAUSE | PlaybackState.ACTION_STOP);
         }
@@ -556,7 +561,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 break;
 
             case AUDIOFOCUS_GAIN:
-                if ( isPlaying() && mIsVolumeDucked ) {
+                if ( isPlaying() ) {
                     mPlayer.setVolume(VOLUME_FULL);
                     mIsVolumeDucked = false;
                 }

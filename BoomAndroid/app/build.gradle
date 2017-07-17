@@ -95,8 +95,12 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:10.0.1'
     compile "com.mixpanel.android:mixpanel-android:5.+"
     compile 'com.google.android.gms:play-services-ads:10.0.1'
-
-
+    compile ('com.facebook.android:facebook-android-sdk:4.5.0') {
+        exclude module: 'bolts-android'
+    }
+    compile('com.twitter.sdk.android:tweet-composer:2.3.1@aar') {
+        transitive = true;
+    }
 
 }
 

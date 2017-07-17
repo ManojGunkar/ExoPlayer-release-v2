@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
+import com.facebook.FacebookSdk;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.BoomSplash;
@@ -21,6 +23,8 @@ import com.globaldelight.boom.app.database.FavoriteDBHelper;
 import com.globaldelight.boom.app.database.PlaylistDBHelper;
 import com.globaldelight.boom.app.database.UpNextDBHelper;
 import com.globaldelight.boom.app.sharedPreferences.UserPreferenceHandler;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterCore;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,6 +32,7 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import io.fabric.sdk.android.DefaultLogger;
 import io.fabric.sdk.android.Fabric;
 
 /**
@@ -35,6 +40,10 @@ import io.fabric.sdk.android.Fabric;
  */
 
 public class App extends Application implements Application.ActivityLifecycleCallbacks {
+
+    public static final String TWEET_CONSUMER =" OJlXW2Wyy7LYuNVPlKhqTlvNa";
+    public static final String TWEET_SECRET ="3CfR84QEsJH3VLv9kacF9gz0qg86bUEKQsrjdLDG0DRhoREtJd";
+
 
     private static App application;
     private static PlaylistDBHelper boomPlayListhelper;
@@ -54,6 +63,20 @@ public class App extends Application implements Application.ActivityLifecycleCal
     @Override
     public void onCreate() {
         super.onCreate();
+        FacebookSdk.sdkInitialize(this);
+
+
+        TwitterAuthConfig authConfig =  new TwitterAuthConfig(TWEET_CONSUMER, TWEET_SECRET);
+
+        final Fabric fabric = new Fabric.Builder(this)
+                .kits(new TwitterCore(authConfig))
+                .logger(new DefaultLogger(Log.DEBUG))
+                .debuggable(true)
+                .build();
+
+        Fabric.with(fabric);
+
+
 //        mixpanel = MixPanelAnalyticHelper.getInstance(this);
         MixPanelAnalyticHelper.initPushNotification(this);
         try {

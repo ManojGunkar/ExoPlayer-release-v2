@@ -3,6 +3,7 @@ package com.globaldelight.boom.business;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.util.Log;
 
 import java.util.Date;
 
@@ -29,12 +30,17 @@ public class BusinessData {
     private boolean mShowAds = false;
     private Context mContext;
     private SharedPreferences mPrefs;
+    private Date mInstallDate;
 
     public BusinessData(Context context) {
         mContext = context;
         mPrefs = mContext.getSharedPreferences("com.globaldelight.boom", Context.MODE_PRIVATE);
-        if ( mPrefs.getLong("install_date", 0) == 0 ) {
-            mPrefs.edit().putLong("install_date", System.currentTimeMillis()).apply();
+        try {
+            mInstallDate = new Date(mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).firstInstallTime);
+            Log.d("BusinessData", "Install date " + mInstallDate.toString() );
+        }
+        catch (PackageManager.NameNotFoundException e) {
+
         }
     }
 
@@ -58,17 +64,8 @@ public class BusinessData {
 
 
     public Date installDate() {
-        long time = mPrefs.getLong("install_date",0);
-        return time > 0 ? new Date(time) : null;
-
-//        try {
-//            return new Date(mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).firstInstallTime);
-//        }
-//        catch (PackageManager.NameNotFoundException e) {
-//            return new Date();
-//        }
+        return mInstallDate;
     }
-
 
     public Date getSharedDate() {
         long time = mPrefs.getLong(SHARED_DATE_KEY,0);
