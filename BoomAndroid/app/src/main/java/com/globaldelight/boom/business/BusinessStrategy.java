@@ -29,6 +29,8 @@ import java.util.Observer;
  */
 
 public class BusinessStrategy implements Observer, PlaybackManager.Listener, VideoAd.Callback {
+
+    public static final String ACTION_ADS_STATUS_CHANGED = "com.globaldelight.boom.ADS_STATUS_CHANGED";
     private static final String TAG = "Business Model";
 
     private Context mContext;
@@ -92,6 +94,12 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         }
     }
 
+    public boolean isAdsEnabled() {
+        return data.getState() != BusinessData.STATE_TRIAL && data.getState() != BusinessData.STATE_PURCHASED;
+    }
+
+
+
     public Activity getCurrentActivity() {
         return mCurrentActivity;
     }
@@ -128,6 +136,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
             case BusinessData.STATE_TRIAL:
                 if ( isTrialExpired() ) {
+                    mContext.sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
                     lockEffects();
                     if ( isSharingAllowed() ) {
                         showPopup("TODO: Trial Expired! Share", shareResponse);
@@ -268,6 +277,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     public void onMediaChanged() {
         if ( data.getState() == BusinessData.STATE_UNDEFINED && data.getStartDate() != null ) {
             if ( mSongsPlayed > 1 ) {
+                mContext.sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
                 lockEffects();
                 if ( isSharingAllowed() ) {
                     showPopup("Share to unlock effects", shareResponse);
