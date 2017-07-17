@@ -26,16 +26,15 @@ public class GoogleAdsPresenter implements AdsPresenter {
 
     private int[] mPositions = new int[0];
     private final static int AD_INTERVAL = 5;
+    private final static int AD_POSITION = (int)(Math.random() * 4);
 
     @Override
     public void update(int count) {
         mPositions = new int[count/AD_INTERVAL];
-        int adPosition = (int)(Math.random() * 4);
         for ( int i = 0; i < mPositions.length; i++ ) {
-            mPositions[i] = i * AD_INTERVAL + i + adPosition;
+            mPositions[i] = i * AD_INTERVAL + i + AD_POSITION;
         }
     }
-
 
 
     public GoogleAdsPresenter(AdsBuilder.AdsParam param) {
