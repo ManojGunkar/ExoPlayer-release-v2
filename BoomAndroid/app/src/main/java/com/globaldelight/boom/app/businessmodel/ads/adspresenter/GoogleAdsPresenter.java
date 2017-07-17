@@ -47,18 +47,19 @@ public class GoogleAdsPresenter implements AdsPresenter {
                     @Override
                     public void onContentAdLoaded(NativeContentAd contentAd) {
                         mAd = contentAd;
-                    }
-                })
-                .withAdListener(new AdListener() {
-                    @Override
-                    public void onAdFailedToLoad(int errorCode) {
-                    }
-
-                    @Override
-                    public void onAdLoaded() {
                         callback.onAdsLoaded();
                     }
                 })
+//                .withAdListener(new AdListener() {
+//                    @Override
+//                    public void onAdFailedToLoad(int errorCode) {
+//                    }
+//
+//                    @Override
+//                    public void onAdLoaded() {
+//                        callback.onAdsLoaded();
+//                    }
+//                })
                 .withNativeAdOptions(new NativeAdOptions.Builder()
                         .build())
                 .build();
@@ -88,13 +89,17 @@ public class GoogleAdsPresenter implements AdsPresenter {
 
     @Override
     public void bind(RecyclerView.ViewHolder holder, int position) {
+        GoogleAdViewHolder viewHolder = (GoogleAdViewHolder) holder;
         if ( mAd == null ) {
+            viewHolder.progressView.setVisibility(View.VISIBLE);
+            viewHolder.adContentView.setVisibility(View.GONE);
             return;
         }
 
         NativeContentAd ad = mAd;
+        viewHolder.progressView.setVisibility(View.GONE);
+        viewHolder.adContentView.setVisibility(View.VISIBLE);
 
-        GoogleAdViewHolder viewHolder = (GoogleAdViewHolder) holder;
 
         if ( ad.getLogo() != null ) {
             viewHolder.logoView.setImageDrawable(ad.getLogo().getDrawable());

@@ -5,7 +5,30 @@
     style="@style/AdsTheme"
     android:layout_height="wrap_content">
 
+    <LinearLayout android:id="@+id/ad_loading_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="10dp"
+        android:gravity="center">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+        <com.globaldelight.boom.view.RegularTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/track_sub_title"
+            android:textSize="18sp"
+            android:maxLines="1"
+            android:layout_gravity="center"
+            android:text="Loading Ad..."
+            android:textStyle="normal" />
+    </LinearLayout>
+
+
     <LinearLayout
+        android:id="@+id/ad_content_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
