@@ -25,14 +25,16 @@ public class GoogleAdsPresenter implements AdsPresenter {
     private Callback callback;
 
     private int[] mPositions = new int[0];
-    private final static int AD_INTERVAL = 5;
+    private final static int AD_INTERVAL = 50;
     private final static int AD_POSITION = (int)(Math.random() * 4);
 
     @Override
     public void update(int count) {
-        mPositions = new int[count/AD_INTERVAL];
+        int adCount = Math.max(1, count/AD_INTERVAL);
+        int adPosition = Math.min(AD_POSITION, count);
+        mPositions = new int[adCount];
         for ( int i = 0; i < mPositions.length; i++ ) {
-            mPositions[i] = i * AD_INTERVAL + i + AD_POSITION;
+            mPositions[i] = i * AD_INTERVAL + i + adPosition;
         }
     }
 
