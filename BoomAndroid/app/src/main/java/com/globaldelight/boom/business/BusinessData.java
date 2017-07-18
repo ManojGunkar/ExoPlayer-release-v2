@@ -25,6 +25,8 @@ public class BusinessData {
     private static final String START_DATE_KEY = "BusinessData.start_date";
     private static final String LAST_POPUP_DATE = "BusinessData.last_popup";
     private static final String INITIAL_POPUP_SHOWN_KEY = "BusinessData.initial_popup_shown";
+    private static final String LAST_SHARE_REMINDER_KEY = "BusinessData.LAST_SHARE_REMINDER";
+    private static final String LAST_PURCHASE_REMINDER_KEY = "BusinessData.LAST_PURCHASE_REMINDER";
 
 
     private boolean mShowAds = false;
@@ -112,4 +114,22 @@ public class BusinessData {
     public void setInitialPopupShown() {
         mPrefs.edit().putBoolean(INITIAL_POPUP_SHOWN_KEY, true).apply();
     }
+
+    public void setLastShareReminder(Date date) {
+        mPrefs.edit().putLong(LAST_SHARE_REMINDER_KEY, date.getTime()).apply();
+    }
+
+    public Date getLastShareReminder() {
+        long time = mPrefs.getLong(LAST_SHARE_REMINDER_KEY,0);
+        return time > 0 ? new Date(time) : null;
+    }
+    public void setLastPurchaseReminder(Date date) {
+        mPrefs.edit().putLong(LAST_PURCHASE_REMINDER_KEY, date.getTime()).apply();
+    }
+
+    public Date getLastPurchaseReminder() {
+        long time = mPrefs.getLong(LAST_PURCHASE_REMINDER_KEY,0);
+        return time > 0 ? new Date(time) : null;
+    }
+
 }

@@ -37,4 +37,13 @@ public class BusinessConfig {
     public long videoRewardPeriod() {
         return 5 * MS_PER_MIN;
     }
+
+    public long fullPricePeriod() {
+        return 5 * MS_PER_MIN;
+    }
+
+    public long discountPeriod() {
+        return 15 * MS_PER_MIN;
+    }
+
 }

@@ -1,13 +1,13 @@
 package com.globaldelight.boom.business;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 
@@ -32,6 +32,16 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
     public static final String ACTION_ADS_STATUS_CHANGED = "com.globaldelight.boom.ADS_STATUS_CHANGED";
     private static final String TAG = "Business Model";
+
+    private static final int SHARE_REMINDER_PERIOD = 5*60*1000;
+    private static final int PURCHASE_REMINDER_PERIOD = 15*60*1000;
+
+
+    @IntDef({PRICE_FULL, PRICE_DISCOUNT, PRICE_MIN})
+    public @interface Price{};
+    public static final int PRICE_FULL = 0;
+    public static final int PRICE_DISCOUNT = 1;
+    public static final int PRICE_MIN = 2;
 
     private Context mContext;
     private int state;
@@ -117,12 +127,18 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                 break;
 
             case BusinessData.STATE_LOCKED:
+                if ( shouldRemindSharing() ) {
+                    showShareDialog();
+                }
+                else if ( shouldRemindPurchase() ) {
+                    showPurchaseDialog(false);
+                }
                 break;
 
             case BusinessData.STATE_SHARED:
                 if ( isShareExpired() && isExtendedShareExpired() ) {
                     lockEffects();
-                    showPopup("Sharing expired! Buy", buyResponse);
+                    showPurchaseDialog(false);
                 }
                 break;
 
@@ -130,7 +146,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             case BusinessData.STATE_VIDOE_REWARD:
                 if ( isVideoRewardExpired() ) {
                     lockEffects();
-                    showPopup("Video reward expired!", buyResponse);
                 }
                 break;
 
@@ -138,11 +153,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                 if ( isTrialExpired() ) {
                     mContext.sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
                     lockEffects();
-                    if ( isSharingAllowed() ) {
-                        showPopup("TODO: Trial Expired! Share", shareResponse);
+                    if ( shouldRemindSharing() ) {
+                        showShareDialog();
                     }
-                    else {
-                        showPopup("TODO: Trial Expired! Buy", buyResponse);
+                    else if ( shouldRemindPurchase() ) {
+                        showPurchaseDialog(false);
                     }
                 }
                 break;
@@ -155,6 +170,9 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                 break;
         }
     }
+
+
+
 
     private static boolean isTimeExpired(Date startDate, long period) {
         return (startDate == null) || ( System.currentTimeMillis() > startDate.getTime() + period );
@@ -180,6 +198,49 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         return ( data.getState() != BusinessData.STATE_PURCHASED && data.getState() != BusinessData.STATE_SHARED && data.getSharedDate() == null );
     }
 
+    private boolean shouldRemindPurchase() {
+        return isTimeExpired(data.getLastPurchaseReminder(), PURCHASE_REMINDER_PERIOD);
+    }
+
+    private void showPurchaseDialog(boolean sharingAllowed) {
+        String message = "Buy @ ";
+        String price = "";
+        switch ( getPurchaseLevel() ) {
+            case PRICE_FULL:
+                price = "$2.99";
+                break;
+            case PRICE_DISCOUNT:
+                price = "$1.99";
+                break;
+            case PRICE_MIN:
+                price = "$0.99";
+                break;
+        }
+
+        data.setLastPurchaseReminder(new Date());
+
+        if ( sharingAllowed ) {
+            showPopup(message+price + "\n or \n Share", "Buy", "Share", shareResponse );
+        }
+        else {
+            showPopup(message+price, "Buy", "Remind Me Later", buyResponse );
+        }
+    };
+
+    private @Price int getPurchaseLevel() {
+        Date startDate = data.getStartDate();
+        if ( startDate == null || !isTimeExpired(startDate, config.fullPricePeriod() ) ) {
+            return PRICE_FULL;
+        }
+        else if ( !isTimeExpired(startDate, config.discountPeriod()) ) {
+            return PRICE_DISCOUNT;
+        }
+
+        return PRICE_MIN;
+    }
+
+
+
     private void onPurchase() {
 
     }
@@ -189,9 +250,28 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         AudioEffect.getInstance(mContext).setEnableAudioEffect(mWasEffectsOnWhenLocked);
     }
 
+
+
+    private boolean shouldRemindSharing() {
+        Date sharedDate = data.getSharedDate();
+        if (  isSharingAllowed() && sharedDate == null && isTimeExpired(data.getLastShareReminder(), SHARE_REMINDER_PERIOD) ) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    private void showShareDialog() {
+        data.setLastShareReminder(new Date());
+        showPurchaseDialog(true);
+    }
+
+
     private boolean isSharingAllowed() {
         return data.getSharedDate() == null && !isTimeExpired(data.installDate(), config.sharePeriod()*2 + config.extendedSharePeriod());
     }
+
 
     private void onShare() {
         if ( mCurrentActivity != null ) {
@@ -204,15 +284,24 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             data.setSharedDate(new Date());
             state = BusinessData.STATE_SHARED;
             AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
-            showPopup("TODO: Shared!", null);
+            showPopup("TODO: Shared!", "Ok", null, null);
         }
     }
 
     private void onShareFailed() {
         if ( rewardUserForSharing() ) {
             // TODO: Notify user that share failed
-            showPopup("TODO: Share Failed!", null);
+            showPopup("TODO: Share Failed!", "Ok", null, null);
         }
+    }
+
+
+    private void showVideoAd() {
+        if ( App.playbackManager().isTrackPlaying() ) {
+            mWasPlaying = true;
+            App.playbackManager().playPause();
+        }
+        mVideoAd.show(mCurrentActivity);
     }
 
 
@@ -255,11 +344,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         if ( property.equals(AudioEffect.AUDIO_EFFECT_PROPERTY) ) {
             update();
             if ( data.getState() == BusinessData.STATE_LOCKED && AudioEffect.getInstance(mContext).isAudioEffectOn() ) {
-                if ( App.playbackManager().isTrackPlaying() ) {
-                    mWasPlaying = true;
-                    App.playbackManager().playPause();
-                }
-                mVideoAd.show(mCurrentActivity);
+                showPopup("Watch Video Ad to unlock effects", "Watch", "Cancel", videoResponse);
             }
             else if ( (data.getState() == BusinessData.STATE_TRIAL || data.getState() == BusinessData.STATE_UNDEFINED) && data.getStartDate() == null ) {
                 data.setStartDate(new Date());
@@ -280,10 +365,10 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                 mContext.sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
                 lockEffects();
                 if ( isSharingAllowed() ) {
-                    showPopup("Share to unlock effects", shareResponse);
+                    showShareDialog();
                 }
                 else {
-                    showPopup("Buy to unlock effects", buyResponse);
+                    showPurchaseDialog(false);
                 }
             }
             mSongsPlayed++;
@@ -315,11 +400,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                     if ( !data.isInitialPopupShown() && data.getStartDate() != null && isTimeExpired(data.getStartDate(), config.initialPopupDelay())) {
                         data.setInitialPopupShown();
                         data.setLastPopupDate(new Date());
-                        showPopup("Initial Popup", trialResponse);
+                        showPurchaseDialog(false);
                     }
                     else if ( data.isInitialPopupShown() && isTimeExpired(data.getLastPopupDate(), config.reminderInterval()) ) {
                         data.setLastPopupDate(new Date());
-                        showPopup("Reminder", trialResponse);
+                        showPurchaseDialog(true);
                     }
                 }
             }
@@ -332,7 +417,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     }
 
 
-    private void showPopup(final String message, final PopupResponse callback) {
+    private void showPopup(final String message, final String primaryTitle, final String secondaryTitle, final PopupResponse callback) {
         mPendingAlert = new Runnable() {
             @Override
             public void run() {
@@ -349,20 +434,26 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                         .content(message)
                         .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
                         .title("TODO");
+
+                if ( primaryTitle != null ) {
+                    builder.positiveText(primaryTitle);
+                }
+                if ( secondaryTitle != null ) {
+                    builder.negativeText(secondaryTitle);
+                }
+
                 if ( callback != null ) {
-                    builder.negativeText(callback != null ? callback.cancelTitle() : "Cancel")
-                            .positiveText(callback != null ? callback.okTitle() : "Accept")
-                            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    builder.onNegative(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    callback.onCancel();
+                                    callback.onSecondaryAction();
 
                                 }
                             })
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    callback.onOk();
+                                    callback.onPrimaryAction();
                                 }
                             })
                             .onNeutral(new MaterialDialog.SingleButtonCallback() {
@@ -370,7 +461,14 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     callback.onCancel();
                                 }
+                            })
+                            .cancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    callback.onCancel();
+                                }
                             });
+
                 }
                 builder.show();
                 mPendingAlert = null;
@@ -385,37 +483,33 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
 
     private interface PopupResponse {
-
-        String okTitle();
-        String cancelTitle();
-
-        void onOk();
+        void onPrimaryAction();
+        void onSecondaryAction();
         void onCancel();
     }
 
-
-    private PopupResponse shareResponse = new PopupResponse() {
-
-        public String okTitle() {
-            return "Share";
-        }
-
-        public String cancelTitle() {
-            return "Cancel";
-        }
-
-        @Override
-        public void onOk() {
-            onShare();
-        }
-
+    private abstract class DefaultResponse implements PopupResponse {
         @Override
         public void onCancel() {
+            onSecondaryAction();
+        }
+    }
 
+
+    private PopupResponse shareResponse = new DefaultResponse() {
+
+        @Override
+        public void onPrimaryAction() {
+            onPurchase();
+        }
+
+        @Override
+        public void onSecondaryAction() {
+            onShare();
         }
     };
 
-    private PopupResponse buyResponse = new PopupResponse() {
+    private PopupResponse buyResponse = new DefaultResponse() {
 
         public String okTitle() {
             return "Buy";
@@ -426,35 +520,39 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         }
 
         @Override
-        public void onOk() {
+        public void onPrimaryAction() {
             onPurchase();
         }
 
         @Override
-        public void onCancel() {
+        public void onSecondaryAction() {
 
         }
     };
 
-    private PopupResponse trialResponse = new PopupResponse() {
+    private PopupResponse trialResponse = new DefaultResponse() {
         @Override
-        public String okTitle() {
-            return "Share";
-        }
-
-        @Override
-        public String cancelTitle() {
-            return "Remind Me Later";
-        }
-
-        @Override
-        public void onOk() {
+        public void onPrimaryAction() {
             onShare();
         }
 
         @Override
-        public void onCancel() {
+        public void onSecondaryAction() {
             onRemindLater();
         }
     };
+
+    private PopupResponse videoResponse = new DefaultResponse() {
+
+        @Override
+        public void onPrimaryAction() {
+            showVideoAd();
+        }
+
+        @Override
+        public void onSecondaryAction() {
+            onVideoAdCancelled();
+        }
+    };
+
 }
