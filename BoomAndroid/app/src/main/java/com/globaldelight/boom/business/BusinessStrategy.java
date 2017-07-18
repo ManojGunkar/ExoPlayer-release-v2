@@ -297,10 +297,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
 
     private void showVideoAd() {
-        if ( App.playbackManager().isTrackPlaying() ) {
-            mWasPlaying = true;
-            App.playbackManager().playPause();
-        }
         mVideoAd.show(mCurrentActivity);
     }
 
@@ -312,6 +308,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         data.setVideoRewardDate(new Date());
         if ( mWasPlaying ) {
             App.playbackManager().playPause();
+            mWasPlaying = false;
         }
     }
 
@@ -320,6 +317,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
         if ( mWasPlaying ) {
             App.playbackManager().playPause();
+            mWasPlaying = false;
         }
         // TODO: Should we show any popup?
     }
@@ -344,6 +342,10 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         if ( property.equals(AudioEffect.AUDIO_EFFECT_PROPERTY) ) {
             update();
             if ( data.getState() == BusinessData.STATE_LOCKED && AudioEffect.getInstance(mContext).isAudioEffectOn() ) {
+                if ( App.playbackManager().isTrackPlaying() ) {
+                    mWasPlaying = true;
+                    App.playbackManager().playPause();
+                }
                 showPopup("Watch Video Ad to unlock effects", "Watch", "Cancel", videoResponse);
             }
             else if ( (data.getState() == BusinessData.STATE_TRIAL || data.getState() == BusinessData.STATE_UNDEFINED) && data.getStartDate() == null ) {
@@ -490,8 +492,13 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
     private abstract class DefaultResponse implements PopupResponse {
         @Override
+        public void onSecondaryAction() {
+
+        }
+
+        @Override
         public void onCancel() {
-            onSecondaryAction();
+
         }
     }
 
@@ -510,37 +517,12 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     };
 
     private PopupResponse buyResponse = new DefaultResponse() {
-
-        public String okTitle() {
-            return "Buy";
-        }
-
-        public String cancelTitle() {
-            return "Cancel";
-        }
-
         @Override
         public void onPrimaryAction() {
             onPurchase();
         }
-
-        @Override
-        public void onSecondaryAction() {
-
-        }
     };
 
-    private PopupResponse trialResponse = new DefaultResponse() {
-        @Override
-        public void onPrimaryAction() {
-            onShare();
-        }
-
-        @Override
-        public void onSecondaryAction() {
-            onRemindLater();
-        }
-    };
 
     private PopupResponse videoResponse = new DefaultResponse() {
 
@@ -549,8 +531,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             showVideoAd();
         }
 
-        @Override
-        public void onSecondaryAction() {
+        public void onCancel() {
             onVideoAdCancelled();
         }
     };
