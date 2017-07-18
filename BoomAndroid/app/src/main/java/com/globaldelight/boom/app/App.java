@@ -180,6 +180,9 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public void onActivityResumed(Activity activity) {
+        if (  !(activity instanceof BoomSplash) && BusinessStrategy.getInstance(this).getCurrentActivity() != activity ) {
+            BusinessStrategy.getInstance(this).setCurrentActivity(activity);
+        }
     }
 
     public void onActivityPaused(Activity var1) {
