@@ -1060,7 +1060,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
                 if(audioEffects.isAudioEffectOn() != enable) {
                     audioEffects.setEnableAudioEffect(!audioEffects.isAudioEffectOn());
-                    updateAudioEffectUI();
                     MixPanelAnalyticHelper.track(mActivity, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_EFFECT_STATE_CHANGED, audioEffects.isAudioEffectOn());
                     FlurryAnalytics.getInstance(getActivity()).setEvent(enable ? FlurryEvents.EVENT_EFFECTS_TURNED_ON : FlurryEvents.EVENT_EFFECTS_TURNED_OFF);
