@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -198,12 +199,12 @@ public class ShareFragment extends Fragment {
     }
 
     private void onSucess() {
-        getActivity().sendBroadcast(new Intent(ACTION_SHARE_SUCCESS));
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(ACTION_SHARE_SUCCESS));
         getActivity().finish();
     }
 
     private void onCancel() {
-        getActivity().sendBroadcast(new Intent(ACTION_SHARE_FAILED));
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(ACTION_SHARE_FAILED));
         getActivity().finish();
     }
 

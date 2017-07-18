@@ -10,12 +10,15 @@ import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.ShareActivity;
+import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
+import com.globaldelight.boom.app.businessmodel.inapp.activity.InAppPurchaseActivity;
 import com.globaldelight.boom.app.fragments.ShareFragment;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.player.AudioEffect;
@@ -44,7 +47,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     public static final int PRICE_MIN = 2;
 
     private Context mContext;
-    private int state;
     private BusinessData data;
     private BusinessConfig config;
     private Activity mCurrentActivity;
@@ -70,6 +72,22 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     };
 
 
+    private BroadcastReceiver mIAPReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case InAppPurchase.ACTION_IAP_RESTORED:
+                case InAppPurchase.ACTION_IAP_SUCCESS:
+                    onPurchaseSuccess();
+                    break;
+
+                case InAppPurchase.ACTION_IAP_FAILED:
+                    break;
+            }
+        }
+    };
+
+
     private static BusinessStrategy instance;
     public static BusinessStrategy getInstance(Context context) {
         if ( instance == null ) {
@@ -88,7 +106,17 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         IntentFilter filter = new IntentFilter();
         filter.addAction(ShareFragment.ACTION_SHARE_SUCCESS);
         filter.addAction(ShareFragment.ACTION_SHARE_FAILED);
-        mContext.registerReceiver(mShareStatusReciever, filter);
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(mShareStatusReciever, filter);
+
+        IntentFilter iapFilter = new IntentFilter();
+        iapFilter.addAction(InAppPurchase.ACTION_IAP_RESTORED);
+        iapFilter.addAction(InAppPurchase.ACTION_IAP_SUCCESS);
+        iapFilter.addAction(InAppPurchase.ACTION_IAP_FAILED);
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(mIAPReceiver, iapFilter);
+
+        if ( !isPurchased() ) {
+            InAppPurchase.getInstance(mContext).initInAppPurchase();
+        }
     }
 
 
@@ -151,7 +179,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
             case BusinessData.STATE_TRIAL:
                 if ( isTrialExpired() ) {
-                    mContext.sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
+                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
                     lockEffects();
                     if ( shouldRemindSharing() ) {
                         showShareDialog();
@@ -227,7 +255,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         }
     };
 
-    private @Price int getPurchaseLevel() {
+    public @Price int getPurchaseLevel() {
         Date startDate = data.getStartDate();
         if ( startDate == null || !isTimeExpired(startDate, config.fullPricePeriod() ) ) {
             return PRICE_FULL;
@@ -242,14 +270,22 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
 
     private void onPurchase() {
-
+        mContext.startActivity(new Intent(mContext, InAppPurchaseActivity.class));
     }
 
-    private void onPurchased() {
+    public boolean isPurchased() {
+        return data.getState() == BusinessData.STATE_PURCHASED;
+    }
+
+    public void onPurchaseSuccess() {
         data.setState(BusinessData.STATE_PURCHASED);
-        AudioEffect.getInstance(mContext).setEnableAudioEffect(mWasEffectsOnWhenLocked);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
+        AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
     }
 
+    public void onPurchaseFailed() {
+
+    }
 
 
     private boolean shouldRemindSharing() {
@@ -282,16 +318,16 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     private void onShareSuccess() {
         if ( rewardUserForSharing() ) {
             data.setSharedDate(new Date());
-            state = BusinessData.STATE_SHARED;
+            data.setState(BusinessData.STATE_SHARED);
             AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
-            showPopup("TODO: Shared!", "Ok", null, null);
+            showPopup("Enjoy!", "Ok", null, null);
         }
     }
 
     private void onShareFailed() {
         if ( rewardUserForSharing() ) {
             // TODO: Notify user that share failed
-            showPopup("TODO: Share Failed!", "Ok", null, null);
+            showPopup("Failed!", "Ok", null, null);
         }
     }
 
@@ -364,7 +400,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     public void onMediaChanged() {
         if ( data.getState() == BusinessData.STATE_UNDEFINED && data.getStartDate() != null ) {
             if ( mSongsPlayed > 1 ) {
-                mContext.sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
                 lockEffects();
                 if ( isSharingAllowed() ) {
                     showShareDialog();

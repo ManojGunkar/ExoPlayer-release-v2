@@ -203,6 +203,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".app.businessmodel.inapp.activity.InAppPurchaseActivity"
+            android:screenOrientation="portrait"/>
+
+
         <activity
             android:name=".app.activities.WebViewActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
