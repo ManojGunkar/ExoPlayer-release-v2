@@ -82,6 +82,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                     break;
 
                 case InAppPurchase.ACTION_IAP_FAILED:
+                    onPurchaseFailed();
                     break;
             }
         }
@@ -278,7 +279,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     }
 
     public void onPurchaseFailed() {
-
+        // Do nothing
     }
 
 
