@@ -54,7 +54,7 @@ public class InAppPurchase {
     public static final String TAG="InApp Purchase";
 
     private boolean isPremium;
-    private String[] skuPrices = new String[3];
+    private String[] skuPrices = new String[]{"","",""};
     private Context context;
     private static InAppPurchase instance;
 
@@ -83,6 +83,9 @@ public class InAppPurchase {
      */
     private InAppPurchase(Context context) {
         this.context=context;
+        skuPrices[0] = Preferences.readString(context, IAP_ITEM1_PRICE_KEY, "");
+        skuPrices[1] = Preferences.readString(context, IAP_ITEM2_PRICE_KEY, "");
+        skuPrices[2] = Preferences.readString(context, IAP_ITEM3_PRICE_KEY, "");
     }
 
 
@@ -165,6 +168,24 @@ public class InAppPurchase {
                     isPremium = true;
                     onPurchaseRestored();
                 }
+                else {
+                    onPurchaseFailed();
+                }
+
+//                try {
+//                    iabHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
+//                        @Override
+//                        public void onConsumeFinished(Purchase purchase, IabResult result) {
+//                            //Clear the purchase info from persistent storage
+//                        }
+//                    });
+//
+//                }
+//                catch (Exception e) {
+//
+//                }
+
+
 
                 return;
             }
