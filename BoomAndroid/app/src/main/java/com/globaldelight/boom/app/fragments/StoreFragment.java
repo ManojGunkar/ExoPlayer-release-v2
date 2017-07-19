@@ -53,6 +53,8 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     private ProgressBar progressBar;
     private RegularTextView mStoreShareTxt;
     private RegularButton mStoreBuyBtn;
+    private RegularButton mClearButton;
+
     //    ConnectivityReceiver.isNetworkAvailable(mActivity, true)
     private BroadcastReceiver mUpdateInAppItemReceiver = new BroadcastReceiver() {
         @Override
@@ -106,6 +108,16 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         mStoreBuyBtn = (RegularButton) rootView.findViewById(R.id.store_buyButton);
         mStoreBuyBtn.setOnClickListener(this);
 
+        mClearButton = (RegularButton) rootView.findViewById(R.id.store_clear_button);
+        mClearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InAppPurchase.getInstance(getActivity()).clearInAppsPurchase();
+            }
+        });
+        mClearButton.setVisibility(View.GONE);
+
+
         progressBar.setVisibility(View.GONE);
         updateShareContent();
 
@@ -149,6 +161,8 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.after_purchase_store_page_buy_description));
         mStoreBuyBtn.setText(getResources().getString(R.string.after_purchase_buy_button));
         mStoreShareTxt.setVisibility(View.GONE);
+        mClearButton.setVisibility(View.VISIBLE);
+
     }
 
     private void normalStoreUI(String price){
@@ -156,10 +170,13 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_description);
         ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_description);
 
-        if (null != price)
+        if (null != price && price.length() > 0)
             mStoreBuyBtn.setText(getResources().getString(R.string.buy_button) + " @ " + price);
         else
             mStoreBuyBtn.setText(getResources().getString(R.string.buy_button));
+
+        mClearButton.setVisibility(View.GONE);
+
     }
 
     @Override

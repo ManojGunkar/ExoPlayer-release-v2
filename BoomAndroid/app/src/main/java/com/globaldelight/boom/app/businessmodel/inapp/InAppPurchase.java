@@ -128,6 +128,12 @@ public class InAppPurchase {
         return this;
     }
 
+    private boolean mShouldClear = false;
+    public void clearInAppsPurchase() {
+        mShouldClear = true;
+        initInAppPurchase();
+    }
+
     /**
      * With the help of this method we can get sku details such as price, county etc.
      * @return which return QueryInventory listener.
@@ -168,31 +174,36 @@ public class InAppPurchase {
                     }
                 }
 
-                if (isPremium) {
-                    onPurchaseRestored();
+                if ( !mShouldClear ) {
+                    if (isPremium) {
+                        onPurchaseRestored();
+                    }
+                    else if (premiumPurchase != null&& verifyDeveloperPayload(premiumPurchase)) {
+                        isPremium = true;
+                        onPurchaseRestored();
+                    }
+                    else {
+                        onPurchaseFailed();
+                    }
                 }
-                else if (premiumPurchase != null&& verifyDeveloperPayload(premiumPurchase)) {
-                    isPremium = true;
-                    onPurchaseRestored();
-                }
-                else {
+
+                if ( mShouldClear && premiumPurchase != null ) {
+                    try {
+                        iabHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
+                            @Override
+                            public void onConsumeFinished(Purchase purchase, IabResult result) {
+                                //Clear the purchase info from persistent storage
+                            }
+                        });
+
+                    }
+                    catch (Exception e) {
+
+                    }
+
+                    mShouldClear = false;
                     onPurchaseFailed();
                 }
-
-//                try {
-//                    iabHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
-//                        @Override
-//                        public void onConsumeFinished(Purchase purchase, IabResult result) {
-//                            //Clear the purchase info from persistent storage
-//                        }
-//                    });
-//
-//                }
-//                catch (Exception e) {
-//
-//                }
-
-
 
                 return;
             }
@@ -237,7 +248,7 @@ public class InAppPurchase {
                     onPurchaseFailed();
                     Toast.makeText(context, context.getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();                    return;
                 }
-                if (purchase.getSku().equals(SKU_INAPP_ITEM) || purchase.getSku().equals(SKU_INAPP_ITEM_2) || purchase.getSku().equals(SKU_INAPP_ITEM_3)) {
+                else {
                     isPremium = true;
                     onPurchaseSuccess();
                     //   FlurryAnalyticHelper.logEvent(UtilAnalytics.PurchaseCompleted);
