@@ -71,7 +71,9 @@ dependencies {
         exclude group: 'org.apache.httpcomponents'
     }
 
-    compile(name:'library-core', ext:'aar')
+    compile(name:'library-core', ext:'aar') {
+        force = true
+    }
     compile(name:'extension-flac-release', ext:'aar')
     compile(name:'boom-engine-release', ext:'aar')
 
