@@ -141,6 +141,13 @@ public class InAppPurchase {
                 if (result.isFailure()) return;
 
                 Purchase premiumPurchase = inventory.getPurchase(SKU_INAPP_ITEM);
+                if ( premiumPurchase == null ) {
+                    premiumPurchase = inventory.getPurchase(SKU_INAPP_ITEM_2);
+                }
+                if ( premiumPurchase == null ) {
+                    premiumPurchase = inventory.getPurchase(SKU_INAPP_ITEM_3);
+                }
+
                 isPremium = inventory.hasPurchase(SKU_INAPP_ITEM) || inventory.hasPurchase(SKU_INAPP_ITEM_2) || inventory.hasPurchase(SKU_INAPP_ITEM_3)  ;
                 if (inventory.hasDetails(SKU_INAPP_ITEM)) {
                     skuPrices[0] = inventory.getSkuDetails(SKU_INAPP_ITEM).getPrice();
