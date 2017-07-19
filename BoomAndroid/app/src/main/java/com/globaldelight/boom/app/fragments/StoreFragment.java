@@ -2,7 +2,6 @@
 
 package com.globaldelight.boom.app.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -24,26 +22,18 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
 import com.globaldelight.boom.business.BusinessStrategy;
 import com.globaldelight.boom.business.inapp.IabHelper;
-import com.globaldelight.boom.business.inapp.IabResult;
-import com.globaldelight.boom.business.inapp.Inventory;
-import com.globaldelight.boom.business.inapp.Purchase;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.view.RegularButton;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
-import com.globaldelight.boom.app.sharedPreferences.Preferences;
-
-import java.util.ArrayList;
 
 import static com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase.SKU_INAPP_ITEM;
 import static com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase.SKU_INAPP_ITEM_2;
 import static com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase.SKU_INAPP_ITEM_3;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
-import static com.globaldelight.boom.app.sharedPreferences.Preferences.INAPP_PURCHASE_PRICE_VALUE;
 
 /**
  * Created by Rahul Agarwal on 08-02-17.
@@ -232,7 +222,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 return SKU_INAPP_ITEM;
             case BusinessStrategy.PRICE_DISCOUNT:
                 return SKU_INAPP_ITEM_2;
-            case BusinessStrategy.PRICE_MIN:
+            case BusinessStrategy.PRICE_DISCOUNT_2:
                 return SKU_INAPP_ITEM_3;
         }
     }

@@ -40,11 +40,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     private static final int PURCHASE_REMINDER_PERIOD = 15*60*1000;
 
 
-    @IntDef({PRICE_FULL, PRICE_DISCOUNT, PRICE_MIN})
+    @IntDef({PRICE_FULL, PRICE_DISCOUNT, PRICE_DISCOUNT_2})
     public @interface Price{};
     public static final int PRICE_FULL = 0;
     public static final int PRICE_DISCOUNT = 1;
-    public static final int PRICE_MIN = 2;
+    public static final int PRICE_DISCOUNT_2 = 2;
 
     private Context mContext;
     private BusinessData data;
@@ -232,18 +232,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
     private void showPurchaseDialog(boolean sharingAllowed) {
         String message = "Buy @ ";
-        String price = "";
-        switch ( getPurchaseLevel() ) {
-            case PRICE_FULL:
-                price = "$2.99";
-                break;
-            case PRICE_DISCOUNT:
-                price = "$1.99";
-                break;
-            case PRICE_MIN:
-                price = "$0.99";
-                break;
-        }
+        String price = getPurchasePrice();
 
         data.setLastPurchaseReminder(new Date());
 
@@ -264,9 +253,14 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             return PRICE_DISCOUNT;
         }
 
-        return PRICE_MIN;
+        return PRICE_DISCOUNT_2;
     }
 
+
+    private String getPurchasePrice() {
+        String[] priceList = InAppPurchase.getInstance(mContext).getPriceList();
+        return priceList[getPurchaseLevel()];
+    }
 
 
     private void onPurchase() {
@@ -470,6 +464,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                         .widgetColor(ContextCompat.getColor(mContext, R.color.dialog_widget))
                         .contentColor(ContextCompat.getColor(mContext, R.color.dialog_content))
                         .content(message)
+                        .canceledOnTouchOutside(false)
                         .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
                         .title("TODO");
 
