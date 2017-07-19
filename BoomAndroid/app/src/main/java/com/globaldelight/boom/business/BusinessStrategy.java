@@ -16,9 +16,9 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.app.activities.ShareActivity;
 import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
-import com.globaldelight.boom.app.businessmodel.inapp.activity.InAppPurchaseActivity;
 import com.globaldelight.boom.app.fragments.ShareFragment;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.player.AudioEffect;
@@ -265,7 +265,9 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
 
     private void onPurchase() {
-        mContext.startActivity(new Intent(mContext, InAppPurchaseActivity.class));
+        Intent intent = new Intent(mContext, ActivityContainer.class);
+        intent.putExtra("container",R.string.store_title);
+        mContext.startActivity(intent);
     }
 
     public boolean isPurchased() {
