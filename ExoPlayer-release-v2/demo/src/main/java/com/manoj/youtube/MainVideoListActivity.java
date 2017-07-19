@@ -224,7 +224,7 @@ public class MainVideoListActivity extends AppCompatActivity {
                 onFinishLoading();
                 String downloadUrl = null;
                 if (sparseArray != null) {
-                    int preferredFormats[] = {18, 43, 22, 36};
+                    int preferredFormats[] = { 22, 18, 43, 36};
                     for ( int i = 0; i < preferredFormats.length; i++ ) {
                         downloadUrl = sparseArray.get(preferredFormats[i]).getUrl();
                         if ( downloadUrl != null ) {
