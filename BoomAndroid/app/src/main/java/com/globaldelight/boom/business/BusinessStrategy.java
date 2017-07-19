@@ -17,7 +17,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.ActivityContainer;
-import com.globaldelight.boom.app.activities.ShareActivity;
 import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
 import com.globaldelight.boom.app.fragments.ShareFragment;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
@@ -307,9 +306,9 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
 
     private void onShare() {
-        if ( mCurrentActivity != null ) {
-            mCurrentActivity.startActivity(new Intent(mCurrentActivity, ShareActivity.class));
-        }
+        Intent intent = new Intent(mContext, ActivityContainer.class);
+        intent.putExtra("container",R.string.title_share);
+        mContext.startActivity(intent);
     }
 
     private void onShareSuccess() {

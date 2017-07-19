@@ -424,9 +424,13 @@ public class MainActivity extends MasterActivity
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
                 return  true;
             case R.id.nav_share:
-                //Utils.shareStart(MainActivity.this);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startCompoundActivities(R.string.title_share);
+                    }
+                }, 300);
                 drawerLayout.closeDrawer(GravityCompat.START);
-                startActivity(new Intent(this, ShareActivity.class));
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Share_Opened_from_Boom);
                 return true;

@@ -12,6 +12,7 @@ import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.fragments.FavouriteListFragment;
 import com.globaldelight.boom.app.fragments.RecentPlayedFragment;
+import com.globaldelight.boom.app.fragments.ShareFragment;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.fragments.AboutFragment;
 import com.globaldelight.boom.app.fragments.SettingFragment;
@@ -85,6 +86,11 @@ public class ActivityContainer extends MasterActivity {
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Store_Page_Opened_from_Drawer);
 
                 break;
+            case R.string.title_share:
+                mFragment =  new ShareFragment();
+                setVisibleMiniPlayer(false);
+                break;
+
             case R.string.header_about:
                 mFragment =  new AboutFragment();
                 setVisibleMiniPlayer(false);
