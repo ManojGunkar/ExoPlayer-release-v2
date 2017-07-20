@@ -1,13 +1,22 @@
 package com.globaldelight.boom.app.fragments;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentProvider;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -21,19 +30,33 @@ import android.widget.Toast;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.applinks.AppLinkData;
 import com.facebook.share.Sharer;
 import com.facebook.share.model.AppInviteContent;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.AppInviteDialog;
 import com.facebook.share.widget.ShareDialog;
 import com.globaldelight.boom.R;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.twitter.sdk.android.core.services.StatusesService;
 import com.twitter.sdk.android.tweetcomposer.Card;
 import com.twitter.sdk.android.tweetcomposer.ComposerActivity;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import com.twitter.sdk.android.tweetcomposer.TweetUploadService;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import io.fabric.sdk.android.DefaultLogger;
 import io.fabric.sdk.android.Fabric;
@@ -52,6 +75,19 @@ public class ShareFragment extends Fragment {
 
     private CallbackManager callbackManager;
     private ShareDialog shareDialog;
+    private TwitterAuthClient mAuthClient;
+    private Callback<TwitterSession> mTwitterAuthCallback = new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                tweetShare();
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                ShareFragment.this.onCancel();
+            }
+    };
+
 
     @Nullable
     @Override
@@ -78,58 +114,58 @@ public class ShareFragment extends Fragment {
         tweetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tweetShare();
+                if ( TwitterCore.getInstance().getSessionManager().getActiveSession() != null ) {
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            tweetShare();
+                        }
+                    });
+                }
+                else {
+                    getTwitterAuthClient().authorize(getActivity(),mTwitterAuthCallback);
+                }
             }
         });
+
 
         return view;
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(TweetUploadService.UPLOAD_SUCCESS);
+        filter.addAction(TweetUploadService.UPLOAD_FAILURE);
+        getActivity().registerReceiver(mTweetStatusReceiver, filter);
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        getActivity().unregisterReceiver(mTweetStatusReceiver);
+    }
+
     private void tweetShare(){
-        TwitterAuthConfig authConfig =  new TwitterAuthConfig(KEY.TWEET_CONSUMER, KEY.TWEET_SECRET);
-
-        final Fabric fabric = new Fabric.Builder(getActivity())
-                .kits(new TwitterCore(authConfig))
-                .logger(new DefaultLogger(Log.DEBUG))
-                .debuggable(true)
-                .build();
-
-        Fabric.with(fabric);
-
-
-        Fabric.with(getActivity(), new TwitterCore(authConfig), new TweetComposer());
-       TweetComposer.Builder builder = new TweetComposer.Builder(getActivity())
-                .text("just setting up my Twitter Kit.");
-        builder.show();
-
-//        final TwitterSession session = TwitterCore.getInstance().getSessionManager()
-//                .getActiveSession();
-//        final Intent intent = new ComposerActivity.Builder(getActivity())
-//                .session(session)
-//                .createIntent();
-//        intent.putExtra("EXTRA_TWEET_TEXT","Hello World Testing");
-//        startActivity(intent);
-/*
-        Uri uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE +
-                "://" + getResources().getResourcePackageName(R.drawable.ic_boom_about_icon)
-                + '/' + getResources().getResourceTypeName(R.drawable.ic_boom_about_icon) + '/' + getResources().getResourceEntryName(R.drawable.ic_boom_about_icon) );
-
-        final Card card = new Card.AppCardBuilder(getActivity())
-               // .imageUri(uri)
-             //   .googlePlayId("com.globaldelight.boom")
-                .build();
+        final TwitterSession session = TwitterCore.getInstance().getSessionManager()
+                .getActiveSession();
         final Intent intent = new ComposerActivity.Builder(getActivity())
                 .session(session)
-                .card(card)
-                .hashtags("#helloworld", "#twitter")
+                .hashtags("#FeelYourMusic")
                 .createIntent();
-        startActivity(intent);*/
+        startActivity(intent);
     }
 
     private void fbShare(){
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(this);
         if (ShareDialog.canShow(ShareLinkContent.class)) {
+
+
             ShareLinkContent linkContent = new ShareLinkContent.Builder()
                     .setContentUrl(Uri.parse("http://developers.facebook.com/android"))
                     .build();
@@ -200,12 +236,10 @@ public class ShareFragment extends Fragment {
 
     private void onSucess() {
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(ACTION_SHARE_SUCCESS));
-        getActivity().finish();
     }
 
     private void onCancel() {
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(ACTION_SHARE_FAILED));
-        getActivity().finish();
     }
 
     private void bindView(){
@@ -219,10 +253,13 @@ public class ShareFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode,resultCode,data);
+        getTwitterAuthClient().onActivityResult(requestCode, resultCode, data);
+        if ( callbackManager != null ) {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
-    public class TweetResultReceiver extends BroadcastReceiver {
+    private BroadcastReceiver mTweetStatusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (TweetUploadService.UPLOAD_SUCCESS.equals(intent.getAction())) {
@@ -235,10 +272,13 @@ public class ShareFragment extends Fragment {
                 Toast.makeText(context,"Failure "+retryIntent,Toast.LENGTH_SHORT).show();
             }
         }
-    }
+    };
 
-     interface KEY{
-        String TWEET_CONSUMER =" OJlXW2Wyy7LYuNVPlKhqTlvNa";
-        String TWEET_SECRET ="3CfR84QEsJH3VLv9kacF9gz0qg86bUEKQsrjdLDG0DRhoREtJd";
-    }
+    private TwitterAuthClient getTwitterAuthClient() {
+        if ( mAuthClient == null ) {
+            mAuthClient = new TwitterAuthClient();
+        }
+
+        return mAuthClient;
+    };
 }

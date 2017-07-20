@@ -25,6 +25,7 @@ import com.globaldelight.boom.app.database.UpNextDBHelper;
 import com.globaldelight.boom.app.sharedPreferences.UserPreferenceHandler;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,8 +42,8 @@ import io.fabric.sdk.android.Fabric;
 
 public class App extends Application implements Application.ActivityLifecycleCallbacks {
 
-    public static final String TWEET_CONSUMER =" OJlXW2Wyy7LYuNVPlKhqTlvNa";
-    public static final String TWEET_SECRET ="3CfR84QEsJH3VLv9kacF9gz0qg86bUEKQsrjdLDG0DRhoREtJd";
+    public static final String TWEET_CONSUMER ="K8KDQHnW8Zi0ZLZklAcKGqI92";
+    public static final String TWEET_SECRET ="OLhb1Lp9BaZf26qOQE6EOHBP66sImaZ635ls23TJqrDcmwhpuy";
 
 
     private static App application;
@@ -69,7 +70,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
         TwitterAuthConfig authConfig =  new TwitterAuthConfig(TWEET_CONSUMER, TWEET_SECRET);
 
         final Fabric fabric = new Fabric.Builder(this)
-                .kits(new TwitterCore(authConfig))
+                .kits(new TwitterCore(authConfig), new TweetComposer(), new Crashlytics())
                 .logger(new DefaultLogger(Log.DEBUG))
                 .debuggable(true)
                 .build();
@@ -79,9 +80,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
 //        mixpanel = MixPanelAnalyticHelper.getInstance(this);
         MixPanelAnalyticHelper.initPushNotification(this);
-        try {
-            Fabric.with(this, new Crashlytics());
-        }catch (Exception e){}
         application = this;
 
 
