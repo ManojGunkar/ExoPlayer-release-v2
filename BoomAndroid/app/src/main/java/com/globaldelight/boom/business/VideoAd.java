@@ -3,7 +3,9 @@ package com.globaldelight.boom.business;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.telecom.Call;
+import android.widget.Toast;
 
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.utils.Utils;
 import com.google.android.exoplayer2.C;
 import com.google.android.gms.ads.AdRequest;
@@ -12,12 +14,13 @@ import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 /**
  * Created by adarsh on 14/07/17.
  */
 
 public class VideoAd implements RewardedVideoAdListener {
-
     private Context mContext;
     private RewardedVideoAd mAd;
     private Callback mCallback;
@@ -33,7 +36,7 @@ public class VideoAd implements RewardedVideoAdListener {
     public void prepare() {
         mAd = MobileAds.getRewardedVideoAdInstance(mContext);
         mAd.setRewardedVideoAdListener(this);
-        mAd.loadAd("ca-app-pub-3940256099942544/5224354917", new AdRequest.Builder().build());
+        mAd.loadAd(BuildConfig.GOOGLE_VIDEO_AD_ID, new AdRequest.Builder().build());
     }
 
 
@@ -45,7 +48,7 @@ public class VideoAd implements RewardedVideoAdListener {
         else {
             mShow = true;
             Utils.showProgressLoader(context);
-            mAd.loadAd("ca-app-pub-3940256099942544/5224354917", new AdRequest.Builder().build());
+            mAd.loadAd(BuildConfig.GOOGLE_VIDEO_AD_ID, new AdRequest.Builder().build());
         }
     }
 
