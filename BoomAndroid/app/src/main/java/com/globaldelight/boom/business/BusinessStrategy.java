@@ -264,9 +264,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
 
     private void onPurchase() {
-        Intent intent = new Intent(mContext, ActivityContainer.class);
-        intent.putExtra("container",R.string.store_title);
-        mContext.startActivity(intent);
+        if ( mCurrentActivity != null ) {
+            Intent intent = new Intent(mContext, ActivityContainer.class);
+            intent.putExtra("container",R.string.store_title);
+            mCurrentActivity.startActivity(intent);
+        }
     }
 
     public boolean isPurchased() {
@@ -306,9 +308,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
 
     private void onShare() {
-        Intent intent = new Intent(mContext, ActivityContainer.class);
-        intent.putExtra("container",R.string.title_share);
-        mContext.startActivity(intent);
+        if ( mCurrentActivity != null ) {
+            Intent intent = new Intent(mContext, ActivityContainer.class);
+            intent.putExtra("container",R.string.title_share);
+            mCurrentActivity.startActivity(intent);
+        }
     }
 
     private void onShareSuccess() {
