@@ -14,6 +14,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
+
+import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -94,8 +96,9 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
     private void setArtistImg(final SimpleItemViewHolder holder, final int position, final int size) {
         String path = itemList.get(position).getItemArtUrl();
         if ( path == null ) path = "";
-        Picasso.with(context).load(new File(path))
+        Glide.with(context).load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
+                .fitCenter()
                 .into(holder.defaultImg);
     }
 

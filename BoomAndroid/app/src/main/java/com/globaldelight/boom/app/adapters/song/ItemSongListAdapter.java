@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -189,11 +190,10 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
     private void setAlbumArt(String path, SimpleItemViewHolder holder) {
         if ( path == null ) path = "";
-        Picasso.with(activity)
-                .load(new File(path))
+        Glide.with(activity)
+                .load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
-                .noFade()
-                .resize(WIDTH, HEIGHT)
+                .fitCenter()
                 .into(holder.img);
     }
 

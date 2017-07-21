@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+
+import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -180,9 +182,9 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
         if ( path == null ) {
             path = "";
         }
-        Picasso.with(context).load(new File(path))
+        Glide.with(context).load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
-                .resize(WIDTH, HEIGHT)
+                .fitCenter()
                 .into(holder.img);
     }
 

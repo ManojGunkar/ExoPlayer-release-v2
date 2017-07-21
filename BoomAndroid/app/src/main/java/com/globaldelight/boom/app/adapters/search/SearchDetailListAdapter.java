@@ -22,6 +22,8 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -371,16 +373,17 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
 
     private void setArtistImg(final SearchDetailListAdapter.SimpleItemViewHolder holder, String path, final int size) {
         if ( path == null ) path = "";
-        Picasso.with(context).load(new File(path))
+        Glide.with(context).load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
+                .fitCenter()
                 .into(holder.defaultImg);
     }
 
     private void setSongArt(String path, SearchDetailListAdapter.SimpleItemViewHolder holder) {
-        if ( path == null ) path = "";
-        Picasso.with(context)
-                .load(new File(path))
+        Glide.with(context)
+                .load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
+                .fitCenter()
                 .into(holder.img);
     }
 
