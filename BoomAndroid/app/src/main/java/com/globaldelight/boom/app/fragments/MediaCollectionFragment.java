@@ -17,6 +17,9 @@ import android.widget.ProgressBar;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.adapters.media.MediaGridAdapter;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.businessmodel.ads.adapter.AdWrapperAdapter;
+import com.globaldelight.boom.app.businessmodel.ads.builder.AdsBuilder;
+import com.globaldelight.boom.business.AdController;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
@@ -33,8 +36,9 @@ public abstract class MediaCollectionFragment extends Fragment {
     private Activity mActivity;
     private View mainView;
     private RecyclerView recyclerView;
-    private MediaGridAdapter adapter;
+    private AdController mAdController;
     private ProgressBar mLibLoad;
+
 
     @Override
     public void onAttach(Context context) {
@@ -121,8 +125,10 @@ public abstract class MediaCollectionFragment extends Fragment {
             recyclerView.setLayoutManager(gridLayoutManager);
             recyclerView.addItemDecoration(new SimpleDividerItemDecoration(mActivity, Utils.getWindowWidth(mActivity)));
             recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(mActivity, 0)));
-            adapter = new MediaGridAdapter(mActivity, recyclerView, iMediaCollectionList, isPhone);
-            recyclerView.setAdapter(adapter);
+            MediaGridAdapter mediaAdapter = new MediaGridAdapter(mActivity, recyclerView, iMediaCollectionList, isPhone);
+
+            mAdController = new AdController(getActivity(), recyclerView, mediaAdapter, true);
+            recyclerView.setAdapter(mAdController.getAdAdapter());
             recyclerView.setHasFixedSize(true);
             listIsEmpty(iMediaCollectionList.size());
         }

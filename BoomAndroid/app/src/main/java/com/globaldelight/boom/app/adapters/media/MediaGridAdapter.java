@@ -70,6 +70,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mediaImageView.setVisibility(View.VISIBLE);
+        holder.position = position;
         MediaItemCollection mediaItem = itemList.get(position);
 
         holder.title.setText(mediaItem.getItemTitle());
@@ -83,10 +84,10 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
         int size = setSize(holder);
         if(null == mediaItem.getItemArtUrl()) {
             if ( mediaItem.getItemType() == ItemType.ARTIST ) {
-                mediaItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getArtistArtList().get(mediaItem.getItemId()));
+                mediaItem.setItemArtUrl(App.playbackManager().queue().getArtistArtList().get(mediaItem.getItemId()));
             }
             else {
-                mediaItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(mediaItem.getItemSubTitle()));
+                mediaItem.setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(mediaItem.getItemSubTitle()));
             }
         }
 
@@ -147,7 +148,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
             @Override
             public void onClick(View view) {
 
-                final int position = holder.getAdapterPosition();
+                final int position = holder.position;
                 final MediaItemCollection mediaItem = itemList.get(position);
 
                 recyclerView.smoothScrollToPosition(position);
@@ -164,7 +165,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
             @Override
             public void onClick(View view) {
 
-                final int position = holder.getAdapterPosition();
+                final int position = holder.position;
                 final MediaItemCollection mediaItem = itemList.get(position);
 
                 PopupMenu pm = new PopupMenu(context, view);
@@ -187,6 +188,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
         public ImageView mediaImageView;
         public View overflowMenu, mainView;
         public TableLayout artTable;
+        public int position = -1;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -224,10 +226,10 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
             ArrayList<? extends IMediaItemBase> itemToAdd = getMediaListToAdd(mediaItem);
             switch (itemId) {
                 case R.id.popup_album_play_next:
-                    App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(itemToAdd);
+                    App.playbackManager().queue().addItemAsPlayNext(itemToAdd);
                     break;
                 case R.id.popup_album_add_queue:
-                    App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemToAdd);
+                    App.playbackManager().queue().addItemAsUpNext(itemToAdd);
                     break;
                 case R.id.popup_album_add_playlist:
                     Utils.addToPlaylist(activity, itemToAdd, null);

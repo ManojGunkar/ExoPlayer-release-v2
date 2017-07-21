@@ -80,7 +80,7 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
         holder.subTitle.setText( sb.toString());
         int size = setSize(holder);
         if(null == itemList.get(position).getItemArtUrl())
-            itemList.get(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(itemList.get(position).getItemSubTitle()));
+            itemList.get(position).setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(itemList.get(position).getItemSubTitle()));
 
         if(null == itemList.get(position).getItemArtUrl())
             itemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -133,10 +133,10 @@ public class GenreGridAdapter extends RecyclerView.Adapter<GenreGridAdapter.Simp
 
                             switch (item.getItemId()) {
                                 case R.id.popup_album_play_next:
-                                    App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).getMediaElement());
+                                    App.playbackManager().queue().addItemAsPlayNext(((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).getMediaElement());
                                     break;
                                 case R.id.popup_album_add_queue:
-                                    App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).getMediaElement());
+                                    App.playbackManager().queue().addItemAsUpNext(((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).getMediaElement());
                                     break;
                                 case R.id.popup_album_add_playlist:
                                     Utils.addToPlaylist(activity, ((IMediaItemCollection) itemList.get(position).getMediaElement().get(0)).getMediaElement(), null);

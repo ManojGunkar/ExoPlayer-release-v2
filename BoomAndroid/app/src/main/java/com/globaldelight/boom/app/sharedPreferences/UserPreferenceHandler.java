@@ -93,28 +93,4 @@ public class UserPreferenceHandler {
     public int getSortedByAlbum() {
         return shp.getInt(ALBUM_SORTED, ALBUM_SORTED_BY_TITLE);
     }
-
-    public void setPlayerSeekPosition(int playerSeekPosition) {
-        shp.edit().putInt(PLAYER_SEEK_POSITION, playerSeekPosition).apply();
-    }
-
-    public int getPlayerSeekPosition(){
-        return shp.getInt(PLAYER_SEEK_POSITION, 0);
-    }
-
-    public void setPlayedTime(long playedTime) {
-        shp.edit().putLong(PLAYER_PLAYED_TIME, playedTime).apply();
-    }
-
-    public long getPlayedTime(){
-        return shp.getLong(PLAYER_PLAYED_TIME, 0);
-    }
-
-    public void setRemainsTime(long remainsTime) {
-        shp.edit().putLong(PLAYER_REMAINS_TIME, remainsTime).apply();
-    }
-
-    public long getRemainsTime(long defaultTime){
-        return shp.getLong(PLAYER_REMAINS_TIME, defaultTime);
-    }
 }

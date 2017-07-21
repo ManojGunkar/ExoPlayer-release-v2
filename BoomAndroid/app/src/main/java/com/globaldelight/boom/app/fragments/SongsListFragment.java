@@ -19,6 +19,9 @@ import android.widget.ProgressBar;
 
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.businessmodel.ads.adapter.AdWrapperAdapter;
+import com.globaldelight.boom.app.businessmodel.ads.builder.AdsBuilder;
+import com.globaldelight.boom.business.AdController;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
@@ -27,7 +30,7 @@ import com.globaldelight.boom.view.RegularTextView;
 
 import java.util.ArrayList;
 
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 
 /**
  * Created by Rahul Agarwal on 28-02-17.
@@ -40,6 +43,8 @@ public class SongsListFragment extends Fragment{
     private RecyclerView recyclerView;
     private SongListAdapter songListAdapter;
     private ProgressBar mLibLoad;
+    private AdController mAdController;
+
 
     @Override
     public void onAttach(Context context) {
@@ -68,7 +73,7 @@ public class SongsListFragment extends Fragment{
         @Override
         public void onReceive(Context mActivity, Intent intent) {
             switch (intent.getAction()){
-                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY :
+                case ACTION_PLAYER_STATE_CHANGED:
                     if(null != songListAdapter){
                         songListAdapter.notifyDataSetChanged();
                     }
@@ -83,7 +88,7 @@ public class SongsListFragment extends Fragment{
         if(null != songListAdapter)
             songListAdapter.notifyDataSetChanged();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         if(null != mActivity)
             mActivity.registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
     }
@@ -140,7 +145,9 @@ public class SongsListFragment extends Fragment{
             recyclerView.setLayoutManager(llm);
             recyclerView.setHasFixedSize(true);
             songListAdapter = new SongListAdapter(mActivity, SongsListFragment.this, iMediaItemList, ItemType.SONGS);
-            recyclerView.setAdapter(songListAdapter);
+
+            mAdController = new AdController(getActivity(), recyclerView, songListAdapter, false);
+            recyclerView.setAdapter(mAdController.getAdAdapter());
             listIsEmpty(iMediaItemList.size());
         }
     }

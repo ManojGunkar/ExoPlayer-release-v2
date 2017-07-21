@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.gms.ads.formats.NativeContentAdView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/google_native_adView"
+    android:layout_width="match_parent"
+    style="@style/AdsTheme"
+    android:layout_height="wrap_content">
+
+    <LinearLayout android:id="@+id/ad_loading_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="10dp"
+        android:gravity="center">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+        <com.globaldelight.boom.view.RegularTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/track_sub_title"
+            android:textSize="18sp"
+            android:maxLines="1"
+            android:layout_gravity="center"
+            android:text="Loading Ad..."
+            android:textStyle="normal" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ad_content_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.globaldelight.boom.view.RegularTextView
+            android:id="@+id/tvHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ivLogo"
+                android:layout_width="@dimen/track_list_album_art_size"
+                android:layout_height="@dimen/track_list_album_art_size"
+                android:layout_gravity="center_vertical"
+                android:scaleType="centerCrop" />
+
+            <com.globaldelight.boom.view.RegularTextView
+                android:id="@+id/tvDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:textColor="@color/track_sub_title"
+                android:textStyle="normal" />
+
+            <Button
+                android:id="@+id/btnAction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:backgroundTint="@color/colorAccent"
+                android:padding="2dp" />
+        </LinearLayout>
+
+        <com.globaldelight.boom.view.RegularTextView
+            android:id="@+id/tvAdvertiser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="1dp"
+            android:textColor="@color/track_sub_title"
+            android:textStyle="italic" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:background="@color/library_separator"/>
+
+</com.google.android.gms.ads.formats.NativeContentAdView>

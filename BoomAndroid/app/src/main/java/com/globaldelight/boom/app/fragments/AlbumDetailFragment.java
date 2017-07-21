@@ -26,7 +26,7 @@ import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.app.adapters.album.AlbumDetailAdapter;
 
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -50,7 +50,7 @@ public class AlbumDetailFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
-                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                case ACTION_PLAYER_STATE_CHANGED:
                     if(null != albumDetailAdapter)
                         albumDetailAdapter.notifyDataSetChanged();
                     break;
@@ -88,7 +88,7 @@ public class AlbumDetailFragment extends Fragment {
 
     private void initValues(){
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         if(null != mActivity) {
             mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
 
@@ -109,11 +109,11 @@ public class AlbumDetailFragment extends Fragment {
 
     public void onFloatPlayAlbums() {
         if (dataCollection.getParentType() == ItemType.ALBUM && dataCollection.getMediaElement().size() > 0) {
-            App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(dataCollection.getMediaElement(), 0);
+            App.playbackManager().queue().addItemListToPlay(dataCollection.getMediaElement(), 0);
         } else if (dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() > 0) {
-            App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement(), 0);
+            App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement(), 0);
         } else if (dataCollection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() > 0) {
-            App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement(), 0);
+            App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement(), 0);
         }
         if ( albumDetailAdapter != null ) {
             albumDetailAdapter.notifyDataSetChanged();

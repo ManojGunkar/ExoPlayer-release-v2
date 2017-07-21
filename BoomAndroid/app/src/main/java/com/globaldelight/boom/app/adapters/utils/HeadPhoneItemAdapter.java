@@ -9,11 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.globaldelight.boom.Constants;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.view.RegularTextView;
-import com.globaldelight.boomplayer.AudioEffect;
+import com.globaldelight.boom.player.AudioEffect;
 
 import org.json.JSONException;
 
@@ -47,7 +48,7 @@ public class HeadPhoneItemAdapter extends RecyclerView.Adapter<HeadPhoneItemAdap
 
     @Override
     public void onBindViewHolder(SimpleItemViewHolder holder, final int position) {
-        if(selectedHeadPhoneType == position){
+        if(selectedHeadPhoneType == toHeadphoneType(position)){
             holder.earPhone.setImageDrawable(activeHeadPhoneList.getDrawable(position));
             holder.type.setTextColor(ContextCompat.getColor(context, R.color.effect_active));
         }else {
@@ -58,13 +59,12 @@ public class HeadPhoneItemAdapter extends RecyclerView.Adapter<HeadPhoneItemAdap
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                audioEffectPreferenceHandler.setHeadPhoneType(position);
-                selectedHeadPhoneType = position;
-                App.getPlayerEventHandler().setHeadPhoneType(position);
+                audioEffectPreferenceHandler.setHeadPhoneType(toHeadphoneType(position));
+                selectedHeadPhoneType = audioEffectPreferenceHandler.getHeadPhoneType();
                 notifyDataSetChanged();
                 recyclerView.scrollToPosition(position);
                 try {
-                    AnalyticsHelper.trackHeadPhoneUsed(context, String.valueOf(position));
+                    AnalyticsHelper.trackHeadPhoneUsed(context, String.valueOf(selectedHeadPhoneType));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -75,6 +75,18 @@ public class HeadPhoneItemAdapter extends RecyclerView.Adapter<HeadPhoneItemAdap
     @Override
     public int getItemCount() {
         return headPhoneList.length();
+    }
+
+    int toHeadphoneType(int pos) {
+        switch (pos) {
+            case 0:
+                return Constants.Headphone.OVER_EAR;
+            case 1:
+                return Constants.Headphone.IN_CANAL;
+            default:
+                return Constants.Headphone.ON_EAR;
+
+        }
     }
 
     public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {

@@ -4,22 +4,28 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
+import com.facebook.FacebookSdk;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.activities.BoomSplash;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.playbackEvent.handler.PlayerEventHandler;
-import com.globaldelight.boom.playbackEvent.handler.PlayingQueueHandler;
+import com.globaldelight.boom.business.BusinessStrategy;
+import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.app.service.PlayerService;
 import com.globaldelight.boom.app.database.CloudMediaItemDBHelper;
 import com.globaldelight.boom.app.database.FavoriteDBHelper;
 import com.globaldelight.boom.app.database.PlaylistDBHelper;
 import com.globaldelight.boom.app.database.UpNextDBHelper;
 import com.globaldelight.boom.app.sharedPreferences.UserPreferenceHandler;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,6 +33,7 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import io.fabric.sdk.android.DefaultLogger;
 import io.fabric.sdk.android.Fabric;
 
 /**
@@ -35,8 +42,11 @@ import io.fabric.sdk.android.Fabric;
 
 public class App extends Application implements Application.ActivityLifecycleCallbacks {
 
+    public static final String TWEET_CONSUMER ="K8KDQHnW8Zi0ZLZklAcKGqI92";
+    public static final String TWEET_SECRET ="OLhb1Lp9BaZf26qOQE6EOHBP66sImaZ635ls23TJqrDcmwhpuy";
+
+
     private static App application;
-    private static PlayingQueueHandler playingQueueHandler;
     private static PlaylistDBHelper boomPlayListhelper;
     private static FavoriteDBHelper favoriteDBHelper;
     private static UpNextDBHelper upNextDBHelper;
@@ -54,16 +64,25 @@ public class App extends Application implements Application.ActivityLifecycleCal
     @Override
     public void onCreate() {
         super.onCreate();
+        FacebookSdk.sdkInitialize(this);
+
+
+        TwitterAuthConfig authConfig =  new TwitterAuthConfig(TWEET_CONSUMER, TWEET_SECRET);
+
+        final Fabric fabric = new Fabric.Builder(this)
+                .kits(new TwitterCore(authConfig), new TweetComposer(), new Crashlytics())
+                .logger(new DefaultLogger(Log.DEBUG))
+                .debuggable(true)
+                .build();
+
+        Fabric.with(fabric);
+
+
 //        mixpanel = MixPanelAnalyticHelper.getInstance(this);
         MixPanelAnalyticHelper.initPushNotification(this);
-        try {
-            Fabric.with(this, new Crashlytics());
-        }catch (Exception e){}
         application = this;
 
 
-
-        playingQueueHandler = PlayingQueueHandler.getInstance(application);
 
         boomPlayListhelper = new PlaylistDBHelper(application);
 
@@ -80,8 +99,8 @@ public class App extends Application implements Application.ActivityLifecycleCal
         registerActivityLifecycleCallbacks(this);
     }
 
-    public static PlayerEventHandler getPlayerEventHandler() {
-        return PlayerEventHandler.getPlayerEventInstance(application);
+    public static PlaybackManager playbackManager() {
+        return PlayerService.getInstance(application).getPlayback();
     }
 
     public static UserPreferenceHandler getUserPreferenceHandler() {
@@ -94,10 +113,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     public static CloudMediaItemDBHelper getCloudMediaItemDBHelper() {
         return cloudMediaItemDBHelper;
-    }
-
-    public static PlayingQueueHandler getPlayingQueueHandler() {
-        return playingQueueHandler;
     }
 
     public static PlaylistDBHelper getBoomPlayListHelper() {
@@ -124,8 +139,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     public void onTerminate() {
         super.onTerminate();
         application = null;
-        playingQueueHandler.Terminate();
-       MixPanelAnalyticHelper.getInstance(this).flush();
+        MixPanelAnalyticHelper.getInstance(this).flush();
     }
 
     public void onActivityCreated(Activity var1, Bundle var2) {
@@ -133,6 +147,10 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public void onActivityStarted(Activity activity) {
+        if ( !(activity instanceof BoomSplash) ) {
+            BusinessStrategy.getInstance(this).setCurrentActivity(activity);
+        }
+
         Boolean terminate = false;
         int terminateReason = R.string.app_expire;
         if( isExpired() ) {
@@ -160,12 +178,18 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public void onActivityResumed(Activity activity) {
+        if (  !(activity instanceof BoomSplash) && BusinessStrategy.getInstance(this).getCurrentActivity() != activity ) {
+            BusinessStrategy.getInstance(this).setCurrentActivity(activity);
+        }
     }
 
     public void onActivityPaused(Activity var1) {
     }
 
-    public void onActivityStopped(Activity var1) {
+    public void onActivityStopped(Activity activity) {
+        if ( BusinessStrategy.getInstance(this).getCurrentActivity() == activity ) {
+            BusinessStrategy.getInstance(this).setCurrentActivity(null);
+        }
     }
 
     public void onActivitySaveInstanceState(Activity var1, Bundle var2) {

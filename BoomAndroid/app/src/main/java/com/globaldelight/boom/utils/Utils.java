@@ -37,9 +37,6 @@ import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.business.BusinessPreferences;
-import com.globaldelight.boom.business.BusinessUtils;
-import com.globaldelight.boom.business.client.BusinessHandler;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.activities.ActivityContainer;
@@ -51,9 +48,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
-import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED;
-import static com.globaldelight.boom.business.BusinessPreferences.ACTION_APP_SHARED_DATE;
-import static com.globaldelight.boom.business.BusinessPreferences.ACTION_EMAIL_DIALOG_SHOWN;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
@@ -285,9 +279,6 @@ public class Utils {
                 shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
                 shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
                 fragment.startActivityForResult(Intent.createChooser(shareIntent, "share"), SHARE_COMPLETE);
-
-                BusinessPreferences.writeBoolean(context, ACTION_APP_SHARED, true);
-                BusinessPreferences.writeLong(context, ACTION_APP_SHARED_DATE, System.currentTimeMillis());
             } catch (Exception e) {
             }
         }
@@ -310,13 +301,6 @@ public class Utils {
 //        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //
 //        Log.d("Installed: " , dateFormat.format( installTime));
-        return false;
-    }
-
-    public static boolean isShareExpireHour(Context context) {
-        if ((System.currentTimeMillis() - BusinessPreferences.readLong(context, ACTION_APP_SHARED_DATE, System.currentTimeMillis())) > (3600000 *  5)) {
-            return true;
-        }
         return false;
     }
 
@@ -358,42 +342,34 @@ public class Utils {
     }
 
     public static void SharePopup(final Context context) {
-        if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED_DIALOG_SHOWN, false) &&
-                !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false) &&
-                !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_SHARED, false)) {
-            new MaterialDialog.Builder(context)
-                    .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                    .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                    .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
-                    .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
-                    .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                    .negativeText(R.string.share_button)
-                    .positiveText(R.string.continue_button)
-                    .customView(R.layout.share_popup, false)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+        new MaterialDialog.Builder(context)
+                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
+                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
+                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
+                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
+                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                .negativeText(R.string.share_button)
+                .positiveText(R.string.continue_button)
+                .customView(R.layout.share_popup, false)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 //                            FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
-                            FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Share_Opened_from_Dialog);
+                        FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Share_Opened_from_Dialog);
 
-                            shareStart(context);
-                        }
-                    })
-                    .show();
-            BusinessPreferences.writeBoolean(context, BusinessPreferences.ACTION_APP_SHARED_DIALOG_SHOWN, true);
-        }
+                        shareStart(context);
+                    }
+                })
+                .show();
     }
 
     public static void EmailPopup(final Context context) {
-        if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)
-                && !Preferences.readBoolean(context, ACTION_EMAIL_DIALOG_SHOWN, false)) {
-            Preferences.writeBoolean(context, ACTION_EMAIL_DIALOG_SHOWN, true);
             new MaterialDialog.Builder(context)
                     .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
                     .title(R.string.sub_email_header)
@@ -418,83 +394,75 @@ public class Utils {
                         @Override
                         public void onInput(MaterialDialog dialog, CharSequence input) {
                             if (!input.toString().matches("") && ConnectivityReceiver.isNetworkAvailable(context, true)) {
-                                BusinessHandler.getBusinessHandlerInstance(context).saveEmailAddress(BusinessUtils.EmailSource.library, input.toString(), true);
                             }
                         }
                     }).show();
-        }
+
     }
 
     public static void ExpirePopup(final Context context) {
-        if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_EXPIRE_DIALOG_SHOWN, false) &&
-                !BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)) {
-            new MaterialDialog.Builder(context)
-                    .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                    .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                    .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
-                    .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
-                    .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                    .negativeText(R.string.buy_button)
-                    .positiveText(R.string.continue_button)
-                    .customView(R.layout.expire_pop_up, false)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    EmailPopup(context);
-                                }
-                            }, 5000);
-                            dialog.dismiss();
+        new MaterialDialog.Builder(context)
+                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
+                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
+                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
+                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
+                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                .negativeText(R.string.buy_button)
+                .positiveText(R.string.continue_button)
+                .customView(R.layout.expire_pop_up, false)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                EmailPopup(context);
+                            }
+                        }, 5000);
+                        dialog.dismiss();
 
-                        }
-                    })
-                    .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                    .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    }
+                })
+                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 //                            jumpToStore(context);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    EmailPopup(context);
-                                }
-                            }, 5000);
-                        }
-                    })
-                    .show();
-            BusinessPreferences.readBoolean(context, BusinessPreferences.ACTION_APP_EXPIRE_DIALOG_SHOWN, true);
-        }
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                EmailPopup(context);
+                            }
+                        }, 5000);
+                    }
+                })
+                .show();
     }
 
     public static void InternetPopup(final Activity activity){
-        if(isBusinessModelEnable() && !BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, false) && isMoreThan24Hour() && !ConnectivityReceiver.isNetworkAvailable(activity, false) && !BusinessPreferences.readBoolean(activity, BusinessPreferences.ACTION_IN_APP_PURCHASE, false)){
-            new MaterialDialog.Builder(activity)
-                    .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
-                    .positiveColor(ContextCompat.getColor(activity, R.color.dialog_submit_positive))
-                    .negativeColor(ContextCompat.getColor(activity, R.color.dialog_submit_negative))
-                    .widgetColor(ContextCompat.getColor(activity, R.color.dialog_widget))
-                    .contentColor(ContextCompat.getColor(activity, R.color.dialog_content))
-                    .negativeText(R.string.buy_button)
-                    .positiveText(R.string.settings_button)
-                    .customView(R.layout.off_line_pop_up, false)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            activity.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
-                        }
-                    })
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            jumpToStore(activity);
-                        }
-                    })
-                    .show();
-            BusinessPreferences.writeBoolean(activity, BusinessPreferences.ACTION_APP_INTERNET_DIALOG_SHOWN, true);
-        }
+        new MaterialDialog.Builder(activity)
+                .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
+                .positiveColor(ContextCompat.getColor(activity, R.color.dialog_submit_positive))
+                .negativeColor(ContextCompat.getColor(activity, R.color.dialog_submit_negative))
+                .widgetColor(ContextCompat.getColor(activity, R.color.dialog_widget))
+                .contentColor(ContextCompat.getColor(activity, R.color.dialog_content))
+                .negativeText(R.string.buy_button)
+                .positiveText(R.string.settings_button)
+                .customView(R.layout.off_line_pop_up, false)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        activity.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        jumpToStore(activity);
+                    }
+                })
+                .show();
     }
 
     public static void jumpToStore(Activity activity) {

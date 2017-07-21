@@ -54,13 +54,14 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
-                case PlayerEvents.ACTION_UPDATE_QUEUE:
+                case PlayerEvents.ACTION_QUEUE_UPDATED:
+                case PlayerEvents.ACTION_SONG_CHANGED:
                     if (upNextListAdapter != null)
-                        upNextListAdapter.updateList(App.getPlayingQueueHandler().getUpNextList());
+                        upNextListAdapter.updateList(App.playbackManager().queue());
                     break;
-                case PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                case PlayerEvents.ACTION_PLAYER_STATE_CHANGED:
                     if (upNextListAdapter != null)
-                        upNextListAdapter.updateList(App.getPlayingQueueHandler().getUpNextList());
+                        upNextListAdapter.updateList(App.playbackManager().queue());
                     break;
             }
         }
@@ -94,8 +95,9 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
 
     private void initViews() {
         IntentFilter filter = new IntentFilter();
-        filter.addAction(PlayerEvents.ACTION_UPDATE_QUEUE);
-        filter.addAction(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        filter.addAction(PlayerEvents.ACTION_QUEUE_UPDATED);
+        filter.addAction(PlayerEvents.ACTION_SONG_CHANGED);
+        filter.addAction(PlayerEvents.ACTION_PLAYER_STATE_CHANGED);
         mActivity.registerReceiver(upnextBroadcastReceiver, filter);
 
         checkPermissions();
@@ -111,7 +113,7 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
 
         @Override
         protected UpNextPlayingQueue doInBackground(Object... params) {
-            return App.getPlayingQueueHandler().getUpNextList();
+            return App.playbackManager().queue();
         }
 
         @Override
@@ -125,7 +127,7 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
             rootView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(mActivity, 0)));
             upNextListAdapter = new UpNextListAdapter(mActivity, UpNextListFragment.this, rootView);
             rootView.setAdapter(upNextListAdapter);
-            gridLayoutManager.scrollToPosition(App.getPlayingQueueHandler().getUpNextList().getPlayingItemIndex());
+            gridLayoutManager.scrollToPosition(App.playbackManager().queue().getPlayingItemIndex());
             rootView.setHasFixedSize(true);
             setUpItemTouchHelper();
             rootView.setVisibility(View.VISIBLE);
@@ -179,15 +181,15 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
             // not important, we don't want drag & drop
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                if(App.getPlayingQueueHandler().getUpNextList().getUpNextItemCount() > 0) {
+                if(App.playbackManager().queue().getUpNextItemCount() > 0) {
                     int start = viewHolder.getAdapterPosition();
                     int to = target.getAdapterPosition();
-                    if (start == App.getPlayingQueueHandler().getUpNextList().getPlayingItemIndex()) {
-                        App.getPlayingQueueHandler().getUpNextList().setPlayingItemIndex(to);
-                    } else if (to == App.getPlayingQueueHandler().getUpNextList().getPlayingItemIndex()) {
-                        App.getPlayingQueueHandler().getUpNextList().setPlayingItemIndex(start);
+                    if (start == App.playbackManager().queue().getPlayingItemIndex()) {
+                        App.playbackManager().queue().setPlayingItemIndex(to);
+                    } else if (to == App.playbackManager().queue().getPlayingItemIndex()) {
+                        App.playbackManager().queue().setPlayingItemIndex(start);
                     }
-                    Collections.swap(App.getPlayingQueueHandler().getUpNextList().getUpNextItemList(), start, to);
+                    Collections.swap(App.playbackManager().queue().getUpNextItemList(), start, to);
                     upNextListAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
                     upNextListAdapter.notifyItemChanged(target.getAdapterPosition());
                     upNextListAdapter.notifyItemChanged(viewHolder.getAdapterPosition());

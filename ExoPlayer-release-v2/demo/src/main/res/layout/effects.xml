@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="match_parent">
+
+    <Switch
+        android:id="@+id/effect_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/effects"/>
+    <Switch
+        android:id="@+id/surround_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/surround"/>
+    <Switch
+        android:id="@+id/fullbass_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/full_bass"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/intensity" />
+
+    <SeekBar
+        android:id="@+id/intensity_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="20"
+        android:progress="10" />
+
+</LinearLayout>

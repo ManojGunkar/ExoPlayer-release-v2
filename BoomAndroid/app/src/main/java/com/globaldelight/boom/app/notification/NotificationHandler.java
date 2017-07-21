@@ -3,6 +3,7 @@ package com.globaldelight.boom.app.notification;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -23,7 +24,7 @@ import static android.view.View.VISIBLE;
  * Created by Rahul Kumar Agrawal on 6/14/2016.
  */
 
-public class NotificationHandler {
+public class NotificationHandler  {
 
     private static final int NOTIFICATION_ID = 56565;
     private Context context;
@@ -140,8 +141,10 @@ public class NotificationHandler {
         if ( playing ) {
             service.startForeground(NOTIFICATION_ID, notificationCompat);
         }
+        else {
+            notificationManager.notify(NOTIFICATION_ID, notificationCompat);
+        }
 
-        notificationManager.notify(NOTIFICATION_ID, notificationCompat);
         notificationActive = true;
     }
 

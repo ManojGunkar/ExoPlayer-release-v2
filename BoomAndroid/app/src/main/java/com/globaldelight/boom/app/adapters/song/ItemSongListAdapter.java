@@ -123,7 +123,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             holder.mainView.setElevation(0);
 
             if(null == currentItem.getItemArtUrl())
-                currentItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(currentItem.getItemAlbum()));
+                currentItem.setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(currentItem.getItemAlbum()));
 
             if(null == currentItem.getItemArtUrl())
                 currentItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -146,7 +146,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             holder.artistName.setVisibility(null != currentItem.getItemArtist() ? View.VISIBLE : View.GONE);
             holder.artistName.setText(currentItem.getItemArtist());
 
-            setAlbumArt(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(currentItem.getItemAlbum()), holder);
+            setAlbumArt(App.playbackManager().queue().getAlbumArtList().get(currentItem.getItemAlbum()), holder);
 
             if (selectedHolder != null)
                 selectedHolder.mainView.setBackgroundColor(ContextCompat
@@ -164,7 +164,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     }
 
     private void updatePlayingTrack(SimpleItemViewHolder holder){
-        IMediaItemBase nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        IMediaItemBase nowPlayingItem = App.playbackManager().queue().getPlayingItem();
         if(null != nowPlayingItem ){
             boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
             if(currentItem.getItemId() == nowPlayingItem.getItemId()){
@@ -172,11 +172,11 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);
                 holder.loadCloud.setVisibility(View.GONE);
-                if(App.getPlayerEventHandler().isPlaying()){
+                if( App.playbackManager().isTrackPlaying() ){
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
-                } else {
-                    if(!isMediaItem && App.getPlayerEventHandler().isTrackWaitingForPlay() && !App.getPlayerEventHandler().isPaused())
+                    if(!isMediaItem && App.playbackManager().isTrackLoading())
                         holder.loadCloud.setVisibility(View.VISIBLE);
+                } else {
                     holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
             }else{
@@ -237,11 +237,11 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                     FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_GENERE_AllSongs_Thumbnail);
 
                 }
-                if (!App.getPlayerEventHandler().isTrackLoading()) {
+                if (!App.playbackManager().isTrackLoading()) {
                     if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
-                        App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(collection.getMediaElement(), position);
+                        App.playbackManager().queue().addItemListToPlay(collection.getMediaElement(), position);
                     }else{
-                        App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), position);
+                        App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), position);
                     }
                     new Handler().postDelayed(new Runnable() {
                         @Override
