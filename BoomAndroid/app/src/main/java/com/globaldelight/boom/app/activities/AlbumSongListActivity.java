@@ -122,7 +122,7 @@ public class AlbumSongListActivity extends MasterActivity {
 //                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_GENERE_ALL_SONGS_section);
                     FlurryAnalytics.getInstance(AlbumSongListActivity.this).setEvent(FlurryEvents.FAB_Tapped_from_GENERE_ALL_SONGS_section);
                 }
-                if(null != fragment && !App.getPlayerEventHandler().isTrackWaitingForPlay()){
+                if(null != fragment && !App.playbackManager().isTrackWaitingForPlay()){
                     fragment.onFloatPlayAlbumSongs();
                     sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
                 }

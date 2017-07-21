@@ -179,4 +179,8 @@
         <item name="android:background">#1f1f20</item>
     </style>
 
+    <style name="AdsTheme">
+        <item name="android:background">@drawable/ads_layout_bg</item>
+    </style>
+
 </resources>

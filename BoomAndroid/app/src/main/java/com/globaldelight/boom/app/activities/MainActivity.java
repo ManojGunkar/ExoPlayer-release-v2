@@ -76,7 +76,7 @@ public class MainActivity extends MasterActivity
                     }
                     break;
 
-                case PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                case PlayerEvents.ACTION_PLAYER_STATE_CHANGED:
                     if ( mLibraryFragment != null ) {
                         ((LibraryFragment)mLibraryFragment).useCoachMarkWindow();
                         ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
@@ -129,7 +129,7 @@ public class MainActivity extends MasterActivity
         if(null != navigationView)
             navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
         registerHeadSetReceiver();
-        App.getPlayerEventHandler().isLibraryResumes = true;
+        App.playbackManager().isLibraryResumes = true;
         super.onResume();
     }
 
@@ -137,7 +137,7 @@ public class MainActivity extends MasterActivity
         registerPlayerReceiver(MainActivity.this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
-        intentFilter.addAction(PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(PlayerEvents.ACTION_PLAYER_STATE_CHANGED);
 
         registerReceiver(headPhoneReceiver, intentFilter);
     }
@@ -424,7 +424,12 @@ public class MainActivity extends MasterActivity
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
                 return  true;
             case R.id.nav_share:
-                Utils.shareStart(MainActivity.this);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startCompoundActivities(R.string.title_share);
+                    }
+                }, 300);
                 drawerLayout.closeDrawer(GravityCompat.START);
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Share_Opened_from_Boom);
@@ -470,7 +475,7 @@ public class MainActivity extends MasterActivity
     protected void onPause() {
         unregisterPlayerReceiver(MainActivity.this);
         unregisterReceiver(headPhoneReceiver);
-        App.getPlayerEventHandler().isLibraryResumes = false;
+        App.playbackManager().isLibraryResumes = false;
         super.onPause();
     }
 

@@ -260,5 +260,6 @@
     <string name="conitnue_with_acc_change">CONTINUE</string>
 
     <string name="title_internet_alert">No Internet Connection</string>
+    <string name="facebook_app_id" translatable="false">218364201905576</string>
 
     </resources>

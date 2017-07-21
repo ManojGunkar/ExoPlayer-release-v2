@@ -104,7 +104,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     holder.subTitle.setText(((MediaItemCollection) collection.getMediaElement().get(pos)).getItemSubTitle());
                     holder.defaultImg.setVisibility(View.VISIBLE);
                     if(null == collection.getMediaElement().get(pos).getItemArtUrl())
-                        collection.getMediaElement().get(pos).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItemCollection) collection.getMediaElement().get(pos)).getItemTitle()));
+                        collection.getMediaElement().get(pos).setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(((MediaItemCollection) collection.getMediaElement().get(pos)).getItemTitle()));
 
                     if(null == collection.getMediaElement().get(pos).getItemArtUrl())
                         collection.getMediaElement().get(pos).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -254,18 +254,18 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                         }
                         switch (menuItem.getItemId()) {
                             case R.id.album_header_add_play_next:
-                                App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement());
+                                App.playbackManager().queue().addItemAsPlayNext(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement());
                                 break;
                             case R.id.album_header_add_to_upnext:
-                                App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement());
+                                App.playbackManager().queue().addItemAsUpNext(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement());
                                 break;
                             case R.id.album_header_add_to_playlist:
                                 Utils.addToPlaylist(activity, ((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), null);
                                 break;
                             case R.id.album_header_shuffle:
-                                if (App.getPlayingQueueHandler().getUpNextList() != null) {
+                                if (App.playbackManager().queue() != null) {
                                     activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
-                                    App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), 0);
+                                    App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), 0);
                                 }
                                 break;
                         }
@@ -325,10 +325,10 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                         }
                         switch (item.getItemId()) {
                             case R.id.popup_album_play_next :
-                                App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(((IMediaItemCollection) collection.getMediaElement().get(position)).getMediaElement());
+                                App.playbackManager().queue().addItemAsPlayNext(((IMediaItemCollection) collection.getMediaElement().get(position)).getMediaElement());
                                 break;
                             case R.id.popup_album_add_queue :
-                                App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection) collection.getMediaElement().get(position)).getMediaElement());
+                                App.playbackManager().queue().addItemAsUpNext(((IMediaItemCollection) collection.getMediaElement().get(position)).getMediaElement());
                                 break;
                             case R.id.popup_album_add_playlist:
                                 Utils.addToPlaylist(activity, ((IMediaItemCollection)collection.getMediaElement().get(position)).getMediaElement(), null);

@@ -37,10 +37,10 @@ public class OverFlowMenuUtils {
                 try {
                     switch (item.getItemId()) {
                         case R.id.popup_recent_play_next:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(MediaController.getInstance(activity).getPlayListTrackList((IMediaItemCollection) itemBase));
+                            App.playbackManager().queue().addItemAsPlayNext(MediaController.getInstance(activity).getPlayListTrackList((IMediaItemCollection) itemBase));
                             break;
                         case R.id.popup_recent_add_queue:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(MediaController.getInstance(activity).getPlayListTrackList((IMediaItemCollection) itemBase));
+                            App.playbackManager().queue().addItemAsUpNext(MediaController.getInstance(activity).getPlayListTrackList((IMediaItemCollection) itemBase));
                             break;
                     }
                 }catch (Exception e){ }
@@ -59,10 +59,10 @@ public class OverFlowMenuUtils {
                 try {
                     switch (menuItem.getItemId()) {
                         case R.id.popup_play_next:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(MediaController.getInstance(activity).getBoomPlayListTrackList(itemBase.getItemId()));
+                            App.playbackManager().queue().addItemAsPlayNext(MediaController.getInstance(activity).getBoomPlayListTrackList(itemBase.getItemId()));
                             break;
                         case R.id.popup_add_queue:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(MediaController.getInstance(activity).getBoomPlayListTrackList(itemBase.getItemId()));
+                            App.playbackManager().queue().addItemAsUpNext(MediaController.getInstance(activity).getBoomPlayListTrackList(itemBase.getItemId()));
                             break;
                         case R.id.popup_playlist_rename:
                             renameDialog(activity, itemBase.getItemTitle(), itemBase.getItemId());
@@ -114,10 +114,10 @@ public class OverFlowMenuUtils {
                 try {
                     switch (item.getItemId()) {
                         case R.id.popup_recent_play_next:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(MediaController.getInstance(activity).getFavoriteList());
+                            App.playbackManager().queue().addItemAsPlayNext(MediaController.getInstance(activity).getFavoriteList());
                             break;
                         case R.id.popup_recent_add_queue:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(MediaController.getInstance(activity).getFavoriteList());
+                            App.playbackManager().queue().addItemAsUpNext(MediaController.getInstance(activity).getFavoriteList());
                             break;
                     }
                 }catch (Exception e){ }
@@ -136,10 +136,10 @@ public class OverFlowMenuUtils {
                 try {
                     switch (item.getItemId()) {
                         case R.id.popup_recent_play_next:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(MediaController.getInstance(activity).getRecentPlayedList());
+                            App.playbackManager().queue().addItemAsPlayNext(MediaController.getInstance(activity).getRecentPlayedList());
                             break;
                         case R.id.popup_recent_add_queue:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(MediaController.getInstance(activity).getRecentPlayedList());
+                            App.playbackManager().queue().addItemAsUpNext(MediaController.getInstance(activity).getRecentPlayedList());
                             break;
                     }
                 }catch (Exception e){ }
@@ -183,10 +183,10 @@ public class OverFlowMenuUtils {
                 try {
                     switch (item.getItemId()) {
                         case R.id.popup_song_play_next:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(itemBase);
+                            App.playbackManager().queue().addItemAsPlayNext(itemBase);
                             break;
                         case R.id.popup_song_add_queue:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemBase);
+                            App.playbackManager().queue().addItemAsUpNext(itemBase);
                             break;
                         case R.id.popup_song_add_playlist:
                             ArrayList list = new ArrayList();
@@ -231,10 +231,10 @@ public class OverFlowMenuUtils {
                 try {
                     switch (item.getItemId()) {
                         case R.id.popup_song_play_next:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(itemBase);
+                            App.playbackManager().queue().addItemAsPlayNext(itemBase);
                             break;
                         case R.id.popup_song_add_queue:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemBase);
+                            App.playbackManager().queue().addItemAsUpNext(itemBase);
                             break;
                         case R.id.popup_song_add_playlist:
                             ArrayList list = new ArrayList();
@@ -267,10 +267,10 @@ public class OverFlowMenuUtils {
                 try {
                     switch (item.getItemId()) {
                         case R.id.popup_song_play_next:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(itemBase);
+                            App.playbackManager().queue().addItemAsPlayNext(itemBase);
                             break;
                         case R.id.popup_song_add_queue:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemBase);
+                            App.playbackManager().queue().addItemAsUpNext(itemBase);
                             break;
                         case R.id.popup_song_add_playlist:
                             ArrayList list = new ArrayList();
@@ -312,16 +312,16 @@ public class OverFlowMenuUtils {
                 try {
                     switch (menuItem.getItemId()) {
                         case R.id.album_header_add_play_next:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(mediaElement);
+                            App.playbackManager().queue().addItemAsPlayNext(mediaElement);
                             break;
                         case R.id.album_header_add_to_upnext:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(mediaElement);
+                            App.playbackManager().queue().addItemAsUpNext(mediaElement);
                             break;
                         case R.id.album_header_add_to_playlist:
                             Utils.addToPlaylist(activity, mediaElement, null);
                             break;
                         case R.id.album_header_shuffle:
-                            App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(mediaElement, 0);
+                            App.playbackManager().queue().addItemListToPlay(mediaElement, 0);
                             activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
                             break;
                         case R.id.popup_playlist_rename:
@@ -350,16 +350,16 @@ public class OverFlowMenuUtils {
                 try {
                     switch (menuItem.getItemId()) {
                         case R.id.album_header_add_play_next:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(mediaElement);
+                            App.playbackManager().queue().addItemAsPlayNext(mediaElement);
                             break;
                         case R.id.album_header_add_to_upnext:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(mediaElement);
+                            App.playbackManager().queue().addItemAsUpNext(mediaElement);
                             break;
                         case R.id.album_header_add_to_playlist:
                             Utils.addToPlaylist(activity, mediaElement, null);
                             break;
                         case R.id.album_header_shuffle:
-                            App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(mediaElement, 0);
+                            App.playbackManager().queue().addItemListToPlay(mediaElement, 0);
                             activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
                             break;
                     }
@@ -381,16 +381,16 @@ public class OverFlowMenuUtils {
                 try {
                     switch (menuItem.getItemId()) {
                         case R.id.album_header_add_play_next:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(mediaElement);
+                            App.playbackManager().queue().addItemAsPlayNext(mediaElement);
                             break;
                         case R.id.album_header_add_to_upnext:
-                            App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(mediaElement);
+                            App.playbackManager().queue().addItemAsUpNext(mediaElement);
                             break;
                         case R.id.album_header_add_to_playlist:
                             Utils.addToPlaylist(activity, mediaElement, null);
                             break;
                         case R.id.album_header_shuffle:
-                            App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(mediaElement, 0);
+                            App.playbackManager().queue().addItemListToPlay(mediaElement, 0);
                             activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
                             break;
                     }

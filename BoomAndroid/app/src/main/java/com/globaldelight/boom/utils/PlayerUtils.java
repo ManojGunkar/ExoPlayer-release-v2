@@ -94,8 +94,8 @@ public class PlayerUtils {
         float scaleY = (float)imgHeight / (float)bitmap.getHeight();
         float scale = Math.max(scaleX, scaleY);
 
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, (int)(bitmap.getWidth() * scale),
-                (int)(bitmap.getHeight() * scale), false);
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, Math.round(bitmap.getWidth() * scale),
+                Math.round(bitmap.getHeight() * scale), false);
 
         Bitmap tempBitmap = Bitmap.createBitmap(scaledBitmap,
                 (scaledBitmap.getWidth() - imgWidth)/2,

@@ -84,7 +84,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             holder.artistName.setText(((MediaItem)resultItemList.get(position)).getItemArtist());
             holder.mainView.setElevation(0);
             if(null == resultItemList.get(position).getItemArtUrl())
-                resultItemList.get(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(((MediaItem) resultItemList.get(position)).getItemAlbum()));
+                resultItemList.get(position).setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(((MediaItem) resultItemList.get(position)).getItemAlbum()));
 
             if(null == resultItemList.get(position).getItemArtUrl())
                 resultItemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -96,8 +96,8 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                 @Override
                 public void onClick(View view) {
                     animate(holder);
-                    if (!App.getPlayerEventHandler().isTrackLoading()) {
-                        App.getPlayingQueueHandler().getUpNextList().addItemToPlay(resultItemList.get(position));
+                    if (!App.playbackManager().isTrackLoading()) {
+                        App.playbackManager().queue().addItemToPlay(resultItemList.get(position));
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -118,10 +118,10 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                             try {
                                 switch (item.getItemId()) {
                                     case R.id.popup_song_play_next:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(resultItemList.get(position));
+                                        App.playbackManager().queue().addItemAsPlayNext(resultItemList.get(position));
                                         break;
                                     case R.id.popup_song_add_queue:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(resultItemList.get(position));
+                                        App.playbackManager().queue().addItemAsUpNext(resultItemList.get(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
                                         ArrayList list = new ArrayList<IMediaItemBase>();
@@ -187,10 +187,10 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
 
                                 switch (item.getItemId()) {
                                     case R.id.popup_album_play_next:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(((IMediaItemCollection)resultItemList.get(position)).getMediaElement());
+                                        App.playbackManager().queue().addItemAsPlayNext(((IMediaItemCollection)resultItemList.get(position)).getMediaElement());
                                         break;
                                     case R.id.popup_album_add_queue:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection)resultItemList.get(position)).getMediaElement());
+                                        App.playbackManager().queue().addItemAsUpNext(((IMediaItemCollection)resultItemList.get(position)).getMediaElement());
                                         break;
                                     case R.id.popup_album_add_playlist:
                                         Utils.addToPlaylist(activity, ((MediaItemCollection) resultItemList.get(position)).getMediaElement(), null);
@@ -220,7 +220,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                     (albumCount<=1 ? context.getResources().getString(R.string.album) : context.getResources().getString(R.string.albums)) +" "+albumCount);
             int size = setSize(holder);
             if(null == resultItemList.get(position).getItemArtUrl())
-                resultItemList.get(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getArtistArtList().get(((MediaItemCollection) resultItemList.get(position)).getItemId()));
+                resultItemList.get(position).setItemArtUrl(App.playbackManager().queue().getArtistArtList().get(((MediaItemCollection) resultItemList.get(position)).getItemId()));
 
             if(null == resultItemList.get(position).getItemArtUrl())
                 resultItemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -261,10 +261,10 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
 
                                 switch (item.getItemId()) {
                                     case R.id.popup_album_play_next:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(((IMediaItemCollection)((IMediaItemCollection) resultItemList.get(position)).getMediaElement().get(0)).getMediaElement());
+                                        App.playbackManager().queue().addItemAsPlayNext(((IMediaItemCollection)((IMediaItemCollection) resultItemList.get(position)).getMediaElement().get(0)).getMediaElement());
                                         break;
                                     case R.id.popup_album_add_queue:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection)((IMediaItemCollection) resultItemList.get(position)).getMediaElement().get(0)).getMediaElement());
+                                        App.playbackManager().queue().addItemAsUpNext(((IMediaItemCollection)((IMediaItemCollection) resultItemList.get(position)).getMediaElement().get(0)).getMediaElement());
                                         break;
                                     case R.id.popup_album_add_playlist:
                                         Utils.addToPlaylist(activity, ((IMediaItemCollection)((IMediaItemCollection) resultItemList.get(position)).getMediaElement().get(0)).getMediaElement(), null);
@@ -287,16 +287,16 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
         holder.mainView.setElevation(Utils.dpToPx(context, 2));
     }
     private void updatePlayingTrack(SimpleItemViewHolder holder, long itemId){
-        IMediaItemBase nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        IMediaItemBase nowPlayingItem = App.playbackManager().queue().getPlayingItem();
         if(null != nowPlayingItem){
             if(itemId == nowPlayingItem.getItemId()){
                 holder.name.setSelected(true);
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);
-                if(App.getPlayerEventHandler().isPlaying()){
-                    holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
+                if(App.playbackManager().isTrackPlaying()){
+                    holder.art_overlay_play.setImageResource(R.drawable.ic_player_pause);
                 }else{
-                    holder.art_overlay_play.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
+                    holder.art_overlay_play.setImageResource(R.drawable.ic_player_play);
                 }
             }else{
                 holder.name.setSelected(false);

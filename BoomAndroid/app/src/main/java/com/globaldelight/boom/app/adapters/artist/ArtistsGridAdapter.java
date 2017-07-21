@@ -70,7 +70,7 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
                 (albumCount<=1 ? context.getResources().getString(R.string.album) : context.getResources().getString(R.string.albums)) +" "+albumCount);
         int size = setSize(holder);
         if(null==itemList.get(position).getItemArtUrl())
-            itemList.get(position).setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getArtistArtList().get(itemList.get(position).getItemId()));
+            itemList.get(position).setItemArtUrl(App.playbackManager().queue().getArtistArtList().get(itemList.get(position).getItemId()));
 
         if(null==itemList.get(position).getItemArtUrl())
             itemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -125,10 +125,10 @@ public class ArtistsGridAdapter extends RecyclerView.Adapter<ArtistsGridAdapter.
 
                             switch (item.getItemId()) {
                                 case R.id.popup_album_play_next:
-                                    App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).getMediaElement());
+                                    App.playbackManager().queue().addItemAsPlayNext(((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).getMediaElement());
                                     break;
                                 case R.id.popup_album_add_queue:
-                                    App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).getMediaElement());
+                                    App.playbackManager().queue().addItemAsUpNext(((IMediaItemCollection)itemList.get(position).getMediaElement().get(0)).getMediaElement());
                                     break;
                                 case R.id.popup_album_add_playlist:
                                     Utils.addToPlaylist(activity, ((IMediaItemCollection) itemList.get(position).getMediaElement().get(0)).getMediaElement(), null);

@@ -31,7 +31,7 @@ import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE;
 
 /**
@@ -55,7 +55,7 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
-                case ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY:
+                case ACTION_PLAYER_STATE_CHANGED:
                     notifyAdapter(null);
                     break;
             }
@@ -97,7 +97,7 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
 
     private void initViews() {
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_UPDATE_NOW_PLAYING_ITEM_IN_LIBRARY);
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         mActivity.registerReceiver(mUpdateItemSongListReceiver, intentFilter);
 
         favouriteMediaList = FavouriteMediaList.getFavouriteListInstance(mActivity);

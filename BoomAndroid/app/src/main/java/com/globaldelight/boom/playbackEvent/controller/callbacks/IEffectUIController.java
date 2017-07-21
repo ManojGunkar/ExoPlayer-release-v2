@@ -1,6 +1,6 @@
 package com.globaldelight.boom.playbackEvent.controller.callbacks;
 
-import com.globaldelight.boomplayer.AudioEffect;
+import com.globaldelight.boom.player.AudioEffect;
 
 /**
  * Created by Rahul Agarwal on 24-01-17.

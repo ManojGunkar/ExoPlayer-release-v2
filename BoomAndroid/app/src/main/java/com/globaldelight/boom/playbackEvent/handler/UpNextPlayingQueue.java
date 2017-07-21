@@ -342,7 +342,7 @@ public class UpNextPlayingQueue {
     }
 
     public void setNewItemAsPlayingItem(int position) {
-        if (mPlayingItemIndex == position && !App.getPlayerEventHandler().isStopped()) {
+        if (mPlayingItemIndex == position && !App.playbackManager().isStopped()) {
             PlayPause();
         } else {
             insertToHistory(getPlayingItem());
@@ -406,8 +406,6 @@ public class UpNextPlayingQueue {
                     PlayingItemChanged();
                 }
             }, 200);
-        } else {
-            context.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_LAST_PLAYED_SONG));
         }
     }
 
@@ -438,7 +436,7 @@ public class UpNextPlayingQueue {
 
     public void addItemToPlay(final IMediaItemBase item) {
         long mTime = System.currentTimeMillis();
-        boolean isPlayPause = App.getPlayerEventHandler().getPlayerDataSourceId() == item.getItemId() ? true : false;
+        boolean isPlayPause = App.playbackManager().getPlayerDataSourceId() == item.getItemId() ? true : false;
         if (null != item && null != getPlayingItem() && item.getItemId() == getPlayingItem().getItemId() && isPlayPause) {
             PlayPause();
         } else if (null != mUpNextList && null != item && mTime - mShiftingTime > 500) {
@@ -458,7 +456,7 @@ public class UpNextPlayingQueue {
 
     public void addItemListToPlay(final ArrayList<? extends IMediaItemBase> itemList, final int position) {
         long mTime = System.currentTimeMillis();
-        boolean isPlayPause = App.getPlayerEventHandler().getPlayerDataSourceId() == itemList.get(position).getItemId() ? true : false;
+        boolean isPlayPause = App.playbackManager().getPlayerDataSourceId() == itemList.get(position).getItemId() ? true : false;
         if (null != itemList && null != getPlayingItem() && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isPlayPause) {
             PlayPause();
         } else if (null != mUpNextList && null != itemList && itemList.size() > 0 && mTime - mShiftingTime > 500) {

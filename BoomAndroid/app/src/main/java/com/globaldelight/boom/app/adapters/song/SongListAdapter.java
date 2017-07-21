@@ -69,12 +69,13 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     @Override
     public void onBindViewHolder(final SongViewHolder holder, final int position) {
         MediaItem mediaItem = (MediaItem) itemList.get(position);
+        holder.position = position;
         holder.mainView.setElevation(0);
         holder.title.setText(mediaItem.getItemTitle());
         holder.description.setVisibility(null != mediaItem.getItemArtist() ? View.VISIBLE : View.GONE);
         holder.description.setText(mediaItem.getItemArtist());
         if (null == mediaItem.getItemArtUrl()) {
-            mediaItem.setItemArtUrl(App.getPlayingQueueHandler().getUpNextList().getAlbumArtList().get(mediaItem.getItemAlbum()));
+            mediaItem.setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(mediaItem.getItemAlbum()));
         }
         if (null == mediaItem.getItemArtUrl()) {
             mediaItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -86,21 +87,23 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     }
 
     private void updatePlayingTrack(SongViewHolder holder, long itemId){
-        IMediaItemBase nowPlayingItem = App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+        IMediaItemBase nowPlayingItem = App.playbackManager().queue().getPlayingItem();
         if(null != nowPlayingItem) {
             boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
             if (itemId == nowPlayingItem.getItemId()) {
                 holder.overlay.setVisibility(View.VISIBLE );
                 holder.overlayPlay.setVisibility( View.VISIBLE );
                 holder.title.setSelected(true);
-                if (App.getPlayerEventHandler().isPlaying()) {
+                if (App.playbackManager().isTrackPlaying()) {
                     holder.progressIndicator.setVisibility(View.GONE);
-                    holder.overlayPlay.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_pause, null));
-                } else {
-                    if(!isMediaItem && App.getPlayerEventHandler().isTrackWaitingForPlay() && !App.getPlayerEventHandler().isPaused())
+                    holder.overlayPlay.setImageResource(R.drawable.ic_player_pause);
+                    if( !isMediaItem && App.playbackManager().isTrackLoading() ) {
                         holder.progressIndicator.setVisibility(View.VISIBLE);
-                    else
+                    } else {
                         holder.progressIndicator.setVisibility(View.GONE);
+                    }
+                } else {
+                    holder.progressIndicator.setVisibility(View.GONE);
                     holder.overlayPlay.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
             } else {
@@ -125,13 +128,13 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final int position = holder.getAdapterPosition();
+                final int position = holder.position;
                 if ( position == -1) {
                     return;
                 }
 
-                if (!App.getPlayerEventHandler().isTrackLoading()) {
-                    App.getPlayingQueueHandler().getUpNextList().addItemListToPlay(itemList, position);
+                if ( !App.playbackManager().isTrackWaitingForPlay() ) {
+                    App.playbackManager().queue().addItemListToPlay(itemList, position);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -168,7 +171,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         holder.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-                    final int position = holder.getAdapterPosition();
+                    final int position = holder.position;
                     PopupMenu pm = new PopupMenu(activity, anchorView);
                     pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
@@ -176,10 +179,10 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                             try {
                                 switch (item.getItemId()) {
                                     case R.id.popup_song_play_next:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsPlayNext(itemList.get(position));
+                                        App.playbackManager().queue().addItemAsPlayNext(itemList.get(position));
                                         break;
                                     case R.id.popup_song_add_queue:
-                                        App.getPlayingQueueHandler().getUpNextList().addItemAsUpNext(itemList.get(position));
+                                        App.playbackManager().queue().addItemAsUpNext(itemList.get(position));
                                         break;
                                     case R.id.popup_song_add_playlist:
                                         ArrayList list = new ArrayList();
@@ -245,6 +248,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         public ImageView img, overlayPlay;
         public LinearLayout menu;
         public ProgressBar progressIndicator;
+        public int position;
 
         public SongViewHolder(View itemView) {
             super(itemView);

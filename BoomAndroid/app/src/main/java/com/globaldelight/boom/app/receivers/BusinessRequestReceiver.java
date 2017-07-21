@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 
-import com.globaldelight.boom.business.BusinessUtils;
 import com.globaldelight.boom.utils.Utils;
 
 /**
@@ -30,15 +29,6 @@ public class BusinessRequestReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         switch (intent.getAction()){
             case ACTION_BUSINESS_CONFIGURATION :
-                postBusinessRequest.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(BusinessUtils.getAddEnable()){
-                            requestReceiverListener.onBusinessRequest(BusinessUtils.getAddSources(), BusinessUtils.isLibraryBannerEnable(), (BusinessUtils.isEffectVideoEnable()|| BusinessUtils.isPlayerVideoEnable() || BusinessUtils.isLibraryVideoEnable()));
-                            Utils.SharePopup(context);
-                        }
-                    }
-                }, BusinessUtils.getAddsDisplayIntervals());
 
                 break;
             case ACTION_BUSINESS_APP_EXPIRE :
@@ -49,6 +39,5 @@ public class BusinessRequestReceiver extends BroadcastReceiver {
 
 
     public interface IUpdateBusinessRequest{
-        void onBusinessRequest(BusinessUtils.AddSource addSources, boolean libraryBannerEnable, boolean libraryVideoEnable);
     }
 }

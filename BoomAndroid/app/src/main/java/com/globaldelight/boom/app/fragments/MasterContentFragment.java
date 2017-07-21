@@ -42,13 +42,14 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
+import com.globaldelight.boom.app.dialogs.EqualizerDialog;
+import com.globaldelight.boom.app.dialogs.SpeakerDialog;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.activities.MasterActivity;
 import com.globaldelight.boom.app.adapters.utils.EqualizerDialogAdapter;
-import com.globaldelight.boom.playbackEvent.controller.EffectUIController;
 import com.globaldelight.boom.playbackEvent.controller.PlayerUIController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
@@ -62,25 +63,25 @@ import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
-import com.globaldelight.boomplayer.AudioEffect;
+import com.globaldelight.boom.player.AudioEffect;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.TimeUnit;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ITEM_CLICKED;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_LAST_PLAYED_SONG;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_DISCONNECTED;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_SWITCH_OFF_AUDIO_EFFECT;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_SCREEN_RESUME;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_RECEIVE_SONG;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_TRACK_STOPPED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_QUEUE_COMPLETED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_REPEAT;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_SHUFFLE;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_TRACK_SEEK;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_TRACK_POSITION;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_ALL;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_NONE;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_ONE;
@@ -96,7 +97,7 @@ import static com.globaldelight.boom.app.sharedPreferences.Preferences.TOOLTIP_S
  * Created by Rahul Agarwal on 16-01-17.
  */
 
-public class MasterContentFragment extends Fragment implements MasterActivity.IPlayerSliderControl, View.OnClickListener, View.OnTouchListener, EqualizerDialogAdapter.IEqualizerSelect {
+public class MasterContentFragment extends Fragment implements MasterActivity.IPlayerSliderControl, View.OnClickListener, View.OnTouchListener, Observer {
     private final String TAG = "PlayerFragment-TAG";
 
     private long mItemId=-1;
@@ -138,15 +139,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private AppCompatCheckBox mFullBassCheck;
     private RegularTextView mEffectSwitchTxt, m3DSurroundTxt, mIntensityTxt, mEqualizerTxt, mSelectedEqTxt;
     private ImageView m3DSurroundBtn, mIntensityBtn, mEqualizerBtn, mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
-    private LinearLayout mEqDialogPanel, mSpeakerDialogPanel;
-    private double mOldIntensity;
+    private LinearLayout mEqDialogPanel;
 
     private List<String> eq_names;
     private TypedArray eq_active_off;
 
     private int ScreenWidth, ScreenHeight;
-    private boolean isEffectOn = false;
-    private EffectUIController aaEffectUIController;
     private PlayerUIController playerUIController;
     private Handler postMessage;
 
@@ -157,7 +155,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         public void onReceive(Context context, Intent intent) {
             IMediaItem item;
             switch (intent.getAction()){
-                case ACTION_RECEIVE_SONG :
+                case ACTION_SONG_CHANGED:
                     item = intent.getParcelableExtra("playing_song");
                     if(item != null){
                         mPlayingMediaItem = (MediaItem) item;
@@ -169,53 +167,51 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     }
                     stopLoadProgress();
                     break;
-                case ACTION_LAST_PLAYED_SONG:
-                    item = intent.getParcelableExtra("playing_song");
-                    mPlayingMediaItem = (MediaItem) item;
-                    mIsPlaying = false;
-                    mIsLastPlayed = intent.getBooleanExtra("last_played_song", true);
-                    updatePlayerUI();
-                    break;
-                case ACTION_ITEM_CLICKED :
+
+                case ACTION_PLAYER_STATE_CHANGED:
                     try {
-                        if (intent.getBooleanExtra("play_pause", false) == false) {
-                            mMiniPlayerPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_miniplayer_play, null));
-                            mPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_play, null));
+                        if ( App.playbackManager().isTrackPlaying() ) {
+                            mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_pause);
+                            mPlayPause.setImageResource(R.drawable.ic_player_pause);
                         } else {
-                            mMiniPlayerPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_miniplayer_pause, null));
-                            mPlayPause.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_player_pause, null));
-                        }
+                            mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_play);
+                            mPlayPause.setImageResource(R.drawable.ic_player_play);
+                         }
                     }catch (Exception e){}
                     stopLoadProgress();
                     break;
-                case ACTION_TRACK_STOPPED :
-                    mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
+                case ACTION_QUEUE_COMPLETED:
+                    mPlayingMediaItem = (MediaItem) App.playbackManager().queue().getPlayingItem();
                     mIsPlaying = false;
-                    mIsLastPlayed = false;
+                    mIsLastPlayed = true;
+                    mTrackSeek.setProgress(0);
+                    mMiniPlayerSeek.setProgress(0);
+                    updateTrackPlayTime(0, 0);
                     updatePlayerUI(false);
                     showProgressLoader();
                     break;
-                case ACTION_UPDATE_TRACK_SEEK :
+                case ACTION_UPDATE_TRACK_POSITION:
+                    long duration = App.playbackManager().getDuration();
+                    long current = App.playbackManager().getPosition();
                     if(!isUser) {
-                        mTrackSeek.setProgress(intent.getIntExtra("percent", 0));
-                        mMiniPlayerSeek.setProgress(intent.getIntExtra("percent", 0));
+                        int percent = duration > 0 ? (int)((current * 100) / duration) : 0;
+                        mTrackSeek.setProgress(percent);
+                        mMiniPlayerSeek.setProgress(percent);
                     }
                     if(isCloudSeek){
                         stopLoadProgress();
                         isCloudSeek = false;
                     }
 
-                    long totalMillis = intent.getLongExtra("totalms", 0);
-                    long currentMillis = intent.getLongExtra("currentms", 0);
                     if(!isUser)
-                        updateTrackPlayTime(totalMillis, currentMillis);
+                        updateTrackPlayTime(duration, current);
                     break;
                 case ACTION_UPDATE_SHUFFLE:
                     updateShuffle();
                     break;
                 case ACTION_UPDATE_REPEAT :
                     updateRepeat();
-                    updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
+                    updatePreviousNext(App.playbackManager().queue().isPrevious(), App.playbackManager().queue().isNext());
                     break;
                 case ACTION_STOP_UPDATING_UPNEXT_DB:
                     isUpdateUpnextDB = false;
@@ -228,12 +224,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     break;
                 case ACTION_ON_NETWORK_DISCONNECTED:
                     stopLoadProgress();
-                    break;
-                case ACTION_ON_SWITCH_OFF_AUDIO_EFFECT:
-                    // update UI of effect (mini player effect button also)
-                    mEffectSwitch.setChecked(false);
-                    updateMiniPlayerEffectUI(false);
-                    setEnableEffects();
                     break;
             }
         }
@@ -288,7 +278,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     public void onResume() {
         super.onResume();
         updateProgressLoader();
-        Utils.InternetPopup(mActivity);
     }
 
     private void setPlayerEnable(boolean isEnable){
@@ -309,10 +298,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void setPlayerInfo(){
-        mPlayingMediaItem = (MediaItem) App.getPlayingQueueHandler().getUpNextList().getPlayingItem();
-        mIsPlaying = App.getPlayerEventHandler().isPlaying();
-        mIsLastPlayed = (null != App.getPlayerEventHandler().getPlayingItem() ?
-                (!App.getPlayerEventHandler().isPlaying() && !App.getPlayerEventHandler().isPaused() ? true : false) :
+        mPlayingMediaItem = (MediaItem) App.playbackManager().queue().getPlayingItem();
+        mIsPlaying = App.playbackManager().isPlaying();
+        mIsLastPlayed = (null != App.playbackManager().getPlayingItem() ?
+                (!App.playbackManager().isPlaying() && !App.playbackManager().isPaused() ? true : false) :
                 false);
 
         updatePlayerSeekAndTime();
@@ -325,9 +314,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void updatePlayerSeekAndTime() {
         if(null != mPlayingMediaItem && !mIsPlaying && !mIsLastPlayed){
-            int progress = App.getUserPreferenceHandler().getPlayerSeekPosition();
-            long currentMillis= App.getUserPreferenceHandler().getPlayedTime();
-            long totalMillis = App.getUserPreferenceHandler().getRemainsTime(mPlayingMediaItem.getDurationLong());
+            long currentMillis= App.playbackManager().getPosition();
+            long totalMillis = App.playbackManager().getDuration();
+            int progress = totalMillis > 0? (int)(currentMillis * 100 / totalMillis) : 0;
+
 
             if(null != mTrackSeek)
                 mTrackSeek.setProgress(progress);
@@ -341,7 +331,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     /* Large Player UI and Functionality*/
     private void updateActionBarButtons() {
-        if(App.getPlayingQueueHandler().getUpNextList().getUpNextItemCount() > 0 ){
+        if(App.playbackManager().queue().getUpNextItemCount() > 0 ){
             mUpNextBtnPanel.setVisibility(View.VISIBLE);
             mPlayerOverFlowMenuPanel.setVisibility(View.VISIBLE);
         }else{
@@ -494,7 +484,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     isUser = true;
                     mTrackSeek.setProgress(progress);
                     changeProgress(progress);
-                    if(App.getPlayerEventHandler().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB)
+                    if(App.playbackManager().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB)
                         showProgressLoader();
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Playing_SeekBar_Used_in_Effects_screen);
                 }
@@ -548,7 +538,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 //        }
         if(null != mPlayingMediaItem && mediaChanged)
             updateAlbumArt(mPlayingMediaItem);
-        setEnableEffects();
+        updateAudioEffectUI();
 
         updateActionBarButtons();
     }
@@ -614,7 +604,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mTotalSeekTime.setVisibility(View.INVISIBLE);
             mCurrentSeekTime.setVisibility(View.INVISIBLE);
         }
-        updatePreviousNext(App.getPlayingQueueHandler().getUpNextList().isPrevious(), App.getPlayingQueueHandler().getUpNextList().isNext());
+        updatePreviousNext(App.playbackManager().queue().isPrevious(), App.playbackManager().queue().isNext());
         updateShuffle();
         updateRepeat();
     }
@@ -699,7 +689,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onPanelCollapsed(View panel) {
         setMiniPlayerVisible(true);
-        updateMiniPlayerUI(mPlayingMediaItem, App.getPlayerEventHandler().isPlaying(), mIsLastPlayed);
+        updateMiniPlayerUI(mPlayingMediaItem, App.playbackManager().isTrackPlaying(), mIsLastPlayed);
         showEffectShortCut();
 
         if(null != coachMarkEffectSwitcher){
@@ -725,14 +715,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void showEffectSwitchTip(){
-        if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.getPlayerEventHandler().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
+        if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.playbackManager().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
             coachMarkEffectSwitcher = new CoachMarkerWindow(mActivity, DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
             coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
             coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
         }
 
         if (null != mPlayerContent && mPlayerContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, Preferences.TOOLTIP_SWITCH_EFFECT_LARGE_PLAYER, true) && mPlayerContent.getVisibility() == View.VISIBLE &&
-                !App.getPlayerEventHandler().isStopped() && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
+                !App.playbackManager().isStopped() && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
             coachMarkEffectPager = new CoachMarkerWindow(mActivity, DRAW_TOP_CENTER, getResources().getString(R.string.switch_effect_screen_tooltip));
             coachMarkEffectPager.setAutoDismissBahaviour(true);
             coachMarkEffectPager.showCoachMark(mInflater.findViewById(R.id.effect_tab));
@@ -765,7 +755,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void updateProgressLoader(){
-        if(App.getPlayerEventHandler().isTrackWaitingForPlay())
+        if( App.playbackManager().isTrackLoading() )
             showProgressLoader();
         else
             stopLoadProgress();
@@ -775,6 +765,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     public void onStart() {
         setPlayerInfo();
         super.onStart();
+        audioEffects.addObserver(this);
 //        FlurryAnalyticHelper.flurryStartSession(mActivity);
         FlurryAnalytics.getInstance(getActivity()).startSession();
     }
@@ -792,18 +783,16 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     public void registerPlayerReceiver(Context context){
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_RECEIVE_SONG);
-        intentFilter.addAction(ACTION_LAST_PLAYED_SONG);
-        intentFilter.addAction(ACTION_ITEM_CLICKED);
-        intentFilter.addAction(ACTION_TRACK_STOPPED);
-        intentFilter.addAction(ACTION_UPDATE_TRACK_SEEK);
+        intentFilter.addAction(ACTION_SONG_CHANGED);
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
+        intentFilter.addAction(ACTION_QUEUE_COMPLETED);
+        intentFilter.addAction(ACTION_UPDATE_TRACK_POSITION);
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
         intentFilter.addAction(ACTION_HOME_SCREEN_BACK_PRESSED);
         intentFilter.addAction(ACTION_PLAYER_SCREEN_RESUME);
         intentFilter.addAction(ACTION_ON_NETWORK_DISCONNECTED);
-        intentFilter.addAction(ACTION_ON_SWITCH_OFF_AUDIO_EFFECT);
         context.registerReceiver(mPlayerBroadcastReceiver, intentFilter);
 
         setPlayerInfo();
@@ -916,40 +905,19 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                 break;
             case R.id.eq_dialog_panel:
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Open_Equalizer_Dailog_from_DropDown);
-                if (isEffectOn && audioEffects.isEqualizerOn())
+                if (audioEffects.isAudioEffectOn() && audioEffects.isEqualizerOn())
                     onEqDialogOpen();
                 break;
             case R.id.equalizer_txt:
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Open_Equalizer_Dailog_from_text);
-                if (isEffectOn && audioEffects.isEqualizerOn())
+                if (audioEffects.isAudioEffectOn() && audioEffects.isEqualizerOn())
                     onEqDialogOpen();
                 break;
             case R.id.speaker_btn:
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Speaker_Dialog_Opened_From_Arrow);
             case R.id.three_surround_txt:
-                if (isEffectOn && audioEffects.is3DSurroundOn())
+                if (audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn())
                     openSpeakerDialog();
-                break;
-            case R.id.speaker_left_front:
-                updateSpeakers(AudioEffect.SPEAKER_FRONT_LEFT);
-                break;
-            case R.id.speaker_right_front:
-                updateSpeakers(AudioEffect.SPEAKER_FRONT_RIGHT);
-                break;
-            case R.id.speaker_left_surround:
-                updateSpeakers(AudioEffect.SPEAKER_SURROUND_LEFT);
-                break;
-            case R.id.speaker_right_surround:
-                updateSpeakers(AudioEffect.SPEAKER_SURROUND_RIGHT);
-                break;
-            case R.id.speaker_left_tweeter:
-                updateSpeakers(AudioEffect.SPEAKER_TWEETER);
-                break;
-            case R.id.speaker_right_tweeter:
-                updateSpeakers(AudioEffect.SPEAKER_TWEETER);
-                break;
-            case R.id.speaker_sub_woofer:
-                updateSpeakers(AudioEffect.SPEAKER_WOOFER);
                 break;
         }
     }
@@ -959,8 +927,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private void overFlowMenu(Context context, View view) {
         PopupMenu pm = new PopupMenu(context, view);
         boolean isCurrentTrackFav= false;
-        if(App.getPlayerEventHandler().getPlayingItem() != null) {
-            isCurrentTrackFav = MediaController.getInstance(mActivity).isFavoriteItem(App.getPlayerEventHandler().getPlayingItem().getItemId());
+        if(App.playbackManager().getPlayingItem() != null) {
+            isCurrentTrackFav = MediaController.getInstance(mActivity).isFavoriteItem(App.playbackManager().getPlayingItem().getItemId());
         }
         final boolean isFav = isCurrentTrackFav;
         pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -970,16 +938,16 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     switch (item.getItemId()) {
                         case R.id.popup_song_add_fav:
                             if(isFav){
-                                MediaController.getInstance(mActivity).removeItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem().getItemId());
+                                MediaController.getInstance(mActivity).removeItemToFavoriteList(App.playbackManager().getPlayingItem().getItemId());
                                 Toast.makeText(mActivity, mActivity.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                             }else{
-                                MediaController.getInstance(mActivity).addItemToFavoriteList(App.getPlayerEventHandler().getPlayingItem());
+                                MediaController.getInstance(mActivity).addItemToFavoriteList(App.playbackManager().getPlayingItem());
                                 Toast.makeText(mActivity, mActivity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
                             }
                             break;
                         case R.id.popup_song_add_playlist:
                             ArrayList list = new ArrayList();
-                            list.add(App.getPlayerEventHandler().getPlayingItem());
+                            list.add(App.playbackManager().getPlayingItem());
                             Utils.addToPlaylist(mActivity, list, null);
                             break;
                     }
@@ -1004,7 +972,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             case R.id.player_large:
                 return true;
             case R.id.intensity_disable_img:
-                if(isEffectOn && audioEffects.isIntensityOn())
+                if( audioEffects.isAudioEffectOn()  && audioEffects.isIntensityOn())
                     return false;
                 else
                     return true;
@@ -1018,9 +986,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     private void initEffectControl() {
         postMessage = new Handler();
-
-        aaEffectUIController = new EffectUIController(mActivity);
-        EffectUIController.registerEffectController(aaEffectUIController);
 
 //        FrameLayout.LayoutParams effectParam = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (ScreenWidth*85)/100);
         mEffectContent = (LinearLayout) mInflater.findViewById(R.id.effect_content);
@@ -1047,12 +1012,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                         audioEffects.is3DSurroundOn()){
 
                     audioEffects.setEnableFullBass(!audioEffects.isFullBassOn());
-                    postMessage.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            aaEffectUIController.OnFullBassEnable(audioEffects.isFullBassOn());
-                        }
-                    });
 
                  //   FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FULL_BASS, audioEffectPreferenceHandler.isFullBassOn());
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FULL_BASS, audioEffects.isFullBassOn());
@@ -1064,7 +1023,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mIntensityBtn.setOnClickListener(this);
         mIntensityTxt = (RegularTextView) mInflater.findViewById(R.id.intensity_txt);
         mIntensitySeek = (NegativeSeekBar) mInflater.findViewById(R.id.intensity_seek);
-        mIntensitySeek.setProgress(audioEffects.getIntensity());
+        mIntensitySeek.setProgress((int)(audioEffects.getIntensity() * 50 + 50));
         mIntensitySeek.setOnClickListener(this);
 
         mEqualizerBtn = (ImageView) mInflater.findViewById(R.id.equalizer_btn);
@@ -1091,7 +1050,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
         switchAudioEffect();
 
-        setEnableEffects();
+        updateAudioEffectUI();
     }
 
     private void switchAudioEffect(){
@@ -1101,13 +1060,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
                 if(audioEffects.isAudioEffectOn() != enable) {
                     audioEffects.setEnableAudioEffect(!audioEffects.isAudioEffectOn());
-                    setEnableEffects();
-                    postMessage.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            aaEffectUIController.OnEffectEnable(isEffectOn);
-                        }
-                    });
                     MixPanelAnalyticHelper.track(mActivity, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_EFFECT_STATE_CHANGED, audioEffects.isAudioEffectOn());
                     FlurryAnalytics.getInstance(getActivity()).setEvent(enable ? FlurryEvents.EVENT_EFFECTS_TURNED_ON : FlurryEvents.EVENT_EFFECTS_TURNED_OFF);
@@ -1118,78 +1070,56 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         });
     }
 
-    private void setEnableEffects(){
-        isEffectOn = audioEffects.isAudioEffectOn();
-        mOldIntensity = audioEffects.getIntensity()/(double)100;
-        if(isEffectOn){
-            mEffectSwitchTxt.setText(mActivity.getString(R.string.on));
-            setEnable3DEffect(audioEffects.is3DSurroundOn());
-            setEnableIntensity(audioEffects.isIntensityOn());
-            setEnableEqualizer(audioEffects.isEqualizerOn());
-
-        }else{
-            mEffectSwitchTxt.setText(mActivity.getString(R.string.off));
-            setEnable3DEffect(audioEffects.is3DSurroundOn());
-            setEnableIntensity(audioEffects.isIntensityOn());
-            setEnableEqualizer(audioEffects.isEqualizerOn());
-        }
-    }
-
-    private void setEnable3DEffect(boolean enable){
-        boolean effectsOn = audioEffects.isAudioEffectOn();
-        m3DSurroundBtn.setEnabled(effectsOn);
-        m3DSurroundTxt.setEnabled(effectsOn);
-        mSpeakerBtn.setEnabled(effectsOn);
-
-        if ( effectsOn ) {
-            m3DSurroundBtn.setSelected(enable);
-            m3DSurroundTxt.setSelected(enable);
-            mSpeakerBtn.setSelected(enable);
+    private void updateAudioEffectUI(){
+        boolean isEffectOn = audioEffects.isAudioEffectOn();
+        if ( mEffectSwitch.isChecked() != isEffectOn ) {
+            mEffectSwitch.setChecked(isEffectOn);
         }
 
-        setEnableFullBass(audioEffects.isFullBassOn());
-    }
+        mEffectSwitchTxt.setText( isEffectOn? R.string.on : R.string.off);
 
-    private void setEnableFullBass(boolean enable){
-        mFullBassCheck.setEnabled(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn());
-    }
-
-    private void setEnableIntensity(boolean enable) {
-        boolean effectsOn = audioEffects.isAudioEffectOn();
-        mIntensityBtn.setEnabled(effectsOn);
-        mIntensityTxt.setEnabled(effectsOn);
-        mIntensitySeek.setDisable(!(enable && effectsOn));
-
-        if ( effectsOn ) {
-            mIntensityBtn.setSelected(enable);
-            mIntensityTxt.setSelected(enable);
+        boolean isSurroundOn = audioEffects.is3DSurroundOn();
+        m3DSurroundBtn.setEnabled(isEffectOn);
+        m3DSurroundTxt.setEnabled(isEffectOn);
+        mSpeakerBtn.setEnabled(isEffectOn);
+        if ( isEffectOn ) {
+            m3DSurroundBtn.setSelected(isSurroundOn);
+            m3DSurroundTxt.setSelected(isSurroundOn);
+            mSpeakerBtn.setSelected(isSurroundOn);
         }
-//        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_INTENSITY_STATE_CHANGED);
 
-    }
+        mFullBassCheck.setEnabled(isEffectOn && audioEffects.is3DSurroundOn());
 
-    private void setEnableEqualizer(boolean active) {
-        setChangeEqualizerValue(audioEffects.getSelectedEqualizerPosition());
+        boolean isIntensityOn = audioEffects.isIntensityOn();
+        mIntensityBtn.setEnabled(isEffectOn);
+        mIntensityTxt.setEnabled(isEffectOn);
+        mIntensitySeek.setDisable(!(isIntensityOn && isEffectOn));
 
-        HashMap<String, String> articleParams = new HashMap<>();
-        articleParams.put(UtilAnalytics.PARAM_SELECTED_EQUALIZER, eq_names.get(audioEffects.getSelectedEqualizerPosition()));
-        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Type_of_Equalizer_selected,articleParams);
-        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_selected,articleParams);
-        boolean enable = audioEffects.isAudioEffectOn();
-        mEqualizerBtn.setEnabled(enable);
-        mEqualizerTxt.setEnabled(enable);
-        mSelectedEqGoImg.setEnabled(enable);
-        mEqDialogPanel.setEnabled(enable);
-        mSelectedEqTxt.setEnabled(enable);
-        mSelectedEqImg.setEnabled(enable);
-        if ( enable ) {
-            mEqualizerBtn.setSelected(active);
-            mEqualizerTxt.setSelected(active);
-            mSelectedEqTxt.setSelected(active);
-            mSelectedEqImg.setSelected(active);
-            mSelectedEqGoImg.setSelected(active);
-            mEqDialogPanel.setSelected(active);
+        if ( isEffectOn ) {
+            mIntensityBtn.setSelected(isIntensityOn);
+            mIntensityTxt.setSelected(isIntensityOn);
         }
+
+
+        boolean isEqualizerOn = audioEffects.isEqualizerOn();
+        mEqualizerBtn.setEnabled(isEffectOn);
+        mEqualizerTxt.setEnabled(isEffectOn);
+        mSelectedEqGoImg.setEnabled(isEffectOn);
+        mEqDialogPanel.setEnabled(isEffectOn);
+        mSelectedEqTxt.setEnabled(isEffectOn);
+        mSelectedEqImg.setEnabled(isEffectOn);
+        if ( isEffectOn ) {
+            mEqualizerBtn.setSelected(isEqualizerOn);
+            mEqualizerTxt.setSelected(isEqualizerOn);
+            mSelectedEqTxt.setSelected(isEqualizerOn);
+            mSelectedEqImg.setSelected(isEqualizerOn);
+            mSelectedEqGoImg.setSelected(isEqualizerOn);
+            mEqDialogPanel.setSelected(isEqualizerOn);
+        }
+
+        int eqPosition = audioEffects.getSelectedEqualizerPosition();
+        mSelectedEqImg.setImageDrawable(eq_active_off.getDrawable(eqPosition));
+        mSelectedEqTxt.setText(eq_names.get(eqPosition));
     }
 
     private String isAllSpeakersAreOff(){
@@ -1205,122 +1135,22 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         return null;
     }
 
-    private void updateSpeakers(LinearLayout speakerPanel){
-        ImageView mFrontLeftSpeaker, mFrontRightSpeaker, mSurroundLeftSpeaker, mSurroundRightSpeaker;
 
-        mFrontLeftSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_left_front);
-        mFrontRightSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_right_front);
-        mSurroundLeftSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_left_surround);
-        mSurroundRightSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_right_surround);
-
-        mFrontLeftSpeaker.setOnClickListener(this);
-        mFrontRightSpeaker.setOnClickListener(this);
-        mSurroundLeftSpeaker.setOnClickListener(this);
-        mSurroundRightSpeaker.setOnClickListener(this);
-
-        mFrontLeftSpeaker.setSelected(audioEffects.isLeftFrontSpeakerOn());
-        mFrontRightSpeaker.setSelected(audioEffects.isRightFrontSpeakerOn());
-        mSurroundLeftSpeaker.setSelected(audioEffects.isLeftSurroundSpeakerOn());
-        mSurroundRightSpeaker.setSelected(audioEffects.isRightSurroundSpeakerOn());
-
-        updateTweeterAndWoofer(speakerPanel, audioEffects.isAllSpeakerOn());
-    }
-
-    private void updateTweeterAndWoofer(LinearLayout speakerPanel, boolean enable){
-        ImageView mTweeterLeftSpeaker, mTweeterRightSpeaker, mWoofer;
-        mTweeterLeftSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_left_tweeter);
-        mTweeterRightSpeaker = (ImageView) speakerPanel.findViewById(R.id.speaker_right_tweeter);
-        mWoofer = (ImageView) speakerPanel.findViewById(R.id.speaker_sub_woofer);
-
-        mTweeterLeftSpeaker.setOnClickListener(this);
-        mTweeterRightSpeaker.setOnClickListener(this);
-        mWoofer.setOnClickListener(this);
-
-        audioEffects.setOnAllSpeaker(enable);
-
-        mTweeterLeftSpeaker.setEnabled(enable);
-        mTweeterRightSpeaker.setEnabled(enable);
-        mWoofer.setEnabled(enable);
-
-        if ( enable ) {
-            mTweeterLeftSpeaker.setSelected(audioEffects.isTweeterOn());
-            mTweeterRightSpeaker.setSelected(audioEffects.isTweeterOn());
-            mWoofer.setSelected(audioEffects.isWooferOn());
-        }
-    }
 
     private void onEqDialogOpen(){
-        final EqualizerDialogAdapter adapter = new EqualizerDialogAdapter(mActivity, audioEffects.getSelectedEqualizerPosition(), eq_names, eq_active_off, this);
-        RecyclerView recyclerView = (RecyclerView)mActivity.getLayoutInflater()
-                .inflate(R.layout.recycler_view_layout, null);
-        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-        recyclerView.scrollToPosition(audioEffects.getSelectedEqualizerPosition());
-        recyclerView.setAdapter(adapter);
-
-        MaterialDialog dialog = new MaterialDialog.Builder(mActivity)
-                .title(R.string.eq_dialog_title)
-                .backgroundColor(ContextCompat.getColor(mActivity, R.color.dialog_background))
-                .titleColor(ContextCompat.getColor(mActivity, R.color.dialog_title))
-                .positiveColor(ContextCompat.getColor(mActivity, R.color.dialog_submit_positive))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                .customView(recyclerView, false)
-                .positiveText(R.string.done)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                    }
-                })
-                .autoDismiss(false)
-                .canceledOnTouchOutside(false)
-                .show();
-        dialog.getWindow().setLayout((ScreenWidth *80)/100, (ScreenHeight *70)/100);
+        new EqualizerDialog(mActivity).show();
     }
 
     private void openSpeakerDialog() {
-        mSpeakerDialogPanel = (LinearLayout) mActivity.getLayoutInflater()
-                .inflate(R.layout.speaker_panel, null);
-
-        updateSpeakers(mSpeakerDialogPanel);
-
-        MaterialDialog dialog = new MaterialDialog.Builder(mActivity)
-                .title(R.string.speaker_dialog_title)
-                .backgroundColor(ContextCompat.getColor(mActivity, R.color.dialog_background))
-                .titleColor(ContextCompat.getColor(mActivity, R.color.dialog_title))
-                .positiveColor(ContextCompat.getColor(mActivity, R.color.dialog_submit_positive))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                .customView(mSpeakerDialogPanel, false)
-                .positiveText(R.string.done)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                    }
-                })
-                .autoDismiss(false)
-                .canceledOnTouchOutside(false)
-                .show();
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        new SpeakerDialog(mActivity).show();
     }
 
     private void switch3DSurround(){
         if(audioEffects.isAudioEffectOn()) {
             audioEffects.setEnable3DSurround(!audioEffects.is3DSurroundOn());
-            postMessage.post(new Runnable() {
-                @Override
-                public void run() {
-                    aaEffectUIController.On3DSurroundEnable(audioEffects.is3DSurroundOn());
-                }
-            });
-            setEnable3DEffect(audioEffects.is3DSurroundOn());
-
-            if(audioEffects.is3DSurroundOn()) {
-                if (!audioEffects.isIntensityOn()) {
-                    switchIntensity();
-                }
-                if (!audioEffects.isEqualizerOn()) {
-                    switchEqualizer();
-                }
+            if ( audioEffects.is3DSurroundOn() ) {
+                audioEffects.setEnableIntensity(true);
+                audioEffects.setEnableEqualizer(true);
             }
             MixPanelAnalyticHelper.track(mActivity, audioEffects.is3DSurroundOn() ? AnalyticsHelper.EVENT_3D_TURNED_ON : AnalyticsHelper.EVENT_3D_TURNED_OFF);
 //            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_3D_STATE_CHANGED, audioEffectPreferenceHandler.is3DSurroundOn());
@@ -1330,39 +1160,21 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     private void switchIntensity(){
-        if(audioEffects.isAudioEffectOn() && !audioEffects.is3DSurroundOn()){
-            setEnableIntensity(!audioEffects.isIntensityOn());
-            audioEffects.setEnableIntensity(!audioEffects.isIntensityOn());
-        }else if(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && !audioEffects.isIntensityOn()){
-            setEnableIntensity(!audioEffects.isIntensityOn());
-            audioEffects.setEnableIntensity(!audioEffects.isIntensityOn());
-        }else if(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && audioEffects.isIntensityOn()){
+        if( audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && audioEffects.isIntensityOn()){
             Toast.makeText(mActivity, mActivity.getResources().getString(R.string.req_intensity), Toast.LENGTH_LONG).show();
         }
-        postMessage.post(new Runnable() {
-            @Override
-            public void run() {
-                aaEffectUIController.OnIntensityEnable(audioEffects.isIntensityOn());
-            }
-        });
+        else {
+            audioEffects.setEnableIntensity(!audioEffects.isIntensityOn());
+        }
     }
 
     private void switchEqualizer(){
-        if(audioEffects.isAudioEffectOn()  && !audioEffects.is3DSurroundOn()){
-            setEnableEqualizer(!audioEffects.isEqualizerOn());
-            audioEffects.setEnableEqualizer(!audioEffects.isEqualizerOn());
-        }else if(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && !audioEffects.isEqualizerOn()){
-            setEnableEqualizer(!audioEffects.isEqualizerOn());
-            audioEffects.setEnableEqualizer(!audioEffects.isEqualizerOn());
-        } else if(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && audioEffects.isEqualizerOn()){
+        if(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && audioEffects.isEqualizerOn()){
             Toast.makeText(mActivity, mActivity.getResources().getString(R.string.req_equlaizer), Toast.LENGTH_LONG).show();
         }
-        postMessage.post(new Runnable() {
-            @Override
-            public void run() {
-                aaEffectUIController.OnEqualizerEnable(audioEffects.isEqualizerOn());
-            }
-        });
+        else {
+            audioEffects.setEnableEqualizer(!audioEffects.isEqualizerOn());
+        }
         MixPanelAnalyticHelper.track(mActivity, audioEffects.isEqualizerOn() ? AnalyticsHelper.EVENT_EQ_TURNED_ON : AnalyticsHelper.EVENT_EQ_TURNED_OFF);
 //        FlurryAnalyticHelper.logEventWithStatus(UtilAnalytics.Equalizer_status, audioEffectPreferenceHandler.isEqualizerOn());
 
@@ -1372,23 +1184,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         mIntensitySeek.setOnSeekBarChangeListener(new NegativeSeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean isUser) {
-                if((progress/(double)100 - mOldIntensity >= .1 || mOldIntensity - progress/(double)100 >= .1) || progress == 100  || progress == 0) {
-                    mOldIntensity = progress / (double) 100;
-                    audioEffects.setIntensity(progress);
+                audioEffects.setIntensity((progress - 50)/50.0f );
 
-                    if (isUser)
-                        postMessage.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                aaEffectUIController.OnIntensityChange(progress);
-                            }
-                        });
+                if (isUser) {
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
-
-                   /* try {
-//                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_INTENSITY_STATE_CHANGED);
-                    } catch (Exception e) {
-                    }*/
                 }
             }
 
@@ -1407,73 +1206,10 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     @Override
     public void onStop() {
         super.onStop();
+        audioEffects.deleteObserver(this);
         FlurryAnalytics.getInstance(getActivity()).endSession();
     }
-    @Override
-    public void onChangeEqualizerValue(final int position) {
-        setChangeEqualizerValue(position);
-        postMessage.post(new Runnable() {
-            @Override
-            public void run() {
-                aaEffectUIController.OnEqualizerChange(position);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_EQ_STATE_CHANGED);
-            }
-        });
-    }
 
-    public void setChangeEqualizerValue(final int position) {
-        postMessage.post(new Runnable() {
-            @Override
-            public void run() {
-                mSelectedEqImg.setImageDrawable(eq_active_off.getDrawable(position));
-                mSelectedEqTxt.setText(eq_names.get(position));
-                audioEffects.setSelectedEqualizerPosition(position);
-            }
-        });
-    }
-
-    private void updateSpeakers(@AudioEffect.Speaker final int speakerType){
-        boolean enable = false;
-        switch (speakerType) {
-            case AudioEffect.SPEAKER_FRONT_LEFT:
-                enable = !audioEffects.isLeftFrontSpeakerOn();
-                audioEffects.setEnableLeftFrontSpeaker(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FRONT_LEFT_SPEAKER, enable);
-                break;
-
-            case AudioEffect.SPEAKER_FRONT_RIGHT:
-                enable = !audioEffects.isRightFrontSpeakerOn();
-                audioEffects.setEnableRightFrontSpeaker(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FRONT_RIGHT_SPEAKER, enable);
-                break;
-
-            case AudioEffect.SPEAKER_SURROUND_LEFT:
-                enable = !audioEffects.isLeftSurroundSpeakerOn();
-                audioEffects.setEnableLeftSurroundSpeaker(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_REAR_LEFT_SPEAKER, enable);
-                break;
-
-            case AudioEffect.SPEAKER_SURROUND_RIGHT:
-                enable = !audioEffects.isRightSurroundSpeakerOn();
-                audioEffects.setEnableRightSurroundSpeaker(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_REAR_RIGHT_SPEAKER, enable);
-                break;
-
-            case AudioEffect.SPEAKER_TWEETER:
-                enable = !audioEffects.isTweeterOn();
-                audioEffects.setEnableTweeter(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_TWEETER, enable);
-                break;
-
-            case AudioEffect.SPEAKER_WOOFER:
-                enable = !audioEffects.isWooferOn();
-                audioEffects.setEnableWoofer(enable);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_SUBWOOFER, enable);
-                break;
-        }
-        updateSpeakers(mSpeakerDialogPanel);
-        aaEffectUIController.OnSpeakerEnable(speakerType, enable);
-    }
 
     private void dismissTooltip() {
         if (null != coachMarkEffectPager) {
@@ -1503,5 +1239,20 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     private void stopLoadProgress(){
         if(View.VISIBLE == mLoadingProgress.getVisibility())
             mLoadingProgress.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if ( o instanceof AudioEffect ) {
+            String property = (String)arg;
+            updateMiniPlayerEffectUI(audioEffects.isAudioEffectOn());
+            updateAudioEffectUI();
+            if ( property.equals(AudioEffect.EQUALIZER_PROPERTY)) {
+                HashMap<String, String> articleParams = new HashMap<>();
+                articleParams.put(UtilAnalytics.PARAM_SELECTED_EQUALIZER, eq_names.get(audioEffects.getSelectedEqualizerPosition()));
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Type_of_Equalizer_selected,articleParams);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_selected,articleParams);
+            }
+        }
     }
 }

@@ -19,14 +19,14 @@ public class FlurryAnalytics {
     private final static String PRODUCTION_FLURRY_API_KEY = "XRPWTN4PDGJJQX6NNJPN";
 
     private FlurryAnalytics(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         new FlurryAgent.Builder()
                 .withLogEnabled(true)
                 .build(context.getApplicationContext(), DEVELOPMENT_FLURRY_API_KEY);
     }
 
     public static FlurryAnalytics getInstance(Context context) {
-        if (instance == null) instance = new FlurryAnalytics(context);
+        if (instance == null) instance = new FlurryAnalytics(context.getApplicationContext());
         return instance;
     }
 
