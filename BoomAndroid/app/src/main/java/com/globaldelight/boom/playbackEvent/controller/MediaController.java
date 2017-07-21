@@ -48,11 +48,6 @@ public class MediaController implements IMediaController {
     }
 
     @Override
-    public ArrayList<? extends IMediaItemBase> getPlayListTrackList(long parentId, String parentTitle) {
-        return DeviceMediaQuery.getPlaylistSongs(context, parentId, parentTitle);
-    }
-
-    @Override
     public void createBoomPlaylist(String playlist) {
         App.getBoomPlayListHelper().createPlaylist(playlist);
 //        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
@@ -226,31 +221,6 @@ public class MediaController implements IMediaController {
     @Override
     public void addSongsToCloudItemList(@MediaType int mediaType, ArrayList<IMediaItemBase> fileList) {
         App.getCloudMediaItemDBHelper().addSongs(mediaType, fileList);
-    }
-
-    @Override
-    public ArrayList<? extends IMediaItem> getAlbumTrackList(long itemId, String itemTitle) {
-        return DeviceMediaQuery.getAlbumDetail(context, itemId, itemTitle);
-    }
-
-    @Override
-    public ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(long parentId, long itemId) {
-        return DeviceMediaQuery.getSongListOfArtistsAlbum(context, itemId, parentId);
-    }
-
-    @Override
-    public ArrayList<? extends IMediaItemBase> getArtistTrackList(long parentId, String parentTitle) {
-        return DeviceMediaQuery.getSongListOfArtist(context, parentId, parentTitle);
-    }
-
-    @Override
-    public ArrayList<? extends IMediaItemBase> getGenreAlbumsTrackList(long parentId, String parentTitle, long itemId, String itemTitle) {
-        return DeviceMediaQuery.getSongListOfGenreAlbum(context, parentId, parentTitle, itemId, itemTitle);
-    }
-
-    @Override
-    public ArrayList<? extends IMediaItemBase> getGenreTrackList(long parentId, String parentTitle) {
-        return DeviceMediaQuery.getSongListOfGenre(context, parentId, parentTitle);
     }
 
     @Override

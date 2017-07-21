@@ -105,11 +105,6 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
     }
 
     @Override
-    public void setItemCount(int itemCount) {
-        this.mItemCount = itemCount;
-    }
-
-    @Override
     public int getItemCount() {
         return mItemCount;
     }
