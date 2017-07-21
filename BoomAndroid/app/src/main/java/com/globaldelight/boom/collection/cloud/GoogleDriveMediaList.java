@@ -30,9 +30,9 @@ public class GoogleDriveMediaList {
         postMessage = new Handler();
     }
 
-    public static GoogleDriveMediaList geGoogleDriveMediaListInstance(Context context){
+    public static GoogleDriveMediaList getInstance(Context context){
         if(null == handler){
-            handler = new GoogleDriveMediaList(context);
+            handler = new GoogleDriveMediaList(context.getApplicationContext());
         }
         return handler;
     }

@@ -115,7 +115,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     }
 
     public void resetKeys(Context context){
-        GoogleDriveMediaList.geGoogleDriveMediaListInstance(context).clearGoogleDriveMediaContent();
+        GoogleDriveMediaList.getInstance(context).clearGoogleDriveMediaContent();
         mFragment.startActivityForResult(
                 mCredential.newChooseAccountIntent(),
                 REQUEST_ACCOUNT_PICKER);
@@ -143,7 +143,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (!isDeviceOnline()) {
-            GoogleDriveMediaList.geGoogleDriveMediaListInstance(mContext).onErrorOccurred(mFragment.getResources().getString(R.string.network_error));
+            GoogleDriveMediaList.getInstance(mContext).onErrorOccurred(mFragment.getResources().getString(R.string.network_error));
         } else {
             loadGoogleDriveList  = new LoadGoogleDriveList(mFragment, mCredential, 0);
             loadGoogleDriveList.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
