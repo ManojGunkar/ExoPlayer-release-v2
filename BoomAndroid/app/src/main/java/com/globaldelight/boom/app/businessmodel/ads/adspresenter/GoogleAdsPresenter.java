@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.businessmodel.ads.builder.AdsBuilder;
 import com.globaldelight.boom.app.businessmodel.ads.viewholder.GoogleAdViewHolder;
@@ -42,7 +43,7 @@ public class GoogleAdsPresenter implements AdsPresenter {
     public GoogleAdsPresenter(AdsBuilder.AdsParam param) {
         this.param = param;
         //Change google ad id to release build
-        adLoader = new AdLoader.Builder(param.context, "ca-app-pub-3940256099942544/2247696110")
+        adLoader = new AdLoader.Builder(param.context, BuildConfig.GOOGLE_NATIVE_AD_ID)
                 .forContentAd(new NativeContentAd.OnContentAdLoadedListener() {
                     @Override
                     public void onContentAdLoaded(NativeContentAd contentAd) {

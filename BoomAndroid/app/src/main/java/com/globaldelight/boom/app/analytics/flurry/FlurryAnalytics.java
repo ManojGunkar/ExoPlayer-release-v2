@@ -3,6 +3,7 @@ package com.globaldelight.boom.app.analytics.flurry;
 import android.content.Context;
 
 import com.flurry.android.FlurryAgent;
+import com.globaldelight.boom.BuildConfig;
 
 import java.util.Map;
 
@@ -15,14 +16,11 @@ public class FlurryAnalytics {
     private Context context;
     private static FlurryAnalytics instance;
 
-    private final static String DEVELOPMENT_FLURRY_API_KEY = "MGGVKKG7JYXGC3N89B4V";
-    private final static String PRODUCTION_FLURRY_API_KEY = "XRPWTN4PDGJJQX6NNJPN";
-
     private FlurryAnalytics(Context context) {
         this.context = context.getApplicationContext();
         new FlurryAgent.Builder()
                 .withLogEnabled(true)
-                .build(context.getApplicationContext(), DEVELOPMENT_FLURRY_API_KEY);
+                .build(context.getApplicationContext(), BuildConfig.FLURRY_API_KEY);
     }
 
     public static FlurryAnalytics getInstance(Context context) {

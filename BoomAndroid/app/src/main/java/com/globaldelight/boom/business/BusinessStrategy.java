@@ -11,6 +11,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -264,9 +265,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
 
     private void onPurchase() {
-        Intent intent = new Intent(mContext, ActivityContainer.class);
-        intent.putExtra("container",R.string.store_title);
-        mContext.startActivity(intent);
+        if ( mCurrentActivity != null ) {
+            Intent intent = new Intent(mContext, ActivityContainer.class);
+            intent.putExtra("container",R.string.store_title);
+            mCurrentActivity.startActivity(intent);
+        }
     }
 
     public boolean isPurchased() {
@@ -306,9 +309,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
 
     private void onShare() {
-        Intent intent = new Intent(mContext, ActivityContainer.class);
-        intent.putExtra("container",R.string.title_share);
-        mContext.startActivity(intent);
+        if ( mCurrentActivity != null ) {
+            Intent intent = new Intent(mContext, ActivityContainer.class);
+            intent.putExtra("container",R.string.title_share);
+            mCurrentActivity.startActivity(intent);
+        }
     }
 
     private void onShareSuccess() {
@@ -451,7 +456,13 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     }
 
 
+    private boolean mAlertIsVisible = false;
     private void showPopup(final String message, final String primaryTitle, final String secondaryTitle, final PopupResponse callback) {
+
+        if (mAlertIsVisible) {
+            Log.d(TAG, "Skipped alert with message: " + message);
+        }
+
         mPendingAlert = new Runnable() {
             @Override
             public void run() {
@@ -459,6 +470,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                     return;
                 }
 
+                mAlertIsVisible = true;
                 MaterialDialog.Builder builder = new MaterialDialog.Builder(mCurrentActivity);
                 builder.backgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background))
                         .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
@@ -481,6 +493,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                     builder.onNegative(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    mAlertIsVisible = false;
                                     callback.onSecondaryAction();
 
                                 }
@@ -488,22 +501,24 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    mAlertIsVisible = false;
                                     callback.onPrimaryAction();
                                 }
                             })
                             .onNeutral(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    mAlertIsVisible = false;
                                     callback.onCancel();
                                 }
                             })
                             .cancelListener(new DialogInterface.OnCancelListener() {
                                 @Override
                                 public void onCancel(DialogInterface dialog) {
+                                    mAlertIsVisible = false;
                                     callback.onCancel();
                                 }
                             });
-
                 }
                 builder.show();
                 mPendingAlert = null;

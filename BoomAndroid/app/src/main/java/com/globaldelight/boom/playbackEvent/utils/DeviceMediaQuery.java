@@ -73,7 +73,6 @@ public class DeviceMediaQuery {
             }while (songListCursor.moveToNext());
 
         }
-        Log.e("ToTaL_TiMe : ", "On_EnD : "+System.currentTimeMillis());
         if (songListCursor != null) {
             songListCursor.close();
         }
