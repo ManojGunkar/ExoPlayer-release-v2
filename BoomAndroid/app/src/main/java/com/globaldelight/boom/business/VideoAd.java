@@ -97,6 +97,7 @@ public class VideoAd implements RewardedVideoAdListener {
         }
 
         mShow = false;
+        Toast.makeText(mContext, "Failed to load video ad. Error: " + i, LENGTH_SHORT).show();
         mCallback.onVideoAdCancelled();
     }
 
