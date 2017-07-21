@@ -46,7 +46,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     private Activity activity;
     private @ItemType int listItemType;
     Fragment fragment;
-    private int WIDTH, HEIGHT;
 
 
     public SongListAdapter(Activity activity, Fragment fragment, ArrayList<? extends IMediaItemBase> itemList, @ItemType int listItemType) {
@@ -54,8 +53,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         this.fragment = fragment;
         this.itemList = itemList;
         this.listItemType = listItemType;
-        WIDTH = Utils.dpToPx(activity, 62);
-        HEIGHT = Utils.dpToPx(activity, 62);
     }
 
     @Override
@@ -109,8 +106,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                     holder.overlayPlay.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
             } else {
-                holder.overlay.setVisibility( View.INVISIBLE );
-                holder.overlayPlay.setVisibility( View.INVISIBLE );
+                holder.overlay.setVisibility( View.GONE );
+                holder.overlayPlay.setVisibility( View.GONE );
                 holder.progressIndicator.setVisibility(View.GONE);
                 holder.title.setSelected(false);
             }

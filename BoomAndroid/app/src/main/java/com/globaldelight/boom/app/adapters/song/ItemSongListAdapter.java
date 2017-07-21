@@ -66,7 +66,6 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     private IMediaItem currentItem;
     private ListDetail listDetail;
     private AlbumSongListFragment fragment;
-    private int WIDTH, HEIGHT;
 
 
     public ItemSongListAdapter(Activity activity, AlbumSongListFragment fragment, IMediaItemCollection collection, ListDetail listDetail, OnStartDragListener dragListener) {
@@ -75,8 +74,6 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         this.collection = (MediaItemCollection) collection;
         this.listDetail = listDetail;
         this.mOnStartDragListener = dragListener;
-        WIDTH = Utils.dpToPx(activity, 62);
-        HEIGHT = Utils.dpToPx(activity, 62);
     }
     @Override
     public ItemSongListAdapter.SimpleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
