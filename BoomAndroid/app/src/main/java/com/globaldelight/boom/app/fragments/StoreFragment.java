@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
 import com.globaldelight.boom.business.BusinessStrategy;
 import com.globaldelight.boom.business.inapp.IabHelper;
@@ -43,32 +45,26 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
     ScrollView rootView;
     private static final String TAG = "In-App-Handler";
-    private IabHelper mHelper;
     private Context mContext;
     private Activity mActivity;
     public static final String ACTION_IN_APP_PURCHASE_SUCCESSFUL = "ACTION_INAPP_PURCHASE_SUCCESSFUL";
-    boolean mIsPremium = false;
-    private String boomPrice;
-    private boolean intiStoreStartup;
     private ProgressBar progressBar;
     private RegularTextView mStoreShareTxt;
     private RegularButton mStoreBuyBtn;
     private RegularButton mClearButton;
+    private boolean mUserPurchased = false; // to track if the user purchased
 
     //    ConnectivityReceiver.isNetworkAvailable(mActivity, true)
     private BroadcastReceiver mUpdateInAppItemReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
-                case ACTION_SONG_CHANGED:
-                    updateInApp();
-                    break;
-
                 case InAppPurchase.ACTION_IAP_RESTORED:
                     onSuccessRestoreAppPurchase();
                     break;
 
                 case InAppPurchase.ACTION_IAP_SUCCESS:
+                    mUserPurchased = true;
                     onSuccessAppPurchase();
                     break;
 
@@ -183,20 +179,17 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.store_share_text:
-            //    FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Store);
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Share_Opened_from_Store);
                 try {
                     Utils.shareStart(mActivity, StoreFragment.this);
                 } catch (Exception e) {
                 }
                 break;
             case R.id.store_buyButton:
-                if (mIsPremium == false) {
-                    try {
-                        Log.d("installdate",String.valueOf(mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).firstInstallTime));
-                    } catch (PackageManager.NameNotFoundException e) {
-                        e.printStackTrace();
+                if ( !BusinessStrategy.getInstance(getActivity()).isPurchased() ) {
+                    if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
+                        startInAppFlow();
                     }
-                    startPurchaseRestore();
                 }
                 break;
         }
@@ -222,16 +215,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void startPurchaseRestore() {
-        if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
-            try {
-                startInAppFlow();
-
-            } catch (Exception e) {
-            }
-        }
-    }
-
     private String getCurrentInAppItem() {
         switch (BusinessStrategy.getInstance(mContext).getPurchaseLevel()) {
             default:
@@ -249,20 +232,16 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         InAppPurchase.getInstance(mContext).buyNow(getActivity(), getCurrentInAppItem());
     }
 
-    private void updateInApp() {
-        mStoreBuyBtn.setVisibility(View.GONE);
-    }
-
     @Override
     public void onDestroy() {
         mActivity.unregisterReceiver(mUpdateInAppItemReceiver);
         super.onDestroy();
-//        if(BusinessPreferences.readBoolean(mContext, STORE_CLOSED_WITH_PURCHASE, true)){
-//            FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Closed_With_Purchase);
-//            MixPanelAnalyticHelper.track(mActivity, UtilAnalytics.Store_Closed_With_Purchase);
-//        }else{
-//            FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Closed_Without_Purchase);
-//        }
+        if( mUserPurchased ){
+            FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Store_Closed_With_Purchase);
+            MixPanelAnalyticHelper.track(mActivity, FlurryEvents.Store_Closed_With_Purchase);
+        }else{
+            FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Store_Closed_Without_Purchase);
+        }
         MixPanelAnalyticHelper.getInstance(mContext).flush();
     }
 

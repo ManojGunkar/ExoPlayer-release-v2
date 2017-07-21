@@ -9,19 +9,14 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.business.inapp.IabHelper;
 import com.globaldelight.boom.business.inapp.IabResult;
 import com.globaldelight.boom.business.inapp.Inventory;
 import com.globaldelight.boom.business.inapp.Purchase;
-import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Observable;
-
-import static com.globaldelight.boom.app.sharedPreferences.Preferences.INAPP_PURCHASE_PRICE_VALUE;
 
 /**
  * @Created by Manoj Kumar on 7/11/2017.

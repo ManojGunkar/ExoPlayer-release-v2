@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
+import com.bumptech.glide.Glide;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.app.activities.AlbumSongListActivity;
@@ -181,28 +182,28 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
 
             switch (count) {
                 case 1:
-                    Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
-                    Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
-                    Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
-                    Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
+                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
+                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
+                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
+                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
                     break;
                 case 2:
-                    Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
-                    Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
-                    Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
-                    Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
+                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
+                    Glide.with(activity).load(Urls.get(1)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
+                    Glide.with(activity).load(Urls.get(1)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
+                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
                     break;
                 case 3:
-                    Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
-                    Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
-                    Picasso.with(activity).load(new File(Urls.get(2))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
-                    Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
+                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
+                    Glide.with(activity).load(Urls.get(1)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
+                    Glide.with(activity).load(Urls.get(2)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
+                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
                     break;
                 case 4:
-                    Picasso.with(activity).load(new File(Urls.get(0))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
-                    Picasso.with(activity).load(new File(Urls.get(1))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
-                    Picasso.with(activity).load(new File(Urls.get(2))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
-                    Picasso.with(activity).load(new File(Urls.get(3))).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
+                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
+                    Glide.with(activity).load(Urls.get(1)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
+                    Glide.with(activity).load(Urls.get(2)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
+                    Glide.with(activity).load(Urls.get(3)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
                     break;
             }
         }else{

@@ -89,6 +89,10 @@ public class VideoAd implements RewardedVideoAdListener {
 
     @Override
     public void onRewardedVideoAdFailedToLoad(int i) {
+        if ( mShow ) {
+            Utils.dismissProgressLoader();
+        }
+
         mShow = false;
         mCallback.onVideoAdCancelled();
     }

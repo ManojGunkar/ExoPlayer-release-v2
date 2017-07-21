@@ -46,10 +46,8 @@ import com.globaldelight.boom.app.dialogs.EqualizerDialog;
 import com.globaldelight.boom.app.dialogs.SpeakerDialog;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
-import com.globaldelight.boom.app.analytics.UtilAnalytics;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.activities.MasterActivity;
-import com.globaldelight.boom.app.adapters.utils.EqualizerDialogAdapter;
 import com.globaldelight.boom.playbackEvent.controller.PlayerUIController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
@@ -1249,7 +1247,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             updateAudioEffectUI();
             if ( property.equals(AudioEffect.EQUALIZER_PROPERTY)) {
                 HashMap<String, String> articleParams = new HashMap<>();
-                articleParams.put(UtilAnalytics.PARAM_SELECTED_EQUALIZER, eq_names.get(audioEffects.getSelectedEqualizerPosition()));
+                articleParams.put(FlurryEvents.PARAM_SELECTED_EQUALIZER, eq_names.get(audioEffects.getSelectedEqualizerPosition()));
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Type_of_Equalizer_selected,articleParams);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_selected,articleParams);
             }

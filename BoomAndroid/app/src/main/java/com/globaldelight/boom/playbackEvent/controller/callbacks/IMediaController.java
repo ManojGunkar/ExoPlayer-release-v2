@@ -75,18 +75,6 @@ public interface IMediaController {
 
     void addSongsToCloudItemList(@MediaType int mediaType, ArrayList<IMediaItemBase> fileList);
 
-    ArrayList<? extends IMediaItem> getAlbumTrackList(long itemId, String itemTitle) ;
-
-    ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(long parentId, long itemId) ;
-
-    ArrayList<? extends IMediaItemBase> getArtistTrackList(long parentId, String parentTitle) ;
-
-    ArrayList<? extends IMediaItemBase> getGenreAlbumsTrackList(long parentId, String parentTitle, long itemId, String itemTitle) ;
-
-    ArrayList<? extends IMediaItemBase> getGenreTrackList(long parentId, String parentTitle) ;
-
-    ArrayList<? extends IMediaItemBase> getPlayListTrackList(long parentId, String parentTitle) ;
-
     int getRecentPlayedItemCount();
 
     ArrayList<? extends IMediaItemBase> getRecentPlayedList();

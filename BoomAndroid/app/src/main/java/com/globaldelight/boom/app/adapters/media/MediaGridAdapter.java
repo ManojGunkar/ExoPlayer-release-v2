@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
 
+import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.AlbumDetailActivity;
@@ -125,8 +126,9 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
     private void setMediaImage(ViewHolder holder, MediaItemCollection item) {
         String path = item.getItemArtUrl();
         if ( path == null ) path = "";
-        Picasso.with(context).load(new File(path))
+        Glide.with(context).load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
+                .fitCenter()
                 .into(holder.mediaImageView);
     }
 
