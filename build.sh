@@ -29,7 +29,7 @@ FLAVOUR=$1
 ./gradlew assemble${FLAVOUR}Release -PbuildNumber=$BUILD_NUMBER -PexpiryDate=$EXPIRY_DATE
 check_error $?
 
-$BUILD_TOOLS/zipalign -v -p 4 "${APK_DIR}/app-release-unsigned.apk" "${BUILD_DIR}/app-unsigned-aligned.apk"
+$BUILD_TOOLS/zipalign -v -p 4 "${APK_DIR}/app-${FLAVOUR}-release-unsigned.apk" "${BUILD_DIR}/app-unsigned-aligned.apk"
 check_error $?
 
 $BUILD_TOOLS/apksigner sign --ks keystore.jks \
