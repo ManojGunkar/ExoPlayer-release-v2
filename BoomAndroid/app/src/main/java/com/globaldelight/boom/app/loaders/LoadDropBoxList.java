@@ -16,7 +16,7 @@ public class LoadDropBoxList extends AsyncTask<Void, Void, Void>{
 
     public LoadDropBoxList(Context context){
         this.mContext = context;
-        dropboxMediaList = DropboxMediaList.getDropboxListInstance(mContext);
+        dropboxMediaList = DropboxMediaList.getInstance(mContext);
     }
 
     @Override

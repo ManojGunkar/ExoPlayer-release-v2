@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -44,7 +46,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
     private Activity activity;
     private @ItemType int listItemType;
     Fragment fragment;
-    private int WIDTH, HEIGHT;
 
 
     public SongListAdapter(Activity activity, Fragment fragment, ArrayList<? extends IMediaItemBase> itemList, @ItemType int listItemType) {
@@ -52,8 +53,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         this.fragment = fragment;
         this.itemList = itemList;
         this.listItemType = listItemType;
-        WIDTH = Utils.dpToPx(activity, 62);
-        HEIGHT = Utils.dpToPx(activity, 62);
     }
 
     @Override
@@ -107,20 +106,19 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                     holder.overlayPlay.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
             } else {
-                holder.overlay.setVisibility( View.INVISIBLE );
-                holder.overlayPlay.setVisibility( View.INVISIBLE );
+                holder.overlay.setVisibility( View.GONE );
+                holder.overlayPlay.setVisibility( View.GONE );
                 holder.progressIndicator.setVisibility(View.GONE);
                 holder.title.setSelected(false);
             }
         }
     }
 
-    private void setAlbumArt(String path, SongViewHolder holder) {
-        if ( path == null ) path = "";
-        Picasso.with(activity)
-                .load(new File(path))
+    private void setAlbumArt(@NonNull String path, SongViewHolder holder) {
+        Glide.with(activity)
+                .load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
-                .resize(WIDTH, HEIGHT)
+                .fitCenter()
                 .into(holder.img);
     }
 

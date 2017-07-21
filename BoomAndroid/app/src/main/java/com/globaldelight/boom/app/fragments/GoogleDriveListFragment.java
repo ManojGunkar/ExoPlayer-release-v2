@@ -118,7 +118,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                googleDriveMediaList = GoogleDriveMediaList.geGoogleDriveMediaListInstance(mActivity);
+                googleDriveMediaList = GoogleDriveMediaList.getInstance(mActivity);
                 googleDriveMediaList.setGoogleDriveMediaUpdater(GoogleDriveListFragment.this);
                 googleDriveHandler = new GoogleDriveHandler(GoogleDriveListFragment.this);
                 googleDriveMediaList.setGoogleDriveHandler(googleDriveHandler);

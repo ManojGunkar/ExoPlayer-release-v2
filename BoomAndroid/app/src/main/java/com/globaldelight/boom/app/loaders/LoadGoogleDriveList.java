@@ -50,7 +50,7 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
                 transport, jsonFactory, googleAccountCredential)
                 .setApplicationName(fragment.getResources().getString(R.string.app_name))
                 .build();
-        mediaListInstance = GoogleDriveMediaList.geGoogleDriveMediaListInstance(fragment.getContext());
+        mediaListInstance = GoogleDriveMediaList.getInstance(fragment.getContext());
     }
 
     @Override

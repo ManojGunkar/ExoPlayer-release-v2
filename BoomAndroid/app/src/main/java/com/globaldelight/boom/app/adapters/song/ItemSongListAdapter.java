@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -65,7 +66,6 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     private IMediaItem currentItem;
     private ListDetail listDetail;
     private AlbumSongListFragment fragment;
-    private int WIDTH, HEIGHT;
 
 
     public ItemSongListAdapter(Activity activity, AlbumSongListFragment fragment, IMediaItemCollection collection, ListDetail listDetail, OnStartDragListener dragListener) {
@@ -74,8 +74,6 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         this.collection = (MediaItemCollection) collection;
         this.listDetail = listDetail;
         this.mOnStartDragListener = dragListener;
-        WIDTH = Utils.dpToPx(activity, 62);
-        HEIGHT = Utils.dpToPx(activity, 62);
     }
     @Override
     public ItemSongListAdapter.SimpleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -189,11 +187,10 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
     private void setAlbumArt(String path, SimpleItemViewHolder holder) {
         if ( path == null ) path = "";
-        Picasso.with(activity)
-                .load(new File(path))
+        Glide.with(activity)
+                .load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
-                .noFade()
-                .resize(WIDTH, HEIGHT)
+                .fitCenter()
                 .into(holder.img);
     }
 

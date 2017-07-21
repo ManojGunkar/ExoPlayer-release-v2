@@ -28,9 +28,9 @@ public class DropboxMediaList {
         postMessage = new Handler();
     }
 
-    public static DropboxMediaList getDropboxListInstance(Context context){
+    public static DropboxMediaList getInstance(Context context){
         if(null == handler){
-            handler = new DropboxMediaList(context);
+            handler = new DropboxMediaList(context.getApplicationContext());
         }
         return handler;
     }

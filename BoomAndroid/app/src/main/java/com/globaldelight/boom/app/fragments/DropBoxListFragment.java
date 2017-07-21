@@ -118,7 +118,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
             isDropboxAccountConfigured = false;
             listIsEmpty(true);
         }
-        dropboxMediaList = DropboxMediaList.getDropboxListInstance(mActivity);
+        dropboxMediaList = DropboxMediaList.getInstance(mActivity);
         dropboxMediaList.setDropboxUpdater(this);
         DropBoxUtills.checkDropboxAuthentication(mActivity);
     }

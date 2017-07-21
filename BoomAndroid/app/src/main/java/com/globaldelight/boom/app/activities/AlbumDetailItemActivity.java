@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
@@ -126,10 +127,10 @@ public class AlbumDetailItemActivity extends MasterActivity {
 
     public void setAlbumArt(String albumArt, int height) {
         if ( albumArt == null ) albumArt = "";
-        Picasso.with(AlbumDetailItemActivity.this)
-                .load(new File(albumArt)).resize(height, height)
+        Glide.with(AlbumDetailItemActivity.this)
+                .load(albumArt)
                 .placeholder(R.drawable.ic_default_art_player_header)
-                .noFade()
+                .fitCenter()
                 .into(((ImageView) findViewById(R.id.activity_album_art)));
     }
 

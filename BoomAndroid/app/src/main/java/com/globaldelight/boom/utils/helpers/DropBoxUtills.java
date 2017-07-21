@@ -92,8 +92,8 @@ public class DropBoxUtills {
         SharedPreferences.Editor edit = prefs.edit();
         edit.clear();
         edit.commit();
-        if(null != DropboxMediaList.getDropboxListInstance(context)){
-            DropboxMediaList.getDropboxListInstance(context).clearDropboxContent();
+        if(null != DropboxMediaList.getInstance(context)){
+            DropboxMediaList.getInstance(context).clearDropboxContent();
         }
     }
 

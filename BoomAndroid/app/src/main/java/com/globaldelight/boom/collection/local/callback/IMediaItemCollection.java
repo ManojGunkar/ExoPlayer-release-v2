@@ -14,8 +14,6 @@ public interface IMediaItemCollection extends IMediaItemBase {
 
     int getItemCount();
 
-    void setItemCount(int itemCount);
-
     int getItemListCount();
 
     ArrayList<String> getArtUrlList();
