@@ -7,12 +7,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +23,7 @@ import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
-import com.globaldelight.boom.business.BusinessStrategy;
-import com.globaldelight.boom.business.inapp.IabHelper;
+import com.globaldelight.boom.app.businessmodel.strategy.BusinessStrategy;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.view.RegularButton;
 import com.globaldelight.boom.view.RegularTextView;
@@ -35,7 +32,6 @@ import com.globaldelight.boom.utils.Utils;
 import static com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase.SKU_INAPP_ITEM;
 import static com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase.SKU_INAPP_ITEM_2;
 import static com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase.SKU_INAPP_ITEM_3;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
 
 /**
  * Created by Rahul Agarwal on 08-02-17.

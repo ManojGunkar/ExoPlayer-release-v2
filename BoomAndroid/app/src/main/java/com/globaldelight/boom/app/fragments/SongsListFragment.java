@@ -19,9 +19,7 @@ import android.widget.ProgressBar;
 
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
-import com.globaldelight.boom.app.businessmodel.ads.adapter.AdWrapperAdapter;
-import com.globaldelight.boom.app.businessmodel.ads.builder.AdsBuilder;
-import com.globaldelight.boom.business.AdController;
+import com.globaldelight.boom.app.businessmodel.strategy.AdController;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
