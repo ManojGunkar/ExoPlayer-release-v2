@@ -1,4 +1,4 @@
-package com.globaldelight.boom.app.receivers;
+package com.globaldelight.boom.app.service;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothHeadset;

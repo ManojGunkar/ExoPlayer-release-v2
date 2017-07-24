@@ -8,7 +8,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
@@ -25,7 +24,6 @@ import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
-import com.globaldelight.boom.app.receivers.HeadPhonePlugReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boom.player.AudioConfiguration;
@@ -45,7 +43,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
 
     private long mServiceStartTime = 0;
     private long mServiceStopTime = 0;
-    private static long mShiftingTime = 0;
     private PlaybackManager mPlayback;
     private NotificationHandler notificationHandler;
     private HeadPhonePlugReceiver headPhonePlugReceiver;

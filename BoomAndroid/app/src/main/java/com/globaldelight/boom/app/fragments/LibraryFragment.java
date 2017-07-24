@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
-import com.globaldelight.boom.app.receivers.HeadPhonePlugReceiver;
+import com.globaldelight.boom.app.service.HeadPhonePlugReceiver;
 import com.globaldelight.boom.app.adapters.utils.SectionsPagerAdapter;
 import com.globaldelight.boom.view.CoachMarkerWindow;
 import com.globaldelight.boom.utils.Utils;
