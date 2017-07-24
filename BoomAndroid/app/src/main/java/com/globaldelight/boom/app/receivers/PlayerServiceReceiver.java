@@ -29,8 +29,12 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
     public static final String ACTION_PREV_SONG = "ACTION_PREV_SONG";
     public static final String ACTION_PLAY_PAUSE_SONG = "ACTION_PLAY_PAUSE_SONG";
 
-    private static PlayerServiceReceiver receiverHandler;
-    private static IPlayerService mPlayerService;
+    private IPlayerService mPlayerService;
+    private Context mContext;
+
+    public PlayerServiceReceiver(Context context) {
+        mContext = context;
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -42,8 +46,7 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
         }
     }
 
-    public void registerPlayerServiceReceiver(PlayerService service, PlayerServiceReceiver receiver, IPlayerService mPlayerService){
-        this.receiverHandler = receiver;
+    public void registerService(IPlayerService mPlayerService){
         this.mPlayerService = mPlayerService;
 
         IntentFilter filter = new IntentFilter();
@@ -55,11 +58,11 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
         filter.addAction(ACTION_SEEK_SONG);
         filter.addAction(ACTION_NOTI_CLICK);
         filter.addAction(ACTION_NOTI_REMOVE);
-        service.registerReceiver(receiverHandler, filter);
+        mContext.registerReceiver(this, filter);
     }
 
-    public void unregisterPlayerServiceReceiver(PlayerService service){
-        service.unregisterReceiver(receiverHandler);
+    public void unregisterService(){
+        mContext.unregisterReceiver(this);
         this.mPlayerService = null;
     }
 
