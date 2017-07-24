@@ -475,7 +475,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
         if (mAlertIsVisible) {
             Log.d(TAG, "Skipped alert with message: " + message);
-            return;
         }
 
         mPendingAlert = new Runnable() {
