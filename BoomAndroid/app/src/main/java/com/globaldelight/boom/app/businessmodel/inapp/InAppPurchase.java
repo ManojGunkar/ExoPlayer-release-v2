@@ -10,17 +10,16 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
-import com.globaldelight.boom.business.inapp.IabHelper;
-import com.globaldelight.boom.business.inapp.IabResult;
-import com.globaldelight.boom.business.inapp.Inventory;
-import com.globaldelight.boom.business.inapp.Purchase;
+import com.globaldelight.boom.app.businessmodel.google.inapp.IabHelper;
+import com.globaldelight.boom.app.businessmodel.google.inapp.IabResult;
+import com.globaldelight.boom.app.businessmodel.google.inapp.Inventory;
+import com.globaldelight.boom.app.businessmodel.google.inapp.Purchase;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.ArrayList;
 
 /**
  * @Created by Manoj Kumar on 7/11/2017.
- * @Manually commented All method by Manoj Kumar on 12 July 2017.
  */
 
 public class InAppPurchase {
@@ -46,10 +45,10 @@ public class InAppPurchase {
     private static final String IAP_ITEM3_PRICE_KEY = "com.globaldelight.boom.ITEM3_PRICE";
 
 
-    public static final String TAG="InApp Purchase";
+    public static final String TAG = "InApp Purchase";
 
     private boolean isPremium;
-    private String[] skuPrices = new String[]{"","",""};
+    private String[] skuPrices = new String[]{"", "", ""};
     private Context context;
     private static InAppPurchase instance;
 
@@ -59,25 +58,26 @@ public class InAppPurchase {
     private IabHelper iabHelper;
 
     /**
-     * @before invoke this method check internet connection, it should available.
-     * this method will provide only static object.
      * @param context
      * @return references of this class
+     * @before invoke this method check internet connection, it should available.
+     * this method will provide only static object.
      */
     public static InAppPurchase getInstance(Context context) {
-        if (instance==null)instance = new InAppPurchase(context);
+        if (instance == null) instance = new InAppPurchase(context);
         return instance;
     }
 
-    public IabHelper getIabHelper(){
+    public IabHelper getIabHelper() {
         return iabHelper;
     }
+
     /**
-     * @secure constructor for singleton pattern.
      * @param context
+     * @secure constructor for singleton pattern.
      */
     private InAppPurchase(Context context) {
-        this.context=context;
+        this.context = context;
         skuPrices[0] = Preferences.readString(context, IAP_ITEM1_PRICE_KEY, "");
         skuPrices[1] = Preferences.readString(context, IAP_ITEM2_PRICE_KEY, "");
         skuPrices[2] = Preferences.readString(context, IAP_ITEM3_PRICE_KEY, "");
@@ -92,10 +92,11 @@ public class InAppPurchase {
 
     /**
      * With the help of this method we can initialise InApp purchase.
+     *
      * @return Method chaining technique which bind other method with same context.
      */
-    public  InAppPurchase initInAppPurchase(){
-        iabHelper = new IabHelper(context,PUBLIC_KEY);
+    public InAppPurchase initInAppPurchase() {
+        iabHelper = new IabHelper(context, PUBLIC_KEY);
         iabHelper.enableDebugLogging(true);
         iabHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
@@ -124,6 +125,7 @@ public class InAppPurchase {
     }
 
     private boolean mShouldClear = false;
+
     public void clearInAppsPurchase() {
         mShouldClear = true;
         initInAppPurchase();
@@ -131,9 +133,10 @@ public class InAppPurchase {
 
     /**
      * With the help of this method we can get sku details such as price, county etc.
+     *
      * @return which return QueryInventory listener.
      */
-    public IabHelper.QueryInventoryFinishedListener getQueryInventory(){
+    public IabHelper.QueryInventoryFinishedListener getQueryInventory() {
         return new IabHelper.QueryInventoryFinishedListener() {
             @Override
             public void onQueryInventoryFinished(IabResult result,
@@ -142,47 +145,45 @@ public class InAppPurchase {
                 if (result.isFailure()) return;
 
                 Purchase premiumPurchase = inventory.getPurchase(SKU_INAPP_ITEM);
-                if ( premiumPurchase == null ) {
+                if (premiumPurchase == null) {
                     premiumPurchase = inventory.getPurchase(SKU_INAPP_ITEM_2);
                 }
-                if ( premiumPurchase == null ) {
+                if (premiumPurchase == null) {
                     premiumPurchase = inventory.getPurchase(SKU_INAPP_ITEM_3);
                 }
 
-                isPremium = inventory.hasPurchase(SKU_INAPP_ITEM) || inventory.hasPurchase(SKU_INAPP_ITEM_2) || inventory.hasPurchase(SKU_INAPP_ITEM_3)  ;
+                isPremium = inventory.hasPurchase(SKU_INAPP_ITEM) || inventory.hasPurchase(SKU_INAPP_ITEM_2) || inventory.hasPurchase(SKU_INAPP_ITEM_3);
                 if (inventory.hasDetails(SKU_INAPP_ITEM)) {
                     skuPrices[0] = inventory.getSkuDetails(SKU_INAPP_ITEM).getPrice();
-                    if (skuPrices[0]!=null) {
+                    if (skuPrices[0] != null) {
                         Preferences.writeString(context, IAP_ITEM1_PRICE_KEY, skuPrices[0]);
                     }
                 }
                 if (inventory.hasDetails(SKU_INAPP_ITEM_2)) {
                     skuPrices[1] = inventory.getSkuDetails(SKU_INAPP_ITEM_2).getPrice();
-                    if (skuPrices!=null) {
+                    if (skuPrices != null) {
                         Preferences.writeString(context, IAP_ITEM2_PRICE_KEY, skuPrices[1]);
                     }
                 }
                 if (inventory.hasDetails(SKU_INAPP_ITEM_3)) {
                     skuPrices[2] = inventory.getSkuDetails(SKU_INAPP_ITEM_3).getPrice();
-                    if (skuPrices[2]!=null) {
+                    if (skuPrices[2] != null) {
                         Preferences.writeString(context, IAP_ITEM3_PRICE_KEY, skuPrices[2]);
                     }
                 }
 
-                if ( !mShouldClear ) {
+                if (!mShouldClear) {
                     if (isPremium) {
                         onPurchaseRestored();
-                    }
-                    else if (premiumPurchase != null&& verifyDeveloperPayload(premiumPurchase)) {
+                    } else if (premiumPurchase != null && verifyDeveloperPayload(premiumPurchase)) {
                         isPremium = true;
                         onPurchaseRestored();
-                    }
-                    else {
+                    } else {
                         onPurchaseFailed();
                     }
                 }
 
-                if ( mShouldClear && premiumPurchase != null ) {
+                if (mShouldClear && premiumPurchase != null) {
                     try {
                         iabHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
                             @Override
@@ -191,8 +192,7 @@ public class InAppPurchase {
                             }
                         });
 
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
 
                     }
 
@@ -206,9 +206,9 @@ public class InAppPurchase {
     }
 
 
-
     /**
-     *You can purchase package of InApp purchase.
+     * You can purchase package of InApp purchase.
+     *
      * @param activity which handled by onActivityResult.
      */
     public void buyNow(Activity activity, String inAppItem) {
@@ -221,29 +221,31 @@ public class InAppPurchase {
         }
     }
 
-    private IabHelper.OnIabPurchaseFinishedListener getPurchased(){
+    private IabHelper.OnIabPurchaseFinishedListener getPurchased() {
         return new IabHelper.OnIabPurchaseFinishedListener() {
             @SuppressLint("LongLogTag")
             public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
                 if (result.isFailure()) {
                     if (result.getResponse() == -1003) {
                         onPurchaseSuccess();
-                        Toast.makeText(context, context.getResources().getString(R.string.inapp_process_success), Toast.LENGTH_SHORT).show();                    }
+                        Toast.makeText(context, context.getResources().getString(R.string.inapp_process_success), Toast.LENGTH_SHORT).show();
+                    }
                     if (result.getResponse() == 7) {
                         onPurchaseRestored();
                         Toast.makeText(context, context.getResources().getString(R.string.inapp_process_restore), Toast.LENGTH_SHORT).show();
                     } else {
                         onPurchaseFailed();
-                        Toast.makeText(context, context.getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();                    return;
+                        Toast.makeText(context, context.getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                //    FlurryAnalyticHelper.logEvent(UtilAnalytics.Purchase_Failed);
+                    //    FlurryAnalyticHelper.logEvent(UtilAnalytics.Purchase_Failed);
                     return;
                 }
                 if (!verifyDeveloperPayload(purchase)) {
                     onPurchaseFailed();
-                    Toast.makeText(context, context.getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();                    return;
-                }
-                else {
+                    Toast.makeText(context, context.getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
                     isPremium = true;
                     onPurchaseSuccess();
                     //   FlurryAnalyticHelper.logEvent(UtilAnalytics.PurchaseCompleted);
@@ -311,4 +313,4 @@ public class InAppPurchase {
     private static String getDeviceID(Context context) {
         return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
- }
+}
