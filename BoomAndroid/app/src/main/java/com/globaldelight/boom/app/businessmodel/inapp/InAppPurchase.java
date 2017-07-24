@@ -69,9 +69,6 @@ public class InAppPurchase {
         return instance;
     }
 
-    public IabHelper getIabHelper(){
-        return iabHelper;
-    }
     /**
      * @secure constructor for singleton pattern.
      * @param context
@@ -127,6 +124,10 @@ public class InAppPurchase {
     public void clearInAppsPurchase() {
         mShouldClear = true;
         initInAppPurchase();
+    }
+
+    public boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
+        return iabHelper.handleActivityResult(requestCode,resultCode,data);
     }
 
     /**
