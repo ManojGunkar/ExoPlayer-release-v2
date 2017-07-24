@@ -1,8 +1,9 @@
-package com.globaldelight.boom.app.notification;
+package com.globaldelight.boom.app.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,48 +29,37 @@ public class NotificationHandler  {
 
     private static final int NOTIFICATION_ID = 56565;
     private Context context;
-    private PlayerService service;
-    private boolean notificationActive;
-    RemoteViews notiLayoutBig, notiCollapsedView;
-    private static NotificationManager notificationManager;
+    private Service service;
+    private NotificationManager notificationManager;
 
-    public NotificationHandler(Context context, PlayerService service) {
-        this.context = context;
+    public NotificationHandler(Service service) {
+        this.context = service;
         this.service = service;
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    private Notification.Builder createBuiderNotification(boolean removable) {
+    private Notification.Builder createBuiderNotification(boolean active) {
         Intent notificationIntent = new Intent();
         notificationIntent.setAction(PlayerServiceReceiver.ACTION_NOTI_CLICK);
         PendingIntent contentIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, 0);
         Intent deleteIntent = new Intent();
         deleteIntent.setAction(PlayerServiceReceiver.ACTION_NOTI_REMOVE);
         PendingIntent deletePendingIntent = PendingIntent.getBroadcast(context, 0, deleteIntent, 0);
-        if (removable)
-            return new Notification.Builder(context)
-                    .setOngoing(false)
-                    .setSmallIcon(R.drawable.ic_boom_status_bar_icon)
-                    .setContentIntent(contentIntent)
-                    .setDeleteIntent(deletePendingIntent);
-        else
-            return new Notification.Builder(context)
-                    .setOngoing(true)
-                    .setSmallIcon(R.drawable.ic_boom_status_bar_icon)
-                    .setContentIntent(contentIntent)
-                    .setDeleteIntent(deletePendingIntent);
+        return new Notification.Builder(context)
+                .setOngoing(active)
+                .setSmallIcon(R.drawable.ic_boom_status_bar_icon)
+                .setContentIntent(contentIntent)
+                .setDeleteIntent(deletePendingIntent);
     }
 
-    public void setNotificationPlayer(boolean removable) {
-    }
 
-    public void changeNotificationDetails(IMediaItem item, boolean playing, boolean isLastPlayed) {
+    public void update(IMediaItem item, boolean playing, boolean isLastPlayed) {
 
         if(item == null && !isLastPlayed){
             removeNotification();
             return;
         }
-        Notification notificationCompat = createBuiderNotification(!playing).build();
+        Notification notificationCompat = createBuiderNotification(playing).build();
         RemoteViews notiLayoutBig = new RemoteViews(context.getPackageName(),
                 R.layout.notification_layout);
         RemoteViews notiCollapsedView = new RemoteViews(context.getPackageName(),
@@ -145,18 +135,9 @@ public class NotificationHandler  {
             notificationManager.notify(NOTIFICATION_ID, notificationCompat);
         }
 
-        notificationActive = true;
     }
 
     public void removeNotification(){
         notificationManager.cancel(NOTIFICATION_ID);
     }
-
-    public boolean isNotificationActive() {
-        return notificationActive;
-    }
-
-    public void setNotificationActive(boolean notificationActive) {
-        this.notificationActive = notificationActive;
-    }
-}
+ }
