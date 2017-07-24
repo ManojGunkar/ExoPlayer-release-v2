@@ -35,6 +35,7 @@ import java.util.TimerTask;
 
 import io.fabric.sdk.android.DefaultLogger;
 import io.fabric.sdk.android.Fabric;
+import io.fabric.sdk.android.Kit;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -69,13 +70,23 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
         TwitterAuthConfig authConfig =  new TwitterAuthConfig(TWEET_CONSUMER, TWEET_SECRET);
 
-        final Fabric fabric = new Fabric.Builder(this)
-                .kits(new TwitterCore(authConfig), new TweetComposer(), new Crashlytics())
-                .logger(new DefaultLogger(Log.DEBUG))
-                .debuggable(true)
-                .build();
+        if ( BuildConfig.FLAVOR.equals("production") ) {
+            final Fabric fabric = new Fabric.Builder(this)
+                    .kits(new TwitterCore(authConfig), new TweetComposer(), new Crashlytics())
+                    .logger(new DefaultLogger(Log.DEBUG))
+                    .debuggable(true)
+                    .build();
+            Fabric.with(fabric);
+        }
+        else {
+            final Fabric fabric = new Fabric.Builder(this)
+                    .kits(new TwitterCore(authConfig), new TweetComposer())
+                    .logger(new DefaultLogger(Log.DEBUG))
+                    .debuggable(true)
+                    .build();
 
-        Fabric.with(fabric);
+            Fabric.with(fabric);
+        }
 
 
 //        mixpanel = MixPanelAnalyticHelper.getInstance(this);
