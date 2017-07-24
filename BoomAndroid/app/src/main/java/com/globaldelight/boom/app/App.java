@@ -15,7 +15,7 @@ import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.BoomSplash;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.app.businessmodel.strategy.BusinessStrategy;
+import com.globaldelight.boom.business.BusinessStrategy;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.app.service.PlayerService;
 import com.globaldelight.boom.app.database.CloudMediaItemDBHelper;
@@ -35,6 +35,7 @@ import java.util.TimerTask;
 
 import io.fabric.sdk.android.DefaultLogger;
 import io.fabric.sdk.android.Fabric;
+import io.fabric.sdk.android.Kit;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
