@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
@@ -83,7 +84,6 @@ public class AlbumDetailFragment extends Fragment {
         initValues();
         new LoadAlbumSongs().execute();
         setForAnimation();
-        //FlurryAnalyticHelper.init(mActivity);
     }
 
     private void initValues(){
@@ -97,7 +97,7 @@ public class AlbumDetailFragment extends Fragment {
                 if (dataCollection.getParentType() == ItemType.ALBUM) {
                     appBarLayout.setTitle(dataCollection.getItemTitle());
                 } else {
-                    appBarLayout.setTitle(dataCollection.getMediaElement().get(dataCollection.getCurrentIndex()).getItemTitle());
+                    appBarLayout.setTitle(dataCollection.getItemAt(dataCollection.getCurrentIndex()).getItemTitle());
                 }
             }
         }
@@ -108,12 +108,12 @@ public class AlbumDetailFragment extends Fragment {
     }
 
     public void onFloatPlayAlbums() {
-        if (dataCollection.getParentType() == ItemType.ALBUM && dataCollection.getMediaElement().size() > 0) {
+        if (dataCollection.getParentType() == ItemType.ALBUM && dataCollection.count() > 0) {
             App.playbackManager().queue().addItemListToPlay(dataCollection.getMediaElement(), 0);
-        } else if (dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() > 0) {
-            App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement(), 0);
-        } else if (dataCollection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() > 0) {
-            App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection)dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement(), 0);
+        } else if (dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex())).count() > 0) {
+            App.playbackManager().queue().addItemListToPlay((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex()), 0);
+        } else if (dataCollection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex())).count() > 0) {
+            App.playbackManager().queue().addItemListToPlay((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex()), 0);
         }
         if ( albumDetailAdapter != null ) {
             albumDetailAdapter.notifyDataSetChanged();
@@ -124,13 +124,13 @@ public class AlbumDetailFragment extends Fragment {
 
         @Override
         protected IMediaItemCollection doInBackground(Void... params) {
-            if(dataCollection.getParentType() == ItemType.ALBUM && dataCollection.getMediaElement().size() == 0) {
+            if(dataCollection.getParentType() == ItemType.ALBUM && dataCollection.count() == 0) {
                 dataCollection.setMediaElement(MediaController.getInstance(mActivity).getAlbumTrackList(dataCollection));
-            }else if(dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() == 0){
-                ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).setMediaElement(MediaController.getInstance(mActivity).getArtistAlbumsTrackList(dataCollection));
+            }else if(dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection) dataCollection.getItemAt(dataCollection.getCurrentIndex())).count() == 0){
+                ((IMediaItemCollection) dataCollection.getItemAt(dataCollection.getCurrentIndex())).setMediaElement(MediaController.getInstance(mActivity).getArtistAlbumsTrackList(dataCollection));
             }else if(dataCollection.getParentType() == ItemType.GENRE &&
-                    ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).getMediaElement().size() == 0){
-                ((IMediaItemCollection) dataCollection.getMediaElement().get(dataCollection.getCurrentIndex())).setMediaElement(MediaController.getInstance(mActivity).getGenreAlbumsTrackList(dataCollection));
+                    ((IMediaItemCollection) dataCollection.getItemAt(dataCollection.getCurrentIndex())).count() == 0){
+                ((IMediaItemCollection) dataCollection.getItemAt(dataCollection.getCurrentIndex())).setMediaElement(MediaController.getInstance(mActivity).getGenreAlbumsTrackList(dataCollection));
             }
             return dataCollection;
         }
@@ -139,31 +139,27 @@ public class AlbumDetailFragment extends Fragment {
         protected void onPostExecute(IMediaItemCollection iMediaItemBase) {
             super.onPostExecute(iMediaItemBase);
 
-            StringBuilder itemCount = new StringBuilder();
+            IMediaItemCollection collection = iMediaItemBase;
+            if(iMediaItemBase.getItemType() != ItemType.ALBUM) {
+                collection = (IMediaItemCollection) iMediaItemBase.getItemAt(iMediaItemBase.getCurrentIndex());
+            }
 
-            if(iMediaItemBase.getItemType() == ItemType.ALBUM){
-                itemCount.append(iMediaItemBase.getMediaElement().size() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
-                itemCount.append(" ").append(iMediaItemBase.getMediaElement().size());
-                listDetail = new ListDetail(iMediaItemBase.getItemTitle(), iMediaItemBase.getItemSubTitle(), itemCount.toString());
+            StringBuilder itemCount = new StringBuilder();
+            itemCount.append(getResources().getString(collection.count() > 1 ? R.string.songs : R.string.song));
+            itemCount.append(" ").append(collection.count());
+
+            if(collection.getItemType() == ItemType.ALBUM){
+                listDetail = new ListDetail(collection.getItemTitle(), collection.getItemSubTitle(), itemCount.toString());
             }else{
-                itemCount.append(((MediaItemCollection) iMediaItemBase.getMediaElement().get(iMediaItemBase.getCurrentIndex())).getMediaElement().size() > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
-                itemCount.append(" ").append(((MediaItemCollection) iMediaItemBase.getMediaElement().get(iMediaItemBase.getCurrentIndex())).getMediaElement().size());
-                listDetail = new ListDetail(iMediaItemBase.getItemTitle(), ((MediaItemCollection) iMediaItemBase.getMediaElement().get(iMediaItemBase.getCurrentIndex())).getItemSubTitle(), itemCount.toString());
+                listDetail = new ListDetail(iMediaItemBase.getItemTitle(), collection.getItemSubTitle(), itemCount.toString());
             }
 
             rootView.setLayoutManager(new LinearLayoutManager(mActivity));
-            albumDetailAdapter = new AlbumDetailAdapter(mActivity, iMediaItemBase, listDetail);
-            rootView.setAdapter(albumDetailAdapter);
-
-            if(iMediaItemBase.getItemType() == ItemType.ALBUM){
-                if (((IMediaItemCollection) iMediaItemBase).getMediaElement().size() < 1) {
-                    listIsEmpty();
-                }
-            }else {
-                if (((MediaItemCollection) iMediaItemBase.getMediaElement().get(iMediaItemBase.getCurrentIndex())).getMediaElement().size() < 1) {
-                    listIsEmpty();
-                }
+            albumDetailAdapter = new AlbumDetailAdapter(mActivity, collection, listDetail);
+            if (collection.count() < 1) {
+                listIsEmpty();
             }
+            rootView.setAdapter(albumDetailAdapter);
         }
     }
 
@@ -180,15 +176,12 @@ public class AlbumDetailFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        //FlurryAnalyticHelper.flurryStartSession(mActivity);
         FlurryAnalytics.getInstance(getActivity()).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-       // FlurryAnalyticHelper.flurryStopSession(mActivity);
         FlurryAnalytics.getInstance(getActivity()).endSession();
-
     }
 }

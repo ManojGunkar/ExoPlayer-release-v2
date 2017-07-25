@@ -57,7 +57,7 @@ public class AlbumDetailActivity extends MasterActivity {
         if( collection.getParentType() == ItemType.ALBUM ){
             currentItem = collection;
         } else {
-            currentItem = (IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex());
+            currentItem = (IMediaItemCollection) collection.getItemAt(collection.getCurrentIndex());
         }
 
         int width = Utils.getWindowWidth(this);
