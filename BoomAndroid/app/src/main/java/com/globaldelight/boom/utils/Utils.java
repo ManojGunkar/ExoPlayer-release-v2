@@ -33,6 +33,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
+import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
@@ -176,6 +177,11 @@ public class Utils {
         adapter.setDialog(dialog);
     }
 
+    public static void  addToPlaylist(Activity activity, IMediaItemCollection songCollection, String fromPlaylist) {
+        addToPlaylist(activity, songCollection.getMediaElement(),fromPlaylist);
+    }
+
+
     public static void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
         final Context context = activity;
         new MaterialDialog.Builder(context)
@@ -200,6 +206,10 @@ public class Utils {
                         }
                     }
                 }).show();
+    }
+
+    public static void newPlaylistDialog(Activity activity, IMediaItemCollection songs, String fromPlaylist) {
+        newPlaylistDialog(activity,songs.getMediaElement(), fromPlaylist);
     }
 
     public static boolean isPhone(Activity activity){

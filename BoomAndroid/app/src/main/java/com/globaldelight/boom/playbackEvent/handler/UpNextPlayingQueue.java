@@ -12,6 +12,7 @@ import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
 import com.google.gson.Gson;
@@ -366,6 +367,10 @@ public class UpNextPlayingQueue {
         mUpNextList.addAll(itemList);
     }
 
+    public void addItemAsUpNext(IMediaItemCollection collection) {
+        addItemAsUpNext(collection.getMediaElement());
+    }
+
     public void addItemAsPlayNext(IMediaItemBase item) {
         if (mShuffle == SHUFFLE_ON) {
             updateUnshuffledList(getPlayNextPosition(), item);
@@ -378,6 +383,10 @@ public class UpNextPlayingQueue {
             updateUnshuffledList(getPlayNextPosition(), itemList);
         }
         mUpNextList.addAll(getPlayNextPosition(), itemList);
+    }
+
+    public void addItemAsPlayNext(IMediaItemCollection collection) {
+        addItemAsPlayNext(collection.getMediaElement());
     }
 
     public int getPlayNextPosition() {
@@ -474,6 +483,11 @@ public class UpNextPlayingQueue {
             }, 100);
         }
     }
+
+    public void addItemListToPlay(IMediaItemCollection collection, int position) {
+        addItemListToPlay(collection.getMediaElement(), position);
+    }
+
 
     private void newShuffleList() {
         if (mUpNextList.size() > 0) {
