@@ -1184,9 +1184,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean isUser) {
                 audioEffects.setIntensity((progress - 50)/50.0f );
 
-                if (isUser) {
-                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
-                }
             }
 
             @Override
@@ -1245,11 +1242,23 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             String property = (String)arg;
             updateMiniPlayerEffectUI(audioEffects.isAudioEffectOn());
             updateAudioEffectUI();
-            if ( property.equals(AudioEffect.EQUALIZER_PROPERTY)) {
-                HashMap<String, String> articleParams = new HashMap<>();
-                articleParams.put(FlurryEvents.PARAM_SELECTED_EQUALIZER, eq_names.get(audioEffects.getSelectedEqualizerPosition()));
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Type_of_Equalizer_selected,articleParams);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_selected,articleParams);
+            switch (property){
+                case AudioEffect.INTENSITY_PROPERTY :
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
+                    break;
+                case AudioEffect.AUTO_EQUALIZER:
+                    break;
+                case AudioEffect.EQUALIZER_STATE_PROPERTY:
+                    break;
+                case AudioEffect.FULL_BASS_PROPERTY:
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FULL_BASS);
+                    break;
+                case AudioEffect.EQUALIZER_PROPERTY:
+                    HashMap<String, String> articleParams = new HashMap<>();
+                    articleParams.put(FlurryEvents.PARAM_SELECTED_EQUALIZER, eq_names.get(audioEffects.getSelectedEqualizerPosition()));
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Type_of_Equalizer_selected,articleParams);
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_selected,articleParams);
+                    break;
             }
         }
     }

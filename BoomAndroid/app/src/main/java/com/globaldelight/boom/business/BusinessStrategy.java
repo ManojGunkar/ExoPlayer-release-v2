@@ -18,6 +18,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.ActivityContainer;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
 import com.globaldelight.boom.app.fragments.ShareFragment;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
@@ -168,6 +170,8 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                 if ( isShareExpired() && isExtendedShareExpired() ) {
                     lockEffects();
                     showPurchaseDialog(false);
+                    FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_SHARE_EXPIRE);
+                    FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_5_DAYS_TRIAL_EXPIRE);
                 }
                 break;
 
@@ -175,6 +179,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             case BusinessData.STATE_VIDOE_REWARD:
                 if ( isVideoRewardExpired() ) {
                     lockEffects();
+                    FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_REWARADED_EXPIRE);
                 }
                 break;
 
@@ -182,6 +187,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                 if ( isTrialExpired() ) {
                     LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
                     lockEffects();
+                    FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_TRIAL_EXPIRE);
                     if ( shouldRemindSharing() ) {
                         showShareDialog();
                     }
@@ -269,6 +275,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             Intent intent = new Intent(mContext, ActivityContainer.class);
             intent.putExtra("container",R.string.store_title);
             mCurrentActivity.startActivity(intent);
+            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_ON_PURCHASE);
         }
     }
 
@@ -290,8 +297,10 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     private boolean shouldRemindSharing() {
         Date sharedDate = data.getSharedDate();
         if (  isSharingAllowed() && sharedDate == null && isTimeExpired(data.getLastShareReminder(), SHARE_REMINDER_PERIOD) ) {
+            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_REMINDER_ME_LATER);
             return true;
-        }
+        }else
+            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_REMINDER_EXPIRE);
 
         return false;
     }
@@ -313,6 +322,8 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             Intent intent = new Intent(mContext, ActivityContainer.class);
             intent.putExtra("container",R.string.title_share);
             mCurrentActivity.startActivity(intent);
+            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.Share_Opened_from_Dialog);
+
         }
     }
 
@@ -329,6 +340,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         if ( rewardUserForSharing() ) {
             // TODO: Notify user that share failed
             showPopup("Failed!", "Ok", null, null);
+            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_SHARE_FAILED);
         }
     }
 
@@ -347,6 +359,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             App.playbackManager().playPause();
             mWasPlaying = false;
         }
+        FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_WATCHED_VIDEO);
     }
 
     @Override
@@ -356,6 +369,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             App.playbackManager().playPause();
             mWasPlaying = false;
         }
+        FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_CANCEL_VIDEO);
         // TODO: Should we show any popup?
     }
 
@@ -557,6 +571,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         @Override
         public void onPrimaryAction() {
             onPurchase();
+
         }
 
         @Override
@@ -578,10 +593,13 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         @Override
         public void onPrimaryAction() {
             showVideoAd();
+            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_WATCHED_VIDEO);
+
         }
 
         public void onCancel() {
             onVideoAdCancelled();
+            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_CANCEL_VIDEO);
         }
     };
 

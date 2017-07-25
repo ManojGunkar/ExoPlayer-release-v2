@@ -15,6 +15,7 @@ import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.BoomSplash;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.business.BusinessStrategy;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.app.service.PlayerService;
@@ -67,6 +68,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
         super.onCreate();
         FacebookSdk.sdkInitialize(this);
 
+        FlurryAnalytics.getInstance(this).endSession();
 
         TwitterAuthConfig authConfig =  new TwitterAuthConfig(TWEET_CONSUMER, TWEET_SECRET);
 
@@ -88,8 +90,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
             Fabric.with(fabric);
         }
 
-
-//        mixpanel = MixPanelAnalyticHelper.getInstance(this);
         MixPanelAnalyticHelper.initPushNotification(this);
         application = this;
 
@@ -104,8 +104,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
         cloudMediaItemDBHelper = new CloudMediaItemDBHelper(application);
 
         userPreferenceHandler = new UserPreferenceHandler(application);
-
-//        FlurryAnalyticHelper.init(this);
 
         registerActivityLifecycleCallbacks(this);
     }

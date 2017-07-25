@@ -7,6 +7,9 @@ import com.globaldelight.boom.BuildConfig;
 
 import java.util.Map;
 
+import static android.util.Log.VERBOSE;
+import static com.globaldelight.boom.BuildConfig.FLURRY_API_KEY;
+
 /**
  * Created by Manoj Kumar on 6/20/2017.
  */
@@ -18,9 +21,14 @@ public class FlurryAnalytics {
 
     private FlurryAnalytics(Context context) {
         this.context = context.getApplicationContext();
+
         new FlurryAgent.Builder()
                 .withLogEnabled(true)
-                .build(context.getApplicationContext(), BuildConfig.FLURRY_API_KEY);
+                .withCaptureUncaughtExceptions(true)
+                .withContinueSessionMillis(10)
+                .withLogEnabled(true)
+                .withLogLevel(VERBOSE)
+                .build(context, FLURRY_API_KEY);
     }
 
     public static FlurryAnalytics getInstance(Context context) {

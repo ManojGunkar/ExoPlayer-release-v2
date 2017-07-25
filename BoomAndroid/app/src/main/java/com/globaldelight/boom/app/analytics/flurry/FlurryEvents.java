@@ -111,4 +111,28 @@ public final class FlurryEvents {
     public static final String EVENT_EQ_TURNED_ON = "Equalizer Turned ON";
     public static final String EVENT_EQ_TURNED_OFF = "Equalizer Turned OFF";
 
+    public static final String EVENT_WATCHED_VIDEO = "EVENT_WATCHED_VIDEO";
+    public static final String EVENT_CANCEL_VIDEO = "EVENT_CANCEL_VIDEO";
+    public static final String EVENT_FACEBOOK_ADS = "EVENT_FACEBOOK_ADS";
+    public static final String EVENT_GOOGLE_ADS = "EVENT_GOOGLE_ADS";
+    public static final String EVENT_TRIAL_EXPIRE = "EVENT_TRIAL_EXPIRE";
+    public static final String EVENT_SHARE_EXPIRE = "EVENT_SHARE_EXPIRE";
+    public static final String EVENT_SHARE_FAILED = "EVENT_SHARE_FAILED";
+    public static final String EVENT_REWARADED_EXPIRE = "EVENT_REWARADED_EXPIRE";
+    public static final String EVENT_24_HOURS_TRIAL_EXPIRE = "EVENT_24_HOURS_TRIAL_EXPIRE";
+    public static final String EVENT_5_DAYS_TRIAL_EXPIRE = "EVENT_5_DAYS_TRIAL_EXPIRE";
+    public static final String EVENT_REMINDER_ME_LATER = "EVENT_REMINDER_ME_LATER";
+    public static final String EVENT_REMINDER_EXPIRE = "EVENT_REMINDER_EXPIRE";
+    public static final String EVENT_SHARE_TWITTER = "EVENT_SHARE_TWITTER";
+    public static final String EVENT_SHARE_TWITTER_CANCEL = "EVENT_SHARE_TWITTER_CANCEL";
+    public static final String EVENT_SHARE_FACEBOOK = "EVENT_SHARE_FACEBOOK";
+    public static final String EVENT_SHARE_FACEBOOK_CANCEL = "EVENT_SHARE_FACEBOOK_CANCEL";
+    public static final String EVENT_INVITE_FACEBOOK = "EVENT_INVITE_FACEBOOK";
+    public static final String EVENT_INVITE_FACEBOOK_CANCEL = "EVENT_INVITE_FACEBOOK_CANCEL";
+    public static final String EVENT_ON_PURCHASE = "EVENT_ON_PURCHASE";
+    public static final String EVENT_ON_PURCHASE_CANCEL = "EVENT_ON_PURCHASE_CANCEL";
+
+
+
+
 }
