@@ -33,4 +33,8 @@ public interface IMediaItemCollection extends IMediaItemBase {
     @MediaType int getMediaType();
 
     @ItemType int getParentType();
+
+    IMediaItemBase getItemAt(int index);
+
+    int count();
 }
