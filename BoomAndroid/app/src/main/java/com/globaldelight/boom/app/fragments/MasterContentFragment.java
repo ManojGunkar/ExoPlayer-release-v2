@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.dialogs.EqualizerDialog;
@@ -824,7 +825,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
                 break;
             case R.id.player_upnext_button:
-                playerUIController.OnUpNextClick(mActivity);
+                startUpNextActivity();
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.UpNext_Button_Tapped);
                 break;
 
@@ -1235,6 +1236,13 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         if(View.VISIBLE == mLoadingProgress.getVisibility())
             mLoadingProgress.setVisibility(View.GONE);
     }
+
+    private void startUpNextActivity() {
+        Intent queueIntent = new Intent(getActivity(), ActivityContainer.class);
+        queueIntent.putExtra("container", R.string.up_next);
+        getActivity().startActivity(queueIntent);
+    }
+
 
     @Override
     public void update(Observable o, Object arg) {
