@@ -1260,6 +1260,15 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_selected,articleParams);
                     break;
             }
+            else if ( property.equals(AudioEffect.INTENSITY_PROPERTY) ) {
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
+            }
+            else if ( property.equals(AudioEffect.EQUALIZER_STATE_PROPERTY) ) {
+                FlurryAnalytics.getInstance(mActivity).setEvent(FlurryEvents.EVENT_EQ_STATE_CHANGED);
+            }
+            else if ( property.equals(AudioEffect.SURROUND_SOUND_PROPERTY) ) {
+                FlurryAnalytics.getInstance(mActivity).setEvent(FlurryEvents.EVENT_3D_STATE_CHANGED);
+            }
         }
     }
 }
