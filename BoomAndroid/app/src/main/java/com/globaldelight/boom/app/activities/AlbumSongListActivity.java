@@ -101,7 +101,7 @@ public class AlbumSongListActivity extends MasterActivity {
         if(currentItem.getItemType() == ItemType.PLAYLIST || currentItem.getItemType() == ItemType.BOOM_PLAYLIST){
             artUrlList = currentItem.getArtUrlList();
         }else{
-            artUrlList = ((IMediaItemCollection)currentItem.getMediaElement().get(currentItem.getCurrentIndex())).getArtUrlList();
+            artUrlList = ((IMediaItemCollection)currentItem.getItemAt(currentItem.getCurrentIndex())).getArtUrlList();
         }
         setAlbumArt(artUrlList);
 
@@ -213,58 +213,12 @@ public class AlbumSongListActivity extends MasterActivity {
     }
 
     private void setSongsArtImage(final ArrayList<String> Urls) {
-        int count = Urls.size() > 4 ? 4 : Urls.size();
         TableRow.LayoutParams param = new TableRow.LayoutParams(screenWidth / 2, screenWidth / 2);
         artImg1.setLayoutParams(param);
         artImg2.setLayoutParams(param);
         artImg3.setLayoutParams(param);
         artImg4.setLayoutParams(param);
-
-
-
-
-        switch (count){
-            case 1:
-                Glide.with(this).load(Urls.get(0)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Glide.with(this).load(Urls.get(0)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Glide.with(this).load(Urls.get(0)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Glide.with(this).load(Urls.get(0)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                break;
-            case 2:
-                Glide.with(this).load(Urls.get(0)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Glide.with(this).load(Urls.get(1)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Glide.with(this).load(Urls.get(1)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Glide.with(this).load(Urls.get(0)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                break;
-            case 3:
-                Glide.with(this).load(Urls.get(0)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Glide.with(this).load(Urls.get(1)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Glide.with(this).load(Urls.get(2)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Glide.with(this).load(Urls.get(0)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                break;
-            default:
-                Glide.with(this).load(Urls.get(0)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Glide.with(this).load(Urls.get(1)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Glide.with(this).load(Urls.get(2)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Glide.with(this).load(Urls.get(3)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                break;
-        }
+        PlayerUtils.setSongsArtTable(this, Urls, new ImageView[]{artImg1, artImg2, artImg3, artImg4});
     }
 
 

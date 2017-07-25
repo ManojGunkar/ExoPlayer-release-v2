@@ -2,6 +2,7 @@ package com.globaldelight.boom.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
@@ -10,9 +11,12 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
 
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by Rahul Agarwal on 30-11-16.
@@ -121,5 +125,41 @@ public class PlayerUtils {
         tmpOut.copyTo(outputBitmap);
 
         return outputBitmap;
+    }
+
+    public static void setSongsArtTable(Context context, ArrayList<String> imageUrls, ImageView views[] ) {
+        if ( views.length < 4 ) {
+            return;
+        }
+
+        int count = imageUrls.size() > 4 ? 4 : imageUrls.size();
+        String urls[] = new String[4];
+        switch (count){
+            case 1:
+                urls[0] = urls[1] = urls[2] = urls[3] = imageUrls.get(0);
+                break;
+            case 2:
+                urls[0] = urls[3] = imageUrls.get(0);
+                urls[1] = urls[2] = imageUrls.get(1);
+                break;
+            case 3:
+                urls[0] = urls[3] = imageUrls.get(0);
+                urls[1] = imageUrls.get(1);
+                urls[2] = imageUrls.get(2);
+                break;
+            case 4:
+                urls[0] = imageUrls.get(0);
+                urls[1] = imageUrls.get(1);
+                urls[2] = imageUrls.get(2);
+                urls[3] = imageUrls.get(3);
+                break;
+        }
+
+        for (int i = 0; i < views.length; i++ ) {
+            Glide.with(context)
+                    .load(urls[i])
+                    .placeholder(R.drawable.ic_default_art_grid)
+                    .into(views[i]);
+        }
     }
 }

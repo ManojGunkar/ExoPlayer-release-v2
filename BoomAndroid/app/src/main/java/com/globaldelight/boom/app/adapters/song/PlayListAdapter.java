@@ -179,33 +179,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
             holder.artImg3.setScaleType(ImageView.ScaleType.CENTER_CROP);
             holder.artImg4.setLayoutParams(param);
             holder.artImg4.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-            switch (count) {
-                case 1:
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
-                    break;
-                case 2:
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
-                    Glide.with(activity).load(Urls.get(1)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
-                    Glide.with(activity).load(Urls.get(1)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
-                    break;
-                case 3:
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
-                    Glide.with(activity).load(Urls.get(1)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
-                    Glide.with(activity).load(Urls.get(2)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
-                    break;
-                case 4:
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
-                    Glide.with(activity).load(Urls.get(1)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
-                    Glide.with(activity).load(Urls.get(2)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
-                    Glide.with(activity).load(Urls.get(3)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
-                    break;
-            }
+            PlayerUtils.setSongsArtTable(activity, Urls, new ImageView[]{holder.artImg1, holder.artImg2, holder.artImg3, holder.artImg4});
         }else{
             holder.artTable.setVisibility(View.INVISIBLE);
             holder.defaultImg.setVisibility(View.VISIBLE);
