@@ -110,8 +110,8 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
             count = collection.getMediaElement().size();
 
         }else{
-            title = collection.getMediaElement().get(collection.getCurrentIndex()).getItemTitle();
-            count = ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getItemCount();
+            title = collection.getItemAt(collection.getCurrentIndex()).getItemTitle();
+            count = ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).getItemCount();
         }
         itemCount.append(count > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
         itemCount.append(" ").append(count);
@@ -132,7 +132,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
             if (collection.getParentType() == PLAYLIST || collection.getParentType() == BOOM_PLAYLIST) {
                 App.playbackManager().queue().addItemListToPlay(collection.getMediaElement(), 0);
             } else {
-                App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), 0);
+                App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).getMediaElement(), 0);
             }
         }catch (Exception e){}
     }
@@ -151,11 +151,11 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
             } else if (collection.getParentType() == ItemType.PLAYLIST && collection.getMediaElement().isEmpty()) {
                 collection.setMediaElement(MediaController.getInstance(mActivity).getPlayListTrackList(collection));
             }else if(collection.getParentType() == ItemType.ARTIST &&
-                        ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
-                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(mActivity).getArtistTrackList(collection));
+                        ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
+                    ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(mActivity).getArtistTrackList(collection));
             }else if(collection.getParentType() == ItemType.GENRE &&
-                    ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
-                ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(mActivity).getGenreTrackList(collection));
+                    ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).getMediaElement().isEmpty()){ //ItemType.ARTIST && ItemType.GENRE
+                ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(mActivity).getGenreTrackList(collection));
             }
             setDetail(collection);
             ((AlbumSongListActivity)mActivity).updateAlbumArt();

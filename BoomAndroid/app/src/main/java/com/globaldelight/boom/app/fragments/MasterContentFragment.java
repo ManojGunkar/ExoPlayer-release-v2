@@ -13,18 +13,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatSeekBar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,20 +28,16 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.dialogs.EqualizerDialog;
 import com.globaldelight.boom.app.dialogs.SpeakerDialog;
-import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.activities.MasterActivity;
@@ -56,15 +48,14 @@ import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
+import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.view.CoachMarkerWindow;
 import com.globaldelight.boom.view.NegativeSeekBar;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
-import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.player.AudioEffect;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -922,45 +913,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
 
-
     private void overFlowMenu(Context context, View view) {
-        PopupMenu pm = new PopupMenu(context, view);
-        boolean isCurrentTrackFav= false;
-        if(App.playbackManager().getPlayingItem() != null) {
-            isCurrentTrackFav = MediaController.getInstance(mActivity).isFavoriteItem(App.playbackManager().getPlayingItem().getItemId());
-        }
-        final boolean isFav = isCurrentTrackFav;
-        pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                try {
-                    switch (item.getItemId()) {
-                        case R.id.popup_song_add_fav:
-                            if(isFav){
-                                MediaController.getInstance(mActivity).removeItemToFavoriteList(App.playbackManager().getPlayingItem().getItemId());
-                                Toast.makeText(mActivity, mActivity.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
-                            }else{
-                                MediaController.getInstance(mActivity).addItemToFavoriteList(App.playbackManager().getPlayingItem());
-                                Toast.makeText(mActivity, mActivity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
-                            }
-                            break;
-                        case R.id.popup_song_add_playlist:
-                            ArrayList list = new ArrayList();
-                            list.add(App.playbackManager().getPlayingItem());
-                            Utils.addToPlaylist(mActivity, list, null);
-                            break;
-                    }
-                }catch (Exception e){
-                }
-                return false;
-            }
-        });
-        if(isCurrentTrackFav){
-            pm.inflate(R.menu.player_remove_menu);
-        }else{
-            pm.inflate(R.menu.player_add_menu);
-        }
-        pm.show();
+        OverFlowMenuUtils.showMediaItemMenu(mActivity, view, R.menu.player_popup, App.playbackManager().getPlayingItem());
     }
 
     @Override

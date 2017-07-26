@@ -39,11 +39,7 @@ import com.globaldelight.boom.app.fragments.AlbumSongListFragment;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
-import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 
 import static com.globaldelight.boom.playbackEvent.utils.ItemType.BOOM_PLAYLIST;
 import static com.globaldelight.boom.playbackEvent.utils.ItemType.PLAYLIST;
@@ -111,9 +107,9 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         } else if (position >= 1 && collection.getItemType() != BOOM_PLAYLIST) {
             int pos = position -1;
             if (collection.getItemType() == PLAYLIST) {
-                currentItem = (MediaItem) collection.getMediaElement().get(pos);
+                currentItem = (MediaItem) collection.getItemAt(pos);
             }else{
-                currentItem = (MediaItem) ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().get(pos);
+                currentItem = (MediaItem) ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).getItemAt(pos);
             }
 
             holder.name.setText(currentItem.getItemTitle());
@@ -135,7 +131,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             setOnClicks(holder, pos);
         } else if (position >= 1 && collection.getItemType() == BOOM_PLAYLIST) {
             int pos = position - 1;
-            currentItem = (IMediaItem) collection.getMediaElement().get(pos);
+            currentItem = (IMediaItem) collection.getItemAt(pos);
             holder.undoButton.setVisibility(View.INVISIBLE);
             holder.name.setText(currentItem.getItemTitle());
 
@@ -201,12 +197,11 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             public void onClick(View anchorView) {
 
                 if(collection.getItemType() == BOOM_PLAYLIST){
-                    OverFlowMenuUtils.setBoomPlayListHeaderMenu(activity, anchorView, collection.getItemId(), collection.getItemTitle(), collection.getMediaElement());
+                    OverFlowMenuUtils.showCollectionMenu(activity, anchorView, R.menu.boomplaylist_header_menu, collection);
                 }else if(collection.getItemType() == PLAYLIST){
-                    OverFlowMenuUtils.setPlayListHeaderMenu(activity, anchorView, collection.getMediaElement());
+                    OverFlowMenuUtils.showCollectionMenu(activity, anchorView, R.menu.collection_header_popup, collection);
                 }else{
-                    OverFlowMenuUtils.setArtistGenreSongHeaderMenu(activity, anchorView, ((IMediaItemCollection) collection.getMediaElement().
-                            get(collection.getCurrentIndex())).getMediaElement());
+                    OverFlowMenuUtils.showCollectionMenu(activity, anchorView, R.menu.collection_header_popup, (IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex()));
                 }
             }
         });
@@ -236,9 +231,9 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                 }
                 if (!App.playbackManager().isTrackLoading()) {
                     if (collection.getItemType() == PLAYLIST || collection.getItemType() == BOOM_PLAYLIST) {
-                        App.playbackManager().queue().addItemListToPlay(collection.getMediaElement(), position);
+                        App.playbackManager().queue().addItemListToPlay(collection, position);
                     }else{
-                        App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection) collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement(), position);
+                        App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection) collection.getItemAt(collection.getCurrentIndex())), position);
                     }
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -253,12 +248,11 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             @Override
             public void onClick(View anchorView) {
                 if(collection.getItemType() == BOOM_PLAYLIST){
-                    OverFlowMenuUtils.setBoomPlayListItemMenu(activity, anchorView, collection.getItemId(), collection.getMediaElement().get(position));
+                    OverFlowMenuUtils.showPlaylistItemMenu(activity, anchorView, R.menu.boomplaylist_item_menu, collection.getItemAt(position), (int)collection.getItemId());
                 }else if(collection.getItemType() == PLAYLIST){
-                    OverFlowMenuUtils.setPlayListItemMenu(activity, anchorView, collection.getMediaElement().get(position));
+                    OverFlowMenuUtils.showMediaItemMenu(activity, anchorView, R.menu.media_item_popup, collection.getItemAt(position));
                 }else{
-                    OverFlowMenuUtils.setArtistGenreSongItemMenu(activity, anchorView, ((IMediaItemCollection) collection.getMediaElement()
-                            .get(collection.getCurrentIndex())).getMediaElement().get(position));
+                    OverFlowMenuUtils.showMediaItemMenu(activity, anchorView, R.menu.media_item_popup, ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).getItemAt(position));
                 }
             }
         });
@@ -331,7 +325,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         if(collection.getItemType() == BOOM_PLAYLIST || collection.getItemType() == PLAYLIST)
             return collection.getMediaElement().size() + 1;
         else
-            return ((IMediaItemCollection)collection.getMediaElement().get(collection.getCurrentIndex())).getMediaElement().size() + 1;
+            return ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).getMediaElement().size() + 1;
     }
 
     @Override

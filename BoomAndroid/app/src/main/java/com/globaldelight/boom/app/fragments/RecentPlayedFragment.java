@@ -94,22 +94,10 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
     }
 
     private void initViews() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
-        mActivity.registerReceiver(mUpdateItemSongListReceiver, intentFilter);
-
         recentPlayedMediaList = RecentPlayedMediaList.getRecentPlayedListInstance(mActivity);
         recentPlayedMediaList.setRecentPlayedUpdater(this);
         recentPlayedMediaList.clearRecentPlayedContent();
         setSongListAdapter(recentPlayedMediaList.getRecentPlayedMediaList());
-
-        if(EasyPermissions.hasPermissions(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-            LoadRecentPlayedList();
-        }else {
-            EasyPermissions.requestPermissions(
-                    RecentPlayedFragment.this, getResources().getString(R.string.storage_permission),
-                    REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
     }
 
     private void setSongListAdapter(ArrayList<IMediaItemBase> recentPlayedMediaList) {
@@ -184,19 +172,25 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
-    }
-    @Override
     public void onStart() {
         super.onStart();
         FlurryAnalytics.getInstance(getActivity()).startSession();
+        if(EasyPermissions.hasPermissions(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            LoadRecentPlayedList();
+        }else {
+            EasyPermissions.requestPermissions(
+                    RecentPlayedFragment.this, getResources().getString(R.string.storage_permission),
+                    REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
+        mActivity.registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         FlurryAnalytics.getInstance(getActivity()).endSession();
+        mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
     }
 }

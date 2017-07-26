@@ -1,34 +1,24 @@
 package com.globaldelight.boom.app.adapters.album;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
-import android.widget.Toast;
+
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.playbackEvent.controller.MediaController;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
-import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
-import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
+import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.view.RegularTextView;
-import com.globaldelight.boom.utils.Utils;
-
-import java.util.ArrayList;
 
 /**
  * Created by Rahul Agarwal on 8/9/2016.
@@ -107,30 +97,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
         holder.mMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-                PopupMenu pm = new PopupMenu(activity, anchorView);
-                pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.album_header_add_play_next:
-                                App.playbackManager().queue().addItemAsPlayNext(collection);
-                                break;
-                            case R.id.album_header_add_to_upnext:
-                                App.playbackManager().queue().addItemAsUpNext(collection);
-                                break;
-                            case R.id.album_header_add_to_playlist:
-                                Utils.addToPlaylist(activity, collection, null);
-                                break;
-                            case R.id.album_header_shuffle:
-                                activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
-                                App.playbackManager().queue().addItemListToPlay(collection, 0);
-                                break;
-                        }
-                        return false;
-                    }
-                });
-                pm.inflate(R.menu.album_header_menu);
-                pm.show();
+                OverFlowMenuUtils.showCollectionMenu(activity, anchorView, R.menu.collection_header_popup, collection);
             }
         });
     }
@@ -166,43 +133,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                 if ( position == -1 ) {
                     return;
                 }
-                PopupMenu pm = new PopupMenu(activity, anchorView);
-                pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        IMediaItemBase selectedItem = collection.getItemAt(position);
-                        switch (menuItem.getItemId()) {
-                            case R.id.popup_song_play_next:
-                                App.playbackManager().queue().addItemAsPlayNext(selectedItem);
-                                break;
-                            case R.id.popup_song_add_queue:
-                                App.playbackManager().queue().addItemAsUpNext(selectedItem);
-                                break;
-                            case R.id.popup_song_add_playlist:
-                                ArrayList list = new ArrayList();
-                                list.add(selectedItem);
-                                Utils.addToPlaylist(activity, list, null);
-                                break;
-                            case R.id.popup_song_add_fav:
-                                if (MediaController.getInstance(activity).isFavoriteItem(selectedItem.getItemId())) {
-                                    MediaController.getInstance(activity).removeItemToFavoriteList(selectedItem.getItemId());
-                                    Toast.makeText(activity, activity.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
-                                } else {
-                                    MediaController.getInstance(activity).addItemToFavoriteList((IMediaItem)selectedItem);
-                                    Toast.makeText(activity, activity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
-                                }
-                                break;
-                        }
-
-                        return false;
-                    }
-                });
-                if (MediaController.getInstance(activity).isFavoriteItem(collection.getItemAt(position).getItemId())) {
-                    pm.inflate(R.menu.song_remove_fav);
-                } else {
-                    pm.inflate(R.menu.song_add_fav);
-                }
-                pm.show();
+                OverFlowMenuUtils.showMediaItemMenu(activity, anchorView, R.menu.media_item_popup, collection.getItemAt(position));
             }
         });
     }

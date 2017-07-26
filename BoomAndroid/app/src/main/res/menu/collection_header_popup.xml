@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/album_header_shuffle"
+        android:id="@+id/collection_shuffle_item"
         android:title="@string/menu_shuffle"/>
     <item
-        android:id="@+id/album_header_add_play_next"
+        android:id="@+id/collection_play_next_item"
         android:title="@string/menu_play_next"/>
     <item
-        android:id="@+id/album_header_add_to_upnext"
+        android:id="@+id/collection_add_to_queue_item"
         android:title="@string/menu_add_upnext" />
     <item
-        android:id="@+id/album_header_add_to_playlist"
+        android:id="@+id/collection_add_to_playlist_item"
         android:title="@string/menu_add_boom_playlist"/>
 </menu>

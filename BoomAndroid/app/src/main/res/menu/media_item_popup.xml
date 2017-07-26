@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/song_play_next_item"
+        android:icon="@drawable/ic_menu_selected"
+        android:title="@string/menu_play_next"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/song_add_queue_item"
+        android:icon="@drawable/ic_menu_selected"
+        android:title="@string/menu_add_upnext"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/song_add_playlist_item"
+        android:icon="@drawable/ic_menu_selected"
+        android:title="@string/menu_add_boom_playlist"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/song_add_fav_item"
+        android:icon="@drawable/ic_menu_selected"
+        android:title="@string/menu_add_boom_fav"
+        app:showAsAction="ifRoom" />
+</menu>

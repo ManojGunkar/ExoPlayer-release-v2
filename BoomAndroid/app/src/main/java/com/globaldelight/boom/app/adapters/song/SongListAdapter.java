@@ -8,14 +8,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
@@ -24,16 +21,13 @@ import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.fragments.FavouriteListFragment;
+import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.view.RegularTextView;
-import com.globaldelight.boom.utils.Utils;
-import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -169,50 +163,12 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         holder.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View anchorView) {
-                    final int position = holder.position;
-                    PopupMenu pm = new PopupMenu(activity, anchorView);
-                    pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            try {
-                                switch (item.getItemId()) {
-                                    case R.id.popup_song_play_next:
-                                        App.playbackManager().queue().addItemAsPlayNext(itemList.get(position));
-                                        break;
-                                    case R.id.popup_song_add_queue:
-                                        App.playbackManager().queue().addItemAsUpNext(itemList.get(position));
-                                        break;
-                                    case R.id.popup_song_add_playlist:
-                                        ArrayList list = new ArrayList();
-                                        list.add(itemList.get(position));
-                                        Utils.addToPlaylist(activity, list, null);
-                                        break;
-                                    case R.id.popup_song_add_fav:
-                                        if(MediaController.getInstance(activity).isFavoriteItem(itemList.get(position).getItemId())){
-                                            MediaController.getInstance(activity).removeItemToFavoriteList(itemList.get(position).getItemId());
-                                            Toast.makeText(activity, activity.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
-                                        }else{
-                                            MediaController.getInstance(activity).addItemToFavoriteList((IMediaItem) itemList.get(position));
-                                            Toast.makeText(activity, activity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
-                                        }
-                                        if(listItemType == ItemType.FAVOURITE)
-                                            updateFavoriteList(MediaController.getInstance(activity).getFavoriteList());
-                                        break;
-                                }
-                            }catch (Exception e){
+                final int position = holder.position;
+                OverFlowMenuUtils.showMediaItemMenu(activity, anchorView,R.menu.media_item_popup, itemList.get(position));
+                if(listItemType == ItemType.FAVOURITE) {
+                    updateFavoriteList(MediaController.getInstance(activity).getFavoriteList());
+                }
 
-                            }
-                            return false;
-                        }
-                    });
-                    if(listItemType == ItemType.FAVOURITE ||
-                            MediaController.getInstance(activity).isFavoriteItem(itemList.get(position).getItemId())) {
-                        pm.inflate(R.menu.song_remove_fav);
-                    }else{
-                        pm.inflate(R.menu.song_add_fav);
-                    }
-
-                    pm.show();
             }
         });
     }
@@ -232,7 +188,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         return null == itemList ? 0 : itemList.size();
     }
 
-    public void updateMediaList(ArrayList<IMediaItemBase> mediaList) {
+    public void updateMediaList(ArrayList<? extends IMediaItemBase> mediaList) {
         if(null != mediaList){
             this.itemList = mediaList;
         }

@@ -94,12 +94,12 @@ public class AlbumDetailItemFragment extends Fragment {
     }
 
     public void onFloatPlayAlbums() {
-        if(collection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().size() == 0) {
-            ((IMediaItemCollection) collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(mActivity).getArtistTrackList(collection));
-        }else if(collection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)collection.getMediaElement().get(0)).getMediaElement().size() == 0) {
-            ((IMediaItemCollection) collection.getMediaElement().get(0)).setMediaElement(MediaController.getInstance(mActivity).getGenreTrackList(collection));
+        if(collection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)collection.getItemAt(0)).count() == 0) {
+            ((IMediaItemCollection) collection.getItemAt(0)).setMediaElement(MediaController.getInstance(mActivity).getArtistTrackList(collection));
+        }else if(collection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)collection.getItemAt(0)).count() == 0) {
+            ((IMediaItemCollection) collection.getItemAt(0)).setMediaElement(MediaController.getInstance(mActivity).getGenreTrackList(collection));
         }
-        App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection) collection.getMediaElement().get(0)).getMediaElement(), 0);
+        App.playbackManager().queue().addItemListToPlay((IMediaItemCollection) collection.getItemAt(0), 0);
         detailAlbumGridAdapter.notifyDataSetChanged();
     }
 
@@ -108,9 +108,9 @@ public class AlbumDetailItemFragment extends Fragment {
         @Override
         protected IMediaItemBase doInBackground(Void... params) {
 //            ItemType.ARTIST && ItemType.GENRE
-            if(collection.getParentType() == ItemType.ARTIST && collection.getMediaElement().size() == 0)
+            if(collection.getParentType() == ItemType.ARTIST && collection.count() == 0)
                 collection.setMediaElement(MediaController.getInstance(mActivity).getArtistAlbumsList(collection));
-            else if(collection.getParentType() == ItemType.GENRE && collection.getMediaElement().size() == 0)
+            else if(collection.getParentType() == ItemType.GENRE && collection.count() == 0)
                 collection.setMediaElement(MediaController.getInstance(mActivity).getGenreAlbumsList(collection));
             return collection;
         }
@@ -137,7 +137,7 @@ public class AlbumDetailItemFragment extends Fragment {
                     return detailAlbumGridAdapter.isHeader(position) ? gridLayoutManager.getSpanCount() : 1;
                 }
             });
-            if (((IMediaItemCollection) iMediaItemBase).getMediaElement().size() < 1) {
+            if (((IMediaItemCollection) iMediaItemBase).count() < 1) {
                 listIsEmpty();
             }
         }
