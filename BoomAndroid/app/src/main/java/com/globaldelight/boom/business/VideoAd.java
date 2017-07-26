@@ -94,11 +94,10 @@ public class VideoAd implements RewardedVideoAdListener {
     public void onRewardedVideoAdFailedToLoad(int i) {
         if ( mShow ) {
             Utils.dismissProgressLoader();
+            mShow = false;
+            Toast.makeText(mContext, "Failed to load video ad. Error: " + i, LENGTH_SHORT).show();
+            mCallback.onVideoAdCancelled();
         }
-
-        mShow = false;
-        Toast.makeText(mContext, "Failed to load video ad. Error: " + i, LENGTH_SHORT).show();
-        mCallback.onVideoAdCancelled();
     }
 
     public interface Callback {
