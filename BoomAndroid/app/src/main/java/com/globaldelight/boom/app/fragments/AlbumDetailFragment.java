@@ -109,7 +109,7 @@ public class AlbumDetailFragment extends Fragment {
 
     public void onFloatPlayAlbums() {
         if (dataCollection.getParentType() == ItemType.ALBUM && dataCollection.count() > 0) {
-            App.playbackManager().queue().addItemListToPlay(dataCollection.getMediaElement(), 0);
+            App.playbackManager().queue().addItemListToPlay(dataCollection, 0);
         } else if (dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex())).count() > 0) {
             App.playbackManager().queue().addItemListToPlay((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex()), 0);
         } else if (dataCollection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex())).count() > 0) {
