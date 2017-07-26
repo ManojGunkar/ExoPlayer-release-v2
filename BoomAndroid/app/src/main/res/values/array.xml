@@ -1,31 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <integer-array name="eq_active_on">
-        <item>@drawable/ic_list_auto_on</item>
-        <item>@drawable/ic_list_bassboost_on</item>
-        <item>@drawable/ic_list_acoustic_on</item>
-        <item>@drawable/ic_list_60s_on</item>
-        <item>@drawable/ic_list_classical_on</item>
-        <item>@drawable/ic_list_dubstep_on</item>
-        <item>@drawable/ic_list_electronic_on</item>
-        <item>@drawable/ic_list_flat_on</item>
-        <item>@drawable/ic_list_hiphop_on</item>
-        <item>@drawable/ic_list_house_on</item>
-        <item>@drawable/ic_list_jazz_on</item>
-        <item>@drawable/ic_list_loud_on</item>
-        <item>@drawable/ic_list_music_on</item>
-        <item>@drawable/ic_list_party_on</item>
-        <item>@drawable/ic_list_pop_on</item>
-        <item>@drawable/ic_list_reggae_on</item>
-        <item>@drawable/ic_list_rock_on</item>
-        <item>@drawable/ic_list_soft_on</item>
-        <item>@drawable/ic_list_treble_on</item>
-        <item>@drawable/ic_list_vocals_on</item>
-        <item>@drawable/ic_list_rb_on</item>
-        <item>@drawable/ic_list_metal_on</item>
-    </integer-array>
-
     <integer-array name="eq_active_off">
         <item>@drawable/ic_list_auto_off</item>
         <item>@drawable/ic_list_bassboost_off</item>
