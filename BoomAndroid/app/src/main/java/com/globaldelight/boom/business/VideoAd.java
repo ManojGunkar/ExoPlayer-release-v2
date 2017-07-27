@@ -36,7 +36,7 @@ public class VideoAd implements RewardedVideoAdListener {
     public void prepare() {
         mAd = MobileAds.getRewardedVideoAdInstance(mContext);
         mAd.setRewardedVideoAdListener(this);
-        mAd.loadAd(BuildConfig.GOOGLE_VIDEO_AD_ID, new AdRequest.Builder().build());
+    //    mAd.loadAd(BuildConfig.GOOGLE_VIDEO_AD_ID, new AdRequest.Builder().build());
     }
 
 
