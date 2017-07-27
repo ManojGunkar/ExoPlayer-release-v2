@@ -463,9 +463,9 @@ public class UpNextPlayingQueue {
         }
     }
 
-    public void addItemListToPlay(final ArrayList<? extends IMediaItemBase> itemList, final int position) {
+    public void addItemListToPlay(final ArrayList<? extends IMediaItemBase> itemList, final int position, final boolean shuffle) {
         long mTime = System.currentTimeMillis();
-        boolean isPlayPause = App.playbackManager().getPlayerDataSourceId() == itemList.get(position).getItemId() ? true : false;
+        boolean isPlayPause = !shuffle && App.playbackManager().getPlayerDataSourceId() == itemList.get(position).getItemId() ? true : false;
         if (null != itemList && null != getPlayingItem() && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isPlayPause) {
             PlayPause();
         } else if (null != mUpNextList && null != itemList && itemList.size() > 0 && mTime - mShiftingTime > 500) {
@@ -476,12 +476,23 @@ public class UpNextPlayingQueue {
                     insertToHistory(getPlayingItem());
                     clearUpNext();
                     mUpNextList.addAll(itemList);
+                    if ( shuffle ) {
+                        Collections.shuffle(mUpNextList, new Random(System.currentTimeMillis()));
+                    }
                     mPlayingItemIndex = position;
                     newShuffleList();
                     PlayingItemChanged();
                 }
             }, 100);
         }
+    }
+
+    public void addItemListToPlay(final ArrayList<? extends IMediaItemBase> itemList, final int position) {
+        addItemListToPlay(itemList, position, false);
+    }
+
+    public void addItemListToPlay(IMediaItemCollection collection, int position, boolean shuffle) {
+        addItemListToPlay(collection.getMediaElement(), position, shuffle);
     }
 
     public void addItemListToPlay(IMediaItemCollection collection, int position) {

@@ -279,8 +279,7 @@ public class OverFlowMenuUtils {
                             break;
 
                         case R.id.collection_shuffle_item:
-                            App.playbackManager().queue().addItemListToPlay(collection, 0);
-                            activity.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
+                            App.playbackManager().queue().addItemListToPlay(collection, 0, true);
                             break;
 
                         case R.id.playlist_rename_item:
