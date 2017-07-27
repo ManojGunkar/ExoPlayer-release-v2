@@ -139,7 +139,7 @@ public class OverFlowMenuUtils {
             public boolean onMenuItemClick(MenuItem item) {
                 try {
                     switch (item.getItemId()) {
-                        case R.id.collection_add_to_playlist_item:
+                        case R.id.collection_play_next_item:
                             App.playbackManager().queue().addItemAsPlayNext(MediaController.getInstance(activity).getRecentPlayedList());
                             break;
                         case R.id.collection_add_to_queue_item:
