@@ -140,8 +140,6 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
                 ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(getActivity()).getGenreTrackList(collection));
             }
             setDetail(collection);
-            ((AlbumSongListActivity)getActivity()).updateAlbumArt();
-
 
             if ( collection.getParentType() == ItemType.BOOM_PLAYLIST || collection.getParentType() == ItemType.PLAYLIST ) {
                 return collection;
@@ -154,6 +152,10 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         @Override
         protected void onPostExecute(IMediaItemCollection iMediaItemCollection) {
             super.onPostExecute(iMediaItemCollection);
+
+            ((AlbumSongListActivity)getActivity()).updateAlbumArt();
+
+
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             rootView.setLayoutManager(llm);
             rootView.setHasFixedSize(true);

@@ -51,20 +51,15 @@ public class AlbumSongListActivity extends MasterActivity {
 
     public void updateAlbumArt() {
         final ArrayList<String> urlList = MediaController.getInstance(this).getArtUrlList((MediaItemCollection) currentItem);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(urlList.size() > 0){
-                    findViewById(R.id.activity_album_art).setVisibility(View.GONE);
-                    tblAlbumArt.setVisibility(View.VISIBLE);
-                    setSongsArtImage(urlList);
-                }else{
-                    findViewById(R.id.activity_album_art).setVisibility(View.VISIBLE);
-                    tblAlbumArt.setVisibility(View.GONE);
-                    setDefaultImage();
-                }
-            }
-        });
+        if(urlList.size() > 0){
+            findViewById(R.id.activity_album_art).setVisibility(View.GONE);
+            tblAlbumArt.setVisibility(View.VISIBLE);
+            setSongsArtImage(urlList);
+        }else{
+            findViewById(R.id.activity_album_art).setVisibility(View.VISIBLE);
+            tblAlbumArt.setVisibility(View.GONE);
+            setDefaultImage();
+        }
     }
 
     @Override
