@@ -158,6 +158,7 @@ public class PlayerUtils {
         for (int i = 0; i < views.length; i++ ) {
             Glide.with(context)
                     .load(urls[i])
+                    .centerCrop()
                     .placeholder(R.drawable.ic_default_art_grid)
                     .into(views[i]);
         }

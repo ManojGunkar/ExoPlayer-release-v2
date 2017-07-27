@@ -206,7 +206,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         Glide.with(activity)
                 .load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
-                .fitCenter()
+                .centerCrop()
                 .into(holder.img);
     }
 

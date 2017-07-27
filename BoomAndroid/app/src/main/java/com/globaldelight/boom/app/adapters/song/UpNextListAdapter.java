@@ -183,7 +183,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
         }
         Glide.with(context).load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
-                .fitCenter()
+                .centerCrop()
                 .into(holder.img);
     }
 

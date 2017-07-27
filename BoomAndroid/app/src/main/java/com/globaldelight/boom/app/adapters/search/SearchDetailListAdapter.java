@@ -281,7 +281,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
         if ( path == null ) path = "";
         Glide.with(context).load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
-                .fitCenter()
+                .centerCrop()
                 .into(holder.defaultImg);
     }
 
@@ -289,7 +289,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
         Glide.with(context)
                 .load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
-                .fitCenter()
+                .centerCrop()
                 .into(holder.img);
     }
 

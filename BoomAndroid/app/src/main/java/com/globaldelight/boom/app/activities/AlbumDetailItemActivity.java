@@ -132,6 +132,7 @@ public class AlbumDetailItemActivity extends MasterActivity {
                 .load(albumArt)
                 .placeholder(R.drawable.ic_default_art_player_header)
                 .fitCenter()
+                .skipMemoryCache(true)
                 .into(((ImageView) findViewById(R.id.activity_album_art)));
     }
 
