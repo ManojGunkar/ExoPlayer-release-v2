@@ -52,7 +52,8 @@ public class AlbumDetailItemActivity extends MasterActivity {
     }
 
     private void initValues() {
-        currentItem = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
+        Bundle b = getIntent().getBundleExtra("bundle");
+        currentItem = (MediaItemCollection) b.getParcelable("mediaItemCollection");
 
         int width = Utils.getWindowWidth(this);
         int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);

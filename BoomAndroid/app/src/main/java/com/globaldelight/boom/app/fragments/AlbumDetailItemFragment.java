@@ -64,7 +64,8 @@ public class AlbumDetailItemFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        collection = (MediaItemCollection) this.mActivity.getIntent().getParcelableExtra("mediaItemCollection");
+        Bundle b = mActivity.getIntent().getBundleExtra("bundle");
+        collection = (MediaItemCollection) b.getParcelable("mediaItemCollection");
         setListDetail();
         new LoadAlbumItems().execute();
         setForAnimation();

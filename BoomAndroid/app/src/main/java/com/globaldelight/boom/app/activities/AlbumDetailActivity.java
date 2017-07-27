@@ -52,7 +52,8 @@ public class AlbumDetailActivity extends MasterActivity {
     }
 
     private void initValues() {
-        collection = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
+        Bundle b = getIntent().getBundleExtra("bundle");
+        collection = (MediaItemCollection) b.getParcelable("mediaItemCollection");
 
         if( collection.getParentType() == ItemType.ALBUM ){
             currentItem = collection;

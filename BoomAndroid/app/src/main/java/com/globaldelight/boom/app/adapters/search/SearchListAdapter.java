@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -257,7 +258,9 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                         @Override
                         public void run() {
                             Intent i = new Intent(context, AlbumDetailItemActivity.class);
-                            i.putExtra("mediaItemCollection", (MediaItemCollection)artists.get(getPosition(position)));
+                            Bundle b = new Bundle();
+                            b.putParcelable("mediaItemCollection", (MediaItemCollection)artists.get(getPosition(position)));
+                            i.putExtra("bundle", b);
                             context.startActivity(i);
                         }
                     }, 100);
@@ -294,7 +297,9 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                         @Override
                         public void run() {
                             Intent i = new Intent(context, AlbumDetailActivity.class);
-                            i.putExtra("mediaItemCollection", (MediaItemCollection)albums.get(getPosition(position)));
+                            Bundle b = new Bundle();
+                            b.putParcelable("mediaItemCollection", (MediaItemCollection)albums.get(getPosition(position)));
+                            i.putExtra("bundle", b);
                             context.startActivity(i);
                         }
                     }, 100);

@@ -78,7 +78,8 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        collection = (MediaItemCollection) getActivity().getIntent().getParcelableExtra("mediaItemCollection");
+        Bundle b = getActivity().getIntent().getBundleExtra("bundle");
+        collection = (MediaItemCollection) b.getParcelable("mediaItemCollection");
         setDetail(collection);
 //        FlurryAnalyticHelper.init(mActivity);
     }

@@ -3,6 +3,7 @@ package com.globaldelight.boom.app.adapters.media;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -254,7 +255,9 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
             }
 
             Intent i = new Intent(activity, theClass);
-            i.putExtra("mediaItemCollection", mediaItem);
+            Bundle b = new Bundle();
+            b.putParcelable("mediaItemCollection", mediaItem);
+            i.putExtra("bundle", b);
             return i;
         }
     }

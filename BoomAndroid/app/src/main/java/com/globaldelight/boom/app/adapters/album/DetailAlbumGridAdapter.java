@@ -2,6 +2,7 @@ package com.globaldelight.boom.app.adapters.album;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -222,7 +223,9 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                         }else if (itemView == ITEM_VIEW_ALBUM) {
                             i = new Intent(activity, AlbumDetailActivity.class);
                         }
-                        i.putExtra("mediaItemCollection", collection);
+                        Bundle b = new Bundle();
+                        b.putParcelable("mediaItemCollection", collection);
+                        i.putExtra("bundle", b);
                         activity.startActivity(i);
                     }
                 }, 100);

@@ -76,7 +76,8 @@ public class AlbumSongListActivity extends MasterActivity {
 
     private void initViews() {
         setDrawerLocked(true);
-        currentItem = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
+        Bundle b = getIntent().getBundleExtra("bundle");
+        currentItem = (MediaItemCollection) b.getParcelable("mediaItemCollection");
 
         fragment = new AlbumSongListFragment();
 

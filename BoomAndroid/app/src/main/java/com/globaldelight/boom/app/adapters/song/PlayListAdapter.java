@@ -2,6 +2,7 @@ package com.globaldelight.boom.app.adapters.song;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -213,12 +214,16 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
                                 break;
                             case ITEM_VIEW_TYPE_BOOM_PLAYLIST:
                                 Intent boomIntent = new Intent(activity, AlbumSongListActivity.class);
-                                boomIntent.putExtra("mediaItemCollection", (MediaItemCollection)mBoomPlayList.get(getPosition(position)));
+                                Bundle b = new Bundle();
+                                b.putParcelable("mediaItemCollection", (MediaItemCollection)mBoomPlayList.get(getPosition(position)));
+                                boomIntent.putExtra("bundle", b);
                                 activity.startActivity(boomIntent);
                                 break;
                             case ITEM_VIEW_TYPE_PLAYLIST:
                                 Intent listIntent = new Intent(activity, AlbumSongListActivity.class);
-                                listIntent.putExtra("mediaItemCollection", (MediaItemCollection)defaultPlayList.get(getPosition(position)));
+                                Bundle b2 = new Bundle();
+                                b2.putParcelable("mediaItemCollection", (MediaItemCollection)defaultPlayList.get(getPosition(position)));
+                                listIntent.putExtra("bundle", b2);
                                 activity.startActivity(listIntent);
                                 break;
                         }

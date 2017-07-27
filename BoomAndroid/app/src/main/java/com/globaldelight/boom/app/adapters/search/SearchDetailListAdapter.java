@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -124,7 +125,9 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                         @Override
                         public void run() {
                             Intent i = new Intent(context, AlbumDetailActivity.class);
-                            i.putExtra("mediaItemCollection", theCollection);
+                            Bundle b = new Bundle();
+                            b.putParcelable("mediaItemCollection", theCollection);
+                            i.putExtra("bundle", b);
                             context.startActivity(i);
                         }
                     }, 100);
@@ -169,7 +172,9 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                         @Override
                         public void run() {
                             Intent i = new Intent(context, AlbumDetailItemActivity.class);
-                            i.putExtra("mediaItemCollection", (MediaItemCollection)resultItemList.get(position));
+                            Bundle b = new Bundle();
+                            b.putParcelable("mediaItemCollection", (MediaItemCollection)resultItemList.get(position));
+                            i.putExtra("bundle", b);
                             context.startActivity(i);
                         }
                     }, 100);
