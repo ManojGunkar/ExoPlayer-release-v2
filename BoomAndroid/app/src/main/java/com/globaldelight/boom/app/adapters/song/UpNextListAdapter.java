@@ -168,7 +168,6 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 }
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_Up_next);
                 FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Song_Played_Up_next);
-
             }
         });
     }
@@ -196,9 +195,9 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
     public boolean isSwipeDeleteAllowed(int postion) {
         if(postion == playingItemPosition){
             return false;
-        }else if (postion >= 0 && postion < getItemCount())
-            return true;
-        return false;
+        }
+
+        return true;
     }
 
     public void removeSwipedItem(final RecyclerView.ViewHolder viewholder) {
