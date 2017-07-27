@@ -212,7 +212,6 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recyclerView.smoothScrollToPosition(position);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

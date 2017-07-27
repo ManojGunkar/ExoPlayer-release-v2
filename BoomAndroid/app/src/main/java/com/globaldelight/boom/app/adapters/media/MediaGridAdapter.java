@@ -149,7 +149,6 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
                 final int position = holder.position;
                 final MediaItemCollection mediaItem = itemList.get(position);
 
-                recyclerView.smoothScrollToPosition(position);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
