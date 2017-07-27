@@ -49,7 +49,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     private ArrayList<Listener> mListeners = new ArrayList<>();
     private IMediaItemBase playingItem;
-    private boolean isTrackWaiting = false;
+    private volatile boolean isTrackWaiting = false;
     private AudioPlayer mPlayer;
     private Context context;
     private AudioManager audioManager;
@@ -66,7 +66,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         public void onStateChange(@AudioPlayer.State int state) {
             switch (state) {
                 case AudioPlayer.LOADING:
-                    isTrackWaiting = false;
                     notifyMediaChanged();
                     if(null != getPlayingItem() && getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB){
                         notifyPlayerStateChanged();
@@ -396,10 +395,10 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                     setSessionState(PlaybackState.STATE_PLAYING);
                 }
             }else{
-                isTrackWaiting = false;
                 setSessionState(PlaybackState.STATE_STOPPED);
                 Toast.makeText(context, context.getResources().getString(R.string.loading_problem), Toast.LENGTH_SHORT).show();
             }
+            isTrackWaiting = false;
         }
     }
 
