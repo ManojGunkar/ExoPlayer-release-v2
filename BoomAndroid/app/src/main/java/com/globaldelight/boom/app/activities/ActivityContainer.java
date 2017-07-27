@@ -82,7 +82,6 @@ public class ActivityContainer extends MasterActivity {
             case R.string.store_title:
                 mFragment =  new StoreFragment();
                 setVisibleMiniPlayer(false);
-               // FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Store_Page_Opened_from_Drawer);
 
                 break;
@@ -144,14 +143,12 @@ public class ActivityContainer extends MasterActivity {
     @Override
     public  void onStart() {
         super.onStart();
-       // FlurryAnalyticHelper.flurryStartSession(this);
         FlurryAnalytics.getInstance(this).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-      //  FlurryAnalyticHelper.flurryStopSession(this);
         FlurryAnalytics.getInstance(this).endSession();
     }
 }
