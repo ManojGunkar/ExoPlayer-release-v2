@@ -278,17 +278,20 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
     }
 
     private void setArtistImg(String path, SearchDetailListAdapter.SimpleItemViewHolder holder) {
-        if ( path == null ) path = "";
+        final int size = Utils.largeImageSize(context);
         Glide.with(context).load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
+                .override(size, size)
                 .centerCrop()
                 .into(holder.defaultImg);
     }
 
     private void setSongArt(String path, SearchDetailListAdapter.SimpleItemViewHolder holder) {
+        final int size = Utils.smallImageSize(activity);
         Glide.with(context)
                 .load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
+                .override(size, size)
                 .centerCrop()
                 .into(holder.img);
     }

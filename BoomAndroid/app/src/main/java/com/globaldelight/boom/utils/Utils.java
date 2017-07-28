@@ -58,6 +58,9 @@ public class Utils {
     private static BoomDialogView progressLoader;
     public static final int SHARE_COMPLETE = 1001;
     public static final int PURCHASE_FLOW_LAUNCH = 1002;
+    public static final int LARGE_IMAGE_SIZE_DP = 64;
+    public static final int SMALL_IMAGE_SIZE_DP = 32;
+
 
     private Utils(Context context) {
 
@@ -482,8 +485,19 @@ public class Utils {
         activity.startActivity(intent);
     }
 
-    public static boolean isBusinessModelEnable(){
-        return false;
+    public static int SMALL_IMAGE_SIZE = -1;
+    public static int smallImageSize(Context context) {
+        if ( SMALL_IMAGE_SIZE == -1 ) {
+            SMALL_IMAGE_SIZE = dpToPx(context, SMALL_IMAGE_SIZE_DP);
+        }
+        return SMALL_IMAGE_SIZE;
     }
 
- }
+    public static int LARGE_IMAGE_SIZE = -1;
+    public static int largeImageSize(Context context) {
+        if ( LARGE_IMAGE_SIZE == -1 ) {
+            LARGE_IMAGE_SIZE = dpToPx(context, LARGE_IMAGE_SIZE_DP);
+        }
+        return LARGE_IMAGE_SIZE;
+    }
+}

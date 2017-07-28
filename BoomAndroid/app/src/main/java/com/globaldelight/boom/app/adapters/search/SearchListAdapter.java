@@ -248,7 +248,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             if(null == artists.get(getPosition(position)).getItemArtUrl())
                 artists.get(getPosition(position)).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
 
-            setArtistImg(holder, ((MediaItemCollection) artists.get(getPosition(position))).getItemArtUrl(), size);
+            setArtistImg(holder, artists.get(getPosition(position)).getItemArtUrl());
 
             holder.mainView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -287,7 +287,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             holder.title.setText(albums.get(getPosition(position)).getItemTitle());
             holder.subTitle.setText(((MediaItemCollection) albums.get(getPosition(position))).getItemSubTitle());
             int size = setSize(holder);
-            setArtistImg(holder, ((MediaItemCollection) albums.get(getPosition(position))).getItemArtUrl(), size);
+            setArtistImg(holder, albums.get(getPosition(position)).getItemArtUrl());
 
             holder.mainView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -453,20 +453,22 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
         return size;
     }
 
-    private void setArtistImg(final SimpleItemViewHolder holder, String path, final int size) {
-        if ( path == null ) path = "";
+    private void setArtistImg(final SimpleItemViewHolder holder, String path) {
+        final int size = Utils.largeImageSize(context);
         Glide.with(context).load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
                 .centerCrop()
+                .override(size, size)
                 .into(holder.defaultImg);
     }
 
     private void setSongArt(String path, SimpleItemViewHolder holder) {
-        if ( path == null ) path = "";
+        final int size = Utils.smallImageSize(context);
         Glide.with(context)
                 .load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
                 .centerCrop()
+                .override(size, size)
                 .into(holder.img);
     }
 

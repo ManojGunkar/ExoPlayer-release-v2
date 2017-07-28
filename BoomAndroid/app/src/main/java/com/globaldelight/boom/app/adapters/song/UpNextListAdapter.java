@@ -178,12 +178,11 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
     }
 
     private void setArt(SimpleItemViewHolder holder, String path) {
-        if ( path == null ) {
-            path = "";
-        }
+        final int size = Utils.smallImageSize(context);
         Glide.with(context).load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
                 .centerCrop()
+                .override(size, size)
                 .into(holder.img);
     }
 

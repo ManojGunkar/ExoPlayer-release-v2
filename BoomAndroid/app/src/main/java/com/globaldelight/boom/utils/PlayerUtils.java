@@ -160,6 +160,7 @@ public class PlayerUtils {
                     .load(urls[i])
                     .centerCrop()
                     .placeholder(R.drawable.ic_default_art_grid)
+                    .skipMemoryCache(true)
                     .into(views[i]);
         }
     }

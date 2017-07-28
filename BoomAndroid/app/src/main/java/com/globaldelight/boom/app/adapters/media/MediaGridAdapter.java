@@ -120,11 +120,11 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
 
 
     private void setMediaImage(ViewHolder holder, MediaItemCollection item) {
-        String path = item.getItemArtUrl();
-        if ( path == null ) path = "";
-        Glide.with(context).load(path)
+        final int size = Utils.largeImageSize(context);
+        Glide.with(context).load(item.getItemArtUrl())
                 .placeholder(R.drawable.ic_default_art_grid)
                 .centerCrop()
+                .override(size, size)
                 .into(holder.mediaImageView);
     }
 

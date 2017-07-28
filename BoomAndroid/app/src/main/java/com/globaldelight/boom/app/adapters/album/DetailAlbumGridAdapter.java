@@ -107,7 +107,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     if(null == currentItem.getItemArtUrl())
                         currentItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
 
-                    setArtistImg(holder, pos, size, currentItem.getItemArtUrl());
+                    setArtistImg(holder, currentItem.getItemArtUrl());
                     setOnClicks(holder, pos, ITEM_VIEW_ALBUM);
                     break;
                 case ITEM_VIEW_SONG:
@@ -179,12 +179,13 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     }
 
 
-    private void setArtistImg(final SimpleItemViewHolder holder, final int position, final int size, String path) {
-        if ( path == null ) path = "";
+    private void setArtistImg(final SimpleItemViewHolder holder, String path) {
+        final int size = Utils.largeImageSize(activity);
         Glide.with(activity)
                 .load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
                 .centerCrop()
+                .override(size, size)
                 .into(holder.defaultImg);
     }
 

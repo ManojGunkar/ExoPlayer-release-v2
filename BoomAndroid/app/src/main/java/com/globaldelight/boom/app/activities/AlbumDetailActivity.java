@@ -140,7 +140,7 @@ public class AlbumDetailActivity extends MasterActivity {
         Glide.with(AlbumDetailActivity.this)
                 .load(albumArt)
                 .placeholder(R.drawable.ic_default_art_player_header)
-                .fitCenter()
+                .centerCrop()
                 .skipMemoryCache(true)
                 .into(imageView);
     }

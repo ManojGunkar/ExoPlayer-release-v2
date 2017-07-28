@@ -36,6 +36,7 @@ import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.app.fragments.AlbumSongListFragment;
+import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
@@ -203,10 +204,12 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     }
 
     private void setAlbumArt(String path, SimpleItemViewHolder holder) {
+        final int size = Utils.smallImageSize(activity);
         Glide.with(activity)
                 .load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
                 .centerCrop()
+                .override(size, size)
                 .into(holder.img);
     }
 
