@@ -43,14 +43,11 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
     OnStartDragListener mOnStartDragListener;
     private RecyclerView recyclerView;
     private Context context;
-    private int WIDTH, HEIGHT;
 
     public UpNextListAdapter(Context context, OnStartDragListener dragListener, RecyclerView recyclerView) {
         this.context = context;
         this.mOnStartDragListener = dragListener;
         this.recyclerView = recyclerView;
-        WIDTH = Utils.dpToPx(context, 62);
-        HEIGHT = Utils.dpToPx(context, 62);
     }
 
     public void updateList(UpNextPlayingQueue playingQueue) {
@@ -170,11 +167,6 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Song_Played_Up_next);
             }
         });
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void setHeaderBg(SimpleItemViewHolder holder) {
-        holder.mainView.setElevation(dpToPx(context, 2));
     }
 
     private void setArt(SimpleItemViewHolder holder, String path) {
