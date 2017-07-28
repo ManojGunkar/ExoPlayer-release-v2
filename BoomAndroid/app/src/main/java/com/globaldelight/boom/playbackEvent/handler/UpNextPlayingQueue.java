@@ -75,7 +75,6 @@ public class UpNextPlayingQueue {
 
     private static final String SHUFFLED = "shuffle";
     private static final String UNSHUFFLE = "unshuffle";
-    private int playNextPosition;
 
     public UpNextPlayingQueue(Context context) {
         this.context = context;
@@ -397,7 +396,7 @@ public class UpNextPlayingQueue {
         long mTime = System.currentTimeMillis();
         if (isNext() && mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
-            new Handler().postDelayed(new Runnable() {
+            new Handler().post(new Runnable() {
                 @Override
                 public void run() {
                     insertToHistory(getPlayingItem());
@@ -414,7 +413,7 @@ public class UpNextPlayingQueue {
                     }
                     PlayingItemChanged();
                 }
-            }, 200);
+            });
         }
     }
 
@@ -422,7 +421,7 @@ public class UpNextPlayingQueue {
         long mTime = System.currentTimeMillis();
         if (isPrevious() && mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
-            new Handler().postDelayed(new Runnable() {
+            new Handler().post(new Runnable() {
                 @Override
                 public void run() {
                     insertToHistory(getPlayingItem());
@@ -439,7 +438,7 @@ public class UpNextPlayingQueue {
                     }
                     PlayingItemChanged();
                 }
-            }, 200);
+            });
         }
     }
 
@@ -450,7 +449,7 @@ public class UpNextPlayingQueue {
             PlayPause();
         } else if (null != mUpNextList && null != item && mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
-            new Handler().postDelayed(new Runnable() {
+            new Handler().post(new Runnable() {
                 @Override
                 public void run() {
                     insertToHistory(getPlayingItem());
@@ -459,7 +458,7 @@ public class UpNextPlayingQueue {
                     mPlayingItemIndex = 0;
                     PlayingItemChanged();
                 }
-            }, 100);
+            });
         }
     }
 
@@ -470,7 +469,7 @@ public class UpNextPlayingQueue {
             PlayPause();
         } else if (null != mUpNextList && null != itemList && itemList.size() > 0 && mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
-            new Handler().postDelayed(new Runnable() {
+            new Handler().post(new Runnable() {
                 @Override
                 public void run() {
                     insertToHistory(getPlayingItem());
@@ -483,7 +482,7 @@ public class UpNextPlayingQueue {
                     newShuffleList();
                     PlayingItemChanged();
                 }
-            }, 100);
+            });
         }
     }
 
