@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
@@ -198,6 +199,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     public void onActivityStopped(Activity activity) {
         if ( BusinessStrategy.getInstance(this).getCurrentActivity() == activity ) {
             BusinessStrategy.getInstance(this).setCurrentActivity(null);
+            Glide.get(this).clearMemory();
         }
     }
 
@@ -206,6 +208,12 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     public void onActivityDestroyed(Activity var1) {
 
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Glide.get(this).clearMemory();
     }
 
     private boolean isExpired(){
