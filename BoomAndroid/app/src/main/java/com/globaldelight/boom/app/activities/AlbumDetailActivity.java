@@ -65,7 +65,6 @@ public class AlbumDetailActivity extends MasterActivity {
         int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
         int height = Utils.getWindowHeight(this) - panelSize * 4;
         setAlbumArtSize(width, width);
-        setAlbumArt(currentItem.getItemArtUrl());
     }
 
     private void initViews() {
@@ -121,7 +120,6 @@ public class AlbumDetailActivity extends MasterActivity {
 
     public void setAlbumArt(String albumArt) {
         ImageView imageView = (ImageView) findViewById(R.id.activity_album_art);
-        if ( albumArt == null ) albumArt = "";
         Glide.with(AlbumDetailActivity.this)
                 .load(albumArt)
                 .placeholder(R.drawable.ic_default_art_player_header)
@@ -149,11 +147,13 @@ public class AlbumDetailActivity extends MasterActivity {
     @Override
     public void onStart() {
         super.onStart();
+
         FlurryAnalytics.getInstance(this).startSession();
         registerPlayerReceiver(AlbumDetailActivity.this);
         final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
         mFloatPlayAllAlbums.startAnimation(anim_in);
 
+        setAlbumArt(currentItem.getItemArtUrl());
     }
 
     @Override
@@ -161,7 +161,8 @@ public class AlbumDetailActivity extends MasterActivity {
         super.onStop();
         FlurryAnalytics.getInstance(this).endSession();
         unregisterPlayerReceiver(AlbumDetailActivity.this);
-    }
 
+        setAlbumArt(null);
+    }
 }
 

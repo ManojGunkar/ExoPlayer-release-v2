@@ -87,14 +87,14 @@ import static com.globaldelight.boom.app.sharedPreferences.Preferences.TOOLTIP_S
  * Created by Rahul Agarwal on 16-01-17.
  */
 
-public class MasterContentFragment extends Fragment implements MasterActivity.IPlayerSliderControl, View.OnClickListener, View.OnTouchListener, Observer {
+public class MasterContentFragment extends Fragment implements View.OnClickListener, View.OnTouchListener, Observer {
     private final String TAG = "PlayerFragment-TAG";
 
     private long mItemId=-1;
     private boolean isUser = false;
     
     Activity mActivity;
-    private static ProgressBar mLoadingProgress;
+    private ProgressBar mLoadingProgress;
     private static boolean isCloudSeek = false;
     private AudioEffect audioEffects;
 
@@ -225,6 +225,12 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         if (context instanceof Activity){
             mActivity = (Activity) context;
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
     }
 
     @Nullable
@@ -666,8 +672,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
     /* Player Slider Callbacks*/
-
-    @Override
     public void onPanelSlide(View panel, float slideOffset, boolean isEffectOpened) {
         if(slideOffset < 0.1){
             setMiniPlayerVisible(true);
@@ -676,7 +680,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }
     }
 
-    @Override
     public void onPanelCollapsed(View panel) {
         setMiniPlayerVisible(true);
         updateMiniPlayerUI(mPlayingMediaItem, App.playbackManager().isTrackPlaying(), mIsLastPlayed);
@@ -690,7 +693,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }
     }
 
-    @Override
     public void onPanelExpanded(View panel) {
         setMiniPlayerVisible(false);
 
@@ -728,17 +730,14 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         }
     }
 
-    @Override
     public void onPanelAnchored(View panel) {
 
     }
 
-    @Override
     public void onPanelHidden(View panel) {
 
     }
 
-    @Override
     public void onResumeFragment(int alfa) {
         mPlayerActionPanel.setAlpha(alfa);
         updateProgressLoader();
@@ -756,16 +755,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
         setPlayerInfo();
         super.onStart();
         audioEffects.addObserver(this);
-//        FlurryAnalyticHelper.flurryStartSession(mActivity);
         FlurryAnalytics.getInstance(getActivity()).startSession();
-    }
-
-    @Override
-    public void onVolumeUp() {
-    }
-
-    @Override
-    public void onVolumeDown() {
     }
 
 
@@ -790,10 +780,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
     public void unregisterPlayerReceiver(Context context){
         context.unregisterReceiver(mPlayerBroadcastReceiver);
-    }
-
-    public MasterActivity.IPlayerSliderControl getPlayerSliderControl() {
-        return this;
     }
 
     @Override
@@ -1157,6 +1143,9 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     public void onStop() {
         super.onStop();
         audioEffects.deleteObserver(this);
+        mLargeAlbumArt.setImageBitmap(null);
+        mPlayerBackground.setBackground(null);
+
         FlurryAnalytics.getInstance(getActivity()).endSession();
     }
 
