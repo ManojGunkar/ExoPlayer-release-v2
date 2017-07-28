@@ -12,13 +12,4 @@
     <item
         android:id="@+id/collection_add_to_playlist_item"
         android:title="@string/menu_add_boom_playlist"/>
-
-    <item
-        android:id="@+id/playlist_rename_item"
-        android:title="@string/rename"/>
-
-    <item
-        android:id="@+id/playlist_delete_item"
-        android:visible="false"
-        android:title="@string/delete"/>
 </menu>

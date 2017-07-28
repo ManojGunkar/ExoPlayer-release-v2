@@ -26,7 +26,6 @@ import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
 import com.globaldelight.boom.business.BusinessStrategy;
-import com.globaldelight.boom.business.inapp.IabHelper;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.view.RegularButton;
 import com.globaldelight.boom.view.RegularTextView;
@@ -197,7 +196,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!InAppPurchase.getInstance(mContext).getIabHelper().handleActivityResult(requestCode,
+        if (!InAppPurchase.getInstance(mContext).handleActivityResult(requestCode,
                 resultCode, data)) {
             super.onActivityResult(requestCode, resultCode, data);
         }

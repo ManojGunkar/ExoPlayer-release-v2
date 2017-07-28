@@ -13,18 +13,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatSeekBar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,19 +28,16 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.dialogs.EqualizerDialog;
 import com.globaldelight.boom.app.dialogs.SpeakerDialog;
-import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.activities.MasterActivity;
@@ -55,15 +48,14 @@ import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
+import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.view.CoachMarkerWindow;
 import com.globaldelight.boom.view.NegativeSeekBar;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
-import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.player.AudioEffect;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -824,7 +816,7 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
 
                 break;
             case R.id.player_upnext_button:
-                playerUIController.OnUpNextClick(mActivity);
+                startUpNextActivity();
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.UpNext_Button_Tapped);
                 break;
 
@@ -921,45 +913,8 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
     }
 
 
-
     private void overFlowMenu(Context context, View view) {
-        PopupMenu pm = new PopupMenu(context, view);
-        boolean isCurrentTrackFav= false;
-        if(App.playbackManager().getPlayingItem() != null) {
-            isCurrentTrackFav = MediaController.getInstance(mActivity).isFavoriteItem(App.playbackManager().getPlayingItem().getItemId());
-        }
-        final boolean isFav = isCurrentTrackFav;
-        pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                try {
-                    switch (item.getItemId()) {
-                        case R.id.popup_song_add_fav:
-                            if(isFav){
-                                MediaController.getInstance(mActivity).removeItemToFavoriteList(App.playbackManager().getPlayingItem().getItemId());
-                                Toast.makeText(mActivity, mActivity.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
-                            }else{
-                                MediaController.getInstance(mActivity).addItemToFavoriteList(App.playbackManager().getPlayingItem());
-                                Toast.makeText(mActivity, mActivity.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
-                            }
-                            break;
-                        case R.id.popup_song_add_playlist:
-                            ArrayList list = new ArrayList();
-                            list.add(App.playbackManager().getPlayingItem());
-                            Utils.addToPlaylist(mActivity, list, null);
-                            break;
-                    }
-                }catch (Exception e){
-                }
-                return false;
-            }
-        });
-        if(isCurrentTrackFav){
-            pm.inflate(R.menu.player_remove_menu);
-        }else{
-            pm.inflate(R.menu.player_add_menu);
-        }
-        pm.show();
+        OverFlowMenuUtils.showMediaItemMenu(mActivity, view, R.menu.player_popup, App.playbackManager().getPlayingItem());
     }
 
     @Override
@@ -1184,9 +1139,6 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean isUser) {
                 audioEffects.setIntensity((progress - 50)/50.0f );
 
-                if (isUser) {
-                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
-                }
             }
 
             @Override
@@ -1239,17 +1191,40 @@ public class MasterContentFragment extends Fragment implements MasterActivity.IP
             mLoadingProgress.setVisibility(View.GONE);
     }
 
+    private void startUpNextActivity() {
+        Intent queueIntent = new Intent(getActivity(), ActivityContainer.class);
+        queueIntent.putExtra("container", R.string.up_next);
+        getActivity().startActivity(queueIntent);
+    }
+
+
     @Override
     public void update(Observable o, Object arg) {
         if ( o instanceof AudioEffect ) {
             String property = (String)arg;
             updateMiniPlayerEffectUI(audioEffects.isAudioEffectOn());
             updateAudioEffectUI();
-            if ( property.equals(AudioEffect.EQUALIZER_PROPERTY)) {
-                HashMap<String, String> articleParams = new HashMap<>();
-                articleParams.put(FlurryEvents.PARAM_SELECTED_EQUALIZER, eq_names.get(audioEffects.getSelectedEqualizerPosition()));
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Type_of_Equalizer_selected,articleParams);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_selected,articleParams);
+            switch (property){
+                case AudioEffect.INTENSITY_PROPERTY :
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
+                    break;
+                case AudioEffect.SURROUND_SOUND_PROPERTY:
+                    FlurryAnalytics.getInstance(mActivity).setEvent(FlurryEvents.EVENT_3D_STATE_CHANGED);
+                    break;
+                case AudioEffect.AUTO_EQUALIZER:
+                    break;
+                case AudioEffect.EQUALIZER_STATE_PROPERTY:
+                    FlurryAnalytics.getInstance(mActivity).setEvent(FlurryEvents.EVENT_EQ_STATE_CHANGED);
+                    break;
+                case AudioEffect.FULL_BASS_PROPERTY:
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FULL_BASS);
+                    break;
+                case AudioEffect.EQUALIZER_PROPERTY:
+                    HashMap<String, String> articleParams = new HashMap<>();
+                    articleParams.put(FlurryEvents.PARAM_SELECTED_EQUALIZER, eq_names.get(audioEffects.getSelectedEqualizerPosition()));
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Type_of_Equalizer_selected,articleParams);
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_selected,articleParams);
+                    break;
             }
         }
     }

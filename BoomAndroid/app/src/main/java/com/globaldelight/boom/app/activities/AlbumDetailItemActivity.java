@@ -52,7 +52,8 @@ public class AlbumDetailItemActivity extends MasterActivity {
     }
 
     private void initValues() {
-        currentItem = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
+        Bundle b = getIntent().getBundleExtra("bundle");
+        currentItem = (MediaItemCollection) b.getParcelable("mediaItemCollection");
 
         int width = Utils.getWindowWidth(this);
         int panelSize = (int) getResources().getDimension(R.dimen.album_title_height);
@@ -104,22 +105,6 @@ public class AlbumDetailItemActivity extends MasterActivity {
         super.onResumeFragments();
     }
 
-    @Override
-    protected void onResume() {
-        registerPlayerReceiver(AlbumDetailItemActivity.this);
-        super.onResume();
-
-        final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
-        mFloatPlayAlbums.startAnimation(anim_in);
-
-    }
-
-    @Override
-    protected void onPause() {
-        unregisterPlayerReceiver(AlbumDetailItemActivity.this);
-        super.onPause();
-    }
-
     private void setAlbumArtSize(int width, int height) {
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width, height);
         findViewById(R.id.activity_album_art).setLayoutParams(lp);
@@ -130,7 +115,8 @@ public class AlbumDetailItemActivity extends MasterActivity {
         Glide.with(AlbumDetailItemActivity.this)
                 .load(albumArt)
                 .placeholder(R.drawable.ic_default_art_player_header)
-                .fitCenter()
+                .centerCrop()
+                .skipMemoryCache(true)
                 .into(((ImageView) findViewById(R.id.activity_album_art)));
     }
 
@@ -138,7 +124,7 @@ public class AlbumDetailItemActivity extends MasterActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            super.onBackPressed();
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -147,19 +133,22 @@ public class AlbumDetailItemActivity extends MasterActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
     @Override
     public void onStart() {
         super.onStart();
-       // FlurryAnalyticHelper.flurryStartSession(this);
+        final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
+        mFloatPlayAlbums.startAnimation(anim_in);
+
         FlurryAnalytics.getInstance(this).startSession();
+        registerPlayerReceiver(AlbumDetailItemActivity.this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-//        FlurryAnalyticHelper.flurryStopSession(this);
         FlurryAnalytics.getInstance(this).endSession();
-
+        unregisterPlayerReceiver(AlbumDetailItemActivity.this);
     }
 }

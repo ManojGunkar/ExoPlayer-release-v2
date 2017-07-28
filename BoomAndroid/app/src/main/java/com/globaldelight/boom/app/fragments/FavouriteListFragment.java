@@ -21,8 +21,10 @@ import android.view.ViewGroup;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.collection.local.FavouriteMediaList;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.loaders.LoadFavouriteList;
 
@@ -44,6 +46,8 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
     private SongListAdapter adapter;
     Activity mActivity;
 
+
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -55,6 +59,11 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
+                case PlayerEvents.ACTION_UPDATE_PLAYLIST:
+                    if (null != adapter) {
+                        updateFavoriteList();
+                    }
+                    break;
                 case ACTION_PLAYER_STATE_CHANGED:
                     notifyAdapter(null);
                     break;
@@ -86,6 +95,8 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
 
     }
 
+
+
     @Override
     public void onResume() {
         super.onResume();
@@ -96,22 +107,10 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
     }
 
     private void initViews() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
-        mActivity.registerReceiver(mUpdateItemSongListReceiver, intentFilter);
-
         favouriteMediaList = FavouriteMediaList.getFavouriteListInstance(mActivity);
         favouriteMediaList.setFavouriteUpdater(this);
         favouriteMediaList.clearFavouriteContent();
         setSongListAdapter(favouriteMediaList.getFavouriteMediaList());
-
-        if(EasyPermissions.hasPermissions(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-            LoadFavouriteList();
-        }else {
-            EasyPermissions.requestPermissions(
-                    FavouriteListFragment.this, getResources().getString(R.string.storage_permission),
-                    REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
     }
 
     private void setSongListAdapter(ArrayList<IMediaItemBase> favouriteMediaList) {
@@ -164,12 +163,17 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
         rootView.scrollTo(0, 100);
     }
 
-    private void notifyAdapter(ArrayList<IMediaItemBase> mediaList){
+    private void notifyAdapter(ArrayList<? extends IMediaItemBase> mediaList){
         if(null != adapter){
             adapter.updateMediaList(mediaList);
             listIsEmpty(adapter.getItemCount());
         }
     }
+
+    private void updateFavoriteList() {
+        notifyAdapter(MediaController.getInstance(getActivity()).getFavoriteList());
+    }
+
 
     public void listIsEmpty(int size) {
         if(null != getActivity()) {
@@ -186,19 +190,28 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
     }
 
     @Override
-    public void onDestroy() {
-        mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
-        super.onDestroy();
-    }
-    @Override
     public  void onStart() {
         super.onStart();
         FlurryAnalytics.getInstance(getActivity()).startSession();
+
+        IntentFilter filter = new IntentFilter(PlayerEvents.ACTION_UPDATE_PLAYLIST);
+        filter.addAction(PlayerEvents.ACTION_PLAYER_STATE_CHANGED);
+        getActivity().registerReceiver(mUpdateItemSongListReceiver, filter);
+
+        if(EasyPermissions.hasPermissions(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            LoadFavouriteList();
+        }else {
+            EasyPermissions.requestPermissions(
+                    FavouriteListFragment.this, getResources().getString(R.string.storage_permission),
+                    REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
         FlurryAnalytics.getInstance(getActivity()).endSession();
+
+        getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
     }
 }

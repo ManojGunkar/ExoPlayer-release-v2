@@ -51,20 +51,15 @@ public class AlbumSongListActivity extends MasterActivity {
 
     public void updateAlbumArt() {
         final ArrayList<String> urlList = MediaController.getInstance(this).getArtUrlList((MediaItemCollection) currentItem);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(urlList.size() > 0){
-                    findViewById(R.id.activity_album_art).setVisibility(View.GONE);
-                    tblAlbumArt.setVisibility(View.VISIBLE);
-                    setSongsArtImage(urlList);
-                }else{
-                    findViewById(R.id.activity_album_art).setVisibility(View.VISIBLE);
-                    tblAlbumArt.setVisibility(View.GONE);
-                    setDefaultImage();
-                }
-            }
-        });
+        if(urlList.size() > 0){
+            findViewById(R.id.activity_album_art).setVisibility(View.GONE);
+            tblAlbumArt.setVisibility(View.VISIBLE);
+            setSongsArtImage(urlList);
+        }else{
+            findViewById(R.id.activity_album_art).setVisibility(View.VISIBLE);
+            tblAlbumArt.setVisibility(View.GONE);
+            setDefaultImage();
+        }
     }
 
     @Override
@@ -81,7 +76,8 @@ public class AlbumSongListActivity extends MasterActivity {
 
     private void initViews() {
         setDrawerLocked(true);
-        currentItem = (MediaItemCollection) getIntent().getParcelableExtra("mediaItemCollection");
+        Bundle b = getIntent().getBundleExtra("bundle");
+        currentItem = (MediaItemCollection) b.getParcelable("mediaItemCollection");
 
         fragment = new AlbumSongListFragment();
 
@@ -101,7 +97,7 @@ public class AlbumSongListActivity extends MasterActivity {
         if(currentItem.getItemType() == ItemType.PLAYLIST || currentItem.getItemType() == ItemType.BOOM_PLAYLIST){
             artUrlList = currentItem.getArtUrlList();
         }else{
-            artUrlList = ((IMediaItemCollection)currentItem.getMediaElement().get(currentItem.getCurrentIndex())).getArtUrlList();
+            artUrlList = ((IMediaItemCollection)currentItem.getItemAt(currentItem.getCurrentIndex())).getArtUrlList();
         }
         setAlbumArt(artUrlList);
 
@@ -147,38 +143,27 @@ public class AlbumSongListActivity extends MasterActivity {
     @Override
     public void onStart() {
         super.onStart();
-//        FlurryAnalyticHelper.flurryStartSession(this);
         FlurryAnalytics.getInstance(this).startSession();
+
+        final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
+        mFloatPlayAlbumSongs.startAnimation(anim_in);
+
+
+        fragment.updateAdapter();
+        registerPlayerReceiver(AlbumSongListActivity.this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-//        FlurryAnalyticHelper.flurryStopSession(this);
-          FlurryAnalytics.getInstance(this).endSession();
-
+        FlurryAnalytics.getInstance(this).endSession();
+        unregisterPlayerReceiver(AlbumSongListActivity.this);
     }
 
     @Override
     protected void onResumeFragments() {
         sendBroadcast(new Intent(PlayerEvents.ACTION_PLAYER_SCREEN_RESUME));
         super.onResumeFragments();
-    }
-
-    @Override
-    protected void onResume() {
-        fragment.updateAdapter();
-        registerPlayerReceiver(AlbumSongListActivity.this);
-        super.onResume();
-
-        final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
-        mFloatPlayAlbumSongs.startAnimation(anim_in);
-    }
-
-    @Override
-    protected void onPause() {
-        unregisterPlayerReceiver(AlbumSongListActivity.this);
-        super.onPause();
     }
 
     private void setAlbumArtSize() {
@@ -213,58 +198,12 @@ public class AlbumSongListActivity extends MasterActivity {
     }
 
     private void setSongsArtImage(final ArrayList<String> Urls) {
-        int count = Urls.size() > 4 ? 4 : Urls.size();
         TableRow.LayoutParams param = new TableRow.LayoutParams(screenWidth / 2, screenWidth / 2);
         artImg1.setLayoutParams(param);
         artImg2.setLayoutParams(param);
         artImg3.setLayoutParams(param);
         artImg4.setLayoutParams(param);
-
-
-
-
-        switch (count){
-            case 1:
-                Glide.with(this).load(Urls.get(0)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Glide.with(this).load(Urls.get(0)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Glide.with(this).load(Urls.get(0)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*/*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Glide.with(this).load(Urls.get(0)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                break;
-            case 2:
-                Glide.with(this).load(Urls.get(0)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Glide.with(this).load(Urls.get(1)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Glide.with(this).load(Urls.get(1)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Glide.with(this).load(Urls.get(0)).error(R.drawable.ic_default_art_grid)
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                break;
-            case 3:
-                Glide.with(this).load(Urls.get(0)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Glide.with(this).load(Urls.get(1)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Glide.with(this).load(Urls.get(2)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Glide.with(this).load(Urls.get(0)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                break;
-            default:
-                Glide.with(this).load(Urls.get(0)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg1);
-                Glide.with(this).load(Urls.get(1)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg2);
-                Glide.with(this).load(Urls.get(2)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg3);
-                Glide.with(this).load(Urls.get(3)).error(getResources().getDrawable(R.drawable.ic_default_art_grid, null))
-                        /*.centerCrop().resize(size.width/2, size.height/2)*//*.memoryPolicy(MemoryPolicy.NO_CACHE)*/.into(artImg4);
-                break;
-        }
+        PlayerUtils.setSongsArtTable(this, Urls, new ImageView[]{artImg1, artImg2, artImg3, artImg4});
     }
 
 
@@ -272,8 +211,7 @@ public class AlbumSongListActivity extends MasterActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            fragment.updateBoomPlaylistIfOrderChanged();
-            super.onBackPressed();
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -285,11 +223,6 @@ public class AlbumSongListActivity extends MasterActivity {
             getSupportFragmentManager().popBackStack();
         fragment.updateBoomPlaylistIfOrderChanged();
         super.onBackPressed();
-    }
-
-    @Override
-    protected void onDestroy() {
-        fragment.updateBoomPlaylistIfOrderChanged();
-        super.onDestroy();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
@@ -15,6 +16,7 @@ import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.BoomSplash;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.business.BusinessStrategy;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.app.service.PlayerService;
@@ -35,6 +37,7 @@ import java.util.TimerTask;
 
 import io.fabric.sdk.android.DefaultLogger;
 import io.fabric.sdk.android.Fabric;
+import io.fabric.sdk.android.Kit;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -66,19 +69,28 @@ public class App extends Application implements Application.ActivityLifecycleCal
         super.onCreate();
         FacebookSdk.sdkInitialize(this);
 
+        FlurryAnalytics.getInstance(this).endSession();
 
         TwitterAuthConfig authConfig =  new TwitterAuthConfig(TWEET_CONSUMER, TWEET_SECRET);
 
-        final Fabric fabric = new Fabric.Builder(this)
-                .kits(new TwitterCore(authConfig), new TweetComposer(), new Crashlytics())
-                .logger(new DefaultLogger(Log.DEBUG))
-                .debuggable(true)
-                .build();
+        if ( BuildConfig.FLAVOR.equals("production") ) {
+            final Fabric fabric = new Fabric.Builder(this)
+                    .kits(new TwitterCore(authConfig), new TweetComposer(), new Crashlytics())
+                    .logger(new DefaultLogger(Log.DEBUG))
+                    .debuggable(true)
+                    .build();
+            Fabric.with(fabric);
+        }
+        else {
+            final Fabric fabric = new Fabric.Builder(this)
+                    .kits(new TwitterCore(authConfig), new TweetComposer())
+                    .logger(new DefaultLogger(Log.DEBUG))
+                    .debuggable(true)
+                    .build();
 
-        Fabric.with(fabric);
+            Fabric.with(fabric);
+        }
 
-
-//        mixpanel = MixPanelAnalyticHelper.getInstance(this);
         MixPanelAnalyticHelper.initPushNotification(this);
         application = this;
 
@@ -93,8 +105,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
         cloudMediaItemDBHelper = new CloudMediaItemDBHelper(application);
 
         userPreferenceHandler = new UserPreferenceHandler(application);
-
-//        FlurryAnalyticHelper.init(this);
 
         registerActivityLifecycleCallbacks(this);
     }
@@ -189,6 +199,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     public void onActivityStopped(Activity activity) {
         if ( BusinessStrategy.getInstance(this).getCurrentActivity() == activity ) {
             BusinessStrategy.getInstance(this).setCurrentActivity(null);
+            Glide.get(this).clearMemory();
         }
     }
 
@@ -197,6 +208,12 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     public void onActivityDestroyed(Activity var1) {
 
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Glide.get(this).clearMemory();
     }
 
     private boolean isExpired(){

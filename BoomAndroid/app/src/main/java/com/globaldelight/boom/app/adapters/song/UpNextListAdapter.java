@@ -168,7 +168,6 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 }
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_Up_next);
                 FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Song_Played_Up_next);
-
             }
         });
     }
@@ -179,12 +178,11 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
     }
 
     private void setArt(SimpleItemViewHolder holder, String path) {
-        if ( path == null ) {
-            path = "";
-        }
+        final int size = Utils.smallImageSize(context);
         Glide.with(context).load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
-                .fitCenter()
+                .centerCrop()
+                .override(size, size)
                 .into(holder.img);
     }
 
@@ -196,9 +194,9 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
     public boolean isSwipeDeleteAllowed(int postion) {
         if(postion == playingItemPosition){
             return false;
-        }else if (postion >= 0 && postion < getItemCount())
-            return true;
-        return false;
+        }
+
+        return true;
     }
 
     public void removeSwipedItem(final RecyclerView.ViewHolder viewholder) {

@@ -82,7 +82,6 @@ public class ActivityContainer extends MasterActivity {
             case R.string.store_title:
                 mFragment =  new StoreFragment();
                 setVisibleMiniPlayer(false);
-               // FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Store_Page_Opened_from_Drawer);
 
                 break;
@@ -123,11 +122,6 @@ public class ActivityContainer extends MasterActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         getSupportFragmentManager().findFragmentById(R.id.item_detail_container).onActivityResult(requestCode, resultCode, data);
-
-//        if (requestCode == Utils.PURCHASE_FLOW_LAUNCH && null != mFragment && mFragment instanceof  StoreFragment &&
-//                !((StoreFragment) mFragment).getPurchaseHelper().handleActivityResult(requestCode, resultCode, data)) {
-//        }else{
-//        }
     }
 
     @Override
@@ -145,26 +139,16 @@ public class ActivityContainer extends MasterActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        if(null != mFragment && mFragment instanceof  StoreFragment) {
-//            IabHelper mHelper = ((StoreFragment) mFragment).getPurchaseHelper();
-//            if (mHelper != null) try {
-//                mHelper.dispose();
-//            } catch (IabHelper.IabAsyncInProgressException e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
     @Override
     public  void onStart() {
         super.onStart();
-       // FlurryAnalyticHelper.flurryStartSession(this);
         FlurryAnalytics.getInstance(this).startSession();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-      //  FlurryAnalyticHelper.flurryStopSession(this);
         FlurryAnalytics.getInstance(this).endSession();
     }
 }

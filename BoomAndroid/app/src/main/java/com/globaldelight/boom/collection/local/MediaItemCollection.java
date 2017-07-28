@@ -120,6 +120,17 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
     }
 
     @Override
+    public int count() {
+        return this.mMediaElement.size();
+    }
+
+
+    @Override
+    public IMediaItemBase getItemAt(int index) {
+        return this.mMediaElement.get(index);
+    }
+
+    @Override
     public ArrayList<? extends IMediaItemBase> getMediaElement(){
         return this.mMediaElement;
     }

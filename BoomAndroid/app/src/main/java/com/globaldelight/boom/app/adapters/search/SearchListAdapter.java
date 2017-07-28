@@ -7,34 +7,30 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.TableLayout;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
-import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumDetailItemActivity;
 import com.globaldelight.boom.app.activities.SearchDetailActivity;
 import com.globaldelight.boom.app.fragments.SearchDetailFragment;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.app.adapters.search.utils.SearchResult;
+import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.app.App;
@@ -44,9 +40,7 @@ import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.app.adapters.search.utils.Search;
 import com.globaldelight.boom.utils.Utils;
-import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -242,7 +236,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             holder.defaultImg.setVisibility(View.VISIBLE);
 
             holder.title.setText(artists.get(getPosition(position)).getItemTitle());
-            int count = ((MediaItemCollection)artists.get(getPosition(position))).getItemCount();
+            final int count = ((MediaItemCollection)artists.get(getPosition(position))).getItemCount();
             int albumCount = ((MediaItemCollection)artists.get(getPosition(position))).getItemListCount();
             holder.subTitle.setText((count<=1 ? context.getResources().getString(R.string.song) : context.getResources().getString(R.string.songs)) +" "+count+" "+
                     (albumCount<=1 ? context.getResources().getString(R.string.album) : context.getResources().getString(R.string.albums)) +" "+albumCount);
@@ -254,7 +248,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             if(null == artists.get(getPosition(position)).getItemArtUrl())
                 artists.get(getPosition(position)).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
 
-            setArtistImg(holder, ((MediaItemCollection) artists.get(getPosition(position))).getItemArtUrl(), size);
+            setArtistImg(holder, artists.get(getPosition(position)).getItemArtUrl());
 
             holder.mainView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -264,7 +258,9 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                         @Override
                         public void run() {
                             Intent i = new Intent(context, AlbumDetailItemActivity.class);
-                            i.putExtra("mediaItemCollection", (MediaItemCollection)artists.get(getPosition(position)));
+                            Bundle b = new Bundle();
+                            b.putParcelable("mediaItemCollection", (MediaItemCollection)artists.get(getPosition(position)));
+                            i.putExtra("bundle", b);
                             context.startActivity(i);
                         }
                     }, 100);
@@ -273,39 +269,16 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             holder.grid_menu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PopupMenu pm = new PopupMenu(context, v);
-                    pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            try {
-                                if(((IMediaItemCollection) artists.get(getPosition(position))).getMediaElement().size() == 0){
-                                    ((IMediaItemCollection)artists.get(getPosition(position))).setMediaElement(MediaController.getInstance(context).getArtistAlbumsList((IMediaItemCollection) artists.get(getPosition(position))));
-                                }
-                                if(((IMediaItemCollection)((IMediaItemCollection) artists.get(getPosition(position))).getMediaElement().get(0)).getMediaElement().size() == 0)
-                                    ((IMediaItemCollection)((IMediaItemCollection) artists.get(getPosition(position))).getMediaElement().get(0)).
-                                            setMediaElement(MediaController.getInstance(activity).getArtistTrackList((IMediaItemCollection) artists.get(getPosition(position))));
+                    if(((IMediaItemCollection) artists.get(getPosition(position))).count() == 0){
+                        ((IMediaItemCollection)artists.get(getPosition(position))).setMediaElement(MediaController.getInstance(context).getArtistAlbumsList((IMediaItemCollection) artists.get(getPosition(position))));
+                    }
+                    if(((IMediaItemCollection)((IMediaItemCollection) artists.get(getPosition(position))).getItemAt(0)).count() == 0)
+                        ((IMediaItemCollection)((IMediaItemCollection) artists.get(getPosition(position))).getItemAt(0)).
+                                setMediaElement(MediaController.getInstance(activity).getArtistTrackList((IMediaItemCollection) artists.get(getPosition(position))));
 
-                                switch (item.getItemId()) {
-                                    case R.id.popup_album_play_next:
-                                        App.playbackManager().queue().addItemAsPlayNext(((IMediaItemCollection)((IMediaItemCollection) artists.get(getPosition(position))).getMediaElement().get(0)).getMediaElement());
-                                        break;
-                                    case R.id.popup_album_add_queue:
-                                        App.playbackManager().queue().addItemAsUpNext(((IMediaItemCollection)((IMediaItemCollection) artists.get(getPosition(position))).getMediaElement().get(0)).getMediaElement());
-                                        break;
-                                    case R.id.popup_album_add_playlist:
-                                        Utils.addToPlaylist(activity, ((IMediaItemCollection)((IMediaItemCollection) artists.get(getPosition(position))).getMediaElement().get(0)).getMediaElement(), null);
-//                                        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
-                                        FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
-
-                                        break;
-                                }
-                            }catch (Exception e){}
-                            return false;
-                        }
-                    });
-                    pm.inflate(R.menu.album_popup);
-                    pm.show();
-                }
+                    IMediaItemCollection selected = ((IMediaItemCollection)((IMediaItemCollection) artists.get(getPosition(position))).getItemAt(0));
+                    OverFlowMenuUtils.showCollectionMenu((Activity)context, v, R.menu.collection_popup, selected);
+                    }
             });
         } else if (whatView(position) == ITEM_VIEW_TYPE_LIST_ALBUM) {
             if (albums.size() == 0)
@@ -314,7 +287,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             holder.title.setText(albums.get(getPosition(position)).getItemTitle());
             holder.subTitle.setText(((MediaItemCollection) albums.get(getPosition(position))).getItemSubTitle());
             int size = setSize(holder);
-            setArtistImg(holder, ((MediaItemCollection) albums.get(getPosition(position))).getItemArtUrl(), size);
+            setArtistImg(holder, albums.get(getPosition(position)).getItemArtUrl());
 
             holder.mainView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -324,7 +297,9 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                         @Override
                         public void run() {
                             Intent i = new Intent(context, AlbumDetailActivity.class);
-                            i.putExtra("mediaItemCollection", (MediaItemCollection)albums.get(getPosition(position)));
+                            Bundle b = new Bundle();
+                            b.putParcelable("mediaItemCollection", (MediaItemCollection)albums.get(getPosition(position)));
+                            i.putExtra("bundle", b);
                             context.startActivity(i);
                         }
                     }, 100);
@@ -334,33 +309,10 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             holder.grid_menu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PopupMenu pm = new PopupMenu(context, v);
-                    pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            try {
-                                if(((IMediaItemCollection)albums.get(getPosition(position))).getMediaElement().size() == 0)
-                                    ((IMediaItemCollection)albums.get(getPosition(position))).setMediaElement(MediaController.getInstance(context).getAlbumTrackList((IMediaItemCollection) albums.get(getPosition(position))));
-                                switch (item.getItemId()) {
-                                    case R.id.popup_album_play_next:
-                                        App.playbackManager().queue().addItemAsPlayNext(((IMediaItemCollection)albums.get(getPosition(position))).getMediaElement());
-                                        break;
-                                    case R.id.popup_album_add_queue:
-                                        App.playbackManager().queue().addItemAsUpNext(((IMediaItemCollection)albums.get(getPosition(position))).getMediaElement());
-                                        break;
-                                    case R.id.popup_album_add_playlist:
-                                        Utils.addToPlaylist(activity, ((MediaItemCollection) albums.get(getPosition(position))).getMediaElement(), null);
-                                      //  FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
-                                        FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.EVENT_ADD_ITEMS_TO_PLAYLIST_FROM_LIBRARY);
+                    if(((IMediaItemCollection)albums.get(getPosition(position))).count() == 0)
+                        ((IMediaItemCollection)albums.get(getPosition(position))).setMediaElement(MediaController.getInstance(context).getAlbumTrackList((IMediaItemCollection) albums.get(getPosition(position))));
 
-                                        break;
-                                }
-                            }catch (Exception e){}
-                            return false;
-                        }
-                    });
-                    pm.inflate(R.menu.album_popup);
-                    pm.show();
+                    OverFlowMenuUtils.showCollectionMenu((Activity)context, v, R.menu.collection_popup, ((IMediaItemCollection)albums.get(getPosition(position))));
                 }
             });
 
@@ -399,43 +351,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             holder.menu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View anchorView) {
-                        PopupMenu pm = new PopupMenu(context, anchorView);
-                        pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                try {
-                                    switch (item.getItemId()) {
-                                        case R.id.popup_song_play_next:
-                                            App.playbackManager().queue().addItemAsPlayNext(songs.get(getPosition(position)));
-                                            break;
-                                        case R.id.popup_song_add_queue:
-                                            App.playbackManager().queue().addItemAsUpNext(songs.get(getPosition(position)));
-                                            break;
-                                        case R.id.popup_song_add_playlist:
-                                            ArrayList list = new ArrayList<IMediaItemBase>();
-                                            list.add(songs.get(getPosition(position)));
-                                            Utils.addToPlaylist(activity, list, null);
-                                            break;
-                                        case R.id.popup_song_add_fav:
-                                            if (MediaController.getInstance(context).isFavoriteItem(songs.get(getPosition(position)).getItemId())) {
-                                                MediaController.getInstance(context).removeItemToFavoriteList(songs.get(getPosition(position)).getItemId());
-                                                Toast.makeText(context, context.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                MediaController.getInstance(context).addItemToFavoriteList((IMediaItem) songs.get(getPosition(position)));
-                                                Toast.makeText(context, context.getResources().getString(R.string.added_to_favorite), Toast.LENGTH_SHORT).show();
-                                            }
-                                            break;
-                                    }
-                                }catch (Exception e){}
-                                return false;
-                            }
-                        });
-                        if (MediaController.getInstance(context).isFavoriteItem(songs.get(getPosition(position)).getItemId())) {
-                            pm.inflate(R.menu.song_remove_fav);
-                        } else {
-                            pm.inflate(R.menu.song_add_fav);
-                        }
-                        pm.show();
+                    OverFlowMenuUtils.showMediaItemMenu((Activity)context, anchorView, R.menu.media_item_popup, songs.get(getPosition(position)));
                 }
             });
         }
@@ -537,20 +453,22 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
         return size;
     }
 
-    private void setArtistImg(final SimpleItemViewHolder holder, String path, final int size) {
-        if ( path == null ) path = "";
+    private void setArtistImg(final SimpleItemViewHolder holder, String path) {
+        final int size = Utils.largeImageSize(context);
         Glide.with(context).load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
-                .fitCenter()
+                .centerCrop()
+                .override(size, size)
                 .into(holder.defaultImg);
     }
 
     private void setSongArt(String path, SimpleItemViewHolder holder) {
-        if ( path == null ) path = "";
+        final int size = Utils.smallImageSize(context);
         Glide.with(context)
                 .load(path)
                 .placeholder(R.drawable.ic_default_art_grid)
-                .fitCenter()
+                .centerCrop()
+                .override(size, size)
                 .into(holder.img);
     }
 

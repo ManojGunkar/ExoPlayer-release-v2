@@ -9,6 +9,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.businessmodel.ads.adapter.AdWrapperAdapter;
 import com.globaldelight.boom.app.businessmodel.ads.adspresenter.AdsPresenter;
 import com.globaldelight.boom.app.businessmodel.ads.adspresenter.NoAdsPresenter;
@@ -70,6 +72,7 @@ public class AdController extends BroadcastReceiver {
             }
             else {
                 mAdAdapter.setAdsPresenter(mPresenter);
+
             }
         }
     }

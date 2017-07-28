@@ -78,6 +78,5 @@ public class EqualizerDialog implements EqualizerDialogAdapter.IEqualizerSelect{
     @Override
     public void onChangeEqualizerValue(final int position) {
         audioEffects.setSelectedEqualizerPosition(position);
-        FlurryAnalytics.getInstance(mActivity).setEvent(FlurryEvents.EVENT_EQ_STATE_CHANGED);
     }
 }

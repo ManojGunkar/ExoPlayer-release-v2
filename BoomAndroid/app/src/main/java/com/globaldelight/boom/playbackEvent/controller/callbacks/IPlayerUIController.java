@@ -20,8 +20,6 @@ public interface IPlayerUIController {
 
     void OnPreviousTrackClick();
 
-    void OnUpNextClick(Activity activity);
-
     void OnPlayerTitleClick(Activity activity);
 
 

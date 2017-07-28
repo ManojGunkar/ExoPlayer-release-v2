@@ -33,6 +33,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
+import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
@@ -57,6 +58,9 @@ public class Utils {
     private static BoomDialogView progressLoader;
     public static final int SHARE_COMPLETE = 1001;
     public static final int PURCHASE_FLOW_LAUNCH = 1002;
+    public static final int LARGE_IMAGE_SIZE_DP = 64;
+    public static final int SMALL_IMAGE_SIZE_DP = 32;
+
 
     private Utils(Context context) {
 
@@ -176,6 +180,11 @@ public class Utils {
         adapter.setDialog(dialog);
     }
 
+    public static void  addToPlaylist(Activity activity, IMediaItemCollection songCollection, String fromPlaylist) {
+        addToPlaylist(activity, songCollection.getMediaElement(),fromPlaylist);
+    }
+
+
     public static void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
         final Context context = activity;
         new MaterialDialog.Builder(context)
@@ -200,6 +209,10 @@ public class Utils {
                         }
                     }
                 }).show();
+    }
+
+    public static void newPlaylistDialog(Activity activity, IMediaItemCollection songs, String fromPlaylist) {
+        newPlaylistDialog(activity,songs.getMediaElement(), fromPlaylist);
     }
 
     public static boolean isPhone(Activity activity){
@@ -472,8 +485,19 @@ public class Utils {
         activity.startActivity(intent);
     }
 
-    public static boolean isBusinessModelEnable(){
-        return false;
+    public static int SMALL_IMAGE_SIZE = -1;
+    public static int smallImageSize(Context context) {
+        if ( SMALL_IMAGE_SIZE == -1 ) {
+            SMALL_IMAGE_SIZE = dpToPx(context, SMALL_IMAGE_SIZE_DP);
+        }
+        return SMALL_IMAGE_SIZE;
     }
 
- }
+    public static int LARGE_IMAGE_SIZE = -1;
+    public static int largeImageSize(Context context) {
+        if ( LARGE_IMAGE_SIZE == -1 ) {
+            LARGE_IMAGE_SIZE = dpToPx(context, LARGE_IMAGE_SIZE_DP);
+        }
+        return LARGE_IMAGE_SIZE;
+    }
+}

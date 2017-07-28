@@ -43,7 +43,6 @@ import java.util.Collections;
  */
 
 public class UpNextListFragment extends Fragment implements OnStartDragListener {
-    private ProgressBar mQueueLoad;
     private UpNextListAdapter upNextListAdapter;
     private PermissionChecker permissionChecker;
     private ItemTouchHelper mItemTouchHelper;
@@ -90,50 +89,24 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
-
     }
 
     private void initViews() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(PlayerEvents.ACTION_QUEUE_UPDATED);
-        filter.addAction(PlayerEvents.ACTION_SONG_CHANGED);
-        filter.addAction(PlayerEvents.ACTION_PLAYER_STATE_CHANGED);
-        mActivity.registerReceiver(upnextBroadcastReceiver, filter);
-
-        checkPermissions();
     }
 
-    private class LoadPlayingQueueList extends AsyncTask<Object, Object, UpNextPlayingQueue> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mQueueLoad = new ProgressBar(mActivity);
-            rootView.setVisibility(View.GONE);
-        }
-
-        @Override
-        protected UpNextPlayingQueue doInBackground(Object... params) {
-            return App.playbackManager().queue();
-        }
-
-        @Override
-        protected void onPostExecute(UpNextPlayingQueue upNextList) {
-            super.onPostExecute(upNextList);
-            GridLayoutManager gridLayoutManager =
-                    new GridLayoutManager(mActivity, 1);
-            gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            rootView.setLayoutManager(gridLayoutManager);
-            rootView.addItemDecoration(new SimpleDividerItemDecoration(mActivity, Utils.getWindowWidth(mActivity)));
-            rootView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(mActivity, 0)));
-            upNextListAdapter = new UpNextListAdapter(mActivity, UpNextListFragment.this, rootView);
-            rootView.setAdapter(upNextListAdapter);
-            gridLayoutManager.scrollToPosition(App.playbackManager().queue().getPlayingItemIndex());
-            rootView.setHasFixedSize(true);
-            setUpItemTouchHelper();
-            rootView.setVisibility(View.VISIBLE);
-            mQueueLoad.setVisibility(View.GONE);
-            mQueueLoad.setEnabled(false);
-        }
+    private void loadPlayingQueue() {
+        GridLayoutManager gridLayoutManager =
+                new GridLayoutManager(mActivity, 1);
+        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        rootView.setLayoutManager(gridLayoutManager);
+        rootView.addItemDecoration(new SimpleDividerItemDecoration(mActivity, Utils.getWindowWidth(mActivity)));
+        rootView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(mActivity, 0)));
+        upNextListAdapter = new UpNextListAdapter(mActivity, UpNextListFragment.this, rootView);
+        rootView.setAdapter(upNextListAdapter);
+        gridLayoutManager.scrollToPosition(App.playbackManager().queue().getPlayingItemIndex());
+        rootView.setHasFixedSize(true);
+        setUpItemTouchHelper();
+        rootView.setVisibility(View.VISIBLE);
     }
 
     private void checkPermissions() {
@@ -143,7 +116,7 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
-                        new LoadPlayingQueueList().execute();
+                        loadPlayingQueue();
                     }
 
                     @Override
@@ -257,14 +230,17 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
     }
 
     @Override
-    public void onDestroy() {
-        mActivity.unregisterReceiver(upnextBroadcastReceiver);
-        super.onDestroy();
-    }
-    @Override
     public  void onStart() {
         super.onStart();
         FlurryAnalytics.getInstance(getActivity()).startSession();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(PlayerEvents.ACTION_QUEUE_UPDATED);
+        filter.addAction(PlayerEvents.ACTION_SONG_CHANGED);
+        filter.addAction(PlayerEvents.ACTION_PLAYER_STATE_CHANGED);
+        mActivity.registerReceiver(upnextBroadcastReceiver, filter);
+
+        checkPermissions();
     }
 
     @Override
@@ -272,5 +248,6 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
         super.onStop();
         FlurryAnalytics.getInstance(getActivity()).endSession();
 
+        mActivity.unregisterReceiver(upnextBroadcastReceiver);
     }
 }

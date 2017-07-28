@@ -2,6 +2,7 @@ package com.globaldelight.boom.app.adapters.song;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -179,33 +180,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
             holder.artImg3.setScaleType(ImageView.ScaleType.CENTER_CROP);
             holder.artImg4.setLayoutParams(param);
             holder.artImg4.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-            switch (count) {
-                case 1:
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
-                    break;
-                case 2:
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
-                    Glide.with(activity).load(Urls.get(1)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
-                    Glide.with(activity).load(Urls.get(1)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
-                    break;
-                case 3:
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
-                    Glide.with(activity).load(Urls.get(1)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
-                    Glide.with(activity).load(Urls.get(2)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
-                    break;
-                case 4:
-                    Glide.with(activity).load(Urls.get(0)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg1);
-                    Glide.with(activity).load(Urls.get(1)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg2);
-                    Glide.with(activity).load(Urls.get(2)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg3);
-                    Glide.with(activity).load(Urls.get(3)).error(activity.getResources().getDrawable(R.drawable.ic_default_art_grid, null)).into(holder.artImg4);
-                    break;
-            }
+            PlayerUtils.setSongsArtTable(activity, Urls, new ImageView[]{holder.artImg1, holder.artImg2, holder.artImg3, holder.artImg4});
         }else{
             holder.artTable.setVisibility(View.INVISIBLE);
             holder.defaultImg.setVisibility(View.VISIBLE);
@@ -239,12 +214,16 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
                                 break;
                             case ITEM_VIEW_TYPE_BOOM_PLAYLIST:
                                 Intent boomIntent = new Intent(activity, AlbumSongListActivity.class);
-                                boomIntent.putExtra("mediaItemCollection", (MediaItemCollection)mBoomPlayList.get(getPosition(position)));
+                                Bundle b = new Bundle();
+                                b.putParcelable("mediaItemCollection", (MediaItemCollection)mBoomPlayList.get(getPosition(position)));
+                                boomIntent.putExtra("bundle", b);
                                 activity.startActivity(boomIntent);
                                 break;
                             case ITEM_VIEW_TYPE_PLAYLIST:
                                 Intent listIntent = new Intent(activity, AlbumSongListActivity.class);
-                                listIntent.putExtra("mediaItemCollection", (MediaItemCollection)defaultPlayList.get(getPosition(position)));
+                                Bundle b2 = new Bundle();
+                                b2.putParcelable("mediaItemCollection", (MediaItemCollection)defaultPlayList.get(getPosition(position)));
+                                listIntent.putExtra("bundle", b2);
                                 activity.startActivity(listIntent);
                                 break;
                         }

@@ -12,12 +12,11 @@ apply plugin: 'io.fabric'
 
 android {
     def EXPIRY_DATE = "EXPIRY_DATE"
-    def EXPIRY_ENABLED = "EXPIRY_ENABLED"
     def BUSINESS_MODEL_ENABLED = "BUSINESS_MODEL_ENABLED"
     def STRING = { k -> "\"${k}\"" }
 
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '25.0.3'
 
     defaultConfig {
         applicationId "com.globaldelight.boom"
@@ -29,10 +28,7 @@ android {
 
         buildConfigField("String", EXPIRY_DATE, expiryDate as String);
         buildConfigField("boolean", BUSINESS_MODEL_ENABLED, businessModelEnabled)
-        buildConfigField "String", 'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-3940256099942544/5224354917")
-        buildConfigField "String", 'GOOGLE_NATIVE_AD_ID',       STRING("ca-app-pub-3940256099942544/2247696110")
-        buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN',    STRING("598c4011c2d961ef3b7f248459fa30c7")
-        buildConfigField "String", 'MIXPANEL_SENDER_ID',        STRING("862807752058")
+        buildConfigField "String", 'MIXPANEL_SENDER_ID',  STRING("862807752058")
     }
 
     buildTypes {
@@ -48,11 +44,17 @@ android {
     }
     productFlavors {
         development {
-            buildConfigField "String", 'FLURRY_API_KEY', STRING("MGGVKKG7JYXGC3N89B4V")
+            buildConfigField "String", 'FLURRY_API_KEY',            STRING("MGGVKKG7JYXGC3N89B4V")
+            buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN',    STRING("598c4011c2d961ef3b7f248459fa30c7")
+            buildConfigField "String", 'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-3940256099942544/5224354917")
+            buildConfigField "String", 'GOOGLE_NATIVE_AD_ID',       STRING("ca-app-pub-3940256099942544/2247696110")
         }
-
         production {
-            buildConfigField "String", 'FLURRY_API_KEY', STRING("XRPWTN4PDGJJQX6NNJPN")
+            buildConfigField "String",  EXPIRY_DATE,                 "null"
+            buildConfigField "String",  'FLURRY_API_KEY',            STRING("XRPWTN4PDGJJQX6NNJPN")
+            buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    STRING("79a795acec1fbcc3d9d28f792c51fc24")
+            buildConfigField "String",  'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-2462021843550393/4811995067")
+            buildConfigField "String",  'GOOGLE_NATIVE_AD_ID',       STRING("ca-app-pub-2462021843550393/9799761460")
         }
     }
 }
@@ -91,26 +93,26 @@ dependencies {
     compile(name:'extension-flac-release', ext:'aar')
     compile(name:'boom-engine-release', ext:'aar')
 
-    compile 'com.android.support:support-v4:25.1.1'
-    compile 'com.android.support:cardview-v7:25.1.1'
-    compile 'com.android.support:design:25.1.1'
-    compile 'com.android.support:recyclerview-v7:25.1.1'
+    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:cardview-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.afollestad.material-dialogs:core:0.9.0.2'
-    compile 'com.android.support:palette-v7:25.1.1'
-    compile 'com.github.bumptech.glide:glide:3.5.2'
+    compile 'com.android.support:palette-v7:25.3.1'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.flurry.android:analytics:7.0.0@aar'
     compile 'com.appsflyer:af-android-sdk:4.6.7@aar'
-    compile 'com.google.android.gms:play-services-base:10.0.1'
-    compile 'com.google.android.gms:play-services-auth:10.0.1'
+    compile 'com.google.android.gms:play-services-base:11.0.1'
+    compile 'com.google.android.gms:play-services-auth:11.0.1'
     compile 'com.google.firebase:firebase-appindexing:10.0.1'
-    compile 'com.google.android.gms:play-services-drive:10.0.1'
+    compile 'com.google.android.gms:play-services-drive:11.0.1'
     compile 'pub.devrel:easypermissions:0.2.1'
-    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.google.code.gson:gson:2.7'
     compile 'com.android.volley:volley:1.0.0'
     testCompile 'junit:junit:4.12'
-    compile 'com.google.android.gms:play-services-gcm:10.0.1'
-    compile "com.mixpanel.android:mixpanel-android:5.+"
-    compile 'com.google.android.gms:play-services-ads:10.0.1'
+    compile 'com.google.android.gms:play-services-gcm:11.0.1'
+    compile "com.mixpanel.android:mixpanel-android:5.1.0"
+    compile 'com.google.android.gms:play-services-ads:11.0.1'
     compile ('com.facebook.android:audience-network-sdk:4.+') {
         exclude group: 'com.google.android.exoplayer'
     }

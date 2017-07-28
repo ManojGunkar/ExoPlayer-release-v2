@@ -10,4 +10,9 @@
         android:icon="@drawable/ic_menu_selected"
         android:title="@string/menu_add_upnext"
         android:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/collection_add_to_playlist_item"
+        android:icon="@drawable/ic_menu_selected"
+        android:title="@string/menu_add_boom_playlist"
+        android:showAsAction="ifRoom" />
 </menu>

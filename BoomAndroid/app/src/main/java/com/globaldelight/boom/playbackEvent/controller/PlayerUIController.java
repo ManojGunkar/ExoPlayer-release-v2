@@ -75,17 +75,6 @@ public class PlayerUIController implements IPlayerUIController {
     }
 
     @Override
-    public void OnUpNextClick(Activity activity) {
-        startUpNextActivity(activity);
-    }
-
-    private void startUpNextActivity(Activity activity) {
-        Intent queueIntent = new Intent(activity, ActivityContainer.class);
-        queueIntent.putExtra("container", R.string.up_next);
-        activity.startActivity(queueIntent);
-    }
-
-    @Override
     public void OnPlayerTitleClick(Activity activity) {
     }
 }

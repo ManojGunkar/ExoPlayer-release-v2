@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.businessmodel.ads.adapter.AdWrapperAdapter;
 import com.globaldelight.boom.app.businessmodel.ads.adspresenter.FacebookAdsPresenter;
 import com.globaldelight.boom.app.businessmodel.ads.adspresenter.GoogleAdsPresenter;
@@ -17,6 +19,7 @@ import com.globaldelight.boom.app.businessmodel.ads.adspresenter.GoogleAdsPresen
 public class AdsBuilder {
 
     private final AdsParam param;
+    private Context context;
 
     private AdsBuilder(AdsParam param) {
         this.param = param;
@@ -62,10 +65,12 @@ public class AdsBuilder {
     }
 
     public AdWrapperAdapter buildFacebookAds() {
+        FlurryAnalytics.getInstance(param.context).setEvent(FlurryEvents.EVENT_FACEBOOK_ADS);
         return new AdWrapperAdapter(param.adapter, new FacebookAdsPresenter(param));
     }
 
     public AdWrapperAdapter buildGoogleAds(){
+        FlurryAnalytics.getInstance(param.context).setEvent(FlurryEvents.EVENT_GOOGLE_ADS);
         return new AdWrapperAdapter(param.adapter,new GoogleAdsPresenter(param));
     }
 
