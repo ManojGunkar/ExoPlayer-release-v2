@@ -143,38 +143,27 @@ public class AlbumSongListActivity extends MasterActivity {
     @Override
     public void onStart() {
         super.onStart();
-//        FlurryAnalyticHelper.flurryStartSession(this);
         FlurryAnalytics.getInstance(this).startSession();
+
+        final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
+        mFloatPlayAlbumSongs.startAnimation(anim_in);
+
+
+        fragment.updateAdapter();
+        registerPlayerReceiver(AlbumSongListActivity.this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-//        FlurryAnalyticHelper.flurryStopSession(this);
-          FlurryAnalytics.getInstance(this).endSession();
-
+        FlurryAnalytics.getInstance(this).endSession();
+        unregisterPlayerReceiver(AlbumSongListActivity.this);
     }
 
     @Override
     protected void onResumeFragments() {
         sendBroadcast(new Intent(PlayerEvents.ACTION_PLAYER_SCREEN_RESUME));
         super.onResumeFragments();
-    }
-
-    @Override
-    protected void onResume() {
-        fragment.updateAdapter();
-        registerPlayerReceiver(AlbumSongListActivity.this);
-        super.onResume();
-
-        final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
-        mFloatPlayAlbumSongs.startAnimation(anim_in);
-    }
-
-    @Override
-    protected void onPause() {
-        unregisterPlayerReceiver(AlbumSongListActivity.this);
-        super.onPause();
     }
 
     private void setAlbumArtSize() {
@@ -222,8 +211,7 @@ public class AlbumSongListActivity extends MasterActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            fragment.updateBoomPlaylistIfOrderChanged();
-            super.onBackPressed();
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -235,11 +223,6 @@ public class AlbumSongListActivity extends MasterActivity {
             getSupportFragmentManager().popBackStack();
         fragment.updateBoomPlaylistIfOrderChanged();
         super.onBackPressed();
-    }
-
-    @Override
-    protected void onDestroy() {
-        fragment.updateBoomPlaylistIfOrderChanged();
-        super.onDestroy();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }
