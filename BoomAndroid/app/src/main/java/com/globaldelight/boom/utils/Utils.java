@@ -47,6 +47,7 @@ import com.globaldelight.boom.app.sharedPreferences.Preferences;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.regex.Matcher;
 
 import static android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
 
@@ -58,8 +59,8 @@ public class Utils {
     private static BoomDialogView progressLoader;
     public static final int SHARE_COMPLETE = 1001;
     public static final int PURCHASE_FLOW_LAUNCH = 1002;
-    public static final int LARGE_IMAGE_SIZE_DP = 64;
-    public static final int SMALL_IMAGE_SIZE_DP = 32;
+    public static final int LARGE_IMAGE_SIZE_DP = 128;
+    public static final int SMALL_IMAGE_SIZE_DP = 62;
 
 
     private Utils(Context context) {
