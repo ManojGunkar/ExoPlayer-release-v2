@@ -1143,9 +1143,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     public void onStop() {
         super.onStop();
         audioEffects.deleteObserver(this);
-        mLargeAlbumArt.setImageBitmap(null);
-        mPlayerBackground.setBackground(null);
-
         FlurryAnalytics.getInstance(getActivity()).endSession();
     }
 
