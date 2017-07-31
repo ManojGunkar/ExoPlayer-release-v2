@@ -29,31 +29,27 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     private static final String TAG = "MasterActivity";
 
     public DrawerLayout drawerLayout;
-    private LinearLayout activityContainer;
     private SlidingUpPanelLayout mSlidingPaneLayout;
     private MasterContentFragment contentFragment;
     private FragmentManager fragmentManager;
     private Handler handler;
-
     private boolean isDrawerLocked = false;
     private static boolean isPlayerExpended = false, isEffectScreenExpended = false;
     
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
-        FrameLayout rootLayout = (FrameLayout) getLayoutInflater().inflate(R.layout.activity_master, null);
-        drawerLayout = (DrawerLayout) rootLayout.findViewById(R.id.drawer_layout);
+        super.setContentView(R.layout.activity_master);
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         //make volume keys change multimedia volume even if music is not playing now
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         handler = new Handler();
-        mSlidingPaneLayout = (SlidingUpPanelLayout) rootLayout.findViewById(R.id.sliding_layout);
-        activityContainer = (LinearLayout) rootLayout.findViewById(R.id.activity_holder);
+        mSlidingPaneLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        LinearLayout activityContainer = (LinearLayout)findViewById(R.id.activity_holder);
         getLayoutInflater().inflate(layoutResID, activityContainer, true);
         fragmentManager = getSupportFragmentManager();
         contentFragment = new MasterContentFragment();
         initContainer();
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
-
-        super.setContentView(rootLayout);
     }
 
     BroadcastReceiver mPlayerSliderReceiver = new BroadcastReceiver() {
