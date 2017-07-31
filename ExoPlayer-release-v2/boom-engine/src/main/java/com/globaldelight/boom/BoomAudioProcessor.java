@@ -44,6 +44,7 @@ public class BoomAudioProcessor implements AudioProcessor {
 
         sampleRate = sampleRateHz;
         inputChannelCount = channelCount;
+        outputBuffer.clear();
 
         engine = new BoomEngine(sampleRate, inputChannelCount, mFloatAudio);
         applyEffects();
