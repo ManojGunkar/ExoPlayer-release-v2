@@ -478,10 +478,4 @@ public class MainActivity extends MasterActivity
         App.playbackManager().isLibraryResumes = false;
         super.onPause();
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
 }

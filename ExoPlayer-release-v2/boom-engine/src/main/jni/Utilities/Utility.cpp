@@ -74,8 +74,8 @@ void convert_multi_to_stereo(void* ioBuf, int inChannels, int frameCount)
 
 void convert_mono_to_stereo(void* ioBuf, int frameCount)
 {
-    uint16_t* inPtr = (uint16_t*)ioBuf + frameCount;
-    uint16_t* outPtr = (uint16_t*)ioBuf + (frameCount * 2);
+    uint16_t* inPtr = (uint16_t*)ioBuf + frameCount - 1;
+    uint16_t* outPtr = (uint16_t*)ioBuf + (frameCount * 2) - 2;
     int remaining = frameCount;
     while ( remaining > 0 ) {
         *outPtr = *inPtr;

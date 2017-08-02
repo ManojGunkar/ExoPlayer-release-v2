@@ -57,6 +57,12 @@ public abstract class MediaCollectionFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
+    }
+
     public Context getContext() {
         return mActivity;
     }
@@ -65,7 +71,6 @@ public abstract class MediaCollectionFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initViews();
-//        FlurryAnalyticHelper.init(mActivity);
     }
 
     private View getItemView(LayoutInflater inflater, ViewGroup container){

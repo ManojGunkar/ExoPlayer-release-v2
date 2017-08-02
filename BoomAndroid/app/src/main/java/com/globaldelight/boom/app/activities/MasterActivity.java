@@ -28,35 +28,28 @@ import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 public class MasterActivity extends AppCompatActivity implements SlidingUpPanelLayout.PanelSlideListener {
     private static final String TAG = "MasterActivity";
 
-    private FrameLayout activity;
     public DrawerLayout drawerLayout;
-    private LinearLayout activityContainer;
     private SlidingUpPanelLayout mSlidingPaneLayout;
     private MasterContentFragment contentFragment;
-    private IPlayerSliderControl iPlayerSliderControl;
     private FragmentManager fragmentManager;
     private Handler handler;
-
     private boolean isDrawerLocked = false;
     private static boolean isPlayerExpended = false, isEffectScreenExpended = false;
     
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
-        activity = (FrameLayout) getLayoutInflater().inflate(R.layout.activity_master, null);
-        drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
+        super.setContentView(R.layout.activity_master);
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         //make volume keys change multimedia volume even if music is not playing now
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         handler = new Handler();
-        mSlidingPaneLayout = (SlidingUpPanelLayout) activity.findViewById(R.id.sliding_layout);
-        activityContainer = (LinearLayout) activity.findViewById(R.id.activity_holder);
+        mSlidingPaneLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        LinearLayout activityContainer = (LinearLayout)findViewById(R.id.activity_holder);
         getLayoutInflater().inflate(layoutResID, activityContainer, true);
         fragmentManager = getSupportFragmentManager();
         contentFragment = new MasterContentFragment();
         initContainer();
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
-
-        //FlurryAnalyticHelper.init(this);
-        super.setContentView(activity);
     }
 
     BroadcastReceiver mPlayerSliderReceiver = new BroadcastReceiver() {
@@ -110,7 +103,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         handler.post(new Runnable() {
             @Override
             public void run() {
-                iPlayerSliderControl.onResumeFragment(mSlidingPaneLayout.isPanelExpanded() ? 1 : 0);
+                contentFragment.onResumeFragment(mSlidingPaneLayout.isPanelExpanded() ? 1 : 0);
             }
         });
         super.onResumeFragments();
@@ -130,23 +123,11 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         switch (event.getKeyCode()) {
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (mSlidingPaneLayout.isPanelExpanded()) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            iPlayerSliderControl.onVolumeUp();
-                        }
-                    });
                     return false;
                 }
                 break;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (mSlidingPaneLayout.isPanelExpanded()) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            iPlayerSliderControl.onVolumeDown();
-                        }
-                    });
                     return false;
                 }
                 break;
@@ -157,11 +138,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     @Override
     protected void onResume() {
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
-        try{
-            App.startPlayerService();
-        }catch (Exception e){
-
-        }
         super.onResume();
     }
 
@@ -185,9 +161,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
 
     public void initContainer() {
         if(!mSlidingPaneLayout.isPanelExpanded()) {
-
-            iPlayerSliderControl = contentFragment.getPlayerSliderControl();
-
             fragmentManager.beginTransaction()
                     .replace(R.id.panel_holder, contentFragment).commitAllowingStateLoss();
             mSlidingPaneLayout.setPanelSlideListener(MasterActivity.this);
@@ -212,7 +185,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         handler.post(new Runnable() {
             @Override
             public void run() {
-                iPlayerSliderControl.onPanelSlide(panel, slideOffset, isEffectScreenExpended);
+                contentFragment.onPanelSlide(panel, slideOffset, isEffectScreenExpended);
             }
         });
     }
@@ -224,7 +197,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         handler.post(new Runnable() {
             @Override
             public void run() {
-                iPlayerSliderControl.onPanelCollapsed(panel);
+                contentFragment.onPanelCollapsed(panel);
             }
         });
     }
@@ -236,7 +209,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         handler.post(new Runnable() {
             @Override
             public void run() {
-                iPlayerSliderControl.onPanelExpanded(panel);
+                contentFragment.onPanelExpanded(panel);
             }
         });
     }
@@ -246,7 +219,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         handler.post(new Runnable() {
             @Override
             public void run() {
-                iPlayerSliderControl.onPanelAnchored(panel);
+                contentFragment.onPanelAnchored(panel);
             }
         });
     }
@@ -256,19 +229,8 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         handler.post(new Runnable() {
             @Override
             public void run() {
-                iPlayerSliderControl.onPanelHidden(panel);
+                contentFragment.onPanelHidden(panel);
             }
         });
-    }
-
-    public interface IPlayerSliderControl{
-        void onPanelSlide(View panel, float slideOffset, boolean isEffectOpened);
-        void onPanelCollapsed(View panel);
-        void onPanelExpanded(View panel);
-        void onPanelAnchored(View panel);
-        void onPanelHidden(View panel);
-        void onResumeFragment(int alfa);
-        void onVolumeUp();
-        void onVolumeDown();
     }
 }

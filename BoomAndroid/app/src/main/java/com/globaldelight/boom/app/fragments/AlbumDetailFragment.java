@@ -68,6 +68,12 @@ public class AlbumDetailFragment extends Fragment {
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);

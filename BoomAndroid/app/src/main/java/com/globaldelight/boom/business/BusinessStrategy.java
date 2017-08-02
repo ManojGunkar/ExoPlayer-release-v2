@@ -297,11 +297,8 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     private boolean shouldRemindSharing() {
         Date sharedDate = data.getSharedDate();
         if (  isSharingAllowed() && sharedDate == null && isTimeExpired(data.getLastShareReminder(), SHARE_REMINDER_PERIOD) ) {
-            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_REMINDER_ME_LATER);
             return true;
-        }else
-            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_REMINDER_EXPIRE);
-
+        }
         return false;
     }
 
@@ -347,6 +344,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
     private void showVideoAd() {
         mVideoAd.show(mCurrentActivity);
+        FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_WATCHED_VIDEO);
     }
 
 
@@ -592,7 +590,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         @Override
         public void onPrimaryAction() {
             showVideoAd();
-            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_WATCHED_VIDEO);
 
         }
 

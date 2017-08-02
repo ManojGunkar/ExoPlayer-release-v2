@@ -144,7 +144,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     public void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateInAppItemReceiver);
-    //    FlurryAnalyticHelper.flurryStopSession(mActivity);
     }
 
     private void intiStoreStartup() {

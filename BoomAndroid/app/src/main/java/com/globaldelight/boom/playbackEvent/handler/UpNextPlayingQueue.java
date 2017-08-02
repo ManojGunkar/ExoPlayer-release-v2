@@ -539,13 +539,18 @@ public class UpNextPlayingQueue {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (mShuffle == SHUFFLE_ON) {
-                    insertUpNextList(SHUFFLED);
-                } else {
-                    insertUpNextList(UNSHUFFLE);
-                    Preferences.writeString(context, SHUFFLED, null);
+                try {
+                    if (mShuffle == SHUFFLE_ON) {
+                        insertUpNextList(SHUFFLED);
+                    } else {
+                        insertUpNextList(UNSHUFFLE);
+                        Preferences.writeString(context, SHUFFLED, null);
+                    }
+                    savePlayingItemIndex();
                 }
-                savePlayingItemIndex();
+                catch (Exception e) {
+
+                }
             }
         }).start();
     }
