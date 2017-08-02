@@ -2,6 +2,8 @@
 bin
 gen
 libs
+!/demo/libs
+!/boom-engine/src/main/jni/libs
 obj
 lint.xml
 
