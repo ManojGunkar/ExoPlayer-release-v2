@@ -71,10 +71,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
         return instance;
     }
 
-    public PlaybackManager getPlayback() {
-        return mPlayback;
-    }
-
 
     @Override
     public void onCreate() {
@@ -84,7 +80,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
         serviceReceiver = new PlayerServiceReceiver(this);
         serviceReceiver.registerService(this);
 
-        mPlayback = new PlaybackManager(this);
+        mPlayback = PlaybackManager.getInstance(this);
         mPlayback.registerListener(this);
 
         try {
