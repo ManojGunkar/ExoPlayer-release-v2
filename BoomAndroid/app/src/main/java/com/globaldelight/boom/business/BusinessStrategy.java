@@ -158,10 +158,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                 break;
 
             case BusinessData.STATE_LOCKED:
-                if ( AudioEffect.getInstance(mContext).isAudioEffectOn() ) {
-                    AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
-                }
-
                 if ( shouldRemindSharing() ) {
                     showShareDialog();
                 }
@@ -361,6 +357,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             App.playbackManager().playPause();
             mWasPlaying = false;
         }
+        AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
         FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_WATCHED_VIDEO);
     }
 
@@ -395,6 +392,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         if ( property.equals(AudioEffect.AUDIO_EFFECT_PROPERTY) ) {
             update();
             if ( data.getState() == BusinessData.STATE_LOCKED && AudioEffect.getInstance(mContext).isAudioEffectOn() ) {
+                AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
                 if ( App.playbackManager().isTrackPlaying() ) {
                     mWasPlaying = true;
                     App.playbackManager().playPause();
