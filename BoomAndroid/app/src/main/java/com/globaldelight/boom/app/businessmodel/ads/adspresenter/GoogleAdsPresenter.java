@@ -92,13 +92,23 @@ public class GoogleAdsPresenter implements AdsPresenter {
     public void bind(RecyclerView.ViewHolder holder, int position) {
         GoogleAdViewHolder viewHolder = (GoogleAdViewHolder) holder;
         if ( mAd == null ) {
-            viewHolder.progressView.setVisibility(View.VISIBLE);
             viewHolder.adContentView.setVisibility(View.GONE);
+
+            if ( adLoader != null && adLoader.isLoading() ) {
+                viewHolder.errorView.setVisibility(View.GONE);
+                viewHolder.progressView.setVisibility(View.VISIBLE);
+            }
+            else {
+                viewHolder.errorView.setVisibility(View.VISIBLE);
+                viewHolder.progressView.setVisibility(View.GONE);
+            }
+
             return;
         }
 
         NativeContentAd ad = mAd;
         viewHolder.progressView.setVisibility(View.GONE);
+        viewHolder.errorView.setVisibility(View.GONE);
         viewHolder.adContentView.setVisibility(View.VISIBLE);
 
 

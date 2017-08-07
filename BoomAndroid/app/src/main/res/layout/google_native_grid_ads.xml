@@ -27,6 +27,24 @@
             android:textStyle="normal" />
     </LinearLayout>
 
+    <LinearLayout android:id="@+id/ad_error_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center">
+        <com.globaldelight.boom.view.RegularTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/track_sub_title"
+            android:textSize="18sp"
+            android:maxLines="3"
+            android:layout_gravity="center"
+            android:text="Failed to load Ads!"
+            android:textStyle="normal" />
+    </LinearLayout>
+
+
     <LinearLayout
         android:id="@+id/ad_content_view"
         android:layout_width="match_parent"
