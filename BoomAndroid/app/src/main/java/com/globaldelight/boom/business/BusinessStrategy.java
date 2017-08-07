@@ -158,6 +158,10 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                 break;
 
             case BusinessData.STATE_LOCKED:
+                if ( AudioEffect.getInstance(mContext).isAudioEffectOn() ) {
+                    AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
+                }
+
                 if ( shouldRemindSharing() ) {
                     showShareDialog();
                 }
