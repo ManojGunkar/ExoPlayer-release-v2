@@ -141,7 +141,16 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         }
     };
 
-    public PlaybackManager(Context context){
+
+    private static  PlaybackManager instance = null;
+    public static PlaybackManager getInstance(Context context) {
+        if ( instance == null ) {
+            instance = new PlaybackManager(context.getApplicationContext());
+        }
+        return instance;
+    }
+
+    private PlaybackManager(Context context){
         this.context = context;
         mPlayer = new AudioPlayer(context, IPlayerEvents);
         mQueue = new UpNextPlayingQueue(context);

@@ -110,7 +110,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public static PlaybackManager playbackManager() {
-        return PlayerService.getInstance(application).getPlayback();
+        return PlaybackManager.getInstance(application);
     }
 
     public static UserPreferenceHandler getUserPreferenceHandler() {

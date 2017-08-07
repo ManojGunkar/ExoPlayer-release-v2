@@ -23,6 +23,7 @@ public class GoogleAdViewHolder extends RecyclerView.ViewHolder {
     public ImageView  imageView;
     public View       adContentView;
     public View       progressView;
+    public View       errorView;
     public Button     adActionBtn;
 
     public GoogleAdViewHolder(View itemView) {
@@ -30,6 +31,7 @@ public class GoogleAdViewHolder extends RecyclerView.ViewHolder {
         adView= (NativeContentAdView) itemView.findViewById(R.id.google_native_adView);
         adContentView = (View)itemView.findViewById(R.id.ad_content_view);
         progressView = (View)itemView.findViewById(R.id.ad_loading_view);
+        errorView = (View)itemView.findViewById(R.id.ad_error_view);
         logoView = (ImageView)adView.findViewById(R.id.ivLogo);
         headerView = (TextView)adView.findViewById(R.id.tvHeader);
         descriptionView = (TextView)adView.findViewById(R.id.tvDescription);
