@@ -146,7 +146,7 @@ public class SongsListFragment extends Fragment{
             recyclerView.setHasFixedSize(true);
             songListAdapter = new SongListAdapter(mActivity, SongsListFragment.this, iMediaItemList, ItemType.SONGS);
 
-            mAdController = new AdController(getActivity(), recyclerView, songListAdapter, false);
+            mAdController = new AdController(mActivity, recyclerView, songListAdapter, false);
             recyclerView.setAdapter(mAdController.getAdAdapter());
             listIsEmpty(iMediaItemList.size());
         }
@@ -155,10 +155,17 @@ public class SongsListFragment extends Fragment{
     public  void onStart() {
         super.onStart();
         FlurryAnalytics.getInstance(getActivity()).startSession();
+        if ( mAdController != null ) {
+            mAdController.register();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();    }
+        FlurryAnalytics.getInstance(getActivity()).endSession();
+        if ( mAdController != null ) {
+            mAdController.unregister();
+        }
+    }
 }

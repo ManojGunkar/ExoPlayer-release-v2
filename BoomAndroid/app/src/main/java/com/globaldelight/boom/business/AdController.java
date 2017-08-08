@@ -34,9 +34,16 @@ public class AdController extends BroadcastReceiver {
         mRecyclerView = recyclerView;
         mIsGrid = isGrid;
         mBaseAdapter = adapter;
+        register();
+    }
 
+    public void register() {
         IntentFilter filter = new IntentFilter(BusinessStrategy.ACTION_ADS_STATUS_CHANGED);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(this, filter);
+    }
+
+    public void unregister() {
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(this);
     }
 
     public AdWrapperAdapter getAdAdapter() {

@@ -57,12 +57,6 @@ public abstract class MediaCollectionFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mActivity = null;
-    }
-
     public Context getContext() {
         return mActivity;
     }
@@ -104,12 +98,18 @@ public abstract class MediaCollectionFragment extends Fragment {
     public void onStart() {
         super.onStart();
         FlurryAnalytics.getInstance(getActivity()).startSession();
+        if ( mAdController != null ) {
+            mAdController.register();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
         FlurryAnalytics.getInstance(getActivity()).endSession();
+        if ( mAdController != null ) {
+            mAdController.unregister();
+        }
     }
 
     protected abstract void loadCollection();
@@ -132,7 +132,7 @@ public abstract class MediaCollectionFragment extends Fragment {
             recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(mActivity, 0)));
             MediaGridAdapter mediaAdapter = new MediaGridAdapter(mActivity, recyclerView, iMediaCollectionList, isPhone);
 
-            mAdController = new AdController(getActivity(), recyclerView, mediaAdapter, true);
+            mAdController = new AdController(mActivity, recyclerView, mediaAdapter, true);
             recyclerView.setAdapter(mAdController.getAdAdapter());
             recyclerView.setHasFixedSize(true);
             listIsEmpty(iMediaCollectionList.size());
