@@ -98,7 +98,9 @@ public class BoomAudioProcessor implements AudioProcessor {
 
     @Override
     public void reset() {
-        engine.release();
+        if ( engine != null ) {
+            engine.release();
+        }
     }
 
     public void setEffectState(boolean enable) {
