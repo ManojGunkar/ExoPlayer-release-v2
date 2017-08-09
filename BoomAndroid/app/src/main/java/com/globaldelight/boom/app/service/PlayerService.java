@@ -233,11 +233,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
         super.onDestroy();
     }
 
-    private void updateUpNextDB() {
-        mPlayback.queue().SaveUpNextItems();
-    }
-
-
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         if(isConnected) {
@@ -264,7 +259,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
             e.printStackTrace();
         }
         updateNotificationPlayer(mPlayback.getPlayingItem(), true, false);
-        updateUpNextDB();
+        mPlayback.queue().SaveUpNextItems(false);
     }
 
     @Override
