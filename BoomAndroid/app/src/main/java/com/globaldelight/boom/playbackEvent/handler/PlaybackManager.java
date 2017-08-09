@@ -49,7 +49,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     private ArrayList<Listener> mListeners = new ArrayList<>();
     private IMediaItemBase playingItem;
-    private volatile boolean isTrackWaiting = false;
     private AudioPlayer mPlayer;
     private Context context;
     private AudioManager audioManager;
@@ -58,6 +57,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     private Handler mHandler;
     private UpNextPlayingQueue mQueue;
     private int skipDirection;
+    private PlayingItemChanged mItemChangeTask = null;
 
 
     AudioPlayer.Callback IPlayerEvents = new AudioPlayer.Callback() {
@@ -242,28 +242,43 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     }
 
     @Override
-    public synchronized void onPlayingItemChanged() {
+    public void onPlayingItemChanged() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                changePlayingItem();
+            }
+        });
+    }
+
+    private void changePlayingItem() {
         if ( isPlaying() ) {
             setSessionState(PlaybackState.STATE_PAUSED);
         }
 
         notifyMediaChanged();
         playingItem = mQueue.getPlayingItem();
+
+        if ( mItemChangeTask != null && mItemChangeTask.getStatus() != AsyncTask.Status.FINISHED ) {
+            mItemChangeTask.cancel(true);
+            mItemChangeTask = null;
+        }
+
         if ( playingItem != null ) {
-            isTrackWaiting = true;
-            new PlayingItemChanged().execute(playingItem);
+            mItemChangeTask = new PlayingItemChanged();
+            mItemChangeTask.execute(playingItem);
         }
         else {
             setSessionState(PlaybackState.STATE_STOPPED);
         }
     }
 
-    public  boolean isTrackWaitingForPlay(){
-        return isTrackWaiting;
+    public boolean isTrackWaiting() {
+        return (mItemChangeTask != null && mItemChangeTask.getStatus() != AsyncTask.Status.FINISHED);
     }
 
     public boolean isTrackLoading(){
-        return isLoading() || isTrackWaitingForPlay();
+        return isLoading() || isTrackWaiting();
     }
 
     public boolean isTrackPlaying() {
@@ -407,7 +422,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 setSessionState(PlaybackState.STATE_STOPPED);
                 Toast.makeText(context, context.getResources().getString(R.string.loading_problem), Toast.LENGTH_SHORT).show();
             }
-            isTrackWaiting = false;
         }
     }
 
@@ -462,7 +476,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     }
 
     public void seek(final int progress) {
-        if( !isTrackWaiting ){
+        if( !isTrackWaiting() ){
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {

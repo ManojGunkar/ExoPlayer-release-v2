@@ -128,31 +128,16 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                     return;
                 }
 
-                if ( !App.playbackManager().isTrackWaitingForPlay() ) {
-                    App.playbackManager().queue().addItemListToPlay(itemList, position);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyDataSetChanged();
-                        }
-                    }, 500);
-                }
+                App.playbackManager().queue().addItemListToPlay(itemList, position);
                 if(itemList.get(position).getMediaType()==MediaType.DROP_BOX){
-//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_from_DropBox_thum_Nail);
                     FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_from_DropBox_thum_Nail);
 
-
                 }else if(itemList.get(position).getMediaType()==MediaType.GOOGLE_DRIVE){
-//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Song_Played_from_GoogleDrive_thum_Nail);
                     FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_from_GoogleDrive_thum_Nail);
-
                 }
                 else {
-//                    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_SONG_SECTION);
                     FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.EVENT_MUSIC_PLAYED_FROM_SONG_SECTION);
-
                 }
-//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_MUSIC_PLAYED_FROM_FAVOURITE_SECTION);
                 if(listItemType == ItemType.RECENT_PLAYED){
                     FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_Recent_Playlist);
 

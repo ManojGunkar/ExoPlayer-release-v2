@@ -156,9 +156,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
         holder.mainView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!App.playbackManager().isTrackLoading()){
-                    App.playbackManager().queue().setNewItemAsPlayingItem(itemPosition);
-                }
+                App.playbackManager().queue().setNewItemAsPlayingItem(itemPosition);
                 try {
                     recyclerView.scrollToPosition(itemPosition);
                 } catch (Exception e) {

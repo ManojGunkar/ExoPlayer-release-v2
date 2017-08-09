@@ -247,15 +247,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
                 }
 
-                if (!App.playbackManager().isTrackLoading()) {
-                    App.playbackManager().queue().addItemListToPlay(collection, position);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyDataSetChanged();
-                        }
-                    }, 500);
-                }
+                App.playbackManager().queue().addItemListToPlay(collection, position);
             }
         });
         holder.menu.setOnClickListener(new View.OnClickListener() {
