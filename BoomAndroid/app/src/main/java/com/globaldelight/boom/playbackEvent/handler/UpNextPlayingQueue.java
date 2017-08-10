@@ -481,6 +481,7 @@ public class UpNextPlayingQueue {
                     mPlayingItemIndex = position;
                     newShuffleList();
                     PlayingItemChanged();
+                    SaveUpNextItems(true);
                 }
             });
         }
@@ -535,24 +536,26 @@ public class UpNextPlayingQueue {
         return null;
     }
 
-    public void SaveUpNextItems() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (mShuffle == SHUFFLE_ON) {
-                        insertUpNextList(SHUFFLED);
-                    } else {
-                        insertUpNextList(UNSHUFFLE);
-                        Preferences.writeString(context, SHUFFLED, null);
+    public void SaveUpNextItems(boolean saveList) {
+        savePlayingItemIndex();
+        if ( saveList ) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (mShuffle == SHUFFLE_ON) {
+                            insertUpNextList(SHUFFLED);
+                        } else {
+                            insertUpNextList(UNSHUFFLE);
+                            Preferences.writeString(context, SHUFFLED, null);
+                        }
                     }
-                    savePlayingItemIndex();
-                }
-                catch (Exception e) {
+                    catch (Exception e) {
 
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
 
     private void savePlayingItemIndex() {

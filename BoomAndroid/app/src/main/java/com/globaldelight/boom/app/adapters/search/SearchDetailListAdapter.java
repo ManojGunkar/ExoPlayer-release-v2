@@ -92,15 +92,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
                 @Override
                 public void onClick(View view) {
                     animate(holder);
-                    if (!App.playbackManager().isTrackLoading()) {
-                        App.playbackManager().queue().addItemToPlay(resultItemList.get(position));
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                notifyDataSetChanged();
-                            }
-                        }, 500);
-                    }
+                    App.playbackManager().queue().addItemToPlay(resultItemList.get(position));
                 }
             });
 

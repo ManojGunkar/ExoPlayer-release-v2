@@ -38,9 +38,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     public static final String ACTION_ADS_STATUS_CHANGED = "com.globaldelight.boom.ADS_STATUS_CHANGED";
     private static final String TAG = "Business Model";
 
-    private static final int SHARE_REMINDER_PERIOD = 5*60*1000;
-    private static final int PURCHASE_REMINDER_PERIOD = 15*60*1000;
-
 
     @IntDef({PRICE_FULL, PRICE_DISCOUNT, PRICE_DISCOUNT_2})
     public @interface Price{};
@@ -234,7 +231,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     }
 
     private boolean shouldRemindPurchase() {
-        return isTimeExpired(data.getLastPurchaseReminder(), PURCHASE_REMINDER_PERIOD);
+        return isTimeExpired(data.getLastPurchaseReminder(), config.purchaseReminderInterval());
     }
 
     private void showPurchaseDialog(boolean sharingAllowed) {
@@ -252,11 +249,10 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     };
 
     public @Price int getPurchaseLevel() {
-        Date startDate = data.getStartDate();
-        if ( startDate == null || !isTimeExpired(startDate, config.fullPricePeriod() ) ) {
+        if ( !isTimeExpired(data.installDate(), config.fullPricePeriod() ) ) {
             return PRICE_FULL;
         }
-        else if ( !isTimeExpired(startDate, config.discountPeriod()) ) {
+        else if ( !isTimeExpired(data.installDate(), config.discountPeriod()) ) {
             return PRICE_DISCOUNT;
         }
 
@@ -296,7 +292,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
     private boolean shouldRemindSharing() {
         Date sharedDate = data.getSharedDate();
-        if (  isSharingAllowed() && sharedDate == null && isTimeExpired(data.getLastShareReminder(), SHARE_REMINDER_PERIOD) ) {
+        if (  isSharingAllowed() && sharedDate == null && isTimeExpired(data.getLastShareReminder(), config.shareReminderInterval()) ) {
             return true;
         }
         return false;
@@ -357,6 +353,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             App.playbackManager().playPause();
             mWasPlaying = false;
         }
+        AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
         FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_WATCHED_VIDEO);
     }
 
@@ -391,6 +388,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         if ( property.equals(AudioEffect.AUDIO_EFFECT_PROPERTY) ) {
             update();
             if ( data.getState() == BusinessData.STATE_LOCKED && AudioEffect.getInstance(mContext).isAudioEffectOn() ) {
+                AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
                 if ( App.playbackManager().isTrackPlaying() ) {
                     mWasPlaying = true;
                     App.playbackManager().playPause();
@@ -412,7 +410,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     @Override
     public void onMediaChanged() {
         if ( data.getState() == BusinessData.STATE_UNDEFINED && data.getStartDate() != null ) {
-            if ( mSongsPlayed > 1 ) {
+            if ( mSongsPlayed > config.freeSongsLimit() ) {
                 LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
                 lockEffects();
                 if ( isSharingAllowed() ) {

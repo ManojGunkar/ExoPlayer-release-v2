@@ -34,7 +34,7 @@ public class PlayerUIController implements IPlayerUIController {
     @Override
     public void OnPlayPause() {
         IMediaItemBase item =  App.playbackManager().queue().getPlayingItem();
-        if(null != item && !App.playbackManager().isTrackWaitingForPlay()) {
+        if(null != item ) {
             mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
         }
     }
@@ -42,7 +42,7 @@ public class PlayerUIController implements IPlayerUIController {
     @Override
     public void OnPlayerSeekChange(int progress) {
         IMediaItemBase item =  App.playbackManager().queue().getPlayingItem();
-        if(null != item && !App.playbackManager().isTrackWaitingForPlay()) {
+        if(null != item ) {
             Intent intent = new Intent(PlayerServiceReceiver.ACTION_SEEK_SONG);
             intent.putExtra("seek", progress);
             mContext.sendBroadcast(intent);
@@ -64,13 +64,13 @@ public class PlayerUIController implements IPlayerUIController {
 
     @Override
     public void OnNextTrackClick() {
-        if(App.playbackManager().queue().isNext() && !App.playbackManager().isTrackWaitingForPlay())
+        if(App.playbackManager().queue().isNext())
             mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_NEXT_SONG));
     }
 
     @Override
     public void OnPreviousTrackClick() {
-        if(App.playbackManager().queue().isPrevious() && !App.playbackManager().isTrackWaitingForPlay())
+        if(App.playbackManager().queue().isPrevious())
             mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PREV_SONG));
     }
 

@@ -194,21 +194,21 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
 
     @Override
     public void onNextTrack() {
-        if (mPlayback.queue().isNext() && !mPlayback.isTrackWaitingForPlay()) {
+        if ( mPlayback.queue().isNext() ) {
             mPlayback.playNextSong(true);
         }
     }
 
     @Override
     public void onPreviousTrack() {
-        if (mPlayback.queue().isPrevious() && !mPlayback.isTrackWaitingForPlay()) {
+        if ( mPlayback.queue().isPrevious() ) {
             mPlayback.playPrevSong();
         }
     }
 
     @Override
     public void onPlayPauseTrack() {
-        if (null != mPlayback.queue().getPlayingItem() && !mPlayback.isTrackWaitingForPlay() ) {
+        if ( null != mPlayback.queue().getPlayingItem() ) {
             mPlayback.playPause();
         }
     }
@@ -232,11 +232,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
         }catch (Exception e){}
         super.onDestroy();
     }
-
-    private void updateUpNextDB() {
-        mPlayback.queue().SaveUpNextItems();
-    }
-
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
@@ -264,7 +259,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
             e.printStackTrace();
         }
         updateNotificationPlayer(mPlayback.getPlayingItem(), true, false);
-        updateUpNextDB();
+        mPlayback.queue().SaveUpNextItems(false);
     }
 
     @Override

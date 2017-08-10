@@ -110,7 +110,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
                 if ( position == -1 ) {
                     return;
                 }
-                if (App.playbackManager().queue() != null && !App.playbackManager().isTrackLoading()) {
+                if (App.playbackManager().queue() != null ) {
                     if ( collection.count() > 0) {
                         App.playbackManager().queue().addItemListToPlay(collection, position);
                     }
