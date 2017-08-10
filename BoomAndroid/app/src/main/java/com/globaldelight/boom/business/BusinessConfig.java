@@ -11,39 +11,46 @@ public class BusinessConfig {
     private static final int MS_PER_DAY = 24 * MS_PER_HOUR;
 
     public long trialPeriod() {
-        return 5 * MS_PER_MIN;
+        return 1 * MS_PER_DAY;
     };
 
     public long sharePeriod() {
-        return 15 * MS_PER_MIN;
+        return 5 * MS_PER_DAY;
     };
 
     public long extendedSharePeriod() {
-        return 2 * MS_PER_MIN;
+        return 2 * MS_PER_DAY;
     }
 
     public long initialPopupDelay() {
-        return 1 * MS_PER_MIN;
+        return 30 * MS_PER_MIN;
     }
 
     public long reminderInterval() {
-        return 1 * MS_PER_MIN;
+        return 30 * MS_PER_MIN;
+    }
+
+    public long videoRewardPeriod() {
+        return 1 * MS_PER_DAY;
+    }
+
+    public long fullPricePeriod() {
+        return 1 * MS_PER_DAY;
+    }
+
+    public long discountPeriod() {
+        return 30 * MS_PER_DAY;
     }
 
     public long purchaseReminderInterval() {
         return 5 * MS_PER_DAY;
     }
 
-    public long videoRewardPeriod() {
-        return 5 * MS_PER_MIN;
+    public long shareReminderInterval() {
+        return 1 * MS_PER_DAY;
     }
 
-    public long fullPricePeriod() {
-        return 5 * MS_PER_MIN;
+    public int freeSongsLimit() {
+        return 3;
     }
-
-    public long discountPeriod() {
-        return 15 * MS_PER_MIN;
-    }
-
 }
