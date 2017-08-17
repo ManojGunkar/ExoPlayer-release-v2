@@ -29,6 +29,10 @@ android {
         buildConfigField("String", EXPIRY_DATE, expiryDate as String);
         buildConfigField("boolean", BUSINESS_MODEL_ENABLED, businessModelEnabled)
         buildConfigField "String", 'MIXPANEL_SENDER_ID',  STRING("862807752058")
+        buildConfigField "String", 'FLURRY_API_KEY',            STRING("MGGVKKG7JYXGC3N89B4V")
+        buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN',    STRING("598c4011c2d961ef3b7f248459fa30c7")
+        buildConfigField "String", 'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-3940256099942544/5224354917")
+        buildConfigField "String", 'GOOGLE_NATIVE_AD_ID',       STRING("ca-app-pub-3940256099942544/2247696110")
     }
 
     buildTypes {
@@ -44,10 +48,9 @@ android {
     }
     productFlavors {
         development {
-            buildConfigField "String", 'FLURRY_API_KEY',            STRING("MGGVKKG7JYXGC3N89B4V")
-            buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN',    STRING("598c4011c2d961ef3b7f248459fa30c7")
-            buildConfigField "String", 'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-3940256099942544/5224354917")
-            buildConfigField "String", 'GOOGLE_NATIVE_AD_ID',       STRING("ca-app-pub-3940256099942544/2247696110")
+        }
+        demo {
+            buildConfigField "boolean", BUSINESS_MODEL_ENABLED,     "false"
         }
         production {
             buildConfigField "String",  EXPIRY_DATE,                 "null"

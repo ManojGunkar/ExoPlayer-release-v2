@@ -6,9 +6,9 @@ package com.globaldelight.boom.business;
 
 public class BusinessConfig {
 
-    private static final int MS_PER_MIN = 60*1000;
-    private static final int MS_PER_HOUR = 60 * MS_PER_MIN;
-    private static final int MS_PER_DAY = 24 * MS_PER_HOUR;
+    private static final long MS_PER_MIN = 60L * 1000L;
+    private static final long MS_PER_HOUR = 60L * MS_PER_MIN;
+    private static final long MS_PER_DAY = 24L * MS_PER_HOUR;
 
     public long trialPeriod() {
         return 1 * MS_PER_DAY;
@@ -27,7 +27,7 @@ public class BusinessConfig {
     }
 
     public long reminderInterval() {
-        return 30 * MS_PER_MIN;
+        return 30L * MS_PER_MIN;
     }
 
     public long videoRewardPeriod() {
@@ -39,7 +39,7 @@ public class BusinessConfig {
     }
 
     public long discountPeriod() {
-        return 30 * MS_PER_DAY;
+        return 30L * MS_PER_DAY;
     }
 
     public long purchaseReminderInterval() {

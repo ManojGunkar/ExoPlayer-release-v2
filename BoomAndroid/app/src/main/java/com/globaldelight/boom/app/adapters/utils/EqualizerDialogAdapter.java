@@ -45,8 +45,10 @@ public class EqualizerDialogAdapter extends RecyclerView.Adapter<EqualizerDialog
             @Override
             public void onClick(View view) {
                 final int position = holder.getAdapterPosition();
-                equalizerListener.onChangeEqualizerValue(position);
-                updateList(position);
+                if ( position >= 0 ) {
+                    equalizerListener.onChangeEqualizerValue(position);
+                    updateList(position);
+                }
             }
         });
 

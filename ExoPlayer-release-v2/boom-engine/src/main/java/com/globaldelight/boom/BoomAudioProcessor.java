@@ -93,6 +93,7 @@ public class BoomAudioProcessor implements AudioProcessor {
 
     @Override
     public void flush() {
+        outputBuffer.clear();
         engine.flush();
     }
 

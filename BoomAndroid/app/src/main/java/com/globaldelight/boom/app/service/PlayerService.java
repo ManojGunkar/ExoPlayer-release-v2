@@ -50,27 +50,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
     private PlayerServiceReceiver serviceReceiver;
     private ConnectivityReceiver connectivityReceiver;
 
-    private static PlayerService instance = null;
-    private static Object[] sWait = new Object[0];
-    public static synchronized PlayerService getInstance(Context context) {
-        if ( instance == null ) {
-            context.startService(new Intent(context, PlayerService.class));
-            while ( instance == null ) {
-                if ( Looper.getMainLooper() == Looper.myLooper() ) {
-                    Looper.loop();
-                }
-                try {
-                    Thread.sleep(10);
-                }
-                catch (InterruptedException  e) {
-
-                }
-            }
-        }
-
-        return instance;
-    }
-
 
     @Override
     public void onCreate() {
@@ -79,6 +58,8 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
 
         serviceReceiver = new PlayerServiceReceiver(this);
         serviceReceiver.registerService(this);
+
+        notificationHandler = new NotificationHandler(this);
 
         mPlayback = PlaybackManager.getInstance(this);
         mPlayback.registerListener(this);
@@ -105,8 +86,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
         if(connectivityReceiver.isNetworkAvailable(this, false)){
             LoadNetworkCalls();
         }
-
-        instance = this;
     }
 
     private void LoadNetworkCalls() {
@@ -123,10 +102,8 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mPlayback = App.playbackManager();
         mPlayback.queue().getRepeatShuffleOnAppStart();
-        notificationHandler = new NotificationHandler(this);
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     private void updatePlayPause(boolean play_pause) {
@@ -215,9 +192,9 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
 
     @Override
     public void onDestroy() {
-        instance = null;
         unregisterReceiver(headPhonePlugReceiver);
         serviceReceiver.unregisterService();
+        mPlayback.unregisterListener(this);
         try {
             mServiceStopTime = SystemClock.currentThreadTimeMillis();
             mServiceStartTime = mServiceStopTime - mServiceStartTime;

@@ -27,18 +27,12 @@
             android:textSize="@dimen/player_seek_time_size"
             android:textStyle="normal" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <android.support.v7.widget.AppCompatSeekBar
+            android:id="@+id/control_seek_bar"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <android.support.v7.widget.AppCompatSeekBar
-                android:id="@+id/control_seek_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layoutDirection="inherit"
-                android:progress="100" />
-        </LinearLayout>
+            android:layout_weight="1"
+            android:progress="100" />
 
         <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/remain_time"

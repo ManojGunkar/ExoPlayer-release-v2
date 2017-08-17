@@ -30,7 +30,7 @@ static int mNativeSampleRate = 0;
 static pthread_mutex_t mLock;
 
 
-
+// Clear all the pending data from engine
 static void RinseEngine() {
     int16_t* inbuffer = (int16_t*)calloc(DEFAULT_FRAME_COUNT*CHANNEL_COUNT, sizeof(int16_t));
     float* outbuffer = (float*)calloc(DEFAULT_FRAME_COUNT*CHANNEL_COUNT, BYTES_PER_CHANNEL);
@@ -143,7 +143,6 @@ void BOOM_ENGINE_METHOD(flush)(
     LOGD("Flush");
     gdpl::AutoLock lock(&mLock);
     mProcessor->Flush();
-    mEngine->ResetEngine();
     RinseEngine();
 }
 
