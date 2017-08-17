@@ -884,11 +884,11 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 if (audioEffects.isAudioEffectOn() && audioEffects.isEqualizerOn())
                     onEqDialogOpen();
                 break;
-            case R.id.equalizer_txt:
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Open_Equalizer_Dailog_from_text);
-                if (audioEffects.isAudioEffectOn() && audioEffects.isEqualizerOn())
-                    onEqDialogOpen();
-                break;
+//            case R.id.equalizer_txt:
+//                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Open_Equalizer_Dailog_from_text);
+//                if (audioEffects.isAudioEffectOn() && audioEffects.isEqualizerOn())
+//                    onEqDialogOpen();
+//                break;
             case R.id.speaker_btn:
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Speaker_Dialog_Opened_From_Arrow);
             case R.id.three_surround_txt:
@@ -970,7 +970,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mEqualizerTxt = (RegularTextView) mInflater.findViewById(R.id.equalizer_txt);
         mEqDialogPanel = (LinearLayout) mInflater.findViewById(R.id.eq_dialog_panel);
         mEqDialogPanel.setOnClickListener(this);
-        mEqualizerTxt.setOnClickListener(this);
 
         mSelectedEqImg = (ImageView) mInflater.findViewById(R.id.selected_eq_img);
         mSelectedEqTxt = (RegularTextView) mInflater.findViewById(R.id.selected_eq_txt);
