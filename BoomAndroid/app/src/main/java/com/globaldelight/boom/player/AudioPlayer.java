@@ -244,15 +244,6 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         if ( mExoPlayer != null ) {
             mExoPlayer.seekTo(pos);
         }
-
-        if ( state == PAUSED ) {
-            if (mCallback != null) handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mCallback.onPlayTimeUpdate(mExoPlayer.getCurrentPosition(), mExoPlayer.getDuration());
-                }
-            });
-        }
     }
 
     public void seek(int percent) {
