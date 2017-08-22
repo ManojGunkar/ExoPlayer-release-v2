@@ -128,6 +128,8 @@ public class AlbumDetailFragment extends Fragment {
 
     private class LoadAlbumSongs extends AsyncTask<Void, Integer, IMediaItemCollection> {
 
+        private Activity mActivity = AlbumDetailFragment.this.mActivity;
+
         @Override
         protected IMediaItemCollection doInBackground(Void... params) {
             if(dataCollection.getParentType() == ItemType.ALBUM && dataCollection.count() == 0) {

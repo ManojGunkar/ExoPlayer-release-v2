@@ -112,6 +112,8 @@ public class AlbumDetailItemFragment extends Fragment {
 
     private class LoadAlbumItems extends AsyncTask<Void, Integer, IMediaItemBase> {
 
+        private Activity mActivity = AlbumDetailItemFragment.this.mActivity;
+
         @Override
         protected IMediaItemBase doInBackground(Void... params) {
 //            ItemType.ARTIST && ItemType.GENRE

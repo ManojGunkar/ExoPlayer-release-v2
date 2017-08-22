@@ -132,6 +132,7 @@ public class SongsListFragment extends Fragment{
     }
 
     private class LoadDeviceMediaList extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {
+        private Activity mActivity = SongsListFragment.this.mActivity;
         @Override
         protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
             return MediaController.getInstance(mActivity).getSongList();

@@ -112,6 +112,7 @@ public class PlayListsFragment extends Fragment {
     }
 
     private class LoadCollectionList extends AsyncTask<Void, Void, Void> {
+        private Activity mActivity = PlayListsFragment.this.mActivity;
         GridLayoutManager gridLayoutManager;
         @Override
         protected Void doInBackground(Void... voids) {

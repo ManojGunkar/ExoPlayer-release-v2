@@ -368,14 +368,21 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     private void updateAlbumArt(final IMediaItem item){
         new AsyncTask<Void, Void, Bitmap []>() {
+
+            private Context context = mActivity;
+
             @Override
             protected Bitmap[] doInBackground(Void... params) {
+                if (context == null ) {
+                    return null;
+                }
+
                 Bitmap[] result = new Bitmap[2];
                 boolean failed = false;
                 if ( PlayerUtils.isPathValid(item.getItemArtUrl()) ) {
                     try {
                         Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
-                        Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(mActivity, bitmap, ScreenWidth/10, ScreenHeight/10);
+                        Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(context, bitmap, ScreenWidth/10, ScreenHeight/10);
                         result[0] = bitmap;
                         result[1] = blurredBitmap;
                     }catch (Exception e){
@@ -387,9 +394,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 }
 
                 if ( failed ) {
-                    Bitmap bitmap = BitmapFactory.decodeResource(mActivity.getResources(),
+                    Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),
                             R.drawable.ic_default_art_player_header);
-                    Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(mActivity, bitmap, ScreenWidth/10, ScreenHeight/10);
+                    Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(context, bitmap, ScreenWidth/10, ScreenHeight/10);
                     result[0] = bitmap;
                     result[1] = blurredBitmap;
                 }
@@ -399,7 +406,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
             @Override
             protected void onPostExecute(Bitmap[] bitmaps) {
-                if ( bitmaps.length != 2 ) {
+                if ( bitmaps == null || bitmaps.length != 2 ) {
                     return;
                 }
 

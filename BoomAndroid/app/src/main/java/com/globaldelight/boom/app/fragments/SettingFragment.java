@@ -63,6 +63,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
 
     private class DropboxAccountLoader extends AsyncTask<Void, Void, DropboxAPI.Account> {
+        private Activity mActivity = SettingFragment.this.mActivity;
         @Override
         protected DropboxAPI.Account doInBackground(Void... params) {
             try {
