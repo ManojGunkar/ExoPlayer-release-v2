@@ -66,13 +66,13 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
     }
 
-    public void registerPlayerReceiver(Context context){
+    private void registerPlayerReceiver(Context context){
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE);
         context.registerReceiver(mPlayerSliderReceiver, intentFilter);
     }
 
-    public void unregisterPlayerReceiver(Context context){
+    private void unregisterPlayerReceiver(Context context){
         unregisterReceiver(mPlayerSliderReceiver);
     }
 

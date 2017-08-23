@@ -125,17 +125,6 @@ public class ActivityContainer extends MasterActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        unregisterPlayerReceiver(ActivityContainer.this);
-        super.onPause();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         mFragment = null;

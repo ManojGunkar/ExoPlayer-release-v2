@@ -134,7 +134,6 @@ public class MainActivity extends MasterActivity
     }
 
     private void registerHeadSetReceiver(){
-        registerPlayerReceiver(MainActivity.this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
         intentFilter.addAction(PlayerEvents.ACTION_PLAYER_STATE_CHANGED);
@@ -473,7 +472,6 @@ public class MainActivity extends MasterActivity
 
     @Override
     protected void onPause() {
-        unregisterPlayerReceiver(MainActivity.this);
         unregisterReceiver(headPhoneReceiver);
         App.playbackManager().isLibraryResumes = false;
         super.onPause();
