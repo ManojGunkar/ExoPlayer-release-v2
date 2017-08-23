@@ -265,7 +265,6 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(getActivity()).startSession();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
@@ -279,7 +278,6 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();
         getActivity().unregisterReceiver(mUpdatePlayingItem);
     }
 }

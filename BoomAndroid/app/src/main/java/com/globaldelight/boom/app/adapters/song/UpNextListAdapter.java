@@ -38,9 +38,9 @@ import static com.globaldelight.boom.utils.Utils.dpToPx;
 
 public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.SimpleItemViewHolder> {
     private static final int PENDING_REMOVAL_TIMEOUT = 2000;
-    final Handler swipeDeletehandler = new Handler();
-    public int itemDeletePosition = -1, playingItemPosition;
-    OnStartDragListener mOnStartDragListener;
+    private final Handler swipeDeletehandler = new Handler();
+    private int itemDeletePosition = -1, playingItemPosition;
+    private OnStartDragListener mOnStartDragListener;
     private RecyclerView recyclerView;
     private Context context;
 
@@ -214,7 +214,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
         }
     }
 
-    public class SimpleItemViewHolder extends RecyclerView.ViewHolder {
+    public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
 
         //For Header View

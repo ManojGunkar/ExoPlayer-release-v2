@@ -155,19 +155,4 @@ public class AlbumDetailItemFragment extends Fragment {
     public void listIsEmpty() {
         rootView.setVisibility(View.GONE);
     }
-    @Override
-    public  void onStart() {
-        super.onStart();
-//        FlurryAnalyticHelper.flurryStartSession(mActivity);
-        FlurryAnalytics.getInstance(getActivity()).startSession();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-//        FlurryAnalyticHelper.flurryStopSession(mActivity);
-        FlurryAnalytics.getInstance(getActivity()).endSession();
-
-    }
-
 }

@@ -180,16 +180,4 @@ public class AlbumDetailFragment extends Fragment {
         mActivity.unregisterReceiver(mUpdatePlayingItem);
         super.onDestroy();
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        FlurryAnalytics.getInstance(getActivity()).startSession();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();
-    }
 }

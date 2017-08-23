@@ -49,18 +49,6 @@ public class AboutFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         initViews();
     }
-    @Override
-    public void onStart() {
-        super.onStart();
-        FlurryAnalytics.getInstance(mActivity.getApplicationContext()).startSession();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        FlurryAnalytics.getInstance(mActivity.getApplicationContext()).endSession();
-
-    }
 
     private void initViews() {
         rateButton = (RegularButton) rootView.findViewById(R.id.btn_rate_app);

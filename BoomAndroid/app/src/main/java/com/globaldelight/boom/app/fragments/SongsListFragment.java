@@ -155,7 +155,6 @@ public class SongsListFragment extends Fragment{
     @Override
     public  void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(getActivity()).startSession();
         if ( mAdController != null ) {
             mAdController.register();
         }
@@ -164,7 +163,6 @@ public class SongsListFragment extends Fragment{
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();
         if ( mAdController != null ) {
             mAdController.unregister();
         }

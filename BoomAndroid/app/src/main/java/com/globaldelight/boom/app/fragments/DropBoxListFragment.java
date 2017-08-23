@@ -251,17 +251,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     public void finishDropboxLoading() {
         dismissProgressWithDelay();
     }
-    @Override
-    public  void onStart() {
-        super.onStart();
-        FlurryAnalytics.getInstance(getActivity()).startSession();
-    }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();
-    }
 
     @Override
     public void EmptyDropboxList() {

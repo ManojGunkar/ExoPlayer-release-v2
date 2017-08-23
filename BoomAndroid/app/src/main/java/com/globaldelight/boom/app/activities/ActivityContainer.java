@@ -126,7 +126,6 @@ public class ActivityContainer extends MasterActivity {
 
     @Override
     protected void onResume() {
-        registerPlayerReceiver(ActivityContainer.this);
         super.onResume();
     }
 
@@ -139,17 +138,7 @@ public class ActivityContainer extends MasterActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
-    @Override
-    public  void onStart() {
-        super.onStart();
-        FlurryAnalytics.getInstance(this).startSession();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        FlurryAnalytics.getInstance(this).endSession();
+        mFragment = null;
     }
 }
 

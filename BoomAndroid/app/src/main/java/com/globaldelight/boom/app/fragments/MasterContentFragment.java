@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -89,19 +90,20 @@ import static com.globaldelight.boom.app.sharedPreferences.Preferences.TOOLTIP_S
 
 public class MasterContentFragment extends Fragment implements View.OnClickListener, View.OnTouchListener, Observer {
     private final String TAG = "PlayerFragment-TAG";
+    private static boolean isCloudSeek = false;
+    public static boolean isUpdateUpnextDB = true;
+    private static MediaItem mPlayingMediaItem;
+    private static boolean mIsPlaying, mIsLastPlayed;
+
 
     private long mItemId=-1;
     private boolean isUser = false;
     
-    Activity mActivity;
+    private Activity mActivity;
     private ProgressBar mLoadingProgress;
-    private static boolean isCloudSeek = false;
     private AudioEffect audioEffects;
 
-    public static boolean isUpdateUpnextDB = true;
 
-    private static MediaItem mPlayingMediaItem;
-    private static boolean mIsPlaying, mIsLastPlayed;
 
     /************************************************************************************/
 
@@ -126,7 +128,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private RegularTextView mDisableIntensity;
     private NegativeSeekBar mIntensitySeek;
     private SwitchCompat mEffectSwitch;
-    private AppCompatCheckBox mFullBassCheck;
+    private CheckBox mFullBassCheck;
     private RegularTextView mEffectSwitchTxt, m3DSurroundTxt, mIntensityTxt, mEqualizerTxt, mSelectedEqTxt;
     private ImageView m3DSurroundBtn, mIntensityBtn, mEqualizerBtn, mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
     private LinearLayout mEqDialogPanel;
@@ -231,6 +233,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     public void onDetach() {
         super.onDetach();
         mActivity = null;
+        mLargeAlbumArt.setImageDrawable(null);
+        mPlayerBackground.setBackground(null);
     }
 
     @Nullable
@@ -258,8 +262,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         audioEffects = AudioEffect.getInstance(mActivity);
 
         playerUIController = new PlayerUIController(mActivity);
-        PlayerUIController.registerPlayerUIController(playerUIController);
-
         mPlayerBackground = (FrameLayout) mInflater.findViewById(R.id.player_src_background);
 
         initMiniPlayer();
@@ -762,13 +764,13 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         setPlayerInfo();
         super.onStart();
         audioEffects.addObserver(this);
-        FlurryAnalytics.getInstance(getActivity()).startSession();
+        registerPlayerReceiver(mActivity);
     }
 
 
 /*Player Screen Utils*/
 
-    public void registerPlayerReceiver(Context context){
+    private void registerPlayerReceiver(Context context){
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_SONG_CHANGED);
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
@@ -785,7 +787,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         setPlayerInfo();
     }
 
-    public void unregisterPlayerReceiver(Context context){
+    private void unregisterPlayerReceiver(Context context){
         context.unregisterReceiver(mPlayerBroadcastReceiver);
     }
 
@@ -948,7 +950,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mSpeakerBtn.setOnClickListener(this);
         m3DSurroundTxt.setOnClickListener(this);
 
-        mFullBassCheck = (AppCompatCheckBox) mInflater.findViewById(R.id.fullbass_chk);
+        mFullBassCheck = (CheckBox) mInflater.findViewById(R.id.fullbass_chk);
         mFullBassCheck.setChecked(audioEffects.isFullBassOn());
 
         mFullBassCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1149,7 +1151,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     public void onStop() {
         super.onStop();
         audioEffects.deleteObserver(this);
-        FlurryAnalytics.getInstance(getActivity()).endSession();
+        unregisterPlayerReceiver(mActivity);
     }
 
 

@@ -47,7 +47,7 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
     private PermissionChecker permissionChecker;
     private ItemTouchHelper mItemTouchHelper;
     private RecyclerView rootView;
-    Activity mActivity;
+    private Activity mActivity;
 
     private BroadcastReceiver upnextBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -74,6 +74,12 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
         if (context instanceof Activity){
             mActivity = (Activity) context;
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
     }
 
     @Nullable
@@ -232,7 +238,6 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
     @Override
     public  void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(getActivity()).startSession();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(PlayerEvents.ACTION_QUEUE_UPDATED);
@@ -246,8 +251,6 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();
-
         mActivity.unregisterReceiver(upnextBroadcastReceiver);
     }
 }
