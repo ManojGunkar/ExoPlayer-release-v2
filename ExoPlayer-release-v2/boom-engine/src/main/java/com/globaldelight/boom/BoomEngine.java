@@ -23,6 +23,11 @@ public class BoomEngine {
     public static int sampleRate;
     public static int frameCount;
 
+
+    /**
+     * Initialize the engine. Must be called once before using the engine
+     * @param context Android context.
+     */
     public static void init(Context context) {
         AudioManager am = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 
@@ -58,18 +63,40 @@ public class BoomEngine {
 
     public native static void finish();
 
+    /**
+     * Constructor. Initializes the for input stream.
+     *
+     * @param sampleRate Sample rate of the input audio
+     * @param channelCount Number of channels in input audio
+     * @param floatAudio If the output should be in float32 format. If false the output will be in pcm 16 format
+     */
     public BoomEngine(int sampleRate, int channelCount, boolean floatAudio) {
         start(sampleRate, channelCount, floatAudio);
     }
 
+    /**
+     * Releases the engine resources. Call this when the audio stream finishes.
+     */
     public void release() {
         stop();
     }
 
     public native void start(int sampleRate, int channelCount, boolean floatAudio);
 
+    /**
+     * Apply boom audio effects.
+     *
+     * @param inBuffer Contains input audio buffer. Should be allocated by calling ByteBuffer.allocateDirect.The caller should set the position and limit of the buffer. The method will update the position according to the number of bytes consumed. Input should always be in pcm16 format.
+     * @param outBuffer Contains output audio buffer. Should be allocated by calling ByteBuffer. The caller should set the position. The method will fill the buffer and sets the limit of the buffer. Output will be 2 channel pcm16 or float32 format.
+     * @param size The number of bytes to be processed.
+     * @returns the number of bytes processed. Note that this can be 0, it is not an error.
+     */
     public native int process(ByteBuffer inBuffer, ByteBuffer outBuffer, int size);
 
+    /**
+     * Clears internal buffers.
+     * @return ignore the return value.
+     */
     public native int flush();
 
     public native void stop();
