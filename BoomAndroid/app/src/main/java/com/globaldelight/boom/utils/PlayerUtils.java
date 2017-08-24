@@ -116,10 +116,10 @@ public class PlayerUtils {
         return out;
     }
 
-    public static Bitmap blur(Context activity, Bitmap inputBitmap) {
+    public static synchronized Bitmap blur(Context context, Bitmap inputBitmap) {
         Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
 
-        RenderScript rs = RenderScript.create(activity.getApplicationContext());
+        RenderScript rs = RenderScript.create(context);
         ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
         Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
         Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
@@ -127,8 +127,7 @@ public class PlayerUtils {
         theIntrinsic.setInput(tmpIn);
         theIntrinsic.forEach(tmpOut);
         tmpOut.copyTo(outputBitmap);
-        theIntrinsic.destroy();
-        rs.finish();
+
         rs.destroy();
 
         return outputBitmap;
