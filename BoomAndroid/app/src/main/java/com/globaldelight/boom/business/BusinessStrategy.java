@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.ActivityContainer;
@@ -100,6 +101,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         mContext = context;
         data = new BusinessData(mContext);
         config = new BusinessConfig();
+
+        if ( !BuildConfig.BUSINESS_MODEL_ENABLED ) {
+            data.setState(BusinessData.STATE_PURCHASED);
+        }
+
         AudioEffect.getInstance(mContext).addObserver(this);
         App.playbackManager().registerListener(this);
 

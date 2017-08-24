@@ -55,10 +55,14 @@ android {
     }
     productFlavors {
         development {
+
         }
+
         demo {
+            buildConfigField("String", EXPIRY_DATE, STRING(getExpiryDate()) );
             buildConfigField "boolean", BUSINESS_MODEL_ENABLED,     "false"
         }
+
         production {
             buildConfigField "String",  EXPIRY_DATE,                 "null"
             buildConfigField "String",  'FLURRY_API_KEY',            STRING("XRPWTN4PDGJJQX6NNJPN")
