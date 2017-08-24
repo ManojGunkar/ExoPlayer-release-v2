@@ -10,10 +10,17 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
+def getExpiryDate() {
+    def now = Calendar.getInstance();
+    now.add(Calendar.MONTH, 1)
+    return now.getTime().format('dd-MM-yyyy')
+}
+
 android {
     def EXPIRY_DATE = "EXPIRY_DATE"
     def BUSINESS_MODEL_ENABLED = "BUSINESS_MODEL_ENABLED"
     def STRING = { k -> "\"${k}\"" }
+
 
     compileSdkVersion 25
     buildToolsVersion '25.0.3'
@@ -38,7 +45,7 @@ android {
     buildTypes {
 
         debug {
-            buildConfigField("String", EXPIRY_DATE, "null");
+            buildConfigField("String", EXPIRY_DATE, STRING(getExpiryDate()) );
         }
 
         release {
