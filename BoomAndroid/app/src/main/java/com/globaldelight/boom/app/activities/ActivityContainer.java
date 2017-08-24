@@ -7,6 +7,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -19,6 +21,8 @@ import com.globaldelight.boom.app.fragments.SettingFragment;
 import com.globaldelight.boom.app.fragments.StoreFragment;
 import com.globaldelight.boom.app.fragments.UpNextListFragment;
 import com.globaldelight.boom.view.RegularTextView;
+
+import java.util.List;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -95,6 +99,7 @@ public class ActivityContainer extends MasterActivity {
                 setVisibleMiniPlayer(false);
                 break;
         }
+        if (mFragment!=null)
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.item_detail_container, mFragment)
                 .commitAllowingStateLoss();

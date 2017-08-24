@@ -4,10 +4,15 @@ import android.Manifest;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -20,25 +25,41 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.adapters.utils.EqualizerDialogAdapter;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.adapters.search.SearchSuggestionAdapter;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.app.fragments.SearchViewFragment;
+import com.globaldelight.boom.app.share.ShareApater;
+import com.globaldelight.boom.app.share.ShareItem;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.database.MusicSearchHelper;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HEADSET_PLUGGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
@@ -423,12 +444,14 @@ public class MainActivity extends MasterActivity
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
                 return  true;
             case R.id.nav_share:
-                new Handler().postDelayed(new Runnable() {
+                Toast.makeText(this,"share",Toast.LENGTH_SHORT).show();
+                customShare();
+                /*new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        startCompoundActivities(R.string.title_share);
+                       // startCompoundActivities(R.string.title_share);
                     }
-                }, 300);
+                }, 300);*/
                 drawerLayout.closeDrawer(GravityCompat.START);
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Share_Opened_from_Boom);
@@ -476,4 +499,64 @@ public class MainActivity extends MasterActivity
         App.playbackManager().isLibraryResumes = false;
         super.onPause();
     }
+
+    private List<ShareItem> getShareableAppList(){
+       final List<ShareItem> items=new ArrayList<>();
+
+        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        intent.setDataAndType(Uri.parse("Boom android music app"), "text/*");
+        List<ResolveInfo> audio = MainActivity.this.getPackageManager().queryIntentActivities(intent, 0);
+        for (ResolveInfo info : audio){
+            String label = info.loadLabel(this.getPackageManager()).toString();
+            Drawable icon = info.loadIcon(this.getPackageManager());
+            String packageName = info.activityInfo.packageName;
+            String name = info.activityInfo.name;
+            ShareItem item=new ShareItem(label , packageName ,icon );
+            if (name.contains("facebook")) {
+                items.add(item);
+            }else if (name.contains("twitter")) {
+                items.add(item);
+            }else if (name.contains("gmail")){
+                items.add(item);
+            }else if (name.contains("inbox")){
+                items.add(item);
+            }else if (name.contains("email")){
+                items.add(item);
+            }else if (name.contains("outlook")){
+                items.add(item);
+            }else if (name.contains("linkedin")){
+                items.add(item);
+            }else if (name.contains("whatsapp")){
+                items.add(item);
+            }else if (packageName.contains("message")){
+                items.add(item);
+            }
+
+        }
+        return items;
+    }
+
+    public void customShare() {
+        ShareApater adapter=new ShareApater(this,getShareableAppList());
+        RecyclerView recyclerView = (RecyclerView)getLayoutInflater()
+                .inflate(R.layout.recycler_view_layout, null);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title("Share Now")
+                .backgroundColor(ContextCompat.getColor(this, R.color.white))
+                .titleColor(ContextCompat.getColor(this, R.color.black))
+                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
+                .customView(recyclerView, false)
+                .autoDismiss(false)
+                .canceledOnTouchOutside(false)
+                .show();
+        Point point = new Point();
+        getWindowManager().getDefaultDisplay().getSize(point);
+        int ScreenWidth = point.x;
+        int ScreenHeight = point.y;
+        dialog.getWindow().setLayout((ScreenWidth *80)/100, (ScreenHeight *60)/100);
+    }
+
 }
