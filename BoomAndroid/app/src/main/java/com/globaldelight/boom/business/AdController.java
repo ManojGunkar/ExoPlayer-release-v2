@@ -28,16 +28,22 @@ public class AdController extends BroadcastReceiver {
     private RecyclerView.Adapter mBaseAdapter;
     private boolean mIsGrid;
     private Context mContext;
+    private boolean mAdsEnabled = false;
 
     public AdController(Context context, RecyclerView recyclerView, RecyclerView.Adapter adapter, boolean isGrid ) {
         mContext = context;
         mRecyclerView = recyclerView;
         mIsGrid = isGrid;
         mBaseAdapter = adapter;
+        mAdsEnabled = BusinessStrategy.getInstance(mContext).isAdsEnabled();
         register();
     }
 
     public void register() {
+        if ( mAdsEnabled != BusinessStrategy.getInstance(mContext).isAdsEnabled() ) {
+            mAdAdapter.setAdsPresenter(getPresenter());
+        }
+
         IntentFilter filter = new IntentFilter(BusinessStrategy.ACTION_ADS_STATUS_CHANGED);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(this, filter);
     }
