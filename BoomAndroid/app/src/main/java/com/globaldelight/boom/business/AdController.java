@@ -48,12 +48,15 @@ public class AdController extends BroadcastReceiver {
 
     public AdWrapperAdapter getAdAdapter() {
         if ( mAdAdapter == null ) {
-            createAdAdapter();
+            mAdAdapter = new AdWrapperAdapter(mBaseAdapter, getPresenter());
         }
         return mAdAdapter;
     }
 
-    private void createAdAdapter() {
+    private AdsPresenter getAdsPresenter() {
+        if ( mPresenter != null ) {
+            return mPresenter;
+        }
 
         AdsBuilder builder = AdsBuilder.initGoogleAds(mContext, mBaseAdapter, !mIsGrid, mBaseAdapter.getItemCount())
                 .setInterval(2);
@@ -64,23 +67,23 @@ public class AdController extends BroadcastReceiver {
             builder.setLinearLayoutManager((LinearLayoutManager)mRecyclerView.getLayoutManager());
         }
 
-        mAdAdapter = builder.buildGoogleAds();
-        mPresenter = mAdAdapter.getAdsPresenter();
-        if ( !BusinessStrategy.getInstance(mContext).isAdsEnabled() ) {
-            mAdAdapter.setAdsPresenter(new NoAdsPresenter());
-        }
+        mPresenter = builder.buildGoogleAds();
+        return mPresenter;
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if ( intent.getAction().equals(BusinessStrategy.ACTION_ADS_STATUS_CHANGED) ) {
-            if ( !BusinessStrategy.getInstance(mContext).isAdsEnabled() ) {
-                mAdAdapter.setAdsPresenter(new NoAdsPresenter());
-            }
-            else {
-                mAdAdapter.setAdsPresenter(mPresenter);
+            mAdAdapter.setAdsPresenter(getPresenter());
+        }
+    }
 
-            }
+    private AdsPresenter getPresenter() {
+        if ( !BusinessStrategy.getInstance(mContext).isAdsEnabled() ) {
+            return new NoAdsPresenter();
+        }
+        else {
+            return getAdsPresenter();
         }
     }
 }
