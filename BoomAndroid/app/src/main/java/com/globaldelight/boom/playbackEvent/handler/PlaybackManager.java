@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.globaldelight.boom.app.App;
@@ -41,6 +42,7 @@ import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
  */
 
 public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioFocusChangeListener, Observer {
+    private static final String TAG = "PlaybackManager";
     public static boolean isLibraryResumes = false;
 
     private static final int NEXT = 0;
@@ -506,7 +508,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         if ( session == null ) {
             session = new MediaSession(context, context.getPackageName());
             session.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
-            setSessionState(PlaybackState.STATE_STOPPED);
+            setSessionState(PlaybackState.STATE_NONE);
             session.setCallback(mediaSessionCallback);
         }
         session.setActive(true);
