@@ -72,7 +72,7 @@ void BOOM_ENGINE_METHOD(init)(
 {
 #ifdef EXPIRY_DATE
     if ( hasExpired() ) {
-        fprintf(stderr, "Library has expired!!!\n");
+        LOGE("Library has expired!!!\n");
         exit(1);
     }
 #endif
