@@ -46,6 +46,10 @@ public class BoomAudioProcessor implements AudioProcessor {
         inputChannelCount = channelCount;
         outputBuffer.clear();
 
+        if ( engine != null ) {
+            engine.release();
+        }
+
         engine = new BoomEngine(sampleRate, inputChannelCount, mFloatAudio);
         applyEffects();
 
@@ -94,13 +98,16 @@ public class BoomAudioProcessor implements AudioProcessor {
     @Override
     public void flush() {
         outputBuffer.clear();
-        engine.flush();
+        if ( engine != null ) {
+            engine.flush();
+        }
     }
 
     @Override
     public void reset() {
         if ( engine != null ) {
             engine.release();
+            engine = null;
         }
     }
 
