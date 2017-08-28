@@ -33,9 +33,9 @@ android {
         versionName "1.0.0"
         multiDexEnabled true
 
-        buildConfigField("String", EXPIRY_DATE, expiryDate as String);
-        buildConfigField("boolean", BUSINESS_MODEL_ENABLED, businessModelEnabled)
-        buildConfigField "String", 'MIXPANEL_SENDER_ID',  STRING("862807752058")
+        buildConfigField("String",  EXPIRY_DATE,                STRING(getExpiryDate()) );
+        buildConfigField("boolean", BUSINESS_MODEL_ENABLED,     businessModelEnabled)
+        buildConfigField "String", 'MIXPANEL_SENDER_ID',        STRING("862807752058")
         buildConfigField "String", 'FLURRY_API_KEY',            STRING("MGGVKKG7JYXGC3N89B4V")
         buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN',    STRING("598c4011c2d961ef3b7f248459fa30c7")
         buildConfigField "String", 'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-3940256099942544/5224354917")
@@ -45,7 +45,6 @@ android {
     buildTypes {
 
         debug {
-            buildConfigField("String", EXPIRY_DATE, STRING(getExpiryDate()) );
         }
 
         release {
@@ -55,11 +54,9 @@ android {
     }
     productFlavors {
         development {
-
         }
 
         demo {
-            buildConfigField("String", EXPIRY_DATE, STRING(getExpiryDate()) );
             buildConfigField "boolean", BUSINESS_MODEL_ENABLED,     "false"
         }
 

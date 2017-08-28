@@ -26,7 +26,7 @@ chmod +x gradlew
 
 FLAVOUR=$1
 
-./gradlew assemble${FLAVOUR}Release -PbuildNumber=$BUILD_NUMBER -PexpiryDate=$EXPIRY_DATE
+./gradlew assemble${FLAVOUR}Release -PbuildNumber=$BUILD_NUMBER
 check_error $?
 
 $BUILD_TOOLS/zipalign -v -p 4 "${APK_DIR}/app-${FLAVOUR}-release-unsigned.apk" "${BUILD_DIR}/app-unsigned-aligned.apk"
