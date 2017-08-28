@@ -112,6 +112,8 @@ public class AlbumDetailItemFragment extends Fragment {
 
     private class LoadAlbumItems extends AsyncTask<Void, Integer, IMediaItemBase> {
 
+        private Activity mActivity = AlbumDetailItemFragment.this.mActivity;
+
         @Override
         protected IMediaItemBase doInBackground(Void... params) {
 //            ItemType.ARTIST && ItemType.GENRE
@@ -153,19 +155,4 @@ public class AlbumDetailItemFragment extends Fragment {
     public void listIsEmpty() {
         rootView.setVisibility(View.GONE);
     }
-    @Override
-    public  void onStart() {
-        super.onStart();
-//        FlurryAnalyticHelper.flurryStartSession(mActivity);
-        FlurryAnalytics.getInstance(getActivity()).startSession();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-//        FlurryAnalyticHelper.flurryStopSession(mActivity);
-        FlurryAnalytics.getInstance(getActivity()).endSession();
-
-    }
-
 }

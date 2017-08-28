@@ -144,16 +144,4 @@ public class LibraryFragment extends Fragment {
             Preferences.writeBoolean(mActivity, TOOLTIP_CHOOSE_HEADPHONE_LIBRARY, false);
         }
     }
-    @Override
-    public  void onStart() {
-        super.onStart();
-        FlurryAnalytics.getInstance(getActivity()).startSession();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();
-    }
-
 }

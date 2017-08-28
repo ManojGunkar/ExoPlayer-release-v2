@@ -69,8 +69,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
         super.onCreate();
         FacebookSdk.sdkInitialize(this);
 
-        FlurryAnalytics.getInstance(this).endSession();
-
         TwitterAuthConfig authConfig =  new TwitterAuthConfig(TWEET_CONSUMER, TWEET_SECRET);
 
         if ( BuildConfig.FLAVOR.equals("production") ) {

@@ -192,7 +192,6 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
     @Override
     public  void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(getActivity()).startSession();
 
         IntentFilter filter = new IntentFilter(PlayerEvents.ACTION_UPDATE_PLAYLIST);
         filter.addAction(PlayerEvents.ACTION_PLAYER_STATE_CHANGED);
@@ -210,7 +209,6 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();
 
         getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
     }

@@ -1,5 +1,7 @@
 package com.globaldelight.boom.app.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.GridLayoutManager;
 
@@ -20,10 +22,11 @@ public class AlbumsListFragment extends MediaCollectionFragment {
     }
 
     private class LoadCollectionList extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {
+        private Context context = getContext();
         GridLayoutManager gridLayoutManager;
         @Override
         protected synchronized ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
-            return MediaController.getInstance(getContext()).getAlbumList();
+            return MediaController.getInstance(context).getAlbumList();
         }
 
         @Override

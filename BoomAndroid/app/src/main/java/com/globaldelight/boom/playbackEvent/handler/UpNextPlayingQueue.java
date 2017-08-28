@@ -55,7 +55,7 @@ public class UpNextPlayingQueue {
 
 
     private Context context;
-    private static int mPlayingItemIndex = -1;
+    private int mPlayingItemIndex = -1;
     private long mShiftingTime = 0;
     private IUpNextMediaEvent mUpNextMediaEvent = null;
 
@@ -124,7 +124,7 @@ public class UpNextPlayingQueue {
     }
 
     public IMediaItemBase getPlayingItem() {
-        if (null != mUpNextList && mUpNextList.size() > 0 && mPlayingItemIndex >= 0)
+        if (null != mUpNextList && mUpNextList.size() > 0 && mPlayingItemIndex >= 0 && mPlayingItemIndex < mUpNextList.size() )
             return mUpNextList.get(mPlayingItemIndex);
         return null;
     }

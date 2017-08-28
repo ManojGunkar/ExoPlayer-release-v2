@@ -17,18 +17,9 @@ import com.globaldelight.boom.playbackEvent.controller.callbacks.IPlayerUIContro
 
 public class PlayerUIController implements IPlayerUIController {
     private Context mContext;
-    private static IPlayerUIController handler;
 
     public PlayerUIController(Context context){
         this.mContext = context;
-    }
-
-    public static void registerPlayerUIController(IPlayerUIController aaIPlayerUIController){
-        handler = aaIPlayerUIController;
-    }
-
-    public static void unregisterPlayerUIController(){
-        handler = null;
     }
 
     @Override

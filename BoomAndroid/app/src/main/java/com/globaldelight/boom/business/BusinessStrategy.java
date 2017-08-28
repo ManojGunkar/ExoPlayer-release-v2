@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.ActivityContainer;
@@ -22,6 +23,7 @@ import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
 import com.globaldelight.boom.app.fragments.ShareFragment;
+import com.globaldelight.boom.app.share.ShareDialog;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.player.AudioEffect;
 
@@ -100,6 +102,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         mContext = context;
         data = new BusinessData(mContext);
         config = new BusinessConfig();
+
+        if ( !BuildConfig.BUSINESS_MODEL_ENABLED ) {
+            data.setState(BusinessData.STATE_PURCHASED);
+        }
+
         AudioEffect.getInstance(mContext).addObserver(this);
         App.playbackManager().registerListener(this);
 
@@ -312,11 +319,12 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
     private void onShare() {
         if ( mCurrentActivity != null ) {
-            Intent intent = new Intent(mContext, ActivityContainer.class);
-            intent.putExtra("container",R.string.title_share);
-            mCurrentActivity.startActivity(intent);
-            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.Share_Opened_from_Dialog);
-
+            new ShareDialog(mCurrentActivity).show();
+//            Intent intent = new Intent(mContext, ActivityContainer.class);
+//            intent.putExtra("container",R.string.title_share);
+//            mCurrentActivity.startActivity(intent);
+//            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.Share_Opened_from_Dialog);
+//
         }
     }
 

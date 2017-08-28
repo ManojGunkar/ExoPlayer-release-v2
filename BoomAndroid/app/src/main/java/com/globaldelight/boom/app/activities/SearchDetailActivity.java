@@ -71,17 +71,5 @@ public class SearchDetailActivity extends MasterActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    protected void onResume() {
-        registerPlayerReceiver(SearchDetailActivity.this);
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        unregisterPlayerReceiver(SearchDetailActivity.this);
-        super.onPause();
-    }
 }
 

@@ -128,6 +128,8 @@ public class AlbumDetailFragment extends Fragment {
 
     private class LoadAlbumSongs extends AsyncTask<Void, Integer, IMediaItemCollection> {
 
+        private Activity mActivity = AlbumDetailFragment.this.mActivity;
+
         @Override
         protected IMediaItemCollection doInBackground(Void... params) {
             if(dataCollection.getParentType() == ItemType.ALBUM && dataCollection.count() == 0) {
@@ -177,17 +179,5 @@ public class AlbumDetailFragment extends Fragment {
     public void onDestroy() {
         mActivity.unregisterReceiver(mUpdatePlayingItem);
         super.onDestroy();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        FlurryAnalytics.getInstance(getActivity()).startSession();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();
     }
 }

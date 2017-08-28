@@ -81,6 +81,8 @@ public class SearchViewFragment extends Fragment {
 
     private class LoadSearchResult extends AsyncTask<String, Void, Search> {
 
+        private Activity mActivity = SearchViewFragment.this.mActivity;
+
         @Override
         protected void onPreExecute() {
             recyclerView = (RecyclerView) mainView.findViewById(R.id.search_view_results);

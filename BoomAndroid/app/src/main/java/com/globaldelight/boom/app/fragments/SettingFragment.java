@@ -63,6 +63,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
 
     private class DropboxAccountLoader extends AsyncTask<Void, Void, DropboxAPI.Account> {
+        private Activity mActivity = SettingFragment.this.mActivity;
         @Override
         protected DropboxAPI.Account doInBackground(Void... params) {
             try {
@@ -110,12 +111,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(getActivity()).startSession();    }
+    }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();
         if ( mAccountLoader != null && mAccountLoader.getStatus() != AsyncTask.Status.FINISHED ) {
             mAccountLoader.cancel(false);
         }

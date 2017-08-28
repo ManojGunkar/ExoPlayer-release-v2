@@ -132,6 +132,7 @@ public class SongsListFragment extends Fragment{
     }
 
     private class LoadDeviceMediaList extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {
+        private Activity mActivity = SongsListFragment.this.mActivity;
         @Override
         protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
             return MediaController.getInstance(mActivity).getSongList();
@@ -154,7 +155,6 @@ public class SongsListFragment extends Fragment{
     @Override
     public  void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(getActivity()).startSession();
         if ( mAdController != null ) {
             mAdController.register();
         }
@@ -163,7 +163,6 @@ public class SongsListFragment extends Fragment{
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();
         if ( mAdController != null ) {
             mAdController.unregister();
         }

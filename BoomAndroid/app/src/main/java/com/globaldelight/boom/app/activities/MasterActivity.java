@@ -27,15 +27,30 @@ import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 
 public class MasterActivity extends AppCompatActivity implements SlidingUpPanelLayout.PanelSlideListener {
     private static final String TAG = "MasterActivity";
+    private static boolean isPlayerExpended = false, isEffectScreenExpended = false;
 
-    public DrawerLayout drawerLayout;
+    protected DrawerLayout drawerLayout;
     private SlidingUpPanelLayout mSlidingPaneLayout;
     private MasterContentFragment contentFragment;
-    private FragmentManager fragmentManager;
     private Handler handler;
     private boolean isDrawerLocked = false;
-    private static boolean isPlayerExpended = false, isEffectScreenExpended = false;
-    
+
+
+    private BroadcastReceiver mPlayerSliderReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()){
+                case PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE:
+                    if(mSlidingPaneLayout.isPanelExpanded())
+                        mSlidingPaneLayout.collapsePanel();
+                    else
+                        mSlidingPaneLayout.expandPanel();
+                    break;
+            }
+        }
+    };
+
+
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(R.layout.activity_master);
@@ -46,35 +61,18 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         mSlidingPaneLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         LinearLayout activityContainer = (LinearLayout)findViewById(R.id.activity_holder);
         getLayoutInflater().inflate(layoutResID, activityContainer, true);
-        fragmentManager = getSupportFragmentManager();
         contentFragment = new MasterContentFragment();
         initContainer();
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
     }
 
-    BroadcastReceiver mPlayerSliderReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
-                case PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE:
-                    if(mSlidingPaneLayout.isPanelExpanded())
-                        mSlidingPaneLayout.collapsePanel();
-                    else
-                        mSlidingPaneLayout.expandPanel();
-                break;
-            }
-        }
-    };
-
-    public void registerPlayerReceiver(Context context){
-        contentFragment.registerPlayerReceiver(context);
+    private void registerPlayerReceiver(Context context){
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE);
         context.registerReceiver(mPlayerSliderReceiver, intentFilter);
     }
 
-    public void unregisterPlayerReceiver(Context context){
-        contentFragment.unregisterPlayerReceiver(context);
+    private void unregisterPlayerReceiver(Context context){
         unregisterReceiver(mPlayerSliderReceiver);
     }
 
@@ -136,6 +134,13 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        contentFragment = null;
+        mSlidingPaneLayout = null;
+    }
+
+    @Override
     protected void onResume() {
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
         super.onResume();
@@ -146,22 +151,19 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     public  void onStart() {
         super.onStart();
         FlurryAnalytics.getInstance(this).startSession();
+        registerPlayerReceiver(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         FlurryAnalytics.getInstance(this).endSession();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
+        unregisterPlayerReceiver(this);
     }
 
     public void initContainer() {
         if(!mSlidingPaneLayout.isPanelExpanded()) {
-            fragmentManager.beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .replace(R.id.panel_holder, contentFragment).commitAllowingStateLoss();
             mSlidingPaneLayout.setPanelSlideListener(MasterActivity.this);
         }

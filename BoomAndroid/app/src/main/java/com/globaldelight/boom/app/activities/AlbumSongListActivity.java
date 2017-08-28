@@ -143,22 +143,13 @@ public class AlbumSongListActivity extends MasterActivity {
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(this).startSession();
 
         final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
         mFloatPlayAlbumSongs.startAnimation(anim_in);
 
-
         fragment.updateAdapter();
-        registerPlayerReceiver(AlbumSongListActivity.this);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        FlurryAnalytics.getInstance(this).endSession();
-        unregisterPlayerReceiver(AlbumSongListActivity.this);
-    }
 
     @Override
     protected void onResumeFragments() {

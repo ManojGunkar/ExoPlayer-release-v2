@@ -16,7 +16,7 @@ import java.util.Observable;
  */
 
 public class AudioEffect extends Observable {
-    private static AudioEffect handler = null;
+    private static AudioEffect sInstance = null;
     private static final String AUDIO_EFFECT_SETTING = "audio_effect_settings";
 
     public static final String HEAD_PHONE_TYPE_PROPERTY = "audio_head_phone_type";
@@ -42,30 +42,22 @@ public class AudioEffect extends Observable {
     private static final int EQUALIZER_POSITION = 0;
     private static final int AUTO_EQUALIZER_POSITION = 12;
 
-
-
     public static final String AUTO_EQUALIZER = "auto_equalizer";
-
-
-
-
-    private static final String ALL_SPEAKER_POWER = "all_speaker_power";
-
 
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
     private Context context;
 
     private AudioEffect(Context context) {
-        this.context = context.getApplicationContext();
+        this.context = context;
         shp = context.getSharedPreferences(AUDIO_EFFECT_SETTING, Context.MODE_PRIVATE);
         editor = shp.edit();
     }
 
     public static AudioEffect getInstance(Context context) {
-        if (handler == null)
-            handler = new AudioEffect(context);
-        return handler;
+        if (sInstance == null)
+            sInstance = new AudioEffect(context.getApplicationContext());
+        return sInstance;
     }
 
     public int getHeadPhoneType() {

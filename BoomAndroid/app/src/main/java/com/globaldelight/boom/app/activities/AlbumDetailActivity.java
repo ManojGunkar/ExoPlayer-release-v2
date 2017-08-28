@@ -147,9 +147,6 @@ public class AlbumDetailActivity extends MasterActivity {
     @Override
     public void onStart() {
         super.onStart();
-
-        FlurryAnalytics.getInstance(this).startSession();
-        registerPlayerReceiver(AlbumDetailActivity.this);
         final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
         mFloatPlayAllAlbums.startAnimation(anim_in);
 
@@ -159,9 +156,6 @@ public class AlbumDetailActivity extends MasterActivity {
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(this).endSession();
-        unregisterPlayerReceiver(AlbumDetailActivity.this);
-
         setAlbumArt(null);
     }
 }

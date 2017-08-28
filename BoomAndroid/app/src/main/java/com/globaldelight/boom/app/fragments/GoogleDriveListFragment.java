@@ -247,20 +247,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     }
 
     @Override
-    public  void onStart() {
-        super.onStart();
-        FlurryAnalytics.getInstance(getActivity()).startSession();
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();
-    }
-
-
-    @Override
     public void onGoogleDriveMediaListUpdate() {
         setSongListAdapter(false);
         setForAnimation();

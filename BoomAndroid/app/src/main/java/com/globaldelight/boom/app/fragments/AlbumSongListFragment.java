@@ -126,13 +126,15 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
 
     private class LoadAlbumSongListItems extends AsyncTask<Void, Void, IMediaItemCollection> {
 
+        private Activity activity = getActivity();
+
         @Override
         protected IMediaItemCollection doInBackground(Void... params) {
             //ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
             if (collection.getParentType() == ItemType.BOOM_PLAYLIST && collection.count() == 0) {
-                collection.setMediaElement(MediaController.getInstance(getActivity()).getBoomPlayListTrackList(collection.getItemId()));
+                collection.setMediaElement(MediaController.getInstance(activity).getBoomPlayListTrackList(collection.getItemId()));
             } else if (collection.getParentType() == ItemType.PLAYLIST && collection.getMediaElement().isEmpty()) {
-                collection.setMediaElement(MediaController.getInstance(getActivity()).getPlayListTrackList(collection));
+                collection.setMediaElement(MediaController.getInstance(activity).getPlayListTrackList(collection));
             }else if(collection.getParentType() == ItemType.ARTIST &&
                         ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).count() == 0){ //ItemType.ARTIST && ItemType.GENRE
                     ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(getActivity()).getArtistTrackList(collection));
@@ -154,10 +156,10 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         protected void onPostExecute(IMediaItemCollection iMediaItemCollection) {
             super.onPostExecute(iMediaItemCollection);
 
-            ((AlbumSongListActivity)getActivity()).updateAlbumArt();
+            ((AlbumSongListActivity)activity).updateAlbumArt();
 
 
-            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+            LinearLayoutManager llm = new LinearLayoutManager(activity);
             rootView.setLayoutManager(llm);
             rootView.setHasFixedSize(true);
             rootView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -180,7 +182,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
                     }
                 }
             });
-            itemSongListAdapter = new ItemSongListAdapter(getActivity(), AlbumSongListFragment.this, iMediaItemCollection, listDetail, AlbumSongListFragment.this);
+            itemSongListAdapter = new ItemSongListAdapter(activity, AlbumSongListFragment.this, iMediaItemCollection, listDetail, AlbumSongListFragment.this);
             rootView.setAdapter(itemSongListAdapter);
             if (iMediaItemCollection.getParentType() == ItemType.BOOM_PLAYLIST) {
                 setUpItemTouchHelper();
@@ -263,7 +265,6 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(getActivity()).startSession();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
@@ -277,7 +278,6 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();
         getActivity().unregisterReceiver(mUpdatePlayingItem);
     }
 }

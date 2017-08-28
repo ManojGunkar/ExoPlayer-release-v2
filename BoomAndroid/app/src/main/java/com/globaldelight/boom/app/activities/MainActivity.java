@@ -6,8 +6,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -20,12 +24,16 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
@@ -34,11 +42,17 @@ import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.adapters.search.SearchSuggestionAdapter;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.app.fragments.SearchViewFragment;
+import com.globaldelight.boom.app.share.ShareAdapter;
+import com.globaldelight.boom.app.share.ShareDialog;
+import com.globaldelight.boom.app.share.ShareItem;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.database.MusicSearchHelper;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HEADSET_PLUGGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
@@ -134,7 +148,6 @@ public class MainActivity extends MasterActivity
     }
 
     private void registerHeadSetReceiver(){
-        registerPlayerReceiver(MainActivity.this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
         intentFilter.addAction(PlayerEvents.ACTION_PLAYER_STATE_CHANGED);
@@ -424,12 +437,14 @@ public class MainActivity extends MasterActivity
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
                 return  true;
             case R.id.nav_share:
-                new Handler().postDelayed(new Runnable() {
+                Toast.makeText(this,"share",Toast.LENGTH_SHORT).show();
+                new ShareDialog(this).show();
+                /*new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        startCompoundActivities(R.string.title_share);
+                       // startCompoundActivities(R.string.title_share);
                     }
-                }, 300);
+                }, 300);*/
                 drawerLayout.closeDrawer(GravityCompat.START);
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Share_Opened_from_Boom);
@@ -473,7 +488,6 @@ public class MainActivity extends MasterActivity
 
     @Override
     protected void onPause() {
-        unregisterPlayerReceiver(MainActivity.this);
         unregisterReceiver(headPhoneReceiver);
         App.playbackManager().isLibraryResumes = false;
         super.onPause();

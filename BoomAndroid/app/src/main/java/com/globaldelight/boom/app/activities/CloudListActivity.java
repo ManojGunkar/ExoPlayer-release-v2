@@ -219,18 +219,6 @@ public class CloudListActivity extends MasterActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        registerPlayerReceiver(CloudListActivity.this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterPlayerReceiver(CloudListActivity.this);
-    }
-
-    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         loadEveryThing(intent.getStringExtra("title"), true);
@@ -243,17 +231,6 @@ public class CloudListActivity extends MasterActivity
             new Handler().postDelayed(navigateGoogleDrive, anim ? 300 : 0);
         }
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        FlurryAnalytics.getInstance(this).startSession();
-    }
-
-    @Override
-    public void onStop() {
-            super.onStop();
-        FlurryAnalytics.getInstance(this).endSession();    }
 
     public void listIsEmpty(boolean enable, boolean isAccountConfigured) {
         if (enable) {

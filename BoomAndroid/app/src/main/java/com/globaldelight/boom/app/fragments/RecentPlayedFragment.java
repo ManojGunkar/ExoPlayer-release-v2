@@ -174,7 +174,6 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(getActivity()).startSession();
         if(EasyPermissions.hasPermissions(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
             LoadRecentPlayedList();
         }else {
@@ -190,7 +189,6 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(getActivity()).endSession();
         mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
     }
 }

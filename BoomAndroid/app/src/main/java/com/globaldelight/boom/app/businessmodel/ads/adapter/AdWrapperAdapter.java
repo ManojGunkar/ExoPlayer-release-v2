@@ -54,6 +54,12 @@ public class AdWrapperAdapter extends RecyclerView.Adapter {
 
     public void setAdsPresenter(AdsPresenter presenter) {
         adsPresenter = presenter;
+        adsPresenter.setCallback(new AdsPresenter.Callback() {
+            @Override
+            public void onAdsLoaded() {
+                notifyDataSetChanged();
+            }
+        });
         notifyDataSetChanged();
     }
 

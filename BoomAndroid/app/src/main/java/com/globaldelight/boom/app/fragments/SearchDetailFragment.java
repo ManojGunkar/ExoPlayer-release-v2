@@ -93,6 +93,7 @@ public class SearchDetailFragment extends Fragment{
     }
 
     private class LoadSearchDetailList extends AsyncTask<String, Void, ArrayList<? extends IMediaItemBase>> {
+        private Activity mActivity = SearchDetailFragment.this.mActivity;
         private String mResultType, mQuery;
         @Override
         protected ArrayList<? extends IMediaItemBase> doInBackground(String... params) {
