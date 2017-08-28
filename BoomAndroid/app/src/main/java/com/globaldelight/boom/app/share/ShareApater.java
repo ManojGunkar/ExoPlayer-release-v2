@@ -2,7 +2,6 @@ package com.globaldelight.boom.app.share;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.adapters.utils.EqualizerDialogAdapter;
 import com.globaldelight.boom.view.RegularTextView;
 
 import java.util.List;
@@ -38,13 +36,16 @@ public class ShareApater extends RecyclerView.Adapter<ShareApater.ViewHolder> {
             @Override
             public void onClick(View view) {
                 final int position = holder.getAdapterPosition();
+                if (itemList.get(position).text.equalsIgnoreCase("facebook")){
+                    ShareUtils.getInstance(context).fbShare();
+                }else {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.setPackage(itemList.get(position).pkgName);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "Boom Application share text!!!!!");
                 sendIntent.setType("text/plain");
                 context.startActivity(sendIntent);
-            }
+            }}
         });
 
         return holder;
