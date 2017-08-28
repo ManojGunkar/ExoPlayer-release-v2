@@ -47,13 +47,16 @@ public class ShareAdapter extends RecyclerView.Adapter<ShareAdapter.ViewHolder> 
             @Override
             public void onClick(View view) {
                 final int position = holder.getAdapterPosition();
+                if (itemList.get(position).text.equalsIgnoreCase("facebook")){
+                    ShareUtils.getInstance(context).fbShare();
+                }else {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.setPackage(itemList.get(position).pkgName);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "Boom Application share text!!!!!");
                 sendIntent.setType("text/plain");
                 context.startActivity(sendIntent);
-                callback.onItemSelected();
+                callback.onItemSelected();}
             }
         });
 
