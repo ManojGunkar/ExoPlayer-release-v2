@@ -19,10 +19,14 @@ import java.io.IOException;
 
 public class MixPanelAnalyticHelper {
 
-    public static MixpanelAPI mixpanel;
+    public static MixpanelAPI mixpanel = null;
 
     public static MixpanelAPI getInstance(Context context) {
-        mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANEL_PROJECT_TOKEN);
+        if ( mixpanel != null ) {
+            return mixpanel;
+        }
+
+        mixpanel = MixpanelAPI.getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_PROJECT_TOKEN);
         String android_id = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         mixpanel.identify(android_id);

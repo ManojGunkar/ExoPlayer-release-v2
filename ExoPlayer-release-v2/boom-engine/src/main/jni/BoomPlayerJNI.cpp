@@ -29,6 +29,26 @@ static BoomAudioProcessor *mProcessor = nullptr;
 static int mNativeSampleRate = 0;
 static pthread_mutex_t mLock;
 
+//#define EXPIRY_DATE makeDate(1,10,2017)
+#ifdef EXPIRY_DATE
+
+static inline struct tm makeDate(int day, int month, int year) {
+    struct tm time = {};
+    time.tm_mday = day;
+    time.tm_mon  = month - 1; //starting with 0 (Jan is 0th month)
+    time.tm_year = year - 1900; //number of years from 1900
+
+    return time;
+}
+
+static bool hasExpired() {
+    struct tm expiry = EXPIRY_DATE;
+    double diff = difftime(time(NULL), mktime(&expiry));
+    return ( diff > 0 );
+}
+
+#endif
+
 
 // Clear all the pending data from engine
 static void RinseEngine() {
@@ -50,6 +70,13 @@ void BOOM_ENGINE_METHOD(init)(
         jint sampleRate,
         jint inFrameCount)
 {
+#ifdef EXPIRY_DATE
+    if ( hasExpired() ) {
+        LOGE("Library has expired!!!\n");
+        exit(1);
+    }
+#endif
+
     globalJavaAssetManager = env->NewGlobalRef(assetManager);
     InitAssetManager(AAssetManager_fromJava(env, globalJavaAssetManager));
     mNativeSampleRate = sampleRate;

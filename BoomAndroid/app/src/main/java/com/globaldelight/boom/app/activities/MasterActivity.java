@@ -161,11 +161,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         unregisterPlayerReceiver(this);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
     public void initContainer() {
         if(!mSlidingPaneLayout.isPanelExpanded()) {
             getSupportFragmentManager().beginTransaction()

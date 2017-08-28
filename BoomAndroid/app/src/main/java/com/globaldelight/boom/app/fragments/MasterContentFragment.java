@@ -415,12 +415,12 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 final Bitmap bitmap = bitmaps[0];
                 final Bitmap blurredBitmap = bitmaps[1];
                 if ( mItemId == -1 || mItemId != item.getItemId() ) {
-                    PlayerUtils.ImageViewAnimatedChange(mActivity, mLargeAlbumArt, bitmap);
+                    PlayerUtils.ImageViewAnimatedChange(context, mLargeAlbumArt, bitmap);
                     mItemId = item.getItemId();
                 }else{
                     mLargeAlbumArt.setImageBitmap(bitmap);
                 }
-                mPlayerBackground.setBackground(new BitmapDrawable(mActivity.getResources(), blurredBitmap));
+                mPlayerBackground.setBackground(new BitmapDrawable(context.getResources(), blurredBitmap));
             }
         }.execute();
     }

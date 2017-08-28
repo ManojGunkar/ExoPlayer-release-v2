@@ -1,5 +1,6 @@
 package com.globaldelight.boom;
 
+import android.content.Context;
 import android.support.annotation.IntDef;
 
 import com.google.android.exoplayer2.C;
@@ -14,6 +15,8 @@ import java.nio.ByteBuffer;
 public class BoomAudioProcessor implements AudioProcessor {
 
     private static int CHANNEL_COUNT = 2;
+
+    private static boolean isEngineInitialized = false;
     private BoomEngine engine = null;
     private ByteBuffer outputBuffer = ByteBuffer.allocateDirect(2048*4*2*2);
     private int sampleRate;
@@ -31,7 +34,12 @@ public class BoomAudioProcessor implements AudioProcessor {
     private boolean mFloatAudio = false;
 
 
-    public BoomAudioProcessor(boolean floatAudio) {
+    public BoomAudioProcessor(Context context, boolean floatAudio) {
+        if ( !isEngineInitialized ) {
+            BoomEngine.init(context);
+            isEngineInitialized = true;
+        }
+
         mFloatAudio = floatAudio;
     }
 
@@ -45,6 +53,10 @@ public class BoomAudioProcessor implements AudioProcessor {
         sampleRate = sampleRateHz;
         inputChannelCount = channelCount;
         outputBuffer.clear();
+
+        if ( engine != null ) {
+            engine.release();
+        }
 
         engine = new BoomEngine(sampleRate, inputChannelCount, mFloatAudio);
         applyEffects();
@@ -94,13 +106,16 @@ public class BoomAudioProcessor implements AudioProcessor {
     @Override
     public void flush() {
         outputBuffer.clear();
-        engine.flush();
+        if ( engine != null ) {
+            engine.flush();
+        }
     }
 
     @Override
     public void reset() {
         if ( engine != null ) {
             engine.release();
+            engine = null;
         }
     }
 

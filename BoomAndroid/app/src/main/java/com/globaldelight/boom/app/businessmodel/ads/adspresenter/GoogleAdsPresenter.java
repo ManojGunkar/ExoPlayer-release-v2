@@ -48,7 +48,9 @@ public class GoogleAdsPresenter implements AdsPresenter {
                     @Override
                     public void onContentAdLoaded(NativeContentAd contentAd) {
                         mAd = contentAd;
-                        callback.onAdsLoaded();
+                        if ( callback != null ) {
+                            callback.onAdsLoaded();
+                        }
                     }
                 })
 //                .withAdListener(new AdListener() {

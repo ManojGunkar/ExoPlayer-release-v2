@@ -49,7 +49,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
     private DropboxAPI<AndroidAuthSession> dropboxAPI;
     private PlayerServiceReceiver serviceReceiver;
     private ConnectivityReceiver connectivityReceiver;
-
+    private boolean mIsTaskRunning = true;
 
     @Override
     public void onCreate() {
@@ -102,8 +102,38 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        mIsTaskRunning = true;
         mPlayback.queue().getRepeatShuffleOnAppStart();
         return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        unregisterReceiver(headPhonePlugReceiver);
+        serviceReceiver.unregisterService();
+        mPlayback.unregisterListener(this);
+        try {
+            mServiceStopTime = SystemClock.currentThreadTimeMillis();
+            mServiceStartTime = mServiceStopTime - mServiceStartTime;
+            String time = String.format("%02d:%02d",
+                    TimeUnit.MILLISECONDS.toMinutes(mServiceStartTime),
+                    TimeUnit.MILLISECONDS.toSeconds(mServiceStartTime ) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(mServiceStartTime)));
+            HashMap<String, String> val = new HashMap<>();
+            val.put(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, time);
+            FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.EVENT_MUSIC_SESSION_DURATION,val);
+
+        }catch (Exception e){}
+        super.onDestroy();
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        mIsTaskRunning = false;
+        if ( !mPlayback.isTrackPlaying() ) {
+            stopSelf();
+        }
     }
 
     private void updatePlayPause(boolean play_pause) {
@@ -112,8 +142,13 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
 
 
     private void updateNotificationPlayer(IMediaItem playingItem, boolean playing, boolean isLastPlayed) {
-        if(!playing){
-            stopForeground(false);
+        if( !playing ){
+            if ( !mIsTaskRunning ) {
+                stopSelf();
+            }
+            else {
+                stopForeground(false);
+            }
         }
         notificationHandler.update(playingItem, playing, isLastPlayed);
     }
@@ -149,6 +184,9 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
 
     @Override
     public void onNotificationRemove() {
+        if ( !mIsTaskRunning ) {
+            stopSelf();
+        }
     }
 
     @Override
@@ -188,26 +226,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
         if ( null != mPlayback.queue().getPlayingItem() ) {
             mPlayback.playPause();
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        unregisterReceiver(headPhonePlugReceiver);
-        serviceReceiver.unregisterService();
-        mPlayback.unregisterListener(this);
-        try {
-            mServiceStopTime = SystemClock.currentThreadTimeMillis();
-            mServiceStartTime = mServiceStopTime - mServiceStartTime;
-            String time = String.format("%02d:%02d",
-                    TimeUnit.MILLISECONDS.toMinutes(mServiceStartTime),
-                    TimeUnit.MILLISECONDS.toSeconds(mServiceStartTime ) -
-                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(mServiceStartTime)));
-            HashMap<String, String> val = new HashMap<>();
-            val.put(AnalyticsHelper.EVENT_MUSIC_SESSION_DURATION, time);
-            FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.EVENT_MUSIC_SESSION_DURATION,val);
-
-        }catch (Exception e){}
-        super.onDestroy();
     }
 
     @Override
