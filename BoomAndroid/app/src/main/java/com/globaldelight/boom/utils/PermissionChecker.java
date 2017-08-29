@@ -20,7 +20,7 @@ public class PermissionChecker {
 
     public static final int REQUEST_CODE = 7;
     private static final String TAG = "PermissionChecker";
-    private static OnPermissionResponse response;
+    private OnPermissionResponse response;
     private Context context;
     private Activity activity;
     private View baseView;

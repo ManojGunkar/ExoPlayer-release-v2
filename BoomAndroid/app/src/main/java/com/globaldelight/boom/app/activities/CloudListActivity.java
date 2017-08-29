@@ -47,7 +47,6 @@ public class CloudListActivity extends MasterActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cloud);
         initView();
-//        FlurryAnalyticHelper.init(this);
     }
 
     Runnable navigateLibrary= new Runnable() {

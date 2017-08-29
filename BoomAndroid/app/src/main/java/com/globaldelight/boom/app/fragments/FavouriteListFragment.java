@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
-import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.collection.local.FavouriteMediaList;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
@@ -80,6 +79,13 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
+        favouriteMediaList.setFavouriteUpdater(null);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
@@ -107,7 +113,7 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
     }
 
     private void initViews() {
-        favouriteMediaList = FavouriteMediaList.getFavouriteListInstance(mActivity);
+        favouriteMediaList = FavouriteMediaList.getInstance(mActivity);
         favouriteMediaList.setFavouriteUpdater(this);
         favouriteMediaList.clearFavouriteContent();
         setSongListAdapter(favouriteMediaList.getFavouriteMediaList());

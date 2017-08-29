@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
-import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.RecentPlayedMediaList;
@@ -70,6 +69,13 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        recentPlayedMediaList.setRecentPlayedUpdater(null);
+        mActivity = null;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
@@ -94,7 +100,7 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
     }
 
     private void initViews() {
-        recentPlayedMediaList = RecentPlayedMediaList.getRecentPlayedListInstance(mActivity);
+        recentPlayedMediaList = RecentPlayedMediaList.getInstance(mActivity);
         recentPlayedMediaList.setRecentPlayedUpdater(this);
         recentPlayedMediaList.clearRecentPlayedContent();
         setSongListAdapter(recentPlayedMediaList.getRecentPlayedMediaList());

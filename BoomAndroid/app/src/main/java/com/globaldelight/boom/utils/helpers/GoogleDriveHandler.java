@@ -66,11 +66,8 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     }
 
     public GoogleDriveHandler(Fragment mFragment){
-        if(mFragment instanceof GoogleDriveListFragment)
-            this.mContext = ((GoogleDriveListFragment)mFragment).getFragmentContext();
-        else if (mFragment instanceof SettingFragment)
-            this.mContext = ((SettingFragment)mFragment).getFragmentContext();
         this.mFragment = mFragment;
+        this.mContext = mFragment.getContext();
     }
 
     public GoogleAccountCredential getGoogleAccountCredential(){

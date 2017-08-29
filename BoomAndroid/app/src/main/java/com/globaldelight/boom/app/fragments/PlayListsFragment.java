@@ -118,7 +118,7 @@ public class PlayListsFragment extends Fragment {
         protected Void doInBackground(Void... voids) {
             defaultPlayList = MediaController.getInstance(mActivity).getPlayList();
             mBoomPlayList = MediaController.getInstance(mActivity).getBoomPlayList();
-            mFavourite = new MediaItemCollection(0, getResources().getString(R.string.favourite_list), null, null, MediaController.getInstance(mActivity).getFavouriteCount(),
+            mFavourite = new MediaItemCollection(0, mActivity.getResources().getString(R.string.favourite_list), null, null, MediaController.getInstance(mActivity).getFavouriteCount(),
                     0, ItemType.FAVOURITE, MediaType.DEVICE_MEDIA_LIB, ItemType.FAVOURITE);
             mRecentPlayed = new MediaItemCollection(0, getResources().getString(R.string.recently_played), null, null, MediaController.getInstance(mActivity).getRecentPlayedItemCount(),
                     0, ItemType.RECENT_PLAYED, MediaType.DEVICE_MEDIA_LIB, ItemType.RECENT_PLAYED);

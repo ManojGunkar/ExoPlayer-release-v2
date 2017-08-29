@@ -15,7 +15,7 @@ public class FavouriteMediaList {
 
     private ArrayList<IMediaItemBase> fileList;
     private IFavouriteUpdater favouriteUpdater;
-    private static FavouriteMediaList handler;
+    private static FavouriteMediaList instance;
     private Handler postMessage;
 
     private FavouriteMediaList(Context context){
@@ -23,11 +23,11 @@ public class FavouriteMediaList {
         postMessage = new Handler();
     }
 
-    public static FavouriteMediaList getFavouriteListInstance(Context context){
-        if(null == handler){
-            handler = new FavouriteMediaList(context);
+    public static FavouriteMediaList getInstance(Context context){
+        if(null == instance){
+            instance = new FavouriteMediaList(context.getApplicationContext());
         }
-        return handler;
+        return instance;
     }
 
     public void addFilesInFavouriteList(ArrayList<? extends IMediaItemBase> entries){
@@ -50,7 +50,9 @@ public class FavouriteMediaList {
         postMessage.post(new Runnable() {
             @Override
             public void run() {
-                favouriteUpdater.onUpdateFavouriteList();
+                if (favouriteUpdater != null ) {
+                    favouriteUpdater.onUpdateFavouriteList();
+                }
             }
         });
     }

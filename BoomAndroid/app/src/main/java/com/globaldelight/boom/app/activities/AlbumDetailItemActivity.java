@@ -120,15 +120,6 @@ public class AlbumDetailItemActivity extends MasterActivity {
                 .into(((ImageView) findViewById(R.id.activity_album_art)));
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onBackPressed() {

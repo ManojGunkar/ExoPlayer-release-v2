@@ -92,6 +92,13 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         }
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
+        dropboxMediaList.setDropboxUpdater(null);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
