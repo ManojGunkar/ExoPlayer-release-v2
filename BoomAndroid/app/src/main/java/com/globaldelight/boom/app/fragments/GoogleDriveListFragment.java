@@ -59,10 +59,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     public GoogleDriveListFragment() {
     }
 
-    public Context getFragmentContext(){
-        return mActivity;
-    }
-
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -93,6 +89,14 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         if (context instanceof Activity){
             mActivity = (Activity) context;
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
+        googleDriveMediaList.setGoogleDriveHandler(null);
+        googleDriveMediaList.setGoogleDriveMediaUpdater(null);
     }
 
     @Override
@@ -224,12 +228,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         if(null != getActivity())
             mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        googleDriveMediaList.setGoogleDriveMediaUpdater(null);
     }
 
     @Override

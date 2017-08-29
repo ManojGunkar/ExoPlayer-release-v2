@@ -19,7 +19,7 @@ public class GoogleDriveMediaList {
     private ArrayList<IMediaItemBase> fileList;
     private static boolean isAllSongsLoaded = false;
     private IGoogleDriveMediaUpdater googleDriveMediaUpdater;
-    private static GoogleDriveMediaList handler;
+    private static GoogleDriveMediaList sInstance;
     private static GoogleDriveHandler mGoogleDriveHandler;
     private Context mContext;
     private Handler postMessage;
@@ -31,10 +31,10 @@ public class GoogleDriveMediaList {
     }
 
     public static GoogleDriveMediaList getInstance(Context context){
-        if(null == handler){
-            handler = new GoogleDriveMediaList(context.getApplicationContext());
+        if(null == sInstance){
+            sInstance = new GoogleDriveMediaList(context.getApplicationContext());
         }
-        return handler;
+        return sInstance;
     }
 
     public static void setGoogleDriveHandler(GoogleDriveHandler googleDriveHandler) {
@@ -136,9 +136,7 @@ public class GoogleDriveMediaList {
     }
 
     public void setGoogleDriveMediaUpdater(IGoogleDriveMediaUpdater googleDriveMediaUpdater){
-        if(null != googleDriveMediaUpdater) {
-            this.googleDriveMediaUpdater = googleDriveMediaUpdater;
-        }
+        this.googleDriveMediaUpdater = googleDriveMediaUpdater;
     }
 
     public interface IGoogleDriveMediaUpdater {
