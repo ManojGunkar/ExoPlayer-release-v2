@@ -18,7 +18,7 @@ public class LoadRecentPlayedList extends AsyncTask<Void, Integer, ArrayList<? e
     private RecentPlayedMediaList recentPlayedMediaList;
     public LoadRecentPlayedList(Context context){
         this.mContext = context;
-        recentPlayedMediaList = RecentPlayedMediaList.getRecentPlayedListInstance(mContext);
+        recentPlayedMediaList = RecentPlayedMediaList.getInstance(mContext);
     }
     @Override
     protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {

@@ -15,7 +15,7 @@ public class RecentPlayedMediaList {
 
     private ArrayList<IMediaItemBase> fileList;
     private IRecentPlayedUpdater recentPlayedUpdater;
-    private static RecentPlayedMediaList handler;
+    private static RecentPlayedMediaList instance;
     private Handler postMessage;
 
     private RecentPlayedMediaList(Context context){
@@ -23,11 +23,11 @@ public class RecentPlayedMediaList {
         postMessage = new Handler();
     }
 
-    public static RecentPlayedMediaList getRecentPlayedListInstance(Context context){
-        if(null == handler){
-            handler = new RecentPlayedMediaList(context);
+    public static RecentPlayedMediaList getInstance(Context context){
+        if(null == instance){
+            instance = new RecentPlayedMediaList(context.getApplicationContext());
         }
-        return handler;
+        return instance;
     }
 
     public void addFilesInRecentPlayedList(ArrayList<? extends IMediaItemBase> entries){
@@ -50,7 +50,9 @@ public class RecentPlayedMediaList {
         postMessage.post(new Runnable() {
             @Override
             public void run() {
-                recentPlayedUpdater.onUpdateRecentPlayedList();
+                if ( recentPlayedUpdater != null ) {
+                    recentPlayedUpdater.onUpdateRecentPlayedList();
+                }
             }
         });
     }
