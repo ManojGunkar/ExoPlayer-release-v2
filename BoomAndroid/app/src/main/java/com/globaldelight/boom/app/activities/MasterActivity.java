@@ -147,13 +147,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        contentFragment = null;
-        mSlidingPaneLayout = null;
-    }
-
-    @Override
     protected void onResume() {
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
         super.onResume();

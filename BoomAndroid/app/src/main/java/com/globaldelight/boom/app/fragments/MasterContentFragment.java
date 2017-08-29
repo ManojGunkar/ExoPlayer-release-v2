@@ -233,8 +233,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     public void onDetach() {
         super.onDetach();
         mActivity = null;
-        mLargeAlbumArt.setImageDrawable(null);
-        mPlayerBackground.setBackground(null);
     }
 
     @Nullable
