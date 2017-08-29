@@ -63,6 +63,9 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.TimeUnit;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_DISCONNECTED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_SCREEN_RESUME;
@@ -692,8 +695,17 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     public void onPanelCollapsed(View panel) {
         setMiniPlayerVisible(true);
         updateMiniPlayerUI(mPlayingMediaItem, App.playbackManager().isTrackPlaying(), mIsLastPlayed);
-        showEffectShortCut();
 
+        //showEffectShortCut();
+        new MaterialShowcaseView.Builder(mActivity)
+                .setTarget( mInflater.findViewById(R.id.mini_player_effect_img))
+                .setTitleText("Hello")
+                .setDismissText("GOT IT")
+                .setContentText("This is some amazing feature you should know about")
+                .setDelay(1000) // optional but starting animations immediately in onCreate can make them choppy
+                .singleUse("Switch panel") // provide a unique ID used to ensure it is only shown once
+//                .useFadeAnimation() // remove comment if you want to use fade animations for Lollipop & up
+                .show();
         if(null != coachMarkEffectSwitcher){
             coachMarkEffectSwitcher.dismissTooltip();
         }
@@ -704,8 +716,16 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     public void onPanelExpanded(View panel) {
         setMiniPlayerVisible(false);
-
-        showEffectSwitchTip();
+        new MaterialShowcaseView.Builder(mActivity)
+                .setTarget(mInflater.findViewById(R.id.effect_switch))
+                .setTitleText("Hello")
+                .setDismissText("GOT IT")
+                .setContentText("This is some amazing feature you should know about")
+                .setDelay(1000) // optional but starting animations immediately in onCreate can make them choppy
+                .singleUse("Switch panel") // provide a unique ID used to ensure it is only shown once
+//                .useFadeAnimation() // remove comment if you want to use fade animations for Lollipop & up
+                .show();
+      //  showEffectSwitchTip();
 
         if(null != coachMarkEffectPlayer){
             coachMarkEffectPlayer.dismissTooltip();
