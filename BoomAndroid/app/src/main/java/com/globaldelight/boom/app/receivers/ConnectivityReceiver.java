@@ -20,7 +20,7 @@ import java.net.Socket;
 public class ConnectivityReceiver
         extends BroadcastReceiver {
 
-    private static ConnectivityReceiverListener connectivityReceiverListener;
+    private ConnectivityReceiverListener connectivityReceiverListener;
     private static boolean isNWConnected = false;
 
     public ConnectivityReceiver(){}
