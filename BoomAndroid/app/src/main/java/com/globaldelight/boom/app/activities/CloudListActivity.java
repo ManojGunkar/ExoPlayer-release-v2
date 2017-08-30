@@ -113,7 +113,7 @@ public class CloudListActivity extends MasterActivity
     @Override
     public void onBackPressed() {
         if (isPlayerExpended()) {
-            sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+            toggleSlidingPanel();
         } else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {

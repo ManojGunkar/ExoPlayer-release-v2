@@ -121,7 +121,7 @@ public class AlbumSongListActivity extends MasterActivity {
                 }
                 if(null != fragment ){
                     fragment.onFloatPlayAlbumSongs();
-                    sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+                    toggleSlidingPanel();
                 }
             }
         });
@@ -148,13 +148,6 @@ public class AlbumSongListActivity extends MasterActivity {
         mFloatPlayAlbumSongs.startAnimation(anim_in);
 
         fragment.updateAdapter();
-    }
-
-
-    @Override
-    protected void onResumeFragments() {
-        sendBroadcast(new Intent(PlayerEvents.ACTION_PLAYER_SCREEN_RESUME));
-        super.onResumeFragments();
     }
 
     private void setAlbumArtSize() {

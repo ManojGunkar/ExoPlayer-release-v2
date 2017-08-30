@@ -56,7 +56,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HEADSET_PLUGGED;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
 import static com.globaldelight.boom.app.fragments.MasterContentFragment.isUpdateUpnextDB;
 
 /**
@@ -231,12 +230,6 @@ public class MainActivity extends MasterActivity
     }
 
     @Override
-    protected void onResumeFragments() {
-        sendBroadcast(new Intent(PlayerEvents.ACTION_PLAYER_SCREEN_RESUME));
-        super.onResumeFragments();
-    }
-
-    @Override
     public void onPanelCollapsed(View panel) {
         super.onPanelCollapsed(panel);
         if(null != mLibraryFragment){
@@ -251,12 +244,11 @@ public class MainActivity extends MasterActivity
 
     @Override
     public void onBackPressed() {
-        sendBroadcast(new Intent(ACTION_HOME_SCREEN_BACK_PRESSED));
-
+        contentFragment.onBackPressed();
         ((LibraryFragment)mLibraryFragment).setAutoDismissBahaviour();
 
         if (isPlayerExpended()) {
-            sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+            toggleSlidingPanel();
         } else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {

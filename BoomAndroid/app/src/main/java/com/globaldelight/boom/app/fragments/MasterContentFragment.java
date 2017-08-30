@@ -56,6 +56,7 @@ import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.player.AudioEffect;
+import com.globaldelight.boom.view.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,9 +64,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.TimeUnit;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_DISCONNECTED;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_SCREEN_RESUME;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_QUEUE_COMPLETED;
@@ -208,18 +207,18 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 case ACTION_STOP_UPDATING_UPNEXT_DB:
                     isUpdateUpnextDB = false;
                     break;
-                case ACTION_HOME_SCREEN_BACK_PRESSED:
-                    dismissTooltip();
-                    break;
-                case ACTION_PLAYER_SCREEN_RESUME:
-
-                    break;
                 case ACTION_ON_NETWORK_DISCONNECTED:
                     stopLoadProgress();
                     break;
             }
         }
     };
+
+    public void onBackPressed() {
+        dismissTooltip();
+    }
+
+    private SlidingUpPanelLayout mSlidingPanel;
 
     @Override
     public void onAttach(Context context) {
@@ -273,6 +272,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
+        setMiniPlayerVisible(!mSlidingPanel.isPanelExpanded());
         updateProgressLoader();
     }
 
@@ -745,11 +745,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     }
 
-    public void onResumeFragment(int alfa) {
-        mPlayerActionPanel.setAlpha(alfa);
-        updateProgressLoader();
-    }
-
     private void updateProgressLoader(){
         if( App.playbackManager().isTrackLoading() )
             showProgressLoader();
@@ -777,8 +772,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         intentFilter.addAction(ACTION_UPDATE_SHUFFLE);
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
-        intentFilter.addAction(ACTION_HOME_SCREEN_BACK_PRESSED);
-        intentFilter.addAction(ACTION_PLAYER_SCREEN_RESUME);
         intentFilter.addAction(ACTION_ON_NETWORK_DISCONNECTED);
         context.registerReceiver(mPlayerBroadcastReceiver, intentFilter);
 
@@ -798,15 +791,14 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 if(!MasterActivity.isPlayerExpended()){
                     setPlayerEnable(false);
                 }
-                mActivity.sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+                toggleSlidingPanel();
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Effects_Screen_Opened_from_Mini_Player);
 
                 break;
             case R.id.mini_player_title_panel:
             case R.id.player_title_panel:
-                    setPlayerEnable(true);
-                mActivity.sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
-
+                setPlayerEnable(true);
+                toggleSlidingPanel();
                 break;
             case R.id.player_upnext_button:
                 startUpNextActivity();
@@ -1218,6 +1210,19 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_selected,articleParams);
                     break;
             }
+        }
+    }
+
+    public void setSlidingPanel(SlidingUpPanelLayout slidingPanel) {
+        mSlidingPanel = slidingPanel;
+    }
+
+    public void toggleSlidingPanel() {
+        if ( mSlidingPanel.isPanelExpanded() ) {
+            mSlidingPanel.collapsePanel();
+        }
+        else {
+            mSlidingPanel.expandPanel();
         }
     }
 }
