@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -96,6 +97,10 @@ public class CloudListActivity extends MasterActivity
         navigationView.setItemIconTintList(null);
         navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
+        if ( !BuildConfig.BUSINESS_MODEL_ENABLED ) {
+            navigationView.getMenu().removeItem(R.id.nav_store);
+            navigationView.getMenu().removeItem(R.id.nav_share);
+        }
 
         emptyPlaceholderIcon = (ImageView) findViewById(R.id.list_empty_placeholder_icon);
         emptyPlaceholderTitle = (RegularTextView) findViewById(R.id.list_empty_placeholder_txt);

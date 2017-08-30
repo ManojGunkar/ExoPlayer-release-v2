@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
@@ -223,6 +224,10 @@ public class MainActivity extends MasterActivity
         navigationView.setItemIconTintList(null);
         navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
+        if ( !BuildConfig.BUSINESS_MODEL_ENABLED ) {
+            navigationView.getMenu().removeItem(R.id.nav_store);
+            navigationView.getMenu().removeItem(R.id.nav_share);
+        }
     }
 
     @Override
@@ -391,13 +396,11 @@ public class MainActivity extends MasterActivity
         switch (item.getItemId()){
             case R.id.music_library:
                 runnable = navigateLibrary;
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_library_Opened_From_Drawer);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Music_library_Opened_From_Drawer);
                 break;
             case R.id.google_drive:
                 if (Utils.isOnline(this)){
                     runnable = navigateGoogleDrive;
-//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_OPENED_FROM_DRAWER);
                     FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Google_Drive_OPENED_FROM_DRAWER);
                 }else {
                     Utils.networkAlert(this);
@@ -407,7 +410,6 @@ public class MainActivity extends MasterActivity
             case R.id.drop_box:
                 if (Utils.isOnline(this)){
                     runnable = navigateDropbox;
-//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.DROP_BOX_OPENED_FROM_DRAWER);
                     FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.DROP_BOX_OPENED_FROM_DRAWER);
                 }else {
                     Utils.networkAlert(this);
