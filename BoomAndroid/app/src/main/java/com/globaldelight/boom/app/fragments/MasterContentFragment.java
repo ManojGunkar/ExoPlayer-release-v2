@@ -661,21 +661,21 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    public void setMiniPlayerAlpha(float alpha) {
-        miniController.setAlpha(alpha);
-    }
-
     public void setMiniPlayerVisible(boolean isMiniPlayerVisible) {
         if(isMiniPlayerVisible){
             miniController.setAlpha(1);
             mPlayerActionPanel.setAlpha(0);
             mPlayerActionPanel.setVisibility(View.INVISIBLE);
             miniController.setVisibility(View.VISIBLE);
+            mLargeSongSubTitle.setEnabled(false);
+            mLargeSongTitle.setEnabled(false);
         }else{
             miniController.setAlpha(0);
             mPlayerActionPanel.setAlpha(1);
             mPlayerActionPanel.setVisibility(View.VISIBLE);
             miniController.setVisibility(View.INVISIBLE);
+            mLargeSongSubTitle.setEnabled(true);
+            mLargeSongTitle.setEnabled(true);
         }
     }
 
