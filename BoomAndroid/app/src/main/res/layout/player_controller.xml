@@ -19,9 +19,8 @@
 
         <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/played_time"
-            android:layout_width="wrap_content"
+            android:layout_width="35sp"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
             android:maxLines="1"
             android:textColor="@color/large_player_seek_time"
             android:textSize="@dimen/player_seek_time_size"
@@ -36,9 +35,8 @@
 
         <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/remain_time"
-            android:layout_width="wrap_content"
+            android:layout_width="35sp"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
             android:maxLines="1"
             android:textColor="@color/large_player_seek_time"
             android:textSize="@dimen/player_seek_time_size"
