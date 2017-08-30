@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatSeekBar;
@@ -773,13 +774,13 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         intentFilter.addAction(ACTION_UPDATE_REPEAT);
         intentFilter.addAction(ACTION_STOP_UPDATING_UPNEXT_DB);
         intentFilter.addAction(ACTION_ON_NETWORK_DISCONNECTED);
-        context.registerReceiver(mPlayerBroadcastReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(context).registerReceiver(mPlayerBroadcastReceiver, intentFilter);
 
         setPlayerInfo();
     }
 
     private void unregisterPlayerReceiver(Context context){
-        context.unregisterReceiver(mPlayerBroadcastReceiver);
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(mPlayerBroadcastReceiver);
     }
 
     @Override

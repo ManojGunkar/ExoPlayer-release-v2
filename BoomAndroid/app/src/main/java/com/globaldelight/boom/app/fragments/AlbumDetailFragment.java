@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -96,7 +97,7 @@ public class AlbumDetailFragment extends Fragment {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         if(null != mActivity) {
-            mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
+            LocalBroadcastManager.getInstance(mActivity).registerReceiver(mUpdatePlayingItem, intentFilter);
 
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) mActivity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
@@ -177,7 +178,7 @@ public class AlbumDetailFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        mActivity.unregisterReceiver(mUpdatePlayingItem);
+        LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mUpdatePlayingItem);
         super.onDestroy();
     }
 }

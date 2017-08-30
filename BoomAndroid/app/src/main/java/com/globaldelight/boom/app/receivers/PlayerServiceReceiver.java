@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -59,10 +60,12 @@ public class PlayerServiceReceiver extends BroadcastReceiver {
         filter.addAction(ACTION_NOTI_CLICK);
         filter.addAction(ACTION_NOTI_REMOVE);
         mContext.registerReceiver(this, filter);
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(this, filter);
     }
 
     public void unregisterService(){
         mContext.unregisterReceiver(this);
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(this);
         this.mPlayerService = null;
     }
 

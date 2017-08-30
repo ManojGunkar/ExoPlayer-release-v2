@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -201,7 +202,7 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
 
         IntentFilter filter = new IntentFilter(PlayerEvents.ACTION_UPDATE_PLAYLIST);
         filter.addAction(PlayerEvents.ACTION_PLAYER_STATE_CHANGED);
-        getActivity().registerReceiver(mUpdateItemSongListReceiver, filter);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUpdateItemSongListReceiver, filter);
 
         if(EasyPermissions.hasPermissions(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
             LoadFavouriteList();
@@ -216,6 +217,6 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
     public void onStop() {
         super.onStop();
 
-        getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 }

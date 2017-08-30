@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -63,7 +64,7 @@ public class PlayListsFragment extends Fragment {
         super.onAttach(context);
         IntentFilter filter = new IntentFilter();
         filter.addAction(PlayerEvents.ACTION_UPDATE_PLAYLIST);
-        getActivity().registerReceiver(mUpdateItemSongListReceiver, filter);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUpdateItemSongListReceiver, filter);
         if (context instanceof Activity){
             mActivity = (Activity) context;
         }
@@ -92,7 +93,7 @@ public class PlayListsFragment extends Fragment {
 
     @Override
     public void onDetach() {
-        getActivity().unregisterReceiver(mUpdateItemSongListReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUpdateItemSongListReceiver);
         super.onDetach();
     }
 

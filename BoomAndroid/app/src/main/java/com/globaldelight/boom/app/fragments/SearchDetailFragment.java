@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -89,7 +90,7 @@ public class SearchDetailFragment extends Fragment{
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
-        mActivity.registerReceiver(mUpdatePlayingItem, intentFilter);
+        LocalBroadcastManager.getInstance(mActivity).registerReceiver(mUpdatePlayingItem, intentFilter);
     }
 
     private class LoadSearchDetailList extends AsyncTask<String, Void, ArrayList<? extends IMediaItemBase>> {
@@ -154,7 +155,7 @@ public class SearchDetailFragment extends Fragment{
 
     @Override
     public void onDestroy() {
-        mActivity.unregisterReceiver(mUpdatePlayingItem);
+        LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mUpdatePlayingItem);
         super.onDestroy();
     }
 }

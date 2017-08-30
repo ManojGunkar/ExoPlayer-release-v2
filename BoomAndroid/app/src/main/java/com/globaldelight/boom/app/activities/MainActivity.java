@@ -20,6 +20,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -152,7 +153,7 @@ public class MainActivity extends MasterActivity
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
         intentFilter.addAction(PlayerEvents.ACTION_PLAYER_STATE_CHANGED);
 
-        registerReceiver(headPhoneReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(headPhoneReceiver, intentFilter);
     }
 
     private void checkPermissions() {
@@ -482,7 +483,7 @@ public class MainActivity extends MasterActivity
 
     @Override
     protected void onPause() {
-        unregisterReceiver(headPhoneReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(headPhoneReceiver);
         App.playbackManager().isLibraryResumes = false;
         super.onPause();
     }

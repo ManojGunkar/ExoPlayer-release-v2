@@ -9,6 +9,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -135,7 +136,7 @@ public class CloudListActivity extends MasterActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.action_cloud_sync){
-            sendBroadcast(new Intent(PlayerEvents.ACTION_CLOUD_SYNC));
+            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(PlayerEvents.ACTION_CLOUD_SYNC));
             return true;
         }
         return false;

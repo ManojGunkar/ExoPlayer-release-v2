@@ -2,6 +2,7 @@ package com.globaldelight.boom.playbackEvent.controller;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
@@ -52,7 +53,7 @@ public class MediaController implements IMediaController {
         App.getBoomPlayListHelper().createPlaylist(playlist);
 //        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
         FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_CREATED_NEW_PLAYLIST);
-        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
     @Override
@@ -77,27 +78,27 @@ public class MediaController implements IMediaController {
     @Override
     public void addSongToBoomPlayList(long itemId, ArrayList<? extends IMediaItemBase> mediaElement, boolean isUpdate) {
         App.getBoomPlayListHelper().addSongs(mediaElement, itemId, isUpdate);
-        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
     @Override
     public void removeSongToPlayList(long itemId, int playlistId) {
         App.getBoomPlayListHelper().removeSong(itemId, playlistId);
-        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_BOOM_ITEM_LIST));
-        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_BOOM_ITEM_LIST));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
     @Override
     public void deleteBoomPlaylist(long itemId) {
         App.getBoomPlayListHelper().deletePlaylist(itemId);
-        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
     @Override
     public void renamePlaylist(String playlistTitle, long itemId) {
         App.getBoomPlayListHelper().renamePlaylist(playlistTitle, itemId);
-        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_BOOM_ITEM_LIST));
-        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_BOOM_ITEM_LIST));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
     @Override
@@ -178,7 +179,7 @@ public class MediaController implements IMediaController {
     @Override
     public void removeItemToFavoriteList(long trackId){
         App.getFavoriteDBHelper().removeSong(trackId);
-        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
 //        FlurryAnalyticHelper.logEvent(UtilAnalytics.Remove_Favorites);
         FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Remove_Favorites);
     }
@@ -186,7 +187,7 @@ public class MediaController implements IMediaController {
     @Override
     public void addItemToFavoriteList(IMediaItem item){
         App.getFavoriteDBHelper().addSong(item);
-        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
 //        FlurryAnalyticHelper.logEvent(UtilAnalytics.Add_To_Favorites);
         FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Add_To_Favorites);
 
@@ -236,6 +237,6 @@ public class MediaController implements IMediaController {
     @Override
     public void setRecentPlayedItem(IMediaItemBase recentPlayedItem) {
         App.getUPNEXTDBHelper().addItemsToRecentPlayedList(recentPlayedItem);
-        context.sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 }
