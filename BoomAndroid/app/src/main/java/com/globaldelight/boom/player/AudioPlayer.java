@@ -79,6 +79,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
     private Timer mPlaybackTimer = null;
     private PowerManager.WakeLock mWakeLock;
     private WifiManager.WifiLock  mWifiLock;
+    private long mDuration = 0;
 
 
     public AudioPlayer(Context context, Callback callback) {
@@ -123,7 +124,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
     public long getDuration() {
         if ( mExoPlayer != null ) {
-            return mExoPlayer.getDuration();
+            return mDuration;
         }
         return 0;
     }
@@ -151,6 +152,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         }
 
         if ( mediaHasChanged || mExoPlayer == null  ) {
+            mDuration = 0;
             if(AudioEffect.getInstance(mContext).getSelectedEqualizerPosition() == 0) {
                 setAutoEqualizer();
             }
@@ -181,7 +183,6 @@ public class AudioPlayer implements ExoPlayer.EventListener {
             // {@code onPlayerStateChanged} mCallback when the stream is ready to play.
             mExoPlayer.prepare(mediaSource);
 
-
             state = LOADING;
             postStateChange();
         }
@@ -197,8 +198,8 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         mPlaybackTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if ( mExoPlayer != null && mExoPlayer.getDuration() >= 0 ) {
-                    mCallback.onPlayTimeUpdate(mExoPlayer.getCurrentPosition(), mExoPlayer.getDuration());
+                if ( mExoPlayer != null && mDuration >= 0 ) {
+                    mCallback.onPlayTimeUpdate(mExoPlayer.getCurrentPosition(), mDuration);
                 }
             }
         }, 0, 1000);
@@ -248,7 +249,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
     public void seek(int percent) {
         if ( mExoPlayer != null ) {
-            seek(percent * mExoPlayer.getDuration() / 100);
+            seek(percent * mDuration / 100);
         }
     }
 
@@ -403,6 +404,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
             case ExoPlayer.STATE_READY:
                 if ( mExoPlayer.getPlayWhenReady() ) {
                     state = PLAYING;
+                    mDuration = mExoPlayer.getDuration();
                 }
                 else {
                     state = PAUSED;

@@ -96,7 +96,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     private void initViews() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_IN_APP_PURCHASE_SUCCESSFUL);
-        mActivity.registerReceiver(mUpdateInAppItemReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUpdateInAppItemReceiver, intentFilter);
 
         mStoreShareTxt = (RegularTextView) rootView.findViewById(R.id.store_share_text);
         mStoreShareTxt.setOnClickListener(this);
@@ -232,7 +232,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onDestroy() {
-        mActivity.unregisterReceiver(mUpdateInAppItemReceiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUpdateInAppItemReceiver);
         super.onDestroy();
         if( mUserPurchased ){
             FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Store_Closed_With_Purchase);

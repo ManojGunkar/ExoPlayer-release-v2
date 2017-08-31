@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -90,14 +91,14 @@ public class SongsListFragment extends Fragment{
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         if(null != mActivity)
-            mActivity.registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
+            LocalBroadcastManager.getInstance(mActivity).registerReceiver(mPlayerEventBroadcastReceiver, intentFilter);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         if(null != mActivity)
-            mActivity.unregisterReceiver(mPlayerEventBroadcastReceiver);
+            LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mPlayerEventBroadcastReceiver);
     }
 
     public void listIsEmpty(int size) {

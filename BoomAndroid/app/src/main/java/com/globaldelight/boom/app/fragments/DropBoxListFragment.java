@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -141,7 +142,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     public void onPause() {
         super.onPause();
         if(null != mActivity) {
-            mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
+            LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mUpdateItemSongListReceiver);
         }
     }
 
@@ -157,7 +158,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
         intentFilter.addAction(ACTION_ON_NETWORK_CONNECTED);
         intentFilter.addAction(ACTION_CLOUD_SYNC);
         if(null != mActivity)
-            mActivity.registerReceiver(mUpdateItemSongListReceiver, intentFilter);
+            LocalBroadcastManager.getInstance(mActivity).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 
     private void LoadDropboxList(){

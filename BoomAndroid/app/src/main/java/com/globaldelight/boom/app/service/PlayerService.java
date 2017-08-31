@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
@@ -295,6 +296,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
     }
 
     private void sendLocalBroadcast(Intent intent) {
-        sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

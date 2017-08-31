@@ -105,6 +105,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
         if ( !BuildConfig.BUSINESS_MODEL_ENABLED ) {
             data.setState(BusinessData.STATE_PURCHASED);
+            return;
         }
 
         AudioEffect.getInstance(mContext).addObserver(this);

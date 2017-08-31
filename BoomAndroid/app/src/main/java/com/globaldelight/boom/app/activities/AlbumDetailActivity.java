@@ -87,7 +87,7 @@ public class AlbumDetailActivity extends MasterActivity {
                 }
                 if(null != fragment){
                     fragment.onFloatPlayAlbums();
-                    sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+                    toggleSlidingPanel();
                 }
             }
         });
@@ -105,12 +105,6 @@ public class AlbumDetailActivity extends MasterActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.item_detail_container, fragment)
                 .commitAllowingStateLoss();
-    }
-
-    @Override
-    protected void onResumeFragments() {
-        sendBroadcast(new Intent(PlayerEvents.ACTION_PLAYER_SCREEN_RESUME));
-        super.onResumeFragments();
     }
 
     private void setAlbumArtSize(int width, int height) {
