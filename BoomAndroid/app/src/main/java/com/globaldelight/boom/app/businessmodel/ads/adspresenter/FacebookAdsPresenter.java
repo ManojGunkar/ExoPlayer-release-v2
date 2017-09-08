@@ -59,8 +59,10 @@ public class FacebookAdsPresenter implements AdsPresenter {
                 .inflate(param.itemContainerLayoutRes, parent, false);
         ViewGroup vg = (ViewGroup) adLayoutOutline.findViewById(param.itemGridContainerId);
 
+       /* LinearLayout adLayoutContent = (LinearLayout) inflater
+                .inflate(R.layout.grid_facebook_native_ad, parent, false);*/
         LinearLayout adLayoutContent = (LinearLayout) inflater
-                .inflate(R.layout.grid_facebook_native_ad, parent, false);
+                .inflate(R.layout.native_grid_facebook, parent, false);
         vg.addView(adLayoutContent);
 
         if (param.isLinearAds)
