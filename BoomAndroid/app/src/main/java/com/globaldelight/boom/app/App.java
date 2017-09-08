@@ -66,14 +66,17 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     @Override
     public void onCreate() {
+        application = this;
         super.onCreate();
+        registerActivityLifecycleCallbacks(this);
+
         FacebookSdk.sdkInitialize(this);
 
         TwitterAuthConfig authConfig =  new TwitterAuthConfig(TWEET_CONSUMER, TWEET_SECRET);
 
         if ( BuildConfig.FLAVOR.equals("production") ) {
             final Fabric fabric = new Fabric.Builder(this)
-                    .kits(new TwitterCore(authConfig), new TweetComposer(), new Crashlytics())
+                    .kits(new Crashlytics())
                     .logger(new DefaultLogger(Log.DEBUG))
                     .debuggable(true)
                     .build();
@@ -90,21 +93,8 @@ public class App extends Application implements Application.ActivityLifecycleCal
         }
 
         MixPanelAnalyticHelper.initPushNotification(this);
-        application = this;
 
 
-
-        boomPlayListhelper = new PlaylistDBHelper(application);
-
-        favoriteDBHelper = new FavoriteDBHelper(application);
-
-        upNextDBHelper = new UpNextDBHelper(application);
-
-        cloudMediaItemDBHelper = new CloudMediaItemDBHelper(application);
-
-        userPreferenceHandler = new UserPreferenceHandler(application);
-
-        registerActivityLifecycleCallbacks(this);
     }
 
     public static PlaybackManager playbackManager() {
@@ -112,22 +102,37 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
 
     public static UserPreferenceHandler getUserPreferenceHandler() {
+        if ( userPreferenceHandler == null ) {
+            userPreferenceHandler = new UserPreferenceHandler(application);
+        }
         return userPreferenceHandler;
     }
 
     public static UpNextDBHelper getUPNEXTDBHelper() {
+        if ( upNextDBHelper == null ) {
+            upNextDBHelper = new UpNextDBHelper(application);
+        }
         return upNextDBHelper;
     }
 
     public static CloudMediaItemDBHelper getCloudMediaItemDBHelper() {
+        if ( cloudMediaItemDBHelper == null ) {
+            cloudMediaItemDBHelper = new CloudMediaItemDBHelper(application);
+        }
         return cloudMediaItemDBHelper;
     }
 
     public static PlaylistDBHelper getBoomPlayListHelper() {
+        if ( boomPlayListhelper == null ) {
+            boomPlayListhelper = new PlaylistDBHelper(application);
+        }
         return boomPlayListhelper;
     }
 
     public static FavoriteDBHelper getFavoriteDBHelper() {
+        if ( favoriteDBHelper == null ) {
+            favoriteDBHelper = new FavoriteDBHelper(application);
+        }
         return favoriteDBHelper;
     }
 

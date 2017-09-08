@@ -19,7 +19,6 @@ public class Preferences {
     public static final String SLEEP_TIMER_ENABLED = "SLEEP_TIME_ENABLED";
     public static final String APP_FRESH_LAUNCH = "APP_FIRST_LAUNCH";
     public static final String APP_LAST_OPEN = "APP_LAST_OPEN";
-    public static final String INSTALL_DATE = "APP_INSTALL_DATE";
 
     public static final String TOOLTIP_SWITCH_EFFECT_LARGE_PLAYER = "TOOLTIP_SWITCH_EFFECT_LARGE_PLAYER";
     public static final String TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT = "TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT";

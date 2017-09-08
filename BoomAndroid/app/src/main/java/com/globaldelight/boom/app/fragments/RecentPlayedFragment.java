@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
-import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.RecentPlayedMediaList;
@@ -70,6 +70,13 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        recentPlayedMediaList.setRecentPlayedUpdater(null);
+        mActivity = null;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
@@ -94,7 +101,7 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
     }
 
     private void initViews() {
-        recentPlayedMediaList = RecentPlayedMediaList.getRecentPlayedListInstance(mActivity);
+        recentPlayedMediaList = RecentPlayedMediaList.getInstance(mActivity);
         recentPlayedMediaList.setRecentPlayedUpdater(this);
         recentPlayedMediaList.clearRecentPlayedContent();
         setSongListAdapter(recentPlayedMediaList.getRecentPlayedMediaList());
@@ -183,12 +190,12 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
         }
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
-        mActivity.registerReceiver(mUpdateItemSongListReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(mActivity).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
+        LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 }

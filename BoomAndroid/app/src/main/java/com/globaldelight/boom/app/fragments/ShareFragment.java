@@ -181,7 +181,7 @@ public class ShareFragment extends Fragment {
             @Override
             public void onCancel() {
                 ShareFragment.this.onCancel();
-                getActivity().sendBroadcast(new Intent(ACTION_SHARE_FAILED));
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(ACTION_SHARE_FAILED));
                 Toast.makeText(getActivity(),"OnCancel",Toast.LENGTH_SHORT).show();
 
             }
@@ -189,7 +189,7 @@ public class ShareFragment extends Fragment {
             @Override
             public void onError(FacebookException error) {
                 ShareFragment.this.onCancel();
-                getActivity().sendBroadcast(new Intent(ACTION_SHARE_FAILED));
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(ACTION_SHARE_FAILED));
                 Toast.makeText(getActivity(),"OnError"+error.getMessage(),Toast.LENGTH_SHORT).show();
             }
         });

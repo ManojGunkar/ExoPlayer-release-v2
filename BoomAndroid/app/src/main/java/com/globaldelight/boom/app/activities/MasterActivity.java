@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -31,24 +32,9 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
 
     protected DrawerLayout drawerLayout;
     private SlidingUpPanelLayout mSlidingPaneLayout;
-    private MasterContentFragment contentFragment;
+    protected MasterContentFragment contentFragment;
     private Handler handler;
     private boolean isDrawerLocked = false;
-
-
-    private BroadcastReceiver mPlayerSliderReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
-                case PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE:
-                    if(mSlidingPaneLayout.isPanelExpanded())
-                        mSlidingPaneLayout.collapsePanel();
-                    else
-                        mSlidingPaneLayout.expandPanel();
-                    break;
-            }
-        }
-    };
 
 
     @Override
@@ -62,19 +48,11 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         LinearLayout activityContainer = (LinearLayout)findViewById(R.id.activity_holder);
         getLayoutInflater().inflate(layoutResID, activityContainer, true);
         contentFragment = new MasterContentFragment();
+        contentFragment.setSlidingPanel(mSlidingPaneLayout);
         initContainer();
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
     }
 
-    private void registerPlayerReceiver(Context context){
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE);
-        context.registerReceiver(mPlayerSliderReceiver, intentFilter);
-    }
-
-    private void unregisterPlayerReceiver(Context context){
-        unregisterReceiver(mPlayerSliderReceiver);
-    }
 
     public void setDrawerUnlocked(){
         drawerLayout.setDrawerLockMode(isDrawerLocked ? DrawerLayout.LOCK_MODE_LOCKED_CLOSED : DrawerLayout.LOCK_MODE_UNLOCKED);
@@ -97,15 +75,16 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     }
 
     @Override
-    protected void onResumeFragments() {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                contentFragment.onResumeFragment(mSlidingPaneLayout.isPanelExpanded() ? 1 : 0);
-            }
-        });
-        super.onResumeFragments();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     public void onBackPressed() {
@@ -134,13 +113,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        contentFragment = null;
-        mSlidingPaneLayout = null;
-    }
-
-    @Override
     protected void onResume() {
         isPlayerExpended = mSlidingPaneLayout.isPanelExpanded();
         super.onResume();
@@ -151,14 +123,12 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     public  void onStart() {
         super.onStart();
         FlurryAnalytics.getInstance(this).startSession();
-        registerPlayerReceiver(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         FlurryAnalytics.getInstance(this).endSession();
-        unregisterPlayerReceiver(this);
     }
 
     public void initContainer() {
@@ -171,6 +141,10 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
 
     public void setStatusBarColor(int statusBarColor) {
 //        getWindow().setStatusBarColor(statusBarColor);
+    }
+
+    public void toggleSlidingPanel() {
+        contentFragment.toggleSlidingPanel();
     }
 
     public static boolean isPlayerExpended(){

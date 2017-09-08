@@ -9,6 +9,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -47,7 +49,6 @@ public class CloudListActivity extends MasterActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cloud);
         initView();
-//        FlurryAnalyticHelper.init(this);
     }
 
     Runnable navigateLibrary= new Runnable() {
@@ -97,6 +98,10 @@ public class CloudListActivity extends MasterActivity
         navigationView.setItemIconTintList(null);
         navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
+        if ( !BuildConfig.BUSINESS_MODEL_ENABLED ) {
+            navigationView.getMenu().removeItem(R.id.nav_store);
+            navigationView.getMenu().removeItem(R.id.nav_share);
+        }
 
         emptyPlaceholderIcon = (ImageView) findViewById(R.id.list_empty_placeholder_icon);
         emptyPlaceholderTitle = (RegularTextView) findViewById(R.id.list_empty_placeholder_txt);
@@ -109,7 +114,7 @@ public class CloudListActivity extends MasterActivity
     @Override
     public void onBackPressed() {
         if (isPlayerExpended()) {
-            sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+            toggleSlidingPanel();
         } else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
@@ -131,7 +136,7 @@ public class CloudListActivity extends MasterActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.action_cloud_sync){
-            sendBroadcast(new Intent(PlayerEvents.ACTION_CLOUD_SYNC));
+            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(PlayerEvents.ACTION_CLOUD_SYNC));
             return true;
         }
         return false;

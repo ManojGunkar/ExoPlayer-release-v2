@@ -20,6 +20,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -34,6 +35,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
@@ -55,7 +57,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HEADSET_PLUGGED;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HOME_SCREEN_BACK_PRESSED;
 import static com.globaldelight.boom.app.fragments.MasterContentFragment.isUpdateUpnextDB;
 
 /**
@@ -152,7 +153,7 @@ public class MainActivity extends MasterActivity
         intentFilter.addAction(ACTION_HEADSET_PLUGGED);
         intentFilter.addAction(PlayerEvents.ACTION_PLAYER_STATE_CHANGED);
 
-        registerReceiver(headPhoneReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(headPhoneReceiver, intentFilter);
     }
 
     private void checkPermissions() {
@@ -223,12 +224,10 @@ public class MainActivity extends MasterActivity
         navigationView.setItemIconTintList(null);
         navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
-    }
-
-    @Override
-    protected void onResumeFragments() {
-        sendBroadcast(new Intent(PlayerEvents.ACTION_PLAYER_SCREEN_RESUME));
-        super.onResumeFragments();
+        if ( !BuildConfig.BUSINESS_MODEL_ENABLED ) {
+            navigationView.getMenu().removeItem(R.id.nav_store);
+            navigationView.getMenu().removeItem(R.id.nav_share);
+        }
     }
 
     @Override
@@ -246,12 +245,11 @@ public class MainActivity extends MasterActivity
 
     @Override
     public void onBackPressed() {
-        sendBroadcast(new Intent(ACTION_HOME_SCREEN_BACK_PRESSED));
-
+        contentFragment.onBackPressed();
         ((LibraryFragment)mLibraryFragment).setAutoDismissBahaviour();
 
         if (isPlayerExpended()) {
-            sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+            toggleSlidingPanel();
         } else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
@@ -391,13 +389,11 @@ public class MainActivity extends MasterActivity
         switch (item.getItemId()){
             case R.id.music_library:
                 runnable = navigateLibrary;
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_library_Opened_From_Drawer);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Music_library_Opened_From_Drawer);
                 break;
             case R.id.google_drive:
                 if (Utils.isOnline(this)){
                     runnable = navigateGoogleDrive;
-//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_OPENED_FROM_DRAWER);
                     FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Google_Drive_OPENED_FROM_DRAWER);
                 }else {
                     Utils.networkAlert(this);
@@ -407,7 +403,6 @@ public class MainActivity extends MasterActivity
             case R.id.drop_box:
                 if (Utils.isOnline(this)){
                     runnable = navigateDropbox;
-//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.DROP_BOX_OPENED_FROM_DRAWER);
                     FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.DROP_BOX_OPENED_FROM_DRAWER);
                 }else {
                     Utils.networkAlert(this);
@@ -488,7 +483,7 @@ public class MainActivity extends MasterActivity
 
     @Override
     protected void onPause() {
-        unregisterReceiver(headPhoneReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(headPhoneReceiver);
         App.playbackManager().isLibraryResumes = false;
         super.onPause();
     }

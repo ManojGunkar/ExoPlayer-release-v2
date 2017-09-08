@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -322,6 +323,12 @@ public class Utils {
         if((null == progressLoader || !progressLoader.isShowing()) && ConnectivityReceiver.isNetworkAvailable(context, true)) {
             progressLoader = new BoomDialogView(context);
             progressLoader.setCanceledOnTouchOutside(false);
+            progressLoader.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    progressLoader = null;
+                }
+            });
             progressLoader.show();
         }
     }
@@ -331,8 +338,10 @@ public class Utils {
     }
 
     public static void dismissProgressLoader() {
-        if(null != progressLoader && progressLoader.isShowing())
+        if(null != progressLoader && progressLoader.isShowing()) {
             progressLoader.dismiss();
+            progressLoader = null;
+        }
     }
 
     public static String getDeviceDensity(Activity context){

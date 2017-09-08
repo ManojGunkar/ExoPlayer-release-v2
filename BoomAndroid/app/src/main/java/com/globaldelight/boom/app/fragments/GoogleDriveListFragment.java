@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -59,10 +60,6 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     public GoogleDriveListFragment() {
     }
 
-    public Context getFragmentContext(){
-        return mActivity;
-    }
-
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -93,6 +90,14 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         if (context instanceof Activity){
             mActivity = (Activity) context;
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
+        googleDriveMediaList.setGoogleDriveHandler(null);
+        googleDriveMediaList.setGoogleDriveMediaUpdater(null);
     }
 
     @Override
@@ -222,14 +227,8 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
     @Override
     public void onPause() {
         if(null != getActivity())
-            mActivity.unregisterReceiver(mUpdateItemSongListReceiver);
+            LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mUpdateItemSongListReceiver);
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        googleDriveMediaList.setGoogleDriveMediaUpdater(null);
     }
 
     @Override
@@ -243,7 +242,7 @@ public class GoogleDriveListFragment extends Fragment  implements GoogleDriveMed
         intentFilter.addAction(ACTION_ON_NETWORK_CONNECTED);
         intentFilter.addAction(ACTION_CLOUD_SYNC);
         if(null != getActivity())
-            mActivity.registerReceiver(mUpdateItemSongListReceiver, intentFilter);
+            LocalBroadcastManager.getInstance(mActivity).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 
     @Override

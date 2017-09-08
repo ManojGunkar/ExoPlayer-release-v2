@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -269,7 +270,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_UPDATE_BOOM_ITEM_LIST);
-        getActivity().registerReceiver(mUpdatePlayingItem, intentFilter);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUpdatePlayingItem, intentFilter);
 
         new LoadAlbumSongListItems().execute();
         setForAnimation();
@@ -278,6 +279,6 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
     @Override
     public void onStop() {
         super.onStop();
-        getActivity().unregisterReceiver(mUpdatePlayingItem);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUpdatePlayingItem);
     }
 }

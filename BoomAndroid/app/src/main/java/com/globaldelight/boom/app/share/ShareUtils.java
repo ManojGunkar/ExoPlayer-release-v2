@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -52,7 +53,7 @@ public class ShareUtils {
             @Override
             public void onCancel() {
               //  ShareFragment.this.onCancel();
-                context.sendBroadcast(new Intent(ACTION_SHARE_FAILED));
+                LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_SHARE_FAILED));
                 Toast.makeText(context,"OnCancel",Toast.LENGTH_SHORT).show();
 
             }
@@ -60,7 +61,7 @@ public class ShareUtils {
             @Override
             public void onError(FacebookException error) {
              //   ShareFragment.this.onCancel();
-                context.sendBroadcast(new Intent(ACTION_SHARE_FAILED));
+                LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_SHARE_FAILED));
                 Toast.makeText(context,"OnError"+error.getMessage(),Toast.LENGTH_SHORT).show();
             }
         });

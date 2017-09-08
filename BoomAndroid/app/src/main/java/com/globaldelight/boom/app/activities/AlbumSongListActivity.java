@@ -121,7 +121,7 @@ public class AlbumSongListActivity extends MasterActivity {
                 }
                 if(null != fragment ){
                     fragment.onFloatPlayAlbumSongs();
-                    sendBroadcast(new Intent(PlayerEvents.ACTION_TOGGLE_PLAYER_SLIDE));
+                    toggleSlidingPanel();
                 }
             }
         });
@@ -148,13 +148,6 @@ public class AlbumSongListActivity extends MasterActivity {
         mFloatPlayAlbumSongs.startAnimation(anim_in);
 
         fragment.updateAdapter();
-    }
-
-
-    @Override
-    protected void onResumeFragments() {
-        sendBroadcast(new Intent(PlayerEvents.ACTION_PLAYER_SCREEN_RESUME));
-        super.onResumeFragments();
     }
 
     private void setAlbumArtSize() {
@@ -195,17 +188,6 @@ public class AlbumSongListActivity extends MasterActivity {
         artImg3.setLayoutParams(param);
         artImg4.setLayoutParams(param);
         PlayerUtils.setSongsArtTable(this, Urls, new ImageView[]{artImg1, artImg2, artImg3, artImg4});
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

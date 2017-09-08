@@ -3,6 +3,7 @@ package com.globaldelight.boom.playbackEvent.controller;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
@@ -26,7 +27,7 @@ public class PlayerUIController implements IPlayerUIController {
     public void OnPlayPause() {
         IMediaItemBase item =  App.playbackManager().queue().getPlayingItem();
         if(null != item ) {
-            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
         }
     }
 
@@ -36,33 +37,33 @@ public class PlayerUIController implements IPlayerUIController {
         if(null != item ) {
             Intent intent = new Intent(PlayerServiceReceiver.ACTION_SEEK_SONG);
             intent.putExtra("seek", progress);
-            mContext.sendBroadcast(intent);
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
         }
     }
 
     @Override
     public void OnRepeatClick() {
         if(null != App.playbackManager().queue().getPlayingItem())
-            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_REPEAT_SONG));
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_REPEAT_SONG));
 
     }
 
     @Override
     public void OnShuffleClick() {
         if(null != App.playbackManager().queue().getPlayingItem())
-            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_SHUFFLE_SONG));
     }
 
     @Override
     public void OnNextTrackClick() {
         if(App.playbackManager().queue().isNext())
-            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_NEXT_SONG));
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_NEXT_SONG));
     }
 
     @Override
     public void OnPreviousTrackClick() {
         if(App.playbackManager().queue().isPrevious())
-            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PREV_SONG));
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PREV_SONG));
     }
 
     @Override

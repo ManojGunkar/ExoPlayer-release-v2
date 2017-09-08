@@ -61,15 +61,5 @@ public class SearchDetailActivity extends MasterActivity {
                     .commit();
         }
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            super.onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }
 

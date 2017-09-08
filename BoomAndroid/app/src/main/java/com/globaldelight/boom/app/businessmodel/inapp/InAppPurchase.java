@@ -297,7 +297,6 @@ public class InAppPurchase {
     }
 
     private void onPurchaseFailed() {
-        Intent intent = new Intent();
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_IAP_FAILED));
     }
 

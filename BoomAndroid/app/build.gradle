@@ -62,6 +62,7 @@ android {
 
         production {
             buildConfigField "String",  EXPIRY_DATE,                 "null"
+            buildConfigField "boolean", BUSINESS_MODEL_ENABLED,      "true"
             buildConfigField "String",  'FLURRY_API_KEY',            STRING("XRPWTN4PDGJJQX6NNJPN")
             buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    STRING("79a795acec1fbcc3d9d28f792c51fc24")
             buildConfigField "String",  'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-2462021843550393/4811995067")
@@ -122,7 +123,7 @@ dependencies {
     compile 'com.android.volley:volley:1.0.0'
     testCompile 'junit:junit:4.12'
     compile 'com.google.android.gms:play-services-gcm:11.0.1'
-    compile "com.mixpanel.android:mixpanel-android:5.1.0"
+    compile "com.mixpanel.android:mixpanel-android:5.1.2"
     compile 'com.google.android.gms:play-services-ads:11.0.1'
     compile ('com.facebook.android:audience-network-sdk:4.+') {
         exclude group: 'com.google.android.exoplayer'

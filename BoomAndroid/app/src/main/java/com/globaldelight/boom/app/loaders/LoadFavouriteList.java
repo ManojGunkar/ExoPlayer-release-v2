@@ -17,7 +17,7 @@ public class LoadFavouriteList extends AsyncTask<Void, Integer, ArrayList<? exte
     private FavouriteMediaList favouriteMediaList;
     public LoadFavouriteList (Context context){
         this.mContext = context;
-        favouriteMediaList = FavouriteMediaList.getFavouriteListInstance(mContext);
+        favouriteMediaList = FavouriteMediaList.getInstance(mContext);
     }
     @Override
     protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {

@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -253,7 +254,7 @@ public class TimerUtils {
 
     public static void sendMessagePlayerStop(Context mContext) {
         if(App.playbackManager().isPlaying())
-            mContext.sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
     }
 
 
