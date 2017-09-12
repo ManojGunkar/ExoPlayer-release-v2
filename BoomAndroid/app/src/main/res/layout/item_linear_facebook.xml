@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fb_native_ad_container"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_gravity="center_horizontal"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_weight="0.15"
+        android:id="@+id/native_ad_icon"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:padding="5dp"
+        android:scaleType="fitXY"
+        android:layout_gravity="center_vertical" />
+
+    <LinearLayout
+        android:layout_weight="0.5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <com.globaldelight.boom.view.RegularTextView
+            android:id="@+id/native_ad_body"
+            android:layout_weight="0.3"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="title"
+            android:padding="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:maxLength="15"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:textSize="15sp" />
+
+        <com.globaldelight.boom.view.RegularTextView
+            android:id="@+id/native_ad_title"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="title"
+            android:ellipsize="end"
+            android:padding="2dp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:layout_weight="0.3"
+            android:maxLength="25"
+            android:textColor="@android:color/black"
+            android:textSize="15sp" />
+        <com.globaldelight.boom.view.RegularTextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:textStyle="bold"
+            android:text="titlefdgsdfgsdfgdfgsdfgsdfgsdfgsdfgsdfgsdfg"
+            android:ellipsize="end"
+            android:layout_weight="0.3"
+            android:padding="2dp"
+            android:layout_marginBottom="2dp"
+            android:maxLines="1"
+            android:maxLength="25"
+            android:textColor="@android:color/black"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_weight="0.25"
+        android:id="@+id/native_ad_call_to_action"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_gravity="bottom"
+        android:textSize="8sp"
+        android:textColor="#586267"
+        android:text="@string/install_google"
+        />
+
+</LinearLayout>

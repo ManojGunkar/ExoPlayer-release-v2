@@ -18,14 +18,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -49,7 +47,6 @@ import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
-import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.view.CoachMarkerWindow;
 import com.globaldelight.boom.view.NegativeSeekBar;
@@ -128,7 +125,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private RegularTextView mDisableIntensity;
     private NegativeSeekBar mIntensitySeek;
     private SwitchCompat mEffectSwitch;
-    private CheckBox mFullBassCheck;
+    private LinearLayout mFullBassCheck;
     private RegularTextView mEffectSwitchTxt, m3DSurroundTxt, mIntensityTxt, mEqualizerTxt, mSelectedEqTxt;
     private ImageView m3DSurroundBtn, mIntensityBtn, mEqualizerBtn, mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
     private LinearLayout mEqDialogPanel;
@@ -278,6 +275,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void setPlayerEnable(boolean isEnable){
+
         mPlayerTab.setSelected(isEnable);
         mEffectTab.setSelected(!isEnable);
 
@@ -910,11 +908,11 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 return true;
             case R.id.player_large:
                 return true;
-            case R.id.intensity_disable_img:
+            /*case R.id.intensity_disable_img:
                 if( audioEffects.isAudioEffectOn()  && audioEffects.isIntensityOn())
                     return false;
                 else
-                    return true;
+                    return true;*/
             case R.id.mini_player_progress :
                 return true;
         }
@@ -941,22 +939,23 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mSpeakerBtn.setOnClickListener(this);
         m3DSurroundTxt.setOnClickListener(this);
 
-        mFullBassCheck = (CheckBox) mInflater.findViewById(R.id.fullbass_chk);
-        mFullBassCheck.setChecked(audioEffects.isFullBassOn());
+        mFullBassCheck = (LinearLayout) mInflater.findViewById(R.id.fullbass_chk);
+     //   mFullBassCheck.setEnabled(audioEffects.isFullBassOn());
 
-        mFullBassCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mFullBassCheck.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
-                if(audioEffects.isAudioEffectOn() &&
-                        audioEffects.is3DSurroundOn()){
-
-                    audioEffects.setEnableFullBass(!audioEffects.isFullBassOn());
-
-                 //   FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FULL_BASS, audioEffectPreferenceHandler.isFullBassOn());
+            public void onClick(View v) {
+                if(!audioEffects.isFullBassOn()){
+                    mFullBassCheck.setBackground(mActivity.getResources().getDrawable(R.drawable.fullbass_active));
+                    audioEffects.setEnableFullBass(true);
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FULL_BASS, audioEffects.isFullBassOn());
+                }else {
+                    mFullBassCheck.setBackground(mActivity.getResources().getDrawable(R.drawable.fullbass_unactive));
+                    audioEffects.setEnableFullBass(false);
                 }
             }
         });
+
 
         mIntensityBtn = (ImageView) mInflater.findViewById(R.id.intensity_btn);
         mIntensityBtn.setOnClickListener(this);
@@ -975,8 +974,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mSelectedEqTxt = (RegularTextView) mInflater.findViewById(R.id.selected_eq_txt);
         mSelectedEqGoImg = (ImageView) mInflater.findViewById(R.id.selected_eq_go_img);
 
-        mDisableIntensity = (RegularTextView) mInflater.findViewById(R.id.intensity_disable_img);
-        mDisableIntensity.setOnTouchListener(this);
+        /*mDisableIntensity = (RegularTextView) mInflater.findViewById(R.id.intensity_disable_img);
+        mDisableIntensity.setOnTouchListener(this);*/
         eq_names = Arrays.asList(mActivity.getResources().getStringArray(R.array.eq_names));
         eq_active_off = mActivity.getResources().obtainTypedArray(R.array.eq_active_off);
 
@@ -1018,15 +1017,22 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
         boolean isSurroundOn = audioEffects.is3DSurroundOn();
         m3DSurroundBtn.setEnabled(isEffectOn);
+        mSpeakerBtn.setEnabled(isEffectOn);
         m3DSurroundTxt.setEnabled(isEffectOn);
         mSpeakerBtn.setEnabled(isEffectOn);
+        mFullBassCheck.setEnabled(isEffectOn);
+
         if ( isEffectOn ) {
             m3DSurroundBtn.setSelected(isSurroundOn);
             m3DSurroundTxt.setSelected(isSurroundOn);
             mSpeakerBtn.setSelected(isSurroundOn);
+            mFullBassCheck.setEnabled(isSurroundOn);
         }
-
-        mFullBassCheck.setEnabled(isEffectOn && audioEffects.is3DSurroundOn());
+        /*if (isEffectOn && audioEffects.is3DSurroundOn()){
+            mFullBassCheck.setBackground(mActivity.getResources().getDrawable(R.drawable.fullbass_pressed));
+        }else {
+            mFullBassCheck.setBackground(mActivity.getResources().getDrawable(R.drawable.fullbass_unpressed));
+        }*/
 
         boolean isIntensityOn = audioEffects.isIntensityOn();
         mIntensityBtn.setEnabled(isEffectOn);

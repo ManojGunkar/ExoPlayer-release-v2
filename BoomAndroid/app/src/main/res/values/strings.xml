@@ -143,8 +143,8 @@
     <string name="eq_dialog_title">Choose Equalizer</string>
     <string name="speaker_dialog_title">Speakers</string>
     <string name="done">DONE</string>
-    <string name="on">ON</string>
-    <string name="off">OFF</string>
+    <string name="on">Effects ON</string>
+    <string name="off">Effects OFF</string>
     <string name="effect">Effect&#160;</string>
     <string name="three_d_surround">3D Surround</string>
     <string name="fullbass">Full Bass</string>

@@ -81,7 +81,7 @@
                     android:layout_height="30dp"
                     android:layout_gravity="right"
                     android:textSize="8sp"
-                    android:textColor="@color/white"
+                    android:textColor="#586267"
                     android:text="@string/install_google"
                    />
 

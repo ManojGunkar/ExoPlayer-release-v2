@@ -102,15 +102,16 @@
 
         <Button
             android:id="@+id/native_ad_call_to_action"
-            android:layout_width="80dp"
+            android:layout_width="64dp"
             android:layout_height="30dp"
+            android:textColor="#586267"
+            android:text="@string/install_google"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:background="#4286F4"
             android:gravity="center"
             android:paddingLeft="3dp"
             android:paddingRight="3dp"
-            android:textColor="@android:color/white"
             android:textSize="11sp" />
     </LinearLayout>
 </LinearLayout>
