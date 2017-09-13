@@ -6,7 +6,7 @@
     android:layout_margin="@dimen/card_grid_margin"
     android:layout_height="wrap_content">
 
-   <!-- <LinearLayout android:id="@+id/ad_loading_view"
+    <LinearLayout android:id="@+id/ad_loading_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -25,9 +25,9 @@
             android:layout_gravity="center"
             android:text="Loading Ad..."
             android:textStyle="normal" />
-    </LinearLayout>-->
+    </LinearLayout>
 
-    <!--<LinearLayout android:id="@+id/ad_error_view"
+    <LinearLayout android:id="@+id/ad_error_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -42,7 +42,7 @@
             android:layout_gravity="center"
             android:text="Failed to load Ads!"
             android:textStyle="normal" />
-    </LinearLayout>-->
+    </LinearLayout>
 
 
     <LinearLayout
