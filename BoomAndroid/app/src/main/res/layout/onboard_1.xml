@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/onBoardingBG">
+
+        <ImageView
+            android:id="@+id/img_intro_onboard_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_on_boarding_effects" />
+
+        <com.globaldelight.boom.view.RegularTextView
+            android:id="@+id/txt_title_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/regularTextView"
+            android:layout_below="@+id/img_intro_onboard_1"
+            android:layout_marginLeft="@dimen/onboarding_txt_title_margin_side"
+            android:layout_marginRight="@dimen/onboarding_txt_title_margin_side"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
+            android:text="@string/onboard_screen_1_main_tx"
+            android:textColor="@color/white"
+            android:textSize="@dimen/onboarding_txt_title_size"
+            android:textStyle="bold" />
+
+        <com.globaldelight.boom.view.RegularTextView
+            android:id="@+id/regularTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_title_1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/onboarding_txt_title_margin_side"
+            android:layout_marginRight="@dimen/onboarding_txt_title_margin_side"
+            android:layout_marginTop="@dimen/onboarding_txt_sub_title_margin_top"
+            android:gravity="center_horizontal"
+            android:text="@string/onboard_screen_1_sub_tx"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="15dp" />
+
+    </RelativeLayout>
+
+</FrameLayout>

@@ -20,7 +20,7 @@ import com.globaldelight.boom.app.businessmodel.ads.builder.AdsBuilder;
  * Created by adarsh on 17/07/17.
  */
 
-public class AdController extends BroadcastReceiver {
+public class AdsController extends BroadcastReceiver {
 
     private AdWrapperAdapter mAdAdapter;
     private AdsPresenter mPresenter;
@@ -30,7 +30,7 @@ public class AdController extends BroadcastReceiver {
     private Context mContext;
     private boolean mAdsEnabled = false;
 
-    public AdController(Context context, RecyclerView recyclerView, RecyclerView.Adapter adapter, boolean isGrid ) {
+    public AdsController(Context context, RecyclerView recyclerView, RecyclerView.Adapter adapter, boolean isGrid ) {
         mContext = context;
         mRecyclerView = recyclerView;
         mIsGrid = isGrid;

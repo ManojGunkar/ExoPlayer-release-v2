@@ -198,15 +198,22 @@
     <string name="choose_headphone_tooltip">Choose headphone type \nin Settings for best output</string>
 
 
-    <string name="onboard_screen_1_main_tx">Redefine your music experience</string>
-    <string name="onboard_screen_1_sub_tx">Intensify your music listening experience with 3D Surround sound and professional music presets.</string>
-    <string name="onboard_screen_2_main_tx">All your music at one place </string>
-    <string name="onboard_screen_2_sub_tx">Listen to music from your Music Library, Google Drive and Dropbox on the go.</string>
-    <string name="onboard_screen_3_main_tx">Optimized for all headphones</string>
-    <string name="onboard_screen_3_sub_tx">Select your ‘Headphone Type’ in Settings to make your music come alive. </string>
+    <string name="onboard_screen_0_main_tx">Redefine Your Music Experience</string>
+    <string name="onboard_screen_0_sub_tx">Feel your music coming alive with the magical 3D surround sound.</string>
+
+    <string name="onboard_screen_1_main_tx">Pump-up Your Music</string>
+    <string name="onboard_screen_1_sub_tx">Enjoy more control on your music with the professional and intuitive equalizer presets.</string>
+
+    <string name="onboard_screen_2_main_tx">Optimized for All Headphones</string>
+    <string name="onboard_screen_2_sub_tx">Select your “Headphone Type” from app “Settings” to bring your favorite music to life.</string>
+
+    <string name="onboard_screen_3_main_tx">All Your Music at One Place</string>
+    <string name="onboard_screen_3_sub_tx">Listen to music from your music library, Google Drive and Dropbox on the go.</string>
+
     <string name="skip_text">Skip</string>
     <string name="start_boomin">Start Boomin\'</string>
     <string name="next">Next</string>
+
     <string name="loading">Loading...</string>
     <string name="inapp_process_error">Error while InApp Purchase!</string>
     <string name="inapp_process_success">Purchase Success.</string>

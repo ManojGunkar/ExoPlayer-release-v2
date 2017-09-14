@@ -141,7 +141,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     }
 
     public boolean isAdsEnabled() {
-        return true;//data.getState() != BusinessData.STATE_TRIAL && data.getState() != BusinessData.STATE_PURCHASED;
+        return data.getState() != BusinessData.STATE_TRIAL && data.getState() != BusinessData.STATE_PURCHASED;
     }
 
 
