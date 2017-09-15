@@ -66,5 +66,5 @@ dependencies {
     withExtensionsCompile project(path: ':extension-flac')
     withExtensionsCompile project(path: ':extension-opus')
     withExtensionsCompile project(path: ':extension-vp9')
-    compile project(path: ':boom-engine')
+    compile project(path: ':boom-extension')
 }
