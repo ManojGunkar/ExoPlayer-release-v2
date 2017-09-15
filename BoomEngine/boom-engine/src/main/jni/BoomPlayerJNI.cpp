@@ -40,7 +40,7 @@ static inline struct tm makeDate(int day, int month, int year) {
     return time;
 }
 
-static bool hasExpired() {
+static inline bool hasExpired() {
     struct tm expiry = EXPIRY_DATE;
     double diff = difftime(time(NULL), mktime(&expiry));
     return ( diff > 0 );
