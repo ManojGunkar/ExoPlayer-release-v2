@@ -263,4 +263,23 @@
     <string name="facebook_app_id" translatable="false">218364201905576</string>
     <string name="install_google">Install</string>
 
+    <string name="first_notification_title">Don’t Limit Your Boomin’!</string>
+    <string name="first_notification_message">Get immersed in surround sound to experience music like never before at just %s</string>
+    <string name="second_notification_title">Just Boom it!</string>
+    <string name="second_notification_message">Unlock the magical surround sound and remove Ads at just %1$s \nor\nSpread the musical fever, share Boom with your friends, and enjoy %2$d days free trial</string>
+    <string name="second_notification_message_no_share">Unlock the magical surround sound and remove Ads at just %s</string>
+    <string name="third_notification_title">Get More For Less!</string>
+    <string name="third_notification_message">Unlock all features, remove Ads and experience music like never before for only %s</string>
+    <string name="first_effect_on_title">Congratulations!</string>
+    <string name="first_effect_on_message">Enjoy all features for free for %d hours. Boom it before it ends.</string>
+    <string name="afterTrial_effect_on_title">Missed free usage of premium features?</string>
+    <string name="afterTrial_effect_on_message">Don’t worry; enjoy your first %d songs with all the premium features for free!</string>
+    <string name="share_success_title">Congratulations!</string>
+    <string name="share_success_message">Now you can enjoy all features for free for %d days!</string>
+    <string name="buy_button_title">Buy</string>
+    <string name="share_button_title">Share</string>
+    <string name="remind_button_title">Remind Me Later</string>
+
+
+
 </resources>

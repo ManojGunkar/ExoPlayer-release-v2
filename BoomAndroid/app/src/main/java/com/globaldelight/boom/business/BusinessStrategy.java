@@ -14,6 +14,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
@@ -211,9 +212,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         }
     }
 
-
-
-
     private static boolean isTimeExpired(Date startDate, long period) {
         return (startDate == null) || ( System.currentTimeMillis() > startDate.getTime() + period );
     }
@@ -242,17 +240,46 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         return isTimeExpired(data.getLastPurchaseReminder(), config.purchaseReminderInterval());
     }
 
+    private void showInitialPopup() {
+        String price = getPurchasePrice();
+        showPopup(
+                mContext.getString(R.string.first_notification_title),
+                mContext.getString(R.string.first_notification_message, price ),
+                mContext.getString(R.string.buy_button_title),
+                mContext.getString(R.string.remind_button_title),
+                buyResponse);
+    }
+
     private void showPurchaseDialog(boolean sharingAllowed) {
-        String message = "Buy @ ";
         String price = getPurchasePrice();
 
         data.setLastPurchaseReminder(new Date());
 
-        if ( sharingAllowed ) {
-            showPopup(message+price + "\n or \n Share", "Buy", "Share", shareResponse );
+        if ( getPurchaseLevel() == PRICE_FULL ) {
+            if ( sharingAllowed ) {
+                showPopup(
+                        mContext.getString(R.string.second_notification_title),
+                        mContext.getString(R.string.second_notification_message, price, BusinessConfig.toDays(config.sharePeriod()) ),
+                        mContext.getString(R.string.buy_button_title),
+                        mContext.getString(R.string.share_button_title),
+                        shareResponse);
+            }
+            else {
+                showPopup(
+                        mContext.getString(R.string.second_notification_title),
+                        mContext.getString(R.string.second_notification_message_no_share, price),
+                        mContext.getString(R.string.buy_button_title),
+                        mContext.getString(R.string.remind_button_title),
+                        buyResponse);
+            }
         }
         else {
-            showPopup(message+price, "Buy", "Remind Me Later", buyResponse );
+            showPopup(
+                    mContext.getString(R.string.third_notification_title),
+                    mContext.getString(R.string.third_notification_message, price),
+                    mContext.getString(R.string.buy_button_title),
+                    mContext.getString(R.string.remind_button_title),
+                    buyResponse);
         }
     };
 
@@ -334,14 +361,17 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             data.setSharedDate(new Date());
             data.setState(BusinessData.STATE_SHARED);
             AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
-            showPopup("Enjoy!", "Ok", null, null);
+            showPopup(mContext.getString(R.string.share_success_title),
+                    mContext.getString(R.string.share_success_message, BusinessConfig.toDays(config.sharePeriod())),
+                    mContext.getString(R.string.ok),
+                    null, null);
         }
     }
 
     private void onShareFailed() {
         if ( rewardUserForSharing() ) {
             // TODO: Notify user that share failed
-            showPopup("Failed!", "Ok", null, null);
+            //showPopup("Failed!", "Ok", null, null);
             FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_SHARE_FAILED);
         }
     }
@@ -391,22 +421,56 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     }
 
 
-    @Override
-    public void update(Observable o, Object arg) {
-        String property = (String)arg;
-        if ( property.equals(AudioEffect.AUDIO_EFFECT_PROPERTY) ) {
-            update();
-            if ( data.getState() == BusinessData.STATE_LOCKED && AudioEffect.getInstance(mContext).isAudioEffectOn() ) {
+    private void onEffectsON() {
+
+        switch (data.getState()) {
+            case BusinessData.STATE_LOCKED: {
                 AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
                 if ( App.playbackManager().isTrackPlaying() ) {
                     mWasPlaying = true;
                     App.playbackManager().playPause();
                 }
-                showPopup("Watch Video Ad to unlock effects", "Watch", "Cancel", videoResponse);
+                showPopup("TODO", "Watch Video Ad to unlock effects", "Watch", "Cancel", videoResponse);
+                break;
             }
-            else if ( (data.getState() == BusinessData.STATE_TRIAL || data.getState() == BusinessData.STATE_UNDEFINED) && data.getStartDate() == null ) {
-                data.setStartDate(new Date());
+
+            case BusinessData.STATE_TRIAL: {
+                if ( data.getStartDate() == null ) {
+                    data.setStartDate(new Date());
+                    showPopup(
+                            mContext.getString(R.string.first_effect_on_title),
+                            mContext.getString(R.string.first_effect_on_message, BusinessConfig.toHours(config.trialPeriod())),
+                            mContext.getString(R.string.ok),
+                            null,
+                            null);
+                }
+                break;
             }
+
+            case BusinessData.STATE_UNDEFINED: {
+                if ( data.getStartDate() == null ) {
+                    data.setStartDate(new Date());
+                    showPopup(
+                            mContext.getString(R.string.afterTrial_effect_on_title),
+                            mContext.getString(R.string.afterTrial_effect_on_message, config.freeSongsLimit()),
+                            mContext.getString(R.string.ok),
+                            null,
+                            null);
+                }
+                break;
+            }
+
+        }
+
+    }
+
+
+    @Override
+    public void update(Observable o, Object arg) {
+        String property = (String)arg;
+        if ( property.equals(AudioEffect.AUDIO_EFFECT_PROPERTY) ) {
+            update();
+            onEffectsON();
         }
     }
 
@@ -458,7 +522,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                     if ( !data.isInitialPopupShown() && data.getStartDate() != null && isTimeExpired(data.getStartDate(), config.initialPopupDelay())) {
                         data.setInitialPopupShown();
                         data.setLastPopupDate(new Date());
-                        showPurchaseDialog(false);
+                        showInitialPopup();
                     }
                     else if ( data.isInitialPopupShown() && isTimeExpired(data.getLastPopupDate(), config.reminderInterval()) ) {
                         data.setLastPopupDate(new Date());
@@ -474,9 +538,8 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
     }
 
-
     private boolean mAlertIsVisible = false;
-    private void showPopup(final String message, final String primaryTitle, final String secondaryTitle, final PopupResponse callback) {
+    private void showPopup(final String title, final String message, final String primaryTitle, final String secondaryTitle, final PopupResponse callback) {
 
         if (mAlertIsVisible) {
             Log.d(TAG, "Skipped alert with message: " + message);
@@ -495,11 +558,14 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                         .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
                         .negativeColor(ContextCompat.getColor(mContext, R.color.dialog_submit_negative))
                         .widgetColor(ContextCompat.getColor(mContext, R.color.dialog_widget))
+                        .buttonsGravity(GravityEnum.CENTER)
                         .contentColor(ContextCompat.getColor(mContext, R.color.dialog_content))
                         .content(message)
+                        .contentGravity(GravityEnum.CENTER)
                         .canceledOnTouchOutside(false)
                         .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
-                        .title("TODO");
+                        .titleGravity(GravityEnum.CENTER)
+                        .title(title);
 
                 if ( primaryTitle != null ) {
                     builder.positiveText(primaryTitle);
