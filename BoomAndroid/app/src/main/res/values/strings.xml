@@ -269,5 +269,6 @@
     <string name="title_internet_alert">No Internet Connection</string>
     <string name="facebook_app_id" translatable="false">218364201905576</string>
     <string name="install_google">Install</string>
+    <string name="dont_limit_your_boomin_limit">Get immersed in surround sound to experience music like never before at just $2.99</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package com.globaldelight.boom.business;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,6 +13,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -476,6 +480,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
 
     private boolean mAlertIsVisible = false;
+
     private void showPopup(final String message, final String primaryTitle, final String secondaryTitle, final PopupResponse callback) {
 
         if (mAlertIsVisible) {
@@ -605,5 +610,22 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_CANCEL_VIDEO);
         }
     };
+
+    public void showDemoDialog(Context context){
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_share_just_boom_it);
+
+        Button dialogButton = (Button) dialog.findViewById(R.id.btn_popup_primary);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
 
 }

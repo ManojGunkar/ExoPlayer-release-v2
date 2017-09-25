@@ -13,7 +13,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_on_boarding_headphones" />
+            android:src="@drawable/ic_on_boarding_streaming" />
 
         <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/txt_title_3"
