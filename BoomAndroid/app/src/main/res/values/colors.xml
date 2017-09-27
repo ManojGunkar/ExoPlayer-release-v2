@@ -12,6 +12,7 @@
 
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
+    <color name="text_off_state">#6f6d6f</color>
     <color name="transparent">#00000000</color>
 
     <color name="popup_secondary">#7e7c7f</color>

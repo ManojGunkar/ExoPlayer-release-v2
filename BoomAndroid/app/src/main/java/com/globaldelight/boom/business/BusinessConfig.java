@@ -10,6 +10,15 @@ public class BusinessConfig {
     private static final long MS_PER_HOUR = 60L * MS_PER_MIN;
     private static final long MS_PER_DAY = 24L * MS_PER_HOUR;
 
+    static int toDays(long ms) {
+        return (int)(ms/MS_PER_DAY);
+    }
+
+    static int toHours(long ms) {
+        return (int)(ms/MS_PER_HOUR);
+    }
+
+
     public long trialPeriod() {
         return 1 * MS_PER_DAY;
     };
@@ -17,6 +26,11 @@ public class BusinessConfig {
     public long sharePeriod() {
         return 5 * MS_PER_DAY;
     };
+
+    public long sharePeriodInDays() {
+        return 5 * MS_PER_DAY;
+    };
+
 
     public long extendedSharePeriod() {
         return 2 * MS_PER_DAY;

@@ -211,6 +211,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             }
         }
     };
+    private RegularTextView mFullBassText;
 
     public void onBackPressed() {
         dismissTooltip();
@@ -277,14 +278,24 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private void setPlayerEnable(boolean isEnable){
 
         mPlayerTab.setSelected(isEnable);
-        mEffectTab.setSelected(!isEnable);
+   //     mEffectTab.setSelected(!isEnable);
 
         if(isEnable){
             mPlayerContent.setVisibility(View.VISIBLE);
             mEffectContent.setVisibility(View.GONE);
+            if (audioEffects.isAudioEffectOn()){
+                mEffectTab.setImageResource(R.drawable.ic_effects_normal_on);
+            }else {
+                mEffectTab.setImageResource(R.drawable.ic_effects_normal);
+            }
         }else{
             mPlayerContent.setVisibility(View.GONE);
             mEffectContent.setVisibility(View.VISIBLE);
+            if (audioEffects.isAudioEffectOn()){
+                mEffectTab.setImageResource(R.drawable.ic_effects_active_on);
+            }else {
+                mEffectTab.setImageResource(R.drawable.ic_effects_active);
+            }
             mEffectSwitch.setChecked(audioEffects.isAudioEffectOn());
             String msg = isAllSpeakersAreOff();
             if(null != msg)
@@ -312,7 +323,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             long currentMillis= App.playbackManager().getPosition();
             long totalMillis = App.playbackManager().getDuration();
             int progress = totalMillis > 0? (int)(currentMillis * 100 / totalMillis) : 0;
-
 
             if(null != mTrackSeek)
                 mTrackSeek.setProgress(progress);
@@ -790,6 +800,11 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 if(!MasterActivity.isPlayerExpended()){
                     setPlayerEnable(false);
                 }
+                if (audioEffects.isAudioEffectOn()){
+                    mEffectTab.setImageResource(R.drawable.ic_effects_active_on);
+                }else {
+                    mEffectTab.setImageResource(R.drawable.ic_effects_active);
+                }
                 toggleSlidingPanel();
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Effects_Screen_Opened_from_Mini_Player);
 
@@ -935,6 +950,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         m3DSurroundBtn = (ImageView) mInflater.findViewById(R.id.three_surround_btn);
         m3DSurroundBtn.setOnClickListener(this);
         m3DSurroundTxt = (RegularTextView) mInflater.findViewById(R.id.three_surround_txt);
+        mFullBassText=(RegularTextView) mInflater.findViewById(R.id.txt_fullbass);
         mSpeakerBtn = (ImageView) mInflater.findViewById(R.id.speaker_btn) ;
         mSpeakerBtn.setOnClickListener(this);
         m3DSurroundTxt.setOnClickListener(this);
@@ -997,9 +1013,12 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
                 if(audioEffects.isAudioEffectOn() != enable) {
                     audioEffects.setEnableAudioEffect(!audioEffects.isAudioEffectOn());
+                    mEffectTab.setImageResource(R.drawable.ic_effects_normal_on);
                     MixPanelAnalyticHelper.track(mActivity, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_EFFECT_STATE_CHANGED, audioEffects.isAudioEffectOn());
                     FlurryAnalytics.getInstance(getActivity()).setEvent(enable ? FlurryEvents.EVENT_EFFECTS_TURNED_ON : FlurryEvents.EVENT_EFFECTS_TURNED_OFF);
+                }else {
+                    mEffectTab.setImageResource(R.drawable.ic_effects_normal);
                 }
                 Preferences.writeBoolean(mActivity, Preferences.TOOLTIP_SWITCH_EFFECT_LARGE_PLAYER, false);
                 Preferences.writeBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, false);
@@ -1019,20 +1038,20 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         m3DSurroundBtn.setEnabled(isEffectOn);
         mSpeakerBtn.setEnabled(isEffectOn);
         m3DSurroundTxt.setEnabled(isEffectOn);
+        mFullBassText.setTextColor(getResources().getColor(R.color.text_off_state));
         mSpeakerBtn.setEnabled(isEffectOn);
         mFullBassCheck.setEnabled(isEffectOn);
 
         if ( isEffectOn ) {
             m3DSurroundBtn.setSelected(isSurroundOn);
             m3DSurroundTxt.setSelected(isSurroundOn);
+            mFullBassText.setTextColor(getResources().getColor(R.color.white));
             mSpeakerBtn.setSelected(isSurroundOn);
             mFullBassCheck.setEnabled(isSurroundOn);
-        }
-        /*if (isEffectOn && audioEffects.is3DSurroundOn()){
-            mFullBassCheck.setBackground(mActivity.getResources().getDrawable(R.drawable.fullbass_pressed));
+            mEffectTab.setImageResource(R.drawable.ic_effects_active_on);
         }else {
-            mFullBassCheck.setBackground(mActivity.getResources().getDrawable(R.drawable.fullbass_unpressed));
-        }*/
+            mEffectTab.setImageResource(R.drawable.ic_effects_active);
+        }
 
         boolean isIntensityOn = audioEffects.isIntensityOn();
         mIntensityBtn.setEnabled(isEffectOn);

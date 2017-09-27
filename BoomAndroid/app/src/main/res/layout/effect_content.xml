@@ -90,6 +90,7 @@
         android:background="@drawable/fullbass_unactive">
 
         <com.globaldelight.boom.view.RegularTextView
+            android:id="@+id/txt_fullbass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
