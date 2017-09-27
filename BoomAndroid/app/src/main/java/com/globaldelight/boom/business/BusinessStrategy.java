@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -324,7 +325,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
     private void onShare() {
         if ( mCurrentActivity != null ) {
-            new ShareDialog(mCurrentActivity).show();
+            new ShareDialog(mCurrentActivity).showShare();
 //            Intent intent = new Intent(mContext, ActivityContainer.class);
 //            intent.putExtra("container",R.string.title_share);
 //            mCurrentActivity.startActivity(intent);
@@ -611,17 +612,32 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         }
     };
 
-    public void showDemoDialog(Context context){
-        final Dialog dialog = new Dialog(context);
+    public void showDemoDialog(final PopupResponse response, String title, String message, String secondary, String primary){
+        final Dialog dialog = new Dialog(mContext);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
-        dialog.setContentView(R.layout.dialog_share_just_boom_it);
+        dialog.setContentView(R.layout.popup_business);
 
-        Button dialogButton = (Button) dialog.findViewById(R.id.btn_popup_primary);
-        dialogButton.setOnClickListener(new View.OnClickListener() {
+        TextView txtTitle= (TextView) dialog.findViewById(R.id.txt_popup_title);
+        txtTitle.setText(title);
+        TextView txtMessage= (TextView) dialog.findViewById(R.id.txt_popup_message);
+        txtMessage.setText(message);
+
+        Button btnPrimary = (Button) dialog.findViewById(R.id.btn_popup_primary);
+        btnPrimary.setText(primary);
+        btnPrimary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                response.onPrimaryAction();
+            }
+        });
+
+        Button btnSecondary = (Button) dialog.findViewById(R.id.btn_popup_secondary);
+        btnSecondary.setText(secondary);
+        btnPrimary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                response.onSecondaryAction();
             }
         });
 

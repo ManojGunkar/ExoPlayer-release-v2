@@ -433,7 +433,7 @@ public class MainActivity extends MasterActivity
                 return  true;
             case R.id.nav_share:
                 Toast.makeText(this,"share",Toast.LENGTH_SHORT).show();
-                new ShareDialog(this).show();
+                new ShareDialog(this).showShare();
                 /*new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
