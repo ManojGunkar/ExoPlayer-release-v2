@@ -80,27 +80,24 @@
             android:src="@drawable/three_d_setup" />
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/fullbass_chk"
-        style="@style/MediaController"
+    <com.globaldelight.boom.view.CustomToggleButton android:id="@+id/fullbass_chk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:background="@drawable/fullbass_background"
         android:layout_marginLeft="50dp"
-        android:background="@drawable/fullbass_unactive">
-
-        <com.globaldelight.boom.view.RegularTextView
-            android:id="@+id/txt_fullbass"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:text="@string/fullbass"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
-
-    </LinearLayout>
+        android:layout_marginBottom="10dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingRight="20dp"
+        android:paddingLeft="20dp"
+        android:paddingTop = "1dp"
+        android:paddingBottom = "1dp"
+        android:textColor="@color/fullbass_text"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:textStyle="normal"
+        android:textOn="@string/fullbass"
+        android:textOff="@string/fullbass" />
 
     <View
         android:layout_width="match_parent"

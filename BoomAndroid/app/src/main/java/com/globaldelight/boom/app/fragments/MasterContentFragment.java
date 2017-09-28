@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -31,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.ActivityContainer;
@@ -125,7 +127,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private RegularTextView mDisableIntensity;
     private NegativeSeekBar mIntensitySeek;
     private SwitchCompat mEffectSwitch;
-    private LinearLayout mFullBassCheck;
+    private ToggleButton mFullBassCheck;
     private RegularTextView mEffectSwitchTxt, m3DSurroundTxt, mIntensityTxt, mEqualizerTxt, mSelectedEqTxt;
     private ImageView m3DSurroundBtn, mIntensityBtn, mEqualizerBtn, mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
     private LinearLayout mEqDialogPanel;
@@ -211,7 +213,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             }
         }
     };
-    private RegularTextView mFullBassText;
 
     public void onBackPressed() {
         dismissTooltip();
@@ -950,24 +951,17 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         m3DSurroundBtn = (ImageView) mInflater.findViewById(R.id.three_surround_btn);
         m3DSurroundBtn.setOnClickListener(this);
         m3DSurroundTxt = (RegularTextView) mInflater.findViewById(R.id.three_surround_txt);
-        mFullBassText=(RegularTextView) mInflater.findViewById(R.id.txt_fullbass);
         mSpeakerBtn = (ImageView) mInflater.findViewById(R.id.speaker_btn) ;
         mSpeakerBtn.setOnClickListener(this);
         m3DSurroundTxt.setOnClickListener(this);
 
-        mFullBassCheck = (LinearLayout) mInflater.findViewById(R.id.fullbass_chk);
-     //   mFullBassCheck.setEnabled(audioEffects.isFullBassOn());
-
-        mFullBassCheck.setOnClickListener(new View.OnClickListener() {
+        mFullBassCheck = (ToggleButton) mInflater.findViewById(R.id.fullbass_chk);
+        mFullBassCheck.setOnCheckedChangeListener(new ToggleButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if(!audioEffects.isFullBassOn()){
-                    mFullBassCheck.setBackground(mActivity.getResources().getDrawable(R.drawable.fullbass_active));
-                    audioEffects.setEnableFullBass(true);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if ( isChecked != audioEffects.isFullBassOn() ) {
+                    audioEffects.setEnableFullBass(isChecked);
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FULL_BASS, audioEffects.isFullBassOn());
-                }else {
-                    mFullBassCheck.setBackground(mActivity.getResources().getDrawable(R.drawable.fullbass_unactive));
-                    audioEffects.setEnableFullBass(false);
                 }
             }
         });
@@ -1038,14 +1032,12 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         m3DSurroundBtn.setEnabled(isEffectOn);
         mSpeakerBtn.setEnabled(isEffectOn);
         m3DSurroundTxt.setEnabled(isEffectOn);
-        mFullBassText.setTextColor(getResources().getColor(R.color.text_off_state));
         mSpeakerBtn.setEnabled(isEffectOn);
         mFullBassCheck.setEnabled(isEffectOn);
 
         if ( isEffectOn ) {
             m3DSurroundBtn.setSelected(isSurroundOn);
             m3DSurroundTxt.setSelected(isSurroundOn);
-            mFullBassText.setTextColor(getResources().getColor(R.color.white));
             mSpeakerBtn.setSelected(isSurroundOn);
             mFullBassCheck.setEnabled(isSurroundOn);
             mEffectTab.setImageResource(R.drawable.ic_effects_active_on);
