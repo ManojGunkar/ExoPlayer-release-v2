@@ -75,8 +75,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
         @Override
         protected void onPostExecute(DropboxAPI.Account account) {
-            DropBoxUtills.setAccountName(mActivity, account.email);
-            updateDropboxPanel();
+            if (account != null && account.email != null ) {
+                DropBoxUtills.setAccountName(mActivity, account.email);
+                updateDropboxPanel();
+            }
         }
     };
 
