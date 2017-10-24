@@ -55,18 +55,76 @@
             </intent-filter>
         </receiver>
 
+        /************************************Spotify Integration************************************************/
+
+        <activity
+            android:name=".spotify.activity.DemoActivity"
+            android:label="@string/title_activity_demo">
+            <intent-filter>
+               <action android:name="android.intent.action.VIEW"/>
+                <!-- <category android:name="android.intent.category.LAUNCHER"/>-->
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="callback"
+                    android:scheme="spotify"/>
+
+            </intent-filter>
+        </activity>
+
+        <!--<activity
+            android:name="com.spotify.sdk.android.authentication.WebAuthResultActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="callback"
+                    android:scheme="Spotify"/>
+            </intent-filter>
+        </activity>-->
+        <activity
+            android:name="com.spotify.sdk.android.authentication.LoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            />
+
+        <activity
+            android:name=".spotify.activity.SpotifyActivity"
+            android:label="@string/app_name">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="callback"
+                    android:scheme="spotify" />
+            </intent-filter>
+
+        </activity>
+        /************************************Spotify Integration************************************************/
+
+
         <activity android:name="com.facebook.FacebookActivity" />
 
         <meta-data
             android:name="com.mixpanel.android.MPConfig.DisableViewCrawler"
-            android:value="true"/>
+            android:value="true" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="2e9ac4a0d1804747ddcb10dcbcea0f8f63ba1c23" />
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
 
         <!-- Content Provider to query sqlite database -->
@@ -185,7 +243,7 @@
             android:name=".app.activities.OnBoardingActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".app.activities.BoomSplash"
@@ -205,7 +263,7 @@
 
         <receiver
             android:name=".app.analytics.GCMHelper"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
