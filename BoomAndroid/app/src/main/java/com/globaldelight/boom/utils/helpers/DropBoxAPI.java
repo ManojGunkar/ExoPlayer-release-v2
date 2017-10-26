@@ -15,6 +15,8 @@ import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.cloud.DropboxMediaList;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
 
 import java.util.Arrays;
 import java.util.HashSet;
