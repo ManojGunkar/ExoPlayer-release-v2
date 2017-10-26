@@ -83,7 +83,7 @@
             android:value="AIzaSyBzDSoW0QmucHcpe1zOYqoLWDed03fnmT8" />
 
         <activity
-            android:name="com.dropbox.client2.android.AuthActivity"
+            android:name="com.dropbox.core.android.AuthActivity"
             android:configChanges="orientation|keyboard"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"

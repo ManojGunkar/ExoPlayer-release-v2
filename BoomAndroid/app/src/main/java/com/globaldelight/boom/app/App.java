@@ -9,8 +9,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
-import com.dropbox.client2.DropboxAPI;
-import com.dropbox.client2.android.AndroidAuthSession;
 import com.facebook.FacebookSdk;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
@@ -56,7 +54,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
     private static CloudMediaItemDBHelper cloudMediaItemDBHelper;
 //    private static PlayerService service;
     private static UserPreferenceHandler userPreferenceHandler;
-    private static DropboxAPI<AndroidAuthSession> dropboxAPI;
 
 //    private static MixpanelAPI mixpanel;
 
@@ -133,14 +130,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     public static void startPlayerService(){
         application.startService(new Intent(application, PlayerService.class));
-    }
-
-    public static void setDropboxAPI(DropboxAPI<AndroidAuthSession> dropboxAPI) {
-        App.dropboxAPI = dropboxAPI;
-    }
-
-    public static DropboxAPI<AndroidAuthSession> getDropboxAPI(){
-        return App.dropboxAPI;
     }
 
     @Override
