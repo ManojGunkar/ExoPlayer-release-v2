@@ -39,7 +39,7 @@ import com.globaldelight.boom.app.adapters.utils.HeadPhoneItemAdapter;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
-import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.globaldelight.boom.utils.helpers.DropBoxAPI;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boom.utils.sleepTimerUtils.TimerUtils;
 import static android.app.Activity.RESULT_OK;
@@ -62,21 +62,16 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
 
 
-    private class DropboxAccountLoader extends AsyncTask<Void, Void, DropboxAPI.Account> {
+    private class DropboxAccountLoader extends AsyncTask<Void, Void, String> {
         private Activity mActivity = SettingFragment.this.mActivity;
         @Override
-        protected DropboxAPI.Account doInBackground(Void... params) {
-            try {
-                return App.getDropboxAPI().accountInfo();
-            } catch (DropboxException e) {
-                return null;
-            }
+        protected String doInBackground(Void... params) {
+            return DropBoxAPI.getInstance(mActivity).getAccountInfo();
         }
 
         @Override
-        protected void onPostExecute(DropboxAPI.Account account) {
-            if (account != null && account.email != null ) {
-                DropBoxUtills.setAccountName(mActivity, account.email);
+        protected void onPostExecute(String account) {
+            if (account != null ) {
                 updateDropboxPanel();
             }
         }
@@ -155,8 +150,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateDropboxPanel() {
-        if ( DropBoxUtills.isLoggedIn(mActivity) ) {
-            String accountName = DropBoxUtills.getAccountName(mActivity);
+        if ( DropBoxAPI.getInstance(mActivity).isLoggedIn() ) {
+            String accountName = DropBoxAPI.getInstance(mActivity).getAccountName(mActivity);
             if ( accountName == null ) {
                 mAccountLoader = new DropboxAccountLoader();
                 mAccountLoader.execute();
@@ -282,24 +277,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        resetAuthentication();
+        DropBoxAPI.getInstance(mActivity).finishAuthorization();
         updateAccountDetails();
-    }
-
-    private void resetAuthentication(){
-        if(null != App.getDropboxAPI()) {
-            AndroidAuthSession session = App.getDropboxAPI().getSession();
-            if (session.authenticationSuccessful()) {
-                try {
-                    session.finishAuthentication();
-                    TokenPair tokens = session.getAccessTokenPair();
-                    DropBoxUtills.storeKeys(mActivity, tokens.key, tokens.secret);
-                } catch (IllegalStateException e) {
-                    Toast.makeText(mActivity, getResources().getString(R.string.dropbox_authenticate_problem)
-                            + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
     }
 
     public void checkPermissions() {
@@ -330,21 +309,20 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
 
     private void onDropboxClicked() {
+
         Runnable action = new Runnable() {
             @Override
             public void run() {
                 if(ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
-                    App.getDropboxAPI().getSession().unlink();
-                    DropBoxUtills.clearKeys(mActivity);
-                    DropBoxUtills.checkAppKeySetup(App.getApplication());
-                    DropBoxUtills.checkDropboxAuthentication(mActivity);
+                    DropBoxAPI.getInstance(mActivity).clear();
+                    DropBoxAPI.getInstance(mActivity).authorize();
                 }
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Drop_Box_Tapped_From_Setting_Page);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Drop_Box_Tapped_From_Setting_Page);
             }
         };
 
-        if ( DropBoxUtills.isLoggedIn(mActivity) ) {
+        if ( DropBoxAPI.getInstance(mActivity).isLoggedIn() ) {
             showAccountChangeDialog(action);
         }
         else {

@@ -56,7 +56,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
     private static CloudMediaItemDBHelper cloudMediaItemDBHelper;
 //    private static PlayerService service;
     private static UserPreferenceHandler userPreferenceHandler;
-    private static DropboxAPI<AndroidAuthSession> dropboxAPI;
 
 //    private static MixpanelAPI mixpanel;
 
@@ -133,14 +132,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     public static void startPlayerService(){
         application.startService(new Intent(application, PlayerService.class));
-    }
-
-    public static void setDropboxAPI(DropboxAPI<AndroidAuthSession> dropboxAPI) {
-        App.dropboxAPI = dropboxAPI;
-    }
-
-    public static DropboxAPI<AndroidAuthSession> getDropboxAPI(){
-        return App.dropboxAPI;
     }
 
     @Override

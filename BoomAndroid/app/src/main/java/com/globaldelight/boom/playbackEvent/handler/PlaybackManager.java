@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.globaldelight.boom.app.App;
@@ -22,7 +21,7 @@ import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
-import com.globaldelight.boom.utils.helpers.DropBoxUtills;
+import com.globaldelight.boom.utils.helpers.DropBoxAPI;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.player.AudioPlayer;
@@ -384,10 +383,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 dataSource = ((MediaItem)mediaItemBase).getItemUrl();
                 mediaItemBase.setItemArtUrl(mQueue.getAlbumArtList().get(((MediaItem)mediaItemBase).getItemAlbum()));
             }else if(mediaItemBase.getMediaType() == MediaType.DROP_BOX){
-                if(null != App.getDropboxAPI()){
-                    return DropBoxUtills.getDropboxItemUrl(((MediaItem)mediaItemBase).getItemUrl());
-                }
-                return null;
+                return DropBoxAPI.getInstance(context).getDropboxItemUrl(((MediaItem)mediaItemBase).getItemUrl());
             }else if(mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){
                 String access_token = googleDriveHandler.getAccessTokenApi();
                 if(null != access_token) {
