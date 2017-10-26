@@ -2,6 +2,7 @@ package com.globaldelight.boom.spotify.activity;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.spotify.apiconnector.ApiRequestController;
+import com.globaldelight.boom.spotify.pojo.NewReleaseAlbums;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -38,6 +41,11 @@ import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 /**
  * Created by Manoj Kumar on 10/16/2017.
@@ -178,12 +186,35 @@ public class DemoActivity extends Activity implements
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            Log.d(TAG,"Token:-"+response.getAccessToken());
+            Log.d(TAG, "Token:-" + response.getAccessToken());
 
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
                     onAuthenticationComplete(response);
+                    final ProgressDialog dialog = new ProgressDialog(DemoActivity.this);
+                    dialog.setMessage("please wait...");
+                    ApiRequestController.RequestCallback requestCallback = ApiRequestController.getClient();
+                    Call<NewReleaseAlbums> call = requestCallback.getSpotifyAlbum("Bearer " + response.getAccessToken());
+
+                    call.enqueue(new Callback<NewReleaseAlbums>() {
+                        @Override
+                        public void onResponse(Call<NewReleaseAlbums> call, Response<NewReleaseAlbums> response) {
+                            if (response.isSuccessful()) {
+                                Log.d(TAG, "success");
+                                NewReleaseAlbums album = response.body();
+                                Toast.makeText(DemoActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.d(TAG, "Error");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<NewReleaseAlbums> call, Throwable t) {
+                            Log.d(TAG, "Error-" + t.getMessage());
+                        }
+                    });
+
                     break;
 
                 // Auth flow returned an error
@@ -398,7 +429,7 @@ public class DemoActivity extends Activity implements
     }
 
     public void onLoginFailed(Error error) {
-        logStatus("Login error "+ error);
+        logStatus("Login error " + error);
     }
 
     @Override

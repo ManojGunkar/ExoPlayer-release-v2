@@ -39,6 +39,7 @@ import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.app.fragments.SearchViewFragment;
 import com.globaldelight.boom.app.share.ShareDialog;
 import com.globaldelight.boom.spotify.activity.DemoActivity;
+import com.globaldelight.boom.spotify.activity.SpotifyActivity;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
@@ -96,6 +97,8 @@ public class MainActivity extends MasterActivity
         setContentView(R.layout.activity_main);
         initView();
         checkPermissions();
+
+
     }
 
     Runnable navigateLibrary = new Runnable() {
@@ -392,7 +395,7 @@ public class MainActivity extends MasterActivity
                 break;
 
             case R.id.nav_spotify:
-                startActivity(new Intent(this, DemoActivity.class));
+                startActivity(new Intent(this, SpotifyActivity.class));
                 break;
 
             case R.id.drop_box:

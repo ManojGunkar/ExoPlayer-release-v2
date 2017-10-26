@@ -487,7 +487,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
         public ImageView img, art_overlay_play;
         public LinearLayout menu;
 
-//        For Album grid
+//        For Albums grid
         public RegularTextView title, subTitle;
         public ImageView defaultImg;
         public View gridBottomBg, grid_menu;

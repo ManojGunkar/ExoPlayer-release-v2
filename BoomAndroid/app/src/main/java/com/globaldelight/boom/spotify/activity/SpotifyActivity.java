@@ -1,170 +1,142 @@
 package com.globaldelight.boom.spotify.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.Toast;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.spotify.adapter.ItemClickListener;
+import com.globaldelight.boom.spotify.adapter.SpotifyAlbumAdapter;
+import com.globaldelight.boom.spotify.apiconnector.ApiRequestController;
+import com.globaldelight.boom.spotify.apiconnector.SpotifyApiUrls;
+import com.globaldelight.boom.spotify.fragment.SpotifyAlbumFragment;
+import com.globaldelight.boom.spotify.pojo.NewReleaseAlbums;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.PlayerEvent;
-import com.spotify.sdk.android.player.Spotify;
-import com.spotify.sdk.android.player.SpotifyPlayer;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Manoj Kumar on 10/12/2017.
  */
 
-public class SpotifyActivity extends AppCompatActivity implements
-        SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
+public class SpotifyActivity extends AppCompatActivity implements ItemClickListener {
 
-    private static final String TAG = "spotify_tag";
-    private static final String CLIENT_ID = "0fd566b3d5d249eb83acbc3fa6cb3235";
+    private static final String TAG = SpotifyApiUrls.SPOTIFY_TAG;
+
+    public static final String TOKEN = "token";
+    public static final String ALBUM_ID = "album";
+
+
+    public static final String CLIENT_ID = "0fd566b3d5d249eb83acbc3fa6cb3235";
     private static final String CLIENT_SECRET = "5947157861f44103a9b62b9d0bdb84d1";
     private static final String REDIRECT_URI = "spotify://callback";
 
     private static final int REQUEST_CODE = 1337;
+    private static AuthenticationResponse response;
 
-    private Player mPlayer;
+    private List<NewReleaseAlbums.Item> list;
+
+    private SpotifyAlbumAdapter spotifyAlbumAdapter;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spotify);
-
-        Button button= (Button) findViewById(R.id.btn_spotify_login);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AuthenticationRequest.Builder builder =
-                        new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-
-                builder.setScopes(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "streaming"});
-                AuthenticationRequest request = builder.build();
-
-                AuthenticationClient.openLoginInBrowser(SpotifyActivity.this, request);
-            }
-        });
+        recyclerView = (RecyclerView) findViewById(R.id.grid_album_spotify);
+        openLoginWindow();
 
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
+    public static String getToken() {
+        return "Bearer " + response.getAccessToken();
+    }
 
-        Uri data = intent.getData();
-        Log.e(TAG, "data");
-        if (data != null) {
-            AuthenticationResponse response = AuthenticationResponse.fromUri(data);
+    private void openLoginWindow() {
+        final AuthenticationRequest request = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
+                .setScopes(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "streaming"})
+                .build();
 
-            switch (response.getType()) {
-                // Response was successful and contains auth token
-                case TOKEN:
-                    // Handle successful response
-
-                    Log.e(TAG, "the response is success");
-                    break;
-
-                // Auth flow returned an error
-                case ERROR:
-                    Log.e(TAG, "the response is fail");
-                    // Handle error response
-                    break;
-
-                // Most likely auth flow was cancelled
-                default:
-                    // Handle other cases
-            }
-        }
+        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
-        // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
-            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            Log.d(TAG,"Token:-"+response.getAccessToken());
-            if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
-                Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
-                    @Override
-                    public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                        mPlayer = spotifyPlayer;
-                        mPlayer.addConnectionStateCallback(SpotifyActivity.this);
-                        mPlayer.addNotificationCallback(SpotifyActivity.this);
-                    }
+            response = AuthenticationClient.getResponse(resultCode, intent);
+            Log.d(TAG, "Token:-" + response.getAccessToken());
 
-                    @Override
-                    public void onError(Throwable throwable) {
-                        Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
-                    }
-                });
+            switch (response.getType()) {
+                // Response was successful and contains auth token
+                case TOKEN:
+                    final ProgressDialog dialog = new ProgressDialog(SpotifyActivity.this);
+                    dialog.setTitle("loading...");
+                    dialog.setCancelable(false);
+                    dialog.show();
+                    ApiRequestController.RequestCallback requestCallback = ApiRequestController.getClient();
+                    Call<NewReleaseAlbums> call = requestCallback.getSpotifyAlbum("Bearer " + response.getAccessToken());
+
+                    call.enqueue(new Callback<NewReleaseAlbums>() {
+                        @Override
+                        public void onResponse(Call<NewReleaseAlbums> call, Response<NewReleaseAlbums> response) {
+                            if (response.isSuccessful()) {
+                                Log.d(TAG, "success");
+                                dialog.dismiss();
+                                NewReleaseAlbums album = response.body();
+                                list = album.getAlbums().getItems();
+                                Toast.makeText(SpotifyActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                                recyclerView.setLayoutManager(new GridLayoutManager(SpotifyActivity.this, 2));
+                                spotifyAlbumAdapter = new SpotifyAlbumAdapter(SpotifyActivity.this, list);
+                                spotifyAlbumAdapter.setClickListener(SpotifyActivity.this);
+                                recyclerView.setAdapter(spotifyAlbumAdapter);
+                            } else {
+                                dialog.dismiss();
+                                Log.d(TAG, "Error");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<NewReleaseAlbums> call, Throwable t) {
+                            dialog.dismiss();
+                            Log.d(TAG, "Error-" + t.getMessage());
+                        }
+                    });
+                    break;
+
+                case ERROR:
+                    Log.w(TAG, "Auth error: " + response.getError());
+                    break;
             }
         }
     }
 
     @Override
-    protected void onDestroy() {
-        Spotify.destroyPlayer(this);
-        super.onDestroy();
-    }
+    public void onItemClick(View view, int position) {
+        Toast.makeText(this, "click pos " + position, Toast.LENGTH_SHORT).show();
 
-    @Override
-    public void onLoggedIn() {
-        Log.d(TAG, "User logged in");
-        mPlayer.playUri(null, "spotify:track:2TpxZ7JUBn3uw46aR7qd6V", 0, 0);
-    }
+        Bundle bundle = new Bundle();
+        bundle.putString(TOKEN, response.getAccessToken());
+        bundle.putString(ALBUM_ID, list.get(position).getId());
+        SpotifyAlbumFragment albumFragment = new SpotifyAlbumFragment();
+        albumFragment.setArguments(bundle);
 
-    @Override
-    public void onLoggedOut() {
-        Log.d(TAG, "User logged out");
-    }
-
-    @Override
-    public void onLoginFailed(Error error) {
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.frame_spotify, albumFragment)
+                .commit();
 
     }
-
-
-    @Override
-    public void onTemporaryError() {
-        Log.d(TAG, "Temporary error occurred");
-    }
-
-    @Override
-    public void onConnectionMessage(String message) {
-        Log.d(TAG, "Received connection message: " + message);
-    }
-
-    @Override
-    public void onPlaybackEvent(PlayerEvent playerEvent) {
-        Log.d(TAG, "Playback event received: " + playerEvent.name());
-        switch (playerEvent) {
-            // Handle event type as necessary
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onPlaybackError(Error error) {
-        Log.d(TAG, "Playback error received: " + error.name());
-        switch (error) {
-            // Handle error type as necessary
-            default:
-                break;
-        }
-    }
-
 }

@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
+    android:orientation="vertical"
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/img_spotify_album_thumb"
-        android:layout_width="@dimen/track_list_album_art_size"
-        android:layout_height="@dimen/track_list_album_art_size"
-        android:layout_centerInParent="true"
+        android:id="@+id/img_album_thumb_spotify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:scaleType="centerCrop" />
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/txt_album_title_spotify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+</LinearLayout>

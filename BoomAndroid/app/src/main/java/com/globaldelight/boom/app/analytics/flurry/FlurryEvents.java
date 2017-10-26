@@ -43,7 +43,7 @@ public final class FlurryEvents {
     public static final String FAB_BUtton_Tapped_from_Artist_details_Section = "FAB Button Tapped From Artist Details Section";
     public static final String FAB_BUtton_Tapped_from_Genere_Section = "FAB Button Tapped From Genere Section";
     public static final String FAB_BUtton_Tapped_from_Genere_Details_Section = "FAB Button Tapped From Genere Details Section";
-    public static final String FAB_Button_Tapped_from_Album_Section = "FAB Button Tapped From Album  Section";
+    public static final String FAB_Button_Tapped_from_Album_Section = "FAB Button Tapped From Albums  Section";
     public static final String Song_Played_On_Tapping_Artist_Thumbnail = "Song Played From Atrist ThumbNail Icon";
     public static final String Song_Played_On_Tapping_Genere_Thumbnail = "Song Played From Genere ThumbNail Icon";
     public static final String Song_Played_On_Tapping_Alumb_Thumbnail = "Song Played From Alumb ThumbNail Icon";
