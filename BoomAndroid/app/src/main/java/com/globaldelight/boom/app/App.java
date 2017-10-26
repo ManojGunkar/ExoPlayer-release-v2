@@ -9,8 +9,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
-import com.dropbox.client2.DropboxAPI;
-import com.dropbox.client2.android.AndroidAuthSession;
 import com.facebook.FacebookSdk;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;

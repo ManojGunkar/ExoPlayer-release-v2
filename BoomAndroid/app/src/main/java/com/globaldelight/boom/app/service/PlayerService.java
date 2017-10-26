@@ -14,8 +14,6 @@ import com.globaldelight.boom.app.activities.BoomSplash;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
-import com.dropbox.client2.DropboxAPI;
-import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
@@ -44,7 +42,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
     private PlaybackManager mPlayback;
     private NotificationHandler notificationHandler;
     private HeadPhonePlugReceiver headPhonePlugReceiver;
-    private DropboxAPI<AndroidAuthSession> dropboxAPI;
     private PlayerServiceReceiver serviceReceiver;
     private ConnectivityReceiver connectivityReceiver;
     private boolean mIsTaskRunning = true;
