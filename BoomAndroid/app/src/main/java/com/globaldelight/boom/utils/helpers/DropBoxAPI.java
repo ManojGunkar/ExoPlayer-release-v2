@@ -26,19 +26,14 @@ import java.util.HashSet;
  */
 
 public class DropBoxAPI {
-
-    public static final String OVERRIDEMSG = "File name with this name already exists.Do you want to replace this file?";
     final static public String DROPBOX_APP_KEY = "unt5kbgl16jw3tx";
-    final static public String DROPBOX_APP_SECRET = "nwacus6f0ykxpkm";
-    public static boolean mLoggedIn = false;
-
-    final static public Session.AccessType ACCESS_TYPE = Session.AccessType.DROPBOX;
+    // final static public String DROPBOX_APP_SECRET = "nwacus6f0ykxpkm";
 
     final static public String ACCOUNT_PREFS_NAME = "dropbox_prefs";
     final static public String ACCESS_TOKEN = "dropbox_ACCESS_TOKEN";
     final static public String ACCOUNT_NAME = "dropbox_ACCOUNT_NAME";
 
-    static HashSet<String> fileTypes = new HashSet<>(Arrays.asList(new String[]{
+    final static HashSet<String> AUDIO_FILE_TYPES = new HashSet<>(Arrays.asList(new String[]{
             ".aac", ".aif", ".aifc", ".aiff", ".au", ".flac", ".m4a", ".m4b", ".m4p", ".m4r", ".mid", ".mp3", ".oga", ".ogg", ".opus", ".ra", ".ram", ".spx", ".wav", ".wma"
     }));
 
@@ -56,23 +51,9 @@ public class DropBoxAPI {
         return sInstance;
     }
 
-    public DropBoxAPI(Context context) {
+    private DropBoxAPI(Context context) {
         mContext = context;
     }
-
-    private void saveAccessToken(String token) {
-        SharedPreferences prefs = mContext.getSharedPreferences(
-                ACCOUNT_PREFS_NAME, 0);
-        prefs.edit().putString(ACCESS_TOKEN, token).apply();
-    }
-
-
-    private String getAccessToken() {
-        SharedPreferences prefs = mContext.getSharedPreferences(
-                ACCOUNT_PREFS_NAME, 0);
-        return prefs.getString(ACCESS_TOKEN, null);
-    }
-
 
     public void clear() {
         SharedPreferences prefs = mContext.getSharedPreferences(
@@ -123,7 +104,7 @@ public class DropBoxAPI {
                     String path = file.getPathLower();
                     int i = path.lastIndexOf('.');
                     String ext = (i > 0)? path.substring(i) : "";
-                    if ( fileTypes.contains(ext) ) {
+                    if ( AUDIO_FILE_TYPES.contains(ext) ) {
                         dropboxMediaList.addFileInDropboxList(new MediaItem(100000+count, file.getName(), path, ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
                         count++;
                     }
@@ -138,7 +119,7 @@ public class DropBoxAPI {
         }
     }
 
-    public String getDropboxItemUrl(String path){
+    public String getStreamingUrl(String path){
         try {
             return getClient().files().getTemporaryLink(path).getLink();
         } catch (DbxException e) {
@@ -147,11 +128,9 @@ public class DropBoxAPI {
         return null;
     }
 
-
     public boolean isLoggedIn() {
         return getAccessToken() != null;
     }
-
 
     public String getAccountInfo() {
         try {
@@ -162,12 +141,6 @@ public class DropBoxAPI {
         catch (DbxException e) {
             return null;
         }
-    }
-
-
-    private void setAccountName(String accountName) {
-        SharedPreferences prefs = mContext.getSharedPreferences(ACCOUNT_PREFS_NAME, 0);
-        prefs.edit().putString(ACCOUNT_NAME, accountName).apply();
     }
 
     public String getAccountName(Context context) {
@@ -186,4 +159,25 @@ public class DropBoxAPI {
 
         return mDbxClient;
     }
+
+
+    private void saveAccessToken(String token) {
+        SharedPreferences prefs = mContext.getSharedPreferences(
+                ACCOUNT_PREFS_NAME, 0);
+        prefs.edit().putString(ACCESS_TOKEN, token).apply();
+    }
+
+
+    private String getAccessToken() {
+        SharedPreferences prefs = mContext.getSharedPreferences(
+                ACCOUNT_PREFS_NAME, 0);
+        return prefs.getString(ACCESS_TOKEN, null);
+    }
+
+
+    private void setAccountName(String accountName) {
+        SharedPreferences prefs = mContext.getSharedPreferences(ACCOUNT_PREFS_NAME, 0);
+        prefs.edit().putString(ACCOUNT_NAME, accountName).apply();
+    }
+
 }

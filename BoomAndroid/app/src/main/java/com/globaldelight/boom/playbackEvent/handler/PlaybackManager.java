@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.widget.Toast;
 
-import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
@@ -383,7 +382,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 dataSource = ((MediaItem)mediaItemBase).getItemUrl();
                 mediaItemBase.setItemArtUrl(mQueue.getAlbumArtList().get(((MediaItem)mediaItemBase).getItemAlbum()));
             }else if(mediaItemBase.getMediaType() == MediaType.DROP_BOX){
-                return DropBoxAPI.getInstance(context).getDropboxItemUrl(((MediaItem)mediaItemBase).getItemUrl());
+                return DropBoxAPI.getInstance(context).getStreamingUrl(((MediaItem)mediaItemBase).getItemUrl());
             }else if(mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){
                 String access_token = googleDriveHandler.getAccessTokenApi();
                 if(null != access_token) {
