@@ -152,7 +152,9 @@
     <string name="equalizer">Equalizer</string>
     <string name="music_library">Music Library</string>
     <string name="drop_box">Dropbox</string>
+    <string name="drop_box_account">Dropbox(%s)</string>
     <string name="google_drive">Google Drive</string>
+    <string name="google_drive_account">Google Drive(%s)</string>
     <string name="request_cancelled">Request cancelled.</string>
     <string name="login_problem_dropbox">Not able to login in Dropbox</string>
     <string name="login_problem_google_drive">Not able to login in Google Drive</string>

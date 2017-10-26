@@ -153,7 +153,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 mAccountLoader.execute();
             }
             else {
-                String title = mActivity.getString(R.string.drop_box) + " (" + accountName + ")";
+                String title = mActivity.getString(R.string.drop_box_account,accountName) ;
                 dropboxSettingsTitle.setText(title);
                 dropboxSettingsDescription.setText(R.string.cloud_setting_subtitle_change_account);
             }
@@ -168,7 +168,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     private void updateGoogleDrivePanel() {
         String googleDriveAccName = App.getUserPreferenceHandler().getGoogleAccountName();
         if ( null != googleDriveAccName) {
-            String title = mActivity.getString(R.string.google_drive) + " (" + googleDriveAccName + ")";
+            String title = mActivity.getString(R.string.google_drive_account,googleDriveAccName);
             googleDriveSettingsTitle.setText(title);
             googleDriveSettingsDescription.setText(R.string.cloud_setting_subtitle_change_account);
         }
