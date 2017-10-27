@@ -62,6 +62,7 @@
 
     <color name="effect_active">@color/white</color>
     <color name="effect_inactive">#5f5d61</color>
+    <color name="fullbass_inactive">#4f4d51</color>
     <color name="effect_intensity_seek_background">#313131</color>
     <color name="effect_intensity_seek_inactive">#5f5d61</color>
     <color name="effect_intensity_seek_active">#bfbfbf</color>
