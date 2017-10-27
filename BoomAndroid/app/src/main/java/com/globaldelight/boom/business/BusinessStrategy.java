@@ -375,8 +375,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
     private void onShareFailed() {
         if ( rewardUserForSharing() ) {
-            // TODO: Notify user that share failed
-            //showPopup("Failed!", "Ok", null, null);
             FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_SHARE_FAILED);
         }
     }
@@ -393,6 +391,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         // Start the playback if previously playing
         data.setState(BusinessData.STATE_VIDOE_REWARD);
         data.setVideoRewardDate(new Date());
+        showPopup(mContext.getString(R.string.share_success_title),
+                mContext.getString(R.string.video_ad_success_message, BusinessConfig.toHours(config.videoRewardPeriod())),
+                mContext.getString(R.string.ok),
+                null,
+                null);
         if ( mWasPlaying ) {
             App.playbackManager().playPause();
             mWasPlaying = false;
@@ -409,7 +412,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             mWasPlaying = false;
         }
         FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_CANCEL_VIDEO);
-        // TODO: Should we show any popup?
     }
 
 
@@ -435,7 +437,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                     mWasPlaying = true;
                     App.playbackManager().playPause();
                 }
-                showPopup("TODO", "Watch Video Ad to unlock effects", "Watch", "Cancel", videoResponse);
+                showPopup(null,
+                        mContext.getString(R.string.video_ad_message, BusinessConfig.toDays(config.videoRewardPeriod())),
+                        mContext.getString(R.string.watch_button_title),
+                        mContext.getString(R.string.dialog_txt_cancel),
+                        videoResponse);
                 break;
             }
 
@@ -678,37 +684,4 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
             FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_CANCEL_VIDEO);
         }
     };
-
-    public void showDemoDialog(final PopupResponse response, String title, String message, String secondary, String primary){
-        final Dialog dialog = new Dialog(mContext);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(false);
-        dialog.setContentView(R.layout.popup_business);
-
-        TextView txtTitle= (TextView) dialog.findViewById(R.id.txt_popup_title);
-        txtTitle.setText(title);
-        TextView txtMessage= (TextView) dialog.findViewById(R.id.txt_popup_message);
-        txtMessage.setText(message);
-
-        Button btnPrimary = (Button) dialog.findViewById(R.id.btn_popup_primary);
-        btnPrimary.setText(primary);
-        btnPrimary.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                response.onPrimaryAction();
-            }
-        });
-
-        Button btnSecondary = (Button) dialog.findViewById(R.id.btn_popup_secondary);
-        btnSecondary.setText(secondary);
-        btnPrimary.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                response.onSecondaryAction();
-            }
-        });
-
-        dialog.show();
-    }
-
 }

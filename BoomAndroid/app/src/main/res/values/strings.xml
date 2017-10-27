@@ -186,6 +186,7 @@
     <string name="after_purchase_buy_button">Purchased</string>
 
     <string name="title_share">Share</string>
+    <string name="message_share">Enjoying Boom? Share with your friends and spread the word!</string>
     <string name="playstore_link">https://play.google.com/store/apps/details?id=com.globaldelight.boom  \n\n</string>
     <string name="share_desc">\nLet me recommend you this application\n\n</string>
     <string name="choose_share">Choose one</string>
@@ -286,9 +287,12 @@
     <string name="afterTrial_effect_on_message">Don’t worry; enjoy your first %d songs with all the premium features for free!</string>
     <string name="share_success_title">Congratulations!</string>
     <string name="share_success_message">Now you can enjoy all features for free for %d days!</string>
+    <string name="video_ad_message">Watch the video to get all features unlocked for %d hours!</string>
+    <string name="video_ad_success_message">You’ve unlocked all features for %d hours.</string>
     <string name="buy_button_title">Buy</string>
     <string name="share_button_title">Share</string>
     <string name="remind_button_title">Remind Me Later</string>
+    <string name="watch_button_title">Watch</string>
 
 
     <string name="login_button_label">Login</string>
