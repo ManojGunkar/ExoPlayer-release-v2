@@ -69,15 +69,6 @@ android {
             buildConfigField "String",  'GOOGLE_NATIVE_AD_ID',       STRING("ca-app-pub-2462021843550393/9799761460")
         }
     }
-
-    android {
-        lintOptions {
-            checkReleaseBuilds false
-            // Or, if you prefer, you can continue to check for errors in release builds,
-            // but continue the build even when errors are found:
-            abortOnError false
-        }
-    }
 }
 
 repositories {
@@ -92,13 +83,9 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.afollestad.material-dialogs:core:0.9.0.2'
 
-
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
     }
-
-    /**************Spotify***************/
-    compile(name:'spotify-player-24-noconnect-2.20b', ext:'aar')
 
 
     /**************Dropbox***************/
@@ -152,17 +139,6 @@ dependencies {
         transitive = true;
     }
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
-
-    compile 'com.spotify.android:auth:1.0.0-alpha'
-
-
-    /**************Okhttp-***************/
-
-    compile 'com.squareup.retrofit2:retrofit:2.0.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
-
 }
 
 // ADD THIS AT THE BOTTOM

@@ -152,7 +152,6 @@
     <string name="equalizer">Equalizer</string>
     <string name="music_library">Music Library</string>
     <string name="drop_box">Dropbox</string>
-    <string name="spotify">Spotify Music</string>
     <string name="google_drive">Google Drive</string>
     <string name="request_cancelled">Request cancelled.</string>
     <string name="login_problem_dropbox">Not able to login in Dropbox</string>
@@ -290,7 +289,6 @@
     <string name="remind_button_title">Remind Me Later</string>
 
 
-    <string name="title_activity_demo">Spotify Android SDK Demo</string>
     <string name="login_button_label">Login</string>
     <string name="logout_button_label">Logout</string>
     <string name="play_track_button_label">Track</string>

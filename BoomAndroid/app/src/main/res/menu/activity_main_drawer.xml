@@ -21,12 +21,6 @@
             android:checkable="true"
             android:title="@string/drop_box" />
         <item
-            android:id="@+id/nav_spotify"
-            android:icon="@drawable/drawer_item_music_selector"
-            android:checked="false"
-            android:checkable="true"
-            android:title="@string/spotify" />
-        <item
             android:id="@+id/boom_palylist"
             android:icon="@drawable/drawer_boom_playlist_selector"
             android:checked="false"

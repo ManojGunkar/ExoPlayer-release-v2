@@ -15,9 +15,6 @@ import com.globaldelight.boom.Constants;
 
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by adarsh on 25/01/17.
  */
@@ -80,14 +77,13 @@ public class AudioConfiguration {
 
 
     private void downloadConfig() {
-        final String BASE_URL = "https://api.spotify.com/v1/browse/new-releases";
+        final String BASE_URL = "http://devboom2.globaldelight.net/audioconfig.php";
 
-        Uri uri = Uri.parse(BASE_URL); /*.buildUpon()
+        Uri uri = Uri.parse(BASE_URL).buildUpon()
                 .appendQueryParameter("action", "query")
                 .appendQueryParameter("manufacturer", Build.MANUFACTURER)
                 .appendQueryParameter("modelname", Build.MODEL)
                 .build();
-                */
 
         String configURL = uri.toString();
 
@@ -115,16 +111,7 @@ public class AudioConfiguration {
             }
         };
 
-
-        final StringRequest configRequest = new StringRequest(Request.Method.GET, configURL, listener, errorListener) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("Authorization", "Bearer BQDdSGFP8WwHfj1SqfYaV9A1vVkAnYN0elsKxIeg41cHetbYgJgfz9CPCWnWOiFTY0GRNYQTchwOGvUcENAB3vmVJQK7gAAFGakBRRBu6KSWM8aNI239wjb4og7W93wOoAHU3-oQ_J_FJ1fY_ki_PpH8HNcY34FZWeVm6CLMgVqUGAvNofAZ3v08qw");
-                    return params;
-                }
-
-        };
+        StringRequest configRequest = new StringRequest(Request.Method.GET, configURL, listener, errorListener);
         queue.add(configRequest);
     }
 
