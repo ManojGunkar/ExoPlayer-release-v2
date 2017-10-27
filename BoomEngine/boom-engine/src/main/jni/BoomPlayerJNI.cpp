@@ -1,4 +1,6 @@
 /** log */
+#define LOG_TAG "BoomPlayerJNI"
+
 #include <stddef.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
@@ -10,7 +12,6 @@
 #include "Utilities/AutoLock.hpp"
 #include "Utilities/ByteBuffer.h"
 
-#define LOG_TAG "BoomPlayerJNI"
 
 #define BYTES_PER_CHANNEL ((mEngine->GetOutputType() == SAMPLE_TYPE_SHORT)? sizeof(int16_t) : sizeof(float))
 

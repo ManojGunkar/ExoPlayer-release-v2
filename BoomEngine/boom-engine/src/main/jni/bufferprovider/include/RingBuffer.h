@@ -25,9 +25,9 @@ namespace gdpl {
         bool Empty(void);
 
     public:
+        const size_t  frameCount;
         const int  channelCount;
         const int  bytesPerChannel;
-        const size_t  frameCount;
 
     private:
         uint8_t*            _data;

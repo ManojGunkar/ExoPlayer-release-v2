@@ -1,8 +1,8 @@
+#define LOG_TAG "RingBuffer"
+
 #include <android/log.h>
 #include "../include/RingBuffer.h"
 #include "../../logger/log.h"
-
-#define LOG_TAG "RingBuffer"
 
 
 namespace gdpl {

@@ -2,6 +2,8 @@
 // Created by Adarsh on 12/12/16.
 //
 
+#define LOG_TAG "BoomAudioProcessor"
+
 #include <assert.h>
 #include "audioresampler/include/AudioResampler.h"
 #include "bufferprovider/include/RingBuffer.h"
@@ -9,8 +11,6 @@
 #include "Utilities/Utility.h"
 #include "BoomAudioProcessor.h"
 
-
-#define LOG_TAG "BoomAudioProcessor"
 
 using namespace gdpl;
 
