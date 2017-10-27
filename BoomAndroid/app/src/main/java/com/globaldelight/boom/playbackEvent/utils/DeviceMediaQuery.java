@@ -63,10 +63,14 @@ public class DeviceMediaQuery {
             int Date_Added_Column = songListCursor.getColumnIndex
                     (MediaStore.Audio.Media.DATE_ADDED);
             do{
+                String artistName = songListCursor.getString(Artist_Name_Column);
+                if ( artistName == null || artistName.equalsIgnoreCase("<unknown>") ) {
+                    artistName = context.getResources().getString(R.string.unknown_artist);
+                }
                 songList.add(new MediaItem(songListCursor.getLong(Song_Id_Column), songListCursor.getString(Song_Name_Column),
                         songListCursor.getString(Song_Display_Name_Column), songListCursor.getString(Song_Path_Column),
                         songListCursor.getLong(Album_ID_Column), songListCursor.getString(Album_Name_Column),
-                        songListCursor.getLong(Artist_ID_Column), songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
+                        songListCursor.getLong(Artist_ID_Column), artistName,
                         songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
                         /*getAlbumArtByAlbum(context, songListCursor.getString(Album_Name_Column))*/ null, ItemType.SONGS,
                         MediaType.DEVICE_MEDIA_LIB, ItemType.SONGS, 0, null));
@@ -246,8 +250,13 @@ public class DeviceMediaQuery {
 
             //add albums to list
             do {
+                String artistTitle = artistListCursor.getString(Item_Title_Column);
+                if ( artistTitle == null || artistTitle.equalsIgnoreCase("<unknown>") ) {
+                    artistTitle = context.getResources().getString(R.string.unknown_artist);
+                }
+
                 artistList.add(new MediaItemCollection(artistListCursor.getLong(Item_ID_Column),
-                        artistListCursor.getString(Item_Title_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : artistListCursor.getString(Item_Title_Column),
+                        artistTitle,
                         null, /*getAlbumArtByArtist(context, artistListCursor.getString(Item_Title_Column))*/ null,
                         artistListCursor.getInt(Item_Count_Column), artistListCursor.getInt(numOfAlbumsColumn), ItemType.ARTIST,
                         MediaType.DEVICE_MEDIA_LIB, ItemType.ARTIST));

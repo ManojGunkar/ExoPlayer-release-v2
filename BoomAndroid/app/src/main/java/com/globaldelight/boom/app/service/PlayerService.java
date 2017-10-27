@@ -1,11 +1,9 @@
 package com.globaldelight.boom.app.service;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -16,8 +14,6 @@ import com.globaldelight.boom.app.activities.BoomSplash;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
-import com.dropbox.client2.DropboxAPI;
-import com.dropbox.client2.android.AndroidAuthSession;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
@@ -26,7 +22,6 @@ import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
-import com.globaldelight.boom.utils.helpers.DropBoxUtills;
 import com.globaldelight.boom.player.AudioConfiguration;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -47,7 +42,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
     private PlaybackManager mPlayback;
     private NotificationHandler notificationHandler;
     private HeadPhonePlugReceiver headPhonePlugReceiver;
-    private DropboxAPI<AndroidAuthSession> dropboxAPI;
     private PlayerServiceReceiver serviceReceiver;
     private ConnectivityReceiver connectivityReceiver;
     private boolean mIsTaskRunning = true;
@@ -83,22 +77,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
         Preferences.writeBoolean(this, Preferences.SLEEP_TIMER_ENABLED, false);
 
         connectivityReceiver = new ConnectivityReceiver(this);
-
-        if(connectivityReceiver.isNetworkAvailable(this, false)){
-            LoadNetworkCalls();
-        }
-    }
-
-    private void LoadNetworkCalls() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AndroidAuthSession session = DropBoxUtills.buildSession(App.getApplication());
-                dropboxAPI = new DropboxAPI<AndroidAuthSession>(session);
-                App.setDropboxAPI(dropboxAPI);
-                DropBoxUtills.checkAppKeySetup(App.getApplication());
-            }
-        }).start();
     }
 
     @Override
@@ -232,7 +210,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         if(isConnected) {
-            LoadNetworkCalls();
             sendLocalBroadcast(new Intent(ACTION_ON_NETWORK_CONNECTED));
         }else{
             sendLocalBroadcast(new Intent(ACTION_ON_NETWORK_DISCONNECTED));

@@ -65,10 +65,14 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
                     (MediaStore.Audio.Media.ARTIST);
 
             do{
-                addSong(songListCursor.getString(Song_Name_Column).trim());
-//                addSong(songListCursor.getString(Song_Display_Name_Column));
-                addSong(songListCursor.getString(Album_Name_Column).trim());
-                addSong(songListCursor.getString(Artist_Name_Column).trim());
+                final String song = songListCursor.getString(Song_Name_Column);
+                final String album = songListCursor.getString(Album_Name_Column);
+                final String artist = songListCursor.getString(Artist_Name_Column);
+
+                addSong(song);
+                addSong(album);
+                addSong(artist);
+
             }while (songListCursor.moveToNext());
 
         }
@@ -78,12 +82,15 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
     }
 
     private synchronized void addSong(String title) {
+        if ( title == null ) {
+            return;
+        }
         removeSong(title);
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.putNull(ITEM_KEY_ID);
-            values.put(SEARCH_KEY, title);
+            values.put(SEARCH_KEY, title.trim());
             db.insert(TABLE_SEARCH, null, values);
             db.close();
         }catch (Exception e){}
