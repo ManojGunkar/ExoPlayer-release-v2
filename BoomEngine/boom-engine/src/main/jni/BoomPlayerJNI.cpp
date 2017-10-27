@@ -71,6 +71,7 @@ void BOOM_ENGINE_METHOD(init)(
         jint inFrameCount)
 {
 #ifdef EXPIRY_DATE
+#warning This build expires after 1 month
     if ( hasExpired() ) {
         LOGE("Library has expired!!!\n");
         exit(1);
