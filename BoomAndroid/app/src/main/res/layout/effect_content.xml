@@ -48,6 +48,20 @@
         android:layout_height="wrap_content"
         android:padding="5dp">
 
+        <com.globaldelight.boom.view.CustomCheckbox
+            android:id="@+id/three_surround_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:button="@drawable/three_d_state"
+            android:paddingLeft="5dp"
+            android:text="@string/three_d_surround"
+            android:textColor="@color/effect_checkbox_text"
+            android:textSize="@dimen/effect_title_size"
+            android:textStyle="normal"
+            />
+        <!--
         <ImageView
             android:id="@+id/three_surround_btn"
             android:layout_width="wrap_content"
@@ -69,7 +83,7 @@
             android:textColor="@color/effects_text_state"
             android:textSize="@dimen/effect_title_size"
             android:textStyle="normal" />
-
+        -->
         <ImageView
             android:id="@+id/speaker_btn"
             android:layout_width="wrap_content"
@@ -106,6 +120,19 @@
         android:layout_marginTop="5dp"
         android:background="@drawable/ic_effect_separator" />
 
+    <com.globaldelight.boom.view.CustomCheckbox
+        android:id="@+id/intensity_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:button="@drawable/intensity_state"
+        android:paddingLeft="5dp"
+        android:text="@string/intensity"
+        android:textColor="@color/effect_checkbox_text"
+        android:textSize="@dimen/effect_title_size"
+        android:textStyle="normal" />
+    />
+    <!--
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -132,6 +159,7 @@
             android:textSize="@dimen/effect_title_size"
             android:textStyle="normal" />
     </RelativeLayout>
+    -->
 
     <com.globaldelight.boom.view.NegativeSeekBar
         android:id="@+id/intensity_seek"
@@ -159,7 +187,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:padding="5dp">
+        
+        <com.globaldelight.boom.view.CustomCheckbox
+            android:id="@+id/equalizer_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/equalizer_state"
+            android:paddingLeft="5dp"
+            android:text="@string/equalizer"
+            android:textColor="@color/effect_checkbox_text"
+            android:textSize="@dimen/effect_title_size"
+            android:textStyle="normal" />
+            />
 
+        <!--
         <ImageView
             android:id="@+id/equalizer_btn"
             android:layout_width="wrap_content"
@@ -180,6 +221,7 @@
             android:textColor="@color/effects_text_state"
             android:textSize="@dimen/effect_title_size"
             android:textStyle="normal" />
+           -->
 
         <LinearLayout
             android:id="@+id/eq_dialog_panel"

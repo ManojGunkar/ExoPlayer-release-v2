@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -127,8 +128,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private NegativeSeekBar mIntensitySeek;
     private SwitchCompat mEffectSwitch;
     private ToggleButton mFullBassCheck;
-    private RegularTextView mEffectSwitchTxt, m3DSurroundTxt, mIntensityTxt, mEqualizerTxt, mSelectedEqTxt;
-    private ImageView m3DSurroundBtn, mIntensityBtn, mEqualizerBtn, mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
+    private RegularTextView mEffectSwitchTxt, mSelectedEqTxt;
+    private ImageView mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
+    private CheckBox m3DSurroundBtn, mIntensityBtn, mEqualizerBtn;
     private LinearLayout mEqDialogPanel;
 
     private List<String> eq_names;
@@ -914,6 +916,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
 
+
     private void overFlowMenu(Context context, View view) {
         OverFlowMenuUtils.showMediaItemMenu(mActivity, view, R.menu.player_popup, App.playbackManager().getPlayingItem());
     }
@@ -949,12 +952,11 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mEffectSwitch = (SwitchCompat) mInflater.findViewById(R.id.effect_switch);
         mEffectSwitch.setChecked(audioEffects.isAudioEffectOn());
 
-        m3DSurroundBtn = (ImageView) mInflater.findViewById(R.id.three_surround_btn);
+        m3DSurroundBtn = (CheckBox) mInflater.findViewById(R.id.three_surround_btn);
         m3DSurroundBtn.setOnClickListener(this);
-        m3DSurroundTxt = (RegularTextView) mInflater.findViewById(R.id.three_surround_txt);
+
         mSpeakerBtn = (ImageView) mInflater.findViewById(R.id.speaker_btn);
         mSpeakerBtn.setOnClickListener(this);
-        m3DSurroundTxt.setOnClickListener(this);
 
         mFullBassCheck = (ToggleButton) mInflater.findViewById(R.id.fullbass_chk);
         mFullBassCheck.setOnCheckedChangeListener(new ToggleButton.OnCheckedChangeListener() {
@@ -968,16 +970,14 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         });
 
 
-        mIntensityBtn = (ImageView) mInflater.findViewById(R.id.intensity_btn);
+        mIntensityBtn = (CheckBox) mInflater.findViewById(R.id.intensity_btn);
         mIntensityBtn.setOnClickListener(this);
-        mIntensityTxt = (RegularTextView) mInflater.findViewById(R.id.intensity_txt);
         mIntensitySeek = (NegativeSeekBar) mInflater.findViewById(R.id.intensity_seek);
         mIntensitySeek.setProgress((int) (audioEffects.getIntensity() * 50 + 50));
         mIntensitySeek.setOnClickListener(this);
 
-        mEqualizerBtn = (ImageView) mInflater.findViewById(R.id.equalizer_btn);
+        mEqualizerBtn = (CheckBox) mInflater.findViewById(R.id.equalizer_btn);
         mEqualizerBtn.setOnClickListener(this);
-        mEqualizerTxt = (RegularTextView) mInflater.findViewById(R.id.equalizer_txt);
         mEqDialogPanel = (LinearLayout) mInflater.findViewById(R.id.eq_dialog_panel);
         mEqDialogPanel.setOnClickListener(this);
 
@@ -1028,45 +1028,30 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         }
 
         mEffectSwitchTxt.setText(isEffectOn ? R.string.on : R.string.off);
+        mEffectTab.setImageResource(isEffectOn? R.drawable.ic_effects_active_on : R.drawable.ic_effects_active);
+
 
         boolean isSurroundOn = audioEffects.is3DSurroundOn();
+        m3DSurroundBtn.setChecked(isSurroundOn);
         m3DSurroundBtn.setEnabled(isEffectOn);
-        mSpeakerBtn.setEnabled(isEffectOn);
-        m3DSurroundTxt.setEnabled(isEffectOn);
-        mSpeakerBtn.setEnabled(isEffectOn);
-        mFullBassCheck.setEnabled(isEffectOn);
-
-        if (isEffectOn) {
-            m3DSurroundBtn.setSelected(isSurroundOn);
-            m3DSurroundTxt.setSelected(isSurroundOn);
-            mSpeakerBtn.setSelected(isSurroundOn);
-            mFullBassCheck.setEnabled(isSurroundOn);
-            mEffectTab.setImageResource(R.drawable.ic_effects_active_on);
-        } else {
-            mEffectTab.setImageResource(R.drawable.ic_effects_active);
-        }
+        mFullBassCheck.setChecked(audioEffects.isFullBassOn());
+        mFullBassCheck.setEnabled(isEffectOn && isSurroundOn);
+        mSpeakerBtn.setEnabled(isEffectOn && isSurroundOn);
 
         boolean isIntensityOn = audioEffects.isIntensityOn();
+        mIntensityBtn.setChecked(isIntensityOn);
         mIntensityBtn.setEnabled(isEffectOn);
-        mIntensityTxt.setEnabled(isEffectOn);
         mIntensitySeek.setDisable(!(isIntensityOn && isEffectOn));
-
-        if (isEffectOn) {
-            mIntensityBtn.setSelected(isIntensityOn);
-            mIntensityTxt.setSelected(isIntensityOn);
-        }
 
 
         boolean isEqualizerOn = audioEffects.isEqualizerOn();
+        mEqualizerBtn.setChecked(isEqualizerOn);
         mEqualizerBtn.setEnabled(isEffectOn);
-        mEqualizerTxt.setEnabled(isEffectOn);
         mSelectedEqGoImg.setEnabled(isEffectOn);
         mEqDialogPanel.setEnabled(isEffectOn);
         mSelectedEqTxt.setEnabled(isEffectOn);
         mSelectedEqImg.setEnabled(isEffectOn);
         if (isEffectOn) {
-            mEqualizerBtn.setSelected(isEqualizerOn);
-            mEqualizerTxt.setSelected(isEqualizerOn);
             mSelectedEqTxt.setSelected(isEqualizerOn);
             mSelectedEqImg.setSelected(isEqualizerOn);
             mSelectedEqGoImg.setSelected(isEqualizerOn);
@@ -1107,15 +1092,12 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 audioEffects.setEnableIntensity(true);
                 audioEffects.setEnableEqualizer(true);
             }
-            MixPanelAnalyticHelper.track(mActivity, audioEffects.is3DSurroundOn() ? AnalyticsHelper.EVENT_3D_TURNED_ON : AnalyticsHelper.EVENT_3D_TURNED_OFF);
-//            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_3D_STATE_CHANGED, audioEffectPreferenceHandler.is3DSurroundOn());
-            FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_3D_STATE_CHANGED, audioEffects.is3DSurroundOn());
-            FlurryAnalytics.getInstance(getActivity()).setEvent(audioEffects.is3DSurroundOn() ? FlurryEvents.EVENT_3D_TURNED_ON : FlurryEvents.EVENT_3D_TURNED_OFF);
         }
     }
 
     private void switchIntensity() {
         if (audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && audioEffects.isIntensityOn()) {
+            mIntensityBtn.setChecked(true);
             Toast.makeText(mActivity, mActivity.getResources().getString(R.string.req_intensity), Toast.LENGTH_LONG).show();
         } else {
             audioEffects.setEnableIntensity(!audioEffects.isIntensityOn());
@@ -1124,13 +1106,11 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     private void switchEqualizer() {
         if (audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && audioEffects.isEqualizerOn()) {
+            mEqualizerBtn.setChecked(true);
             Toast.makeText(mActivity, mActivity.getResources().getString(R.string.req_equlaizer), Toast.LENGTH_LONG).show();
         } else {
             audioEffects.setEnableEqualizer(!audioEffects.isEqualizerOn());
         }
-        MixPanelAnalyticHelper.track(mActivity, audioEffects.isEqualizerOn() ? AnalyticsHelper.EVENT_EQ_TURNED_ON : AnalyticsHelper.EVENT_EQ_TURNED_OFF);
-//        FlurryAnalyticHelper.logEventWithStatus(UtilAnalytics.Equalizer_status, audioEffectPreferenceHandler.isEqualizerOn());
-
     }
 
     private void setEffectIntensity() {
@@ -1209,12 +1189,15 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
                     break;
                 case AudioEffect.SURROUND_SOUND_PROPERTY:
-                    FlurryAnalytics.getInstance(mActivity).setEvent(FlurryEvents.EVENT_3D_STATE_CHANGED);
+                    MixPanelAnalyticHelper.track(mActivity, audioEffects.is3DSurroundOn() ? AnalyticsHelper.EVENT_3D_TURNED_ON : AnalyticsHelper.EVENT_3D_TURNED_OFF);
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_3D_STATE_CHANGED, audioEffects.is3DSurroundOn());
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(audioEffects.is3DSurroundOn() ? FlurryEvents.EVENT_3D_TURNED_ON : FlurryEvents.EVENT_3D_TURNED_OFF);
                     break;
                 case AudioEffect.AUTO_EQUALIZER:
                     break;
                 case AudioEffect.EQUALIZER_STATE_PROPERTY:
                     FlurryAnalytics.getInstance(mActivity).setEvent(FlurryEvents.EVENT_EQ_STATE_CHANGED);
+                    MixPanelAnalyticHelper.track(mActivity, audioEffects.isEqualizerOn() ? AnalyticsHelper.EVENT_EQ_TURNED_ON : AnalyticsHelper.EVENT_EQ_TURNED_OFF);
                     break;
                 case AudioEffect.FULL_BASS_PROPERTY:
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FULL_BASS);
