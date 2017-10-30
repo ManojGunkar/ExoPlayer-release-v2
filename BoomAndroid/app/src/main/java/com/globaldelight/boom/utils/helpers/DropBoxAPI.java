@@ -63,15 +63,10 @@ public class DropBoxAPI {
     }
 
     public void authorize(){
-        String token = getAccessToken();
-        if ( token == null ) {
-            token = Auth.getOAuth2Token();
-            if ( token == null ) {
-                Auth.startOAuth2Authentication(mContext, DROPBOX_APP_KEY);
-            }
+        if ( !isLoggedIn() ) {
+            Auth.startOAuth2Authentication(mContext, DROPBOX_APP_KEY);
         }
     }
-
 
     public void finishAuthorization() {
         String token = getAccessToken();
