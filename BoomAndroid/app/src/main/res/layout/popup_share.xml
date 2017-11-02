@@ -16,7 +16,7 @@
             android:id="@+id/txt_popup_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Share"
+            android:text="@string/share_text"
             android:textColor="@android:color/white"
             android:textSize="21sp" />
 
