@@ -62,7 +62,6 @@ android {
 
         demo {
             buildConfigField "boolean", BUSINESS_MODEL_ENABLED,     "false"
-            android.lintOptions.checkReleaseBuilds false
         }
 
         production {
