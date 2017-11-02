@@ -2,7 +2,7 @@
 
 ROOT_DIR=$(pwd)
 BUILD_TOOLS="${ANDROID_HOME}/build-tools/24.0.3"
-APK_DIR=app/build/outputs/apk
+APK_DIR=app/build/outputs/apk/${FLAVOUR}/release
 EXPIRY_DATE=$(date -v+1m '+"%d-%m-%Y"')
 
 check_error() {
