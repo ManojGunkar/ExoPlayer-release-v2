@@ -25,11 +25,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class BoomSplash extends AppCompatActivity {
-    private static final long SPLASH_TIME_OUT = 2000;
-    MixpanelAPI mixpanel;
-    JSONObject propsFirst, propsLast;
-    String currentDate;
-    private String TAG="BoomSplash";
+    private static final long SPLASH_TIME_OUT = 1000;
+    private static final String TAG = "BoomSplash";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +35,6 @@ public class BoomSplash extends AppCompatActivity {
             finish();
             return;
         }
-//        FlurryAnalyticHelper.init(this);
     }
 
     @Override
@@ -60,17 +56,13 @@ public class BoomSplash extends AppCompatActivity {
     private void startBoom() {
         App.startPlayerService();
         startBoomLibrary();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(BoomSplash.this);
-        if(null == preferences.getString("Tool_install_date", null)) {
-            SharedPreferences.Editor edit = preferences.edit();
-            edit.putString("Tool_install_date", String.valueOf(System.currentTimeMillis()));
-            edit.commit();
-        }
     }
 
     private void updateDataValues() {
-        //flurry
-//        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_APP_OPEN);
+        JSONObject propsFirst, propsLast;
+        String currentDate;
+        MixpanelAPI mixpanel;
+
         FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.EVENT_APP_OPEN);
 
         //get current date
@@ -78,8 +70,8 @@ public class BoomSplash extends AppCompatActivity {
         mixpanel = MixPanelAnalyticHelper.getInstance(this);
         //new Launch of app.Use for tutorial
         if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true)) {
-            Preferences.writeString(this, Preferences.INSTALL_DATE, currentDate);
             //register first app open once as super property
+            Preferences.writeBoolean(this,Preferences.APP_FRESH_LAUNCH, false);
             propsFirst = new JSONObject();
             try {
                 propsFirst.put(AnalyticsHelper.EVENT_FIRST_VISIT, currentDate);
@@ -125,7 +117,6 @@ public class BoomSplash extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        MixPanelAnalyticHelper.getInstance(this).flush();
         super.onDestroy();
         MixPanelAnalyticHelper.getInstance(this).flush();
     }
@@ -141,6 +132,4 @@ public class BoomSplash extends AppCompatActivity {
         super.onStop();
         FlurryAnalytics.getInstance(this).endSession();
     }
-
-
 }

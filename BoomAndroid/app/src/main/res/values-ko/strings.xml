@@ -152,7 +152,9 @@
     <string name="equalizer">이퀄라이저</string>
     <string name="music_library">뮤직 라이브러리</string>
     <string name="drop_box">Dropbox</string>
+    <string name="drop_box_account">Dropbox(%s)</string>
     <string name="google_drive">Google Drive</string>
+    <string name="google_drive_account">Google Drive(%s)</string>
     <string name="request_cancelled">요청이 취소되었습니다.</string>
     <string name="login_problem_dropbox">Dropbox에 로그인할 수 없습니다.</string>
     <string name="login_problem_google_drive">Google Drive에 로그인할 수 없습니다.</string>
@@ -173,7 +175,7 @@
     <string name="store_page_header">번거로움 없는 Boom</string>
     <string name="store_page_buy_description">번거로움 없이 #FeelYourMusic을 \n 지금 구입하십시오. 광고 없이.</string>
     <string name="store_page_share_description">또한 Boom을 공유하면 \n 5일 동안 광고가 중단됩니다.</string>
-    <string name="share_text">Boom 공유</string>
+    <string name="share_title">Boom 공유</string>
     <string name="menu_restore">구매 재개</string>
     <string name="store_title">스토어</string>
 
@@ -195,6 +197,9 @@
     <string name="use_headphone_tooltip">최고의 경험을 위해 \n 헤드폰을 사용하십시오.</string>
     <string name="choose_headphone_tooltip">최상의 출력을 위해 설정에서 \n헤드폰 유형을 선택하십시오.</string>
 
+    <!-- needs tranlation -->
+    <string name="onboard_screen_0_main_tx">Redefine Your Music Experience</string>
+    <string name="onboard_screen_0_sub_tx">Feel your music coming alive with the magical 3D surround sound.</string>
 
     <string name="onboard_screen_1_main_tx">음악 경험을 재정의하십시오.</string>
     <string name="onboard_screen_1_sub_tx">3D 서라운드 사운드 및 전문 음악 사전 설정으로 음악 감상 경험을 강화하십시오.</string>
@@ -260,6 +265,49 @@
     <string name="app_unsupported">App doesn\'t support this device.</string>
     <string name="title_internet_alert">No Internet Connection</string>
 
+    <string name="message_share">Enjoying Boom? Share with your friends and spread the word!</string>
+    <string name="install_google">Install</string>
+    <string name="dont_limit_your_boomin_limit">Get immersed in surround sound to experience music like never before at just $2.99</string>
+
+    <string name="first_notification_title">Don’t Limit Your Boomin’!</string>
+    <string name="first_notification_message">Get immersed in surround sound to experience music like never before at just %s</string>
+    <string name="second_notification_title">Just Boom it!</string>
+    <string name="second_notification_message">Unlock the magical surround sound and remove Ads at just %1$s \nor\nSpread the musical fever, share Boom with your friends, and enjoy %2$d days free trial</string>
+    <string name="second_notification_message_no_share">Unlock the magical surround sound and remove Ads at just %s</string>
+    <string name="third_notification_title">Get More For Less!</string>
+    <string name="third_notification_message">Unlock all features, remove Ads and experience music like never before for only %s</string>
+    <string name="first_effect_on_title">Congratulations!</string>
+    <string name="first_effect_on_message">Enjoy all features for free for %d hours. Boom it before it ends.</string>
+    <string name="afterTrial_effect_on_title">Missed free usage of premium features?</string>
+    <string name="afterTrial_effect_on_message">Don’t worry; enjoy your first %d songs with all the premium features for free!</string>
+    <string name="share_success_title">Congratulations!</string>
+    <string name="share_success_message">Now you can enjoy all features for free for %d days!</string>
+    <string name="video_ad_message">Watch the video to get all features unlocked for %d hours!</string>
+    <string name="video_ad_success_message">You’ve unlocked all features for %d hours.</string>
+    <string name="buy_button_title">Buy</string>
+    <string name="share_button_title">Share</string>
+    <string name="remind_button_title">Remind Me Later</string>
+    <string name="watch_button_title">Watch</string>
+
+    <string name="login_button_label">Login</string>
+    <string name="logout_button_label">Logout</string>
+    <string name="play_track_button_label">Track</string>
+    <string name="play_playlist_button_label">Playlist</string>
+    <string name="play_mono_track_button_label">Play mono track</string>
+    <string name="play_48khz_track_button_label">Play 48kHz track</string>
+    <string name="play_album_button_label">Album</string>
+    <string name="pause_button_label_toggle">Pause/Resume</string>
+    <string name="skip_next_button_label">Next</string>
+    <string name="skip_prev_button_label">Previous</string>
+    <string name="toggle_shuffle_button_toggle">Toggle shuffle</string>
+    <string name="toggle_repeat_button_label_toggle">Toggle repeat</string>
+    <string name="seek_button_label">Seek</string>
+    <string name="queue_button_label">Queue a song</string>
+    <string name="song_queued_toast">Song queued!</string>
+    <string name="high_bitrate_button_label">320kbps</string>
+    <string name="normal_bitrate_button_label">160kbps</string>
+    <string name="low_bitrate_button_label">96kbps</string>
+    <string name="no_metadata">no metadata</string>
 
 
 </resources>

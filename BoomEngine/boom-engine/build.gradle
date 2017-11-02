@@ -1,0 +1,54 @@
+apply plugin: 'com.android.model.library'
+
+def getExpiryDate() {
+    def now = Calendar.getInstance();
+    now.add(Calendar.MONTH, 1)
+    return now.getTime().format('d,M,yyyy')
+}
+
+
+model {
+    android {
+        compileSdkVersion 25
+        buildToolsVersion "26.0.2"
+
+        defaultConfig {
+            minSdkVersion.apiLevel    = 21
+            targetSdkVersion.apiLevel = 25
+            versionCode 1
+            versionName "1.0"
+
+            testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        }
+        ndk {
+            def DEFINE_EXPIRY_DATE_FLAG = '-DEXPIRY_DATE=makeDate(' + getExpiryDate() + ')'
+
+
+            platformVersion = 23
+            moduleName = 'BoomEngine'
+            toolchain = 'clang'
+            stl       = 'c++_static'
+            CFlags.addAll(['-std=c11'])
+            cppFlags.addAll(['-I' + file('src/main/jni/'),
+                             DEFINE_EXPIRY_DATE_FLAG,
+                             '-std=c++11', '-Wall',
+                             '-fno-exceptions', '-fno-rtti'])
+            ldFlags.addAll(['-L' + file('src/main/jni/libs')])
+            ldLibs.addAll(['android', 'log', 'atomic', 'AudioCore', 'ffts'])
+            abiFilters.addAll(['armeabi-v7a'])
+        }
+
+        buildTypes {
+            release {
+                minifyEnabled false
+                proguardFiles.add(file('proguard-rules.txt'))
+            }
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:support-annotations:25.3.1'
+}

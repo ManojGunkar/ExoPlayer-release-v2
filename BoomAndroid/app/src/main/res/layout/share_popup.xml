@@ -34,7 +34,7 @@
         android:gravity="center"
         android:paddingLeft="@dimen/share_popup_body_margin_side"
         android:paddingRight="@dimen/share_popup_body_margin_side"
-        android:text="@string/share_text"
+        android:text="@string/share_title"
         android:textColor="@color/share_popup_body"
         android:textSize="@dimen/share_popup_body_size" />
 

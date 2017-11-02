@@ -173,7 +173,7 @@
     <string name="store_page_header">完全免费 Boom</string>
     <string name="store_page_buy_description">现在购买以轻松 #FeelYourMusic\n。没有任何广告。</string>
     <string name="store_page_share_description">您也可以分享 Boom，以在 5 天内禁用广告\n。</string>
-    <string name="share_text">分享 Boom</string>
+    <string name="share_title">分享 Boom</string>
     <string name="menu_restore">恢复购买</string>
     <string name="store_title">商店</string>
 
@@ -195,6 +195,8 @@
     <string name="use_headphone_tooltip">使用耳机以获得\n最佳体验</string>
     <string name="choose_headphone_tooltip">在设置中选择耳机类型\n以实现最佳输出</string>
 
+    <string name="onboard_screen_0_main_tx">Redefine Your Music Experience</string>
+    <string name="onboard_screen_0_sub_tx">Feel your music coming alive with the magical 3D surround sound.</string>
 
     <string name="onboard_screen_1_main_tx">重新定义您的音乐体验</string>
     <string name="onboard_screen_1_sub_tx">用 3D 环绕声和专业的音乐预设来强化您的音乐欣赏体验。</string>
@@ -259,5 +261,53 @@
     <string name="store_page_buy_share_description">Buy or Share now to #FeelYourMusic \n without any hassle.</string>
     <string name="app_unsupported">App doesn\'t support this device.</string>
     <string name="title_internet_alert">No Internet Connection</string>
+
+
+    <string name="message_share">Enjoying Boom? Share with your friends and spread the word!</string>
+    <string name="install_google">Install</string>
+    <string name="dont_limit_your_boomin_limit">Get immersed in surround sound to experience music like never before at just $2.99</string>
+
+    <string name="first_notification_title">Don’t Limit Your Boomin’!</string>
+    <string name="first_notification_message">Get immersed in surround sound to experience music like never before at just %s</string>
+    <string name="second_notification_title">Just Boom it!</string>
+    <string name="second_notification_message">Unlock the magical surround sound and remove Ads at just %1$s \nor\nSpread the musical fever, share Boom with your friends, and enjoy %2$d days free trial</string>
+    <string name="second_notification_message_no_share">Unlock the magical surround sound and remove Ads at just %s</string>
+    <string name="third_notification_title">Get More For Less!</string>
+    <string name="third_notification_message">Unlock all features, remove Ads and experience music like never before for only %s</string>
+    <string name="first_effect_on_title">Congratulations!</string>
+    <string name="first_effect_on_message">Enjoy all features for free for %d hours. Boom it before it ends.</string>
+    <string name="afterTrial_effect_on_title">Missed free usage of premium features?</string>
+    <string name="afterTrial_effect_on_message">Don’t worry; enjoy your first %d songs with all the premium features for free!</string>
+    <string name="share_success_title">Congratulations!</string>
+    <string name="share_success_message">Now you can enjoy all features for free for %d days!</string>
+    <string name="video_ad_message">Watch the video to get all features unlocked for %d hours!</string>
+    <string name="video_ad_success_message">You’ve unlocked all features for %d hours.</string>
+    <string name="buy_button_title">Buy</string>
+    <string name="share_button_title">Share</string>
+    <string name="remind_button_title">Remind Me Later</string>
+    <string name="watch_button_title">Watch</string>
+    <string name="drop_box_account">Dropbox(%s)</string>
+    <string name="google_drive_account">Google Drive(%s)</string>
+
+
+    <string name="login_button_label">Login</string>
+    <string name="logout_button_label">Logout</string>
+    <string name="play_track_button_label">Track</string>
+    <string name="play_playlist_button_label">Playlist</string>
+    <string name="play_mono_track_button_label">Play mono track</string>
+    <string name="play_48khz_track_button_label">Play 48kHz track</string>
+    <string name="play_album_button_label">Album</string>
+    <string name="pause_button_label_toggle">Pause/Resume</string>
+    <string name="skip_next_button_label">Next</string>
+    <string name="skip_prev_button_label">Previous</string>
+    <string name="toggle_shuffle_button_toggle">Toggle shuffle</string>
+    <string name="toggle_repeat_button_label_toggle">Toggle repeat</string>
+    <string name="seek_button_label">Seek</string>
+    <string name="queue_button_label">Queue a song</string>
+    <string name="song_queued_toast">Song queued!</string>
+    <string name="high_bitrate_button_label">320kbps</string>
+    <string name="normal_bitrate_button_label">160kbps</string>
+    <string name="low_bitrate_button_label">96kbps</string>
+    <string name="no_metadata">no metadata</string>
 
 </resources>

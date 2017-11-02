@@ -18,7 +18,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
@@ -33,30 +32,30 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
+import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.ActivityContainer;
+import com.globaldelight.boom.app.activities.MasterActivity;
+import com.globaldelight.boom.app.analytics.AnalyticsHelper;
+import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.dialogs.EqualizerDialog;
 import com.globaldelight.boom.app.dialogs.SpeakerDialog;
-import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
-import com.globaldelight.boom.app.activities.MasterActivity;
-import com.globaldelight.boom.playbackEvent.controller.PlayerUIController;
-import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
+import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
-import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
+import com.globaldelight.boom.playbackEvent.controller.PlayerUIController;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
+import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
+import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.view.CoachMarkerWindow;
 import com.globaldelight.boom.view.NegativeSeekBar;
 import com.globaldelight.boom.view.RegularTextView;
-import com.globaldelight.boom.utils.PlayerUtils;
-import com.globaldelight.boom.app.sharedPreferences.Preferences;
-import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.view.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.Arrays;
@@ -65,14 +64,17 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.TimeUnit;
+
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_DISCONNECTED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_QUEUE_COMPLETED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_STOP_UPDATING_UPNEXT_DB;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_QUEUE_COMPLETED;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_REPEAT;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_SHUFFLE;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_UPDATE_TRACK_POSITION;
+import static com.globaldelight.boom.app.sharedPreferences.Preferences.TOOLTIP_OPEN_EFFECT_MINI_PLAYER;
+import static com.globaldelight.boom.app.sharedPreferences.Preferences.TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_ALL;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_NONE;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_ONE;
@@ -81,8 +83,6 @@ import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.SH
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_BOTTOM_CENTER;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_TOP_CENTER;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_TOP_LEFT;
-import static com.globaldelight.boom.app.sharedPreferences.Preferences.TOOLTIP_OPEN_EFFECT_MINI_PLAYER;
-import static com.globaldelight.boom.app.sharedPreferences.Preferences.TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
 
 /**
  * Created by Rahul Agarwal on 16-01-17.
@@ -96,13 +96,12 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private static boolean mIsPlaying, mIsLastPlayed;
 
 
-    private long mItemId=-1;
+    private long mItemId = -1;
     private boolean isUser = false;
-    
+
     private Activity mActivity;
     private ProgressBar mLoadingProgress;
     private AudioEffect audioEffects;
-
 
 
     /************************************************************************************/
@@ -111,7 +110,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     private RegularTextView mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
     private View mInflater;
-    private int colorTo , colorFrom, colorFromActive;
+    private int colorTo, colorFrom, colorFromActive;
     private AppCompatSeekBar mTrackSeek;
     private ImageView mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mPlayerBackBtn, mLargeAlbumArt;
     private ImageView mEffectTab, mPlayerTab;
@@ -128,9 +127,10 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private RegularTextView mDisableIntensity;
     private NegativeSeekBar mIntensitySeek;
     private SwitchCompat mEffectSwitch;
-    private CheckBox mFullBassCheck;
-    private RegularTextView mEffectSwitchTxt, m3DSurroundTxt, mIntensityTxt, mEqualizerTxt, mSelectedEqTxt;
-    private ImageView m3DSurroundBtn, mIntensityBtn, mEqualizerBtn, mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
+    private ToggleButton mFullBassCheck;
+    private RegularTextView mEffectSwitchTxt, mSelectedEqTxt;
+    private ImageView mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
+    private CheckBox m3DSurroundBtn, mIntensityBtn, mEqualizerBtn;
     private LinearLayout mEqDialogPanel;
 
     private List<String> eq_names;
@@ -146,10 +146,10 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         @Override
         public void onReceive(Context context, Intent intent) {
             IMediaItem item;
-            switch (intent.getAction()){
+            switch (intent.getAction()) {
                 case ACTION_SONG_CHANGED:
                     item = intent.getParcelableExtra("playing_song");
-                    if(item != null){
+                    if (item != null) {
                         mPlayingMediaItem = (MediaItem) item;
                         mIsPlaying = intent.getBooleanExtra("playing", false);
                         mIsLastPlayed = false;
@@ -162,14 +162,15 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
                 case ACTION_PLAYER_STATE_CHANGED:
                     try {
-                        if ( App.playbackManager().isTrackPlaying() ) {
+                        if (App.playbackManager().isTrackPlaying()) {
                             mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_pause);
                             mPlayPause.setImageResource(R.drawable.ic_player_pause);
                         } else {
                             mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_play);
                             mPlayPause.setImageResource(R.drawable.ic_player_play);
-                         }
-                    }catch (Exception e){}
+                        }
+                    } catch (Exception e) {
+                    }
                     stopLoadProgress();
                     break;
                 case ACTION_QUEUE_COMPLETED:
@@ -185,23 +186,23 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 case ACTION_UPDATE_TRACK_POSITION:
                     long duration = App.playbackManager().getDuration();
                     long current = App.playbackManager().getPosition();
-                    if(!isUser) {
-                        int percent = duration > 0 ? (int)((current * 100) / duration) : 0;
+                    if (!isUser) {
+                        int percent = duration > 0 ? (int) ((current * 100) / duration) : 0;
                         mTrackSeek.setProgress(percent);
                         mMiniPlayerSeek.setProgress(percent);
                     }
-                    if(isCloudSeek){
+                    if (isCloudSeek) {
                         stopLoadProgress();
                         isCloudSeek = false;
                     }
 
-                    if(!isUser)
+                    if (!isUser)
                         updateTrackPlayTime(duration, current);
                     break;
                 case ACTION_UPDATE_SHUFFLE:
                     updateShuffle();
                     break;
-                case ACTION_UPDATE_REPEAT :
+                case ACTION_UPDATE_REPEAT:
                     updateRepeat();
                     updatePreviousNext(App.playbackManager().queue().isPrevious(), App.playbackManager().queue().isNext());
                     break;
@@ -224,7 +225,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof Activity){
+        if (context instanceof Activity) {
             mActivity = (Activity) context;
         }
     }
@@ -239,7 +240,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mInflater = inflater.inflate(R.layout.fragment_content_master, container, false);
-        if(null == mActivity)
+        if (null == mActivity)
             mActivity = getActivity();
         return mInflater;
     }
@@ -277,24 +278,35 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         updateProgressLoader();
     }
 
-    private void setPlayerEnable(boolean isEnable){
-        mPlayerTab.setSelected(isEnable);
-        mEffectTab.setSelected(!isEnable);
+    private void setPlayerEnable(boolean isEnable) {
 
-        if(isEnable){
+        mPlayerTab.setSelected(isEnable);
+        //     mEffectTab.setSelected(!isEnable);
+
+        if (isEnable) {
             mPlayerContent.setVisibility(View.VISIBLE);
             mEffectContent.setVisibility(View.GONE);
-        }else{
+            if (audioEffects.isAudioEffectOn()) {
+                mEffectTab.setImageResource(R.drawable.ic_effects_normal_on);
+            } else {
+                mEffectTab.setImageResource(R.drawable.ic_effects_normal);
+            }
+        } else {
             mPlayerContent.setVisibility(View.GONE);
             mEffectContent.setVisibility(View.VISIBLE);
+            if (audioEffects.isAudioEffectOn()) {
+                mEffectTab.setImageResource(R.drawable.ic_effects_active_on);
+            } else {
+                mEffectTab.setImageResource(R.drawable.ic_effects_active);
+            }
             mEffectSwitch.setChecked(audioEffects.isAudioEffectOn());
             String msg = isAllSpeakersAreOff();
-            if(null != msg)
+            if (null != msg)
                 Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void setPlayerInfo(){
+    private void setPlayerInfo() {
         mPlayingMediaItem = (MediaItem) App.playbackManager().queue().getPlayingItem();
         mIsPlaying = App.playbackManager().isPlaying();
         mIsLastPlayed = (null != App.playbackManager().getPlayingItem() ?
@@ -304,22 +316,21 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         updatePlayerSeekAndTime();
         try {
             updatePlayerUI();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
 
     private void updatePlayerSeekAndTime() {
-        if(null != mPlayingMediaItem && !mIsPlaying && !mIsLastPlayed){
-            long currentMillis= App.playbackManager().getPosition();
+        if (null != mPlayingMediaItem && !mIsPlaying && !mIsLastPlayed) {
+            long currentMillis = App.playbackManager().getPosition();
             long totalMillis = App.playbackManager().getDuration();
-            int progress = totalMillis > 0? (int)(currentMillis * 100 / totalMillis) : 0;
+            int progress = totalMillis > 0 ? (int) (currentMillis * 100 / totalMillis) : 0;
 
-
-            if(null != mTrackSeek)
+            if (null != mTrackSeek)
                 mTrackSeek.setProgress(progress);
 
-            if(null != mMiniPlayerSeek)
+            if (null != mMiniPlayerSeek)
                 mMiniPlayerSeek.setProgress(progress);
 
             updateTrackPlayTime(totalMillis, currentMillis);
@@ -328,17 +339,17 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     /* Large Player UI and Functionality*/
     private void updateActionBarButtons() {
-        if(App.playbackManager().queue().getUpNextItemCount() > 0 ){
+        if (App.playbackManager().queue().getUpNextItemCount() > 0) {
             mUpNextBtnPanel.setVisibility(View.VISIBLE);
             mPlayerOverFlowMenuPanel.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             mUpNextBtnPanel.setVisibility(View.INVISIBLE);
             mPlayerOverFlowMenuPanel.setVisibility(View.INVISIBLE);
         }
     }
 
-    private void updateShuffle(){
-        switch (App.getUserPreferenceHandler().getShuffle()){
+    private void updateShuffle() {
+        switch (App.getUserPreferenceHandler().getShuffle()) {
             case SHUFFLE_OFF:
                 mShuffle.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_shuffle_off, null));
                 break;
@@ -348,8 +359,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    private void updateRepeat(){
-        switch (App.getUserPreferenceHandler().getRepeat()){
+    private void updateRepeat() {
+        switch (App.getUserPreferenceHandler().getRepeat()) {
             case REPEAT_NONE:
                 mRepeat.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_repeat_off, null));
                 break;
@@ -362,42 +373,41 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    private void updatePreviousNext(boolean prev_enable, boolean next_enable){
+    private void updatePreviousNext(boolean prev_enable, boolean next_enable) {
         mPrevious.setEnabled(prev_enable);
         mNext.setEnabled(next_enable);
     }
 
-    private void updateAlbumArt(final IMediaItem item){
-        new AsyncTask<Void, Void, Bitmap []>() {
+    private void updateAlbumArt(final IMediaItem item) {
+        new AsyncTask<Void, Void, Bitmap[]>() {
 
             private Context context = mActivity;
 
             @Override
             protected Bitmap[] doInBackground(Void... params) {
-                if (context == null ) {
+                if (context == null) {
                     return null;
                 }
 
                 Bitmap[] result = new Bitmap[2];
                 boolean failed = false;
-                if ( PlayerUtils.isPathValid(item.getItemArtUrl()) ) {
+                if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
                     try {
                         Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
-                        Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(context, bitmap, ScreenWidth/10, ScreenHeight/10);
+                        Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(context, bitmap, ScreenWidth / 10, ScreenHeight / 10);
                         result[0] = bitmap;
                         result[1] = blurredBitmap;
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         failed = true;
                     }
-                }
-                else {
+                } else {
                     failed = true;
                 }
 
-                if ( failed ) {
+                if (failed) {
                     Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),
                             R.drawable.ic_default_art_player_header);
-                    Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(context, bitmap, ScreenWidth/10, ScreenHeight/10);
+                    Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(context, bitmap, ScreenWidth / 10, ScreenHeight / 10);
                     result[0] = bitmap;
                     result[1] = blurredBitmap;
                 }
@@ -407,16 +417,16 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
             @Override
             protected void onPostExecute(Bitmap[] bitmaps) {
-                if ( bitmaps == null || bitmaps.length != 2 ) {
+                if (bitmaps == null || bitmaps.length != 2) {
                     return;
                 }
 
                 final Bitmap bitmap = bitmaps[0];
                 final Bitmap blurredBitmap = bitmaps[1];
-                if ( mItemId == -1 || mItemId != item.getItemId() ) {
+                if (mItemId == -1 || mItemId != item.getItemId()) {
                     PlayerUtils.ImageViewAnimatedChange(context, mLargeAlbumArt, bitmap);
                     mItemId = item.getItemId();
-                }else{
+                } else {
                     mLargeAlbumArt.setImageBitmap(bitmap);
                 }
                 mPlayerBackground.setBackground(new BitmapDrawable(context.getResources(), blurredBitmap));
@@ -424,8 +434,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         }.execute();
     }
 
-    private void changeProgress(int progress){
-        if(null != mPlayingMediaItem) {
+    private void changeProgress(int progress) {
+        if (null != mPlayingMediaItem) {
             long totalTime = mPlayingMediaItem.getDurationLong();
             int totalProgress = 100;
             long currentTime = (totalTime / totalProgress) * progress;
@@ -434,13 +444,13 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void updateTrackPlayTime(long totalMillis, long currentMillis) {
-        if(null != mCurrentSeekTime)
+        if (null != mCurrentSeekTime)
             mCurrentSeekTime.setText(String.format("%02d:%02d",
                     TimeUnit.MILLISECONDS.toMinutes(currentMillis),
-                    TimeUnit.MILLISECONDS.toSeconds(currentMillis ) -
+                    TimeUnit.MILLISECONDS.toSeconds(currentMillis) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentMillis))));
-        if(null != mTotalSeekTime)
-            mTotalSeekTime.setText("-"+String.format("%02d:%02d",
+        if (null != mTotalSeekTime)
+            mTotalSeekTime.setText("-" + String.format("%02d:%02d",
                     TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis),
                     TimeUnit.MILLISECONDS.toSeconds(totalMillis - currentMillis) -
                             TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalMillis - currentMillis))));
@@ -452,7 +462,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
         mPlayerActionPanel = mInflater.findViewById(R.id.player_action_bar);
 
-        mLoadingProgress = (ProgressBar) mInflater. findViewById(R.id.load_cloud);
+        mLoadingProgress = (ProgressBar) mInflater.findViewById(R.id.load_cloud);
 
         mPlayerBackBtn = (ImageView) mInflater.findViewById(R.id.player_back_button);
         mPlayerBackBtn.setOnClickListener(this);
@@ -467,8 +477,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
         mLargeAlbumArt = (ImageView) mInflater.findViewById(R.id.player_album_art);
 
-        LinearLayout.LayoutParams artParam = new LinearLayout.LayoutParams((int)(ScreenWidth * 80) / 100, (int)(ScreenWidth * 80) / 100);
-        artParam.setMargins((int) ((ScreenWidth * 10) /100), 0, (int) ((ScreenWidth * 10)/100), 0);
+        LinearLayout.LayoutParams artParam = new LinearLayout.LayoutParams((int) (ScreenWidth * 80) / 100, (int) (ScreenWidth * 80) / 100);
+        artParam.setMargins((int) ((ScreenWidth * 10) / 100), 0, (int) ((ScreenWidth * 10) / 100), 0);
         mInflater.findViewById(R.id.player_large_header).setLayoutParams(artParam);
         mPlayerContent = (FrameLayout) mInflater.findViewById(R.id.player_content);
 
@@ -484,11 +494,11 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mTrackSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
-                if(fromUser) {
+                if (fromUser) {
                     isUser = true;
                     mTrackSeek.setProgress(progress);
                     changeProgress(progress);
-                    if(App.playbackManager().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB)
+                    if (App.playbackManager().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB)
                         showProgressLoader();
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Playing_SeekBar_Used_in_Effects_screen);
                 }
@@ -501,10 +511,12 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if(isUser)
+                if (isUser)
                     postMessage.post(new Runnable() {
                         @Override
-                        public void run() { playerUIController.OnPlayerSeekChange(mTrackSeek.getProgress()); }
+                        public void run() {
+                            playerUIController.OnPlayerSeekChange(mTrackSeek.getProgress());
+                        }
                     });
                 postMessage.postDelayed(new Runnable() {
                     @Override
@@ -530,7 +542,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mShuffle.setOnClickListener(this);
     }
 
-    private void updatePlayerUI(){
+    private void updatePlayerUI() {
         updatePlayerUI(true);
     }
 
@@ -540,7 +552,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 //        }else {
         updateMiniPlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
 //        }
-        if(null != mPlayingMediaItem && mediaChanged)
+        if (null != mPlayingMediaItem && mediaChanged)
             updateAlbumArt(mPlayingMediaItem);
         updateAudioEffectUI();
 
@@ -548,8 +560,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void updateLargePlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
-        if(null != item){
-            switch (App.getUserPreferenceHandler().getShuffle()){
+        if (null != item) {
+            switch (App.getUserPreferenceHandler().getShuffle()) {
                 case SHUFFLE_OFF:
                     DrawableCompat.setTint(mShuffle.getDrawable(), colorFrom);
                     break;
@@ -557,7 +569,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                     DrawableCompat.setTint(mShuffle.getDrawable(), colorFromActive);
                     break;
             }
-            switch (App.getUserPreferenceHandler().getRepeat()){
+            switch (App.getUserPreferenceHandler().getRepeat()) {
                 case REPEAT_NONE:
                     DrawableCompat.setTint(mRepeat.getDrawable(), colorFrom);
                     break;
@@ -579,17 +591,17 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             mLargeSongSubTitle.setVisibility(null != item.getItemArtist() ? View.VISIBLE : View.GONE);
             mLargeSongSubTitle.setText(item.getItemArtist());
 
-            if(isLastPlayedItem){
+            if (isLastPlayedItem) {
                 mTrackSeek.setProgress(0);
                 mPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_play, null));
 
                 long totalMillis = item.getDurationLong();
                 long currentMillis = 0;
 
-                if(!isUser)
+                if (!isUser)
                     updateTrackPlayTime(totalMillis, currentMillis);
 
-            }else {
+            } else {
                 boolean isMediaItem = item.getMediaType() == MediaType.DEVICE_MEDIA_LIB;
                 if (isPlaying) {
                     mPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_pause, null));
@@ -597,7 +609,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                     mPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
             }
-        }else if(!isLastPlayedItem){
+        } else if (!isLastPlayedItem) {
             DrawableCompat.setTint(mRepeat.getDrawable(), colorTo);
             DrawableCompat.setTint(mShuffle.getDrawable(), colorTo);
             DrawableCompat.setTint(mPlayPause.getDrawable(), colorTo);
@@ -619,7 +631,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         miniController.setOnTouchListener(this);
 
         mMiniPlayerSeek = (AppCompatSeekBar) mInflater.findViewById(R.id.mini_player_progress);
-        mMiniPlayerSeek.setPadding(0,0,0,0);
+        mMiniPlayerSeek.setPadding(0, 0, 0, 0);
         mMiniPlayerSeek.setOnTouchListener(this);
 
         mMiniPlayerEffectPanel = (LinearLayout) mInflater.findViewById(R.id.mini_player_boom_effect);
@@ -637,39 +649,39 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     private void updateMiniPlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
         updateMiniPlayerEffectUI(audioEffects.isAudioEffectOn());
-        if(null != item){
+        if (null != item) {
             DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorFrom);
             mMiniSongTitle.setSelected(true);
             mMiniSongSubTitle.setSelected(true);
             mMiniSongTitle.setText(item.getItemTitle());
             mMiniSongSubTitle.setVisibility(null != item.getItemArtist() ? View.VISIBLE : View.GONE);
             mMiniSongSubTitle.setText(item.getItemArtist());
-            if(isPlaying)
+            if (isPlaying)
                 mMiniPlayerPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_pause, null));
             else
                 mMiniPlayerPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_play, null));
-        }else if(!isLastPlayedItem){
+        } else if (!isLastPlayedItem) {
             DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorTo);
         }
     }
 
-    private void updateMiniPlayerEffectUI(boolean enable){
-        if(enable) {
+    private void updateMiniPlayerEffectUI(boolean enable) {
+        if (enable) {
             mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects_on, null));
-        }else{
+        } else {
             mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects, null));
         }
     }
 
     public void setMiniPlayerVisible(boolean isMiniPlayerVisible) {
-        if(isMiniPlayerVisible){
+        if (isMiniPlayerVisible) {
             miniController.setAlpha(1);
             mPlayerActionPanel.setAlpha(0);
             mPlayerActionPanel.setVisibility(View.INVISIBLE);
             miniController.setVisibility(View.VISIBLE);
             mLargeSongSubTitle.setEnabled(false);
             mLargeSongTitle.setEnabled(false);
-        }else{
+        } else {
             miniController.setAlpha(0);
             mPlayerActionPanel.setAlpha(1);
             mPlayerActionPanel.setVisibility(View.VISIBLE);
@@ -681,9 +693,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     /* Player Slider Callbacks*/
     public void onPanelSlide(View panel, float slideOffset, boolean isEffectOpened) {
-        if(slideOffset < 0.1){
+        if (slideOffset < 0.1) {
             setMiniPlayerVisible(true);
-        }else {
+        } else {
             setMiniPlayerVisible(false);
         }
     }
@@ -693,10 +705,10 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         updateMiniPlayerUI(mPlayingMediaItem, App.playbackManager().isTrackPlaying(), mIsLastPlayed);
         showEffectShortCut();
 
-        if(null != coachMarkEffectSwitcher){
+        if (null != coachMarkEffectSwitcher) {
             coachMarkEffectSwitcher.dismissTooltip();
         }
-        if(null!=coachMarkEffectPager){
+        if (null != coachMarkEffectPager) {
             coachMarkEffectPager.dismissTooltip();
         }
     }
@@ -706,7 +718,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
         showEffectSwitchTip();
 
-        if(null != coachMarkEffectPlayer){
+        if (null != coachMarkEffectPlayer) {
             coachMarkEffectPlayer.dismissTooltip();
         }
         updateProgressLoader();
@@ -714,7 +726,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         updateActionBarButtons();
     }
 
-    private void showEffectSwitchTip(){
+    private void showEffectSwitchTip() {
         if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.playbackManager().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
             coachMarkEffectSwitcher = new CoachMarkerWindow(mActivity, DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
             coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
@@ -729,8 +741,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    private void showEffectShortCut(){
-        if(Preferences.readBoolean(mActivity, TOOLTIP_OPEN_EFFECT_MINI_PLAYER, true) && !Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
+    private void showEffectShortCut() {
+        if (Preferences.readBoolean(mActivity, TOOLTIP_OPEN_EFFECT_MINI_PLAYER, true) && !Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
             coachMarkEffectPlayer = new CoachMarkerWindow(mActivity, DRAW_TOP_LEFT, getResources().getString(R.string.library_switch_effect_screen_tooltip));
             coachMarkEffectPlayer.setAutoDismissBahaviour(true);
             Preferences.writeBoolean(mActivity, Preferences.TOOLTIP_OPEN_EFFECT_MINI_PLAYER, false);
@@ -746,8 +758,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     }
 
-    private void updateProgressLoader(){
-        if( App.playbackManager().isTrackLoading() )
+    private void updateProgressLoader() {
+        if (App.playbackManager().isTrackLoading())
             showProgressLoader();
         else
             stopLoadProgress();
@@ -764,7 +776,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
 /*Player Screen Utils*/
 
-    private void registerPlayerReceiver(Context context){
+    private void registerPlayerReceiver(Context context) {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_SONG_CHANGED);
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
@@ -779,18 +791,23 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         setPlayerInfo();
     }
 
-    private void unregisterPlayerReceiver(Context context){
+    private void unregisterPlayerReceiver(Context context) {
         LocalBroadcastManager.getInstance(context).unregisterReceiver(mPlayerBroadcastReceiver);
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.player_back_button:
             case R.id.mini_player_effect_img:
             case R.id.mini_player_boom_effect:
-                if(!MasterActivity.isPlayerExpended()){
+                if (!MasterActivity.isPlayerExpended()) {
                     setPlayerEnable(false);
+                }
+                if (audioEffects.isAudioEffectOn()) {
+                    mEffectTab.setImageResource(R.drawable.ic_effects_active_on);
+                } else {
+                    mEffectTab.setImageResource(R.drawable.ic_effects_active);
                 }
                 toggleSlidingPanel();
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Effects_Screen_Opened_from_Mini_Player);
@@ -876,7 +893,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 break;
             case R.id.equalizer_btn:
                 switchEqualizer();
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_status,audioEffects.isEqualizerOn());
+                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_status, audioEffects.isEqualizerOn());
                 FlurryAnalytics.getInstance(getActivity()).setEvent(audioEffects.isEqualizerOn() ? FlurryEvents.EVENT_EQ_TURNED_ON : FlurryEvents.EVENT_EQ_TURNED_OFF);
                 break;
             case R.id.eq_dialog_panel:
@@ -899,23 +916,24 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
 
+
     private void overFlowMenu(Context context, View view) {
         OverFlowMenuUtils.showMediaItemMenu(mActivity, view, R.menu.player_popup, App.playbackManager().getPlayingItem());
     }
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.small_panel:
                 return true;
             case R.id.player_large:
                 return true;
-            case R.id.intensity_disable_img:
+            /*case R.id.intensity_disable_img:
                 if( audioEffects.isAudioEffectOn()  && audioEffects.isIntensityOn())
                     return false;
                 else
-                    return true;
-            case R.id.mini_player_progress :
+                    return true;*/
+            case R.id.mini_player_progress:
                 return true;
         }
         return false;
@@ -934,40 +952,32 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mEffectSwitch = (SwitchCompat) mInflater.findViewById(R.id.effect_switch);
         mEffectSwitch.setChecked(audioEffects.isAudioEffectOn());
 
-        m3DSurroundBtn = (ImageView) mInflater.findViewById(R.id.three_surround_btn);
+        m3DSurroundBtn = (CheckBox) mInflater.findViewById(R.id.three_surround_btn);
         m3DSurroundBtn.setOnClickListener(this);
-        m3DSurroundTxt = (RegularTextView) mInflater.findViewById(R.id.three_surround_txt);
-        mSpeakerBtn = (ImageView) mInflater.findViewById(R.id.speaker_btn) ;
+
+        mSpeakerBtn = (ImageView) mInflater.findViewById(R.id.speaker_btn);
         mSpeakerBtn.setOnClickListener(this);
-        m3DSurroundTxt.setOnClickListener(this);
 
-        mFullBassCheck = (CheckBox) mInflater.findViewById(R.id.fullbass_chk);
-        mFullBassCheck.setChecked(audioEffects.isFullBassOn());
-
-        mFullBassCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mFullBassCheck = (ToggleButton) mInflater.findViewById(R.id.fullbass_chk);
+        mFullBassCheck.setOnCheckedChangeListener(new ToggleButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
-                if(audioEffects.isAudioEffectOn() &&
-                        audioEffects.is3DSurroundOn()){
-
-                    audioEffects.setEnableFullBass(!audioEffects.isFullBassOn());
-
-                 //   FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_FULL_BASS, audioEffectPreferenceHandler.isFullBassOn());
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked != audioEffects.isFullBassOn()) {
+                    audioEffects.setEnableFullBass(isChecked);
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FULL_BASS, audioEffects.isFullBassOn());
                 }
             }
         });
 
-        mIntensityBtn = (ImageView) mInflater.findViewById(R.id.intensity_btn);
+
+        mIntensityBtn = (CheckBox) mInflater.findViewById(R.id.intensity_btn);
         mIntensityBtn.setOnClickListener(this);
-        mIntensityTxt = (RegularTextView) mInflater.findViewById(R.id.intensity_txt);
         mIntensitySeek = (NegativeSeekBar) mInflater.findViewById(R.id.intensity_seek);
-        mIntensitySeek.setProgress((int)(audioEffects.getIntensity() * 50 + 50));
+        mIntensitySeek.setProgress((int) (audioEffects.getIntensity() * 50 + 50));
         mIntensitySeek.setOnClickListener(this);
 
-        mEqualizerBtn = (ImageView) mInflater.findViewById(R.id.equalizer_btn);
+        mEqualizerBtn = (CheckBox) mInflater.findViewById(R.id.equalizer_btn);
         mEqualizerBtn.setOnClickListener(this);
-        mEqualizerTxt = (RegularTextView) mInflater.findViewById(R.id.equalizer_txt);
         mEqDialogPanel = (LinearLayout) mInflater.findViewById(R.id.eq_dialog_panel);
         mEqDialogPanel.setOnClickListener(this);
 
@@ -975,8 +985,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mSelectedEqTxt = (RegularTextView) mInflater.findViewById(R.id.selected_eq_txt);
         mSelectedEqGoImg = (ImageView) mInflater.findViewById(R.id.selected_eq_go_img);
 
-        mDisableIntensity = (RegularTextView) mInflater.findViewById(R.id.intensity_disable_img);
-        mDisableIntensity.setOnTouchListener(this);
+        /*mDisableIntensity = (RegularTextView) mInflater.findViewById(R.id.intensity_disable_img);
+        mDisableIntensity.setOnTouchListener(this);*/
         eq_names = Arrays.asList(mActivity.getResources().getStringArray(R.array.eq_names));
         eq_active_off = mActivity.getResources().obtainTypedArray(R.array.eq_active_off);
 
@@ -991,16 +1001,19 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         updateAudioEffectUI();
     }
 
-    private void switchAudioEffect(){
+    private void switchAudioEffect() {
 
         mEffectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
-                if(audioEffects.isAudioEffectOn() != enable) {
+                if (audioEffects.isAudioEffectOn() != enable) {
                     audioEffects.setEnableAudioEffect(!audioEffects.isAudioEffectOn());
+                    mEffectTab.setImageResource(R.drawable.ic_effects_normal_on);
                     MixPanelAnalyticHelper.track(mActivity, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_EFFECT_STATE_CHANGED, audioEffects.isAudioEffectOn());
                     FlurryAnalytics.getInstance(getActivity()).setEvent(enable ? FlurryEvents.EVENT_EFFECTS_TURNED_ON : FlurryEvents.EVENT_EFFECTS_TURNED_OFF);
+                } else {
+                    mEffectTab.setImageResource(R.drawable.ic_effects_normal);
                 }
                 Preferences.writeBoolean(mActivity, Preferences.TOOLTIP_SWITCH_EFFECT_LARGE_PLAYER, false);
                 Preferences.writeBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, false);
@@ -1008,47 +1021,37 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         });
     }
 
-    private void updateAudioEffectUI(){
+    private void updateAudioEffectUI() {
         boolean isEffectOn = audioEffects.isAudioEffectOn();
-        if ( mEffectSwitch.isChecked() != isEffectOn ) {
+        if (mEffectSwitch.isChecked() != isEffectOn) {
             mEffectSwitch.setChecked(isEffectOn);
         }
 
-        mEffectSwitchTxt.setText( isEffectOn? R.string.on : R.string.off);
+        mEffectSwitchTxt.setText(isEffectOn ? R.string.on : R.string.off);
+        mEffectTab.setImageResource(isEffectOn? R.drawable.ic_effects_active_on : R.drawable.ic_effects_active);
+
 
         boolean isSurroundOn = audioEffects.is3DSurroundOn();
+        m3DSurroundBtn.setChecked(isSurroundOn);
         m3DSurroundBtn.setEnabled(isEffectOn);
-        m3DSurroundTxt.setEnabled(isEffectOn);
-        mSpeakerBtn.setEnabled(isEffectOn);
-        if ( isEffectOn ) {
-            m3DSurroundBtn.setSelected(isSurroundOn);
-            m3DSurroundTxt.setSelected(isSurroundOn);
-            mSpeakerBtn.setSelected(isSurroundOn);
-        }
-
-        mFullBassCheck.setEnabled(isEffectOn && audioEffects.is3DSurroundOn());
+        mFullBassCheck.setChecked(audioEffects.isFullBassOn());
+        mFullBassCheck.setEnabled(isEffectOn && isSurroundOn);
+        mSpeakerBtn.setEnabled(isEffectOn && isSurroundOn);
 
         boolean isIntensityOn = audioEffects.isIntensityOn();
+        mIntensityBtn.setChecked(isIntensityOn);
         mIntensityBtn.setEnabled(isEffectOn);
-        mIntensityTxt.setEnabled(isEffectOn);
         mIntensitySeek.setDisable(!(isIntensityOn && isEffectOn));
-
-        if ( isEffectOn ) {
-            mIntensityBtn.setSelected(isIntensityOn);
-            mIntensityTxt.setSelected(isIntensityOn);
-        }
 
 
         boolean isEqualizerOn = audioEffects.isEqualizerOn();
+        mEqualizerBtn.setChecked(isEqualizerOn);
         mEqualizerBtn.setEnabled(isEffectOn);
-        mEqualizerTxt.setEnabled(isEffectOn);
         mSelectedEqGoImg.setEnabled(isEffectOn);
         mEqDialogPanel.setEnabled(isEffectOn);
         mSelectedEqTxt.setEnabled(isEffectOn);
         mSelectedEqImg.setEnabled(isEffectOn);
-        if ( isEffectOn ) {
-            mEqualizerBtn.setSelected(isEqualizerOn);
-            mEqualizerTxt.setSelected(isEqualizerOn);
+        if (isEffectOn) {
             mSelectedEqTxt.setSelected(isEqualizerOn);
             mSelectedEqImg.setSelected(isEqualizerOn);
             mSelectedEqGoImg.setSelected(isEqualizerOn);
@@ -1060,8 +1063,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mSelectedEqTxt.setText(eq_names.get(eqPosition));
     }
 
-    private String isAllSpeakersAreOff(){
-        if(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn()) {
+    private String isAllSpeakersAreOff() {
+        if (audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn()) {
             if (!audioEffects.isLeftFrontSpeakerOn() && !audioEffects.isRightFrontSpeakerOn()
                     && !audioEffects.isLeftSurroundSpeakerOn() && !audioEffects.isRightSurroundSpeakerOn()) {
                 return getResources().getString(R.string.all_speakers_off);
@@ -1074,8 +1077,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
 
-
-    private void onEqDialogOpen(){
+    private void onEqDialogOpen() {
         new EqualizerDialog(mActivity).show();
     }
 
@@ -1083,46 +1085,39 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         new SpeakerDialog(mActivity).show();
     }
 
-    private void switch3DSurround(){
-        if(audioEffects.isAudioEffectOn()) {
+    private void switch3DSurround() {
+        if (audioEffects.isAudioEffectOn()) {
             audioEffects.setEnable3DSurround(!audioEffects.is3DSurroundOn());
-            if ( audioEffects.is3DSurroundOn() ) {
+            if (audioEffects.is3DSurroundOn()) {
                 audioEffects.setEnableIntensity(true);
                 audioEffects.setEnableEqualizer(true);
             }
-            MixPanelAnalyticHelper.track(mActivity, audioEffects.is3DSurroundOn() ? AnalyticsHelper.EVENT_3D_TURNED_ON : AnalyticsHelper.EVENT_3D_TURNED_OFF);
-//            FlurryAnalyticHelper.logEventWithStatus(AnalyticsHelper.EVENT_3D_STATE_CHANGED, audioEffectPreferenceHandler.is3DSurroundOn());
-            FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_3D_STATE_CHANGED, audioEffects.is3DSurroundOn());
-            FlurryAnalytics.getInstance(getActivity()).setEvent(audioEffects.is3DSurroundOn() ? FlurryEvents.EVENT_3D_TURNED_ON : FlurryEvents.EVENT_3D_TURNED_OFF);
         }
     }
 
-    private void switchIntensity(){
-        if( audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && audioEffects.isIntensityOn()){
+    private void switchIntensity() {
+        if (audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && audioEffects.isIntensityOn()) {
+            mIntensityBtn.setChecked(true);
             Toast.makeText(mActivity, mActivity.getResources().getString(R.string.req_intensity), Toast.LENGTH_LONG).show();
-        }
-        else {
+        } else {
             audioEffects.setEnableIntensity(!audioEffects.isIntensityOn());
         }
     }
 
-    private void switchEqualizer(){
-        if(audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && audioEffects.isEqualizerOn()){
+    private void switchEqualizer() {
+        if (audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn() && audioEffects.isEqualizerOn()) {
+            mEqualizerBtn.setChecked(true);
             Toast.makeText(mActivity, mActivity.getResources().getString(R.string.req_equlaizer), Toast.LENGTH_LONG).show();
-        }
-        else {
+        } else {
             audioEffects.setEnableEqualizer(!audioEffects.isEqualizerOn());
         }
-        MixPanelAnalyticHelper.track(mActivity, audioEffects.isEqualizerOn() ? AnalyticsHelper.EVENT_EQ_TURNED_ON : AnalyticsHelper.EVENT_EQ_TURNED_OFF);
-//        FlurryAnalyticHelper.logEventWithStatus(UtilAnalytics.Equalizer_status, audioEffectPreferenceHandler.isEqualizerOn());
-
     }
 
     private void setEffectIntensity() {
         mIntensitySeek.setOnSeekBarChangeListener(new NegativeSeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean isUser) {
-                audioEffects.setIntensity((progress - 50)/50.0f );
+                audioEffects.setIntensity((progress - 50) / 50.0f);
 
             }
 
@@ -1158,8 +1153,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    private void showProgressLoader(){
-        if(null != mPlayingMediaItem && mPlayingMediaItem.getMediaType() != MediaType.DEVICE_MEDIA_LIB &&
+    private void showProgressLoader() {
+        if (null != mPlayingMediaItem && mPlayingMediaItem.getMediaType() != MediaType.DEVICE_MEDIA_LIB &&
                 View.GONE == mLoadingProgress.getVisibility() && ConnectivityReceiver.isNetworkAvailable(mActivity, true))
             mLoadingProgress.post(new Runnable() {
                 @Override
@@ -1171,8 +1166,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             stopLoadProgress();
     }
 
-    private void stopLoadProgress(){
-        if(View.VISIBLE == mLoadingProgress.getVisibility())
+    private void stopLoadProgress() {
+        if (View.VISIBLE == mLoadingProgress.getVisibility())
             mLoadingProgress.setVisibility(View.GONE);
     }
 
@@ -1185,21 +1180,24 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void update(Observable o, Object arg) {
-        if ( o instanceof AudioEffect ) {
-            String property = (String)arg;
+        if (o instanceof AudioEffect) {
+            String property = (String) arg;
             updateMiniPlayerEffectUI(audioEffects.isAudioEffectOn());
             updateAudioEffectUI();
-            switch (property){
-                case AudioEffect.INTENSITY_PROPERTY :
+            switch (property) {
+                case AudioEffect.INTENSITY_PROPERTY:
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_INTENSITY_STATE_CHANGED);
                     break;
                 case AudioEffect.SURROUND_SOUND_PROPERTY:
-                    FlurryAnalytics.getInstance(mActivity).setEvent(FlurryEvents.EVENT_3D_STATE_CHANGED);
+                    MixPanelAnalyticHelper.track(mActivity, audioEffects.is3DSurroundOn() ? AnalyticsHelper.EVENT_3D_TURNED_ON : AnalyticsHelper.EVENT_3D_TURNED_OFF);
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_3D_STATE_CHANGED, audioEffects.is3DSurroundOn());
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(audioEffects.is3DSurroundOn() ? FlurryEvents.EVENT_3D_TURNED_ON : FlurryEvents.EVENT_3D_TURNED_OFF);
                     break;
                 case AudioEffect.AUTO_EQUALIZER:
                     break;
                 case AudioEffect.EQUALIZER_STATE_PROPERTY:
                     FlurryAnalytics.getInstance(mActivity).setEvent(FlurryEvents.EVENT_EQ_STATE_CHANGED);
+                    MixPanelAnalyticHelper.track(mActivity, audioEffects.isEqualizerOn() ? AnalyticsHelper.EVENT_EQ_TURNED_ON : AnalyticsHelper.EVENT_EQ_TURNED_OFF);
                     break;
                 case AudioEffect.FULL_BASS_PROPERTY:
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_FULL_BASS);
@@ -1207,22 +1205,22 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 case AudioEffect.EQUALIZER_PROPERTY:
                     HashMap<String, String> articleParams = new HashMap<>();
                     articleParams.put(FlurryEvents.PARAM_SELECTED_EQUALIZER, eq_names.get(audioEffects.getSelectedEqualizerPosition()));
-                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Type_of_Equalizer_selected,articleParams);
-                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_selected,articleParams);
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Type_of_Equalizer_selected, articleParams);
+                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Equalizer_selected, articleParams);
                     break;
             }
         }
     }
+
 
     public void setSlidingPanel(SlidingUpPanelLayout slidingPanel) {
         mSlidingPanel = slidingPanel;
     }
 
     public void toggleSlidingPanel() {
-        if ( mSlidingPanel.isPanelExpanded() ) {
+        if (mSlidingPanel.isPanelExpanded()) {
             mSlidingPanel.collapsePanel();
-        }
-        else {
+        } else {
             mSlidingPanel.expandPanel();
         }
     }

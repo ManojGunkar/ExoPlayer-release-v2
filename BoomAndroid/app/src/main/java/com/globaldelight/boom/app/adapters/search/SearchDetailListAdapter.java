@@ -314,7 +314,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
         public ImageView img, art_overlay_play;
         public LinearLayout menu;
 
-        //        For Album grid
+        //        For Albums grid
         public RegularTextView title, subTitle;
         public ImageView defaultImg;
         public View gridBottomBg, grid_menu;

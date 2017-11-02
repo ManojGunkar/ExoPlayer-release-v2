@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@color/onBoardingBG">
+
+    <ImageView
+        android:id="@+id/img_intro_onboard_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/on_boarding_equaliser" />
+
+    <com.globaldelight.boom.view.RegularTextView
+        android:id="@+id/txt_title_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/onboarding_txt_title_margin_top"
+        android:textColor="@color/white"
+        android:textSize="@dimen/onboarding_txt_title_size"
+        android:text="@string/onboard_screen_1_main_tx"
+        android:textStyle="bold" />
+
+    <com.globaldelight.boom.view.RegularTextView
+        android:id="@+id/regularTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/onboarding_txt_title_margin_side"
+        android:layout_marginRight="@dimen/onboarding_txt_title_margin_side"
+        android:layout_marginTop="@dimen/onboarding_txt_sub_title_margin_top"
+        android:gravity="center_horizontal"
+        android:text="@string/onboard_screen_1_sub_tx"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="15dp" />
+
+</LinearLayout>

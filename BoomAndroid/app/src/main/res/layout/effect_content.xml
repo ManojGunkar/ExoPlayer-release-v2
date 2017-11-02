@@ -1,258 +1,267 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:weightSum="100"
-    android:paddingLeft="@dimen/effect_margin_left"
-    android:paddingRight="@dimen/effect_margin_right"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
+
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_height"
-        android:background="@color/seperator_color"/>
+        android:background="@color/seperator_color" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="18"
-        android:layout_marginLeft="@dimen/effect_content_margin"
-        android:layout_marginRight="@dimen/effect_content_margin"
-        android:layout_gravity="top"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-        <com.globaldelight.boom.view.RegularTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/effect_title_size"
-            android:textStyle="normal"
-            android:textColor="@color/effect_active"
-            android:text="@string/effect"/>
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="5dp">
+
         <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/effect_switch_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/effect_title_size"
-            android:textStyle="normal"
+            android:layout_centerVertical="true"
+            android:text="@string/off"
             android:textColor="@color/effect_active"
-            android:text="@string/off"/>
+            android:textSize="@dimen/effect_title_size"
+            android:textStyle="normal" />
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/effect_switch"
             style="@style/RedSwitch"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:theme="@style/RedSwitch" />
-    </LinearLayout>
+    </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="30.5"
-        android:weightSum="1"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_weight=".6"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:id="@+id/three_surround_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/three_d_state"
-                android:layout_weight="0"/>
-
-            <com.globaldelight.boom.view.RegularTextView
-                android:id="@+id/three_surround_txt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/effect_title_margin"
-                android:textSize="@dimen/effect_title_size"
-                android:textStyle="normal"
-                android:clickable="true"
-                android:textColor="@color/effects_text_state"
-                android:layout_weight="0"
-                android:text="@string/three_d_surround"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight=".4"
-                android:gravity="right|center_vertical">
-                <ImageView
-                    android:id="@+id/speaker_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/three_d_dropdown_state"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/full_bass_margin_left"
-            android:layout_marginBottom="@dimen/full_bass_margin_bottom"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <android.support.v7.widget.AppCompatCheckBox
-                android:id="@+id/fullbass_chk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:foregroundTint="@color/colorPrimaryDark"
-                android:backgroundTint="@color/colorPrimaryDark"
-                android:elevation="12dp"
-                android:textStyle="normal"
-                android:textSize="@dimen/effect_title_size"
-                android:text="@string/fullbass"
-                android:textColor="@color/effect_button_state"
-                android:theme="@style/MyCheckBox"/>
-        </LinearLayout>
-
-    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_height"
-        android:background="@drawable/ic_effect_separator"/>
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/ic_effect_separator" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="30"
-        android:weightSum="1"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:padding="5dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight=".63"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/intensity_btn"
-                android:src="@drawable/intensity_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+        <com.globaldelight.boom.view.CustomCheckbox
+            android:id="@+id/three_surround_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:button="@drawable/three_d_state"
+            android:paddingLeft="5dp"
+            android:text="@string/three_d_surround"
+            android:textColor="@color/effect_checkbox_text"
+            android:textSize="@dimen/effect_title_size"
+            android:textStyle="normal"
+            />
+        <!--
+        <ImageView
+            android:id="@+id/three_surround_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="5dp"
+            android:src="@drawable/three_d_state" />
 
-            <com.globaldelight.boom.view.RegularTextView
-                android:id="@+id/intensity_txt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/effect_title_margin"
-                android:textSize="@dimen/effect_title_size"
-                android:textStyle="normal"
-                android:textColor="@color/effects_text_state"
-                android:text="@string/intensity"/>
-        </LinearLayout>
+        <com.globaldelight.boom.view.RegularTextView
+            android:id="@+id/three_surround_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/three_surround_btn"
+            android:clickable="true"
+            android:padding="5dp"
+            android:text="@string/three_d_surround"
+            android:textColor="@color/effects_text_state"
+            android:textSize="@dimen/effect_title_size"
+            android:textStyle="normal" />
+        -->
+        <ImageView
+            android:id="@+id/speaker_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="5dp"
+            android:src="@drawable/three_d_setup" />
+    </RelativeLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight=".37"
-
-            android:orientation="horizontal">
-            <!--android:layout_marginBottom="@dimen/sixty_px"-->
-
-            <com.globaldelight.boom.view.NegativeSeekBar
-                android:id="@+id/intensity_seek"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layoutDirection="inherit"
-                android:layout_marginLeft="@dimen/player_seek_left_right"
-                android:layout_marginRight="@dimen/player_seek_left_right"
-                android:layout_gravity="center"
-                android:thumbTint="#bfbfbf"
-                android:max="100"
-                android:progressDrawable="@android:color/transparent"
-                android:progress="50"/>
-
-            <com.globaldelight.boom.view.RegularTextView
-                android:id="@+id/intensity_disable_img"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-        </FrameLayout>
-
-    </LinearLayout>
+    <com.globaldelight.boom.view.CustomToggleButton android:id="@+id/fullbass_chk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/fullbass_background"
+        android:layout_marginLeft="50dp"
+        android:layout_marginBottom="10dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingRight="20dp"
+        android:paddingLeft="20dp"
+        android:paddingTop = "1dp"
+        android:paddingBottom = "1dp"
+        android:textColor="@color/fullbass_text"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:textStyle="normal"
+        android:textOn="@string/fullbass"
+        android:textOff="@string/fullbass" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_height"
-        android:background="@drawable/ic_effect_separator"/>
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/ic_effect_separator" />
 
-    <LinearLayout
+    <com.globaldelight.boom.view.CustomCheckbox
+        android:id="@+id/intensity_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:button="@drawable/intensity_state"
+        android:paddingLeft="5dp"
+        android:text="@string/intensity"
+        android:textColor="@color/effect_checkbox_text"
+        android:textSize="@dimen/effect_title_size"
+        android:textStyle="normal" />
+    />
+    <!--
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="21"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:padding="5dp">
 
+        <ImageView
+            android:id="@+id/intensity_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="5dp"
+            android:src="@drawable/intensity_state" />
+
+        <com.globaldelight.boom.view.RegularTextView
+            android:id="@+id/intensity_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/intensity_btn"
+            android:padding="5dp"
+            android:text="@string/intensity"
+            android:textColor="@color/effects_text_state"
+            android:textSize="@dimen/effect_title_size"
+            android:textStyle="normal" />
+    </RelativeLayout>
+    -->
+
+    <com.globaldelight.boom.view.NegativeSeekBar
+        android:id="@+id/intensity_seek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="22dp"
+        android:layoutDirection="inherit"
+        android:max="100"
+        android:progress="50"
+        android:progressDrawable="@android:color/transparent"
+        android:thumbTint="#bfbfbf" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_height"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/ic_effect_separator" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:padding="5dp">
+        
+        <com.globaldelight.boom.view.CustomCheckbox
+            android:id="@+id/equalizer_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/equalizer_state"
+            android:paddingLeft="5dp"
+            android:text="@string/equalizer"
+            android:textColor="@color/effect_checkbox_text"
+            android:textSize="@dimen/effect_title_size"
+            android:textStyle="normal" />
+            />
+
+        <!--
         <ImageView
             android:id="@+id/equalizer_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/equalizer_state"
-            android:layout_weight="0"/>
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="5dp"
+            android:src="@drawable/equalizer_state" />
 
         <com.globaldelight.boom.view.RegularTextView
             android:id="@+id/equalizer_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:textSize="@dimen/effect_title_size"
-            android:textStyle="normal"
+            android:layout_alignBottom="@+id/eq_dialog_panel"
+            android:layout_toEndOf="@+id/equalizer_btn"
+            android:padding="5dp"
+            android:text="@string/equalizer"
             android:textColor="@color/effects_text_state"
-            android:layout_marginLeft="@dimen/effect_title_margin"
-            android:text="@string/equalizer"/>
+            android:textSize="@dimen/effect_title_size"
+            android:textStyle="normal" />
+           -->
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="right|center_vertical">
+            android:id="@+id/eq_dialog_panel"
+            android:layout_width="@dimen/effect_equalizer_dropdown_width"
+            android:layout_height="@dimen/effect_equalizer_dropdown_height"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/equalizer_border_inactive"
+            android:gravity="center_vertical"
+            android:paddingRight="@dimen/effect_eq_dialog_padding">
 
-            <LinearLayout
-                android:id="@+id/eq_dialog_panel"
-                android:layout_width="@dimen/effect_equalizer_dropdown_width"
-                android:layout_height="@dimen/effect_equalizer_dropdown_height"
-                android:paddingLeft="@dimen/effect_eq_dialog_padding"
-                android:paddingRight="@dimen/effect_eq_dialog_padding"
-                android:gravity="center_vertical"
-                android:background="@drawable/equalizer_border_inactive">
-                <ImageView
-                    android:id="@+id/selected_eq_img"
-                    android:layout_width="@dimen/selected_eq_img"
-                    android:layout_height="@dimen/selected_eq_img"
-                    android:tint="@color/effects_text_state"
-                    android:layout_weight="0"/>
+            <ImageView
+                android:id="@+id/selected_eq_img"
+                android:layout_width="@dimen/selected_eq_img"
+                android:layout_height="@dimen/selected_eq_img"
+                android:layout_marginLeft="@dimen/selected_eq_go_img_margin"
+                android:layout_weight="0"
+                android:tint="@color/effects_text_state" />
 
-                <com.globaldelight.boom.view.RegularTextView
-                    android:id="@+id/selected_eq_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/selected_eq_txt_margin"
-                    android:textSize="@dimen/selected_eq_txt"
-                    android:textStyle="normal"
-                    android:textColor="@color/effects_text_state"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:layout_weight="1"/>
+            <com.globaldelight.boom.view.RegularTextView
+                android:id="@+id/selected_eq_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/selected_eq_txt_margin"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/effects_text_state"
+                android:textSize="@dimen/selected_eq_txt"
+                android:textStyle="normal" />
 
-                <ImageView
-                    android:id="@+id/selected_eq_go_img"
-                    android:layout_width="@dimen/selected_eq_go_img"
-                    android:layout_height="@dimen/selected_eq_go_img"
-                    android:layout_marginLeft="@dimen/selected_eq_go_img_margin"
-                    android:src="@drawable/eq_dropdown_state"
-                    android:layout_weight="0"/>
+            <ImageView
+                android:id="@+id/selected_eq_go_img"
+                android:layout_width="@dimen/selected_eq_go_img"
+                android:layout_height="@dimen/selected_eq_go_img"
+                android:layout_marginLeft="@dimen/selected_eq_go_img_margin"
+                android:layout_weight="0"
+                android:src="@drawable/eq_dropdown_state" />
 
-            </LinearLayout>
         </LinearLayout>
+    </RelativeLayout>
 
-    </LinearLayout>
 </LinearLayout>

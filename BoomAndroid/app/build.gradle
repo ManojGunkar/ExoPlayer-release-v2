@@ -23,7 +23,8 @@ android {
 
 
     compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    buildToolsVersion '26.0.2'
+    flavorDimensions "default"
 
     defaultConfig {
         applicationId "com.globaldelight.boom"
@@ -40,6 +41,9 @@ android {
         buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN',    STRING("598c4011c2d961ef3b7f248459fa30c7")
         buildConfigField "String", 'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-3940256099942544/5224354917")
         buildConfigField "String", 'GOOGLE_NATIVE_AD_ID',       STRING("ca-app-pub-3940256099942544/2247696110")
+        buildConfigField "String", 'AUDIO_CONFIG_URL',          STRING("http://devboom2.globaldelight.net/audioconfig.php")
+        buildConfigField "String", 'FEEDBACK_URL',              STRING("http://devboom2.globaldelight.net/feedback.php?os=android")
+
     }
 
     buildTypes {
@@ -87,8 +91,6 @@ dependencies {
         transitive = true;
     }
 
-    /**************Dropbox***************/
-    compile files('libs/json_simple-1.1.jar')
 
     /**************Google Drive***************/
     compile('com.google.api-client:google-api-client-android:1.22.0') {
@@ -103,6 +105,7 @@ dependencies {
     }
     compile(name:'extension-flac-release', ext:'aar')
     compile(name:'boom-engine-release', ext:'aar')
+    compile(name:'boom-extension-release', ext:'aar')
 
     compile 'com.dropbox.core:dropbox-core-sdk:3.0.5'
     compile 'com.squareup.okhttp3:okhttp:3.5.0'
@@ -116,17 +119,16 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.flurry.android:analytics:7.0.0@aar'
     compile 'com.appsflyer:af-android-sdk:4.6.7@aar'
-    compile 'com.google.android.gms:play-services-base:11.0.1'
-    compile 'com.google.android.gms:play-services-auth:11.0.1'
-    compile 'com.google.firebase:firebase-appindexing:10.0.1'
-    compile 'com.google.android.gms:play-services-drive:11.0.1'
+    compile 'com.google.android.gms:play-services-base:11.4.2'
+    compile 'com.google.android.gms:play-services-auth:11.4.2'
+    compile 'com.google.firebase:firebase-appindexing:11.4.2'
+    compile 'com.google.android.gms:play-services-drive:11.4.2'
     compile 'pub.devrel:easypermissions:0.2.1'
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.android.volley:volley:1.0.0'
-    testCompile 'junit:junit:4.12'
-    compile 'com.google.android.gms:play-services-gcm:11.0.1'
+    compile 'com.google.android.gms:play-services-gcm:11.4.2'
     compile "com.mixpanel.android:mixpanel-android:5.1.2"
-    compile 'com.google.android.gms:play-services-ads:11.0.1'
+    compile 'com.google.android.gms:play-services-ads:11.4.2'
     compile ('com.facebook.android:audience-network-sdk:4.+') {
         exclude group: 'com.google.android.exoplayer'
     }
@@ -136,7 +138,7 @@ dependencies {
     compile('com.twitter.sdk.android:tweet-composer:2.3.1@aar') {
         transitive = true;
     }
-
+    compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
 }
 
 // ADD THIS AT THE BOTTOM

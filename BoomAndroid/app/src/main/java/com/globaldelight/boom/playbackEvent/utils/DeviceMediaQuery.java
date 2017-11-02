@@ -117,7 +117,7 @@ public class DeviceMediaQuery {
         return str;
     }
 
-/*****************************************************Album Query****************************************************************/
+/*****************************************************Albums Query****************************************************************/
 
     public static ArrayList<? extends IMediaItemBase> getAlbumList(Context context) {
         ArrayList<MediaItemCollection> albumList = new ArrayList<>();

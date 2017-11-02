@@ -119,7 +119,7 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
         return c;
     }
 
-    /************************************Album Art****************************************************************/
+    /************************************Albums Art****************************************************************/
     public static void getAlbumList(Context context) {
         HashMap<String, String> artWthAlbumName = new HashMap<>();
         Cursor albumListCursor = context.getContentResolver().

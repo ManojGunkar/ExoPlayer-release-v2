@@ -12,7 +12,11 @@
 
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
+    <color name="text_off_state">#6f6d6f</color>
     <color name="transparent">#00000000</color>
+
+    <color name="popup_secondary">#7e7c7f</color>
+    <color name="popup_message">#a8a9aa</color>
 
     <color name="app_background">#0e0e0f</color>
 
@@ -58,6 +62,7 @@
 
     <color name="effect_active">@color/white</color>
     <color name="effect_inactive">#5f5d61</color>
+    <color name="fullbass_inactive">#4f4d51</color>
     <color name="effect_intensity_seek_background">#313131</color>
     <color name="effect_intensity_seek_inactive">#5f5d61</color>
     <color name="effect_intensity_seek_active">#bfbfbf</color>
@@ -98,6 +103,8 @@
     <color name="card_grid_item_title_background_tint">#434343</color>
 
     <color name="black_overlay">#66000000</color>
+    <color name="pop_up_overlay">#1b2124</color>
+    
 
     <color name="store_page_description_text_color">#8d8d8d</color>
     <color name="store_page_button_color">@color/colorAccent</color>

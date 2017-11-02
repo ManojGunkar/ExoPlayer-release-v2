@@ -36,7 +36,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="false"
-                    android:src="@drawable/ic_man_active"/>
+                    android:src="@drawable/ic_man_on"/>
             </LinearLayout>
 
         </FrameLayout>
@@ -50,9 +50,9 @@
                 android:id="@+id/speaker_sub_woofer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:src="@drawable/speakers_woofer"
                 android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/speakers_woofer" />
+                android:layout_centerHorizontal="true" />
 
             <ImageView
                 android:id="@+id/speaker_right_surround"

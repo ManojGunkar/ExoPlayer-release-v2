@@ -3,6 +3,8 @@ package com.globaldelight.boom.app.activities;
 import android.app.Activity;
 import android.os.Bundle;
 import android.webkit.WebView;
+
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 
 /**
@@ -12,7 +14,7 @@ import com.globaldelight.boom.R;
 public class WebViewActivity  extends Activity {
 
     private WebView webView;
-    private java.lang.String webViewUrl="http://devboom2.globaldelight.net/feedback.php?os=android";
+    private java.lang.String webViewUrl= BuildConfig.FEEDBACK_URL;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

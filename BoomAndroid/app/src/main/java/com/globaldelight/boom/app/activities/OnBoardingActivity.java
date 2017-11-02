@@ -1,13 +1,16 @@
 package com.globaldelight.boom.app.activities;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
@@ -47,7 +50,7 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
 
             @Override
             public void onPageSelected(int position) {
-                if (position==2){
+                if (position==3){
                     startBoom.setVisibility(View.VISIBLE);
                     bottomPanel.setVisibility(View.GONE);
                     txtSkip.setVisibility(View.INVISIBLE);
@@ -145,5 +148,7 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
         super.onDestroy();
         Preferences.writeBoolean(this, Preferences.ON_BOARDING_COMPLETED_ON_FIRST_ATTEMPT, false);
     }
+
+
 
 }

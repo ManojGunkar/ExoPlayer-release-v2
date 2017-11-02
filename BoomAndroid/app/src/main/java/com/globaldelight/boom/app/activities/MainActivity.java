@@ -6,12 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.graphics.Point;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -25,8 +21,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -34,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
@@ -44,17 +37,13 @@ import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.adapters.search.SearchSuggestionAdapter;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.app.fragments.SearchViewFragment;
-import com.globaldelight.boom.app.share.ShareAdapter;
 import com.globaldelight.boom.app.share.ShareDialog;
-import com.globaldelight.boom.app.share.ShareItem;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.database.MusicSearchHelper;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_HEADSET_PLUGGED;
 import static com.globaldelight.boom.app.fragments.MasterContentFragment.isUpdateUpnextDB;
@@ -106,6 +95,8 @@ public class MainActivity extends MasterActivity
         setContentView(R.layout.activity_main);
         initView();
         checkPermissions();
+
+
     }
 
     Runnable navigateLibrary = new Runnable() {
@@ -400,6 +391,7 @@ public class MainActivity extends MasterActivity
                     return false;
                 }
                 break;
+
             case R.id.drop_box:
                 if (Utils.isOnline(this)){
                     runnable = navigateDropbox;
@@ -432,7 +424,6 @@ public class MainActivity extends MasterActivity
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
                 return  true;
             case R.id.nav_share:
-                Toast.makeText(this,"share",Toast.LENGTH_SHORT).show();
                 new ShareDialog(this).show();
                 /*new Handler().postDelayed(new Runnable() {
                     @Override

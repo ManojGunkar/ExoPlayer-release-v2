@@ -21,11 +21,7 @@ public class PagerAdapter extends android.support.v4.view.PagerAdapter {
 
     public PagerAdapter(Context context) {
         this.context = context;
-        mSize = 3;
-    }
-
-    public PagerAdapter(int count) {
-        mSize = count;
+        mSize = 4;
     }
 
     @Override
@@ -49,26 +45,17 @@ public class PagerAdapter extends android.support.v4.view.PagerAdapter {
         View xmlView = null;
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (position==0){
-            xmlView = inflater.inflate(R.layout.fragment_onboard_step_1, null);
+            xmlView = inflater.inflate(R.layout.onboard_0, null);
         }if (position==1){
-            xmlView = inflater.inflate(R.layout.fragment_onboard_step_2, null);
+            xmlView = inflater.inflate(R.layout.onboard_1, null);
         }if (position==2){
-            xmlView = inflater.inflate(R.layout.fragment_onboard_step_3, null);
+            xmlView = inflater.inflate(R.layout.onboard_2, null);
+        }if (position==3){
+            xmlView = inflater.inflate(R.layout.onboard_3, null);
         }
 
         view.addView(xmlView);
         return xmlView;
     }
 
-    public void addItem() {
-        mSize++;
-        notifyDataSetChanged();
-    }
-
-    public void removeItem() {
-        mSize--;
-        mSize = mSize < 0 ? 0 : mSize;
-
-        notifyDataSetChanged();
-    }
 }

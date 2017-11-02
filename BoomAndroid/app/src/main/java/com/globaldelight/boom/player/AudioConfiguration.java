@@ -11,7 +11,8 @@ import android.os.Build;
 import com.android.volley.*;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.globaldelight.boom.Constants;
+import com.globaldelight.boom.*;
+import com.globaldelight.boom.BuildConfig;
 
 import org.json.JSONObject;
 
@@ -77,8 +78,7 @@ public class AudioConfiguration {
 
 
     private void downloadConfig() {
-        final String BASE_URL = "http://devboom2.globaldelight.net/audioconfig.php";
-
+        final String BASE_URL = BuildConfig.AUDIO_CONFIG_URL;
         Uri uri = Uri.parse(BASE_URL).buildUpon()
                 .appendQueryParameter("action", "query")
                 .appendQueryParameter("manufacturer", Build.MANUFACTURER)
