@@ -26,6 +26,7 @@ import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.fragments.DropBoxListFragment;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
+import com.globaldelight.boom.app.share.ShareDialog;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
 
@@ -201,7 +202,8 @@ public class CloudListActivity extends MasterActivity
 
                 return true;
             case R.id.nav_share:
-                Utils.shareStart(CloudListActivity.this);
+//                Utils.shareStart(CloudListActivity.this);
+                new ShareDialog(this).show();
                 drawerLayout.closeDrawer(GravityCompat.START);
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Share_Opened_from_Boom);

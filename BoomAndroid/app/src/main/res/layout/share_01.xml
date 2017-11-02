@@ -10,25 +10,22 @@
 
 
     <ImageView
-        android:id="@+id/img_facebook_share"
+        android:id="@+id/img_share_item1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.3"
-        android:src="@drawable/ic_facebook" />
+        android:layout_weight="0.3" />
 
     <ImageView
-        android:id="@+id/img_twitter_share"
+        android:id="@+id/img_share_item2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.3"
-        android:src="@drawable/ic_twitter" />
+        android:layout_weight="0.3" />
 
     <ImageView
-        android:id="@+id/img_email_share"
+        android:id="@+id/img_share_item3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.3"
-        android:src="@drawable/ic_email" />
+        android:layout_weight="0.3"/>
 
 
 </LinearLayout>

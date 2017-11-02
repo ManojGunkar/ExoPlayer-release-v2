@@ -13,7 +13,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.view.Window;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -37,48 +36,48 @@ public class ShareDialog {
     private ViewPager viewpager;
     private CircleIndicator indicator;
 
+    private static final String[] SUPPORTED_APPS = new String[] {
+            "com.facebook.katana",
+            "com.twitter.android",
+            "com.whatsapp",
+            "com.android.mms",
+            "com.linkedin.android"
+    };
+
 
     public ShareDialog(Activity activity) {
         mActivity = activity;
     }
 
-    private List<ShareItem> getShareableAppList() {
-        final List<ShareItem> items = new ArrayList<>();
+    private ArrayList<ShareItem> getShareableAppList() {
+        final ArrayList<ShareItem> items = new ArrayList<>();
 
         Intent intent = new Intent(android.content.Intent.ACTION_SEND);
         intent.setDataAndType(Uri.parse("Boom android music app"), "text/*");
-        List<ResolveInfo> audio = mActivity.getPackageManager().queryIntentActivities(intent, 0);
-        for (ResolveInfo info : audio) {
-            String label = info.loadLabel(mActivity.getPackageManager()).toString();
-            Drawable icon = info.loadIcon(mActivity.getPackageManager());
-            String packageName = info.activityInfo.packageName;
-            String name = info.activityInfo.name.toLowerCase();
-            ShareItem item = new ShareItem(label, packageName, icon);
-            if (name.contains("facebook")) {
-                items.add(item);
-            } else if (name.contains("twitter")) {
-                items.add(item);
-            } else if (name.contains("gmail")) {
-                items.add(item);
-            } else if (name.contains("inbox")) {
-                items.add(item);
-            } else if (name.contains("email")) {
-                items.add(item);
-            } else if (name.contains("outlook")) {
-                items.add(item);
-            } else if (name.contains("linkedin")) {
-                items.add(item);
-            } else if (name.contains("whatsapp")) {
-                items.add(item);
-            } else if (packageName.contains("message")) {
-                items.add(item);
+        List<ResolveInfo> shareableApps = mActivity.getPackageManager().queryIntentActivities(intent, 0);
+        for ( String supportedAppPackage : SUPPORTED_APPS ) {
+            for ( ResolveInfo info : shareableApps ) {
+                if ( info.activityInfo.packageName.equalsIgnoreCase(supportedAppPackage) ) {
+                    String label = info.loadLabel(mActivity.getPackageManager()).toString();
+                    Drawable icon = info.loadIcon(mActivity.getPackageManager());
+                    String packageName = info.activityInfo.packageName;
+                    ShareItem item = new ShareItem(label, packageName, icon);
+                    items.add(item);
+                    break;
+                }
             }
-
         }
+
+        //add email
+        items.add(new ShareItem("email", "", mActivity.getDrawable(R.drawable.ic_email)));
+
+        //add other
+        items.add(new ShareItem("other", "", mActivity.getDrawable(R.drawable.ic_others)));
+
         return items;
     }
 
-    public void showShare() {
+    public void show() {
         final Dialog dialog = new Dialog(mActivity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(true);
@@ -86,14 +85,14 @@ public class ShareDialog {
 
         viewpager = (ViewPager) dialog.findViewById(R.id.pager_share);
         indicator = (CircleIndicator) dialog.findViewById(R.id.indicator_share);
-        viewpager.setAdapter(new sharePagerAdapter(mActivity, 2));
+        viewpager.setAdapter(new SharePagerAdapter(mActivity, getShareableAppList()));
         indicator.setViewPager(viewpager);
         viewpager.setCurrentItem(0);
 
         dialog.show();
     }
 
-
+/*
     public void show() {
         ShareAdapter adapter = new ShareAdapter(mActivity, getShareableAppList(), new ShareAdapter.Callback() {
             @Override
@@ -128,6 +127,6 @@ public class ShareDialog {
         int ScreenHeight = point.y;
         mDialog.getWindow().setLayout((ScreenWidth * 80) / 100, (ScreenHeight * 60) / 100);
     }
-
+*/
 
 }

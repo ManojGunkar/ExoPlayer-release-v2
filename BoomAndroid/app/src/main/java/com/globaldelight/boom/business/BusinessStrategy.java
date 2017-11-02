@@ -352,7 +352,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
     private void onShare() {
         if ( mCurrentActivity != null ) {
-            new ShareDialog(mCurrentActivity).showShare();
+            new ShareDialog(mCurrentActivity).show();
 //            Intent intent = new Intent(mContext, ActivityContainer.class);
 //            intent.putExtra("container",R.string.title_share);
 //            mCurrentActivity.startActivity(intent);

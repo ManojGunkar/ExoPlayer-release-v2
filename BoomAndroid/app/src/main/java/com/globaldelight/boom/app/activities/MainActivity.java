@@ -424,8 +424,7 @@ public class MainActivity extends MasterActivity
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
                 return  true;
             case R.id.nav_share:
-                Toast.makeText(this,"share",Toast.LENGTH_SHORT).show();
-                new ShareDialog(this).showShare();
+                new ShareDialog(this).show();
                 /*new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {

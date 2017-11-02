@@ -93,9 +93,6 @@ dependencies {
     }
 
 
-    /**************Dropbox***************/
-    compile files('libs/json_simple-1.1.jar')
-
     /**************Google Drive***************/
     compile('com.google.api-client:google-api-client-android:1.22.0') {
         exclude group: 'org.apache.httpcomponents'
