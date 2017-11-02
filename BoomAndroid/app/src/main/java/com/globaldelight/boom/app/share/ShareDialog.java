@@ -24,8 +24,7 @@ import com.globaldelight.boom.view.onBoarding.CircleIndicator;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.globaldelight.boom.app.fragments.ShareFragment.ACTION_SHARE_FAILED;
-import static com.globaldelight.boom.app.fragments.ShareFragment.ACTION_SHARE_SUCCESS;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SHARE_SUCCESS;
 
 /**
  * Created by adarsh on 24/08/17.

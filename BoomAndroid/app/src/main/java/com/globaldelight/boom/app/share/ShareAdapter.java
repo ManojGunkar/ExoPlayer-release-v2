@@ -15,9 +15,6 @@ import com.globaldelight.boom.view.RegularTextView;
 
 import java.util.List;
 
-import static com.globaldelight.boom.app.fragments.ShareFragment.ACTION_SHARE_FAILED;
-import static com.globaldelight.boom.app.fragments.ShareFragment.ACTION_SHARE_SUCCESS;
-
 /**
  * Created by Manoj Kumar on 8/24/2017.
  */

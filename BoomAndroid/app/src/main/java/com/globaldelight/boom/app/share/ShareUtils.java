@@ -14,7 +14,7 @@ import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 
-import static com.globaldelight.boom.app.fragments.ShareFragment.ACTION_SHARE_FAILED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SHARE_FAILED;
 
 /**
  * Created by Manoj Kumar on 8/28/2017.

@@ -89,7 +89,7 @@ import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_TOP_LEFT;
  */
 
 public class MasterContentFragment extends Fragment implements View.OnClickListener, View.OnTouchListener, Observer {
-    private final String TAG = "PlayerFragment-TAG";
+    private final String TAG = "MasterContentFragment";
     private static boolean isCloudSeek = false;
     public static boolean isUpdateUpnextDB = true;
     private static MediaItem mPlayingMediaItem;
@@ -268,7 +268,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         initEffectControl();
 
         setPlayerInfo();
-        //FlurryAnalyticHelper.init(mActivity);
     }
 
     @Override
@@ -901,16 +900,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 if (audioEffects.isAudioEffectOn() && audioEffects.isEqualizerOn())
                     onEqDialogOpen();
                 break;
-//            case R.id.equalizer_txt:
-//                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Open_Equalizer_Dailog_from_text);
-//                if (audioEffects.isAudioEffectOn() && audioEffects.isEqualizerOn())
-//                    onEqDialogOpen();
-//                break;
             case R.id.speaker_btn:
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Speaker_Dialog_Opened_From_Arrow);
-            case R.id.three_surround_txt:
-                if (audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn())
-                    openSpeakerDialog();
+                openSpeakerDialog();
                 break;
         }
     }
@@ -928,11 +920,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 return true;
             case R.id.player_large:
                 return true;
-            /*case R.id.intensity_disable_img:
-                if( audioEffects.isAudioEffectOn()  && audioEffects.isIntensityOn())
-                    return false;
-                else
-                    return true;*/
             case R.id.mini_player_progress:
                 return true;
         }
