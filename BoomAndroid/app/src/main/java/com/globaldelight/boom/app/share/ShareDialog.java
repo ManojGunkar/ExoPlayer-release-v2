@@ -2,6 +2,7 @@ package com.globaldelight.boom.app.share;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -17,6 +18,7 @@ import android.view.Window;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.view.onBoarding.CircleIndicator;
 
 import java.util.ArrayList;
@@ -29,10 +31,10 @@ import static com.globaldelight.boom.app.fragments.ShareFragment.ACTION_SHARE_SU
  * Created by adarsh on 24/08/17.
  */
 
-public class ShareDialog {
+public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
 
     private Activity mActivity;
-    private MaterialDialog mDialog = null;
+    private Dialog mDialog = null;
     private ViewPager viewpager;
     private CircleIndicator indicator;
 
@@ -41,7 +43,7 @@ public class ShareDialog {
             "com.twitter.android",
             "com.whatsapp",
             "com.android.mms",
-            "com.linkedin.android"
+            "com.bsb.hike",
     };
 
 
@@ -78,19 +80,50 @@ public class ShareDialog {
     }
 
     public void show() {
-        final Dialog dialog = new Dialog(mActivity);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(true);
-        dialog.setContentView(R.layout.popup_share);
+        mDialog = new Dialog(mActivity);
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mDialog.setCancelable(true);
+        mDialog.setContentView(R.layout.popup_share);
 
-        viewpager = (ViewPager) dialog.findViewById(R.id.pager_share);
-        indicator = (CircleIndicator) dialog.findViewById(R.id.indicator_share);
-        viewpager.setAdapter(new SharePagerAdapter(mActivity, getShareableAppList()));
+        viewpager = (ViewPager) mDialog.findViewById(R.id.pager_share);
+        indicator = (CircleIndicator) mDialog.findViewById(R.id.indicator_share);
+        viewpager.setAdapter(new SharePagerAdapter(mActivity, getShareableAppList(), this));
         indicator.setViewPager(viewpager);
         viewpager.setCurrentItem(0);
 
-        dialog.show();
+        mDialog.show();
     }
+
+    @Override
+    public void onClick(ShareItem item) {
+        Context context = mActivity;
+        mDialog.dismiss();
+        if (item.text.equalsIgnoreCase("facebook") ){
+            ShareUtils.getInstance(context).fbShare();
+        }
+        else if ( item.text.equalsIgnoreCase("email") ) {
+            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_desc));
+            intent.putExtra(Intent.EXTRA_TEXT, "");
+            Intent mailer = Intent.createChooser(intent, null);
+            context.startActivity(mailer);
+        }
+        else if ( item.text.equalsIgnoreCase("other") ) {
+            Utils.shareStart(context);
+        }
+        else {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.setPackage(item.pkgName);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_desc));
+            sendIntent.setType("text/plain");
+            context.startActivity(sendIntent);
+        }
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_SHARE_SUCCESS));
+    }
+
+
 
 /*
     public void show() {

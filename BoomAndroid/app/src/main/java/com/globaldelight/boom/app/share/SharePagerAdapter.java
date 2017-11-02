@@ -21,15 +21,22 @@ import java.util.Random;
 
 public class SharePagerAdapter extends android.support.v4.view.PagerAdapter implements View.OnClickListener {
 
-    public static final int ITEMS_PER_PAGE = 3;
+    public static final int ITEMS_PER_PAGE = 4;
+
+    public interface OnItemClickListener {
+        void onClick(ShareItem item);
+    }
 
     private int pagerSize;
     private Context context;
     ArrayList<ShareItem> mInfo;
+    OnItemClickListener mListener;
 
-    public SharePagerAdapter(Context context, ArrayList<ShareItem> info) {
+
+    public SharePagerAdapter(Context context, ArrayList<ShareItem> info, OnItemClickListener listener) {
         this.context = context;
         mInfo = info;
+        mListener = listener;
         pagerSize = (info.size() / ITEMS_PER_PAGE);
         if ( info.size() % ITEMS_PER_PAGE > 0 ) {
             pagerSize += 1;
@@ -59,10 +66,11 @@ public class SharePagerAdapter extends android.support.v4.view.PagerAdapter impl
         pageView = inflater.inflate(R.layout.share_01, null);
         view.addView(pageView);
 
-        ImageView itemViews[] = new ImageView[3];
+        ImageView itemViews[] = new ImageView[ITEMS_PER_PAGE];
         itemViews[0] = (ImageView)pageView.findViewById(R.id.img_share_item1);
         itemViews[1] = (ImageView)pageView.findViewById(R.id.img_share_item2);
         itemViews[2] = (ImageView)pageView.findViewById(R.id.img_share_item3);
+        itemViews[3] = (ImageView)pageView.findViewById(R.id.img_share_item4);
 
         for ( int i = 0; i < ITEMS_PER_PAGE; i++ ) {
             itemViews[i].setVisibility(View.INVISIBLE);
@@ -87,30 +95,9 @@ public class SharePagerAdapter extends android.support.v4.view.PagerAdapter impl
             return;
         }
 
-        ShareItem item = (ShareItem)tag;
-        if (item.text.equalsIgnoreCase("facebook") ){
-            ShareUtils.getInstance(context).fbShare();
-        }
-        else if ( item.text.equalsIgnoreCase("email") ) {
-            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_desc));
-            intent.putExtra(Intent.EXTRA_TEXT, "");
-            Intent mailer = Intent.createChooser(intent, null);
-            context.startActivity(mailer);
-        }
-        else if ( item.text.equalsIgnoreCase("other") ) {
-            Utils.shareStart(context);
-        }
-        else {
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.setPackage(item.pkgName);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_desc));
-            sendIntent.setType("text/plain");
-            context.startActivity(sendIntent);
+        if ( mListener != null ) {
+            ShareItem item = (ShareItem)tag;
+            mListener.onClick(item);
         }
     }
-
-
 }
