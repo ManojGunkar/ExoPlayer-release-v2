@@ -23,7 +23,6 @@ import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.fragments.AlbumDetailItemFragment;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.utils.Utils;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 

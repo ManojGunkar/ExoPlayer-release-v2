@@ -184,8 +184,8 @@ public class MainActivity extends MasterActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
-                musicSearchHelper.getAlbumList(App.getApplication());
-                musicSearchHelper.getArtistList(App.getApplication());
+                musicSearchHelper.getAlbumList(getApplicationContext());
+                musicSearchHelper.getArtistList(getApplicationContext());
                 musicSearchHelper.setSearchContent();
             }
         }).start();

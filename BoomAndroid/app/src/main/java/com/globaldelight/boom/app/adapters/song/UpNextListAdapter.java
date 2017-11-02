@@ -26,7 +26,6 @@ import com.globaldelight.boom.view.RegularButton;
 import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.Utils;
-import com.squareup.picasso.Picasso;
 import java.io.File;
 
 import static android.view.LayoutInflater.from;

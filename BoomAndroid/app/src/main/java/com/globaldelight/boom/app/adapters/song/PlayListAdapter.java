@@ -24,7 +24,6 @@ import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
-import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
 
