@@ -37,6 +37,9 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
     private ViewPager viewpager;
     private CircleIndicator indicator;
 
+    private static final String OTHER_APPS_NAME = "other";
+    private static final String DEFAULT_EMAIL_APP_NAME = "email";
+
     private static final String[] SUPPORTED_APPS = new String[] {
             "com.facebook.katana",
             "com.twitter.android",
@@ -70,10 +73,10 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
         }
 
         //add email
-        items.add(new ShareItem("email", "", mActivity.getDrawable(R.drawable.ic_email)));
+        items.add(new ShareItem(DEFAULT_EMAIL_APP_NAME, "", mActivity.getDrawable(R.drawable.ic_email)));
 
         //add other
-        items.add(new ShareItem("other", "", mActivity.getDrawable(R.drawable.ic_others)));
+        items.add(new ShareItem(OTHER_APPS_NAME, "", mActivity.getDrawable(R.drawable.ic_others)));
 
         return items;
     }
@@ -100,7 +103,7 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
         if (item.text.equalsIgnoreCase("facebook") ){
             ShareUtils.getInstance(context).fbShare();
         }
-        else if ( item.text.equalsIgnoreCase("email") ) {
+        else if ( item.text.equalsIgnoreCase(DEFAULT_EMAIL_APP_NAME) ) {
             Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_desc));
@@ -108,7 +111,7 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
             Intent mailer = Intent.createChooser(intent, null);
             context.startActivity(mailer);
         }
-        else if ( item.text.equalsIgnoreCase("other") ) {
+        else if ( item.text.equalsIgnoreCase(OTHER_APPS_NAME) ) {
             Utils.shareStart(context);
         }
         else {
