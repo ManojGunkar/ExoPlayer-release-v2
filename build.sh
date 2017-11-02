@@ -2,7 +2,7 @@
 
 ROOT_DIR=$(pwd)
 BUILD_TOOLS="${ANDROID_HOME}/build-tools/24.0.3"
-APK_DIR=app/build/outputs/apk/${FLAVOUR}/release
+APK_DIR=app/build/outputs/apk
 EXPIRY_DATE=$(date -v+1m '+"%d-%m-%Y"')
 
 check_error() {
@@ -25,6 +25,7 @@ cd BoomAndroid
 chmod +x gradlew
 
 FLAVOUR=$1
+APK_DIR=${APK_DIR}/${FLAVOUR}/release
 
 ./gradlew assemble${FLAVOUR}Release -PbuildNumber=$BUILD_NUMBER
 check_error $?
