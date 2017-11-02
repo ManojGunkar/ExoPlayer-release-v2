@@ -173,7 +173,7 @@
     <string name="store_page_header">完全免费 Boom</string>
     <string name="store_page_buy_description">现在购买以轻松 #FeelYourMusic\n。没有任何广告。</string>
     <string name="store_page_share_description">您也可以分享 Boom，以在 5 天内禁用广告\n。</string>
-    <string name="share_text">分享 Boom</string>
+    <string name="share_title">分享 Boom</string>
     <string name="menu_restore">恢复购买</string>
     <string name="store_title">商店</string>
 

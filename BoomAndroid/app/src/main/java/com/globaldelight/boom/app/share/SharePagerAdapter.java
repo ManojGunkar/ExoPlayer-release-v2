@@ -76,7 +76,7 @@ public class SharePagerAdapter extends android.support.v4.view.PagerAdapter impl
             itemViews[i].setVisibility(View.INVISIBLE);
             itemViews[i].setTag(null);
             int itemPos = (position * ITEMS_PER_PAGE + i);
-            if (  itemPos < mInfo.size()) {
+            if ( itemPos < mInfo.size() ) {
                 ShareItem item = mInfo.get(itemPos);
                 itemViews[i].setImageDrawable(item.icon);
                 itemViews[i].setTag(item);

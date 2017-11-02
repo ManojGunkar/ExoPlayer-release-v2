@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="@string/share_text"
+            android:text="@string/share_title"
             android:layout_marginBottom="@dimen/status_bar_height"
             android:textColor="@color/share_text_color"
             android:textSize="@dimen/share_text_size"

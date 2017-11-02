@@ -173,7 +173,7 @@
     <string name="store_page_header">번거로움 없는 Boom</string>
     <string name="store_page_buy_description">번거로움 없이 #FeelYourMusic을 \n 지금 구입하십시오. 광고 없이.</string>
     <string name="store_page_share_description">또한 Boom을 공유하면 \n 5일 동안 광고가 중단됩니다.</string>
-    <string name="share_text">Boom 공유</string>
+    <string name="share_title">Boom 공유</string>
     <string name="menu_restore">구매 재개</string>
     <string name="store_title">스토어</string>
 
