@@ -15,3 +15,13 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-keep class android.support.v7.widget.** { *; }
+
+-dontwarn okio.**
+-dontwarn okhttp3.**
+-dontwarn com.squareup.okhttp.**
+-dontwarn com.facebook.**
+-dontwarn com.dropbox.core.http.*
+-dontwarn javax.servlet.**
+-dontwarn com.google.android.gms.**
