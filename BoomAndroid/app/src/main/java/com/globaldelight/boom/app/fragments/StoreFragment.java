@@ -25,6 +25,7 @@ import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
+import com.globaldelight.boom.app.share.ShareDialog;
 import com.globaldelight.boom.business.BusinessStrategy;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.view.RegularButton;
@@ -116,19 +117,15 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         progressBar.setVisibility(View.GONE);
         updateShareContent();
 
-        if (!BusinessStrategy.getInstance(getActivity()).isPurchased() ) {
-//            Not Purchased
+        if ( !InAppPurchase.getInstance(getContext()).isPurchased() ) {
+            normalStoreUI(getCurrentPrice());
             if (ConnectivityReceiver.isNetworkAvailable(mContext, true)) {
-                intiStoreStartup();
-            }else{
-                normalStoreUI(getCurrentPrice());
+                InAppPurchase.getInstance(getContext()).initInAppPurchase();
             }
         }else{
-//            Purchased
             purchasedStoreUI();
         }
     }
-
 
     @Override
     public void onStart() {
@@ -144,10 +141,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     public void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateInAppItemReceiver);
-    }
-
-    private void intiStoreStartup() {
-        InAppPurchase.getInstance(getActivity()).initInAppPurchase();
     }
 
     private void purchasedStoreUI(){
@@ -178,13 +171,10 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.store_share_text:
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Share_Opened_from_Store);
-                try {
-                    Utils.shareStart(mActivity, StoreFragment.this);
-                } catch (Exception e) {
-                }
+                new ShareDialog(getActivity()).show();
                 break;
             case R.id.store_buyButton:
-                if ( !BusinessStrategy.getInstance(getActivity()).isPurchased() ) {
+                if ( !InAppPurchase.getInstance(getContext()).isPurchased() ) {
                     if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
                         startInAppFlow();
                     }
@@ -205,7 +195,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateShareContent() {
-        if( BusinessStrategy.getInstance(mContext).isPurchased() ){
+        if( InAppPurchase.getInstance(getContext()).isPurchased() ){
             mStoreShareTxt.setVisibility(View.GONE);
         }else {
             ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_share_description);

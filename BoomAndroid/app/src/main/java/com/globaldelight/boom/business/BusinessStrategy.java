@@ -124,10 +124,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         iapFilter.addAction(InAppPurchase.ACTION_IAP_SUCCESS);
         iapFilter.addAction(InAppPurchase.ACTION_IAP_FAILED);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(mIAPReceiver, iapFilter);
-
-        if ( !isPurchased() ) {
-            InAppPurchase.getInstance(mContext).initInAppPurchase();
-        }
+        InAppPurchase.getInstance(mContext).initInAppPurchase();
     }
 
 
@@ -323,7 +320,10 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     }
 
     public void onPurchaseFailed() {
-        // Do nothing
+        // Probably an attempt to hack the app.
+        if ( data.getState() == BusinessData.STATE_PURCHASED ) {
+            data.setState(BusinessData.STATE_LOCKED);
+        }
     }
 
 

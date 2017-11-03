@@ -134,7 +134,7 @@ public class InAppPurchase {
      * With the help of this method we can get sku details such as price, county etc.
      * @return which return QueryInventory listener.
      */
-    public IabHelper.QueryInventoryFinishedListener getQueryInventory(){
+    private IabHelper.QueryInventoryFinishedListener getQueryInventory(){
         return new IabHelper.QueryInventoryFinishedListener() {
             @Override
             public void onQueryInventoryFinished(IabResult result,
@@ -227,17 +227,13 @@ public class InAppPurchase {
             @SuppressLint("LongLogTag")
             public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
                 if (result.isFailure()) {
-                    if (result.getResponse() == -1003) {
-                        onPurchaseSuccess();
-                        Toast.makeText(context, context.getResources().getString(R.string.inapp_process_success), Toast.LENGTH_SHORT).show();                    }
-                    if (result.getResponse() == 7) {
+                    if (result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_ITEM_ALREADY_OWNED) {
                         onPurchaseRestored();
                         Toast.makeText(context, context.getResources().getString(R.string.inapp_process_restore), Toast.LENGTH_SHORT).show();
                     } else {
                         onPurchaseFailed();
                         Toast.makeText(context, context.getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();                    return;
                     }
-                //    FlurryAnalyticHelper.logEvent(UtilAnalytics.Purchase_Failed);
                     return;
                 }
                 if (!verifyDeveloperPayload(purchase)) {
@@ -245,9 +241,7 @@ public class InAppPurchase {
                     Toast.makeText(context, context.getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();                    return;
                 }
                 else {
-                    isPremium = true;
                     onPurchaseSuccess();
-                    //   FlurryAnalyticHelper.logEvent(UtilAnalytics.PurchaseCompleted);
                     Toast.makeText(context, context.getResources().getString(R.string.inapp_process_success), Toast.LENGTH_SHORT).show();
                 }
 

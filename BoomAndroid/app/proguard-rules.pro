@@ -17,6 +17,7 @@
 #}
 
 -keep class android.support.v7.widget.** { *; }
+-keep class com.android.vending.billing.**
 
 -dontwarn okio.**
 -dontwarn okhttp3.**
