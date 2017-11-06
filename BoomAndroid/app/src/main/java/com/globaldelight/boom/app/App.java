@@ -147,7 +147,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
             BusinessStrategy.getInstance(this).setCurrentActivity(activity);
         }
 
-        Boolean terminate = false;
+       /* Boolean terminate = false;
         int terminateReason = R.string.app_expire;
         if( isExpired() ) {
             terminateReason = R.string.app_expire;
@@ -170,7 +170,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
                     System.exit(0);
                 }
             }, 2000);
-        }
+        }*/
     }
 
     public void onActivityResumed(Activity activity) {

@@ -74,7 +74,7 @@
     <color name="dialog_content">#5d5d5e</color>
     <color name="dialog_widget">@color/white</color>
     <color name="dialog_selection">#1a1a1b</color>
-    <color name="dialog_txt">@color/white</color>
+    <color name="dialog_txt">#4f4f4f</color>
     <color name="dialog_selected_txt">@color/colorAccent</color>
     <color name="dialog_list_separator">#1a1a1b</color>
 

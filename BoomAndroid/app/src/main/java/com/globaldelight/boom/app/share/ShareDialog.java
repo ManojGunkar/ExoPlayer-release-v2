@@ -9,6 +9,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
@@ -35,7 +36,7 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
     private Activity mActivity;
     private Dialog mDialog = null;
     private ViewPager viewpager;
-    private CircleIndicator indicator;
+    private TabLayout indicator;
 
     private static final String OTHER_APPS_NAME = "other";
     private static final String DEFAULT_EMAIL_APP_NAME = "email";
@@ -88,9 +89,9 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
         mDialog.setContentView(R.layout.popup_share);
 
         viewpager = (ViewPager) mDialog.findViewById(R.id.pager_share);
-        indicator = (CircleIndicator) mDialog.findViewById(R.id.indicator_share);
+        indicator = (TabLayout) mDialog.findViewById(R.id.indicator_home_tab_layout);
         viewpager.setAdapter(new SharePagerAdapter(mActivity, getShareableAppList(), this));
-        indicator.setViewPager(viewpager);
+        indicator.setupWithViewPager(viewpager, true);
         viewpager.setCurrentItem(0);
 
         mDialog.show();
