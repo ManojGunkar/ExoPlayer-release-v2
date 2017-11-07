@@ -38,7 +38,7 @@
             <com.globaldelight.boom.view.onBoarding.CircleIndicator
                 android:id="@+id/indicator_home"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="0.5"
                 android:padding="5dp" />
 

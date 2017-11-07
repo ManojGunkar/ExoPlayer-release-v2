@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -52,11 +53,13 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
             public void onPageSelected(int position) {
                 if (position==3){
                     startBoom.setVisibility(View.VISIBLE);
+                    startBoom.startAnimation(AnimationUtils.loadAnimation(OnBoardingActivity.this, R.anim.zoom_in));
                     bottomPanel.setVisibility(View.GONE);
                     txtSkip.setVisibility(View.INVISIBLE);
                     txtNext.setVisibility(View.INVISIBLE);
                 }else {
                     startBoom.setVisibility(View.GONE);
+                    startBoom.clearAnimation();
                     bottomPanel.setVisibility(View.VISIBLE);
                     txtSkip.setVisibility(View.VISIBLE);
                     txtNext.setVisibility(View.VISIBLE);
@@ -121,7 +124,7 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     private void jumpToNext() {
         int position = viewpager.getCurrentItem();
         viewpager.setCurrentItem(position + 1, true);
-        if (position>=1){
+        if (position>=2){
             txtSkip.setVisibility(View.INVISIBLE);
             txtNext.setVisibility(View.INVISIBLE);
         }else {
