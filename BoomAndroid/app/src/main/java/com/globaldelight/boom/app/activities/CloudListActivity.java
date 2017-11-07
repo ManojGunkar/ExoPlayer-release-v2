@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
@@ -27,7 +28,6 @@ import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.fragments.DropBoxListFragment;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.share.ShareDialog;
-import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
 
 /**
@@ -38,11 +38,11 @@ public class CloudListActivity extends MasterActivity
         implements NavigationView.OnNavigationItemSelectedListener{
 
     private NavigationView navigationView;
-    private RegularTextView toolbarTitle;
+    private TextView toolbarTitle;
     public MenuItem cloudSyncItem;
     Runnable runnable;
     ImageView emptyPlaceholderIcon;
-    RegularTextView emptyPlaceholderTitle;
+    TextView emptyPlaceholderTitle;
     LinearLayout emptyPlaceHolder;
 
     @Override
@@ -85,8 +85,8 @@ public class CloudListActivity extends MasterActivity
     }
 
     private void initView() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbarTitle = (RegularTextView) findViewById(R.id.toolbar_txt);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbarTitle = findViewById(R.id.toolbar_txt);
         setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);
 
@@ -95,7 +95,7 @@ public class CloudListActivity extends MasterActivity
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);
         navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
@@ -104,9 +104,9 @@ public class CloudListActivity extends MasterActivity
             navigationView.getMenu().removeItem(R.id.nav_share);
         }
 
-        emptyPlaceholderIcon = (ImageView) findViewById(R.id.list_empty_placeholder_icon);
-        emptyPlaceholderTitle = (RegularTextView) findViewById(R.id.list_empty_placeholder_txt);
-        emptyPlaceHolder = (LinearLayout) findViewById(R.id.list_empty_placeholder);
+        emptyPlaceholderIcon = findViewById(R.id.list_empty_placeholder_icon);
+        emptyPlaceholderTitle = findViewById(R.id.list_empty_placeholder_txt);
+        emptyPlaceHolder = findViewById(R.id.list_empty_placeholder);
 
         setTitle(getIntent().getStringExtra("title"));
         loadEveryThing(getIntent().getStringExtra("title"), false);

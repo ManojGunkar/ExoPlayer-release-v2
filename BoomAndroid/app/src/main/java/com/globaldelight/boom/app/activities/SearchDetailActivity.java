@@ -3,12 +3,11 @@ package com.globaldelight.boom.app.activities;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.fragments.SearchDetailFragment;
-import com.globaldelight.boom.view.RegularTextView;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -41,7 +40,7 @@ public class SearchDetailActivity extends MasterActivity {
         mSearchType = getIntent().getStringExtra(SearchDetailFragment.ARG_LIST_TYPE);
         mQuery = getIntent().getStringExtra(SearchDetailFragment.ARG_MEDIA_QUERY);
 
-        ((RegularTextView) findViewById(R.id.toolbar_txt)).setText(mSearchType);
+        ((TextView) findViewById(R.id.toolbar_txt)).setText(mSearchType);
 
         findViewById(R.id.fab).setVisibility(View.GONE);
 

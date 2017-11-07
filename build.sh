@@ -3,6 +3,7 @@
 ROOT_DIR=$(pwd)
 BUILD_TOOLS="${ANDROID_HOME}/build-tools/24.0.3"
 APK_DIR=app/build/outputs/apk
+MAPPING_DIR=app/build/outputs/mapping
 EXPIRY_DATE=$(date -v+1m '+"%d-%m-%Y"')
 
 check_error() {
@@ -26,9 +27,13 @@ chmod +x gradlew
 
 FLAVOUR=$1
 APK_DIR=${APK_DIR}/${FLAVOUR}/release
+MAPPING_DIR=${MAPPING_DIR}/${FLAVOUR}/release
 
 ./gradlew assemble${FLAVOUR}Release -PbuildNumber=$BUILD_NUMBER
 check_error $?
+
+cp ${MAPPING_DIR}/mapping.txt ${BUILD_DIR}
+cp ${MAPPING_DIR}/seeds.txt ${BUILD_DIR}
 
 $BUILD_TOOLS/zipalign -v -p 4 "${APK_DIR}/app-${FLAVOUR}-release-unsigned.apk" "${BUILD_DIR}/app-unsigned-aligned.apk"
 check_error $?

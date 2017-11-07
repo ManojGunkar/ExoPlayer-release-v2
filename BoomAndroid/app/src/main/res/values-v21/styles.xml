@@ -8,6 +8,7 @@
                 <item name="android:textColorHint">@android:color/white</item>
                 <item name="android:background">#1A0d0f11</item>
                 <item name="searchHintIcon">@null</item>
+                <item name="android:fontFamily">@font/titillium_web</item>
         </style>
 
         <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
@@ -26,5 +27,6 @@
                 <item name="android:statusBarColor">@color/transparent</item>
                 <item name="android:textColor">@android:color/white</item>
                 <item name="android:itemBackground">@color/dialog_background</item>
+                <item name="android:fontFamily">@font/titillium_web</item>
         </style>
 </resources>

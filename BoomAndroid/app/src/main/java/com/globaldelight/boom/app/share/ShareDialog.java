@@ -9,6 +9,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
@@ -24,8 +25,7 @@ import com.globaldelight.boom.view.onBoarding.CircleIndicator;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.globaldelight.boom.app.fragments.ShareFragment.ACTION_SHARE_FAILED;
-import static com.globaldelight.boom.app.fragments.ShareFragment.ACTION_SHARE_SUCCESS;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SHARE_SUCCESS;
 
 /**
  * Created by adarsh on 24/08/17.
@@ -36,7 +36,10 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
     private Activity mActivity;
     private Dialog mDialog = null;
     private ViewPager viewpager;
-    private CircleIndicator indicator;
+    private TabLayout indicator;
+
+    private static final String OTHER_APPS_NAME = "other";
+    private static final String DEFAULT_EMAIL_APP_NAME = "email";
 
     private static final String[] SUPPORTED_APPS = new String[] {
             "com.facebook.katana",
@@ -71,10 +74,10 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
         }
 
         //add email
-        items.add(new ShareItem("email", "", mActivity.getDrawable(R.drawable.ic_email)));
+        items.add(new ShareItem(DEFAULT_EMAIL_APP_NAME, "", mActivity.getDrawable(R.drawable.ic_email)));
 
         //add other
-        items.add(new ShareItem("other", "", mActivity.getDrawable(R.drawable.ic_others)));
+        items.add(new ShareItem(OTHER_APPS_NAME, "", mActivity.getDrawable(R.drawable.ic_others)));
 
         return items;
     }
@@ -86,9 +89,9 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
         mDialog.setContentView(R.layout.popup_share);
 
         viewpager = (ViewPager) mDialog.findViewById(R.id.pager_share);
-        indicator = (CircleIndicator) mDialog.findViewById(R.id.indicator_share);
+        indicator = (TabLayout) mDialog.findViewById(R.id.indicator_home_tab_layout);
         viewpager.setAdapter(new SharePagerAdapter(mActivity, getShareableAppList(), this));
-        indicator.setViewPager(viewpager);
+        indicator.setupWithViewPager(viewpager, true);
         viewpager.setCurrentItem(0);
 
         mDialog.show();
@@ -101,7 +104,7 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
         if (item.text.equalsIgnoreCase("facebook") ){
             ShareUtils.getInstance(context).fbShare();
         }
-        else if ( item.text.equalsIgnoreCase("email") ) {
+        else if ( item.text.equalsIgnoreCase(DEFAULT_EMAIL_APP_NAME) ) {
             Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_desc));
@@ -109,7 +112,7 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
             Intent mailer = Intent.createChooser(intent, null);
             context.startActivity(mailer);
         }
-        else if ( item.text.equalsIgnoreCase("other") ) {
+        else if ( item.text.equalsIgnoreCase(OTHER_APPS_NAME) ) {
             Utils.shareStart(context);
         }
         else {
@@ -122,44 +125,4 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
         }
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_SHARE_SUCCESS));
     }
-
-
-
-/*
-    public void show() {
-        ShareAdapter adapter = new ShareAdapter(mActivity, getShareableAppList(), new ShareAdapter.Callback() {
-            @Override
-            public void onItemSelected() {
-                LocalBroadcastManager.getInstance(mActivity).sendBroadcast(new Intent(ACTION_SHARE_SUCCESS));
-                mDialog.dismiss();
-            }
-        });
-        RecyclerView recyclerView = (RecyclerView) mActivity.getLayoutInflater()
-                .inflate(R.layout.recycler_view_layout, null);
-        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-        recyclerView.setAdapter(adapter);
-
-        mDialog = new MaterialDialog.Builder(mActivity)
-                .title("Share Now")
-                .backgroundColor(ContextCompat.getColor(mActivity, R.color.white))
-                .titleColor(ContextCompat.getColor(mActivity, R.color.black))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                .customView(recyclerView, false)
-                .autoDismiss(false)
-                .canceledOnTouchOutside(false)
-                .cancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        LocalBroadcastManager.getInstance(mActivity).sendBroadcast(new Intent(ACTION_SHARE_FAILED));
-                    }
-                })
-                .show();
-        Point point = new Point();
-        mActivity.getWindowManager().getDefaultDisplay().getSize(point);
-        int ScreenWidth = point.x;
-        int ScreenHeight = point.y;
-        mDialog.getWindow().setLayout((ScreenWidth * 80) / 100, (ScreenHeight * 60) / 100);
-    }
-*/
-
 }

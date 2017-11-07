@@ -26,7 +26,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.app.App;
@@ -38,7 +38,6 @@ import com.globaldelight.boom.app.adapters.search.SearchSuggestionAdapter;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.app.fragments.SearchViewFragment;
 import com.globaldelight.boom.app.share.ShareDialog;
-import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.database.MusicSearchHelper;
@@ -60,7 +59,7 @@ public class MainActivity extends MasterActivity
     private NavigationView navigationView;
     private Fragment mSearchResult, mLibraryFragment;
     private boolean isLibraryRendered = false;
-    private RegularTextView toolbarTitle;
+    private TextView toolbarTitle;
     public SearchView searchView;
     public MenuItem searchMenuItem;
     private MusicSearchHelper musicSearchHelper;
@@ -184,8 +183,8 @@ public class MainActivity extends MasterActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
-                musicSearchHelper.getAlbumList(App.getApplication());
-                musicSearchHelper.getArtistList(App.getApplication());
+                musicSearchHelper.getAlbumList(getApplicationContext());
+                musicSearchHelper.getArtistList(getApplicationContext());
                 musicSearchHelper.setSearchContent();
             }
         }).start();
@@ -193,7 +192,7 @@ public class MainActivity extends MasterActivity
 
     private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbarTitle = (RegularTextView) findViewById(R.id.toolbar_txt);
+        toolbarTitle = (TextView) findViewById(R.id.toolbar_txt);
         setTitle(getResources().getString(R.string.music_library));
         setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         setSupportActionBar(toolbar);

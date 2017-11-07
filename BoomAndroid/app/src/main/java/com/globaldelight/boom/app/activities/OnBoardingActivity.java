@@ -1,13 +1,13 @@
 package com.globaldelight.boom.app.activities;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,8 +15,6 @@ import android.widget.TextView;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
-import com.globaldelight.boom.view.RegularButton;
-import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.view.onBoarding.PagerAdapter;
 import com.globaldelight.boom.view.onBoarding.CircleIndicator;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
@@ -27,8 +25,8 @@ import com.globaldelight.boom.app.sharedPreferences.Preferences;
 
 public class OnBoardingActivity extends Activity implements View.OnClickListener {
 
-    private RegularTextView txtSkip, txtNext;
-    private RegularButton startBoom;
+    private TextView txtSkip, txtNext;
+    private Button startBoom;
     private ViewPager viewpager;
     private CircleIndicator indicator;
     LinearLayout bottomPanel;
@@ -52,11 +50,13 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
             public void onPageSelected(int position) {
                 if (position==3){
                     startBoom.setVisibility(View.VISIBLE);
+                    startBoom.startAnimation(AnimationUtils.loadAnimation(OnBoardingActivity.this, R.anim.zoom_in));
                     bottomPanel.setVisibility(View.GONE);
                     txtSkip.setVisibility(View.INVISIBLE);
                     txtNext.setVisibility(View.INVISIBLE);
                 }else {
                     startBoom.setVisibility(View.GONE);
+                    startBoom.clearAnimation();
                     bottomPanel.setVisibility(View.VISIBLE);
                     txtSkip.setVisibility(View.VISIBLE);
                     txtNext.setVisibility(View.VISIBLE);
@@ -70,19 +70,19 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     }
 
     private void initComp() {
-        txtSkip = (RegularTextView) findViewById(R.id.txt_skip_onboard);
-        txtNext = (RegularTextView) findViewById(R.id.txt_next_onboard);
-        startBoom = (RegularButton) findViewById(R.id.btn_boomin_onboard);
+        txtSkip = findViewById(R.id.txt_skip_onboard);
+        txtNext = findViewById(R.id.txt_next_onboard);
+        startBoom = findViewById(R.id.btn_boomin_onboard);
 
-        viewpager = (ViewPager) findViewById(R.id.pager_home);
-        indicator = (CircleIndicator) findViewById(R.id.indicator_home);
+        viewpager = findViewById(R.id.pager_home);
+        indicator = findViewById(R.id.indicator_home);
         viewpager.setAdapter(new PagerAdapter(this));
         indicator.setViewPager(viewpager);
         viewpager.setCurrentItem(0);
         txtSkip.setOnClickListener(this);
         txtNext.setOnClickListener(this);
         startBoom.setOnClickListener(this);
-        bottomPanel = (LinearLayout) findViewById(R.id.onboarding_bottom) ;
+        bottomPanel = findViewById(R.id.onboarding_bottom) ;
     }
 
     private void jumpToHome() {
@@ -121,7 +121,7 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     private void jumpToNext() {
         int position = viewpager.getCurrentItem();
         viewpager.setCurrentItem(position + 1, true);
-        if (position>=1){
+        if (position>=2){
             txtSkip.setVisibility(View.INVISIBLE);
             txtNext.setVisibility(View.INVISIBLE);
         }else {

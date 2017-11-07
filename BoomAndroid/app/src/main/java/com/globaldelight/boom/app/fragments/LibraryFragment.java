@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.service.HeadPhonePlugReceiver;
 import com.globaldelight.boom.app.adapters.utils.SectionsPagerAdapter;
 import com.globaldelight.boom.view.CoachMarkerWindow;
@@ -65,13 +65,13 @@ public class LibraryFragment extends Fragment {
     }
 
     private void initViews() {
-        mAddsContainer = (LinearLayout) rootView.findViewById(R.id.lib_add_container);
-        mTabBar= (TabLayout)  rootView.findViewById(R.id.tabLayout);
-        mViewPager = (ViewPager) rootView.findViewById(R.id.container);
+        mAddsContainer = rootView.findViewById(R.id.lib_add_container);
+        mTabBar= rootView.findViewById(R.id.tabLayout);
+        mViewPager = rootView.findViewById(R.id.container);
 
         setupViewPager(mViewPager);
 
-        Typeface font = Typeface.createFromAsset(mActivity.getAssets(), "fonts/TitilliumWeb-SemiBold.ttf");
+        Typeface font = ResourcesCompat.getFont(mActivity, R.font.titilliumweb_bold);
         for (int i = 0; i < mTabBar.getChildCount(); i++) {
             final View view = mTabBar.getChildAt(i);
             if (view instanceof TextView) {

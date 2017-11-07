@@ -8,12 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.globaldelight.boom.Constants;
-import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
-import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.player.AudioEffect;
 
 import org.json.JSONException;
@@ -91,15 +90,15 @@ public class HeadPhoneItemAdapter extends RecyclerView.Adapter<HeadPhoneItemAdap
 
     public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public RegularTextView type;
+        public TextView type;
         public ImageView earPhone;
         public View mainView;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            type = (RegularTextView) itemView.findViewById(R.id.img_pager_item_title);
-            earPhone = (ImageView) itemView.findViewById(R.id.img_pager_item);
+            type = itemView.findViewById(R.id.img_pager_item_title);
+            earPhone = itemView.findViewById(R.id.img_pager_item);
         }
     }
 }

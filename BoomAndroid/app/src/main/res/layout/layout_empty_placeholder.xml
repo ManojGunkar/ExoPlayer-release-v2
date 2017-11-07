@@ -11,7 +11,7 @@
         android:id="@+id/list_empty_placeholder_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-    <com.globaldelight.boom.view.RegularTextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/list_empty_placeholder_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

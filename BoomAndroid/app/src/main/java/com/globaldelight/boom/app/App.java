@@ -23,9 +23,6 @@ import com.globaldelight.boom.app.database.FavoriteDBHelper;
 import com.globaldelight.boom.app.database.PlaylistDBHelper;
 import com.globaldelight.boom.app.database.UpNextDBHelper;
 import com.globaldelight.boom.app.sharedPreferences.UserPreferenceHandler;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,8 +40,8 @@ import io.fabric.sdk.android.Kit;
 
 public class App extends Application implements Application.ActivityLifecycleCallbacks {
 
-    public static final String TWEET_CONSUMER ="K8KDQHnW8Zi0ZLZklAcKGqI92";
-    public static final String TWEET_SECRET ="OLhb1Lp9BaZf26qOQE6EOHBP66sImaZ635ls23TJqrDcmwhpuy";
+//    public static final String TWEET_CONSUMER ="K8KDQHnW8Zi0ZLZklAcKGqI92";
+//    public static final String TWEET_SECRET ="OLhb1Lp9BaZf26qOQE6EOHBP66sImaZ635ls23TJqrDcmwhpuy";
 
 
     private static App application;
@@ -52,10 +49,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     private static FavoriteDBHelper favoriteDBHelper;
     private static UpNextDBHelper upNextDBHelper;
     private static CloudMediaItemDBHelper cloudMediaItemDBHelper;
-//    private static PlayerService service;
     private static UserPreferenceHandler userPreferenceHandler;
-
-//    private static MixpanelAPI mixpanel;
 
     public static App getApplication() {
         return application;
@@ -69,7 +63,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
         FacebookSdk.sdkInitialize(this);
 
-        TwitterAuthConfig authConfig =  new TwitterAuthConfig(TWEET_CONSUMER, TWEET_SECRET);
 
         if ( BuildConfig.FLAVOR.equals("production") ) {
             final Fabric fabric = new Fabric.Builder(this)
@@ -79,15 +72,16 @@ public class App extends Application implements Application.ActivityLifecycleCal
                     .build();
             Fabric.with(fabric);
         }
-        else {
-            final Fabric fabric = new Fabric.Builder(this)
-                    .kits(new TwitterCore(authConfig), new TweetComposer())
-                    .logger(new DefaultLogger(Log.DEBUG))
-                    .debuggable(true)
-                    .build();
-
-            Fabric.with(fabric);
-        }
+//        else {
+//            TwitterAuthConfig authConfig =  new TwitterAuthConfig(TWEET_CONSUMER, TWEET_SECRET);
+//            final Fabric fabric = new Fabric.Builder(this)
+//                    .kits(new TwitterCore(authConfig), new TweetComposer())
+//                    .logger(new DefaultLogger(Log.DEBUG))
+//                    .debuggable(true)
+//                    .build();
+//
+//            Fabric.with(fabric);
+//        }
 
         MixPanelAnalyticHelper.initPushNotification(this);
 

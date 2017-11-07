@@ -15,8 +15,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -25,9 +27,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
-import com.globaldelight.boom.view.RegularButton;
-import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
+import com.globaldelight.boom.utils.Utils;
 
 import java.lang.reflect.Field;
 import java.text.DateFormat;
@@ -51,19 +52,11 @@ public class TimerUtils {
     private static Long sleepTime;
     private static CountDownTimer mCountDownTimer;;
 
-    public static void customMaterialTimepicker(final Context mContext, final RegularTextView txtDescTimer, boolean running) {
+    public static void customMaterialTimepicker(final Context mContext, final TextView txtDescTimer, boolean running) {
         if(running) {
-            new MaterialDialog.Builder(mContext)
-                    .backgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background))
+            Utils.createDialogBuilder(mContext)
                     .title(mContext.getResources().getString(R.string.title_sleep_timer))
-                    .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
-                    .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
-                    .negativeColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
-                    .neutralColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
-                    .widgetColor(ContextCompat.getColor(mContext, R.color.dialog_widget))
-                    .contentColor(ContextCompat.getColor(mContext, R.color.dialog_widget))
                     .content(mContext.getResources().getString(R.string.ask_reset_timer))
-                    .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                     .negativeText(R.string.timer_cancel)
                     .neutralText(R.string.timer_reset)
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -81,16 +74,8 @@ public class TimerUtils {
                     })
                     .show();
         }else {
-            MaterialDialog dialog = new MaterialDialog.Builder(mContext)
+            MaterialDialog dialog = Utils.createDialogBuilder(mContext)
                     .customView(R.layout.custom_time_picker, false)
-                    .backgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background))
-                    .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
-                    .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
-                    .negativeColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
-                    .neutralColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
-                    .widgetColor(ContextCompat.getColor(mContext, R.color.dialog_widget))
-                    .contentColor(ContextCompat.getColor(mContext, R.color.dialog_content))
-                    .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                     .positiveText(R.string.timer_start)
                     .neutralText(R.string.timer_reset)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -110,8 +95,8 @@ public class TimerUtils {
 
             View dialogView = dialog.getCustomView();
             timePicker = (TimePicker) dialogView.findViewById(R.id.timePickerdialog);
-            RegularButton timerStart = (RegularButton) dialogView.findViewById(R.id.tmstart);
-            final RegularButton timerCancel = (RegularButton) dialogView.findViewById(R.id.tmcancel);
+            Button timerStart = (Button) dialogView.findViewById(R.id.tmstart);
+            final Button timerCancel = (Button) dialogView.findViewById(R.id.tmcancel);
             timerStart.setTransformationMethod(null);
             timerCancel.setTransformationMethod(null);
             View positive = dialog.getActionButton(DialogAction.POSITIVE);
@@ -145,7 +130,7 @@ public class TimerUtils {
     private static void set_numberpicker_text_colour(Context mContext, NumberPicker number_picker) {
         final int count = number_picker.getChildCount();
         final int color = ContextCompat.getColor(mContext, R.color.effect_active);
-        font = Typeface.createFromAsset(mContext.getAssets(), "fonts/TitilliumWeb-Regular.ttf");
+        font = Typeface.createFromAsset(mContext.getAssets(), "font/TitilliumWeb-Regular.ttf");
 
         for (int i = 0; i < count; i++) {
             View child = number_picker.getChildAt(i);
@@ -189,7 +174,7 @@ public class TimerUtils {
         }
     }
 
-    public static void setTimer(final Context mContext, final RegularTextView txtDescTimer) {
+    public static void setTimer(final Context mContext, final TextView txtDescTimer) {
         int hour = 0;
         int minute = 0;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -258,7 +243,7 @@ public class TimerUtils {
     }
 
 
-    public static void resetTimer(Context mContext, RegularTextView txtDescTimer) {
+    public static void resetTimer(Context mContext, TextView txtDescTimer) {
         if (mCountDownTimer != null)
             mCountDownTimer.cancel();
         if (alarmMgr != null)
@@ -275,7 +260,7 @@ public class TimerUtils {
         }
     }
 
-    public static void cancelTimer(RegularTextView txtDescTimer) {
+    public static void cancelTimer(TextView txtDescTimer) {
         String TimerTime = txtDescTimer.getText().toString().substring(0, 7);
         DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         try {
@@ -301,7 +286,7 @@ public class TimerUtils {
         }
     }
 
-    public static void resumeTimerState(final Context mContext, final RegularTextView txtDescTimer) {
+    public static void resumeTimerState(final Context mContext, final TextView txtDescTimer) {
 
         boolean sleepTimerEnabled = Preferences.readBoolean(mContext, Preferences.SLEEP_TIMER_ENABLED, false);
         if (!sleepTimerEnabled) {
@@ -359,7 +344,7 @@ public class TimerUtils {
         }
     }
 
-    public static void setUiTimerEditMode(Context context, RegularTextView txtDescTimer) {
+    public static void setUiTimerEditMode(Context context, TextView txtDescTimer) {
         txtDescTimer.setText(context.getResources().getString(R.string.sleep_timer_description));
     }
 }

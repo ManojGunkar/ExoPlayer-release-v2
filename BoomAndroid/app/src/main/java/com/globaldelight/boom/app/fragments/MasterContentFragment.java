@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -55,7 +56,6 @@ import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.view.CoachMarkerWindow;
 import com.globaldelight.boom.view.NegativeSeekBar;
-import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.view.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.Arrays;
@@ -89,7 +89,7 @@ import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_TOP_LEFT;
  */
 
 public class MasterContentFragment extends Fragment implements View.OnClickListener, View.OnTouchListener, Observer {
-    private final String TAG = "PlayerFragment-TAG";
+    private final String TAG = "MasterContentFragment";
     private static boolean isCloudSeek = false;
     public static boolean isUpdateUpnextDB = true;
     private static MediaItem mPlayingMediaItem;
@@ -108,7 +108,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     public View miniController, mPlayerActionPanel;
 
-    private RegularTextView mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
+    private TextView mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
     private View mInflater;
     private int colorTo, colorFrom, colorFromActive;
     private AppCompatSeekBar mTrackSeek;
@@ -120,15 +120,15 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private FrameLayout mPlayerBackground;
 
     private LinearLayout mMiniPlayerEffectPanel, mMiniTitlePanel;
-    private RegularTextView mMiniSongTitle, mMiniSongSubTitle;
+    private TextView mMiniSongTitle, mMiniSongSubTitle;
     private ImageView mMiniPlayerPlayPause, mMiniPlayerEffect;
     private AppCompatSeekBar mMiniPlayerSeek;
 
-    private RegularTextView mDisableIntensity;
+    private TextView mDisableIntensity;
     private NegativeSeekBar mIntensitySeek;
     private SwitchCompat mEffectSwitch;
     private ToggleButton mFullBassCheck;
-    private RegularTextView mEffectSwitchTxt, mSelectedEqTxt;
+    private TextView mEffectSwitchTxt, mSelectedEqTxt;
     private ImageView mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
     private CheckBox m3DSurroundBtn, mIntensityBtn, mEqualizerBtn;
     private LinearLayout mEqDialogPanel;
@@ -268,7 +268,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         initEffectControl();
 
         setPlayerInfo();
-        //FlurryAnalyticHelper.init(mActivity);
     }
 
     @Override
@@ -457,37 +456,37 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void initLargePlayer() {
-        mPlayerLarge = (LinearLayout) mInflater.findViewById(R.id.player_large);
+        mPlayerLarge = mInflater.findViewById(R.id.player_large);
         mPlayerLarge.setOnTouchListener(this);
 
         mPlayerActionPanel = mInflater.findViewById(R.id.player_action_bar);
 
-        mLoadingProgress = (ProgressBar) mInflater.findViewById(R.id.load_cloud);
+        mLoadingProgress = mInflater.findViewById(R.id.load_cloud);
 
-        mPlayerBackBtn = (ImageView) mInflater.findViewById(R.id.player_back_button);
+        mPlayerBackBtn = mInflater.findViewById(R.id.player_back_button);
         mPlayerBackBtn.setOnClickListener(this);
-        mPlayerTitlePanel = (LinearLayout) mInflater.findViewById(R.id.player_title_panel);
+        mPlayerTitlePanel = mInflater.findViewById(R.id.player_title_panel);
         mPlayerTitlePanel.setOnClickListener(this);
-        mLargeSongTitle = (RegularTextView) mInflater.findViewById(R.id.large_player_title);
-        mLargeSongSubTitle = (RegularTextView) mInflater.findViewById(R.id.large_player_sub_title);
-        mUpNextBtnPanel = (ImageView) mInflater.findViewById(R.id.player_upnext_button);
+        mLargeSongTitle = mInflater.findViewById(R.id.large_player_title);
+        mLargeSongSubTitle = mInflater.findViewById(R.id.large_player_sub_title);
+        mUpNextBtnPanel = mInflater.findViewById(R.id.player_upnext_button);
         mUpNextBtnPanel.setOnClickListener(this);
-        mPlayerOverFlowMenuPanel = (ImageView) mInflater.findViewById(R.id.player_overflow_button);
+        mPlayerOverFlowMenuPanel = mInflater.findViewById(R.id.player_overflow_button);
         mPlayerOverFlowMenuPanel.setOnClickListener(this);
 
-        mLargeAlbumArt = (ImageView) mInflater.findViewById(R.id.player_album_art);
+        mLargeAlbumArt = mInflater.findViewById(R.id.player_album_art);
 
         LinearLayout.LayoutParams artParam = new LinearLayout.LayoutParams((int) (ScreenWidth * 80) / 100, (int) (ScreenWidth * 80) / 100);
         artParam.setMargins((int) ((ScreenWidth * 10) / 100), 0, (int) ((ScreenWidth * 10) / 100), 0);
         mInflater.findViewById(R.id.player_large_header).setLayoutParams(artParam);
-        mPlayerContent = (FrameLayout) mInflater.findViewById(R.id.player_content);
+        mPlayerContent = mInflater.findViewById(R.id.player_content);
 
-        mPlayerTab = (ImageView) mInflater.findViewById(R.id.player_tab);
+        mPlayerTab = mInflater.findViewById(R.id.player_tab);
         mPlayerTab.setOnClickListener(this);
-        mEffectTab = (ImageView) mInflater.findViewById(R.id.effect_tab);
+        mEffectTab = mInflater.findViewById(R.id.effect_tab);
         mEffectTab.setOnClickListener(this);
 
-        mTrackSeek = (AppCompatSeekBar) mInflater.findViewById(R.id.control_seek_bar);
+        mTrackSeek = mInflater.findViewById(R.id.control_seek_bar);
         mTrackSeek.getProgressDrawable().setColorFilter(ContextCompat.getColor(mActivity, R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN);
         mTrackSeek.setPadding(mTrackSeek.getPaddingLeft(), 0, mTrackSeek.getPaddingRight(), 0);
 
@@ -527,14 +526,14 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 }, 300);
             }
         });
-        mCurrentSeekTime = (RegularTextView) mInflater.findViewById(R.id.played_time);
-        mTotalSeekTime = (RegularTextView) mInflater.findViewById(R.id.remain_time);
+        mCurrentSeekTime = mInflater.findViewById(R.id.played_time);
+        mTotalSeekTime = mInflater.findViewById(R.id.remain_time);
 
-        mRepeat = (ImageView) mInflater.findViewById(R.id.controller_repeat);
+        mRepeat = mInflater.findViewById(R.id.controller_repeat);
         mRepeat.setOnClickListener(this);
-        mPrevious = (ImageView) mInflater.findViewById(R.id.controller_prev);
+        mPrevious = mInflater.findViewById(R.id.controller_prev);
         mPrevious.setOnClickListener(this);
-        mPlayPause = (ImageView) mInflater.findViewById(R.id.controller_play);
+        mPlayPause = mInflater.findViewById(R.id.controller_play);
         mPlayPause.setOnClickListener(this);
         mNext = (ImageView) mInflater.findViewById(R.id.controller_next);
         mNext.setOnClickListener(this);
@@ -643,8 +642,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mMiniPlayerPlayPause.setOnClickListener(this);
         mMiniTitlePanel = (LinearLayout) mInflater.findViewById(R.id.mini_player_title_panel);
         mMiniTitlePanel.setOnClickListener(this);
-        mMiniSongTitle = (RegularTextView) mInflater.findViewById(R.id.mini_player_song_title);
-        mMiniSongSubTitle = (RegularTextView) mInflater.findViewById(R.id.mini_player_song_sub_title);
+        mMiniSongTitle = mInflater.findViewById(R.id.mini_player_song_title);
+        mMiniSongSubTitle = mInflater.findViewById(R.id.mini_player_song_sub_title);
     }
 
     private void updateMiniPlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
@@ -901,16 +900,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 if (audioEffects.isAudioEffectOn() && audioEffects.isEqualizerOn())
                     onEqDialogOpen();
                 break;
-//            case R.id.equalizer_txt:
-//                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Open_Equalizer_Dailog_from_text);
-//                if (audioEffects.isAudioEffectOn() && audioEffects.isEqualizerOn())
-//                    onEqDialogOpen();
-//                break;
             case R.id.speaker_btn:
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Speaker_Dialog_Opened_From_Arrow);
-            case R.id.three_surround_txt:
-                if (audioEffects.isAudioEffectOn() && audioEffects.is3DSurroundOn())
-                    openSpeakerDialog();
+                openSpeakerDialog();
                 break;
         }
     }
@@ -928,11 +920,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 return true;
             case R.id.player_large:
                 return true;
-            /*case R.id.intensity_disable_img:
-                if( audioEffects.isAudioEffectOn()  && audioEffects.isIntensityOn())
-                    return false;
-                else
-                    return true;*/
             case R.id.mini_player_progress:
                 return true;
         }
@@ -948,17 +935,17 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mEffectContent = (LinearLayout) mInflater.findViewById(R.id.effect_content);
 //        mEffectContent.setLayoutParams(effectParam);
 
-        mEffectSwitchTxt = (RegularTextView) mInflater.findViewById(R.id.effect_switch_txt);
-        mEffectSwitch = (SwitchCompat) mInflater.findViewById(R.id.effect_switch);
+        mEffectSwitchTxt = mInflater.findViewById(R.id.effect_switch_txt);
+        mEffectSwitch = mInflater.findViewById(R.id.effect_switch);
         mEffectSwitch.setChecked(audioEffects.isAudioEffectOn());
 
-        m3DSurroundBtn = (CheckBox) mInflater.findViewById(R.id.three_surround_btn);
+        m3DSurroundBtn = mInflater.findViewById(R.id.three_surround_btn);
         m3DSurroundBtn.setOnClickListener(this);
 
-        mSpeakerBtn = (ImageView) mInflater.findViewById(R.id.speaker_btn);
+        mSpeakerBtn = mInflater.findViewById(R.id.speaker_btn);
         mSpeakerBtn.setOnClickListener(this);
 
-        mFullBassCheck = (ToggleButton) mInflater.findViewById(R.id.fullbass_chk);
+        mFullBassCheck = mInflater.findViewById(R.id.fullbass_chk);
         mFullBassCheck.setOnCheckedChangeListener(new ToggleButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -970,23 +957,21 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         });
 
 
-        mIntensityBtn = (CheckBox) mInflater.findViewById(R.id.intensity_btn);
+        mIntensityBtn = mInflater.findViewById(R.id.intensity_btn);
         mIntensityBtn.setOnClickListener(this);
-        mIntensitySeek = (NegativeSeekBar) mInflater.findViewById(R.id.intensity_seek);
+        mIntensitySeek = mInflater.findViewById(R.id.intensity_seek);
         mIntensitySeek.setProgress((int) (audioEffects.getIntensity() * 50 + 50));
         mIntensitySeek.setOnClickListener(this);
 
-        mEqualizerBtn = (CheckBox) mInflater.findViewById(R.id.equalizer_btn);
+        mEqualizerBtn = mInflater.findViewById(R.id.equalizer_btn);
         mEqualizerBtn.setOnClickListener(this);
-        mEqDialogPanel = (LinearLayout) mInflater.findViewById(R.id.eq_dialog_panel);
+        mEqDialogPanel = mInflater.findViewById(R.id.eq_dialog_panel);
         mEqDialogPanel.setOnClickListener(this);
 
-        mSelectedEqImg = (ImageView) mInflater.findViewById(R.id.selected_eq_img);
-        mSelectedEqTxt = (RegularTextView) mInflater.findViewById(R.id.selected_eq_txt);
-        mSelectedEqGoImg = (ImageView) mInflater.findViewById(R.id.selected_eq_go_img);
+        mSelectedEqImg = mInflater.findViewById(R.id.selected_eq_img);
+        mSelectedEqTxt = mInflater.findViewById(R.id.selected_eq_txt);
+        mSelectedEqGoImg = mInflater.findViewById(R.id.selected_eq_go_img);
 
-        /*mDisableIntensity = (RegularTextView) mInflater.findViewById(R.id.intensity_disable_img);
-        mDisableIntensity.setOnTouchListener(this);*/
         eq_names = Arrays.asList(mActivity.getResources().getStringArray(R.array.eq_names));
         eq_active_off = mActivity.getResources().obtainTypedArray(R.array.eq_active_off);
 

@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -15,6 +16,7 @@ import com.globaldelight.boom.app.adapters.utils.EqualizerDialogAdapter;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.player.AudioEffect;
+import com.globaldelight.boom.utils.Utils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,12 +57,8 @@ public class EqualizerDialog implements EqualizerDialogAdapter.IEqualizerSelect{
         recyclerView.scrollToPosition(audioEffects.getSelectedEqualizerPosition());
         recyclerView.setAdapter(adapter);
 
-        MaterialDialog dialog = new MaterialDialog.Builder(mActivity)
+        MaterialDialog dialog = Utils.createDialogBuilder(mActivity)
                 .title(R.string.eq_dialog_title)
-                .backgroundColor(ContextCompat.getColor(mActivity, R.color.dialog_background))
-                .titleColor(ContextCompat.getColor(mActivity, R.color.dialog_title))
-                .positiveColor(ContextCompat.getColor(mActivity, R.color.dialog_submit_positive))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .customView(recyclerView, false)
                 .positiveText(R.string.done)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {

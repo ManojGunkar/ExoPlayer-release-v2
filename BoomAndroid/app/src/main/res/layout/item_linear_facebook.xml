@@ -22,7 +22,7 @@
         android:orientation="vertical">
 
 
-        <com.globaldelight.boom.view.RegularTextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/native_ad_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
             android:textSize="15sp"
             android:textStyle="bold" />
 
-        <com.globaldelight.boom.view.RegularTextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/native_ad_body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
             android:textSize="15sp"
             android:textStyle="bold" />
 
-        <!--<com.globaldelight.boom.view.RegularTextView
+        <!--<android.support.v7.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:textStyle="bold"

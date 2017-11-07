@@ -23,7 +23,7 @@
             android:layout_marginRight="@dimen/card_header_recycler_sub_title_margine"
             android:gravity="center_vertical"
             android:orientation="vertical">
-                <com.globaldelight.boom.view.RegularTextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/header_sub_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
                     android:textStyle="normal"/>
 
                 <!-- Detail -->
-                <com.globaldelight.boom.view.RegularTextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/header_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

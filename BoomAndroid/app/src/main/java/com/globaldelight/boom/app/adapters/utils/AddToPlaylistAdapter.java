@@ -4,13 +4,13 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.view.RegularTextView;
 
 import java.util.ArrayList;
 import static android.view.LayoutInflater.from;
@@ -85,13 +85,13 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
     public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
         public View mainView;
-        public RegularTextView name, count;
+        public TextView name, count;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            name = (RegularTextView) itemView.findViewById(R.id.playlist_dialog_name);
-            count = (RegularTextView) itemView.findViewById(R.id.playlist_dialog_song_count);
+            name = itemView.findViewById(R.id.playlist_dialog_name);
+            count = itemView.findViewById(R.id.playlist_dialog_song_count);
         }
     }
 

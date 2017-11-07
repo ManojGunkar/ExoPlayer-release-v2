@@ -14,6 +14,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.player.AudioEffect;
+import com.globaldelight.boom.utils.Utils;
 
 /**
  * Created by adarsh on 11/07/17.
@@ -60,12 +61,8 @@ public class SpeakerDialog implements View.OnClickListener {
 
         updateSpeakers();
 
-        MaterialDialog dialog = new MaterialDialog.Builder(mActivity)
+        MaterialDialog dialog = Utils.createDialogBuilder(mActivity)
                 .title(R.string.speaker_dialog_title)
-                .backgroundColor(ContextCompat.getColor(mActivity, R.color.dialog_background))
-                .titleColor(ContextCompat.getColor(mActivity, R.color.dialog_title))
-                .positiveColor(ContextCompat.getColor(mActivity, R.color.dialog_submit_positive))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .customView(mSpeakerDialogPanel, false)
                 .positiveText(R.string.done)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {

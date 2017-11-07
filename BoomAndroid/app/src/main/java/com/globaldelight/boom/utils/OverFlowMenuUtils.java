@@ -88,8 +88,7 @@ public class OverFlowMenuUtils {
 
     private static void deletePlaylistDialog(final Activity activity, final String itemTitle, final long itemId) {
         String content = activity.getResources().getString(R.string.delete_dialog_txt, itemTitle);
-        new MaterialDialog.Builder(activity)
-                .title(R.string.delete_dialog_title)
+        Utils.createDialogBuilder(activity).title(R.string.delete_dialog_title)
                 .titleColor(ContextCompat.getColor(activity, R.color.dialog_title))
                 .content(content)
                 .contentColor(ContextCompat.getColor(activity, R.color.dialog_title))
@@ -155,15 +154,8 @@ public class OverFlowMenuUtils {
     }
 
     private static void renameDialog(final Activity activity, final String itemTitle, final long itemId) {
-        new MaterialDialog.Builder(activity)
+        Utils.createDialogBuilder(activity)
                 .title(R.string.rename)
-                .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
-                .titleColor(ContextCompat.getColor(activity, R.color.dialog_title))
-                .positiveColor(ContextCompat.getColor(activity, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(activity, R.color.dialog_submit_negative))
-                .widgetColor(ContextCompat.getColor(activity, R.color.dialog_widget))
-                .contentColor(ContextCompat.getColor(activity, R.color.dialog_content))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .cancelable(true)
                 .positiveText(activity.getResources().getString(R.string.done))
                 .negativeText(activity.getResources().getString(R.string.dialog_txt_cancel))

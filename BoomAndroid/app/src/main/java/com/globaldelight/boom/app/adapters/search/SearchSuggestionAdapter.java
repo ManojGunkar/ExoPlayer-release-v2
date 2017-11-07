@@ -5,9 +5,9 @@ import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.view.RegularTextView;
 
 /**
  * Created by Rahul Agarwal on 14-12-16.
@@ -23,7 +23,7 @@ public class SearchSuggestionAdapter extends SimpleCursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        RegularTextView textView=(RegularTextView) view.findViewById(R.id.searchItem);
+        TextView textView=(TextView) view.findViewById(R.id.searchItem);
         String title = cursor.getString(1);
         textView.setText(title);
     }

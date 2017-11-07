@@ -7,17 +7,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
@@ -25,16 +25,14 @@ import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
+import com.globaldelight.boom.app.share.ShareDialog;
 import com.globaldelight.boom.business.BusinessStrategy;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
-import com.globaldelight.boom.view.RegularButton;
-import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
 
 import static com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase.SKU_INAPP_ITEM;
 import static com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase.SKU_INAPP_ITEM_2;
 import static com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase.SKU_INAPP_ITEM_3;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
 
 /**
  * Created by Rahul Agarwal on 08-02-17.
@@ -48,9 +46,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     private Activity mActivity;
     public static final String ACTION_IN_APP_PURCHASE_SUCCESSFUL = "ACTION_INAPP_PURCHASE_SUCCESSFUL";
     private ProgressBar progressBar;
-    private RegularTextView mStoreShareTxt;
-    private RegularButton mStoreBuyBtn;
-    private RegularButton mClearButton;
+    private TextView mStoreShareTxt;
+    private Button mStoreBuyBtn;
+    private Button mClearButton;
     private boolean mUserPurchased = false; // to track if the user purchased
 
     //    ConnectivityReceiver.isNetworkAvailable(mActivity, true)
@@ -98,12 +96,12 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         intentFilter.addAction(ACTION_IN_APP_PURCHASE_SUCCESSFUL);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUpdateInAppItemReceiver, intentFilter);
 
-        mStoreShareTxt = (RegularTextView) rootView.findViewById(R.id.store_share_text);
+        mStoreShareTxt = rootView.findViewById(R.id.store_share_text);
         mStoreShareTxt.setOnClickListener(this);
-        mStoreBuyBtn = (RegularButton) rootView.findViewById(R.id.store_buyButton);
+        mStoreBuyBtn = rootView.findViewById(R.id.store_buyButton);
         mStoreBuyBtn.setOnClickListener(this);
 
-        mClearButton = (RegularButton) rootView.findViewById(R.id.store_clear_button);
+        mClearButton = rootView.findViewById(R.id.store_clear_button);
         mClearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,19 +114,15 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         progressBar.setVisibility(View.GONE);
         updateShareContent();
 
-        if (!BusinessStrategy.getInstance(getActivity()).isPurchased() ) {
-//            Not Purchased
+        if ( !InAppPurchase.getInstance(getContext()).isPurchased() ) {
+            normalStoreUI(getCurrentPrice());
             if (ConnectivityReceiver.isNetworkAvailable(mContext, true)) {
-                intiStoreStartup();
-            }else{
-                normalStoreUI(getCurrentPrice());
+                InAppPurchase.getInstance(getContext()).initInAppPurchase();
             }
         }else{
-//            Purchased
             purchasedStoreUI();
         }
     }
-
 
     @Override
     public void onStart() {
@@ -146,13 +140,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateInAppItemReceiver);
     }
 
-    private void intiStoreStartup() {
-        InAppPurchase.getInstance(getActivity()).initInAppPurchase();
-    }
-
     private void purchasedStoreUI(){
-        ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.after_purchase_store_page_header));
-        ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.after_purchase_store_page_buy_description));
+        ((TextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.after_purchase_store_page_header));
+        ((TextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.after_purchase_store_page_buy_description));
         mStoreBuyBtn.setText(getResources().getString(R.string.after_purchase_buy_button));
         mStoreShareTxt.setVisibility(View.GONE);
         mClearButton.setVisibility(View.VISIBLE);
@@ -160,9 +150,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
 
     private void normalStoreUI(String price){
-        ((RegularTextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.store_page_header));
-        ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_description);
-        ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_description);
+        ((TextView) rootView.findViewById(R.id.header_free_boomin)).setText(getResources().getString(R.string.store_page_header));
+        ((TextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_description);
+        ((TextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_description);
 
         if (null != price && price.length() > 0)
             mStoreBuyBtn.setText(getResources().getString(R.string.buy_button) + " @ " + price);
@@ -178,13 +168,10 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.store_share_text:
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Share_Opened_from_Store);
-                try {
-                    Utils.shareStart(mActivity, StoreFragment.this);
-                } catch (Exception e) {
-                }
+                new ShareDialog(getActivity()).show();
                 break;
             case R.id.store_buyButton:
-                if ( !BusinessStrategy.getInstance(getActivity()).isPurchased() ) {
+                if ( !InAppPurchase.getInstance(getContext()).isPurchased() ) {
                     if (ConnectivityReceiver.isNetworkAvailable(mActivity, true)) {
                         startInAppFlow();
                     }
@@ -205,10 +192,10 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateShareContent() {
-        if( BusinessStrategy.getInstance(mContext).isPurchased() ){
+        if( InAppPurchase.getInstance(getContext()).isPurchased() ){
             mStoreShareTxt.setVisibility(View.GONE);
         }else {
-            ((RegularTextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_share_description);
+            ((TextView) rootView.findViewById(R.id.store_buy_desription)).setText(R.string.store_page_buy_share_description);
             mStoreShareTxt.setVisibility(View.VISIBLE);
         }
     }

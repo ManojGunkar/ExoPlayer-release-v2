@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
@@ -18,7 +19,6 @@ import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
-import com.globaldelight.boom.view.RegularTextView;
 
 /**
  * Created by Rahul Agarwal on 8/9/2016.
@@ -153,26 +153,26 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
     }
 
     public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
-        public RegularTextView name, count, duration;
+        public TextView name, count, duration;
         public View art_overlay;
         public ImageView art_overlay_play;
         public LinearLayout menu;
 
-        public RegularTextView headerSubTitle, headerDetail;
+        public TextView headerSubTitle, headerDetail;
         ImageView mMore;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
-            art_overlay_play = (ImageView) itemView.findViewById(R.id.song_item_img_overlay_play);
+            art_overlay_play = itemView.findViewById(R.id.song_item_img_overlay_play);
             art_overlay = itemView.findViewById(R.id.song_item_img_overlay);
-            name = (RegularTextView) itemView.findViewById(R.id.album_item_name);
-            duration = (RegularTextView) itemView.findViewById(R.id.album_item_duration);
-            count = (RegularTextView) itemView.findViewById(R.id.album_item_count);
-            menu = (LinearLayout) itemView.findViewById(R.id.album_item_overflow_menu);
+            name = itemView.findViewById(R.id.album_item_name);
+            duration = itemView.findViewById(R.id.album_item_duration);
+            count = itemView.findViewById(R.id.album_item_count);
+            menu = itemView.findViewById(R.id.album_item_overflow_menu);
 
-            headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
-            headerDetail = (RegularTextView) itemView.findViewById(R.id.header_detail);
-            mMore = (ImageView) itemView.findViewById(R.id.recycler_header_menu);
+            headerSubTitle = itemView.findViewById(R.id.header_sub_title);
+            headerDetail = itemView.findViewById(R.id.header_detail);
+            mMore = itemView.findViewById(R.id.recycler_header_menu);
         }
     }
 }

@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/pop_up_overlay"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <LinearLayout
@@ -27,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/message_share"
-        android:layout_margin="5dp"
+        android:layout_margin="20dp"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
         android:textColor="@color/dialog_txt"
@@ -36,12 +37,14 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/pager_share"
         android:layout_width="match_parent"
-        android:layout_height="100dp" />
+        android:layout_height="50dp" />
 
-    <com.globaldelight.boom.view.onBoarding.CircleIndicator
-        android:id="@+id/indicator_share"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/indicator_home_tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp" />
+        app:tabBackground="@drawable/tab_selector"
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

@@ -6,18 +6,17 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.fragments.FavouriteListFragment;
 import com.globaldelight.boom.app.fragments.RecentPlayedFragment;
-import com.globaldelight.boom.app.fragments.ShareFragment;
 import com.globaldelight.boom.app.fragments.AboutFragment;
 import com.globaldelight.boom.app.fragments.SettingFragment;
 import com.globaldelight.boom.app.fragments.StoreFragment;
 import com.globaldelight.boom.app.fragments.UpNextListFragment;
-import com.globaldelight.boom.view.RegularTextView;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -47,7 +46,7 @@ public class ActivityContainer extends MasterActivity {
         if(container == R.string.store_title)
             toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
-        ((RegularTextView) findViewById(R.id.toolbar_txt)).setText(getResources().getString(container));
+        ((TextView) findViewById(R.id.toolbar_txt)).setText(getResources().getString(container));
 
         findViewById(R.id.fab).setVisibility(View.GONE);
 
@@ -87,12 +86,6 @@ public class ActivityContainer extends MasterActivity {
                 setVisibleMiniPlayer(false);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Store_Page_Opened_from_Drawer);
                 break;
-
-            case R.string.title_share:
-                mFragment =  new ShareFragment();
-                setVisibleMiniPlayer(false);
-                break;
-
 
             case R.string.header_about:
                 mFragment =  new AboutFragment();

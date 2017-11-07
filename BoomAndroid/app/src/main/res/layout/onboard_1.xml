@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/on_boarding_equaliser" />
 
-    <com.globaldelight.boom.view.RegularTextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/txt_title_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
         android:text="@string/onboard_screen_1_main_tx"
         android:textStyle="bold" />
 
-    <com.globaldelight.boom.view.RegularTextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/regularTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -19,7 +19,9 @@
         app:tabIndicatorHeight="@dimen/pager_tab_indicator_height"
         app:tabIndicatorColor="@color/colorAccent"
         app:tabTextColor="@color/music_tab_selected_color"
-        app:tabSelectedTextColor="@color/music_tab_normal_color"/>
+        app:tabSelectedTextColor="@color/music_tab_normal_color"
+        app:tabTextAppearance="@style/CustomTabBarStyle"
+        />
 
     <LinearLayout
         android:id="@+id/lib_add_container"

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_on_boarding_headphones" />
 
-    <com.globaldelight.boom.view.RegularTextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/txt_title_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
         android:textStyle="bold"
         android:text="@string/onboard_screen_2_main_tx"/>
 
-    <com.globaldelight.boom.view.RegularTextView
+    <android.support.v7.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/onboard_screen_2_sub_tx"

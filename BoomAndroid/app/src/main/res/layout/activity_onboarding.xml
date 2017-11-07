@@ -25,7 +25,7 @@
             android:orientation="horizontal"
             android:weightSum="1">
 
-            <com.globaldelight.boom.view.RegularTextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/txt_skip_onboard"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -38,11 +38,11 @@
             <com.globaldelight.boom.view.onBoarding.CircleIndicator
                 android:id="@+id/indicator_home"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="0.5"
                 android:padding="5dp" />
 
-            <com.globaldelight.boom.view.RegularTextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/txt_next_onboard"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/onboarding_bottom_txt_size" />
         </LinearLayout>
-        <com.globaldelight.boom.view.RegularButton
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_boomin_onboard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

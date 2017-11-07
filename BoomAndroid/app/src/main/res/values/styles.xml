@@ -7,15 +7,19 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
+        <item name="android:fontFamily">@font/titillium_web</item>
+        <item name="android:alertDialogTheme"></item>
     </style>
 
 
     <style name="WidgetTheme">
         <item name="android:textColorHint">@android:color/white</item>
+        <item name="android:fontFamily">@font/titillium_web</item>
     </style>
 
     <style name="PopupMenu" parent="android:Widget.Holo.Light.ListPopupWindow">
         <item name="android:popupBackground">#888888</item>
+        <item name="android:fontFamily">@font/titillium_web</item>
     </style>
 
 
@@ -46,6 +50,7 @@
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="android:background">@color/colorPrimary</item>
+        <item name="android:fontFamily">@font/titillium_web</item>
     </style>
 
     <style name="GenericProgressBackground" parent="android:Theme">
@@ -61,17 +66,18 @@
     </style>
 
     <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-
+        <item name="android:fontFamily">@font/titillium_web</item>
     </style>
 
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+        <item name="android:fontFamily">@font/titillium_web</item>
+    </style>
 
 
     <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:displayOptions">homeAsUp</item>
+        <item name="android:fontFamily">@font/titillium_web</item>
     </style>
 
 
@@ -93,6 +99,7 @@
         <item name="goIcon">@android:drawable/ic_menu_search</item>
         <item name="searchHintIcon">@android:drawable/ic_menu_search</item>
         <item name="android:width">10000dp</item>
+        <item name="android:fontFamily">@font/titillium_web</item>
     </style>
 
     <style name="ThemeToolbar" parent="Theme.AppCompat.Light">
@@ -100,6 +107,8 @@
         <item name="colorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@color/colorAccent</item>
         <item name="searchViewStyle">@style/MySearchViewStyle</item>
+        <item name="android:fontFamily">@font/titillium_web</item>
+
     </style>
 
     <style name="ExpandedTransparent">
@@ -122,11 +131,6 @@
 
         <!-- inactive track color (30% transparency) -->
         <item name="android:colorForeground">#ffffff</item>
-    </style>
-
-    <style name="MyCheckBox" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">@color/white</item>
-        <item name="colorControlActivated">@color/colorAccent</item>
     </style>
 
     <style name="TabTextAppearance" parent="Widget.Design.TabLayout">
@@ -181,5 +185,19 @@
     <style name="AdsTheme">
         <item name="android:background">@drawable/ads_layout_bg</item>
     </style>
+
+    <style name="BoomText">
+        <item name="android:fontFamily">@font/titillium_web</item>
+    </style>
+
+    <style name="NavigationViewStyle">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CustomTabBarStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/music_tab_selected_color</item>
+    </style>
+
 
 </resources>

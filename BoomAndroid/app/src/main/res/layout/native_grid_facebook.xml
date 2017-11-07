@@ -29,7 +29,7 @@
                 android:padding="5dp"
                 android:orientation="vertical">
 
-                <com.globaldelight.boom.view.RegularTextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/native_ad_title"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
@@ -42,7 +42,7 @@
                     android:textSize="@dimen/card_grid_item_sub_title"
                     android:textStyle="bold" />
 
-                <com.globaldelight.boom.view.RegularTextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/native_ad_body"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"

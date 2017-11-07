@@ -1,7 +1,6 @@
 package com.globaldelight.boom.business;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,10 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.GravityEnum;
@@ -28,14 +23,17 @@ import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
-import com.globaldelight.boom.app.fragments.ShareFragment;
 import com.globaldelight.boom.app.share.ShareDialog;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.player.AudioEffect;
+import com.globaldelight.boom.utils.Utils;
 
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
+
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SHARE_FAILED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SHARE_SUCCESS;
 
 /**
  * Created by adarsh on 13/07/17.
@@ -68,10 +66,10 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
-                case ShareFragment.ACTION_SHARE_SUCCESS:
+                case ACTION_SHARE_SUCCESS:
                     onShareSuccess();
                     break;
-                case ShareFragment.ACTION_SHARE_FAILED:
+                case ACTION_SHARE_FAILED:
                     onShareFailed();
                     break;
             }
@@ -118,8 +116,8 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         App.playbackManager().registerListener(this);
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ShareFragment.ACTION_SHARE_SUCCESS);
-        filter.addAction(ShareFragment.ACTION_SHARE_FAILED);
+        filter.addAction(ACTION_SHARE_SUCCESS);
+        filter.addAction(ACTION_SHARE_FAILED);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(mShareStatusReciever, filter);
 
         IntentFilter iapFilter = new IntentFilter();
@@ -127,10 +125,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         iapFilter.addAction(InAppPurchase.ACTION_IAP_SUCCESS);
         iapFilter.addAction(InAppPurchase.ACTION_IAP_FAILED);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(mIAPReceiver, iapFilter);
-
-        if ( !isPurchased() ) {
-            InAppPurchase.getInstance(mContext).initInAppPurchase();
-        }
+        InAppPurchase.getInstance(mContext).initInAppPurchase();
     }
 
 
@@ -326,7 +321,10 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     }
 
     public void onPurchaseFailed() {
-        // Do nothing
+        // Probably an attempt to hack the app.
+        if ( data.getState() == BusinessData.STATE_PURCHASED ) {
+            data.setState(BusinessData.STATE_LOCKED);
+        }
     }
 
 
@@ -353,11 +351,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     private void onShare() {
         if ( mCurrentActivity != null ) {
             new ShareDialog(mCurrentActivity).show();
-//            Intent intent = new Intent(mContext, ActivityContainer.class);
-//            intent.putExtra("container",R.string.title_share);
-//            mCurrentActivity.startActivity(intent);
-//            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.Share_Opened_from_Dialog);
-//
         }
     }
 
@@ -566,17 +559,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                 }
 
                 mAlertIsVisible = true;
-                MaterialDialog.Builder builder = new MaterialDialog.Builder(mCurrentActivity);
-                builder.backgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background))
-                        .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
-                        .negativeColor(ContextCompat.getColor(mContext, R.color.dialog_submit_negative))
-                        .widgetColor(ContextCompat.getColor(mContext, R.color.dialog_widget))
-                        .buttonsGravity(GravityEnum.CENTER)
-                        .contentColor(ContextCompat.getColor(mContext, R.color.dialog_content))
+                MaterialDialog.Builder builder = Utils.createDialogBuilder(mCurrentActivity);
+                builder.buttonsGravity(GravityEnum.CENTER)
                         .content(message)
                         .contentGravity(GravityEnum.CENTER)
                         .canceledOnTouchOutside(false)
-                        .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
                         .titleGravity(GravityEnum.CENTER)
                         .title(title);
 
