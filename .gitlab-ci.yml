@@ -36,5 +36,8 @@ deploy_project:
     - ssh -t adarsh@fs.globaldelight.com DEPLOY_SERVER_PATH=$DEPLOY_SERVER_PATH DEPLOY_DIR=$DEPLOY_DIR 'bash -s' < pre_deploy.sh
     - ssh -t adarsh@fs.globaldelight.com "mkdir -p $DEPLOY_DIR/Build_$BUILD_NUMBER"
     - scp "$BUILD_DIR/$APK_NAME" "adarsh@fs.globaldelight.com:$DEPLOY_DIR/Build_$BUILD_NUMBER/$APK_NAME"
+    - scp "$BUILD_DIR/mapping.txt" "adarsh@fs.globaldelight.com:$DEPLOY_DIR/Build_$BUILD_NUMBER/mapping.txt"
+    - scp "$BUILD_DIR/seeds.txt" "adarsh@fs.globaldelight.com:$DEPLOY_DIR/Build_$BUILD_NUMBER/seeds.txt"
+
   only:
     - master
