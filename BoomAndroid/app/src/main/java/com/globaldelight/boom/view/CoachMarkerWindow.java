@@ -11,9 +11,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.view.RegularTextView;
 
 public class CoachMarkerWindow {
 
@@ -28,7 +28,7 @@ public class CoachMarkerWindow {
     public static final int DRAW_NORMAL_BOTTOM = 9;
 
     private View contentView;
-    private RegularTextView mInfoText;
+    private TextView mInfoText;
     private ImageView mImageArrow;
     private Context ctx;
     private PopupWindow tipWindow;
@@ -64,8 +64,8 @@ public class CoachMarkerWindow {
                 break;
         }
         contentView = inflater.inflate(layout, null);
-        mInfoText = (RegularTextView) contentView.findViewById(R.id.tooltip_text);
-        mImageArrow = (ImageView) contentView.findViewById(R.id.tooltip_nav_up);
+        mInfoText = contentView.findViewById(R.id.tooltip_text);
+        mImageArrow = contentView.findViewById(R.id.tooltip_nav_up);
         mInfoText.setText(text);
     }
 

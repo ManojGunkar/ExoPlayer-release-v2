@@ -23,6 +23,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -89,24 +90,6 @@ public class Utils {
         return metrics.heightPixels;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static Bitmap getBitmapOfVector(Context context, @DrawableRes int id, int height, int width) {
-        Drawable vectorDrawable = context.getDrawable(id);
-        if (vectorDrawable != null)
-            vectorDrawable.setBounds(0, 0, width, height);
-        Bitmap bm = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bm);
-        if (vectorDrawable != null)
-            vectorDrawable.draw(canvas);
-        return bm;
-    }
-
-    public static int pxToDp(Context context, int px) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return dp;
-    }
-
     /**
      * get uri to any resource type
      *
@@ -153,15 +136,8 @@ public class Utils {
                 .inflate(R.layout.addtoplaylist, null);
         rv.setLayoutManager(new LinearLayoutManager(context));
         rv.setAdapter(adapter);
-        MaterialDialog dialog = new MaterialDialog.Builder(context)
+        MaterialDialog dialog = Utils.createDialogBuilder(context)
                 .title(R.string.menu_add_boom_playlist)
-                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                .titleColor(ContextCompat.getColor(context, R.color.dialog_title))
-                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
-                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .customView(rv, false)
                 .positiveText(R.string.new_playlist)
                 .negativeText(R.string.dialog_txt_cancel)
@@ -189,15 +165,8 @@ public class Utils {
 
     public static void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
         final Context context = activity;
-        new MaterialDialog.Builder(context)
+        Utils.createDialogBuilder(activity)
                 .title(R.string.new_playlist)
-                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                .titleColor(ContextCompat.getColor(context, R.color.dialog_title))
-                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
-                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
                 .input(context.getResources().getString(R.string.new_playlist), null, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
@@ -210,11 +179,8 @@ public class Utils {
                             MixPanelAnalyticHelper.getInstance(context).getPeople().set(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST, input.toString());
                         }
                     }
-                }).show();
-    }
-
-    public static void newPlaylistDialog(Activity activity, IMediaItemCollection songs, String fromPlaylist) {
-        newPlaylistDialog(activity,songs.getMediaElement(), fromPlaylist);
+                })
+                .show();
     }
 
     public static boolean isPhone(Activity activity){
@@ -257,14 +223,6 @@ public class Utils {
         builder.show();
     }
 
-    public static int getStatusBarHeight(Context context){
-        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            return context.getResources().getDimensionPixelSize(resourceId);
-        }
-        return 0;
-    }
-
     public static void shareStart(Context context) {
         if(ConnectivityReceiver.isNetworkAvailable(context, true)) {
             try {
@@ -277,23 +235,6 @@ public class Utils {
                 shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
                 shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
                 context.startActivity(Intent.createChooser(shareIntent, "share"));
-            } catch (Exception e) {
-            }
-        }
-    }
-
-    public static void shareStart(Context context, Fragment fragment) {
-        if(ConnectivityReceiver.isNetworkAvailable(context, true)) {
-            try {
-                Intent shareIntent = new Intent(
-                        android.content.Intent.ACTION_SEND);
-                shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getResources().getString(R.string.app_name));
-                String sAux = "\nDownload Boom Music Player\n\n";
-                sAux = sAux + "https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n";
-                shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
-                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-                fragment.startActivityForResult(Intent.createChooser(shareIntent, "share"), SHARE_COMPLETE);
             } catch (Exception e) {
             }
         }
@@ -344,155 +285,16 @@ public class Utils {
         }
     }
 
-    public static String getDeviceDensity(Activity context){
-        DisplayMetrics metrics = new DisplayMetrics();
-        context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        switch(metrics.densityDpi){
-            case DisplayMetrics.DENSITY_LOW:
-                return "LDP";
-            case DisplayMetrics.DENSITY_MEDIUM:
-                return "MDP";
-            case DisplayMetrics.DENSITY_HIGH:
-                return "HDP";
-            case DisplayMetrics.DENSITY_XHIGH:
-                return "XHDP";
-            case DisplayMetrics.DENSITY_XXHIGH:
-                return "XXHDP";
-            case DisplayMetrics.DENSITY_XXXHIGH:
-                return "XXXHDP";
-        }
-        return "Defeult";
-    }
-
-    public static void SharePopup(final Context context) {
-        new MaterialDialog.Builder(context)
+    public static MaterialDialog.Builder createDialogBuilder(Context context) {
+        return new MaterialDialog.Builder(context)
+                .titleColor(ContextCompat.getColor(context, R.color.dialog_title))
+                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
                 .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
                 .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
                 .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
                 .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .negativeText(R.string.share_button)
-                .positiveText(R.string.continue_button)
-                .customView(R.layout.share_popup, false)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                            FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Dialog);
-                        FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Share_Opened_from_Dialog);
+                .typeface(ResourcesCompat.getFont(context, R.font.titilliumweb_semibold), ResourcesCompat.getFont(context, R.font.titilliumweb_regular));
 
-                        shareStart(context);
-                    }
-                })
-                .show();
-    }
-
-    public static void EmailPopup(final Context context) {
-            new MaterialDialog.Builder(context)
-                    .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                    .title(R.string.sub_email_header)
-                    .titleColor(ContextCompat.getColor(context, R.color.dialog_title))
-                    .icon(context.getDrawable(R.drawable.ic_icon_for_popup))
-                    .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                    .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
-                    .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
-                    .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                    .positiveText(R.string.submit)
-                    .autoDismiss(false)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                    .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                    .inputType(TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
-                    .input(context.getResources().getString(R.string.email_text_hint), null, new MaterialDialog.InputCallback() {
-                        @Override
-                        public void onInput(MaterialDialog dialog, CharSequence input) {
-                            if (!input.toString().matches("") && ConnectivityReceiver.isNetworkAvailable(context, true)) {
-                            }
-                        }
-                    }).show();
-
-    }
-
-    public static void ExpirePopup(final Context context) {
-        new MaterialDialog.Builder(context)
-                .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
-                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .negativeText(R.string.buy_button)
-                .positiveText(R.string.continue_button)
-                .customView(R.layout.expire_pop_up, false)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                EmailPopup(context);
-                            }
-                        }, 5000);
-                        dialog.dismiss();
-
-                    }
-                })
-                .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                            jumpToStore(context);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                EmailPopup(context);
-                            }
-                        }, 5000);
-                    }
-                })
-                .show();
-    }
-
-    public static void InternetPopup(final Activity activity){
-        new MaterialDialog.Builder(activity)
-                .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
-                .positiveColor(ContextCompat.getColor(activity, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(activity, R.color.dialog_submit_negative))
-                .widgetColor(ContextCompat.getColor(activity, R.color.dialog_widget))
-                .contentColor(ContextCompat.getColor(activity, R.color.dialog_content))
-                .negativeText(R.string.buy_button)
-                .positiveText(R.string.settings_button)
-                .customView(R.layout.off_line_pop_up, false)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        activity.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        jumpToStore(activity);
-                    }
-                })
-                .show();
-    }
-
-    public static void jumpToStore(Activity activity) {
-        Intent intent = new Intent(activity, ActivityContainer.class);
-        intent.putExtra("container", R.string.store_title);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        activity.startActivity(intent);
     }
 
     public static int SMALL_IMAGE_SIZE = -1;

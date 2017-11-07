@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
-        <com.globaldelight.boom.view.RegularTextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/track_sub_title"
@@ -33,7 +33,7 @@
         android:orientation="vertical"
         android:layout_gravity="center"
         android:gravity="center">
-        <com.globaldelight.boom.view.RegularTextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/track_sub_title"
@@ -70,7 +70,7 @@
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
-                <com.globaldelight.boom.view.RegularTextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/tvHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
                     android:textSize="@dimen/card_grid_item_sub_title"
                     android:textStyle="bold" />
 
-                <com.globaldelight.boom.view.RegularTextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/tvAdvertiser"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <com.globaldelight.boom.view.RegularTextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/tvDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
             android:background="#00FFFFFF"
             android:scaleType="centerCrop" />
 
-        <com.globaldelight.boom.view.RegularButton
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/btnAction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

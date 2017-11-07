@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
@@ -26,7 +27,6 @@ import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.PlayerUtils;
-import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.ArrayList;
@@ -272,18 +272,18 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     }
 
     public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
-        public RegularTextView title, subTitle;
+        public TextView title, subTitle;
         public ImageView defaultImg, artImg1, artImg2, artImg3, artImg4;
         public View gridBottomBg, grid_menu;
         public TableLayout artTable;
         public FrameLayout imgPanel;
-        public RegularTextView headerSubTitle, headerDetail;
+        public TextView headerSubTitle, headerDetail;
         ImageView mMore;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
-            title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
-            subTitle = (RegularTextView) itemView.findViewById(R.id.card_grid_sub_title);
+            title = (TextView) itemView.findViewById(R.id.card_grid_title);
+            subTitle = (TextView) itemView.findViewById(R.id.card_grid_sub_title);
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artImg1 = (ImageView) itemView.findViewById(R.id.card_grid_art_img1);
             artImg2 = (ImageView) itemView.findViewById(R.id.card_grid_art_img2);
@@ -294,8 +294,8 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
             grid_menu = itemView.findViewById(R.id.card_grid_menu);
             imgPanel = (FrameLayout) itemView.findViewById(R.id.card_grid_img_panel);
 
-            headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
-            headerDetail = (RegularTextView) itemView.findViewById(R.id.header_detail);
+            headerSubTitle = (TextView) itemView.findViewById(R.id.header_sub_title);
+            headerDetail = (TextView) itemView.findViewById(R.id.header_detail);
             mMore = (ImageView) itemView.findViewById(R.id.recycler_header_menu);
         }
 

@@ -10,9 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
@@ -22,14 +24,10 @@ import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue;
-import com.globaldelight.boom.view.RegularButton;
-import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.Utils;
-import java.io.File;
 
 import static android.view.LayoutInflater.from;
-import static com.globaldelight.boom.utils.Utils.dpToPx;
 
 /**
  * Created by Rahul Agarwal on 8/8/2016.
@@ -217,35 +215,35 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
 
 
         //For Header View
-        public RegularTextView headerText;
-        public RegularTextView buttonClrear;
+        public TextView headerText;
+        public TextView buttonClrear;
 
         //For Song View
-        public RegularTextView name, artistName;//added by nidhin
+        public TextView name, artistName;//added by nidhin
         public View mainView, art_overlay;
         public ImageView img, art_overlay_play;
         public ProgressBar loadCloud;
 
         public LinearLayout imgHandle;
-        public RegularButton undoButton;
+        public Button undoButton;
         /*functions to implement swipe delete action-made for multi delete*/
         public LinearLayout layout;
 
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            headerText = (RegularTextView) itemView.findViewById(R.id.queue_header_text);
+            headerText = (TextView) itemView.findViewById(R.id.queue_header_text);
 
-            buttonClrear = (RegularTextView) itemView.findViewById(R.id.btn_clear);
+            buttonClrear = (TextView) itemView.findViewById(R.id.btn_clear);
             layout = (LinearLayout) itemView.findViewById(R.id.viewcontent);
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
             art_overlay_play = (ImageView) itemView.findViewById(R.id.song_item_img_overlay_play);
             art_overlay = itemView.findViewById(R.id.song_item_img_overlay);
             loadCloud = (ProgressBar) itemView.findViewById(R.id.load_cloud );
             imgHandle = (LinearLayout) itemView.findViewById(R.id.queue_item_handle);
-            name = (RegularTextView) itemView.findViewById(R.id.queue_item_name);
-            artistName = (RegularTextView) itemView.findViewById(R.id.queue_item_artist);
-            undoButton = (RegularButton) itemView.findViewById(R.id.undo_button);
+            name = (TextView) itemView.findViewById(R.id.queue_item_name);
+            artistName = (TextView) itemView.findViewById(R.id.queue_item_artist);
+            undoButton = (Button) itemView.findViewById(R.id.undo_button);
         }
     }
 }

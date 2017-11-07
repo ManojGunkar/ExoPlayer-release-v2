@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
@@ -20,7 +21,6 @@ import com.globaldelight.boom.app.activities.AlbumSongListActivity;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
@@ -259,7 +259,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
 
     public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public RegularTextView title, subTitle;
+        public TextView title, subTitle;
         public ImageView defaultImg, artImg1, artImg2, artImg3, artImg4;
         public View gridBottomBg, grid_menu, mainView;
         public TableLayout artTable;
@@ -269,8 +269,8 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
             super(itemView);
             mainView = itemView;
 
-            title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
-            subTitle = (RegularTextView) itemView.findViewById(R.id.card_grid_sub_title);
+            title = (TextView) itemView.findViewById(R.id.card_grid_title);
+            subTitle = (TextView) itemView.findViewById(R.id.card_grid_sub_title);
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artImg1 = (ImageView) itemView.findViewById(R.id.card_grid_art_img1);
             artImg2 = (ImageView) itemView.findViewById(R.id.card_grid_art_img2);

@@ -10,7 +10,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.globaldelight.boom.view.RegularTextView
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/title_headphone_type"
@@ -35,7 +35,7 @@
                 android:layout_marginTop="@dimen/setting_item_title_margine_top"
                 android:background="@color/setting_separator" />
 
-            <com.globaldelight.boom.view.RegularTextView
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/cloud_services"
@@ -67,7 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <com.globaldelight.boom.view.RegularTextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/dropbox_settings_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:gravity="center_vertical|left"/>
-                    <com.globaldelight.boom.view.RegularTextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/dropbox_settings_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -113,7 +113,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <com.globaldelight.boom.view.RegularTextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/google_drive_settings_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
                         android:textSize="@dimen/settings_item_title_txt"
                         android:textStyle="normal"
                         android:gravity="center_vertical|left"/>
-                    <com.globaldelight.boom.view.RegularTextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/google_drive_settings_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -152,7 +152,7 @@
                 android:layout_marginTop="@dimen/setting_item_title_margine_top"
                 android:layout_marginLeft="@dimen/setting_item_title_margine_left"
                 android:layout_marginRight="@dimen/setting_item_title_margine_left">
-                <com.globaldelight.boom.view.RegularTextView
+                <android.support.v7.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/title_sleep_timer"
@@ -160,7 +160,7 @@
                     android:textStyle="bold"
                     android:textSize="@dimen/settings_item_title_txt" />
 
-                <com.globaldelight.boom.view.RegularTextView
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/seeting_sleep_timer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -186,7 +186,7 @@
                 android:layout_marginTop="@dimen/setting_item_title_margine_top"
                 android:layout_marginLeft="@dimen/setting_item_title_margine_left"
                 android:layout_marginRight="@dimen/setting_item_title_margine_left">
-                <com.globaldelight.boom.view.RegularTextView
+                <android.support.v7.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/header_about"
@@ -211,7 +211,7 @@
                 android:layout_marginLeft="@dimen/setting_item_title_margine_left"
                 android:layout_marginRight="@dimen/setting_item_title_margine_left"
                 android:layout_marginBottom="@dimen/setting_item_title_margine_top">
-                <com.globaldelight.boom.view.RegularTextView
+                <android.support.v7.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/title_feedback"

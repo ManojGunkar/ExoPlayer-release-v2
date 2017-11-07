@@ -5,7 +5,7 @@
     android:background="@color/upnext_header_background"
     android:orientation="vertical">
 
-    <com.globaldelight.boom.view.RegularTextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/queue_header_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,7 +17,7 @@
         android:textSize="@dimen/play_queue_header_txt"
         android:textStyle="bold" />
 
-    <com.globaldelight.boom.view.RegularTextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/btn_clear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

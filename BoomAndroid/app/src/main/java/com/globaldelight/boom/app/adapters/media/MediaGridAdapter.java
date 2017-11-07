@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TableLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
@@ -26,7 +27,6 @@ import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.Utils;
-import com.globaldelight.boom.view.RegularTextView;
 
 import java.util.ArrayList;
 
@@ -211,7 +211,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public RegularTextView title, subTitle;
+        public TextView title, subTitle;
         public ImageView mediaImageView;
         public View overflowMenu, mainView;
         public TableLayout artTable;
@@ -220,8 +220,8 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
         public ViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
-            subTitle = (RegularTextView) itemView.findViewById(R.id.card_grid_sub_title);
+            title = (TextView) itemView.findViewById(R.id.card_grid_title);
+            subTitle = (TextView) itemView.findViewById(R.id.card_grid_sub_title);
             mediaImageView = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
             overflowMenu = itemView.findViewById(R.id.card_grid_menu);

@@ -32,9 +32,9 @@ import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.app.activities.WebViewActivity;
 import com.globaldelight.boom.app.adapters.utils.HeadPhoneItemAdapter;
-import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
+import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.helpers.DropBoxAPI;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boom.utils.sleepTimerUtils.TimerUtils;
@@ -46,7 +46,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class SettingFragment extends Fragment implements View.OnClickListener {
     ScrollView rootView;
-    RegularTextView sleepTimerTxt;
+    TextView sleepTimerTxt;
     private TextView googleDriveSettingsTitle;
     private TextView googleDriveSettingsDescription;
     private TextView dropboxSettingsTitle;
@@ -115,26 +115,26 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initViews() {
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.headset_recycler) ;
-        LinearLayout dropbox = (LinearLayout) rootView.findViewById(R.id.setting_dropbox_panel);
+        RecyclerView recyclerView = rootView.findViewById(R.id.headset_recycler) ;
+        LinearLayout dropbox = rootView.findViewById(R.id.setting_dropbox_panel);
         dropbox.setOnClickListener(this);
-        LinearLayout googleDrive = (LinearLayout) rootView.findViewById(R.id.setting_google_drive_panel);
+        LinearLayout googleDrive = rootView.findViewById(R.id.setting_google_drive_panel);
         googleDrive.setOnClickListener(this);
-        sleepTimerTxt = (RegularTextView) rootView.findViewById(R.id.seeting_sleep_timer);
+        sleepTimerTxt = rootView.findViewById(R.id.seeting_sleep_timer);
 
         sleepTimerTxt.setOnClickListener(this);
-        LinearLayout sleepTimerPanel = (LinearLayout) rootView.findViewById(R.id.seeting_sleep_timer_panel);
+        LinearLayout sleepTimerPanel = rootView.findViewById(R.id.seeting_sleep_timer_panel);
         sleepTimerPanel.setOnClickListener(this);
-        LinearLayout aboutPanel = (LinearLayout) rootView.findViewById(R.id.about_panel);
+        LinearLayout aboutPanel = rootView.findViewById(R.id.about_panel);
         aboutPanel.setOnClickListener(this);
-        LinearLayout feedbackPanel = (LinearLayout) rootView.findViewById(R.id.feedback_panel);
+        LinearLayout feedbackPanel = rootView.findViewById(R.id.feedback_panel);
         feedbackPanel.setOnClickListener(this);
 
 
-        googleDriveSettingsTitle = (TextView)rootView.findViewById(R.id.google_drive_settings_title);
-        googleDriveSettingsDescription = (TextView)rootView.findViewById(R.id.google_drive_settings_description);
-        dropboxSettingsTitle = (TextView)rootView.findViewById(R.id.dropbox_settings_title);
-        dropboxSettingsDescription = (TextView)rootView.findViewById(R.id.dropbox_settings_description);
+        googleDriveSettingsTitle = rootView.findViewById(R.id.google_drive_settings_title);
+        googleDriveSettingsDescription = rootView.findViewById(R.id.google_drive_settings_description);
+        dropboxSettingsTitle = rootView.findViewById(R.id.dropbox_settings_title);
+        dropboxSettingsDescription = rootView.findViewById(R.id.dropbox_settings_description);
 
         setHeadsetList(recyclerView);
     }
@@ -348,14 +348,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
 
     private void showAccountChangeDialog(final Runnable action) {
-        new MaterialDialog.Builder(mActivity)
-                .backgroundColor(ContextCompat.getColor(mActivity, R.color.dialog_background))
-                .titleColor(ContextCompat.getColor(mActivity, R.color.dialog_title))
-                .positiveColor(ContextCompat.getColor(mActivity, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(mActivity, R.color.dialog_submit_negative))
-                .widgetColor(ContextCompat.getColor(mActivity, R.color.dialog_widget))
+        Utils.createDialogBuilder(mActivity)
                 .content(R.string.settings_change_account_message)
-                .contentColor(ContextCompat.getColor(mActivity, R.color.dialog_content))
                 .negativeText(R.string.dialog_txt_cancel)
                 .positiveText(R.string.conitnue_with_acc_change)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
@@ -27,7 +28,6 @@ import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.fragments.FavouriteListFragment;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.Utils;
-import com.globaldelight.boom.view.RegularTextView;
 
 import java.util.ArrayList;
 
@@ -185,7 +185,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
 
     public static class SongViewHolder extends RecyclerView.ViewHolder {
 
-        public RegularTextView title, description;
+        public TextView title, description;
         public View mainView, overlay;
         public ImageView img, overlayPlay;
         public LinearLayout menu;
@@ -199,9 +199,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
             overlayPlay = (ImageView) itemView.findViewById(R.id.song_item_img_overlay_play);
             overlay = itemView.findViewById(R.id.song_item_img_overlay);
             progressIndicator = (ProgressBar) itemView.findViewById(R.id.load_cloud );
-            title = (RegularTextView) itemView.findViewById(R.id.song_item_name);
+            title = (TextView) itemView.findViewById(R.id.song_item_name);
             menu = (LinearLayout) itemView.findViewById(R.id.song_item_overflow_menu);
-            description = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
+            description = (TextView) itemView.findViewById(R.id.song_item_artist);
         }
     }
 }

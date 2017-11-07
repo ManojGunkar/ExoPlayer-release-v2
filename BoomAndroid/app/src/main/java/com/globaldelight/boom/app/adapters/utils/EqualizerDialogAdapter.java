@@ -2,17 +2,14 @@ package com.globaldelight.boom.app.adapters.utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.view.RegularTextView;
 
 import java.util.List;
 
@@ -77,13 +74,13 @@ public class EqualizerDialogAdapter extends RecyclerView.Adapter<EqualizerDialog
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        public RegularTextView mEqName;
+        public TextView mEqName;
         public ImageView mEqIcon;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mEqName = (RegularTextView) itemView.findViewById(R.id.eq_name);
-            mEqIcon = (ImageView) itemView.findViewById(R.id.eq_icon);
+            mEqName = itemView.findViewById(R.id.eq_name);
+            mEqIcon = itemView.findViewById(R.id.eq_icon);
         }
     }
 

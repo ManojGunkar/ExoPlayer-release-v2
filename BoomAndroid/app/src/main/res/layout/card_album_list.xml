@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="66.2"
             android:orientation="vertical">
-            <com.globaldelight.boom.view.RegularTextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/album_item_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
                 android:textColor="@color/track_selection"
                 android:textSize="@dimen/album_track_title_size"  />
 
-            <com.globaldelight.boom.view.RegularTextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/album_item_duration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

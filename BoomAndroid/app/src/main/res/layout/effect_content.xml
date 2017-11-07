@@ -15,7 +15,7 @@
         android:gravity="center"
         android:padding="5dp">
 
-        <com.globaldelight.boom.view.RegularTextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/effect_switch_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,6 +60,7 @@
             android:textColor="@color/effect_checkbox_text"
             android:textSize="@dimen/effect_title_size"
             android:textStyle="normal"
+            android:fontFamily="@font/titillium_web"
             />
         <!--
         <ImageView
@@ -71,7 +72,7 @@
             android:paddingRight="5dp"
             android:src="@drawable/three_d_state" />
 
-        <com.globaldelight.boom.view.RegularTextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/three_surround_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -94,7 +95,8 @@
             android:src="@drawable/three_d_setup" />
     </RelativeLayout>
 
-    <com.globaldelight.boom.view.CustomToggleButton android:id="@+id/fullbass_chk"
+    <com.globaldelight.boom.view.CustomToggleButton
+        android:id="@+id/fullbass_chk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/fullbass_background"
@@ -111,7 +113,9 @@
         android:textSize="18sp"
         android:textStyle="normal"
         android:textOn="@string/fullbass"
-        android:textOff="@string/fullbass" />
+        android:textOff="@string/fullbass"
+        android:fontFamily="@font/titillium_web"
+        />
 
     <View
         android:layout_width="match_parent"
@@ -130,36 +134,8 @@
         android:text="@string/intensity"
         android:textColor="@color/effect_checkbox_text"
         android:textSize="@dimen/effect_title_size"
-        android:textStyle="normal" />
+        android:textStyle="normal"
     />
-    <!--
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp">
-
-        <ImageView
-            android:id="@+id/intensity_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:paddingRight="5dp"
-            android:src="@drawable/intensity_state" />
-
-        <com.globaldelight.boom.view.RegularTextView
-            android:id="@+id/intensity_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/intensity_btn"
-            android:padding="5dp"
-            android:text="@string/intensity"
-            android:textColor="@color/effects_text_state"
-            android:textSize="@dimen/effect_title_size"
-            android:textStyle="normal" />
-    </RelativeLayout>
-    -->
 
     <com.globaldelight.boom.view.NegativeSeekBar
         android:id="@+id/intensity_seek"
@@ -200,28 +176,6 @@
             android:textStyle="normal" />
             />
 
-        <!--
-        <ImageView
-            android:id="@+id/equalizer_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:paddingRight="5dp"
-            android:src="@drawable/equalizer_state" />
-
-        <com.globaldelight.boom.view.RegularTextView
-            android:id="@+id/equalizer_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/eq_dialog_panel"
-            android:layout_toEndOf="@+id/equalizer_btn"
-            android:padding="5dp"
-            android:text="@string/equalizer"
-            android:textColor="@color/effects_text_state"
-            android:textSize="@dimen/effect_title_size"
-            android:textStyle="normal" />
-           -->
 
         <LinearLayout
             android:id="@+id/eq_dialog_panel"
@@ -241,7 +195,7 @@
                 android:layout_weight="0"
                 android:tint="@color/effects_text_state" />
 
-            <com.globaldelight.boom.view.RegularTextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/selected_eq_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

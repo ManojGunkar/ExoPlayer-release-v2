@@ -17,7 +17,7 @@
         android:paddingLeft="@dimen/player_seek_margin"
         android:paddingRight="@dimen/player_seek_margin">
 
-        <com.globaldelight.boom.view.RegularTextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/played_time"
             android:layout_width="35sp"
             android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             android:layout_weight="1"
             android:progress="100" />
 
-        <com.globaldelight.boom.view.RegularTextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/remain_time"
             android:layout_width="35sp"
             android:layout_height="wrap_content"

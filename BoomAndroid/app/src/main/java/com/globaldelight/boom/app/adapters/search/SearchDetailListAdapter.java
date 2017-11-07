@@ -20,6 +20,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
@@ -32,7 +33,6 @@ import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.app.adapters.search.utils.SearchResult;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
-import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.R;
@@ -307,15 +307,15 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
 
         //For Header View
         public View headerHolder;
-        public RegularTextView headerText, headerCount;
+        public TextView headerText, headerCount;
 
         //For Song Lists
-        public RegularTextView name, artistName;
+        public TextView name, artistName;
         public ImageView img, art_overlay_play;
         public LinearLayout menu;
 
         //        For Albums grid
-        public RegularTextView title, subTitle;
+        public TextView title, subTitle;
         public ImageView defaultImg;
         public View gridBottomBg, grid_menu;
         public TableLayout artTable;
@@ -326,18 +326,18 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             mainView = itemView;
 
             headerHolder = itemView.findViewById(R.id.search_header_holder);
-            headerText = (RegularTextView) itemView.findViewById(R.id.search_header_text);
-            headerCount = (RegularTextView) itemView.findViewById(R.id.search_header_count);
+            headerText = (TextView) itemView.findViewById(R.id.search_header_text);
+            headerCount = (TextView) itemView.findViewById(R.id.search_header_count);
 
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
-            name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
+            name = (TextView) itemView.findViewById(R.id.song_item_name);
             menu = (LinearLayout) itemView.findViewById(R.id.song_item_overflow_menu);
-            artistName = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
+            artistName = (TextView) itemView.findViewById(R.id.song_item_artist);
             art_overlay_play = (ImageView) itemView.findViewById(R.id.song_item_img_overlay_play);
             art_overlay = itemView.findViewById(R.id.song_item_img_overlay);
 
-            title = (RegularTextView) itemView.findViewById(R.id.card_grid_title);
-            subTitle = (RegularTextView) itemView.findViewById(R.id.card_grid_sub_title);
+            title = (TextView) itemView.findViewById(R.id.card_grid_title);
+            subTitle = (TextView) itemView.findViewById(R.id.card_grid_sub_title);
             defaultImg = (ImageView) itemView.findViewById(R.id.card_grid_default_img);
             artTable = (TableLayout)itemView.findViewById(R.id.card_grid_art_table);
             gridBottomBg = itemView.findViewById(R.id.card_grid_bottom);

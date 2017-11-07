@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:padding="10dp"
     android:layout_height="wrap_content">
-    <com.globaldelight.boom.view.RegularTextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/played_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         android:layoutDirection="inherit"
         android:progress="100"/>
 
-    <com.globaldelight.boom.view.RegularTextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/remain_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

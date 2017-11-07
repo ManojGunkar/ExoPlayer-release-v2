@@ -26,6 +26,7 @@ import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
 import com.globaldelight.boom.app.share.ShareDialog;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.player.AudioEffect;
+import com.globaldelight.boom.utils.Utils;
 
 import java.util.Date;
 import java.util.Observable;
@@ -558,17 +559,11 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                 }
 
                 mAlertIsVisible = true;
-                MaterialDialog.Builder builder = new MaterialDialog.Builder(mCurrentActivity);
-                builder.backgroundColor(ContextCompat.getColor(mContext, R.color.dialog_background))
-                        .positiveColor(ContextCompat.getColor(mContext, R.color.dialog_submit_positive))
-                        .negativeColor(ContextCompat.getColor(mContext, R.color.dialog_submit_negative))
-                        .widgetColor(ContextCompat.getColor(mContext, R.color.dialog_widget))
-                        .buttonsGravity(GravityEnum.CENTER)
-                        .contentColor(ContextCompat.getColor(mContext, R.color.dialog_content))
+                MaterialDialog.Builder builder = Utils.createDialogBuilder(mCurrentActivity);
+                builder.buttonsGravity(GravityEnum.CENTER)
                         .content(message)
                         .contentGravity(GravityEnum.CENTER)
                         .canceledOnTouchOutside(false)
-                        .titleColor(ContextCompat.getColor(mContext, R.color.dialog_title))
                         .titleGravity(GravityEnum.CENTER)
                         .title(title);
 

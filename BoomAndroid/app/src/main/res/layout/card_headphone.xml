@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/img_pager_item"/>
 
-    <com.globaldelight.boom.view.RegularTextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/img_pager_item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

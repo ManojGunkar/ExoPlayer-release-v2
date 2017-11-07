@@ -11,11 +11,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
-import com.globaldelight.boom.view.RegularButton;
 
 /**
  * Created by Rahul Agarwal on 08-02-17.
@@ -24,7 +24,7 @@ import com.globaldelight.boom.view.RegularButton;
 public class AboutFragment extends Fragment {
 
     View rootView;
-    RegularButton rateButton;
+    Button rateButton;
     Activity mActivity;
 
     @Override
@@ -51,7 +51,7 @@ public class AboutFragment extends Fragment {
     }
 
     private void initViews() {
-        rateButton = (RegularButton) rootView.findViewById(R.id.btn_rate_app);
+        rateButton =  rootView.findViewById(R.id.btn_rate_app);
         rateButton.setTransformationMethod(null);
         rateButton.setOnClickListener(new View.OnClickListener() {
             @Override

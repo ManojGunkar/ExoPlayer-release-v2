@@ -5,9 +5,6 @@ import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
@@ -30,21 +28,16 @@ import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.app.fragments.AlbumSongListFragment;
 import com.globaldelight.boom.utils.Utils;
-import com.globaldelight.boom.view.RegularTextView;
 import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
-import com.globaldelight.boom.utils.async.Action;
 
 import static com.globaldelight.boom.playbackEvent.utils.ItemType.BOOM_PLAYLIST;
-import static com.globaldelight.boom.playbackEvent.utils.ItemType.PLAYLIST;
-import static com.globaldelight.boom.playbackEvent.utils.ItemType.SONGS;
 
 /**
  * Created by Rahul Agarwal on 8/8/2016.
@@ -330,13 +323,13 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
     public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-        public RegularTextView name, artistName;
+        public TextView name, artistName;
         public View art_overlay;
         public ImageView img, art_overlay_play;
         public LinearLayout menu;
         public ProgressBar loadCloud;
 
-        public RegularTextView headerSubTitle, headerDetail;
+        public TextView headerSubTitle, headerDetail;
         public Button undoButton;
         public ImageView imgHandle;
         ImageView mMore;
@@ -347,13 +340,13 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
             art_overlay_play = (ImageView) itemView.findViewById(R.id.song_item_img_overlay_play);
             art_overlay = itemView.findViewById(R.id.song_item_img_overlay);
             loadCloud = (ProgressBar) itemView.findViewById(R.id.load_cloud );
-            name = (RegularTextView) itemView.findViewById(R.id.song_item_name);
+            name = (TextView) itemView.findViewById(R.id.song_item_name);
             menu = (LinearLayout) itemView.findViewById(R.id.song_item_overflow_menu);
-            artistName = (RegularTextView) itemView.findViewById(R.id.song_item_artist);
+            artistName = (TextView) itemView.findViewById(R.id.song_item_artist);
             undoButton = (Button) itemView.findViewById(R.id.undo_button);
             imgHandle = (ImageView) itemView.findViewById(R.id.song_item_handle);
-            headerSubTitle = (RegularTextView) itemView.findViewById(R.id.header_sub_title);
-            headerDetail = (RegularTextView) itemView.findViewById(R.id.header_detail);
+            headerSubTitle = (TextView) itemView.findViewById(R.id.header_sub_title);
+            headerDetail = (TextView) itemView.findViewById(R.id.header_detail);
             mMore = (ImageView) itemView.findViewById(R.id.recycler_header_menu);
         }
     }

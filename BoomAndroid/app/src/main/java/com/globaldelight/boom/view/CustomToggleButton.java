@@ -2,8 +2,11 @@ package com.globaldelight.boom.view;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.widget.ToggleButton;
+
+import com.globaldelight.boom.R;
 
 /**
  * Created by adarsh on 28/09/17.
@@ -39,17 +42,17 @@ public class CustomToggleButton extends ToggleButton {
         */
         switch (textStyle) {
             case Typeface.BOLD: // bold
-                return Typeface.createFromAsset(context.getAssets(), "fonts/TitilliumWeb-SemiBold.ttf");
+                return ResourcesCompat.getFont(context, R.font.titilliumweb_bold);
 
             case Typeface.ITALIC: // italic
-                return Typeface.createFromAsset(context.getAssets(), "fonts/TitilliumWeb-Italic.ttf");
+                return ResourcesCompat.getFont(context, R.font.titilliumweb_italic);
 
             case Typeface.BOLD_ITALIC: // bold italic
-                return Typeface.createFromAsset(context.getAssets(), "fonts/TitilliumWeb-BoldItalic.ttf");
+                return ResourcesCompat.getFont(context, R.font.titilliumweb_bolditalic);
 
             case Typeface.NORMAL: // regular
             default:
-                return Typeface.createFromAsset(context.getAssets(), "fonts/TitilliumWeb-Regular.ttf");
+                return ResourcesCompat.getFont(context, R.font.titilliumweb_regular);
         }
     }
 }

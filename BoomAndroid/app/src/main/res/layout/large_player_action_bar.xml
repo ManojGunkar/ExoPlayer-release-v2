@@ -24,7 +24,7 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <com.globaldelight.boom.view.RegularTextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/large_player_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
             android:textStyle="normal"
             android:textAlignment="center" />
 
-        <com.globaldelight.boom.view.RegularTextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/large_player_sub_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

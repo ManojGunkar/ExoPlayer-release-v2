@@ -125,44 +125,4 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
         }
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_SHARE_SUCCESS));
     }
-
-
-
-/*
-    public void show() {
-        ShareAdapter adapter = new ShareAdapter(mActivity, getShareableAppList(), new ShareAdapter.Callback() {
-            @Override
-            public void onItemSelected() {
-                LocalBroadcastManager.getInstance(mActivity).sendBroadcast(new Intent(ACTION_SHARE_SUCCESS));
-                mDialog.dismiss();
-            }
-        });
-        RecyclerView recyclerView = (RecyclerView) mActivity.getLayoutInflater()
-                .inflate(R.layout.recycler_view_layout, null);
-        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-        recyclerView.setAdapter(adapter);
-
-        mDialog = new MaterialDialog.Builder(mActivity)
-                .title("Share Now")
-                .backgroundColor(ContextCompat.getColor(mActivity, R.color.white))
-                .titleColor(ContextCompat.getColor(mActivity, R.color.black))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                .customView(recyclerView, false)
-                .autoDismiss(false)
-                .canceledOnTouchOutside(false)
-                .cancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        LocalBroadcastManager.getInstance(mActivity).sendBroadcast(new Intent(ACTION_SHARE_FAILED));
-                    }
-                })
-                .show();
-        Point point = new Point();
-        mActivity.getWindowManager().getDefaultDisplay().getSize(point);
-        int ScreenWidth = point.x;
-        int ScreenHeight = point.y;
-        mDialog.getWindow().setLayout((ScreenWidth * 80) / 100, (ScreenHeight * 60) / 100);
-    }
-*/
-
 }
