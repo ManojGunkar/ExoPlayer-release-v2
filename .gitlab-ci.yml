@@ -19,7 +19,7 @@ build_project:
   script:
     - echo "*** Building..."
     - chmod +x build.sh
-    - if [ -z BUILD_FLAVOR ]; then export BUILD_FLAVOR=development; fi
+    - if [ -z $BUILD_FLAVOR ]; then export BUILD_FLAVOR=development; fi
     - ./build.sh $BUILD_FLAVOR  
   artifacts:
     paths:
