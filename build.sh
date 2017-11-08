@@ -57,6 +57,6 @@ if [ -f "$ARTIFACT_DIR" ]; then
 fi
 
 mkdir "$ARTIFACT_DIR"
-cp "${BUILD_DIR}" "$ARTIFACT_DIR"
+cp -R "${BUILD_DIR}/" "$ARTIFACT_DIR"
 
 cd "$ROOT_DIR"
