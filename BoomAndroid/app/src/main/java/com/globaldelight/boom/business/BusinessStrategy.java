@@ -474,7 +474,9 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         String property = (String)arg;
         if ( property.equals(AudioEffect.AUDIO_EFFECT_PROPERTY) ) {
             update();
-            onEffectsON();
+            if ( AudioEffect.getInstance(mContext).isAudioEffectOn() ) {
+                onEffectsON();
+            }
         }
     }
 
