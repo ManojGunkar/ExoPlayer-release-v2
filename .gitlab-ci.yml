@@ -19,10 +19,11 @@ build_project:
   script:
     - echo "*** Building..."
     - chmod +x build.sh
-    - ./build.sh development  
+    - if [ -z BUILD_FLAVOR ]; then export BUILD_FLAVOR=development; fi
+    - ./build.sh $BUILD_FLAVOR  
   artifacts:
     paths:
-    - $BUILD_DIR 
+    - BoomAndroid/app/build/outputs/apk
 
 test_project:
   stage: test
