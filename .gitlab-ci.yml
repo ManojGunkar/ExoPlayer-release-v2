@@ -23,7 +23,7 @@ build_project:
     - ./build.sh $BUILD_FLAVOR  
   artifacts:
     paths:
-    - BoomAndroid/app/build/outputs/apk
+    - build-output
 
 test_project:
   stage: test
