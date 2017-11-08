@@ -431,7 +431,7 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                     App.playbackManager().playPause();
                 }
                 showPopup(null,
-                        mContext.getString(R.string.video_ad_message, BusinessConfig.toDays(config.videoRewardPeriod())),
+                        mContext.getString(R.string.video_ad_message, BusinessConfig.toHours(config.videoRewardPeriod())),
                         mContext.getString(R.string.watch_button_title),
                         mContext.getString(R.string.dialog_txt_cancel),
                         videoResponse);
