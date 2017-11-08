@@ -374,14 +374,18 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
 
     private void showVideoAd() {
+        if ( App.playbackManager().isTrackPlaying() ) {
+            mWasPlaying = true;
+            App.playbackManager().playPause();
+        }
         mVideoAd.show(mCurrentActivity);
-        FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_WATCHED_VIDEO);
     }
 
 
     @Override
     public void onVideoAdCompleted() {
-        // Start the playback if previously playing
+        FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_WATCHED_VIDEO);
+
         data.setState(BusinessData.STATE_VIDOE_REWARD);
         data.setVideoRewardDate(new Date());
         showPopup(mContext.getString(R.string.share_success_title),
@@ -389,12 +393,13 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
                 mContext.getString(R.string.ok),
                 null,
                 null);
+
+        // Start the playback if previously playing
         if ( mWasPlaying ) {
             App.playbackManager().playPause();
             mWasPlaying = false;
         }
         AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
-        FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_WATCHED_VIDEO);
     }
 
     @Override
@@ -426,10 +431,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         switch (data.getState()) {
             case BusinessData.STATE_LOCKED: {
                 AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
-                if ( App.playbackManager().isTrackPlaying() ) {
-                    mWasPlaying = true;
-                    App.playbackManager().playPause();
-                }
                 showPopup(null,
                         mContext.getString(R.string.video_ad_message, BusinessConfig.toHours(config.videoRewardPeriod())),
                         mContext.getString(R.string.watch_button_title),
