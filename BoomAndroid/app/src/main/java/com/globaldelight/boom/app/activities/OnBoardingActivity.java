@@ -70,19 +70,19 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     }
 
     private void initComp() {
-        txtSkip = findViewById(R.id.txt_skip_onboard);
-        txtNext = findViewById(R.id.txt_next_onboard);
-        startBoom = findViewById(R.id.btn_boomin_onboard);
+        txtSkip = (TextView) findViewById(R.id.txt_skip_onboard);
+        txtNext = (TextView) findViewById(R.id.txt_next_onboard);
+        startBoom = (Button) findViewById(R.id.btn_boomin_onboard);
 
-        viewpager = findViewById(R.id.pager_home);
-        indicator = findViewById(R.id.indicator_home);
+        viewpager = (ViewPager) findViewById(R.id.pager_home);
+        indicator = (CircleIndicator) findViewById(R.id.indicator_home);
         viewpager.setAdapter(new PagerAdapter(this));
         indicator.setViewPager(viewpager);
         viewpager.setCurrentItem(0);
         txtSkip.setOnClickListener(this);
         txtNext.setOnClickListener(this);
         startBoom.setOnClickListener(this);
-        bottomPanel = findViewById(R.id.onboarding_bottom) ;
+        bottomPanel = (LinearLayout) findViewById(R.id.onboarding_bottom);
     }
 
     private void jumpToHome() {

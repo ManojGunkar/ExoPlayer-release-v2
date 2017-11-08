@@ -5,7 +5,7 @@
             android:innerRadius="0dp"
             android:shape="ring"
             android:useLevel="false">
-            <size android:height="4dp" android:width="4dp"/>
+            <size android:height="6dp" android:width="6dp"/>
             <solid android:color="#494949"/>
 
 
