@@ -19,7 +19,10 @@ build_project:
   script:
     - echo "*** Building..."
     - chmod +x build.sh
-    - ./build.sh development   
+    - ./build.sh development  
+  artifacts:
+    paths:
+    - $BUILD_DIR 
 
 test_project:
   stage: test
