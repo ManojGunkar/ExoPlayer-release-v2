@@ -71,7 +71,7 @@ public class LibraryFragment extends Fragment {
 
         setupViewPager(mViewPager);
 
-        Typeface font = ResourcesCompat.getFont(mActivity, R.font.titilliumweb_bold);
+        Typeface font = ResourcesCompat.getFont(mActivity, R.font.titilliumweb_semibold);
         for (int i = 0; i < mTabBar.getChildCount(); i++) {
             final View view = mTabBar.getChildAt(i);
             if (view instanceof TextView) {

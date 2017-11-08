@@ -13,6 +13,7 @@ import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -130,7 +131,7 @@ public class TimerUtils {
     private static void set_numberpicker_text_colour(Context mContext, NumberPicker number_picker) {
         final int count = number_picker.getChildCount();
         final int color = ContextCompat.getColor(mContext, R.color.effect_active);
-        font = Typeface.createFromAsset(mContext.getAssets(), "font/TitilliumWeb-Regular.ttf");
+        font = ResourcesCompat.getFont(mContext, R.font.titilliumweb_regular);
 
         for (int i = 0; i < count; i++) {
             View child = number_picker.getChildAt(i);

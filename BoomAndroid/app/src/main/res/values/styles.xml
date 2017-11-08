@@ -8,7 +8,6 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
         <item name="android:fontFamily">@font/titillium_web</item>
-        <item name="android:alertDialogTheme"></item>
     </style>
 
 
