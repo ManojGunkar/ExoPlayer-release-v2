@@ -52,9 +52,11 @@ cp ${MAPPING_DIR}/mapping.txt "${BUILD_DIR}"
 cp ${MAPPING_DIR}/seeds.txt "${BUILD_DIR}"
 
 ARTIFACT_DIR=$ROOT_DIR/build-output
-if [ -f "$ARTIFACT_DIR" ]
-rm -rdf $ROOT_DIR/build-output
-mkdir 
+if [ -f "$ARTIFACT_DIR" ]; then
+	rm -rdf "$ARTIFACT_DIR"
+fi
 
+mkdir "$ARTIFACT_DIR"
+cp "${BUILD_DIR}" "$ARTIFACT_DIR"
 
 cd "$ROOT_DIR"
