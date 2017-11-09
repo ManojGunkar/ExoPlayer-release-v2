@@ -20,6 +20,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
@@ -145,8 +146,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         ((TextView) rootView.findViewById(R.id.store_buy_desription)).setText(getResources().getString(R.string.after_purchase_store_page_buy_description));
         mStoreBuyBtn.setText(getResources().getString(R.string.after_purchase_buy_button));
         mStoreShareTxt.setVisibility(View.GONE);
-        mClearButton.setVisibility(View.VISIBLE);
-
+        if ( !BuildConfig.FLAVOR.equals("production") ) {
+            mClearButton.setVisibility(View.VISIBLE);
+        }
     }
 
     private void normalStoreUI(String price){
