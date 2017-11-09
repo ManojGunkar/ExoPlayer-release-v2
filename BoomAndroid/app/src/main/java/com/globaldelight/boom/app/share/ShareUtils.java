@@ -15,29 +15,20 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SHARE_FAILED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SHARE_SUCCESS;
 
 /**
  * Created by Manoj Kumar on 8/28/2017.
  */
 
 public class ShareUtils {
-    private static ShareUtils ourInstance;
-    private static Context context;
-
-    public static ShareUtils getInstance(Context context) {
-        if (ourInstance==null)ourInstance=new ShareUtils(context);
-        return ourInstance;
+    private ShareUtils() {
     }
 
-    private ShareUtils(Context context) {
-        this.context=context;
-    }
-    public static void fbShare(){
+    public static void fbShare(final Activity context){
         CallbackManager callbackManager = CallbackManager.Factory.create();
-        ShareDialog shareDialog = new ShareDialog((Activity) context);
+        ShareDialog shareDialog = new ShareDialog(context);
         if (ShareDialog.canShow(ShareLinkContent.class)) {
-
-
             ShareLinkContent linkContent = new ShareLinkContent.Builder()
                     .setContentUrl(Uri.parse("http://developers.facebook.com/android"))
                     .build();
@@ -46,23 +37,18 @@ public class ShareUtils {
         shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
             @Override
             public void onSuccess(Sharer.Result result) {
-               // ShareFragment.this.onSucess();
-                Toast.makeText(context,"OnSuccess",Toast.LENGTH_SHORT).show();
-            }
+                LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_SHARE_SUCCESS));}
 
             @Override
             public void onCancel() {
               //  ShareFragment.this.onCancel();
                 LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_SHARE_FAILED));
-                Toast.makeText(context,"OnCancel",Toast.LENGTH_SHORT).show();
-
             }
 
             @Override
             public void onError(FacebookException error) {
              //   ShareFragment.this.onCancel();
                 LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_SHARE_FAILED));
-                Toast.makeText(context,"OnError"+error.getMessage(),Toast.LENGTH_SHORT).show();
             }
         });
     }

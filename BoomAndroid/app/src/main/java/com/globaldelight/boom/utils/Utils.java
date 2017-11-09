@@ -223,22 +223,6 @@ public class Utils {
         builder.show();
     }
 
-    public static void shareStart(Context context) {
-        if(ConnectivityReceiver.isNetworkAvailable(context, true)) {
-            try {
-                Intent shareIntent = new Intent(
-                        android.content.Intent.ACTION_SEND);
-                shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getResources().getString(R.string.app_name));
-                String sAux = "\nDownload Boom Music Player\n\n";
-                sAux = sAux + "https://play.google.com/store/apps/details?id=com.globaldelight.boom \n\n";
-                shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
-                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-                context.startActivity(Intent.createChooser(shareIntent, "share"));
-            } catch (Exception e) {
-            }
-        }
-    }
 
     public static boolean isMoreThan24Hour() {
         Date installTime = null;

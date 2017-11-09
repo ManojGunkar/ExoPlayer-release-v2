@@ -70,16 +70,12 @@
         android:background="@color/library_album_footer"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/card_grid_bottom_padding"
-        android:paddingTop="@dimen/card_grid_bottom_padding"
-        android:paddingBottom="@dimen/card_grid_bottom_padding"
-        android:weightSum="1">
+        android:padding="@dimen/card_grid_bottom_padding">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight=".5"
-            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="horizontal" >
 
             <android.support.v7.widget.AppCompatTextView
@@ -97,7 +93,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/card_grid_bottom_padding"
-                android:paddingRight="@dimen/card_grid_bottom_padding"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:layout_gravity="right"
@@ -108,10 +103,8 @@
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/card_grid_sub_title"
-            android:paddingRight="@dimen/card_grid_bottom_padding"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight=".5"
+            android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/track_sub_title"
