@@ -1012,8 +1012,11 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             mEffectSwitch.setChecked(isEffectOn);
         }
 
-        mEffectSwitchTxt.setText(isEffectOn ? R.string.on : R.string.off);
-        mEffectTab.setImageResource(isEffectOn? R.drawable.ic_effects_active_on : R.drawable.ic_effects_active);
+       /* mEffectSwitchTxt.setText(isEffectOn ? R.string.on : R.string.off);
+        if (mNext.isEnabled()||mPrevious.isEnabled()){
+            mEffectTab.setImageResource(isEffectOn? R.drawable.ic_effects_normal_on : R.drawable.ic_effects_normal);
+        }else
+        mEffectTab.setImageResource(isEffectOn? R.drawable.ic_effects_active_on : R.drawable.ic_effects_active);*/
 
 
         boolean isSurroundOn = audioEffects.is3DSurroundOn();
