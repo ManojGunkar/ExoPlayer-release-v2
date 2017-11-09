@@ -9,10 +9,13 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Window;
@@ -32,6 +35,63 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_S
  */
 
 public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
+
+    // A proxy activity to obtain share result.
+    public static class ProxyActivity extends Activity {
+        private static final int SHARE_REQUEST_CODE = 1234;
+        @Override
+        protected void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            String appId = getIntent().getStringExtra("app-name");
+            String pkgName = getIntent().getStringExtra("package-name");
+
+            String sAux = getString(R.string.share_desc);
+            sAux = sAux + "\nhttps://play.google.com/store/apps/details?id=com.globaldelight.boom \n";
+
+            if (appId.equalsIgnoreCase("facebook") ){
+                ShareUtils.fbShare(this);
+                finish();
+            }
+            else if ( appId.equalsIgnoreCase(DEFAULT_EMAIL_APP_NAME) ) {
+                String uriText = "mailto:" +
+                                "?subject=" + Uri.encode(getString(R.string.share_desc)) +
+                                "&body=" + Uri.encode(sAux);
+
+                Uri uri = Uri.parse(uriText);
+                Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
+                sendIntent.setData(uri);
+                startActivityForResult(sendIntent, SHARE_REQUEST_CODE);
+            }
+            else if ( appId.equalsIgnoreCase(OTHER_APPS_NAME) ) {
+                Intent shareIntent = new Intent(
+                        android.content.Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.app_name));
+                shareIntent.putExtra(Intent.EXTRA_TEXT, sAux);
+                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+                startActivityForResult(Intent.createChooser(shareIntent, "share"), SHARE_REQUEST_CODE);
+            }
+            else {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.setPackage(pkgName);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_desc));
+                sendIntent.setType("text/plain");
+                startActivityForResult(sendIntent, SHARE_REQUEST_CODE);
+            }
+        }
+
+        @Override
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            if ( SHARE_REQUEST_CODE == requestCode ) {
+                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(ACTION_SHARE_SUCCESS));
+            }
+            finish();
+        }
+    }
+
+
 
     private Activity mActivity;
     private Dialog mDialog = null;
@@ -101,28 +161,11 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
     public void onClick(ShareItem item) {
         Context context = mActivity;
         mDialog.dismiss();
-        if (item.text.equalsIgnoreCase("facebook") ){
-            ShareUtils.getInstance(context).fbShare();
-        }
-        else if ( item.text.equalsIgnoreCase(DEFAULT_EMAIL_APP_NAME) ) {
-            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_desc));
-            intent.putExtra(Intent.EXTRA_TEXT, "");
-            Intent mailer = Intent.createChooser(intent, null);
-            context.startActivity(mailer);
-        }
-        else if ( item.text.equalsIgnoreCase(OTHER_APPS_NAME) ) {
-            Utils.shareStart(context);
-        }
-        else {
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.setPackage(item.pkgName);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_desc));
-            sendIntent.setType("text/plain");
-            context.startActivity(sendIntent);
-        }
-        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_SHARE_SUCCESS));
+
+        Intent proxyIntent = new Intent(context, ProxyActivity.class);
+        proxyIntent.putExtra("app-name", item.text);
+        proxyIntent.putExtra("package-name", item.pkgName);
+        context.startActivity(proxyIntent);
+
     }
 }
