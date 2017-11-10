@@ -72,10 +72,11 @@
             android:src="@drawable/ic_player_previous"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/player_control_margin_left"
-            android:layout_toLeftOf="@+id/controller_play"/>
+            android:layout_toLeftOf="@id/controller_play"/>
 
         <ImageView
             android:id="@+id/controller_play"
+            android:tint="@color/effect_button_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -92,7 +93,7 @@
             android:src="@drawable/ic_player_next"
             android:layout_marginLeft="@dimen/player_control_margin_left"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/controller_play"/>
+            android:layout_toEndOf="@id/controller_play"/>
         <ImageView
             android:id="@+id/controller_shuffle"
             android:layout_width="wrap_content"

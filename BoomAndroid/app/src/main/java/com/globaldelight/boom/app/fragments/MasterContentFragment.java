@@ -17,7 +17,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
@@ -110,8 +109,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     public View miniController, mPlayerActionPanel;
 
     private TextView mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
-    private View mInflater;
-    private int colorTo, colorFrom, colorFromActive;
+    private View mRootView;
     private AppCompatSeekBar mTrackSeek;
     private ImageView mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mPlayerBackBtn, mLargeAlbumArt;
     private ImageView mEffectTab, mPlayerTab;
@@ -236,19 +234,15 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mInflater = inflater.inflate(R.layout.fragment_content_master, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_content_master, container, false);
         if (null == mActivity)
             mActivity = getActivity();
-        return mInflater;
+        return mRootView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        colorTo = ContextCompat.getColor(mActivity, R.color.effect_inactive);
-        colorFrom = ContextCompat.getColor(mActivity, R.color.effect_active);
-        colorFromActive = ContextCompat.getColor(mActivity, R.color.colorAccent);
 
         Point point = new Point();
         mActivity.getWindowManager().getDefaultDisplay().getSize(point);
@@ -258,7 +252,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         audioEffects = AudioEffect.getInstance(mActivity);
 
         playerUIController = new PlayerUIController(mActivity);
-        mPlayerBackground = (FrameLayout) mInflater.findViewById(R.id.player_src_background);
+        mPlayerBackground = (FrameLayout) mRootView.findViewById(R.id.player_src_background);
 
         initMiniPlayer();
         initLargePlayer();
@@ -449,37 +443,37 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void initLargePlayer() {
-        mPlayerLarge = mInflater.findViewById(R.id.player_large);
+        mPlayerLarge = mRootView.findViewById(R.id.player_large);
         mPlayerLarge.setOnTouchListener(this);
 
-        mPlayerActionPanel = mInflater.findViewById(R.id.player_action_bar);
+        mPlayerActionPanel = mRootView.findViewById(R.id.player_action_bar);
 
-        mLoadingProgress = mInflater.findViewById(R.id.load_cloud);
+        mLoadingProgress = mRootView.findViewById(R.id.load_cloud);
 
-        mPlayerBackBtn = mInflater.findViewById(R.id.player_back_button);
+        mPlayerBackBtn = mRootView.findViewById(R.id.player_back_button);
         mPlayerBackBtn.setOnClickListener(this);
-        mPlayerTitlePanel = mInflater.findViewById(R.id.player_title_panel);
+        mPlayerTitlePanel = mRootView.findViewById(R.id.player_title_panel);
         mPlayerTitlePanel.setOnClickListener(this);
-        mLargeSongTitle = mInflater.findViewById(R.id.large_player_title);
-        mLargeSongSubTitle = mInflater.findViewById(R.id.large_player_sub_title);
-        mUpNextBtnPanel = mInflater.findViewById(R.id.player_upnext_button);
+        mLargeSongTitle = mRootView.findViewById(R.id.large_player_title);
+        mLargeSongSubTitle = mRootView.findViewById(R.id.large_player_sub_title);
+        mUpNextBtnPanel = mRootView.findViewById(R.id.player_upnext_button);
         mUpNextBtnPanel.setOnClickListener(this);
-        mPlayerOverFlowMenuPanel = mInflater.findViewById(R.id.player_overflow_button);
+        mPlayerOverFlowMenuPanel = mRootView.findViewById(R.id.player_overflow_button);
         mPlayerOverFlowMenuPanel.setOnClickListener(this);
 
-        mLargeAlbumArt = mInflater.findViewById(R.id.player_album_art);
+        mLargeAlbumArt = mRootView.findViewById(R.id.player_album_art);
 
         LinearLayout.LayoutParams artParam = new LinearLayout.LayoutParams((int) (ScreenWidth * 80) / 100, (int) (ScreenWidth * 80) / 100);
         artParam.setMargins((int) ((ScreenWidth * 10) / 100), 0, (int) ((ScreenWidth * 10) / 100), 0);
-        mInflater.findViewById(R.id.player_large_header).setLayoutParams(artParam);
-        mPlayerContent = mInflater.findViewById(R.id.player_content);
+        mRootView.findViewById(R.id.player_large_header).setLayoutParams(artParam);
+        mPlayerContent = mRootView.findViewById(R.id.player_content);
 
-        mPlayerTab = mInflater.findViewById(R.id.player_tab);
+        mPlayerTab = mRootView.findViewById(R.id.player_tab);
         mPlayerTab.setOnClickListener(this);
-        mEffectTab = mInflater.findViewById(R.id.effect_tab);
+        mEffectTab = mRootView.findViewById(R.id.effect_tab);
         mEffectTab.setOnClickListener(this);
 
-        mTrackSeek = mInflater.findViewById(R.id.control_seek_bar);
+        mTrackSeek = mRootView.findViewById(R.id.control_seek_bar);
         mTrackSeek.getProgressDrawable().setColorFilter(ContextCompat.getColor(mActivity, R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN);
         mTrackSeek.setPadding(mTrackSeek.getPaddingLeft(), 0, mTrackSeek.getPaddingRight(), 0);
 
@@ -518,18 +512,18 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 }, 300);
             }
         });
-        mCurrentSeekTime = mInflater.findViewById(R.id.played_time);
-        mTotalSeekTime = mInflater.findViewById(R.id.remain_time);
+        mCurrentSeekTime = mRootView.findViewById(R.id.played_time);
+        mTotalSeekTime = mRootView.findViewById(R.id.remain_time);
 
-        mRepeat = mInflater.findViewById(R.id.controller_repeat);
+        mRepeat = mRootView.findViewById(R.id.controller_repeat);
         mRepeat.setOnClickListener(this);
-        mPrevious = mInflater.findViewById(R.id.controller_prev);
+        mPrevious = mRootView.findViewById(R.id.controller_prev);
         mPrevious.setOnClickListener(this);
-        mPlayPause = mInflater.findViewById(R.id.controller_play);
+        mPlayPause = mRootView.findViewById(R.id.controller_play);
         mPlayPause.setOnClickListener(this);
-        mNext = (ImageView) mInflater.findViewById(R.id.controller_next);
+        mNext = (ImageView) mRootView.findViewById(R.id.controller_next);
         mNext.setOnClickListener(this);
-        mShuffle = (ImageView) mInflater.findViewById(R.id.controller_shuffle);
+        mShuffle = (ImageView) mRootView.findViewById(R.id.controller_shuffle);
         mShuffle.setOnClickListener(this);
     }
 
@@ -551,6 +545,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void updateLargePlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
+        mPlayPause.setEnabled(true);
         if (null != item) {
             updateShuffle();
             updateRepeat();
@@ -563,14 +558,13 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             mLargeSongTitle.setSelected(true);
             mLargeSongSubTitle.setSelected(true);
 
-            DrawableCompat.setTint(mPlayPause.getDrawable(), colorFrom);
             mLargeSongTitle.setText(item.getItemTitle());
             mLargeSongSubTitle.setVisibility(null != item.getItemArtist() ? View.VISIBLE : View.GONE);
             mLargeSongSubTitle.setText(item.getItemArtist());
 
             if (isLastPlayedItem) {
                 mTrackSeek.setProgress(0);
-                mPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_play, null));
+                mPlayPause.setImageResource(R.drawable.ic_player_play);
 
                 long totalMillis = item.getDurationLong();
                 long currentMillis = 0;
@@ -579,15 +573,10 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                     updateTrackPlayTime(totalMillis, currentMillis);
 
             } else {
-                boolean isMediaItem = item.getMediaType() == MediaType.DEVICE_MEDIA_LIB;
-                if (isPlaying) {
-                    mPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_pause, null));
-                } else {
-                    mPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_player_play, null));
-                }
+                mPlayPause.setImageResource(isPlaying? R.drawable.ic_player_pause : R.drawable.ic_player_play);
             }
         } else if (!isLastPlayedItem) {
-            DrawableCompat.setTint(mPlayPause.getDrawable(), colorTo);
+            mPlayPause.setEnabled(false);
             mLargeSongTitle.setVisibility(View.INVISIBLE);
             mLargeSongSubTitle.setVisibility(View.INVISIBLE);
             mTrackSeek.setVisibility(View.INVISIBLE);
@@ -602,30 +591,30 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     /* Mini Player UI & Functionality*/
     private void initMiniPlayer() {
-        miniController = mInflater.findViewById(R.id.small_panel);
+        miniController = mRootView.findViewById(R.id.small_panel);
         miniController.setOnTouchListener(this);
 
-        mMiniPlayerSeek = (AppCompatSeekBar) mInflater.findViewById(R.id.mini_player_progress);
+        mMiniPlayerSeek = (AppCompatSeekBar) mRootView.findViewById(R.id.mini_player_progress);
         mMiniPlayerSeek.setPadding(0, 0, 0, 0);
         mMiniPlayerSeek.setOnTouchListener(this);
 
-        mMiniPlayerEffectPanel = (LinearLayout) mInflater.findViewById(R.id.mini_player_boom_effect);
+        mMiniPlayerEffectPanel = (LinearLayout) mRootView.findViewById(R.id.mini_player_boom_effect);
         mMiniPlayerEffectPanel.setOnClickListener(this);
-        mMiniPlayerEffect = (ImageView) mInflater.findViewById(R.id.mini_player_effect_img);
+        mMiniPlayerEffect = (ImageView) mRootView.findViewById(R.id.mini_player_effect_img);
         mMiniPlayerEffect.setOnClickListener(this);
 
-        mMiniPlayerPlayPause = (ImageView) mInflater.findViewById(R.id.mini_player_play_pause_btn);
+        mMiniPlayerPlayPause = (ImageView) mRootView.findViewById(R.id.mini_player_play_pause_btn);
         mMiniPlayerPlayPause.setOnClickListener(this);
-        mMiniTitlePanel = (LinearLayout) mInflater.findViewById(R.id.mini_player_title_panel);
+        mMiniTitlePanel = (LinearLayout) mRootView.findViewById(R.id.mini_player_title_panel);
         mMiniTitlePanel.setOnClickListener(this);
-        mMiniSongTitle = mInflater.findViewById(R.id.mini_player_song_title);
-        mMiniSongSubTitle = mInflater.findViewById(R.id.mini_player_song_sub_title);
+        mMiniSongTitle = mRootView.findViewById(R.id.mini_player_song_title);
+        mMiniSongSubTitle = mRootView.findViewById(R.id.mini_player_song_sub_title);
     }
 
     private void updateMiniPlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
         updateMiniPlayerEffectUI(audioEffects.isAudioEffectOn());
+        mMiniPlayerPlayPause.setEnabled(true);
         if (null != item) {
-            DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorFrom);
             mMiniSongTitle.setText(item.getItemTitle());
             mMiniSongSubTitle.setVisibility(null != item.getItemArtist() ? View.VISIBLE : View.GONE);
             mMiniSongSubTitle.setText(item.getItemArtist());
@@ -634,7 +623,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             else
                 mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_play);
         } else if (!isLastPlayedItem) {
-            DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorTo);
+            mMiniPlayerPlayPause.setEnabled(false);
         }
     }
 
@@ -700,17 +689,17 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void showEffectSwitchTip() {
-        if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.playbackManager().isStopped() && mInflater.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
+        if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.playbackManager().isStopped() && mRootView.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
             coachMarkEffectSwitcher = new CoachMarkerWindow(mActivity, DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
             coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
-            coachMarkEffectSwitcher.showCoachMark(mInflater.findViewById(R.id.effect_switch));
+            coachMarkEffectSwitcher.showCoachMark(mRootView.findViewById(R.id.effect_switch));
         }
 
         if (null != mPlayerContent && mPlayerContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, Preferences.TOOLTIP_SWITCH_EFFECT_LARGE_PLAYER, true) && mPlayerContent.getVisibility() == View.VISIBLE &&
                 !App.playbackManager().isStopped() && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
             coachMarkEffectPager = new CoachMarkerWindow(mActivity, DRAW_TOP_CENTER, getResources().getString(R.string.switch_effect_screen_tooltip));
             coachMarkEffectPager.setAutoDismissBahaviour(true);
-            coachMarkEffectPager.showCoachMark(mInflater.findViewById(R.id.effect_tab));
+            coachMarkEffectPager.showCoachMark(mRootView.findViewById(R.id.effect_tab));
         }
     }
 
@@ -719,7 +708,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             coachMarkEffectPlayer = new CoachMarkerWindow(mActivity, DRAW_TOP_LEFT, getResources().getString(R.string.library_switch_effect_screen_tooltip));
             coachMarkEffectPlayer.setAutoDismissBahaviour(true);
             Preferences.writeBoolean(mActivity, Preferences.TOOLTIP_OPEN_EFFECT_MINI_PLAYER, false);
-            coachMarkEffectPlayer.showCoachMark(mInflater.findViewById(R.id.mini_player_effect_img));
+            coachMarkEffectPlayer.showCoachMark(mRootView.findViewById(R.id.mini_player_effect_img));
         }
     }
 
@@ -902,20 +891,20 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         postMessage = new Handler();
 
 //        FrameLayout.LayoutParams effectParam = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (ScreenWidth*85)/100);
-        mEffectContent = (LinearLayout) mInflater.findViewById(R.id.effect_content);
+        mEffectContent = (LinearLayout) mRootView.findViewById(R.id.effect_content);
 //        mEffectContent.setLayoutParams(effectParam);
 
-        mEffectSwitchTxt = mInflater.findViewById(R.id.effect_switch_txt);
-        mEffectSwitch = mInflater.findViewById(R.id.effect_switch);
+        mEffectSwitchTxt = mRootView.findViewById(R.id.effect_switch_txt);
+        mEffectSwitch = mRootView.findViewById(R.id.effect_switch);
         mEffectSwitch.setChecked(audioEffects.isAudioEffectOn());
 
-        m3DSurroundBtn = mInflater.findViewById(R.id.three_surround_btn);
+        m3DSurroundBtn = mRootView.findViewById(R.id.three_surround_btn);
         m3DSurroundBtn.setOnClickListener(this);
 
-        mSpeakerBtn = mInflater.findViewById(R.id.speaker_btn);
+        mSpeakerBtn = mRootView.findViewById(R.id.speaker_btn);
         mSpeakerBtn.setOnClickListener(this);
 
-        mFullBassCheck = mInflater.findViewById(R.id.fullbass_chk);
+        mFullBassCheck = mRootView.findViewById(R.id.fullbass_chk);
         mFullBassCheck.setOnCheckedChangeListener(new ToggleButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -927,20 +916,20 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         });
 
 
-        mIntensityBtn = mInflater.findViewById(R.id.intensity_btn);
+        mIntensityBtn = mRootView.findViewById(R.id.intensity_btn);
         mIntensityBtn.setOnClickListener(this);
-        mIntensitySeek = mInflater.findViewById(R.id.intensity_seek);
+        mIntensitySeek = mRootView.findViewById(R.id.intensity_seek);
         mIntensitySeek.setProgress((int) (audioEffects.getIntensity() * 50 + 50));
         mIntensitySeek.setOnClickListener(this);
 
-        mEqualizerBtn = mInflater.findViewById(R.id.equalizer_btn);
+        mEqualizerBtn = mRootView.findViewById(R.id.equalizer_btn);
         mEqualizerBtn.setOnClickListener(this);
-        mEqDialogPanel = mInflater.findViewById(R.id.eq_dialog_panel);
+        mEqDialogPanel = mRootView.findViewById(R.id.eq_dialog_panel);
         mEqDialogPanel.setOnClickListener(this);
 
-        mSelectedEqImg = mInflater.findViewById(R.id.selected_eq_img);
-        mSelectedEqTxt = mInflater.findViewById(R.id.selected_eq_txt);
-        mSelectedEqGoImg = mInflater.findViewById(R.id.selected_eq_go_img);
+        mSelectedEqImg = mRootView.findViewById(R.id.selected_eq_img);
+        mSelectedEqTxt = mRootView.findViewById(R.id.selected_eq_txt);
+        mSelectedEqGoImg = mRootView.findViewById(R.id.selected_eq_go_img);
 
         eq_names = Arrays.asList(mActivity.getResources().getStringArray(R.array.eq_names));
         eq_active_off = mActivity.getResources().obtainTypedArray(R.array.eq_active_off);
