@@ -580,7 +580,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             mLargeSongTitle.setVisibility(View.INVISIBLE);
             mLargeSongSubTitle.setVisibility(View.INVISIBLE);
             mTrackSeek.setVisibility(View.INVISIBLE);
-            mLargeAlbumArt.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_no_music_selected, null));
+            mLargeAlbumArt.setImageResource(R.drawable.ic_no_music_selected);
             mTotalSeekTime.setVisibility(View.INVISIBLE);
             mCurrentSeekTime.setVisibility(View.INVISIBLE);
         }
@@ -628,11 +628,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void updateMiniPlayerEffectUI(boolean enable) {
-        if (enable) {
-            mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects_on, null));
-        } else {
-            mMiniPlayerEffect.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_effects, null));
-        }
+        mMiniPlayerEffect.setImageResource(enable ?
+                R.drawable.ic_miniplayer_effects_on :
+                R.drawable.ic_miniplayer_effects);
     }
 
     public void setMiniPlayerVisible(boolean isMiniPlayerVisible) {
