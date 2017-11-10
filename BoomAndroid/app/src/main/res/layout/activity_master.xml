@@ -18,6 +18,7 @@
             android:layout_height="match_parent"
             android:gravity="bottom"
             sothree:fadeColor="@android:color/transparent"
+            sothree:dragViewClickable="false"
             sothree:initialState="collapsed"
             sothree:panelHeight="@dimen/player_mini_height"
             sothree:shadowHeight="5dp">
