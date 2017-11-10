@@ -102,6 +102,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private Activity mActivity;
     private ProgressBar mLoadingProgress;
     private AudioEffect audioEffects;
+    private boolean mHideUpNext = false;
 
 
     /************************************************************************************/
@@ -335,6 +336,10 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         } else {
             mUpNextBtnPanel.setVisibility(View.INVISIBLE);
             mPlayerOverFlowMenuPanel.setVisibility(View.INVISIBLE);
+        }
+
+        if ( mHideUpNext ) {
+            mUpNextBtnPanel.setVisibility(View.GONE);
         }
     }
 
@@ -1190,5 +1195,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         } else {
             mSlidingPanel.expandPanel();
         }
+    }
+
+    public void hideUpNext() {
+        mHideUpNext = true;
     }
 }

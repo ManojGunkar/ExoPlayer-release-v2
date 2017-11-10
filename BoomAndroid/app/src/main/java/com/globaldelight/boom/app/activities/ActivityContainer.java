@@ -72,6 +72,7 @@ public class ActivityContainer extends MasterActivity {
 
             case R.string.up_next:
                 mFragment =  new UpNextListFragment();
+                contentFragment.hideUpNext();
                 break;
 
             case R.string.title_settings:
