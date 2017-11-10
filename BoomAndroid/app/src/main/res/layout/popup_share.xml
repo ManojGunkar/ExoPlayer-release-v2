@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:local="http://schemas.android.com/tools"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -45,6 +46,10 @@
         app:tabBackground="@drawable/tab_selector"
         app:tabGravity="center"
         app:tabIndicatorHeight="0dp"
+        local:tabGravity="center"
+        local:tabIndicatorHeight="0dp"
+        local:tabPaddingStart="7dp"
+        local:tabPaddingEnd="7dp"
         android:layout_height="wrap_content"/>
 
 </LinearLayout>

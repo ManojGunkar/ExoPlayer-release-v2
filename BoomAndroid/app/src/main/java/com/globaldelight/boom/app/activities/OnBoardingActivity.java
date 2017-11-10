@@ -82,7 +82,7 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
         txtSkip.setOnClickListener(this);
         txtNext.setOnClickListener(this);
         startBoom.setOnClickListener(this);
-        bottomPanel = findViewById(R.id.onboarding_bottom) ;
+        bottomPanel = findViewById(R.id.onboarding_bottom);
     }
 
     private void jumpToHome() {

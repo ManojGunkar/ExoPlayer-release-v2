@@ -46,7 +46,7 @@
                 android:gravity="center"
                 android:layout_weight=".5"
                 style="@style/MediaController"
-                android:src="@drawable/ic_effects_active" />
+                android:src="@drawable/effect_tab_off" />
 
             <ImageView
                 android:id="@+id/player_tab"

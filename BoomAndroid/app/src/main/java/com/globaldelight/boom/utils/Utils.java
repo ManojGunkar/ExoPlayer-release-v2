@@ -214,12 +214,11 @@ public class Utils {
     }
 
     public static void networkAlert(Context context) {
-        AlertDialog.Builder builder =
-                new AlertDialog.Builder(context, R.style.DialogTheme);
-        builder.setTitle(R.string.title_internet_alert);
-        builder.setMessage(R.string.check_network);
-        builder.setCancelable(false);
-        builder.setPositiveButton("OK", null);
+        MaterialDialog.Builder builder = Utils.createDialogBuilder(context);
+        builder.title(R.string.title_internet_alert);
+        builder.content(R.string.check_network);
+        builder.cancelable(false);
+        builder.positiveText(R.string.ok);
         builder.show();
     }
 

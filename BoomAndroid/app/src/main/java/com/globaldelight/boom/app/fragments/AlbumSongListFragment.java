@@ -117,6 +117,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
 
     public void onFloatPlayAlbumSongs() {
         try {
+            App.playbackManager().stop();
             if (collection.getParentType() == PLAYLIST || collection.getParentType() == BOOM_PLAYLIST) {
                 App.playbackManager().queue().addItemListToPlay(collection, 0);
             } else {

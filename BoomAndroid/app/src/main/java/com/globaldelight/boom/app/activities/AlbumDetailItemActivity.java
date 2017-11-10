@@ -2,6 +2,7 @@ package com.globaldelight.boom.app.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -78,8 +79,12 @@ public class AlbumDetailItemActivity extends MasterActivity {
                 }
             if( null != fragment ){
                 fragment.onFloatPlayAlbums();
-                toggleSlidingPanel();
-            }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        toggleSlidingPanel();
+                    }
+                }, 1000);            }
             }
         });
 
