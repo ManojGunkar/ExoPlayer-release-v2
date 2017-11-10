@@ -124,7 +124,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private ImageView mMiniPlayerPlayPause, mMiniPlayerEffect;
     private AppCompatSeekBar mMiniPlayerSeek;
 
-    private TextView mDisableIntensity;
     private NegativeSeekBar mIntensitySeek;
     private SwitchCompat mEffectSwitch;
     private ToggleButton mFullBassCheck;
@@ -487,7 +486,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean fromUser) {
                 if (fromUser) {
                     isUser = true;
-                    mTrackSeek.setProgress(progress);
                     changeProgress(progress);
                     if (App.playbackManager().getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB)
                         showProgressLoader();
