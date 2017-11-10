@@ -280,24 +280,16 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private void setPlayerEnable(boolean isEnable) {
 
         mPlayerTab.setSelected(isEnable);
-        //     mEffectTab.setSelected(!isEnable);
+        mEffectTab.setSelected(!isEnable);
+        mEffectTab.setImageResource(audioEffects.isAudioEffectOn()? R.drawable.effect_tab_on : R.drawable.effect_tab_off);
 
         if (isEnable) {
             mPlayerContent.setVisibility(View.VISIBLE);
             mEffectContent.setVisibility(View.GONE);
-            if (audioEffects.isAudioEffectOn()) {
-                mEffectTab.setImageResource(R.drawable.ic_effects_normal_on);
-            } else {
-                mEffectTab.setImageResource(R.drawable.ic_effects_normal);
-            }
+
         } else {
             mPlayerContent.setVisibility(View.GONE);
             mEffectContent.setVisibility(View.VISIBLE);
-            if (audioEffects.isAudioEffectOn()) {
-                mEffectTab.setImageResource(R.drawable.ic_effects_active_on);
-            } else {
-                mEffectTab.setImageResource(R.drawable.ic_effects_active);
-            }
             mEffectSwitch.setChecked(audioEffects.isAudioEffectOn());
             String msg = isAllSpeakersAreOff();
             if (null != msg)
@@ -803,11 +795,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 if (!MasterActivity.isPlayerExpended()) {
                     setPlayerEnable(false);
                 }
-                if (audioEffects.isAudioEffectOn()) {
-                    mEffectTab.setImageResource(R.drawable.ic_effects_active_on);
-                } else {
-                    mEffectTab.setImageResource(R.drawable.ic_effects_active);
-                }
+
                 toggleSlidingPanel();
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Effects_Screen_Opened_from_Mini_Player);
 
@@ -993,12 +981,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             public void onCheckedChanged(CompoundButton compoundButton, boolean enable) {
                 if (audioEffects.isAudioEffectOn() != enable) {
                     audioEffects.setEnableAudioEffect(!audioEffects.isAudioEffectOn());
-                    mEffectTab.setImageResource(R.drawable.ic_effects_normal_on);
                     MixPanelAnalyticHelper.track(mActivity, enable ? AnalyticsHelper.EVENT_EFFECTS_TURNED_ON : AnalyticsHelper.EVENT_EFFECTS_TURNED_OFF);
                     FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_EFFECT_STATE_CHANGED, audioEffects.isAudioEffectOn());
                     FlurryAnalytics.getInstance(getActivity()).setEvent(enable ? FlurryEvents.EVENT_EFFECTS_TURNED_ON : FlurryEvents.EVENT_EFFECTS_TURNED_OFF);
-                } else {
-                    mEffectTab.setImageResource(R.drawable.ic_effects_normal);
                 }
                 Preferences.writeBoolean(mActivity, Preferences.TOOLTIP_SWITCH_EFFECT_LARGE_PLAYER, false);
                 Preferences.writeBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, false);
@@ -1013,8 +998,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         }
 
         mEffectSwitchTxt.setText(isEffectOn ? R.string.on : R.string.off);
-        mEffectTab.setImageResource(isEffectOn? R.drawable.ic_effects_active_on : R.drawable.ic_effects_active);
-
+        mEffectTab.setImageResource(isEffectOn? R.drawable.effect_tab_on : R.drawable.effect_tab_off);
 
         boolean isSurroundOn = audioEffects.is3DSurroundOn();
         m3DSurroundBtn.setChecked(isSurroundOn);
