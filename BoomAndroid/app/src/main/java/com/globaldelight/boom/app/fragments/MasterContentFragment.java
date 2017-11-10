@@ -161,15 +161,12 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                     break;
 
                 case ACTION_PLAYER_STATE_CHANGED:
-                    try {
-                        if (App.playbackManager().isTrackPlaying()) {
-                            mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_pause);
-                            mPlayPause.setImageResource(R.drawable.ic_player_pause);
-                        } else {
-                            mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_play);
-                            mPlayPause.setImageResource(R.drawable.ic_player_play);
-                        }
-                    } catch (Exception e) {
+                    if (App.playbackManager().isTrackPlaying()) {
+                        mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_pause);
+                        mPlayPause.setImageResource(R.drawable.ic_player_pause);
+                    } else {
+                        mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_play);
+                        mPlayPause.setImageResource(R.drawable.ic_player_play);
                     }
                     stopLoadProgress();
                     break;
@@ -346,10 +343,10 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private void updateShuffle() {
         switch (App.getUserPreferenceHandler().getShuffle()) {
             case SHUFFLE_OFF:
-                mShuffle.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_shuffle_off, null));
+                mShuffle.setImageResource(R.drawable.ic_shuffle_off);
                 break;
             case SHUFFLE_ON:
-                mShuffle.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_shuffle_on, null));
+                mShuffle.setImageResource(R.drawable.ic_shuffle_on);
                 break;
         }
     }
@@ -357,13 +354,13 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private void updateRepeat() {
         switch (App.getUserPreferenceHandler().getRepeat()) {
             case REPEAT_NONE:
-                mRepeat.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_repeat_off, null));
+                mRepeat.setImageResource(R.drawable.ic_repeat_off);
                 break;
             case REPEAT_ONE:
-                mRepeat.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_repeat_one, null));
+                mRepeat.setImageResource(R.drawable.ic_repeat_one);
                 break;
             case REPEAT_ALL:
-                mRepeat.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_repeat_on, null));
+                mRepeat.setImageResource(R.drawable.ic_repeat_on);
                 break;
         }
     }
@@ -555,22 +552,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     private void updateLargePlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
         if (null != item) {
-            switch (App.getUserPreferenceHandler().getShuffle()) {
-                case SHUFFLE_OFF:
-                    DrawableCompat.setTint(mShuffle.getDrawable(), colorFrom);
-                    break;
-                case SHUFFLE_ON:
-                    DrawableCompat.setTint(mShuffle.getDrawable(), colorFromActive);
-                    break;
-            }
-            switch (App.getUserPreferenceHandler().getRepeat()) {
-                case REPEAT_NONE:
-                    DrawableCompat.setTint(mRepeat.getDrawable(), colorFrom);
-                    break;
-                default:
-                    DrawableCompat.setTint(mRepeat.getDrawable(), colorFromActive);
-                    break;
-            }
+            updateShuffle();
+            updateRepeat();
             mLargeSongTitle.setVisibility(View.VISIBLE);
             mLargeSongSubTitle.setVisibility(View.VISIBLE);
             mTrackSeek.setVisibility(View.VISIBLE);
@@ -604,8 +587,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 }
             }
         } else if (!isLastPlayedItem) {
-            DrawableCompat.setTint(mRepeat.getDrawable(), colorTo);
-            DrawableCompat.setTint(mShuffle.getDrawable(), colorTo);
             DrawableCompat.setTint(mPlayPause.getDrawable(), colorTo);
             mLargeSongTitle.setVisibility(View.INVISIBLE);
             mLargeSongSubTitle.setVisibility(View.INVISIBLE);
@@ -645,15 +626,13 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         updateMiniPlayerEffectUI(audioEffects.isAudioEffectOn());
         if (null != item) {
             DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorFrom);
-            mMiniSongTitle.setSelected(true);
-            mMiniSongSubTitle.setSelected(true);
             mMiniSongTitle.setText(item.getItemTitle());
             mMiniSongSubTitle.setVisibility(null != item.getItemArtist() ? View.VISIBLE : View.GONE);
             mMiniSongSubTitle.setText(item.getItemArtist());
             if (isPlaying)
-                mMiniPlayerPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_pause, null));
+                mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_pause);
             else
-                mMiniPlayerPlayPause.setImageDrawable(mActivity.getResources().getDrawable(R.drawable.ic_miniplayer_play, null));
+                mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_play);
         } else if (!isLastPlayedItem) {
             DrawableCompat.setTint(mMiniPlayerPlayPause.getDrawable(), colorTo);
         }
