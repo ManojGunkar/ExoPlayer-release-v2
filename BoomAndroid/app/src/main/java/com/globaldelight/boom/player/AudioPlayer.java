@@ -38,6 +38,8 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
+import junit.framework.Assert;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -253,23 +255,29 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         }
     }
 
+    private int getGenereId(String genreName) {
+        if ( genreName == null ) {
+            return Constants.EQ.MUSIC;
+        }
 
-    private void setGenreType(String genreType) {
-        final AudioEffect audioEffect = AudioEffect.getInstance(mContext);
-        if (null != genreType) {
-            for (int i = 0; i <= mContext.getResources().getStringArray(R.array.mapped_eq_key).length - 1; i++) {
-                if (genreType.toUpperCase().contains(mContext.getResources().getStringArray(R.array.mapped_eq_key)[i].toUpperCase())) {
-                    String genre = mContext.getResources().getStringArray(R.array.mapped_eq_value)[i];
-                    List t = Arrays.asList(mContext.getResources().getStringArray(R.array.eq_names));
-                    audioEffect.setAutoEqualizerPosition(t.indexOf(genre.toUpperCase()));
-                    Log.d("Song Genre : ", genreType);
-                    Log.d("Selected Song Genre : ", genre);
-                    return;
-                }
+        genreName = genreName.toUpperCase();
+        final String[] eqKeys = mContext.getResources().getStringArray(R.array.mapped_eq_key);
+        final int[] eqValues = mContext.getResources().getIntArray(R.array.mapped_eq_value);
+        Assert.assertEquals(eqKeys.length, eqValues.length);
+
+        for (int i = 0; i < eqKeys.length; i++) {
+            if (genreName.contains(eqKeys[i].toUpperCase())) {
+                return eqValues[i];
             }
         }
-        audioEffect.setAutoEqualizerPosition(12);
-        Log.d("Selected Song Genre : ", "MUSIC");
+        return Constants.EQ.MUSIC;
+    }
+
+
+    private void setGenreType(String genreType) {
+        int genreId = getGenereId(genreType);
+        AudioEffect.getInstance(mContext).setAutoEqualizerPosition(genreId);
+        Log.d(TAG, "Song Genre: " + genreType + " Equalizer: " + genreId);
     }
 
 

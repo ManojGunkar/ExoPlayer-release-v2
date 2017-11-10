@@ -51,15 +51,10 @@
         <item>ELECTRONIC</item>
         <item>FLAT</item>
         <item>LOUD</item>
-
         <item>PARTY</item>
-
         <item>SOFT</item>
         <item>TREBLE</item>
         <item>VOCALS</item>
-
-
-
         <item>Classical</item>
         <item>Country</item>
         <item>Dance</item>
@@ -70,7 +65,6 @@
         <item>House</item>
         <item>Rap</item>
         <item>Jazz</item>
-
         <item>K-Pop</item>
         <item>Pop</item>
         <item>Metal</item>
@@ -99,65 +93,58 @@
         <item>Latino</item>
         <item>Indie</item>
         <item>Greatest Hits</item>
-
     </string-array>
 
-    <string-array name="mapped_eq_value" translatable="false">
-        <item>BASSBOOST</item>
-        <item>ACOUSTIC</item>
-        <item>60\'s</item>
-        <item>ELECTRONIC</item>
-        <item>FLAT</item>
-        <item>LOUD</item>
 
-        <item>PARTY</item>
-        <item>SOFT</item>
-        <item>TREBLE</item>
-        <item>VOCALS</item>
-
-
-
-        <item>Classical</item>
-        <item>Accoustic</item>
-        <item>Party</item>
-        <item>Electronic</item>
-        <item>Reggae</item>
-        <item>Hiphop</item>
-        <item>HIPHOP</item>
-        <item>House</item>
-        <item>R &amp; B</item>
-        <item>Jazz</item>
-
-        <item>Hiphop</item>
-        <item>Hiphop</item>
-        <item>Metal</item>
-        <item>R &amp; B</item>
-        <item>R &amp; B</item>
-        <item>R &amp; B</item>
-        <item>Reggae</item>
-        <item>Rock</item>
-        <item>Party</item>
-        <item>House</item>
-        <item>Dubstep</item>
-        <item>Loud</item>
-        <item>Electronic</item>
-        <item>Loud</item>
-
-
-        <item>MUSIC</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-        <item>Music</item>
-    </string-array>
+    <integer-array name="mapped_eq_value" translatable="false">
+        <item>@integer/BASSBOOST</item>
+        <item>@integer/ACOUSTIC</item>
+        <item>@integer/SIXTIES</item>
+        <item>@integer/ELECTRONIC</item>
+        <item>@integer/FLAT</item>
+        <item>@integer/LOUD</item>
+        <item>@integer/PARTY</item>
+        <item>@integer/SOFT</item>
+        <item>@integer/TREBLE</item>
+        <item>@integer/VOCALS</item>
+        <item>@integer/CLASSICAL</item>
+        <item>@integer/ACOUSTIC</item>
+        <item>@integer/PARTY</item>
+        <item>@integer/ELECTRONIC</item>
+        <item>@integer/REGGAE</item>
+        <item>@integer/HIPHOP</item>
+        <item>@integer/HIPHOP</item>
+        <item>@integer/HOUSE</item>
+        <item>@integer/RNB</item>
+        <item>@integer/JAZZ</item>
+        <item>@integer/POP</item>
+        <item>@integer/POP</item>
+        <item>@integer/METAL</item>
+        <item>@integer/RNB</item>
+        <item>@integer/RNB</item>
+        <item>@integer/RNB</item>
+        <item>@integer/REGGAE</item>
+        <item>@integer/ROCK</item>
+        <item>@integer/PARTY</item>
+        <item>@integer/HOUSE</item>
+        <item>@integer/DUBSTEP</item>
+        <item>@integer/LOUD</item>
+        <item>@integer/ELECTRONIC</item>
+        <item>@integer/LOUD</item>
+        <item>@integer/MUSIC</item>
+        <item>@integer/MUSIC</item>
+        <item>@integer/MUSIC</item>
+        <item>@integer/MUSIC</item>
+        <item>@integer/MUSIC</item>
+        <item>@integer/MUSIC</item>
+        <item>@integer/MUSIC</item>
+        <item>@integer/MUSIC</item>
+        <item>@integer/MUSIC</item>
+        <item>@integer/MUSIC</item>
+        <item>@integer/MUSIC</item>
+        <item>@integer/MUSIC</item>
+        <item>@integer/MUSIC</item>
+        <item>@integer/MUSIC</item>
+    </integer-array>
 
 </resources>

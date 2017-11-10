@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="AUTO">0</integer>
+    <integer name="BASSBOOST">1</integer>
+    <integer name="ACOUSTIC">2</integer>
+    <integer name="SIXTIES">3</integer>
+    <integer name="CLASSICAL">4</integer>
+    <integer name="DUBSTEP">5</integer>
+    <integer name="ELECTRONIC">6</integer>
+    <integer name="FLAT">7</integer>
+    <integer name="HIPHOP">8</integer>
+    <integer name="HOUSE">9</integer>
+    <integer name="JAZZ">10</integer>
+    <integer name="LOUD">11</integer>
+    <integer name="MUSIC">12</integer>
+    <integer name="PARTY">13</integer>
+    <integer name="POP">14</integer>
+    <integer name="REGGAE">15</integer>
+    <integer name="ROCK">16</integer>
+    <integer name="SOFT">17</integer>
+    <integer name="TREBLE">18</integer>
+    <integer name="VOCALS">19</integer>
+    <integer name="RNB">20</integer>
+    <integer name="METAL">21</integer>
+</resources>
