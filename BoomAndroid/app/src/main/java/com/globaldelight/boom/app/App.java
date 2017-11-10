@@ -149,7 +149,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
         Boolean terminate = false;
         int terminateReason = R.string.app_expire;
-       /* if( isExpired() ) {
+        if( isExpired() ) {
             terminateReason = R.string.app_expire;
             terminate = true;
         }
@@ -170,7 +170,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
                     System.exit(0);
                 }
             }, 2000);
-        }*/
+        }
     }
 
     public void onActivityResumed(Activity activity) {
