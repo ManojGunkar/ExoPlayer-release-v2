@@ -468,6 +468,10 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         }
     }
 
+    public void stop() {
+        setSessionState(PlaybackState.STATE_STOPPED);
+    }
+
     public IMediaItem getPlayingItem() {
         return (IMediaItem) mQueue.getPlayingItem();
     }

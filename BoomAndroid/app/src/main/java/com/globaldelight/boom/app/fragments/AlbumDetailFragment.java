@@ -118,6 +118,7 @@ public class AlbumDetailFragment extends Fragment {
     }
 
     public void onFloatPlayAlbums() {
+        App.playbackManager().stop();
         if (dataCollection.getParentType() == ItemType.ALBUM && dataCollection.count() > 0) {
             App.playbackManager().queue().addItemListToPlay(dataCollection, 0);
         } else if (dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex())).count() > 0) {
@@ -125,6 +126,7 @@ public class AlbumDetailFragment extends Fragment {
         } else if (dataCollection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex())).count() > 0) {
             App.playbackManager().queue().addItemListToPlay((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex()), 0);
         }
+
         if ( albumDetailAdapter != null ) {
             albumDetailAdapter.notifyDataSetChanged();
         }

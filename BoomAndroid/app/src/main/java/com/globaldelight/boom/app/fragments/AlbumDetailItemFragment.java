@@ -104,6 +104,7 @@ public class AlbumDetailItemFragment extends Fragment {
     }
 
     public void onFloatPlayAlbums() {
+        App.playbackManager().stop();
         if(collection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)collection.getItemAt(0)).count() == 0) {
             ((IMediaItemCollection) collection.getItemAt(0)).setMediaElement(MediaController.getInstance(mActivity).getArtistTrackList(collection));
         }else if(collection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)collection.getItemAt(0)).count() == 0) {
