@@ -7,16 +7,62 @@
     android:background="@color/library_album_footer">
 
     <LinearLayout
+        android:id="@+id/ad_loading_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:maxLines="3"
+            android:text="Loading Ad..."
+            android:textColor="@color/track_sub_title"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ad_error_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:maxLines="3"
+            android:text="Failed to load Ads!"
+            android:textColor="@color/track_sub_title"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ad_content_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="visible"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/ivImage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_default_art_grid" />
+            android:layout_height="92dp"
+            android:layout_marginTop="2dp"
+            android:background="#00FFFFFF"
+            android:scaleType="centerCrop" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -31,29 +77,30 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:gravity="center_vertical"
-                android:padding="5dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="5dp">
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/tvHeader"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="0.5"
-                    android:text="Ads Title"
                     android:ellipsize="end"
-                    android:maxLines="1"
                     android:maxLength="15"
+                    android:maxLines="1"
+                    android:text="Ads Title"
                     android:textColor="@color/white"
                     android:textSize="@dimen/card_grid_item_sub_title"
                     android:textStyle="bold" />
 
                 <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/tvDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="0.5"
                     android:ellipsize="end"
-                    android:maxLines="1"
                     android:maxLength="15"
+                    android:maxLines="1"
                     android:text="Description"
                     android:textColor="@color/white"
                     android:textSize="@dimen/card_grid_item_sub_title"
@@ -73,10 +120,9 @@
                     android:layout_width="64dp"
                     android:layout_height="30dp"
                     android:layout_gravity="right"
-                    android:textSize="8sp"
-                    android:textColor="@color/white"
                     android:text="@string/install_google"
-                   />
+                    android:textColor="#586267"
+                    android:textSize="8sp" />
 
             </LinearLayout>
         </LinearLayout>

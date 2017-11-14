@@ -85,9 +85,9 @@ public class GoogleAdsPresenter implements AdsPresenter {
     public RecyclerView.ViewHolder createViewHolder(ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (param.isLinearAds)
-            return new GoogleAdViewHolder(inflater.inflate(R.layout.google_native_linear_ads, parent, false));
+            return new GoogleAdViewHolder(inflater.inflate(R.layout.google_native_linear_ads_update, parent, false));
         else
-            return new GoogleAdViewHolder(inflater.inflate(R.layout.google_native_grid_ads, parent, false));
+            return new GoogleAdViewHolder(inflater.inflate(R.layout.google_native_grid_ads_update, parent, false));
     }
 
     @Override
@@ -114,20 +114,20 @@ public class GoogleAdsPresenter implements AdsPresenter {
         viewHolder.adContentView.setVisibility(View.VISIBLE);
 
 
-        if ( ad.getLogo() != null ) {
+       /* if ( ad.getLogo() != null ) {
             viewHolder.logoView.setImageDrawable(ad.getLogo().getDrawable());
             viewHolder.logoView.setVisibility(View.VISIBLE);
         }
         else {
             viewHolder.logoView.setVisibility(View.GONE);
-        }
+        }*/
 
         viewHolder.headerView.setText(ad.getHeadline());
         viewHolder.descriptionView.setText(ad.getBody());
         if ( viewHolder.imageView != null && ad.getImages().size() > 0 ) {
             viewHolder.imageView.setImageDrawable(ad.getImages().get(0).getDrawable());
         }
-        viewHolder.advertiserView.setText(ad.getAdvertiser());
+      //  viewHolder.advertiserView.setText(ad.getAdvertiser());
         viewHolder.adActionBtn.setText(ad.getCallToAction());
         viewHolder.adView.setNativeAd(ad);
     }
