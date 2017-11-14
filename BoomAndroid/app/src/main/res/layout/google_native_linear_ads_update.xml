@@ -79,23 +79,24 @@
                 android:maxLength="15"
                 android:maxLines="1"
                 android:padding="2dp"
+                android:layout_marginLeft="5dp"
                 android:text="title"
-                android:textColor="@color/track_sub_title"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textColor="@color/white"
+                android:textSize="18sp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/tvDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.3"
+                android:layout_marginLeft="5dp"
+
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:padding="2dp"
                 android:text="Description"
                 android:textColor="@color/track_sub_title"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textSize="14sp" />
 
         </LinearLayout>
 
@@ -106,6 +107,7 @@
             android:layout_gravity="bottom"
             android:layout_weight="0.25"
             android:text="@string/install_google"
+            android:textStyle="bold"
             android:textColor="#586267"
             android:textSize="8sp" />
     </LinearLayout>
