@@ -7,6 +7,7 @@
 
 #include <jni.h>
 #include <string>
+#include <array>
 #include <sstream>
 #include <iomanip>
 #include "Context.h"
@@ -23,12 +24,23 @@ namespace gdpl {
 
         }
 
-        std::string getFingerPrint()
+        std::array<uint32_t, 20> getFingerPrint()
         {
             jbyteArray sig = getSignature();
             jobject cert = createCertificate(sig);
             jbyteArray key = getPublicKey(cert);
-            return toHexString(key);
+
+            jbyte* bytes = _env->GetByteArrayElements(key, nullptr);
+            jint length = _env->GetArrayLength(key);
+            std::array<uint32_t, 20> fingerprint;
+
+            for (int i = 0; i < length ; ++i) {
+                fingerprint[i] = (unsigned char)bytes[i];
+            }
+
+            _env->ReleaseByteArrayElements(key, bytes, JNI_ABORT);
+
+            return fingerprint;
         }
 
     private:

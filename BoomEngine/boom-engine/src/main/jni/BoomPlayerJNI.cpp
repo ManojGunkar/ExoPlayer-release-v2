@@ -55,13 +55,21 @@ static inline bool hasExpired() {
 
 
 
-static inline bool verifyFingerPrint(Context& context)
+inline bool verifyFingerPrint(JNIEnv* env, Context& context)
 {
-    const int _reference[20] = PACKAGE_FINGERPRINT;
+    Package pkg(env, context);
+    auto fingerprint = pkg.getFingerPrint();
+    const uint32_t ref[20] = PACKAGE_FINGERPRINT;
+
+    uint32_t sum = 0;
     for ( int i = 0; i < 20; i++ ) {
-        return false;
+        sum += ref[i];
+        if ( fingerprint[i] != ref[i] ) {
+            return false;
+        }
     }
-    return true;
+
+    return (sum==FINGERPRINT_SUM);
 }
 
 // Clear all the pending data from engine
@@ -93,8 +101,12 @@ void BOOM_ENGINE_METHOD(init)(
 #endif
     Context theContext(env, context);
 
-    Package pkg(env, theContext);
-    LOGD("Package Finger Print: %s", pkg.getFingerPrint().c_str());
+#ifdef NDEBUG
+    if ( !verifyFingerPrint(env, theContext) ) {
+        LOGE("Library is not supported!!!\n");
+        exit(1);
+    }
+#endif
 
     globalJavaAssetManager = env->NewGlobalRef(theContext.getAssets());
     InitAssetManager(AAssetManager_fromJava(env, globalJavaAssetManager));
