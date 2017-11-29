@@ -102,8 +102,9 @@ dependencies {
         force = true
     }
     implementation(name:'extension-flac-release', ext:'aar')
-    implementation(name:'boom-engine-release', ext:'aar')
     implementation(name:'boom-extension-release', ext:'aar')
+
+    implementation project(path: ':boom-engine')
 
     implementation 'com.dropbox.core:dropbox-core-sdk:3.0.5'
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
