@@ -127,7 +127,7 @@ public class BoomEngine {
         Log.d(LOG_TAG, "sampleRate:"+sampleRate);
         Log.d(LOG_TAG, "frameSize:"+frameCount);
 
-        init(context.getAssets(), sampleRate, frameCount);
+        init(context, sampleRate, frameCount);
     }
 
     /**
@@ -276,5 +276,5 @@ public class BoomEngine {
 
     private native void stop();
 
-    private native static void init(AssetManager assetManager, int sampleRate, int frameCount);
+    private native static void init(Context context, int sampleRate, int frameCount);
 }

@@ -5,12 +5,16 @@
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 #include <Utilities/Utility.h>
+#include <Utilities/Context.h>
+#include <Utilities/Package.h>
 
 #include "logger/log.h"
 #include "audioFx/AudioEngine.h"
 #include "BoomAudioProcessor.h"
 #include "Utilities/AutoLock.hpp"
 #include "Utilities/ByteBuffer.h"
+#include "Utilities/Context.h"
+#include "Utilities/Package.h"
 
 
 #define BYTES_PER_CHANNEL ((mEngine->GetOutputType() == SAMPLE_TYPE_SHORT)? sizeof(int16_t) : sizeof(float))
@@ -50,6 +54,16 @@ static inline bool hasExpired() {
 #endif
 
 
+
+static inline bool verifyFingerPrint(Context& context)
+{
+    const int _reference[20] = PACKAGE_FINGERPRINT;
+    for ( int i = 0; i < 20; i++ ) {
+        return false;
+    }
+    return true;
+}
+
 // Clear all the pending data from engine
 static void RinseEngine() {
     int16_t* inbuffer = (int16_t*)calloc(DEFAULT_FRAME_COUNT*CHANNEL_COUNT, sizeof(int16_t));
@@ -66,7 +80,7 @@ extern "C" JNIEXPORT
 void BOOM_ENGINE_METHOD(init)(
         JNIEnv *env,
         jclass clazz,
-        jobject assetManager,
+        jobject context,
         jint sampleRate,
         jint inFrameCount)
 {
@@ -77,8 +91,12 @@ void BOOM_ENGINE_METHOD(init)(
         exit(1);
     }
 #endif
+    Context theContext(env, context);
 
-    globalJavaAssetManager = env->NewGlobalRef(assetManager);
+    Package pkg(env, theContext);
+    LOGD("Package Finger Print: %s", pkg.getFingerPrint().c_str());
+
+    globalJavaAssetManager = env->NewGlobalRef(theContext.getAssets());
     InitAssetManager(AAssetManager_fromJava(env, globalJavaAssetManager));
     pthread_mutex_init(&mLock, nullptr);
 }

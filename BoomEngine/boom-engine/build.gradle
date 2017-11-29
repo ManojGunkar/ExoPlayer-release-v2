@@ -23,6 +23,8 @@ model {
         }
         ndk {
             def DEFINE_EXPIRY_DATE_FLAG = '-DEXPIRY_DATE=makeDate(' + getExpiryDate() + ')'
+            def DEFINE_PACKAGE_FINGERPRINT = '-DPACKAGE_FINGERPRINT={0xD7, 0x89, 0x2F, 0xAD, 0x92, 0xCA, 0xE5, 0x50, 0xDB, 0xAE, 0xF0, 0x97, 0x58, 0x25, 0x07, 0xC8, 0x51, 0x19, 0x6A, 0xC2}'
+            def DEFINE_FINGERPRINT_SUM = '-DFINGERPRINT_SUM=0xABF'
 
 
             platformVersion = 23
@@ -32,6 +34,8 @@ model {
             CFlags.addAll(['-std=c11'])
             cppFlags.addAll(['-I' + file('src/main/jni/'),
                              DEFINE_EXPIRY_DATE_FLAG,
+                             DEFINE_PACKAGE_FINGERPRINT,
+                             DEFINE_FINGERPRINT_SUM,
                              '-std=c++11', '-Wall',
                              '-fno-exceptions', '-fno-rtti'])
             ldFlags.addAll(['-L' + file('src/main/jni/libs')])
