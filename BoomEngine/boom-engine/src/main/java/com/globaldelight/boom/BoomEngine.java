@@ -113,22 +113,7 @@ public class BoomEngine {
      * Initializes the engine. This must be called once before creating an instance of BoomEngine.
      * @param context Android context.
      */
-    public static void init(Context context) {
-        AudioManager am = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-
-        String sampleRateStr = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
-        sampleRate = Integer.parseInt(sampleRateStr);
-        if ( sampleRate == 0 ) sampleRate = 44100; // if not available use 44.1kHz
-
-        String frameSizeStr = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
-        frameCount = Integer.parseInt(frameSizeStr);
-        if ( frameCount == 0 ) frameCount = 1024; // if not available use 4k byteBuffer - 1024*2*2
-
-        Log.d(LOG_TAG, "sampleRate:"+sampleRate);
-        Log.d(LOG_TAG, "frameSize:"+frameCount);
-
-        init(context, sampleRate, frameCount);
-    }
+    public native static void init(Context context);
 
     /**
      * Releases resources.
@@ -276,5 +261,4 @@ public class BoomEngine {
 
     private native void stop();
 
-    private native static void init(Context context, int sampleRate, int frameCount);
 }

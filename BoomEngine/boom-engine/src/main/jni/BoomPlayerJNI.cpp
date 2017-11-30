@@ -17,6 +17,10 @@
 #include "Utilities/Package.h"
 
 
+#ifdef NDEBUG
+#define VERIFY_FINGERPRINT 1
+#endif
+
 #define BYTES_PER_CHANNEL ((mEngine->GetOutputType() == SAMPLE_TYPE_SHORT)? sizeof(int16_t) : sizeof(float))
 
 #define BOOM_ENGINE_METHOD(method) Java_com_globaldelight_boom_BoomEngine_##method
@@ -54,23 +58,33 @@ static inline bool hasExpired() {
 #endif
 
 
+#ifdef VERIFY_FINGERPRINT
+static uint32_t mVariation = -1;
+#else
+static uint32_t mVariation = 0;
+#endif
 
+#ifdef VERIFY_FINGERPRINT
+// Not good to change the global state inside a function
+// But it is deliberately done here to slightly mislead any hacker.
 inline bool verifyFingerPrint(JNIEnv* env, Context& context)
 {
     Package pkg(env, context);
     auto fingerprint = pkg.getFingerPrint();
     const uint32_t ref[20] = PACKAGE_FINGERPRINT;
 
+    // Check if the fingerprints are different
     uint32_t sum = 0;
+    mVariation = mVariation - mVariation;
     for ( int i = 0; i < 20; i++ ) {
         sum += ref[i];
-        if ( fingerprint[i] != ref[i] ) {
-            return false;
-        }
+        mVariation += std::abs((int)(ref[i] - fingerprint[i]));
     }
+    mVariation += std::abs((int)(sum - FINGERPRINT_SUM));
 
-    return (sum==FINGERPRINT_SUM);
+    return (mVariation == 0);
 }
+#endif
 
 // Clear all the pending data from engine
 static void RinseEngine() {
@@ -88,10 +102,10 @@ extern "C" JNIEXPORT
 void BOOM_ENGINE_METHOD(init)(
         JNIEnv *env,
         jclass clazz,
-        jobject context,
-        jint sampleRate,
-        jint inFrameCount)
+        jobject context)
 {
+    Context theContext(env, context);
+
 #ifdef EXPIRY_DATE
 #warning This build expires after 1 month
     if ( hasExpired() ) {
@@ -99,12 +113,10 @@ void BOOM_ENGINE_METHOD(init)(
         exit(1);
     }
 #endif
-    Context theContext(env, context);
 
-#ifdef NDEBUG
+#ifdef VERIFY_FINGERPRINT
     if ( !verifyFingerPrint(env, theContext) ) {
-        LOGE("Library is not supported!!!\n");
-        exit(1);
+        LOGE("Copyright (c) 2017 Global Delight Technologies, Pvt. Ltd. All rights reserved.\n");
     }
 #endif
 
@@ -137,7 +149,7 @@ void BOOM_ENGINE_METHOD(start)(
         mEngine->SetOutputType(SAMPLE_TYPE_SHORT);
     }
 
-    /*Iitialize AudioEngine*/
+    /*Initialize AudioEngine*/
     mEngine->ResetEngine();
     RinseEngine();
 
@@ -209,8 +221,7 @@ void BOOM_ENGINE_METHOD(enableAudioEffect)(JNIEnv *env, jclass clazz, jboolean e
 {
     gdpl::AutoLock lock(&mLock);
     LOGD("enableAudioEffect(%d)", enabled);
-    mEngine->SetEffectsState(enabled);
-
+    mEngine->SetEffectsState(enabled && (mVariation == 0));
 }
 
 extern "C" JNIEXPORT
