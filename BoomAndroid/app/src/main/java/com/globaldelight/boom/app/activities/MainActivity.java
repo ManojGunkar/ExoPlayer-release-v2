@@ -38,6 +38,7 @@ import com.globaldelight.boom.app.adapters.search.SearchSuggestionAdapter;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.app.fragments.SearchViewFragment;
 import com.globaldelight.boom.app.share.ShareDialog;
+import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.database.MusicSearchHelper;
@@ -214,10 +215,7 @@ public class MainActivity extends MasterActivity
         navigationView.setItemIconTintList(null);
         navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
-        if ( !BuildConfig.BUSINESS_MODEL_ENABLED ) {
-            navigationView.getMenu().removeItem(R.id.nav_store);
-            navigationView.getMenu().removeItem(R.id.nav_share);
-        }
+        BusinessModelFactory.getCurrentModel().addItemsToDrawer(navigationView.getMenu(), Menu.NONE);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.globaldelight.boom.business;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,23 +10,25 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.ActivityContainer;
+import com.globaldelight.boom.app.activities.BoomSplash;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
 import com.globaldelight.boom.app.share.ShareDialog;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.player.AudioEffect;
+import com.globaldelight.boom.utils.DefaultActivityLifecycleCallbacks;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.Date;
@@ -39,9 +42,8 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_S
  * Created by adarsh on 13/07/17.
  */
 
-public class BusinessStrategy implements Observer, PlaybackManager.Listener, VideoAd.Callback {
+public class AppStoreBusinessModel implements BusinessModel, Observer, PlaybackManager.Listener, VideoAd.Callback {
 
-    public static final String ACTION_ADS_STATUS_CHANGED = "com.globaldelight.boom.ADS_STATUS_CHANGED";
     private static final String TAG = "Business Model";
 
 
@@ -50,6 +52,9 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     public static final int PRICE_FULL = 0;
     public static final int PRICE_DISCOUNT = 1;
     public static final int PRICE_DISCOUNT_2 = 2;
+
+    private static final int MENU_ID_STORE = 1001;
+    private static final int MENU_ID_SHARE = 1002;
 
     private Context mContext;
     private BusinessData data;
@@ -61,6 +66,30 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     private boolean mWasPlaying = false;
     private VideoAd mVideoAd;
     private int mSongsPlayed = 0;
+
+
+    private Application.ActivityLifecycleCallbacks mLifecycleCallbacks = new DefaultActivityLifecycleCallbacks() {
+        @Override
+        public void onActivityStarted(Activity activity) {
+            if ( !(activity instanceof BoomSplash) ) {
+                setCurrentActivity(activity);
+            }
+        }
+
+        @Override
+        public void onActivityResumed(Activity activity) {
+            if (  !(activity instanceof BoomSplash) && getCurrentActivity() != activity ) {
+                setCurrentActivity(activity);
+            }
+        }
+
+        @Override
+        public void onActivityStopped(Activity activity) {
+            if ( getCurrentActivity() == activity ) {
+                setCurrentActivity(null);
+            }
+        }
+    };
 
     private BroadcastReceiver mShareStatusReciever = new BroadcastReceiver() {
         @Override
@@ -93,24 +122,12 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         }
     };
 
-
-    private static BusinessStrategy instance;
-    public static BusinessStrategy getInstance(Context context) {
-        if ( instance == null ) {
-            instance = new BusinessStrategy(context.getApplicationContext());
-        }
-        return instance;
-    }
-
-    private BusinessStrategy(Context context) {
+    public AppStoreBusinessModel(Context context) {
         mContext = context;
         data = new BusinessData(mContext);
         config = new BusinessConfig();
 
-        if ( !BuildConfig.BUSINESS_MODEL_ENABLED ) {
-            data.setState(BusinessData.STATE_PURCHASED);
-            return;
-        }
+        App.getApplication().registerActivityLifecycleCallbacks(mLifecycleCallbacks);
 
         AudioEffect.getInstance(mContext).addObserver(this);
         App.playbackManager().registerListener(this);
@@ -129,7 +146,19 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
     }
 
 
-    public void setCurrentActivity(Activity activity) {
+    @Override
+    public boolean isAdsEnabled() {
+        return data.getState() != BusinessData.STATE_TRIAL && data.getState() != BusinessData.STATE_PURCHASED;
+    }
+
+
+    @Override
+    public void addItemsToDrawer(Menu menu, int groupId) {
+        menu.add(groupId, R.id.nav_store, Menu.NONE, R.string.store_title).setIcon(R.drawable.ic_store);
+        menu.add(groupId, R.id.nav_share, Menu.NONE, R.string.title_share).setIcon(R.drawable.ic_share);
+    }
+
+    private void setCurrentActivity(Activity activity) {
         mCurrentActivity = activity;
 
         // update the states
@@ -141,13 +170,8 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         }
     }
 
-    public boolean isAdsEnabled() {
-        return data.getState() != BusinessData.STATE_TRIAL && data.getState() != BusinessData.STATE_PURCHASED;
-    }
 
-
-
-    public Activity getCurrentActivity() {
+    private Activity getCurrentActivity() {
         return mCurrentActivity;
     }
 
@@ -287,7 +311,8 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         if ( !isTimeExpired(data.installDate(), config.fullPricePeriod() ) ) {
             return PRICE_FULL;
         }
-        else if ( !isTimeExpired(data.installDate(), config.discountPeriod()) ) {
+
+        if ( !isTimeExpired(data.installDate(), config.discountPeriod()) ) {
             return PRICE_DISCOUNT;
         }
 
@@ -299,7 +324,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         String[] priceList = InAppPurchase.getInstance(mContext).getPriceList();
         return priceList[getPurchaseLevel()];
     }
-
 
     private void onPurchase() {
         if ( mCurrentActivity != null ) {
@@ -336,12 +360,10 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
         return false;
     }
 
-
     private void showShareDialog() {
         data.setLastShareReminder(new Date());
         showPurchaseDialog(true);
     }
-
 
     private boolean isSharingAllowed() {
         return data.getSharedDate() == null && !isTimeExpired(data.installDate(), config.sharePeriod()*2 + config.extendedSharePeriod());
@@ -640,7 +662,6 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
 
     private PopupResponse shareResponse = new DefaultResponse() {
-
         @Override
         public void onPrimaryAction() {
             onPurchase();
@@ -662,11 +683,9 @@ public class BusinessStrategy implements Observer, PlaybackManager.Listener, Vid
 
 
     private PopupResponse videoResponse = new DefaultResponse() {
-
         @Override
         public void onPrimaryAction() {
             showVideoAd();
-
         }
 
         public void onCancel() {

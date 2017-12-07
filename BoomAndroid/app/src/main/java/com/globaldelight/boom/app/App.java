@@ -12,10 +12,8 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.activities.BoomSplash;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
-import com.globaldelight.boom.business.BusinessStrategy;
+import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.app.service.PlayerService;
 import com.globaldelight.boom.app.database.CloudMediaItemDBHelper;
@@ -23,6 +21,7 @@ import com.globaldelight.boom.app.database.FavoriteDBHelper;
 import com.globaldelight.boom.app.database.PlaylistDBHelper;
 import com.globaldelight.boom.app.database.UpNextDBHelper;
 import com.globaldelight.boom.app.sharedPreferences.UserPreferenceHandler;
+import com.globaldelight.boom.utils.DefaultActivityLifecycleCallbacks;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,13 +31,12 @@ import java.util.TimerTask;
 
 import io.fabric.sdk.android.DefaultLogger;
 import io.fabric.sdk.android.Fabric;
-import io.fabric.sdk.android.Kit;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
  */
 
-public class App extends Application implements Application.ActivityLifecycleCallbacks {
+public class App extends Application {
 
 //    public static final String TWEET_CONSUMER ="K8KDQHnW8Zi0ZLZklAcKGqI92";
 //    public static final String TWEET_SECRET ="OLhb1Lp9BaZf26qOQE6EOHBP66sImaZ635ls23TJqrDcmwhpuy";
@@ -51,6 +49,62 @@ public class App extends Application implements Application.ActivityLifecycleCal
     private static CloudMediaItemDBHelper cloudMediaItemDBHelper;
     private static UserPreferenceHandler userPreferenceHandler;
 
+    private ActivityLifecycleCallbacks mLifecycleCallbacks = new DefaultActivityLifecycleCallbacks() {
+        private Activity mActivity;
+
+        public void onActivityStarted(Activity activity) {
+            mActivity = activity;
+
+            Boolean terminate = false;
+            int terminateReason = R.string.app_expire;
+            if( isExpired() ) {
+                terminateReason = R.string.app_expire;
+                terminate = true;
+            }
+            else if ( !isSupportedDevice() ) {
+                terminateReason = R.string.app_unsupported;
+                terminate = true;
+            }
+
+            if ( terminate ) {
+                Toast.makeText(App.this, activity.getResources().getString(terminateReason), Toast.LENGTH_LONG).show();
+                activity.finishAndRemoveTask();
+
+                // Terminate the App process after 2 seconds
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        System.exit(0);
+                    }
+                }, 2000);
+            }
+        }
+
+        @Override
+        public void onActivityStopped(Activity activity) {
+            if ( mActivity == activity ) {
+                mActivity = null;
+                Glide.get(App.this).clearMemory();
+            }
+        }
+
+        private boolean isExpired(){
+            if( BuildConfig.EXPIRY_DATE != null ) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                    Date expiryDate = sdf.parse(BuildConfig.EXPIRY_DATE);
+                    Date today = new Date();
+                    return today.after(expiryDate);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+            return false;
+        }
+    };
+
     public static App getApplication() {
         return application;
     }
@@ -59,10 +113,10 @@ public class App extends Application implements Application.ActivityLifecycleCal
     public void onCreate() {
         application = this;
         super.onCreate();
-        registerActivityLifecycleCallbacks(this);
+        registerActivityLifecycleCallbacks(mLifecycleCallbacks);
+        BusinessModelFactory.initModel(this);
 
         FacebookSdk.sdkInitialize(this);
-
 
         if ( BuildConfig.FLAVOR.equals("production") ) {
             final Fabric fabric = new Fabric.Builder(this)
@@ -84,8 +138,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
 //        }
 
         MixPanelAnalyticHelper.initPushNotification(this);
-
-
     }
 
     public static PlaybackManager playbackManager() {
@@ -138,83 +190,10 @@ public class App extends Application implements Application.ActivityLifecycleCal
         MixPanelAnalyticHelper.getInstance(this).flush();
     }
 
-    public void onActivityCreated(Activity var1, Bundle var2) {
-
-    }
-
-    public void onActivityStarted(Activity activity) {
-        if ( !(activity instanceof BoomSplash) ) {
-            BusinessStrategy.getInstance(this).setCurrentActivity(activity);
-        }
-
-        Boolean terminate = false;
-        int terminateReason = R.string.app_expire;
-        if( isExpired() ) {
-            terminateReason = R.string.app_expire;
-            terminate = true;
-        }
-        else if ( !isSupportedDevice() ) {
-            terminateReason = R.string.app_unsupported;
-            terminate = true;
-        }
-
-        if ( terminate ) {
-            Toast.makeText(this, activity.getResources().getString(terminateReason), Toast.LENGTH_LONG).show();
-            activity.finishAndRemoveTask();
-
-            // Terminate the App process after 2 seconds
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    System.exit(0);
-                }
-            }, 2000);
-        }
-    }
-
-    public void onActivityResumed(Activity activity) {
-        if (  !(activity instanceof BoomSplash) && BusinessStrategy.getInstance(this).getCurrentActivity() != activity ) {
-            BusinessStrategy.getInstance(this).setCurrentActivity(activity);
-        }
-    }
-
-    public void onActivityPaused(Activity var1) {
-    }
-
-    public void onActivityStopped(Activity activity) {
-        if ( BusinessStrategy.getInstance(this).getCurrentActivity() == activity ) {
-            BusinessStrategy.getInstance(this).setCurrentActivity(null);
-            Glide.get(this).clearMemory();
-        }
-    }
-
-    public void onActivitySaveInstanceState(Activity var1, Bundle var2) {
-    }
-
-    public void onActivityDestroyed(Activity var1) {
-
-    }
-
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         Glide.get(this).clearMemory();
-    }
-
-    private boolean isExpired(){
-        if( BuildConfig.EXPIRY_DATE != null ) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-                Date expiryDate = sdf.parse(BuildConfig.EXPIRY_DATE);
-                Date today = new Date();
-                return today.after(expiryDate);
-            } catch (ParseException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-        return false;
     }
 
     private boolean isSupportedDevice(){

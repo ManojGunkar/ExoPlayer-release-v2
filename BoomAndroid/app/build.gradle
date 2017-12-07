@@ -44,6 +44,9 @@ android {
         buildConfigField "String", 'AUDIO_CONFIG_URL',          STRING("http://devboom2.globaldelight.net/audioconfig.php")
         buildConfigField "String", 'FEEDBACK_URL',              STRING("http://devboom2.globaldelight.net/feedback.php?os=android")
 
+        ndk {
+            abiFilters = ['armeabi-v7a']
+        }
     }
 
     buildTypes {

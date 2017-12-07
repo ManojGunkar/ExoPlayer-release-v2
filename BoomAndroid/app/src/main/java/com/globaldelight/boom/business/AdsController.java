@@ -9,8 +9,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
-import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.businessmodel.ads.adapter.AdWrapperAdapter;
 import com.globaldelight.boom.app.businessmodel.ads.adspresenter.AdsPresenter;
 import com.globaldelight.boom.app.businessmodel.ads.adspresenter.NoAdsPresenter;
@@ -35,16 +33,16 @@ public class AdsController extends BroadcastReceiver {
         mRecyclerView = recyclerView;
         mIsGrid = isGrid;
         mBaseAdapter = adapter;
-        mAdsEnabled = BusinessStrategy.getInstance(mContext).isAdsEnabled();
+        mAdsEnabled = BusinessModelFactory.getCurrentModel().isAdsEnabled();
         register();
     }
 
     public void register() {
-        if ( mAdsEnabled != BusinessStrategy.getInstance(mContext).isAdsEnabled() ) {
+        if ( mAdsEnabled != BusinessModelFactory.getCurrentModel().isAdsEnabled() ) {
             mAdAdapter.setAdsPresenter(getPresenter());
         }
 
-        IntentFilter filter = new IntentFilter(BusinessStrategy.ACTION_ADS_STATUS_CHANGED);
+        IntentFilter filter = new IntentFilter(BusinessModel.ACTION_ADS_STATUS_CHANGED);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(this, filter);
     }
 
@@ -79,13 +77,13 @@ public class AdsController extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if ( intent.getAction().equals(BusinessStrategy.ACTION_ADS_STATUS_CHANGED) ) {
+        if ( intent.getAction().equals(BusinessModel.ACTION_ADS_STATUS_CHANGED) ) {
             mAdAdapter.setAdsPresenter(getPresenter());
         }
     }
 
     private AdsPresenter getPresenter() {
-        if ( !BusinessStrategy.getInstance(mContext).isAdsEnabled() ) {
+        if ( !BusinessModelFactory.getCurrentModel().isAdsEnabled() ) {
             return new NoAdsPresenter();
         }
         else {
