@@ -60,6 +60,7 @@ android {
         }
     }
     productFlavors {
+
         development {
         }
 
@@ -74,6 +75,10 @@ android {
             buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    STRING("79a795acec1fbcc3d9d28f792c51fc24")
             buildConfigField "String",  'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-2462021843550393/4811995067")
             buildConfigField "String",  'GOOGLE_NATIVE_AD_ID',       STRING("ca-app-pub-2462021843550393/9799761460")
+        }
+
+        b2b {
+            buildConfigField "String",  EXPIRY_DATE,                 "null"
         }
     }
 }

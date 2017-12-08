@@ -294,4 +294,15 @@
     <string name="remind_button_title">Remind Me Later</string>
     <string name="watch_button_title">Watch</string>
 
+    <!-- B2B Business Model -->
+    <string name="promocode_page_title">Redeem Code</string>
+    <string name="promocode_label">Enter Promo Code</string>
+    <string name="promocode_hint">Promo Code</string>
+    <string name="submit_promocode_btn_title">Submit</string>
+    <string name="promocode_exit_dialog_message">Are you sure you want to quit Boom?</string>
+    <string name="dialog_exit_button">Quit</string>
+    <string name="promocode_progress_text">Verifying promo code. Please wait...</string>
+    <string name="promocode_invalid_error">Invalid promo code! Please enter a valid promo code.</string>
+
+
 </resources>

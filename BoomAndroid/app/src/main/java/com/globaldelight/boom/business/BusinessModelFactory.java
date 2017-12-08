@@ -14,14 +14,14 @@ public class BusinessModelFactory {
     private static BusinessModel mStrategy = null;
 
     public static void initModel(Context context) {
-        if ( BuildConfig.FLAVOR.equalsIgnoreCase("inceptive") ) {
-            mStrategy = new DemoModel();
+        if ( BuildConfig.FLAVOR.equalsIgnoreCase("b2b") ) {
+            mStrategy = new B2BModel(context.getApplicationContext());
         }
         else if ( BuildConfig.FLAVOR.equalsIgnoreCase("demo") ) {
             mStrategy = new DemoModel();
         }
         else {
-            mStrategy = new AppStoreBusinessModel(context);
+            mStrategy = new AppStoreBusinessModel(context.getApplicationContext());
         }
     }
 

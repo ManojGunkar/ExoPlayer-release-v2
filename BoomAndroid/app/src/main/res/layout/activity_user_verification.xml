@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPrimaryDark"
+    android:padding="10dp"
+    android:gravity="center_vertical"
+    >
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="21sp"
+        android:textColor="@color/white"
+        android:text="@string/promocode_label"
+        />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/promocode_text_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="21sp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/dialog_txt"
+        android:backgroundTint="@color/colorAccent"
+        android:maxLines="1"
+        android:lines="1"
+        android:minLines="1"
+        android:singleLine="true"
+        android:imeActionLabel="@string/submit_promocode_btn_title"
+        android:hint="@string/promocode_hint" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/promocode_error_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@android:color/holo_red_dark"
+        android:text="@string/promocode_invalid_error"
+        android:textStyle="italic"
+        />
+
+    <LinearLayout
+        android:id="@+id/promocode_progress_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:text="@string/promocode_progress_text"
+            />
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/promocode_submit_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/purchase_button_padding"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/store_page_buy_button_bottom_space"
+        android:layout_marginTop="@dimen/store_page_buy_button_top_space"
+        android:text="@string/submit_promocode_btn_title"
+        android:background="@drawable/store_purchase_btn"
+        android:gravity="center|center_vertical"
+        android:textColor="@color/white"
+        android:textSize="@dimen/store_page_buy_button_text_size"
+        android:typeface="normal" />
+
+</LinearLayout>
