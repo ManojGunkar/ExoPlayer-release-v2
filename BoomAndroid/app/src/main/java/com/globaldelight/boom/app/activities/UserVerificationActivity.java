@@ -21,6 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.sharedPreferences.UserPreferenceHandler;
+import com.globaldelight.boom.business.LicenseManager;
 import com.globaldelight.boom.utils.Utils;
 
 /**
@@ -109,24 +110,23 @@ public class UserVerificationActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void verifyPromoCode(final String promoCode) {
+    private void verifyPromoCode(String promoCode) {
 
         mSubmitButton.setEnabled(false);
         mPromoCodeField.setEnabled(false);
         mProgressView.setVisibility(View.VISIBLE);
 
-        new Handler().postDelayed(new Runnable() {
+        LicenseManager.getInstance(this).verifyCode(promoCode, new LicenseManager.Callback() {
             @Override
-            public void run() {
-                if ( promoCode.equalsIgnoreCase("GDPL12345") ) {
-                    onSuccess();
-                }
-                else {
-                    onError();
-                }
+            public void onSuccess() {
+                UserVerificationActivity.this.onSuccess();
             }
-        }, 3000);
 
+            @Override
+            public void onError(int errorCode) {
+                UserVerificationActivity.this.onError();
+            }
+        });
     }
 
     private void onError() {
@@ -138,8 +138,6 @@ public class UserVerificationActivity extends AppCompatActivity {
     }
 
     private void onSuccess() {
-        SharedPreferences prefs = getSharedPreferences(BuildConfig.APPLICATION_ID, MODE_PRIVATE);
-        prefs.edit().putBoolean("IsUnlocked", true).apply();
         finish();
     }
 }
