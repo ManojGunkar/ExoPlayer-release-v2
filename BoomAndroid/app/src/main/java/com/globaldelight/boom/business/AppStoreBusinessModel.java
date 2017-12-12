@@ -53,9 +53,6 @@ public class AppStoreBusinessModel implements BusinessModel, Observer, PlaybackM
     public static final int PRICE_DISCOUNT = 1;
     public static final int PRICE_DISCOUNT_2 = 2;
 
-    private static final int MENU_ID_STORE = 1001;
-    private static final int MENU_ID_SHARE = 1002;
-
     private Context mContext;
     private BusinessData data;
     private BusinessConfig config;

@@ -155,7 +155,7 @@ public class SecureStorage {
         try {
             return Cipher.getInstance(TRANSFORMATION);
         } catch (Exception exception) {
-            throw new RuntimeException("getCipher: Failed to get an instance of Cipher", exception);
+            throw new RuntimeException("Failed to get cipher", exception);
         }
     }
 
