@@ -2,13 +2,13 @@ package com.globaldelight.boom.business;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
 import android.security.keystore.KeyProperties;
 
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.business.inapp.Base64;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -21,6 +21,7 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -34,6 +35,8 @@ import javax.security.auth.x500.X500Principal;
 public class SecureStorage {
 
     private final static String ALIAS = String.format("%s-%s", BuildConfig.APPLICATION_ID, "B2B");
+    private final static String TRANSFORMATION = "RSA/ECB/PKCS1Padding";
+    private final static String SIGN_ALGORITHM = "SHA256withRSA";
 
     private Context mContext;
     private String  mName;
@@ -55,7 +58,7 @@ public class SecureStorage {
             Cipher input = getCipher();
             input.init(Cipher.ENCRYPT_MODE, publicKey);
 
-            String path = mContext.getFilesDir().getPath() + "/" + encryptedName();
+            String path = getFilePath();
 
             File file = new File(path);
             if ( !file.exists() ) {
@@ -63,11 +66,11 @@ public class SecureStorage {
             }
 
             FileOutputStream fileStream = new FileOutputStream(path);
-            CipherOutputStream encryptedStream = new CipherOutputStream(fileStream, input);
+            CipherOutputStream encryptStream = new CipherOutputStream(fileStream, input);
 
             byte[] encodedBytes = Base64.encode(data).getBytes("UTF-8");
-            encryptedStream.write(encodedBytes);
-            encryptedStream.close();
+            encryptStream.write(encodedBytes);
+            encryptStream.close();
 
             sign(data);
         }
@@ -85,23 +88,23 @@ public class SecureStorage {
             Cipher input = getCipher();
             input.init(Cipher.DECRYPT_MODE, privateKey);
 
-            String path = mContext.getFilesDir().getPath() + "/" + encryptedName();
 
-            FileInputStream fileStream = new FileInputStream(path);
+            FileInputStream fileStream = new FileInputStream(getFilePath());
             CipherInputStream decryptStream = new CipherInputStream(fileStream, input);
 
-            byte[] encodedBytes = new byte[512];
-            int length = decryptStream.read(encodedBytes);
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            byte[] encodedBytes = new byte[4096];
+            while ( true ) {
+                int length = decryptStream.read(encodedBytes);
+                if ( length == -1) break;
 
-            byte[] data = Base64.decode(encodedBytes, 0, length);
+                byteStream.write(encodedBytes, 0, length);
+            }
+
+            byte[] data = Base64.decode(byteStream.toByteArray());
             decryptStream.close();
 
-            if ( verifySign(data) ) {
-                return data;
-            }
-            else {
-                return null;
-            }
+            return verifySign(data) ? data : null;
         }
         catch (Exception e) {
             return null;
@@ -118,16 +121,9 @@ public class SecureStorage {
                 end.add(Calendar.YEAR, 10);
 
                 KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(mContext)
-                        // You'll use the alias later to retrieve the key. It's a key
-                        // for the key!
                         .setAlias(ALIAS)
-                        // The subject used for the self-signed certificate of the
-                        // generated pair
                         .setSubject(new X500Principal("CN=" + ALIAS))
-                        // The serial number used for the self-signed certificate of the
-                        // generated pair.
-                        .setSerialNumber(BigInteger.valueOf(2017))
-                        // Date range of validity for the generated pair.
+                        .setSerialNumber(new BigInteger(64, new Random(System.currentTimeMillis())))
                         .setStartDate(start.getTime()).setEndDate(end.getTime())
                         .build();
 
@@ -141,7 +137,6 @@ public class SecureStorage {
             e.printStackTrace();
         }
     }
-
 
     private String encryptedName() {
         try {
@@ -158,7 +153,7 @@ public class SecureStorage {
 
     private static Cipher getCipher() {
         try {
-            return Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidOpenSSL");
+            return Cipher.getInstance(TRANSFORMATION);
         } catch (Exception exception) {
             throw new RuntimeException("getCipher: Failed to get an instance of Cipher", exception);
         }
@@ -167,13 +162,13 @@ public class SecureStorage {
     private void sign(byte[] data) {
         try {
             KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry)mKeyStore.getEntry(ALIAS, null);
-            Signature s = Signature.getInstance("SHA256withRSA");
+            Signature s = Signature.getInstance(SIGN_ALGORITHM);
             s.initSign(entry.getPrivateKey());
             s.update(data);
             byte[] signature = s.sign();
 
             SharedPreferences pref = mContext.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-            pref.edit().putString(String.format("id-%s", mName), Base64.encode(signature)).apply();
+            pref.edit().putString(signatureKey(), Base64.encode(signature)).apply();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -183,10 +178,10 @@ public class SecureStorage {
     private boolean verifySign(byte[] data) {
         try {
             SharedPreferences pref = mContext.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-            byte[] signature = Base64.decode(pref.getString(String.format("id-%s", mName), ""));
+            byte[] signature = Base64.decode(pref.getString(signatureKey(), ""));
 
             KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry)mKeyStore.getEntry(ALIAS, null);
-            Signature s = Signature.getInstance("SHA256withRSA");
+            Signature s = Signature.getInstance(SIGN_ALGORITHM);
             s.initVerify(entry.getCertificate());
             s.update(data);
 
@@ -196,5 +191,13 @@ public class SecureStorage {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private String getFilePath() {
+        return mContext.getFilesDir().getPath() + "/" + encryptedName();
+    }
+
+    private String signatureKey() {
+        return String.format("id-%s", mName);
     }
 }
