@@ -1,36 +1,11 @@
 package com.globaldelight.boom.business;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.security.KeyPairGeneratorSpec;
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyProperties;
+import android.os.Build;
 
-import com.globaldelight.boom.BuildConfig;
-
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.security.auth.x500.X500Principal;
-
-import static android.content.Context.MODE_PRIVATE;
+import com.globaldelight.boom.utils.SecureStorage;
+import com.google.android.gms.iid.InstanceID;
 
 /**
  * Created by adarsh on 11/12/17.
@@ -56,9 +31,6 @@ public class LicenseManager {
         void onError(int errorCode);
     }
 
-
-
-
     private Context mContext;
     private Receipt mReceipt;
 
@@ -77,11 +49,14 @@ public class LicenseManager {
 
     // Check if the app has license
     public void checkLicense(final Callback callback) {
-        if ( mReceipt != null && mReceipt.isValid() ) {
-            callback.onSuccess();
+
+        // if the receipt is already loaded just verify the receipt
+        if ( mReceipt != null ) {
+            verifyReceipt(callback);
             return;
         }
 
+        //
         new AsyncTask<Void, Void, Receipt>() {
             @Override
             protected Receipt doInBackground(Void... voids) {
@@ -96,13 +71,8 @@ public class LicenseManager {
             @Override
             protected void onPostExecute(Receipt receipt) {
                 super.onPostExecute(receipt);
-                if ( receipt != null && receipt.isValid() ) {
-                    mReceipt = receipt;
-                    callback.onSuccess();
-                }
-                else {
-                    callback.onError(ERROR_NO_LICENSE);
-                }
+                mReceipt = receipt;
+                verifyReceipt(callback);
             }
         }.execute();
     }
@@ -113,11 +83,12 @@ public class LicenseManager {
         new AsyncTask<Void, Void, Receipt>() {
             @Override
             protected Receipt doInBackground(Void... voids) {
-                SecureStorage store = new SecureStorage("receipt", mContext);
-                if ( promoCode.equalsIgnoreCase("GDPL12345") ) {
-                    String json = "{\"emailId\": \"someone@somehwere.com\", \"isValid\": true, \"code\": \"GDPL12345\", \"fingerprint\": \"12345\"}";
-                    store.store(json.getBytes());
-                    return Receipt.fromJSON(json);
+                B2BApi.Result<Receipt> result = B2BApi.getInstance(mContext).verify(promoCode);
+                if ( result.getStatus() == 0 ) {
+                    Receipt receipt = result.getResult();
+                    SecureStorage store = new SecureStorage("receipt", mContext);
+                    store.store(receipt.toJSON().getBytes());
+                    return receipt;
                 }
                 return null;
             }
@@ -125,13 +96,8 @@ public class LicenseManager {
             @Override
             protected void onPostExecute(Receipt receipt) {
                 super.onPostExecute(receipt);
-                if ( receipt != null && receipt.isValid() ) {
-                    mReceipt = receipt;
-                    callback.onSuccess();
-                }
-                else {
-                    callback.onError(ERROR_INVALID_CODE);
-                }
+                mReceipt = receipt;
+                verifyReceipt(callback);
             }
         }.execute();
     }
@@ -140,4 +106,15 @@ public class LicenseManager {
     public void validateLicense(Callback callback) {
     }
 
+
+    private void verifyReceipt(Callback callback) {
+        String iid = InstanceID.getInstance(mContext).getId();
+        if ( mReceipt != null && mReceipt.getModel().equals(Build.MODEL) && mReceipt.getFingerPrint().equals(iid) ) {
+            callback.onSuccess();
+        }
+        else {
+            mReceipt = null;
+            callback.onError(ERROR_NO_LICENSE);
+        }
+    }
 }

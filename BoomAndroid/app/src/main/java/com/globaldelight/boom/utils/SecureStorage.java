@@ -1,4 +1,4 @@
-package com.globaldelight.boom.business;
+package com.globaldelight.boom.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
