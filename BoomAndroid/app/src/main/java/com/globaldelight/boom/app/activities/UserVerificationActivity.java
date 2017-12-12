@@ -11,6 +11,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -67,9 +69,12 @@ public class UserVerificationActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_verification);
-        setTitle(R.string.promocode_page_title);
 
         mSubmitButton = findViewById(R.id.promocode_submit_button);
         mSubmitButton.setOnClickListener(mSubmitClickListener);
@@ -97,17 +102,18 @@ public class UserVerificationActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Utils.createDialogBuilder(this)
-                .content(R.string.promocode_exit_dialog_message)
-                .positiveText(R.string.dialog_exit_button)
-                .negativeText(R.string.dialog_txt_cancel)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        moveTaskToBack(true);
-                    }
-                })
-                .show();
+//        Utils.createDialogBuilder(this)
+//                .content(R.string.promocode_exit_dialog_message)
+//                .positiveText(R.string.dialog_exit_button)
+//                .negativeText(R.string.dialog_txt_cancel)
+//                .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                    @Override
+//                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                        moveTaskToBack(true);
+//                    }
+//                })
+//                .show();
+        moveTaskToBack(true);
     }
 
     private void verifyPromoCode(String promoCode) {
