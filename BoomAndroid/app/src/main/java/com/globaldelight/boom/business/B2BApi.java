@@ -23,34 +23,9 @@ import okhttp3.Response;
 
 public class B2BApi {
 
-    public static final int ERROR_INVALID_CODE = -1;
-    public static final int ERROR_EXPIRED = -2;
-    public static final int ERROR_NOT_REACHABLE = -3;
-
-    public static class Result<T> {
-        private int mStatus;
-        private T mResult;
-
-        public Result(int status) {
-            mStatus = status;
-            mResult = null;
-        }
-
-        public Result(T result) {
-            mStatus = 0;
-            mResult = result;
-        }
-
-        public int getStatus() {
-            return mStatus;
-        }
-
-        public T getResult() {
-            return mResult;
-        }
-    }
-
     private static final String VERIFY_URL = "http://www.boom3dapp.com/registration/verify/";
+    private static final String VERSION_URL = "https://www.boom3dapp.com/registration/version/android/";
+    private static final String FEEDBACK_URL = "https://www.boom3dapp.com/feedback/send/android";
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -98,16 +73,87 @@ public class B2BApi {
                 }
             }
 
-            return new Result<Receipt>(-1);
+            return new Result<Receipt>(ErrorCode.FAILED);
         }
         catch (JSONException e) {
             e.printStackTrace();
-            return new Result<Receipt>(-1);
+            return new Result<Receipt>(ErrorCode.FAILED);
 
         }
         catch (IOException e) {
             e.printStackTrace();
-            return new Result<Receipt>(-1);
+            return new Result<Receipt>(ErrorCode.NETWORK_ERROR);
+        }
+    }
+
+    public Result<Void> submitFeedback(String email, String subject, String description) {
+        try {
+            String iid = InstanceID.getInstance(mContext).getId();
+
+            JSONObject json = new JSONObject();
+
+            json.put("email", email);
+            json.put("subject", subject);
+            json.put("description", description);
+            json.put("deviceId", iid);
+            json.put("model", Build.MODEL);
+            json.put("build", Integer.toString(BuildConfig.VERSION_CODE));
+            json.put("version", BuildConfig.VERSION_NAME);
+            json.put("vendor", "inceptive");
+
+            RequestBody body = RequestBody.create(JSON, json.toString());
+            Request request = new Request.Builder()
+                    .url(FEEDBACK_URL)
+                    .post(body)
+                    .build();
+
+            Response response = getClient().newCall(request).execute();
+            if ( response.isSuccessful() ) {
+                String string = response.body().string();
+                JSONObject result = new JSONObject(string);
+                int status = result.getInt("status");
+                if ( status == 200 ) {
+                    return new Result<Void>(ErrorCode.SUCCESS);
+                }
+            }
+
+            return new Result<Void>(ErrorCode.FAILED);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+            return new Result<Void>(ErrorCode.FAILED);
+
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return new Result<Void>(ErrorCode.NETWORK_ERROR);
+        }
+    }
+
+    public Result<String> checkForUpdate() {
+        try {
+            Request request = new Request.Builder()
+                    .url(VERSION_URL)
+                    .build();
+
+            Response response = getClient().newCall(request).execute();
+            if ( response.isSuccessful() ) {
+                String string = response.body().string();
+                JSONObject result = new JSONObject(string);
+                String version = result.getString("version");
+                return new Result<String>(version);
+            }
+
+            return new Result<String>(ErrorCode.FAILED);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+            return new Result<String>(ErrorCode.FAILED);
+
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return new Result<String>(ErrorCode.NETWORK_ERROR);
         }
     }
 

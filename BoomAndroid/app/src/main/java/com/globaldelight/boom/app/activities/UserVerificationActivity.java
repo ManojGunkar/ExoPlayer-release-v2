@@ -23,6 +23,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.sharedPreferences.UserPreferenceHandler;
+import com.globaldelight.boom.business.ErrorCode;
 import com.globaldelight.boom.business.LicenseManager;
 import com.globaldelight.boom.utils.Utils;
 
@@ -129,18 +130,33 @@ public class UserVerificationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onError(int errorCode) {
-                UserVerificationActivity.this.onError();
+            public void onError(@ErrorCode int errorCode) {
+                UserVerificationActivity.this.onError(errorCode);
             }
         });
     }
 
-    private void onError() {
+    private void onError(@ErrorCode int errorCode) {
         mProgressView.setVisibility(View.GONE);
         mErrorTextView.setVisibility(View.VISIBLE);
         mPromoCodeField.setText("");
         mSubmitButton.setEnabled(false);
         mPromoCodeField.setEnabled(true);
+
+        switch (errorCode) {
+            case ErrorCode.NETWORK_ERROR:
+                mErrorTextView.setText(R.string.check_network);
+                break;
+
+            case ErrorCode.FAILED:
+            case ErrorCode.INVALID_CODE:
+                mErrorTextView.setText(R.string.promocode_invalid_error);
+                break;
+
+            case ErrorCode.LIMIT_EXCEEDED:
+                mErrorTextView.setText(R.string.promocode_limit_exceeded);
+                break;
+        }
     }
 
     private void onSuccess() {

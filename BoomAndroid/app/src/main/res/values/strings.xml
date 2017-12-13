@@ -303,6 +303,6 @@
     <string name="dialog_exit_button">Quit</string>
     <string name="promocode_progress_text">Verifying promo code. Please wait...</string>
     <string name="promocode_invalid_error">Invalid promo code! Please enter a valid promo code.</string>
-
+    <string name="promocode_limit_exceeded">Promo code limit exceeded.</string>
 
 </resources>

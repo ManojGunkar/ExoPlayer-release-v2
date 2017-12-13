@@ -14,21 +14,9 @@ import com.google.android.gms.iid.InstanceID;
 // Manages B2B App License
 public class LicenseManager {
 
-    // No network connection
-    public static final int ERROR_NO_NETWORK = -1;
-
-    // Invalid promo code
-    public static final int ERROR_INVALID_CODE = -2;
-
-    // App license doesn't match with the server (possible hack)
-    public static final int ERROR_INVALID_LICENSE = -3;
-
-    // App doesn't have a license
-    public static final int ERROR_NO_LICENSE = -4;
-
     public interface Callback {
         void onSuccess();
-        void onError(int errorCode);
+        void onError(@ErrorCode int errorCode);
     }
 
     private Context mContext;
@@ -80,24 +68,28 @@ public class LicenseManager {
     // Verify the promo code
     public void verifyCode(String code, final Callback callback) {
         final String promoCode = code;
-        new AsyncTask<Void, Void, Receipt>() {
+        new AsyncTask<Void, Void, Result<Receipt>>() {
             @Override
-            protected Receipt doInBackground(Void... voids) {
-                B2BApi.Result<Receipt> result = B2BApi.getInstance(mContext).verify(promoCode);
-                if ( result.getStatus() == 0 ) {
-                    Receipt receipt = result.getResult();
+            protected Result<Receipt> doInBackground(Void... voids) {
+                Result<Receipt> result = B2BApi.getInstance(mContext).verify(promoCode);
+                if ( result.isSuccess() ) {
+                    Receipt receipt = result.getObject();
                     SecureStorage store = new SecureStorage("receipt", mContext);
                     store.store(receipt.toJSON().getBytes());
-                    return receipt;
                 }
-                return null;
+                return result;
             }
 
             @Override
-            protected void onPostExecute(Receipt receipt) {
-                super.onPostExecute(receipt);
-                mReceipt = receipt;
-                verifyReceipt(callback);
+            protected void onPostExecute(Result<Receipt> result) {
+                super.onPostExecute(result);
+                if ( result.isSuccess() ) {
+                    mReceipt = result.getObject();
+                    verifyReceipt(callback);
+                }
+                else {
+                    callback.onError(result.getStatus());
+                }
             }
         }.execute();
     }
@@ -114,7 +106,7 @@ public class LicenseManager {
         }
         else {
             mReceipt = null;
-            callback.onError(ERROR_NO_LICENSE);
+            callback.onError(ErrorCode.NO_LICENSE);
         }
     }
 }
