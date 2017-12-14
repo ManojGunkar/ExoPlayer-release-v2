@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Build;
 
 import com.globaldelight.boom.BuildConfig;
-import com.google.android.gms.iid.InstanceID;
+import com.globaldelight.boom.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,9 +23,12 @@ import okhttp3.Response;
 
 public class B2BApi {
 
+    public static final String STORE_PAGE_URL = "https://www.boom3dapp.com/store/android/version/";
     private static final String VERIFY_URL = "http://www.boom3dapp.com/registration/verify/";
     private static final String VERSION_URL = "https://www.boom3dapp.com/registration/version/android/";
-    private static final String FEEDBACK_URL = "https://www.boom3dapp.com/feedback/send/android";
+
+    private static final String LIMIT_REACHED = "DEVICE LIMIT REACHED";
+    private static final String INVALID_CODE = "NOT VALID CODE";
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -46,15 +49,14 @@ public class B2BApi {
 
     public Result<Receipt> verify(String code) {
         try {
-            String iid = InstanceID.getInstance(mContext).getId();
+            String iid = Utils.getFingerPrint(mContext);
 
             JSONObject json = new JSONObject();
             json.put("code", code);
-            json.put("deviceId", iid);
+            json.put("deviceid", iid);
             json.put("model", Build.MODEL);
             json.put("build", Integer.toString(BuildConfig.VERSION_CODE));
             json.put("version", BuildConfig.VERSION_NAME);
-            json.put("vendor", "inceptive");
 
             RequestBody body = RequestBody.create(JSON, json.toString());
             Request request = new Request.Builder()
@@ -64,16 +66,12 @@ public class B2BApi {
 
             Response response = getClient().newCall(request).execute();
             if ( response.isSuccessful() ) {
-                String string = response.body().string();
-                JSONObject result = new JSONObject(string);
-                int status = result.getInt("status");
-                if ( status == 200 ) {
-                    Receipt receipt = new Receipt("none", code, iid, Build.MODEL);
-                    return new Result<Receipt>(receipt);
-                }
+                Receipt receipt = Receipt.fromJSON(response.body().string());
+                return new Result<Receipt>(receipt);
             }
-
-            return new Result<Receipt>(ErrorCode.FAILED);
+            else {
+                return new Result<Receipt>(parseError(response));
+            }
         }
         catch (JSONException e) {
             e.printStackTrace();
@@ -83,50 +81,6 @@ public class B2BApi {
         catch (IOException e) {
             e.printStackTrace();
             return new Result<Receipt>(ErrorCode.NETWORK_ERROR);
-        }
-    }
-
-    public Result<Void> submitFeedback(String email, String subject, String description) {
-        try {
-            String iid = InstanceID.getInstance(mContext).getId();
-
-            JSONObject json = new JSONObject();
-
-            json.put("email", email);
-            json.put("subject", subject);
-            json.put("description", description);
-            json.put("deviceId", iid);
-            json.put("model", Build.MODEL);
-            json.put("build", Integer.toString(BuildConfig.VERSION_CODE));
-            json.put("version", BuildConfig.VERSION_NAME);
-            json.put("vendor", "inceptive");
-
-            RequestBody body = RequestBody.create(JSON, json.toString());
-            Request request = new Request.Builder()
-                    .url(FEEDBACK_URL)
-                    .post(body)
-                    .build();
-
-            Response response = getClient().newCall(request).execute();
-            if ( response.isSuccessful() ) {
-                String string = response.body().string();
-                JSONObject result = new JSONObject(string);
-                int status = result.getInt("status");
-                if ( status == 200 ) {
-                    return new Result<Void>(ErrorCode.SUCCESS);
-                }
-            }
-
-            return new Result<Void>(ErrorCode.FAILED);
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-            return new Result<Void>(ErrorCode.FAILED);
-
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            return new Result<Void>(ErrorCode.NETWORK_ERROR);
         }
     }
 
@@ -162,6 +116,17 @@ public class B2BApi {
             mClient = new OkHttpClient();
         }
         return mClient;
+    }
+
+    private @ErrorCode int parseError(Response response) {
+        switch ( response.message() ) {
+            case INVALID_CODE:
+                return ErrorCode.INVALID_CODE;
+            case LIMIT_REACHED:
+                return ErrorCode.LIMIT_EXCEEDED;
+            default:
+                return ErrorCode.FAILED;
+        }
     }
 }
 

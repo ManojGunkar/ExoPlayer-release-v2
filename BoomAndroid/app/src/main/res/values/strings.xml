@@ -223,7 +223,7 @@
     <string name="inapp_process_restore">Purchase Restored.</string>
 
     <string name="share_button">SHARE NOW</string>
-    <string name="continue_button">CONTINUE WITH ADS</string>
+    <string name="continue_button">Continue</string>
     <string name="dialog_title">Like it? Share it!</string>
     <string name="sub_email_header">Don\'t Stop Boomin\'</string>
     <string name="sub_email_text">Share your e-mail ID and continue to #FeelYourMusic</string>
@@ -295,14 +295,22 @@
     <string name="watch_button_title">Watch</string>
 
     <!-- B2B Business Model -->
-    <string name="promocode_page_title">Redeem Code</string>
-    <string name="promocode_label">Enter Promo Code</string>
-    <string name="promocode_hint">Promo Code</string>
-    <string name="submit_promocode_btn_title">Submit</string>
-    <string name="promocode_exit_dialog_message">Are you sure you want to quit Boom?</string>
-    <string name="dialog_exit_button">Quit</string>
-    <string name="promocode_progress_text">Verifying promo code. Please wait...</string>
-    <string name="promocode_invalid_error">Invalid promo code! Please enter a valid promo code.</string>
-    <string name="promocode_limit_exceeded">Promo code limit exceeded.</string>
+
+    <string name="promocode_page_title">One Last Step</string>
+    <string name="promocode_hint">Provided inside your Wave headphone box.</string>
+    <string name="promocode_prompt">Please enter the promo code</string>
+    <string name="verify_promocode_button_title">Verify</string>
+    <string name="promocode_progress_text">Please wait…</string>
+    <string name="promocode_congrats_message">CONGRATULATIONS</string>
+    <string name="promocode_success_message">Thank you for verifying. Now, you can start Boomin’!</string>
+    <string name="promocode_invalid_error">Oops! You’ve entered wrong promo code.</string>
+    <string name="promocode_limit_exceeded">Sorry! The promo code is already used.</string>
+    <string name="promocode_network_error">Oops! No Internet available.</string>
+    <string name="promocode_generic_error">Oops! Something went wrong. Please try again later.</string>
+
+    <string name="update_drawer_title">Update Boom</string>
+    <string name="update_dialog_title">New update available!</string>
+    <string name="update_dialog_message">Update to the latest version of Boom.</string>
+    <string name="update_now">Update Now</string>
 
 </resources>

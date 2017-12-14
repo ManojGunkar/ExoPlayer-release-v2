@@ -1,11 +1,7 @@
 package com.globaldelight.boom.app.activities;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,14 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.sharedPreferences.UserPreferenceHandler;
 import com.globaldelight.boom.business.ErrorCode;
 import com.globaldelight.boom.business.LicenseManager;
-import com.globaldelight.boom.utils.Utils;
 
 /**
  * Created by adarsh on 08/12/17.
@@ -33,10 +24,12 @@ import com.globaldelight.boom.utils.Utils;
 
 public class UserVerificationActivity extends AppCompatActivity {
 
+    private View mPromocodeView;
     private Button mSubmitButton;
     private EditText mPromoCodeField;
-    private TextView mErrorTextView;
+    private TextView mTitleTextView;
     private View mProgressView;
+    private View mCongratsView;
 
     private View.OnClickListener mSubmitClickListener = new View.OnClickListener() {
         @Override
@@ -46,25 +39,26 @@ public class UserVerificationActivity extends AppCompatActivity {
         }
     };
 
+    private View.OnClickListener mContinueClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            finish();
+        }
+    };
+
     private TextWatcher mTextChangeListener = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
         }
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             boolean hasText = charSequence.length() > 0;
-            if ( hasText ) {
-                mErrorTextView.setVisibility(View.GONE);
-            }
-
             mSubmitButton.setEnabled(hasText);
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
-
         }
     };
 
@@ -77,9 +71,10 @@ public class UserVerificationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_verification);
 
-        mSubmitButton = findViewById(R.id.promocode_submit_button);
-        mSubmitButton.setOnClickListener(mSubmitClickListener);
-        mSubmitButton.setEnabled(false);
+        mPromocodeView = findViewById(R.id.verify_screen);
+        mTitleTextView = findViewById(R.id.promocode_page_title);
+
+        mPromocodeView = findViewById(R.id.promocode_view);
 
         mPromoCodeField = findViewById(R.id.promocode_text_field);
         mPromoCodeField.addTextChangedListener(mTextChangeListener);
@@ -93,34 +88,30 @@ public class UserVerificationActivity extends AppCompatActivity {
             }
         });
 
-        mErrorTextView = findViewById(R.id.promocode_error_view);
-        mErrorTextView.setVisibility(View.GONE);
+        mSubmitButton = findViewById(R.id.promocode_verify_button);
+        mSubmitButton.setOnClickListener(mSubmitClickListener);
+        mSubmitButton.setEnabled(false);
+
 
         mProgressView = findViewById(R.id.promocode_progress_view);
         mProgressView.setVisibility(View.GONE);
+        Button continueButton = findViewById(R.id.continue_button);
+        continueButton.setOnClickListener(mContinueClickListener);
+
+        mCongratsView = findViewById(R.id.congrats_screen);
+        mCongratsView.setVisibility(View.GONE);
 
     }
 
     @Override
     public void onBackPressed() {
-//        Utils.createDialogBuilder(this)
-//                .content(R.string.promocode_exit_dialog_message)
-//                .positiveText(R.string.dialog_exit_button)
-//                .negativeText(R.string.dialog_txt_cancel)
-//                .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                    @Override
-//                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                        moveTaskToBack(true);
-//                    }
-//                })
-//                .show();
         moveTaskToBack(true);
     }
 
     private void verifyPromoCode(String promoCode) {
 
-        mSubmitButton.setEnabled(false);
-        mPromoCodeField.setEnabled(false);
+        mTitleTextView.setText(R.string.promocode_progress_text);
+        mPromocodeView.setVisibility(View.GONE);
         mProgressView.setVisibility(View.VISIBLE);
 
         LicenseManager.getInstance(this).verifyCode(promoCode, new LicenseManager.Callback() {
@@ -138,28 +129,28 @@ public class UserVerificationActivity extends AppCompatActivity {
 
     private void onError(@ErrorCode int errorCode) {
         mProgressView.setVisibility(View.GONE);
-        mErrorTextView.setVisibility(View.VISIBLE);
-        mPromoCodeField.setText("");
-        mSubmitButton.setEnabled(false);
+        mPromocodeView.setVisibility(View.VISIBLE);
+        mSubmitButton.setEnabled(true);
         mPromoCodeField.setEnabled(true);
 
         switch (errorCode) {
             case ErrorCode.NETWORK_ERROR:
-                mErrorTextView.setText(R.string.check_network);
+                mTitleTextView.setText(R.string.promocode_network_error);
                 break;
 
             case ErrorCode.FAILED:
             case ErrorCode.INVALID_CODE:
-                mErrorTextView.setText(R.string.promocode_invalid_error);
+                mTitleTextView.setText(R.string.promocode_invalid_error);
                 break;
 
             case ErrorCode.LIMIT_EXCEEDED:
-                mErrorTextView.setText(R.string.promocode_limit_exceeded);
+                mTitleTextView.setText(R.string.promocode_limit_exceeded);
                 break;
         }
     }
 
     private void onSuccess() {
-        finish();
+        mPromocodeView.setVisibility(View.GONE);
+        mCongratsView.setVisibility(View.VISIBLE);
     }
 }

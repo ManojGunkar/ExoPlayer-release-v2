@@ -18,6 +18,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.AnyRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -294,5 +295,10 @@ public class Utils {
             LARGE_IMAGE_SIZE = dpToPx(context, LARGE_IMAGE_SIZE_DP);
         }
         return LARGE_IMAGE_SIZE;
+    }
+
+    // Unique device id
+    public static String getFingerPrint(Context context) {
+        return Settings.Secure.getString(context.getApplicationContext().getContentResolver(),Settings.Secure.ANDROID_ID);
     }
 }

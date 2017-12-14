@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 
 import com.globaldelight.boom.utils.SecureStorage;
-import com.google.android.gms.iid.InstanceID;
+import com.globaldelight.boom.utils.Utils;
 
 /**
  * Created by adarsh on 11/12/17.
@@ -100,7 +100,7 @@ public class LicenseManager {
 
 
     private void verifyReceipt(Callback callback) {
-        String iid = InstanceID.getInstance(mContext).getId();
+        String iid = Utils.getFingerPrint(mContext);
         if ( mReceipt != null && mReceipt.getModel().equals(Build.MODEL) && mReceipt.getFingerPrint().equals(iid) ) {
             callback.onSuccess();
         }
