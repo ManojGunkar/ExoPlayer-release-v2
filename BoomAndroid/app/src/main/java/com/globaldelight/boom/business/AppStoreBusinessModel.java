@@ -155,6 +155,12 @@ public class AppStoreBusinessModel implements BusinessModel, Observer, PlaybackM
         menu.add(groupId, R.id.nav_share, Menu.NONE, R.string.title_share).setIcon(R.drawable.ic_share);
     }
 
+    @Override
+    public void onDrawerItemClicked(MenuItem item, Context context) {
+
+    }
+
+
     private void setCurrentActivity(Activity activity) {
         mCurrentActivity = activity;
 

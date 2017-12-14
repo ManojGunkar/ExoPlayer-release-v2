@@ -38,6 +38,7 @@ import com.globaldelight.boom.app.adapters.search.SearchSuggestionAdapter;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.app.fragments.SearchViewFragment;
 import com.globaldelight.boom.app.share.ShareDialog;
+import com.globaldelight.boom.business.BusinessConfig;
 import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
@@ -432,6 +433,10 @@ public class MainActivity extends MasterActivity
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Share_Opened_from_Boom);
                 return true;
+            default:
+                BusinessModelFactory.getCurrentModel().onDrawerItemClicked(item, this);
+                break;
+
         }
         if (runnable != null) {
             item.setChecked(true);

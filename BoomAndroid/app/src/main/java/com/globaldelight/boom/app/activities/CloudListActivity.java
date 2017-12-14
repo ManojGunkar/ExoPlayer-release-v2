@@ -206,6 +206,9 @@ public class CloudListActivity extends MasterActivity
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Share_Opened_from_Boom);
                 return true;
+            default:
+                BusinessModelFactory.getCurrentModel().onDrawerItemClicked(item, this);
+                break;
         }
 
         if (runnable != null) {

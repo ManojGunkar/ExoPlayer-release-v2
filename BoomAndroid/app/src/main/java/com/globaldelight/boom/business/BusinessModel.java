@@ -1,6 +1,7 @@
 package com.globaldelight.boom.business;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -16,4 +17,7 @@ public interface BusinessModel {
     boolean isAdsEnabled();
 
     void addItemsToDrawer(Menu menu, int groupId);
+
+    void onDrawerItemClicked(MenuItem item, Context context);
+
 }
