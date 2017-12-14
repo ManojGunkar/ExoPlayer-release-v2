@@ -106,8 +106,9 @@ public class B2BModel implements BusinessModel {
     }
 
     private void checkForUpdate() {
+        final String LAST_CHECK_KEY = "last_update_check";
         final SharedPreferences prefs = mContext.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-        long lastCheck = prefs.getLong("last_update_check", 0);
+        long lastCheck = prefs.getLong(LAST_CHECK_KEY, 0);
         if ( System.currentTimeMillis() - lastCheck <  UPDATE_CHECK_INTERVAL ) {
             return;
         }
@@ -123,7 +124,7 @@ public class B2BModel implements BusinessModel {
                 super.onPostExecute(result);
                 if ( result.isSuccess() && isNewerVersion(result.getObject()) ) {
                     showUpdateDialog();
-                    prefs.edit().putLong("last_update_check", System.currentTimeMillis()).apply();
+                    prefs.edit().putLong(LAST_CHECK_KEY, System.currentTimeMillis()).apply();
                 }
             }
         }.execute();
