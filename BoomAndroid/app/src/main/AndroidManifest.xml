@@ -135,7 +135,6 @@
 
         <activity
             android:name=".app.activities.AlbumSongListActivity"
-            android:label="@string/title_activity_child"
             android:parentActivityName=".app.activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -145,7 +144,6 @@
         </activity>
         <activity
             android:name=".app.activities.AlbumDetailItemActivity"
-            android:label="@string/title_item_detail"
             android:parentActivityName=".app.activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
