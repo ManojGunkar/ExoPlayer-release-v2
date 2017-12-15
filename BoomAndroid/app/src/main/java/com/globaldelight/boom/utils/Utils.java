@@ -65,9 +65,7 @@ public class Utils {
     public static final int LARGE_IMAGE_SIZE_DP = 128;
     public static final int SMALL_IMAGE_SIZE_DP = 62;
 
-
     private Utils(Context context) {
-
     }
 
     public static int dpToPx(Context context, int dp) {
@@ -176,8 +174,7 @@ public class Utils {
                             addToPlaylist(activity, song, fromPlaylist);
                         //    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
                             FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_CREATED_NEW_PLAYLIST);
-
-                            MixPanelAnalyticHelper.getInstance(context).getPeople().set(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST, input.toString());
+                            MixPanelAnalyticHelper.getInstance(context).setPeopleAnalytics(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST, input.toString());
                         }
                     }
                 })
