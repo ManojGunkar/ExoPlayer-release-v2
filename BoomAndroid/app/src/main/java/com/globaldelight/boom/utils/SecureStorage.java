@@ -58,8 +58,7 @@ public class SecureStorage {
             Cipher input = getCipher();
             input.init(Cipher.ENCRYPT_MODE, publicKey);
 
-            String path = getFilePath();
-
+            String path = getFilePath(mContext, mName);
             File file = new File(path);
             if ( !file.exists() ) {
                 file.createNewFile();
@@ -89,7 +88,7 @@ public class SecureStorage {
             input.init(Cipher.DECRYPT_MODE, privateKey);
 
 
-            FileInputStream fileStream = new FileInputStream(getFilePath());
+            FileInputStream fileStream = new FileInputStream(getFilePath(mContext, mName));
             CipherInputStream decryptStream = new CipherInputStream(fileStream, input);
 
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
@@ -138,9 +137,9 @@ public class SecureStorage {
         }
     }
 
-    private String encryptedName() {
+    private static String encryptedName(String name) {
         try {
-            byte[] bytes = mName.getBytes("UTF-8");
+            byte[] bytes = name.getBytes("UTF-8");
             for ( int i = 0; i < bytes.length; i++ ) {
                 bytes[i] = (byte)(bytes[i] ^ 0xA1);
             }
@@ -193,11 +192,16 @@ public class SecureStorage {
         }
     }
 
-    private String getFilePath() {
-        return mContext.getFilesDir().getPath() + "/" + encryptedName();
+    private static String getFilePath(Context context, String name) {
+        return context.getFilesDir().getPath() + "/" + encryptedName(name);
     }
 
     private String signatureKey() {
         return String.format("id-%s", mName);
+    }
+
+    public static boolean exists(Context context, String name) {
+        File file = new File(getFilePath(context, name));
+        return file.exists();
     }
 }

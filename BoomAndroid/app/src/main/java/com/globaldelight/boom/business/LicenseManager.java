@@ -3,6 +3,7 @@ package com.globaldelight.boom.business;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.provider.Settings;
 
 import com.globaldelight.boom.utils.SecureStorage;
 import com.globaldelight.boom.utils.Utils;
@@ -21,6 +22,8 @@ public class LicenseManager {
 
     private Context mContext;
     private Receipt mReceipt;
+
+    private static final String RECEIPT_NAME = "receipt";
 
     private static LicenseManager sInstance = null;
 
@@ -44,11 +47,16 @@ public class LicenseManager {
             return;
         }
 
+        if ( !SecureStorage.exists(mContext,RECEIPT_NAME) ) {
+            callback.onError(ErrorCode.NO_LICENSE);
+            return;
+        }
+
         //
         new AsyncTask<Void, Void, Receipt>() {
             @Override
             protected Receipt doInBackground(Void... voids) {
-                SecureStorage store = new SecureStorage("receipt", mContext);
+                SecureStorage store = new SecureStorage(RECEIPT_NAME, mContext);
                 byte[] data = store.load();
                 if ( data != null ) {
                     return Receipt.fromJSON(new String(data));
@@ -74,7 +82,7 @@ public class LicenseManager {
                 Result<Receipt> result = B2BApi.getInstance(mContext).verify(promoCode);
                 if ( result.isSuccess() ) {
                     Receipt receipt = result.getObject();
-                    SecureStorage store = new SecureStorage("receipt", mContext);
+                    SecureStorage store = new SecureStorage(RECEIPT_NAME, mContext);
                     store.store(receipt.toJSON().getBytes());
                 }
                 return result;
