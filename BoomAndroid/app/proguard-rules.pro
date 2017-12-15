@@ -26,3 +26,9 @@
 -dontwarn com.dropbox.core.http.*
 -dontwarn javax.servlet.**
 -dontwarn com.google.android.gms.**
+
+-keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault
+
+-keepclassmembers class * {
+  @com.google.api.client.util.Key <fields>;
+}
