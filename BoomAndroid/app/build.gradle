@@ -80,7 +80,10 @@ android {
         }
 
         b2b {
+            applicationIdSuffix ".b2b"
             buildConfigField "String",  EXPIRY_DATE,                 "null"
+            buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    "null"
+
         }
     }
 }
