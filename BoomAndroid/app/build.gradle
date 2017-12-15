@@ -68,6 +68,7 @@ android {
 
         demo {
             buildConfigField "boolean", BUSINESS_MODEL_ENABLED,     "false"
+            buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    "null"
         }
 
         production {
