@@ -66,18 +66,15 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
      */
     @Override
     protected List<String> doInBackground(Void... params) {
+        mLastError = null;
         List<String> itemList = null;
         try {
             itemList = getDataFromApi();
         } catch (Exception e) {
             mLastError = e;
-            cancel(true);
+            e.printStackTrace();
         }
-        if ((itemList == null || itemList.size() == 0) && mediaListInstance.getGoogleDriveMediaList().size() <= 0) {
-            mediaListInstance.onEmptyList();
-        } else {
-            mediaListInstance.finishGoogleDriveMediaLoading();
-        }
+
         return itemList;
     }
 
@@ -116,6 +113,10 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
 
     @Override
     protected void onPostExecute(List<String> output) {
+        if ( mLastError != null ) {
+            onError();
+        }
+
         if ((output == null || output.size() == 0) && mediaListInstance.getGoogleDriveMediaList().size() <= 0) {
             mediaListInstance.onEmptyList();
         } else {
@@ -125,6 +126,10 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
 
     @Override
     protected void onCancelled() {
+        onError();
+    }
+
+    public void onError() {
         try {
             if (mLastError != null) {
                 if (null != GoogleDriveMediaList.getGoogleDriveHandler() && mLastError instanceof GooglePlayServicesAvailabilityIOException) {
