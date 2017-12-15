@@ -34,7 +34,7 @@ android {
         versionName "1.0.0"
         multiDexEnabled true
 
-        resValue 'string', 'version', versionName
+        resValue 'string', 'version', "v"+versionName
 
         buildConfigField("String",  EXPIRY_DATE,                STRING(getExpiryDate()) )
         buildConfigField("boolean", BUSINESS_MODEL_ENABLED,     businessModelEnabled)

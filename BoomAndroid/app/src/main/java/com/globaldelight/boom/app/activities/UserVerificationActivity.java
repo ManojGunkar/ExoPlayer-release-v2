@@ -112,6 +112,7 @@ public class UserVerificationActivity extends AppCompatActivity {
 
         mTitleTextView.setText(R.string.promocode_progress_text);
         mPromocodeView.setVisibility(View.GONE);
+        mPromoCodeField.setEnabled(false);
         mProgressView.setVisibility(View.VISIBLE);
 
         LicenseManager.getInstance(this).verifyCode(promoCode, new LicenseManager.Callback() {

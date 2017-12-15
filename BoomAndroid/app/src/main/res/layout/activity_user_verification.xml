@@ -46,7 +46,6 @@
                 android:lines="1"
                 android:minLines="1"
                 android:singleLine="true"
-                android:imeActionLabel="@string/verify_promocode_button_title"
                 android:hint="@string/promocode_prompt" />
 
             <android.support.v7.widget.AppCompatTextView
