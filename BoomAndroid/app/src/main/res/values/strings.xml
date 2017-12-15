@@ -88,7 +88,7 @@
     <string name="copyright">\u00a9 2017, Global Delight Technologies Pvt Ltd. \n All rights reserved.</string>
 
     <!-- Tutorial-->
-    <string name="tutorial_use_headphones">Use Headphones for the best experience</string>
+    <string name="tutorial_use_headphones">Use Headphones for the best experience.</string>
 
     <!-- playing queue-->
     <string name="clear">Clear</string>
@@ -195,19 +195,14 @@
     <string name="cloud_configure_placeholder_txt">No accounts configured yet. \nConfigure accounts in Settings to access songs.</string>
     <string name="playlist_track_already_added">Song already added in the playlist.</string>
 
-
     <string name="delete_dialog_txt">Do you want to delete "\""%1$s"\"" ?</string>
     <string name="delete_dialog_title">Delete Playlist</string>
     <string name="error_in_playing">Error in playing song</string>
-
     <string name="ask_reset_timer">Do you want to cancel sleeping timer?</string>
     <string name="empty_search_result">No results found!</string>
     <string name="close_button">CLOSE</string>
-
     <string name="cloud_setting_subtitle_change_account">Tap to change account.</string>
     <string name="settings_change_account_message">If you change account, all data linked with the current account will be lost.</string>
-    <string name="conitnue_with_acc_change">Continue</string>
-
     <string name="title_internet_alert">No Internet Connection</string>
 
     <!-- B2B Business Model -->
