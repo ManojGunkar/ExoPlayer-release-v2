@@ -424,7 +424,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     public void playNextSong(boolean isUser) {
         skipDirection = NEXT;
-        if ( isNext() ) {
+        if ( isNext() || mQueue.repeatSong() ) {
             mQueue.setNextPlayingItem(isUser);
         }
         else {
