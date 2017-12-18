@@ -15,6 +15,7 @@ import android.os.ParcelFileDescriptor;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
@@ -415,9 +416,16 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                     session.setMetadata(builder.build());
                     setSessionState(PlaybackState.STATE_PLAYING);
                 }
-            }else{
+            }
+
+            if ( mediaItemBase == null || dataSource == null )
+            {
+                mPlayer.setPath(null);
+                mPlayer.setDataSourceId(-1);
                 setSessionState(PlaybackState.STATE_STOPPED);
-                Toast.makeText(context, context.getResources().getString(R.string.loading_problem), Toast.LENGTH_SHORT).show();
+                if ( ConnectivityReceiver.isNetworkAvailable(context, true) ) {
+                    Toast.makeText(context, context.getResources().getString(R.string.loading_problem), Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

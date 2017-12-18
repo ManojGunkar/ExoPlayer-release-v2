@@ -147,11 +147,17 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
 
     public void play() {
+        if ( sourcePath == null ) {
+            stop();
+            return;
+        }
+
         boolean mediaHasChanged = !TextUtils.equals(sourcePath, mCurrentSourcePath);
         if (mediaHasChanged) {
             mCurrentSourcePath = sourcePath;
             releaseResources(true);
         }
+
 
         if ( mediaHasChanged || mExoPlayer == null  ) {
             mDuration = 0;
