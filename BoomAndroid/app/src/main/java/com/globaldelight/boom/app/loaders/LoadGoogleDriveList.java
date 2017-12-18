@@ -146,14 +146,11 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
                 mediaListInstance.onRequestCancelled();
             }
         }catch (Exception e){
-
+            e.printStackTrace();
         }
     }
 
     public void setCancelLoading(){
         this.cancel(true);
-        if(null != mediaListInstance){
-            mediaListInstance.onErrorOccurred("");
-        }
     }
 }
