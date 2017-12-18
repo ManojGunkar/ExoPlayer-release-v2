@@ -70,15 +70,17 @@ public class OverFlowMenuUtils {
                             break;
                         case R.id.popup_playlist_rename:
                             renameDialog(activity, itemBase.getItemTitle(), itemBase.getItemId());
-//                            FlurryAnalyticHelper.logEvent(UtilAnalytics.Playlist_Edit_Button_Tapped);
                             FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Playlist_Edit_Button_Tapped);
 
                             break;
                         case R.id.popup_playlist_delete:
                             deletePlaylistDialog(activity, itemBase.getItemTitle(), itemBase.getItemId());
+                            FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Playlist_Deleted);
                             break;
                     }
-                }catch (Exception e){}
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 return false;
             }
         });
@@ -89,15 +91,8 @@ public class OverFlowMenuUtils {
     private static void deletePlaylistDialog(final Activity activity, final String itemTitle, final long itemId) {
         String content = activity.getResources().getString(R.string.delete_dialog_txt, itemTitle);
         Utils.createDialogBuilder(activity).title(R.string.delete_dialog_title)
-                .titleColor(ContextCompat.getColor(activity, R.color.dialog_title))
                 .content(content)
-                .contentColor(ContextCompat.getColor(activity, R.color.dialog_title))
                 .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
-                .positiveColor(ContextCompat.getColor(activity, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(activity, R.color.dialog_submit_negative))
-                .widgetColor(ContextCompat.getColor(activity, R.color.white))
-                .typeface("TitilliumWeb-SemiBold.ttf", "TitilliumWeb-Regular.ttf")
-                .cancelable(false)
                 .positiveText(activity.getResources().getString(R.string.ok))
                 .negativeText(activity.getResources().getString(R.string.dialog_txt_cancel))
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
