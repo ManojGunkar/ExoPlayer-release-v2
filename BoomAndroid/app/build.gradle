@@ -84,7 +84,7 @@ android {
             applicationIdSuffix ".b2b"
             buildConfigField "String",  EXPIRY_DATE,                 "null"
             buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    "null"
-
+            buildConfigField "String",  'FEEDBACK_URL',               STRING("https://apimboom2.globaldelight.net/feedback.php?flaour=b2b")
         }
     }
 }
@@ -96,6 +96,7 @@ repositories {
     }
     maven { url 'https://maven.fabric.io/public' }
 }
+
 
 dependencies {
     implementation 'com.afollestad.material-dialogs:core:0.9.0.2'
