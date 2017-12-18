@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -77,5 +78,9 @@ public class AboutFragment extends Fragment {
             }
         });
         rateButton.setEnabled(true);
+        if ( BuildConfig.FLAVOR.equals("b2b") || BuildConfig.FLAVOR.equals("demo") ) {
+            rateButton.setVisibility(View.INVISIBLE);
+            rateButton.setEnabled(false);
+        }
     }
 }
