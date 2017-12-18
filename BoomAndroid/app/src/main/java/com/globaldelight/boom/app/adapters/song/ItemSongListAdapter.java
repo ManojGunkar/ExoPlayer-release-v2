@@ -53,7 +53,6 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     private int selectedSongId = -1;
     private SimpleItemViewHolder selectedHolder;
     private Activity activity;
-    private IMediaItem currentItem;
     private ListDetail listDetail;
     private AlbumSongListFragment fragment;
 
@@ -111,7 +110,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         }
 
         if(position >= 1){
-            updatePlayingTrack(holder);
+            updatePlayingTrack(holder, position-1);
         }
     }
 
@@ -131,7 +130,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     }
 
     private void bindSongs(final ItemSongListAdapter.SimpleItemViewHolder holder, final int position) {
-        currentItem = (MediaItem) collection.getItemAt(position);
+        IMediaItem currentItem = (MediaItem) collection.getItemAt(position);
 
         holder.name.setText(currentItem.getItemTitle());
         holder.artistName.setText(currentItem.getItemArtist());
@@ -153,7 +152,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     }
 
     private void bindBoomPlaylist(final ItemSongListAdapter.SimpleItemViewHolder holder, final int position) {
-        currentItem = (IMediaItem) collection.getItemAt(position);
+        IMediaItem currentItem = (IMediaItem) collection.getItemAt(position);
         holder.undoButton.setVisibility(View.INVISIBLE);
         holder.name.setText(currentItem.getItemTitle());
         holder.itemView.setElevation(0);
@@ -172,7 +171,8 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         setDragHandle(holder);
     }
 
-    private void updatePlayingTrack(SimpleItemViewHolder holder){
+    private void updatePlayingTrack(SimpleItemViewHolder holder, int position){
+        IMediaItem currentItem = (IMediaItem) collection.getItemAt(position);
         IMediaItemBase nowPlayingItem = App.playbackManager().queue().getPlayingItem();
         if(null != nowPlayingItem ){
             boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
@@ -190,9 +190,16 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
                 }
             }else{
                 holder.name.setSelected(false);
-                holder.art_overlay.setVisibility(View.INVISIBLE);
-                holder.art_overlay_play.setVisibility(View.INVISIBLE);
+                holder.loadCloud.setVisibility(View.GONE);
+                holder.art_overlay.setVisibility(View.GONE);
+                holder.art_overlay_play.setVisibility(View.GONE);
             }
+        }
+        else {
+            holder.name.setSelected(false);
+            holder.loadCloud.setVisibility(View.GONE);
+            holder.art_overlay.setVisibility(View.GONE);
+            holder.art_overlay_play.setVisibility(View.GONE);
         }
     }
 
