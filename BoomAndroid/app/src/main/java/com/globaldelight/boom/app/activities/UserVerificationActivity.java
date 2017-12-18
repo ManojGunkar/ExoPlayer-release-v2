@@ -64,10 +64,6 @@ public class UserVerificationActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_verification);
 
@@ -109,7 +105,7 @@ public class UserVerificationActivity extends AppCompatActivity {
     }
 
     private void verifyPromoCode(String promoCode) {
-
+        mTitleTextView.setTextColor(getResources().getColor(R.color.white));
         mTitleTextView.setText(R.string.promocode_progress_text);
         mPromocodeView.setVisibility(View.GONE);
         mPromoCodeField.setEnabled(false);
@@ -133,6 +129,7 @@ public class UserVerificationActivity extends AppCompatActivity {
         mPromocodeView.setVisibility(View.VISIBLE);
         mSubmitButton.setEnabled(true);
         mPromoCodeField.setEnabled(true);
+        mTitleTextView.setTextColor(getResources().getColor(R.color.promo_code_error));
 
         switch (errorCode) {
             case ErrorCode.NETWORK_ERROR:

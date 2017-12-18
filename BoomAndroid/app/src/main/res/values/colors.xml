@@ -112,5 +112,9 @@
     <color name="share_popup_body">#a9a9aa</color>
     <color name="library_empty_placeholder_txt_color">#909090</color>
 
+    <color name="promo_code_line">#999999</color>
+    <color name="promo_code_hint">#666666</color>
+    <color name="promo_code_error">#ffc600</color>
+
 </resources><!--
 <color name="colorAccent">#FF4081</color>-->

@@ -24,7 +24,7 @@ import okhttp3.Response;
 public class B2BApi {
 
     public static final String STORE_PAGE_URL = "https://www.boom3dapp.com/store/android/version/";
-    private static final String VERIFY_URL = "http://www.boom3dapp.com/registration/verify/";
+    private static final String VERIFY_URL = "https://www.boom3dapp.com/registration/verify/";
     private static final String VERSION_URL = "https://www.boom3dapp.com/registration/version/android/";
 
     private static final String LIMIT_REACHED = "DEVICE LIMIT REACHED";

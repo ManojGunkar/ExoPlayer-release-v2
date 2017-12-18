@@ -219,7 +219,7 @@
             android:name=".app.activities.UserVerificationActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.PromoCode" />
 
     </application>
 

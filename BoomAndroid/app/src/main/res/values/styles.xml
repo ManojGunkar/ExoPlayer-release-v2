@@ -151,10 +151,16 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/transparent</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:itemBackground">@color/dialog_background</item>
+    </style>
+
+    <style name="AppTheme.PromoCode" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:itemBackground">@color/dialog_background</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

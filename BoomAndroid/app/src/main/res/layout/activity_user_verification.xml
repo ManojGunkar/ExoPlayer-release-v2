@@ -5,31 +5,37 @@
     android:layout_height="match_parent">
 
     <LinearLayout android:id="@+id/verify_screen"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@color/colorPrimaryDark"
-        android:padding="10dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
         android:gravity="center_horizontal"
         >
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="128dp"
-            android:src="@drawable/ic_store_banner_img" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:src="@drawable/promo_head" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/promocode_page_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="21sp"
+            android:layout_marginTop="12dp"
+            android:textSize="23sp"
             android:textColor="@color/white"
             android:text="@string/promocode_page_title"
             android:lines="2"
             android:layout_gravity="center"
+            android:gravity="center"
             />
 
         <LinearLayout
             android:id="@+id/promocode_view"
+            android:layout_marginTop="56dp"
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="wrap_content">
@@ -38,10 +44,10 @@
                 android:id="@+id/promocode_text_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="21sp"
+                android:textSize="20sp"
                 android:textColor="@color/white"
-                android:textColorHint="@color/dialog_txt"
-                android:backgroundTint="@color/colorAccent"
+                android:textColorHint="@color/promo_code_hint"
+                android:backgroundTint="@color/promo_code_line"
                 android:maxLines="1"
                 android:lines="1"
                 android:minLines="1"
@@ -52,9 +58,9 @@
                 android:id="@+id/promocode_hint_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textColor="@android:color/white"
-                android:maxLines="2"
+                android:textSize="13sp"
+                android:gravity="right"
+                android:textColor="@color/promo_code_line"
                 android:text="@string/promocode_hint"
                 />
 
@@ -62,13 +68,13 @@
                 android:id="@+id/promocode_verify_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="22dp"
                 android:padding="@dimen/purchase_button_padding"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/verify_promocode_button_title"
                 android:background="@drawable/store_purchase_btn"
                 android:gravity="center|center_vertical"
-                android:textColor="@color/white"
+                android:textColor="@color/button_text_color_state"
                 android:textSize="@dimen/store_page_buy_button_text_size"
                 android:typeface="normal" />
         </LinearLayout>
@@ -76,6 +82,7 @@
         <LinearLayout
             android:id="@+id/promocode_progress_view"
             android:visibility="gone"
+            android:layout_marginTop="102dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical">
@@ -83,8 +90,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:indeterminate="true"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -95,34 +101,46 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@color/colorPrimaryDark"
-        android:padding="10dp"
         android:gravity="center_horizontal"
         >
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="256dp"
-            android:src="@drawable/ic_store_banner_img" />
-
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/promocode_congrats_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textSize="32sp"
-            android:shadowRadius="5"
-            android:shadowColor="@color/dialog_txt"
-            android:shadowDx="5"
-            android:shadowDy="5"
-            android:textColor="@android:color/white"
-            android:text="@string/promocode_congrats_message"
-            android:textStyle="bold"
-            />
-
-        <android.support.v7.widget.AppCompatTextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="21sp"
+            android:layout_marginTop="40dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:background="@drawable/promo_success_background">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:src="@drawable/promo_success_logo" />
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/promocode_congrats_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:layout_gravity="center_horizontal"
+                android:textSize="26sp"
+                android:shadowRadius="8"
+                android:shadowColor="#a9003e"
+                android:shadowDx="4"
+                android:shadowDy="4"
+                android:textColor="@android:color/white"
+                android:text="@string/promocode_congrats_message"
+                android:textStyle="bold"
+                />
+        </LinearLayout>
+
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"
             android:textColor="@android:color/white"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
             android:maxLines="2"
             android:gravity="center"
             android:text="@string/promocode_success_message"
@@ -130,13 +148,14 @@
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/continue_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/purchase_button_padding"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/store_page_buy_button_bottom_space"
-            android:layout_marginTop="@dimen/store_page_buy_button_top_space"
-            android:text="@string/continue_button"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="@string/start_boomin"
             android:background="@drawable/store_purchase_btn"
             android:gravity="center|center_vertical"
             android:textColor="@color/white"
