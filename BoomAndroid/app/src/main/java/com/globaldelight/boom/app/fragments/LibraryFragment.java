@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.activities.MasterActivity;
 import com.globaldelight.boom.app.service.HeadPhonePlugReceiver;
 import com.globaldelight.boom.app.adapters.utils.SectionsPagerAdapter;
 import com.globaldelight.boom.view.CoachMarkerWindow;
@@ -39,6 +38,7 @@ public class LibraryFragment extends Fragment {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private TabLayout mTabBar;
     private ViewPager mViewPager;
+    private LinearLayout mAddsContainer;
     private CoachMarkerWindow coachMarkUseHeadPhone, coachMarkChooseHeadPhone;
 
     @Override
@@ -65,6 +65,7 @@ public class LibraryFragment extends Fragment {
     }
 
     private void initViews() {
+        mAddsContainer = rootView.findViewById(R.id.lib_add_container);
         mTabBar= rootView.findViewById(R.id.tabLayout);
         mViewPager = rootView.findViewById(R.id.container);
 
@@ -103,14 +104,6 @@ public class LibraryFragment extends Fragment {
                 coachMarkUseHeadPhone = new CoachMarkerWindow(mActivity, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
                 coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
                 coachMarkUseHeadPhone.showCoachMark(mViewPager);
-                coachMarkUseHeadPhone.setOnDismissListener(new CoachMarkerWindow.OnDismissListener() {
-                    @Override
-                    public void onDismiss() {
-                        if ( !MasterActivity.isPlayerExpended() ) {
-                            ((MasterActivity)getActivity()).toggleSlidingPanel();
-                        }
-                    }
-                });
 
                 if(Utils.isMoreThan24Hour())
                     Preferences.writeBoolean(mActivity, TOOLTIP_USE_24_HEADPHONE_LIBRARY, false);
