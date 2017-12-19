@@ -1,6 +1,7 @@
 package com.globaldelight.boom.app.analytics.flurry;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.flurry.android.FlurryAgent;
 import com.globaldelight.boom.BuildConfig;
@@ -15,20 +16,27 @@ import static com.globaldelight.boom.BuildConfig.FLURRY_API_KEY;
  */
 
 public class FlurryAnalytics {
-
+    private final String TAG = "FlurryAnalytics";
     private Context context;
     private static FlurryAnalytics instance;
+    private boolean enabled = true;
 
     private FlurryAnalytics(Context context) {
         this.context = context.getApplicationContext();
 
-        new FlurryAgent.Builder()
-                .withLogEnabled(true)
-                .withCaptureUncaughtExceptions(true)
-                .withContinueSessionMillis(10)
-                .withLogEnabled(true)
-                .withLogLevel(VERBOSE)
-                .build(context, FLURRY_API_KEY);
+        try {
+            new FlurryAgent.Builder()
+                    .withLogEnabled(true)
+                    .withCaptureUncaughtExceptions(true)
+                    .withContinueSessionMillis(10)
+                    .withLogEnabled(true)
+                    .withLogLevel(VERBOSE)
+                    .build(context, FLURRY_API_KEY);
+            enabled = true;
+        }
+        catch (Exception e) {
+            enabled = false;
+        }
     }
 
     public static FlurryAnalytics getInstance(Context context) {
@@ -37,32 +45,40 @@ public class FlurryAnalytics {
     }
 
     public FlurryAnalytics startSession() {
-        FlurryAgent.onStartSession(context);
+        Log.d(TAG, "startSession");
+        if ( enabled ) {
+            FlurryAgent.onStartSession(context);
+        }
         return this;
     }
 
     public FlurryAnalytics endSession() {
-        FlurryAgent.onEndSession(context);
+        Log.d(TAG, "endSession");
+        if ( enabled ) FlurryAgent.onEndSession(context);
         return this;
     }
 
     public FlurryAnalytics setEvent(String event) {
-        FlurryAgent.logEvent(event);
+        Log.d(TAG, event );
+        if ( enabled ) FlurryAgent.logEvent(event);
         return this;
     }
 
     public FlurryAnalytics setEvent(String event, boolean status) {
-        FlurryAgent.logEvent(event, status);
+        Log.d(TAG, event + " status: " + (status? "true" : "false"));
+        if ( enabled ) FlurryAgent.logEvent(event, status);
         return this;
     }
 
     public FlurryAnalytics setEvent(String event, Map<String, String> params) {
-        FlurryAgent.logEvent(event, params);
+        Log.d(TAG, event + " params: " + params.toString());
+        if ( enabled ) FlurryAgent.logEvent(event, params);
         return this;
     }
 
     public FlurryAnalytics setEvent(String event, Map<String, String> params, boolean status) {
-        FlurryAgent.logEvent(event, params, status);
+        Log.d(TAG, event + " status: " + (status? "true" : "false") + " params: " + params.toString());
+        if ( enabled ) FlurryAgent.logEvent(event, params, status);
         return this;
     }
 }

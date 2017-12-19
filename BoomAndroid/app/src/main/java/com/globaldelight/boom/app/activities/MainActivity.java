@@ -224,6 +224,7 @@ public class MainActivity extends MasterActivity
     @Override
     public void onPanelCollapsed(View panel) {
         super.onPanelCollapsed(panel);
+        ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
     }
 
     @Override
