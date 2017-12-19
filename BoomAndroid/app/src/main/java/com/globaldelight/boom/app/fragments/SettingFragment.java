@@ -351,7 +351,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         Utils.createDialogBuilder(mActivity)
                 .content(R.string.settings_change_account_message)
                 .negativeText(R.string.dialog_txt_cancel)
-                .positiveText(R.string.conitnue_with_acc_change)
+                .positiveText(R.string.continue_button)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {

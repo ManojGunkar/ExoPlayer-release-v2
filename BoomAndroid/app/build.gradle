@@ -34,6 +34,8 @@ android {
         versionName "1.0.0"
         multiDexEnabled true
 
+        resValue 'string', 'version', "v"+versionName
+
         buildConfigField("String",  EXPIRY_DATE,                STRING(getExpiryDate()) )
         buildConfigField("boolean", BUSINESS_MODEL_ENABLED,     businessModelEnabled)
         buildConfigField "String", 'MIXPANEL_SENDER_ID',        STRING("862807752058")
@@ -44,6 +46,9 @@ android {
         buildConfigField "String", 'AUDIO_CONFIG_URL',          STRING("http://devboom2.globaldelight.net/audioconfig.php")
         buildConfigField "String", 'FEEDBACK_URL',              STRING("http://devboom2.globaldelight.net/feedback.php?os=android")
 
+        ndk {
+            abiFilters = ['armeabi-v7a']
+        }
     }
 
     buildTypes {
@@ -57,11 +62,13 @@ android {
         }
     }
     productFlavors {
+
         development {
         }
 
         demo {
             buildConfigField "boolean", BUSINESS_MODEL_ENABLED,     "false"
+            buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    "null"
         }
 
         production {
@@ -71,6 +78,13 @@ android {
             buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    STRING("79a795acec1fbcc3d9d28f792c51fc24")
             buildConfigField "String",  'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-2462021843550393/4811995067")
             buildConfigField "String",  'GOOGLE_NATIVE_AD_ID',       STRING("ca-app-pub-2462021843550393/9799761460")
+        }
+
+        b2b {
+            applicationIdSuffix ".b2b"
+            buildConfigField "String",  EXPIRY_DATE,                 "null"
+            buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    "null"
+            buildConfigField "String",  'FEEDBACK_URL',               STRING("https://apimboom2.globaldelight.net/feedback.php?flaour=b2b")
         }
     }
 }
@@ -82,6 +96,7 @@ repositories {
     }
     maven { url 'https://maven.fabric.io/public' }
 }
+
 
 dependencies {
     implementation 'com.afollestad.material-dialogs:core:0.9.0.2'
@@ -102,8 +117,9 @@ dependencies {
         force = true
     }
     implementation(name:'extension-flac-release', ext:'aar')
-    implementation(name:'boom-engine-release', ext:'aar')
     implementation(name:'boom-extension-release', ext:'aar')
+
+    implementation project(path: ':boom-engine')
 
     implementation 'com.dropbox.core:dropbox-core-sdk:3.0.5'
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
@@ -125,7 +141,6 @@ dependencies {
     implementation 'com.google.android.gms:play-services-drive:11.4.2'
     implementation 'pub.devrel:easypermissions:0.2.1'
     implementation 'com.google.code.gson:gson:2.8.0'
-    implementation 'com.android.volley:volley:1.0.0'
     implementation 'com.google.android.gms:play-services-gcm:11.4.2'
     implementation "com.mixpanel.android:mixpanel-android:5.1.4"
     implementation 'com.google.android.gms:play-services-ads:11.4.2'
@@ -135,7 +150,6 @@ dependencies {
     implementation ('com.facebook.android:facebook-android-sdk:4.5.0') {
         exclude module: 'bolts-android'
     }
-    implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0'
 }
 
 // ADD THIS AT THE BOTTOM

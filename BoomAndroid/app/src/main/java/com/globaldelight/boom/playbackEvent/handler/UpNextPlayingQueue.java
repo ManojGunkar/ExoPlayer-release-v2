@@ -275,6 +275,10 @@ public class UpNextPlayingQueue {
         }
     }
 
+    public boolean repeatSong() {
+        return mRepeat == REPEAT_ONE;
+    }
+
     private void nullCheck() {
         if (null == mUpNextList)
             mUpNextList = new ArrayList<>();
@@ -394,7 +398,7 @@ public class UpNextPlayingQueue {
 
     public void setNextPlayingItem(final boolean isUser) {
         long mTime = System.currentTimeMillis();
-        if (isNext() && mTime - mShiftingTime > 500) {
+        if ( (isNext() || repeatSong()) && mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
             new Handler().post(new Runnable() {
                 @Override

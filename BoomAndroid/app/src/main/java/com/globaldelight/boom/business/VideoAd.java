@@ -30,7 +30,7 @@ public class VideoAd implements RewardedVideoAdListener {
     public VideoAd(Context context, Callback callback) {
         mContext = context.getApplicationContext();
         mCallback = callback;
-        MobileAds.initialize(mContext, "com.globaldelight.boom");
+        MobileAds.initialize(mContext, BuildConfig.APPLICATION_ID);
     }
 
     public void prepare() {

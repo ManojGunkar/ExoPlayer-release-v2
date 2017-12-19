@@ -1,1 +1,4 @@
 include ':app'
+include ':boom-engine'
+
+project(':boom-engine').projectDir = new File(settingsDir, '../BoomEngine/boom-engine')

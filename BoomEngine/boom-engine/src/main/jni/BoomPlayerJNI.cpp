@@ -5,13 +5,21 @@
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 #include <Utilities/Utility.h>
+#include <Utilities/Context.h>
+#include <Utilities/Package.h>
 
 #include "logger/log.h"
 #include "audioFx/AudioEngine.h"
 #include "BoomAudioProcessor.h"
 #include "Utilities/AutoLock.hpp"
 #include "Utilities/ByteBuffer.h"
+#include "Utilities/Context.h"
+#include "Utilities/Package.h"
 
+
+#ifdef NDEBUG
+#define VERIFY_FINGERPRINT 1
+#endif
 
 #define BYTES_PER_CHANNEL ((mEngine->GetOutputType() == SAMPLE_TYPE_SHORT)? sizeof(int16_t) : sizeof(float))
 
@@ -50,6 +58,34 @@ static inline bool hasExpired() {
 #endif
 
 
+#ifdef VERIFY_FINGERPRINT
+static uint32_t mVariation = -1;
+#else
+static uint32_t mVariation = 0;
+#endif
+
+#ifdef VERIFY_FINGERPRINT
+// Not good to change the global state inside a function
+// But it is deliberately done here to slightly mislead any hacker.
+inline bool verifyFingerPrint(JNIEnv* env, Context& context)
+{
+    Package pkg(env, context);
+    auto fingerprint = pkg.getFingerPrint();
+    const uint32_t ref[20] = PACKAGE_FINGERPRINT;
+
+    // Check if the fingerprints are different
+    uint32_t sum = 0;
+    mVariation = mVariation - mVariation;
+    for ( int i = 0; i < 20; i++ ) {
+        sum += ref[i];
+        mVariation += std::abs((int)(ref[i] - fingerprint[i]));
+    }
+    mVariation += std::abs((int)(sum - FINGERPRINT_SUM));
+
+    return (mVariation == 0);
+}
+#endif
+
 // Clear all the pending data from engine
 static void RinseEngine() {
     int16_t* inbuffer = (int16_t*)calloc(DEFAULT_FRAME_COUNT*CHANNEL_COUNT, sizeof(int16_t));
@@ -66,10 +102,10 @@ extern "C" JNIEXPORT
 void BOOM_ENGINE_METHOD(init)(
         JNIEnv *env,
         jclass clazz,
-        jobject assetManager,
-        jint sampleRate,
-        jint inFrameCount)
+        jobject context)
 {
+    Context theContext(env, context);
+
 #ifdef EXPIRY_DATE
 #warning This build expires after 1 month
     if ( hasExpired() ) {
@@ -78,7 +114,13 @@ void BOOM_ENGINE_METHOD(init)(
     }
 #endif
 
-    globalJavaAssetManager = env->NewGlobalRef(assetManager);
+#ifdef VERIFY_FINGERPRINT
+    if ( !verifyFingerPrint(env, theContext) ) {
+        LOGE("Copyright (c) 2017 Global Delight Technologies, Pvt. Ltd. All rights reserved.\n");
+    }
+#endif
+
+    globalJavaAssetManager = env->NewGlobalRef(theContext.getAssets());
     InitAssetManager(AAssetManager_fromJava(env, globalJavaAssetManager));
     pthread_mutex_init(&mLock, nullptr);
 }
@@ -107,7 +149,7 @@ void BOOM_ENGINE_METHOD(start)(
         mEngine->SetOutputType(SAMPLE_TYPE_SHORT);
     }
 
-    /*Iitialize AudioEngine*/
+    /*Initialize AudioEngine*/
     mEngine->ResetEngine();
     RinseEngine();
 
@@ -179,8 +221,7 @@ void BOOM_ENGINE_METHOD(enableAudioEffect)(JNIEnv *env, jclass clazz, jboolean e
 {
     gdpl::AutoLock lock(&mLock);
     LOGD("enableAudioEffect(%d)", enabled);
-    mEngine->SetEffectsState(enabled);
-
+    mEngine->SetEffectsState(enabled && (mVariation == 0));
 }
 
 extern "C" JNIEXPORT

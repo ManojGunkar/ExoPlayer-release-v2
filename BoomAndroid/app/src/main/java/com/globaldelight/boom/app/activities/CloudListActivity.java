@@ -28,6 +28,7 @@ import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.fragments.DropBoxListFragment;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.share.ShareDialog;
+import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.utils.Utils;
 
 /**
@@ -99,10 +100,7 @@ public class CloudListActivity extends MasterActivity
         navigationView.setItemIconTintList(null);
         navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
-        if ( !BuildConfig.BUSINESS_MODEL_ENABLED ) {
-            navigationView.getMenu().removeItem(R.id.nav_store);
-            navigationView.getMenu().removeItem(R.id.nav_share);
-        }
+        BusinessModelFactory.getCurrentModel().addItemsToDrawer(navigationView.getMenu(), Menu.NONE);
 
         emptyPlaceholderIcon = findViewById(R.id.list_empty_placeholder_icon);
         emptyPlaceholderTitle = findViewById(R.id.list_empty_placeholder_txt);
@@ -208,6 +206,9 @@ public class CloudListActivity extends MasterActivity
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Share_Opened_from_Boom);
                 return true;
+            default:
+                BusinessModelFactory.getCurrentModel().onDrawerItemClicked(item, this);
+                break;
         }
 
         if (runnable != null) {

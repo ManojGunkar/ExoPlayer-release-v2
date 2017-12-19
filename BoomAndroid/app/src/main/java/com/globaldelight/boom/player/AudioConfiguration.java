@@ -6,15 +6,20 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 
-import com.android.volley.*;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.globaldelight.boom.*;
 import com.globaldelight.boom.BuildConfig;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by adarsh on 25/01/17.
@@ -30,7 +35,6 @@ public class AudioConfiguration {
     private  @Constants.Quality int quality = Constants.Quality.HIGH;
     private int format = FORMAT_FLOAT;
     private Context context;
-    private RequestQueue queue;
 
 
     private static AudioConfiguration instance = null;
@@ -44,14 +48,11 @@ public class AudioConfiguration {
 
     private AudioConfiguration(Context context) {
         this.context = context.getApplicationContext();
-        queue = Volley.newRequestQueue(this.context);
     }
 
     public void load() {
         readConfig();
-        if ( isNetworkConnected(context) ) {
-            downloadConfig();
-        }
+        downloadConfig();
     }
 
     public @Constants.Quality int getQuality() {
@@ -79,40 +80,49 @@ public class AudioConfiguration {
 
     private void downloadConfig() {
         final String BASE_URL = BuildConfig.AUDIO_CONFIG_URL;
-        Uri uri = Uri.parse(BASE_URL).buildUpon()
-                .appendQueryParameter("action", "query")
-                .appendQueryParameter("manufacturer", Build.MANUFACTURER)
-                .appendQueryParameter("modelname", Build.MODEL)
-                .build();
 
-        String configURL = uri.toString();
-
-
-        Response.Listener<String> listener = new Response.Listener<String>() {
+        new AsyncTask<Void, Void, String>() {
             @Override
-            public void onResponse(String response) {
+            protected String doInBackground(Void... voids) {
                 try {
-                    JSONObject json = new JSONObject(response);
-                    String qualityStr = json.getString("quality");
-                    String formatStr = json.getString("format");
-                    quality = toQuality(qualityStr);
-                    format = toFormat(formatStr);
-                    saveConfig(qualityStr, formatStr);
-                }
-                catch (Exception e) {
+                    OkHttpClient client = new OkHttpClient();
+                    Uri uri = Uri.parse(BASE_URL).buildUpon()
+                            .appendQueryParameter("action", "query")
+                            .appendQueryParameter("manufacturer", Build.MANUFACTURER)
+                            .appendQueryParameter("modelname", Build.MODEL)
+                            .build();
 
+                    String configURL = uri.toString();
+
+                    Request request = new Request.Builder().url(configURL).build();
+                    Response response = client.newCall(request).execute();
+                    if (response.isSuccessful()) {
+                        return response.body().string();
+                    }
+                    return null;
+                }
+                catch (IOException e) {
+                    return null;
                 }
             }
-        };
 
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
+            protected void onPostExecute(String jsonString) {
+                super.onPostExecute(jsonString);
+                if ( jsonString != null ) {
+                    try {
+                        JSONObject json = new JSONObject(jsonString);
+                        String qualityStr = json.getString("quality");
+                        String formatStr = json.getString("format");
+                        quality = toQuality(qualityStr);
+                        format = toFormat(formatStr);
+                        saveConfig(qualityStr, formatStr);
+                    }
+                    catch (JSONException e) {
+                    }
+                }
             }
-        };
-
-        StringRequest configRequest = new StringRequest(Request.Method.GET, configURL, listener, errorListener);
-        queue.add(configRequest);
+        }.execute();
     }
 
     private @Constants.Quality int toQuality(String quality) {
@@ -135,11 +145,5 @@ public class AudioConfiguration {
             case "pcm16":
                 return FORMAT_INT16;
         }
-    }
-
-    private static boolean isNetworkConnected(Context context) {
-        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetInfo = manager.getActiveNetworkInfo();
-        return activeNetInfo != null && activeNetInfo.isConnected();
     }
 }

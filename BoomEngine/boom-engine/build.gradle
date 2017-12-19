@@ -17,12 +17,12 @@ model {
             targetSdkVersion.apiLevel = 25
             versionCode 1
             versionName "1.0"
-
-            testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
         }
+
         ndk {
             def DEFINE_EXPIRY_DATE_FLAG = '-DEXPIRY_DATE=makeDate(' + getExpiryDate() + ')'
+            def DEFINE_PACKAGE_FINGERPRINT = '-DPACKAGE_FINGERPRINT={0x77,0xF9,0x4C,0x77,0x94,0x8E,0x28,0xB2,0x74,0x20,0xCA,0x2C,0x36,0xD3,0xF5,0x75,0x26,0x5D,0x54,0xC2}'
+            def DEFINE_FINGERPRINT_SUM = '-DFINGERPRINT_SUM=0x9C5'
 
 
             platformVersion = 23
@@ -32,6 +32,8 @@ model {
             CFlags.addAll(['-std=c11'])
             cppFlags.addAll(['-I' + file('src/main/jni/'),
                              DEFINE_EXPIRY_DATE_FLAG,
+                             DEFINE_PACKAGE_FINGERPRINT,
+                             DEFINE_FINGERPRINT_SUM,
                              '-std=c++11', '-Wall',
                              '-fno-exceptions', '-fno-rtti'])
             ldFlags.addAll(['-L' + file('src/main/jni/libs')])

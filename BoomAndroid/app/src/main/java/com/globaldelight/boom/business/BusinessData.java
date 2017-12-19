@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import com.globaldelight.boom.BuildConfig;
+
 import java.util.Date;
 
 /**
@@ -36,7 +38,7 @@ public class BusinessData {
 
     public BusinessData(Context context) {
         mContext = context;
-        mPrefs = mContext.getSharedPreferences("com.globaldelight.boom", Context.MODE_PRIVATE);
+        mPrefs = mContext.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         try {
             mInstallDate = new Date(mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).firstInstallTime);
             Log.d("BusinessData", "Install date " + mInstallDate.toString() );

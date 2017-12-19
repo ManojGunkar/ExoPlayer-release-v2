@@ -124,6 +124,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
         if( !playing ){
             if ( !mIsTaskRunning ) {
                 stopSelf();
+                return; // Prevent zombie notification
             }
             else {
                 stopForeground(false);

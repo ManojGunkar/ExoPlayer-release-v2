@@ -135,7 +135,6 @@
 
         <activity
             android:name=".app.activities.AlbumSongListActivity"
-            android:label="@string/title_activity_child"
             android:parentActivityName=".app.activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -145,7 +144,6 @@
         </activity>
         <activity
             android:name=".app.activities.AlbumDetailItemActivity"
-            android:label="@string/title_item_detail"
             android:parentActivityName=".app.activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -216,6 +214,12 @@
         <activity
             android:name=".app.share.ShareDialog$ProxyActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity
+            android:name=".app.activities.UserVerificationActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PromoCode" />
 
     </application>
 
