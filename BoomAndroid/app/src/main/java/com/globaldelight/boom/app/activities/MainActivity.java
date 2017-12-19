@@ -82,7 +82,7 @@ public class MainActivity extends MasterActivity
                     break;
 
                 case PlayerEvents.ACTION_PLAYER_STATE_CHANGED:
-                    if ( mLibraryFragment != null ) {
+                    if ( mLibraryFragment != null && App.playbackManager().isPlaying() ) {
                         ((LibraryFragment)mLibraryFragment).useCoachMarkWindow();
                         ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
                     }
