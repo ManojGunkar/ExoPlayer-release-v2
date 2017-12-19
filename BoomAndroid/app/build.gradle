@@ -133,7 +133,7 @@ dependencies {
 
     implementation 'com.afollestad.material-dialogs:core:0.9.0.2'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
-    implementation 'com.flurry.android:analytics:7.0.0@aar'
+    implementation 'com.flurry.android:analytics:8.2.0@aar'
     implementation 'com.appsflyer:af-android-sdk:4.7.2@aar'
     implementation 'com.google.android.gms:play-services-base:11.4.2'
     implementation 'com.google.android.gms:play-services-auth:11.4.2'
