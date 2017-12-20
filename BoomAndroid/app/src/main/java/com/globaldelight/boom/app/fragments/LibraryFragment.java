@@ -23,6 +23,7 @@ import com.globaldelight.boom.view.CoachMarkerWindow;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 
+import static com.globaldelight.boom.app.sharedPreferences.Preferences.LIBRARY_CURRENT_TAB;
 import static com.globaldelight.boom.app.sharedPreferences.Preferences.TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_NORMAL_BOTTOM;
 import static com.globaldelight.boom.app.sharedPreferences.Preferences.HEADPHONE_CONNECTED;
@@ -71,6 +72,7 @@ public class LibraryFragment extends Fragment {
 
         setupViewPager(mViewPager);
 
+
         Typeface font = ResourcesCompat.getFont(mActivity, R.font.titilliumweb_semibold);
         for (int i = 0; i < mTabBar.getChildCount(); i++) {
             final View view = mTabBar.getChildAt(i);
@@ -79,6 +81,7 @@ public class LibraryFragment extends Fragment {
                 ((TextView) view).setTextSize(getResources().getDimension(R.dimen.music_tab_txt_size));
             }
         }
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -91,6 +94,7 @@ public class LibraryFragment extends Fragment {
         viewPager.setAdapter(mSectionsPagerAdapter);
         viewPager.setOffscreenPageLimit(5);
         mTabBar.setupWithViewPager(mViewPager);
+        viewPager.setCurrentItem(Preferences.readInteger(getActivity(), LIBRARY_CURRENT_TAB, 2));
     }
 
     public void useCoachMarkWindow(){
@@ -118,6 +122,12 @@ public class LibraryFragment extends Fragment {
 
             Preferences.writeBoolean(mActivity, TOOLTIP_USE_HEADPHONE_LIBRARY, false);
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Preferences.writeInteger(getActivity(), LIBRARY_CURRENT_TAB, mViewPager.getCurrentItem());
     }
 
     public void setDismissHeadphoneCoachmark(){
