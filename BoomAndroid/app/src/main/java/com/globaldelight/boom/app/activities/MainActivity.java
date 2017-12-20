@@ -77,6 +77,7 @@ public class MainActivity extends MasterActivity
             switch ( intent.getAction() ) {
                 case ACTION_HEADSET_PLUGGED:
                     if( null != mLibraryFragment) {
+                        ((LibraryFragment)mLibraryFragment).setDismissHeadphoneCoachmark();
                         ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
                     }
                     break;

@@ -17,6 +17,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.utils.Utils;
 
 public class CoachMarkerWindow {
 
@@ -109,6 +110,8 @@ public class CoachMarkerWindow {
                 mImageArrow.setVisibility(View.GONE);
                 break;
         }
+        int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+        mInfoText.setMaxWidth(screenWidth - 2 * Utils.dpToPx(ctx, 12));
         tipWindow.setHeight(ActionBar.LayoutParams.WRAP_CONTENT);
         tipWindow.setWidth(ActionBar.LayoutParams.WRAP_CONTENT);
         tipWindow.setFocusable(false);
@@ -117,8 +120,6 @@ public class CoachMarkerWindow {
 
         int screen_pos[] = new int[2];
         anchor.getLocationOnScreen(screen_pos);
-
-        int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
 
         final Rect anchor_rect = new Rect(screen_pos[0], screen_pos[1], screen_pos[0]
                 + anchor.getMeasuredWidth(), screen_pos[1] + anchor.getMeasuredHeight());
@@ -167,7 +168,7 @@ public class CoachMarkerWindow {
 
             case DRAW_NORMAL_BOTTOM:
                 position_x = anchor_rect.centerX()  - contentViewWidth / 2;
-                position_y = (int) (anchor_rect.top - getArrowHeight());
+                position_y = (int) anchor_rect.top;
                 break;
         }
 
