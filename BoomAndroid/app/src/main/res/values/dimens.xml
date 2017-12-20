@@ -140,7 +140,7 @@
 
 
     <dimen name="album_track_menu_margin">14.5dp</dimen>
-    <dimen name="card_grid_bottom_padding">10.5dp</dimen>
+    <dimen name="card_grid_bottom_padding">10dp</dimen>
     <dimen name="card_header_recycler_title_margine_top">18.5dp</dimen>
     <dimen name="card_playlist_dialog_margin">20.5dp</dimen>
     <dimen name="selected_eq_go_img">10.5dp</dimen>
