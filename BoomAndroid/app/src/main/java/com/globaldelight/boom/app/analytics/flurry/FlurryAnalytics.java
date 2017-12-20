@@ -1,10 +1,10 @@
 package com.globaldelight.boom.app.analytics.flurry;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.flurry.android.FlurryAgent;
 import com.globaldelight.boom.BuildConfig;
+import com.globaldelight.boom.utils.Log;
 
 import java.util.Map;
 

@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -29,6 +28,7 @@ import com.globaldelight.boom.app.share.ShareDialog;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.utils.DefaultActivityLifecycleCallbacks;
+import com.globaldelight.boom.utils.Log;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.Date;
