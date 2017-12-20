@@ -54,6 +54,7 @@ android {
     buildTypes {
 
         debug {
+            buildConfigField "String",  'FLURRY_API_KEY',            STRING("")
         }
 
         release {

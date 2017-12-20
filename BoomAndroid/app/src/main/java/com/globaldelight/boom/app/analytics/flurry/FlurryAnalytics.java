@@ -26,7 +26,6 @@ public class FlurryAnalytics {
 
         try {
             new FlurryAgent.Builder()
-                    .withLogEnabled(true)
                     .withCaptureUncaughtExceptions(true)
                     .withContinueSessionMillis(10)
                     .withLogEnabled(true)
@@ -48,6 +47,7 @@ public class FlurryAnalytics {
         Log.d(TAG, "startSession");
         if ( enabled ) {
             FlurryAgent.onStartSession(context);
+
         }
         return this;
     }
