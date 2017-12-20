@@ -55,7 +55,7 @@ FLAVOUR=$1
 
 ./gradlew clean
 
-./gradlew assemble${FLAVOUR}Release -PbuildNumber=$BUILD_NUMBER -PnoEngineExpiry
+./gradlew assemble${FLAVOUR}Release -PbuildNumber=$BUILD_NUMBER
 check_error $?
 
 if [ -z "$FLAVOUR" ]; then
