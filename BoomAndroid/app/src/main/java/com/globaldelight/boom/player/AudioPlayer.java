@@ -191,8 +191,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
             // {@code onPlayerStateChanged} mCallback when the stream is ready to play.
             mExoPlayer.prepare(mediaSource);
 
-            state = LOADING;
-            postStateChange();
+            changeState(LOADING);
         }
 
         mWakeLock.acquire();
@@ -214,9 +213,8 @@ public class AudioPlayer implements ExoPlayer.EventListener {
     }
 
     public void stop(){
-        state = STOPPED;
+        changeState(STOPPED);
         releaseResources(true);
-        postStateChange();
     }
 
     private void releaseResources(boolean releasePlayer) {
@@ -244,8 +242,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         if ( mExoPlayer != null ) {
             mExoPlayer.setPlayWhenReady(false);
         }
-        state = PAUSED;
-        postStateChange();
+        changeState(PAUSED);
         releaseResources(false);
     }
 
@@ -294,6 +291,13 @@ public class AudioPlayer implements ExoPlayer.EventListener {
                     mCallback.onError();
                 }
             });
+        }
+    }
+
+    private void changeState(int newState) {
+        if ( state != newState ) {
+            state = newState;
+            postStateChange();
         }
     }
 
@@ -417,13 +421,12 @@ public class AudioPlayer implements ExoPlayer.EventListener {
 
             case ExoPlayer.STATE_READY:
                 if ( mExoPlayer.getPlayWhenReady() ) {
-                    state = PLAYING;
+                    changeState(PLAYING);
                     mDuration = mExoPlayer.getDuration();
                 }
                 else {
-                    state = PAUSED;
+                    changeState(PAUSED);
                 }
-                postStateChange();
                 break;
 
             case ExoPlayer.STATE_ENDED:
