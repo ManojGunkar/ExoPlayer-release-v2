@@ -703,7 +703,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     private void showEffectShortCut() {
         if (Preferences.readBoolean(mActivity, TOOLTIP_OPEN_EFFECT_MINI_PLAYER, true) && !Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true)) {
-            coachMarkEffectPlayer = new CoachMarkerWindow(mActivity, DRAW_TOP_LEFT, getResources().getString(R.string.library_switch_effect_screen_tooltip));
+            coachMarkEffectPlayer = new CoachMarkerWindow(mActivity, DRAW_TOP_CENTER, getResources().getString(R.string.library_switch_effect_screen_tooltip));
             coachMarkEffectPlayer.setAutoDismissBahaviour(true);
             Preferences.writeBoolean(mActivity, Preferences.TOOLTIP_OPEN_EFFECT_MINI_PLAYER, false);
             coachMarkEffectPlayer.showCoachMark(mRootView.findViewById(R.id.mini_player_effect_img));

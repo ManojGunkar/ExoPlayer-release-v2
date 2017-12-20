@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPrimaryDark"
+    android:gravity="center">
 
     <LinearLayout android:id="@+id/verify_screen"
         android:visibility="visible"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/colorPrimaryDark"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
-        android:gravity="center_horizontal"
-        >
+        android:gravity="center_horizontal">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
             android:src="@drawable/promo_head" />
 
         <android.support.v7.widget.AppCompatTextView
@@ -82,38 +82,33 @@
         <LinearLayout
             android:id="@+id/promocode_progress_view"
             android:visibility="gone"
-            android:layout_marginTop="102dp"
+            android:layout_marginTop="56dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:layout_height="136dp">
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
                 android:indeterminate="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
-
     </LinearLayout>
 
     <LinearLayout android:id="@+id/congrats_screen"
         android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/colorPrimaryDark"
-        android:gravity="center_horizontal"
-        >
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
             android:orientation="vertical"
             android:gravity="center_horizontal"
             android:background="@drawable/promo_success_background">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="56dp"
                 android:src="@drawable/promo_success_logo" />
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/promocode_congrats_textview"
@@ -131,7 +126,6 @@
                 android:textStyle="bold"
                 />
         </LinearLayout>
-
 
         <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
@@ -163,4 +157,4 @@
             android:typeface="normal" />
     </LinearLayout>
 
-</FrameLayout>
+</LinearLayout>

@@ -77,12 +77,13 @@ public class MainActivity extends MasterActivity
             switch ( intent.getAction() ) {
                 case ACTION_HEADSET_PLUGGED:
                     if( null != mLibraryFragment) {
+                        ((LibraryFragment)mLibraryFragment).setDismissHeadphoneCoachmark();
                         ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
                     }
                     break;
 
                 case PlayerEvents.ACTION_PLAYER_STATE_CHANGED:
-                    if ( mLibraryFragment != null ) {
+                    if ( mLibraryFragment != null && App.playbackManager().isPlaying() ) {
                         ((LibraryFragment)mLibraryFragment).useCoachMarkWindow();
                         ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
                     }
@@ -96,12 +97,14 @@ public class MainActivity extends MasterActivity
         setContentView(R.layout.activity_main);
         initView();
         checkPermissions();
-
-
     }
 
     Runnable navigateLibrary = new Runnable() {
         public void run() {
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            if ( currentFragment == mLibraryFragment && mLibraryFragment != null ) {
+                return;
+            }
             isLibraryRendered = true;
             toolbarTitle.setText(getResources().getString(R.string.music_library));
             navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
@@ -222,8 +225,7 @@ public class MainActivity extends MasterActivity
     @Override
     public void onPanelCollapsed(View panel) {
         super.onPanelCollapsed(panel);
-        if(null != mLibraryFragment){
-        }
+        ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
     }
 
     @Override

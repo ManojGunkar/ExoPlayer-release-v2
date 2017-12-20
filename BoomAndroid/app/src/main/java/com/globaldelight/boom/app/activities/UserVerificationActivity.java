@@ -25,6 +25,7 @@ import com.globaldelight.boom.business.LicenseManager;
 public class UserVerificationActivity extends AppCompatActivity {
 
     private View mPromocodeView;
+    private View mVerifyScreen;
     private Button mSubmitButton;
     private EditText mPromoCodeField;
     private TextView mTitleTextView;
@@ -67,9 +68,8 @@ public class UserVerificationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_verification);
 
-        mPromocodeView = findViewById(R.id.verify_screen);
+        mVerifyScreen = findViewById(R.id.verify_screen);
         mTitleTextView = findViewById(R.id.promocode_page_title);
-
         mPromocodeView = findViewById(R.id.promocode_view);
 
         mPromoCodeField = findViewById(R.id.promocode_text_field);
@@ -78,7 +78,9 @@ public class UserVerificationActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     String promoCode = mPromoCodeField.getText().toString();
-                    verifyPromoCode(promoCode);
+                    if ( promoCode.length() > 0 ) {
+                        verifyPromoCode(promoCode);
+                    }
                 }
                 return false;
             }
@@ -127,7 +129,7 @@ public class UserVerificationActivity extends AppCompatActivity {
     private void onError(@ErrorCode int errorCode) {
         mProgressView.setVisibility(View.GONE);
         mPromocodeView.setVisibility(View.VISIBLE);
-        mSubmitButton.setEnabled(true);
+        mSubmitButton.setEnabled(mPromoCodeField.getText().length() > 0);
         mPromoCodeField.setEnabled(true);
         mTitleTextView.setTextColor(getResources().getColor(R.color.promo_code_error));
 
@@ -148,7 +150,7 @@ public class UserVerificationActivity extends AppCompatActivity {
     }
 
     private void onSuccess() {
-        mPromocodeView.setVisibility(View.GONE);
+        mVerifyScreen.setVisibility(View.GONE);
         mCongratsView.setVisibility(View.VISIBLE);
     }
 }
