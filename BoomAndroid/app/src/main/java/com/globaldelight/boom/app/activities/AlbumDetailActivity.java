@@ -31,7 +31,7 @@ import java.io.File;
  * Created by Rahul Agarwal on 26-01-17.
  */
 
-public class AlbumDetailActivity extends MasterActivity {
+public class AlbumDetailActivity extends MasterActivity implements AlbumDetailFragment.Callback{
 
     IMediaItemCollection collection, currentItem;
     AlbumDetailFragment fragment;
@@ -96,6 +96,8 @@ public class AlbumDetailActivity extends MasterActivity {
                 }
             }
         });
+        mFloatPlayAllAlbums.setEnabled(false);
+        mFloatPlayAllAlbums.setVisibility(View.GONE);
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -107,6 +109,7 @@ public class AlbumDetailActivity extends MasterActivity {
         arguments.putParcelable("mediaItemCollection", (MediaItemCollection)collection);
         fragment = new AlbumDetailFragment();
         fragment.setArguments(arguments);
+        fragment.setCallback(this);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.item_detail_container, fragment)
                 .commitAllowingStateLoss();
@@ -136,9 +139,6 @@ public class AlbumDetailActivity extends MasterActivity {
     @Override
     public void onStart() {
         super.onStart();
-        final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
-        mFloatPlayAllAlbums.startAnimation(anim_in);
-
         setAlbumArt(currentItem.getItemArtUrl());
     }
 
@@ -146,6 +146,14 @@ public class AlbumDetailActivity extends MasterActivity {
     public void onStop() {
         super.onStop();
         setAlbumArt(null);
+    }
+
+    @Override
+    public void onLoadingComplete() {
+        mFloatPlayAllAlbums.setEnabled(true);
+        mFloatPlayAllAlbums.setVisibility(View.VISIBLE);
+        final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
+        mFloatPlayAllAlbums.startAnimation(anim_in);
     }
 }
 

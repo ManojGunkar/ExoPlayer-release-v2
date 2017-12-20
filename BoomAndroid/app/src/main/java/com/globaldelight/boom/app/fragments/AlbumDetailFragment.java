@@ -15,6 +15,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telecom.Call;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,16 +38,26 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_P
 
 public class AlbumDetailFragment extends Fragment {
 
+    public interface Callback {
+        void onLoadingComplete();
+    }
+
     private IMediaItemCollection dataCollection;
     private ListDetail listDetail;
     private RecyclerView rootView;
     private AlbumDetailAdapter albumDetailAdapter;
     Activity mActivity;
+    Callback mCallback;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public AlbumDetailFragment() {
+    }
+
+    public void setCallback(Callback callback) {
+        mCallback = callback;
     }
 
     private BroadcastReceiver mUpdatePlayingItem = new BroadcastReceiver() {
@@ -174,6 +185,10 @@ public class AlbumDetailFragment extends Fragment {
                 listIsEmpty();
             }
             rootView.setAdapter(albumDetailAdapter);
+
+            if ( mCallback != null ) {
+                mCallback.onLoadingComplete();
+            }
         }
     }
 
