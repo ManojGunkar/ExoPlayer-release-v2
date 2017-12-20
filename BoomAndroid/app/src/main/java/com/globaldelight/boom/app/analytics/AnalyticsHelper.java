@@ -2,11 +2,6 @@ package com.globaldelight.boom.app.analytics;
 
 import android.content.Context;
 
-import com.flurry.android.FlurryAgent;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.player.AudioEffect;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -126,11 +121,6 @@ public class AnalyticsHelper {
         MixPanelAnalyticHelper.getInstance(context).track(EVENT_HEADPHONE_TYPE_CHANGED, properties);
         MixPanelAnalyticHelper.getInstance(context).registerSuperProperties(properties);
         MixPanelAnalyticHelper.getInstance(context).setPeopleAnalytics(properties);
-    }
-
-    public void logCommonEvent(Context context, String event) {
-        FlurryAgent.logEvent(event);
-        MixPanelAnalyticHelper.getInstance(context).track(event);
     }
 
 }

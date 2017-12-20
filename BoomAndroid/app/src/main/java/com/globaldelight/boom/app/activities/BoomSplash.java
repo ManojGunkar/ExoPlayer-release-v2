@@ -123,12 +123,12 @@ public class BoomSplash extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(this).startSession();
+        FlurryAnalytics.getInstance(this).startSession(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(this).endSession();
+        FlurryAnalytics.getInstance(this).endSession(this);
     }
 }
