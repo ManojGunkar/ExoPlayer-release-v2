@@ -35,8 +35,9 @@ model {
                              DEFINE_FINGERPRINT_SUM,
                              '-std=c++11', '-Wall',
                              '-fno-exceptions', '-fno-rtti'])
+
             if ( !project.hasProperty("noEngineExpiry") ) {
-                cppFlags.addAll([DEFINE_EXPIRY_DATE_FLAG]);
+                cppFlags.addAll([DEFINE_EXPIRY_DATE_FLAG])
             }
 
             ldFlags.addAll(['-L' + file('src/main/jni/libs')])
