@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
+import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.business.ErrorCode;
 import com.globaldelight.boom.business.LicenseManager;
 
@@ -102,11 +104,25 @@ public class UserVerificationActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        FlurryAnalytics.getInstance(this).startSession(this);
+        FlurryAnalytics.getInstance(this).pageView();
+    }
+
+    @Override
+    protected void onStop() {
+        FlurryAnalytics.getInstance(this).endSession(this);
+        super.onStop();
+    }
+
+    @Override
     public void onBackPressed() {
         moveTaskToBack(true);
     }
 
     private void verifyPromoCode(String promoCode) {
+        FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.EVENT_PROMOCODE_VERIFY_CLICKED);
         mTitleTextView.setTextColor(getResources().getColor(R.color.white));
         mTitleTextView.setText(R.string.promocode_progress_text);
         mPromocodeView.setVisibility(View.GONE);
@@ -127,6 +143,8 @@ public class UserVerificationActivity extends AppCompatActivity {
     }
 
     private void onError(@ErrorCode int errorCode) {
+        FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.EVENT_PROMOCODE_VERIFY_FAILED);
+
         mProgressView.setVisibility(View.GONE);
         mPromocodeView.setVisibility(View.VISIBLE);
         mSubmitButton.setEnabled(mPromoCodeField.getText().length() > 0);
@@ -150,6 +168,7 @@ public class UserVerificationActivity extends AppCompatActivity {
     }
 
     private void onSuccess() {
+        FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.EVENT_PROMOCODE_VERIFY_SUCCESS);
         mVerifyScreen.setVisibility(View.GONE);
         mCongratsView.setVisibility(View.VISIBLE);
     }
