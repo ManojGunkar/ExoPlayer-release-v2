@@ -133,6 +133,10 @@ public final class FlurryEvents {
     public static final String EVENT_ON_PURCHASE = "EVENT_ON_PURCHASE";
     public static final String EVENT_ON_PURCHASE_CANCEL = "EVENT_ON_PURCHASE_CANCEL";
 
+    public static final String EVENT_PROMOCODE_VERIFY_CLICKED = "PromoCode verify clicked";
+    public static final String EVENT_PROMOCODE_VERIFY_FAILED = "PromoCode verify failed";
+    public static final String EVENT_PROMOCODE_VERIFY_SUCCESS = "PromoCode verify succeeded";
+
 
 
 

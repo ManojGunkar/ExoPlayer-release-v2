@@ -11,7 +11,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
+
+import com.globaldelight.boom.utils.Log;
 
 public class Base {
     private static Base.LogRelay mLogRelay;

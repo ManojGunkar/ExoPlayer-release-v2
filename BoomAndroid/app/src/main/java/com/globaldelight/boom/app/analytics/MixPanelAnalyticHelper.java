@@ -2,9 +2,9 @@ package com.globaldelight.boom.app.analytics;
 
 import android.content.Context;
 import android.provider.Settings;
-import android.util.Log;
 
 import com.globaldelight.boom.BuildConfig;
+import com.globaldelight.boom.utils.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 

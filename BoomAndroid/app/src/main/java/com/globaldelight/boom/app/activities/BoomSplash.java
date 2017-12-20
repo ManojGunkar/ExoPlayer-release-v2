@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
@@ -123,12 +122,12 @@ public class BoomSplash extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(this).startSession();
+        FlurryAnalytics.getInstance(this).startSession(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(this).endSession();
+        FlurryAnalytics.getInstance(this).endSession(this);
     }
 }

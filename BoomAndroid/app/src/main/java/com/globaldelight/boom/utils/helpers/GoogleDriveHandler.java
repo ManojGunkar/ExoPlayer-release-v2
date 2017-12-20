@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
@@ -19,6 +18,7 @@ import com.globaldelight.boom.collection.cloud.GoogleDriveMediaList;
 import com.globaldelight.boom.app.loaders.LoadGoogleDriveList;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.fragments.SettingFragment;
+import com.globaldelight.boom.utils.Log;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.common.ConnectionResult;

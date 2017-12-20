@@ -238,7 +238,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
 
     @Override
     public void onPlayerStateChanged() {
-        if ( mPlayback.isTrackPlaying() ) {
+        if ( mPlayback.isPlaying() ) {
             FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.EVENT_PLAY_PLAYING);
         }
         else if (mPlayback.isPaused() ) {

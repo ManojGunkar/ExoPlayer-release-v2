@@ -6,7 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.util.Log;
+
+import com.globaldelight.boom.utils.Log;
 
 /**
  * Created by Rahul Agarwal on 05-10-16.

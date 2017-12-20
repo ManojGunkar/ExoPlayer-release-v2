@@ -31,11 +31,15 @@ model {
             stl       = 'c++_static'
             CFlags.addAll(['-std=c11'])
             cppFlags.addAll(['-I' + file('src/main/jni/'),
-                             DEFINE_EXPIRY_DATE_FLAG,
                              DEFINE_PACKAGE_FINGERPRINT,
                              DEFINE_FINGERPRINT_SUM,
                              '-std=c++11', '-Wall',
                              '-fno-exceptions', '-fno-rtti'])
+
+            if ( !project.hasProperty("noEngineExpiry") ) {
+                cppFlags.addAll([DEFINE_EXPIRY_DATE_FLAG])
+            }
+
             ldFlags.addAll(['-L' + file('src/main/jni/libs')])
             ldLibs.addAll(['android', 'log', 'atomic', 'AudioCore', 'ffts'])
             abiFilters.addAll(['armeabi-v7a'])

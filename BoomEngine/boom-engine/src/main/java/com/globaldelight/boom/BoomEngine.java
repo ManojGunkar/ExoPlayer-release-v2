@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
-import android.util.Log;
 
 import java.nio.ByteBuffer;
 

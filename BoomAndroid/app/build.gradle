@@ -36,6 +36,7 @@ android {
 
         resValue 'string', 'version', "v"+versionName
 
+        buildConfigField "boolean",'ENABLE_LOG',                'true'
         buildConfigField("String",  EXPIRY_DATE,                STRING(getExpiryDate()) )
         buildConfigField("boolean", BUSINESS_MODEL_ENABLED,     businessModelEnabled)
         buildConfigField "String", 'MIXPANEL_SENDER_ID',        STRING("862807752058")
@@ -54,6 +55,8 @@ android {
     buildTypes {
 
         debug {
+            buildConfigField "String",  'FLURRY_API_KEY',            STRING("")
+            buildConfigField "boolean", 'ENABLE_LOG',                'true'
         }
 
         release {
@@ -72,6 +75,7 @@ android {
         }
 
         production {
+            buildConfigField "boolean",'ENABLE_LOG',                'false'
             buildConfigField "String",  EXPIRY_DATE,                 "null"
             buildConfigField "boolean", BUSINESS_MODEL_ENABLED,      "true"
             buildConfigField "String",  'FLURRY_API_KEY',            STRING("XRPWTN4PDGJJQX6NNJPN")
@@ -82,8 +86,10 @@ android {
 
         b2b {
             applicationIdSuffix ".b2b"
+
+            buildConfigField "boolean", 'ENABLE_LOG',                'true'
             buildConfigField "String",  EXPIRY_DATE,                 "null"
-        //    buildConfigField "String",  'FLURRY_API_KEY',            STRING("G6P5DBXKYF5C3NH4S752")
+            buildConfigField "String",  'FLURRY_API_KEY',            STRING("G6P5DBXKYF5C3NH4S752")
             buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    "null"
             buildConfigField "String",  'FEEDBACK_URL',               STRING("https://apimboom2.globaldelight.net/feedback.php?flaour=b2b")
         }

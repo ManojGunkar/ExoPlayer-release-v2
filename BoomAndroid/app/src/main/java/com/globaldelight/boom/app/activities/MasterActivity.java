@@ -122,13 +122,13 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
     @Override
     public  void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(this).startSession();
+        FlurryAnalytics.getInstance(this).startSession(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(this).endSession();
+        FlurryAnalytics.getInstance(this).endSession(this);
     }
 
     public void initContainer() {
