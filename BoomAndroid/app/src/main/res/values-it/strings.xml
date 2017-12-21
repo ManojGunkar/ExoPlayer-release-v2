@@ -5,7 +5,7 @@
         <item>AUTOMATICO</item>
         <item>AMPLIFICATORE BASSI</item>
         <item>ACUSTICA</item>
-        <item>Anni &apos;60</item>
+        <item>Anni \&apos;60</item>
         <item>CLASSICA</item>
         <item>DUBSTEP</item>
         <item>ELETTRONICA</item>
@@ -52,12 +52,12 @@
 
     <string name="search_hint">Cerca</string>
     <string name="storage_permission">Autorizzazione di lettura/scrittura della scheda SD</string>
-    <string name="account_permission">&quot;L&apos;app deve accedere al tuo account Google (tramite Contatti).&quot;</string>
+    <string name="account_permission">&quot;L\&apos;app deve accedere al tuo account Google (tramite Contatti).&quot;</string>
     <string name="ok">OK</string>
 	
 	<!--Surround 3D-->
-	<string name="req_intensity">Per 3D è necessario che l&apos;Intensità sia ATTIVA</string>
-    <string name="req_equlaizer">Per 3D è necessario che l&apos;Equalizzatore sia ATTIVO</string>
+	<string name="req_intensity">Per 3D è necessario che l\&apos;Intensità sia ATTIVA</string>
+    <string name="req_equlaizer">Per 3D è necessario che l\&apos;Equalizzatore sia ATTIVO</string>
 	
 	<!--Impostazioni-->
 	<string name="title_headphone_type">Selezionare il tipo di cuffie</string>
@@ -70,8 +70,8 @@
     <string name="timer_reset">CHIUDI</string>
 
     <string name="cloud_services">Servizi cloud</string>
-    <string name="cloud_setting_dropbox_subtitle">Tocca per aggiungere l&apos;account di Dropbox</string>
-    <string name="cloud_setting_google_subtitle">Tocca per aggiungere l&apos;account di Google Drive</string>
+    <string name="cloud_setting_dropbox_subtitle">Tocca per aggiungere l\&apos;account di Dropbox</string>
+    <string name="cloud_setting_google_subtitle">Tocca per aggiungere l\&apos;account di Google Drive</string>
     <string name="drop_box_account">Dropbox (%s)</string>
     <string name="google_drive_account">Google Drive (%s)</string>
 
@@ -84,7 +84,7 @@
 	<string name="header_about">Informazioni</string>
     <string name="description_about">Un suono surround fantastico creato da\nGlobal Delight</string>
     <string name="rate_app">Valuta sul Play Store</string>
-    <string name="about_technology">La tecnologia dell&apos;audio surround coinvolgente nelle cuffie è in attesa di brevetto.</string>
+    <string name="about_technology">La tecnologia dell\&apos;audio surround coinvolgente nelle cuffie è in attesa di brevetto.</string>
     <string name="copyright">\u00a9 2017, Global Delight Technologies Pvt Ltd.\n Tutti i diritti sono riservati.</string>
 	
 	<!-- Tutorial-->
@@ -132,7 +132,7 @@
     <string name="menu_remove_boom_item">Rimuovi la canzone</string>
 	
 	<!-- Schermata di riproduzione -->
-	<string name="eq_dialog_title">Scegli l&apos;equalizzatore</string>
+	<string name="eq_dialog_title">Scegli l\&apos;equalizzatore</string>
     <string name="speaker_dialog_title">Altoparlanti</string>
     <string name="done">FATTO</string>
     <string name="on">Effetti ATTIVI</string>
@@ -143,8 +143,8 @@
     <string name="intensity">Intensità</string>
     <string name="equalizer">Equalizzatore</string>
     <string name="more"> ALTRO</string>
-    <string name="empty_list">L&apos;elenco è vuoto.</string>
-    <string name="require_google_play_service">Per questa app è necessario Google Play Services. Installa Google Play Services sul tuo dispositivo o riavvia l&apos;app.</string>
+    <string name="empty_list">L\&apos;elenco è vuoto.</string>
+    <string name="require_google_play_service">Per questa app è necessario Google Play Services. Installa Google Play Services sul tuo dispositivo o riavvia l\&apos;app.</string>
     <string name="remaning"> rimanenti.</string>
     <string name="hour">Ora</string>
     <string name="minute">Minuto</string>
@@ -155,13 +155,13 @@
     <string name="request_cancelled">Richiesta cancellata.</string>
     <string name="login_problem_dropbox">Impossibile effettuare il login in Dropbox</string>
     <string name="login_problem_google_drive">Impossibile effettuare il login in Google Drive</string>
-    <string name="dropbox_authenticate_problem">Impossibile eseguire l&apos;autenticazione in Dropbox:</string>
+    <string name="dropbox_authenticate_problem">Impossibile eseguire l\&apos;autenticazione in Dropbox:</string>
     <string name="google_drive_loading_error">Errore di caricamento in Google Drive:\n</string>
     <string name="check_network">Verifica la connessione di rete e riprova</string>
     <string name="app_expire">App scaduta.</string>
     <string name="network_error">Connessione di rete non disponibile.</string>
     <string name="error_fetch_data">Errore durante il recupero dei dati</string>
-    <string name="app_unsupported">L&apos;app non supporta questo dispositivo.</string>
+    <string name="app_unsupported">L\&apos;app non supporta questo dispositivo.</string>
 	
 	<!-- tooltip -->
 	<string name="library_switch_effect_screen_tooltip">Tocca qui per aprire rapidamente Effetti di Boom</string>
@@ -176,10 +176,10 @@
     <string name="onboard_screen_0_sub_tx">Ascolta la musica prendere vita con il magico suono surround 3D.</string>
 
     <string name="onboard_screen_1_main_tx">Dai vita alla tua musica</string>
-    <string name="onboard_screen_1_sub_tx">Goditi un maggiore controllo della musica con le impostazioni predefinite dell&apos;equalizzatore professionali e intuitive.</string>
+    <string name="onboard_screen_1_sub_tx">Goditi un maggiore controllo della musica con le impostazioni predefinite dell\&apos;equalizzatore professionali e intuitive.</string>
 
     <string name="onboard_screen_2_main_tx">Ottimizzata per tutti i tipi di cuffie</string>
-    <string name="onboard_screen_2_sub_tx">Seleziona il “Tipo di cuffie” dalle “Impostazioni” dell&apos;app per dare vita alla tua musica preferita.</string>
+    <string name="onboard_screen_2_sub_tx">Seleziona il “Tipo di cuffie” dalle “Impostazioni” dell\&apos;app per dare vita alla tua musica preferita.</string>
 
     <string name="onboard_screen_3_main_tx">Tutta la tua musica in un unico posto</string>
     <string name="onboard_screen_3_sub_tx">Ascolta la musica dal catalogo multimediale, da Google Drive e da Dropbox ovunque tu sia.</string>
@@ -201,13 +201,13 @@
     <string name="ask_reset_timer">Annullare il timer di sospensione?</string>
     <string name="empty_search_result">Nessun risultato trovato.</string>
     <string name="close_button">CHIUDI</string>
-    <string name="cloud_setting_subtitle_change_account">Tocca per modificare l&apos;account.</string>
-    <string name="settings_change_account_message">Se si modifica l&apos;account, tutti i dati collegati all&apos;account attuale andranno persi.</string>
+    <string name="cloud_setting_subtitle_change_account">Tocca per modificare l\&apos;account.</string>
+    <string name="settings_change_account_message">Se si modifica l\&apos;account, tutti i dati collegati all\&apos;account attuale andranno persi.</string>
     <string name="title_internet_alert">Nessuna connessione Internet</string>
 	
 	<!-- Modello aziendale B2B -->
 	<string name="promocode_page_title">Ancora un passaggio</string>
-    <string name="promocode_hint">Lo trovi all&apos;interno del cofanetto delle cuffie Wave.</string>
+    <string name="promocode_hint">Lo trovi all\&apos;interno del cofanetto delle cuffie Wave.</string>
     <string name="promocode_prompt">Inserisci il codice promozionale</string>
     <string name="verify_promocode_button_title">Verifica</string>
     <string name="promocode_progress_text">Attendi…</string>
@@ -220,54 +220,10 @@
 
     <string name="update_drawer_title">Aggiorna Boom</string>
     <string name="update_dialog_title">Nuovo aggiornamento disponibile.</string>
-    <string name="update_dialog_message">Passa all&apos;ultima versione di Boom.</string>
+    <string name="update_dialog_message">Passa all\&apos;ultima versione di Boom.</string>
     <string name="update_now">Aggiorna ora</string>
 
     <string name="remind_button_title">Ricordamelo più tardi</string>
     <string name="continue_button">Continua</string>
-
-    <!-- App Store Business Model -->
-    <string name="install_google">Install</string>
-
-    <string name="store_page_header">Hassle free Boomin\'</string>
-    <string name="store_page_buy_description">Buy now to #FeelYourMusic without any hassle.</string>
-    <string name="store_page_buy_share_description">Buy or Share now to #FeelYourMusic without any hassle.</string>
-    <string name="share_title">Share Boom</string>
-    <string name="store_title">Store</string>
-
-    <string name="after_purchase_store_page_header">Happy Boomin\'!</string>
-    <string name="after_purchase_store_page_buy_description">Congratulations!You can now listen to your music the way it \n was intended!</string>
-    <string name="after_purchase_buy_button">Purchased</string>
-
-    <string name="title_share">Share</string>
-    <string name="message_share">Enjoying Boom? Share with your friends and spread the word!</string>
-    <string name="playstore_link">https://play.google.com/store/apps/details?id=com.globaldelight.boom  \n\n</string>
-    <string name="share_desc">\nLet me recommend you this application\n\n</string>
-
-    <string name="buy_button">BUY NOW</string>
-
-    <string name="inapp_process_error">Error while InApp Purchase!</string>
-    <string name="inapp_process_success">Purchase Success.</string>
-    <string name="inapp_process_restore">Purchase Restored.</string>
-
-    <string name="first_notification_title">Don’t Limit Your Boomin’!</string>
-    <string name="first_notification_message">Get immersed in surround sound to experience music like never before at just %s</string>
-    <string name="second_notification_title">Just Boom it!</string>
-    <string name="second_notification_message">Unlock the magical surround sound and remove Ads at just %1$s \nor\nSpread the musical fever, share Boom with your friends, and enjoy %2$d days free trial</string>
-    <string name="second_notification_message_no_share">Unlock the magical surround sound and remove Ads at just %s</string>
-    <string name="third_notification_title">Get More For Less!</string>
-    <string name="third_notification_message">Unlock all features, remove Ads and experience music like never before for only %s</string>
-    <string name="first_effect_on_title">Congratulations!</string>
-    <string name="first_effect_on_message">Enjoy all features for free for %d hours. Boom it before it ends.</string>
-    <string name="afterTrial_effect_on_title">Missed free usage of premium features?</string>
-    <string name="afterTrial_effect_on_message">Don’t worry; enjoy your first %d songs with all the premium features for free!</string>
-    <string name="share_success_title">Congratulations!</string>
-    <string name="share_success_message">Now you can enjoy all features for free for %d days!</string>
-    <string name="video_ad_message">Watch the video to get all features unlocked for %d hours!</string>
-    <string name="video_ad_success_message">You’ve unlocked all features for %d hours.</string>
-    <string name="buy_button_title">Buy</string>
-    <string name="share_button_title">Share</string>
-    <string name="watch_button_title">Watch</string>
-
 
 </resources>
