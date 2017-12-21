@@ -32,6 +32,8 @@ import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.app.activities.WebViewActivity;
 import com.globaldelight.boom.app.adapters.utils.HeadPhoneItemAdapter;
+import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.utils.Utils;
@@ -313,6 +315,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                     DropBoxAPI.getInstance(mActivity).clear();
                     DropBoxAPI.getInstance(mActivity).authorize();
                 }
+                if ( isPlayingFrom(MediaType.DROP_BOX) ) {
+                    App.playbackManager().playPause();
+                }
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Drop_Box_Tapped_From_Setting_Page);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Drop_Box_Tapped_From_Setting_Page);
             }
@@ -332,6 +337,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
             @Override
             public void run() {
                 checkPermissions();
+                if ( isPlayingFrom(MediaType.GOOGLE_DRIVE) ) {
+                    App.playbackManager().playPause();
+                }
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_Tapped_From_Setting_Page);
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Google_Drive_Tapped_From_Setting_Page);
             }
@@ -365,5 +373,15 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                     }
                 })
                 .show();
+    }
+
+    private boolean isPlayingFrom(@MediaType int mediaType) {
+        if ( App.playbackManager().isPlaying() ) {
+            IMediaItem item = App.playbackManager().getPlayingItem();
+            if ( item != null && item.getMediaType() == mediaType ) {
+                return true;
+            }
+        }
+        return false;
     }
 }

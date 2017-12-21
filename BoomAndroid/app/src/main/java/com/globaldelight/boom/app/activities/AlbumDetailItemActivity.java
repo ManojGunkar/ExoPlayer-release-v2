@@ -31,7 +31,7 @@ import java.io.File;
  * Created by Rahul Agarwal on 26-01-17.
  */
 
-public class AlbumDetailItemActivity extends MasterActivity {
+public class AlbumDetailItemActivity extends MasterActivity implements AlbumDetailItemFragment.LoadingCallback {
 
     IMediaItemCollection currentItem;
     AlbumDetailItemFragment fragment;
@@ -87,6 +87,8 @@ public class AlbumDetailItemActivity extends MasterActivity {
                 }, 1000);            }
             }
         });
+        mFloatPlayAlbums.setEnabled(false);
+        mFloatPlayAlbums.setVisibility(View.GONE);
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -98,6 +100,7 @@ public class AlbumDetailItemActivity extends MasterActivity {
         arguments.putParcelable("mediaItemCollection", (MediaItemCollection)currentItem);
         fragment = new AlbumDetailItemFragment();
         fragment.setArguments(arguments);
+        fragment.setLoadingCallback(this);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.item_detail_container, fragment)
                 .commit();
@@ -127,6 +130,12 @@ public class AlbumDetailItemActivity extends MasterActivity {
     @Override
     public void onStart() {
         super.onStart();
+    }
+
+    @Override
+    public void onLoadingComplete() {
+        mFloatPlayAlbums.setVisibility(View.VISIBLE);
+        mFloatPlayAlbums.setEnabled(true);
         final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
         mFloatPlayAlbums.startAnimation(anim_in);
     }

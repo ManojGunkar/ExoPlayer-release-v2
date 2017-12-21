@@ -42,17 +42,27 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_U
  */
 
 public class AlbumSongListFragment extends Fragment implements OnStartDragListener {
+
+    public interface Callback {
+        void onLoadingComplete();
+    }
+
     private IMediaItemCollection collection;
     private ListDetail listDetail;
     private RecyclerView rootView;
     private ItemSongListAdapter itemSongListAdapter;
     private ItemTouchHelper mItemTouchHelper;
     private static boolean isMoved = false;
+    private Callback mCallback;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public AlbumSongListFragment() {
+    }
+
+    public void setCallback(Callback callback) {
+        mCallback = callback;
     }
 
     private BroadcastReceiver mUpdatePlayingItem = new BroadcastReceiver() {
@@ -193,7 +203,12 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
             if (iMediaItemCollection.getParentType() == ItemType.BOOM_PLAYLIST) {
                 setUpItemTouchHelper();
             }
+
+            if ( mCallback != null ) {
+                mCallback.onLoadingComplete();
+            }
         }
+
     }
 
     @Override

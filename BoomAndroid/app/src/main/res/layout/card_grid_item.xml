@@ -70,7 +70,9 @@
         android:background="@color/library_album_footer"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:padding="@dimen/card_grid_bottom_padding">
+        android:paddingLeft="@dimen/card_grid_bottom_padding"
+        android:paddingTop="@dimen/card_grid_bottom_padding"
+        android:paddingBottom="@dimen/card_grid_bottom_padding">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -84,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
-                android:text="fgfdgdfgdfgdfgdfgdfg"
+                android:text="Song Name"
                 android:layout_marginBottom="7dp"
                 android:layout_weight="1"
                 android:maxLines="1"
@@ -96,6 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/card_grid_bottom_padding"
+                android:paddingRight="@dimen/card_grid_bottom_padding"
                 android:layout_marginBottom="2dp"
                 android:paddingTop="5dp"
                 android:paddingBottom="8dp"
@@ -109,7 +112,8 @@
             android:id="@+id/card_grid_sub_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="fgfdgdfgdfgdfgdfgdfg"
+            android:layout_marginRight="@dimen/card_grid_bottom_padding"
+            android:text="Artist Name"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/track_sub_title"
