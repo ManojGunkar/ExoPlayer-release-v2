@@ -129,7 +129,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private TextView mEffectSwitchTxt, mSelectedEqTxt;
     private ImageView mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
     private CheckBox m3DSurroundBtn, mIntensityBtn, mEqualizerBtn;
-    private LinearLayout mEqDialogPanel;
+    private View mEqDialogPanel;
 
     private List<String> eq_names;
     private TypedArray eq_active_off;
