@@ -156,7 +156,7 @@
     <dimen name="setting_cloud_item_height">58dp</dimen>
     <dimen name="onboarding_txt_title_margin_top">6dp</dimen>
     <dimen name="onboarding_txt_title_size">20sp</dimen>
-    <dimen name="onboarding_txt_title_margin_side">40dp</dimen>
+    <dimen name="onboarding_txt_title_margin_side">24dp</dimen>
     <dimen name="onboarding_txt_sub_title_margin_top">16dp</dimen>
     <dimen name="onboarding_bottom_height">66dp</dimen>
     <dimen name="onboarding_bottom_margin_side">24dp</dimen>
