@@ -36,6 +36,7 @@ public class B2BModel implements BusinessModel {
 
     private Context mContext;
     private Activity mCurrentActivity;
+    private MenuItem mUpdateMenuItem;
 
     private Application.ActivityLifecycleCallbacks mLifecycle = new DefaultActivityLifecycleCallbacks() {
         @Override
@@ -73,8 +74,8 @@ public class B2BModel implements BusinessModel {
 
     @Override
     public void addItemsToDrawer(Menu menu, int groupId) {
-        menu.add(groupId, R.id.update, Menu.NONE, R.string.update_drawer_title).setIcon(R.drawable.ic_store);
-        menu.add(groupId, R.id.feedback, Menu.NONE, R.string.title_feedback).setIcon(R.drawable.ic_share);
+        mUpdateMenuItem = menu.add(groupId, R.id.update, Menu.NONE, R.string.check_update_drawer_title).setIcon(R.drawable.ic_update);
+        menu.add(groupId, R.id.feedback, Menu.NONE, R.string.title_feedback).setIcon(R.drawable.ic_feedback);
     }
 
     @Override
@@ -107,9 +108,16 @@ public class B2BModel implements BusinessModel {
 
     private void checkForUpdate() {
         final String LAST_CHECK_KEY = "last_update_check";
+        final String AVAILABLE_VERSION = "available_version";
+
         final SharedPreferences prefs = mContext.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         long lastCheck = prefs.getLong(LAST_CHECK_KEY, 0);
         if ( System.currentTimeMillis() - lastCheck <  UPDATE_CHECK_INTERVAL ) {
+            String availableVersion = prefs.getString(AVAILABLE_VERSION, null);
+            if ( availableVersion != null && isNewerVersion(availableVersion) ) {
+                showUpdateAvailable();
+            }
+
             return;
         }
 
@@ -125,6 +133,8 @@ public class B2BModel implements BusinessModel {
                 if ( result.isSuccess() && isNewerVersion(result.getObject()) ) {
                     showUpdateDialog();
                     prefs.edit().putLong(LAST_CHECK_KEY, System.currentTimeMillis()).apply();
+                    prefs.edit().putString(AVAILABLE_VERSION, result.getObject()).apply();
+                    showUpdateAvailable();
                 }
             }
         }.execute();
@@ -146,6 +156,11 @@ public class B2BModel implements BusinessModel {
         }
 
         return isNewer;
+    }
+
+    private void showUpdateAvailable() {
+        mUpdateMenuItem.setTitle(R.string.update_drawer_title);
+        mUpdateMenuItem.setIcon(R.drawable.ic_new_update);
     }
 
     private void showUpdateDialog() {
