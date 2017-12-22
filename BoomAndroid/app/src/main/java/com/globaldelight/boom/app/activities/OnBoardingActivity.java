@@ -29,7 +29,7 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     private Button startBoom;
     private ViewPager viewpager;
     private CircleIndicator indicator;
-    LinearLayout bottomPanel;
+    private View bottomPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

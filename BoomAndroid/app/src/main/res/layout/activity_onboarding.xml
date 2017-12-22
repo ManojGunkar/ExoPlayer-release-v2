@@ -14,45 +14,42 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal">
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/onboarding_bottom"
             android:layout_width="match_parent"
             android:layout_height="@dimen/onboarding_bottom_height"
             android:layout_marginLeft="@dimen/onboarding_bottom_margin_side"
             android:layout_marginRight="@dimen/onboarding_bottom_margin_side"
-            android:layout_gravity="bottom|center_vertical"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_gravity="bottom|center_vertical">
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/txt_skip_onboard"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.25"
-                android:padding="5dp"
                 android:text="@string/skip_text"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/onboarding_bottom_txt_size" />
 
             <com.globaldelight.boom.view.onBoarding.CircleIndicator
                 android:id="@+id/indicator_home"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="0.5"
+                android:layout_centerInParent="true"
                 android:padding="5dp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/txt_next_onboard"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.25"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:gravity="right"
-                android:padding="5dp"
                 android:text="@string/next"
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/onboarding_bottom_txt_size" />
-        </LinearLayout>
+        </RelativeLayout>
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_boomin_onboard"
             android:layout_width="wrap_content"
@@ -64,6 +61,7 @@
             android:layout_below="@+id/txt_sub_title_onboard"
             android:textSize="@dimen/onboarding_bottom_button_txt"
             android:visibility="gone"
+            android:padding="@dimen/purchase_button_padding"
             android:layout_marginBottom="20dp"
             android:textColor="@android:color/white"/>
     </FrameLayout>

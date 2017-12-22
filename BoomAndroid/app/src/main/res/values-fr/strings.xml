@@ -56,14 +56,14 @@
     <string name="ok">OK</string>
 	
 	<!--encercler 3d-->
-	<string name="req_intensity">3D nécessite l’activation de l&apos;intensité</string>
-    <string name="req_equlaizer">3D nécessite l’activation de l&apos;égaliseur</string>
+	<string name="req_intensity">3D nécessite l’activation de l\&apos;intensité</string>
+    <string name="req_equlaizer">3D nécessite l’activation de l\&apos;égaliseur</string>
 	
 	<!--Réglage-->
 	<string name="title_headphone_type">Sélectionnez le type de casque</string>
     <string name="on_ear">Oreille</string>
     <string name="in_canal">Canal</string>
-    <string name="over_ear">Sur l&apos;oreille</string>
+    <string name="over_ear">Sur l\&apos;oreille</string>
 
     <string name="timer_start">DÉMARRER LE MINUTEUR</string>
     <string name="timer_cancel">ANNULER LE MINUTEUR</string>
@@ -84,7 +84,7 @@
 	<string name="header_about">À propos de</string>
     <string name="description_about">Son Surround agréable conçu par \nGlobal Delight</string>
     <string name="rate_app">Évaluez sur le Play Store</string>
-    <string name="about_technology">La technologie de l&apos;audio surround immersif sur les écouteurs est en instance de brevet.</string>
+    <string name="about_technology">La technologie de l\&apos;audio surround immersif sur les écouteurs est en instance de brevet.</string>
     <string name="copyright">\u00a9 2017, Global Delight Technologies Pvt Ltd.\n All rights reserved.</string>
 	
 	<!-- Tutoriel-->
@@ -132,7 +132,7 @@
     <string name="menu_remove_boom_item">Supprimer morceau</string>
 	
 	<!-- Écran du joueur -->
-	<string name="eq_dialog_title">Choisir l&apos;égaliseur</string>
+	<string name="eq_dialog_title">Choisir l\&apos;égaliseur</string>
     <string name="speaker_dialog_title">Haut-parleurs</string>
     <string name="done">TERMINÉ</string>
     <string name="on">Effets activé</string>
@@ -155,12 +155,12 @@
     <string name="request_cancelled">Demande annulée.</string>
     <string name="login_problem_dropbox">Impossible de se connecter à Dropbox</string>
     <string name="login_problem_google_drive">Impossible de se connecter à Google Drive</string>
-    <string name="dropbox_authenticate_problem">Impossible d&apos;authentifier avec Dropbox :</string>
+    <string name="dropbox_authenticate_problem">Impossible d\&apos;authentifier avec Dropbox :</string>
     <string name="google_drive_loading_error">Erreur de chargement dans Google Drive :\n</string>
     <string name="check_network">Veuillez vérifier votre connexion réseau et réessayer</string>
     <string name="app_expire">Appli expirée !</string>
     <string name="network_error">Aucune connexion réseau disponible.</string>
-    <string name="error_fetch_data">Erreur d&apos;extraction de données</string>
+    <string name="error_fetch_data">Erreur d\&apos;extraction de données</string>
     <string name="app_unsupported">Appli incompatible avec cet appareil.</string>
 	
 	<!-- info-bulles -->
@@ -173,10 +173,10 @@
 	
 	<!-- à bord -->
 	<string name="onboard_screen_0_main_tx">Redéfinir votre expérience musicale</string>
-    <string name="onboard_screen_0_sub_tx">Sentez votre musique s&apos;animer avec le son 3D surround magique.</string>
+    <string name="onboard_screen_0_sub_tx">Sentez votre musique s\&apos;animer avec le son 3D surround magique.</string>
 
     <string name="onboard_screen_1_main_tx">Pompez votre musique</string>
-    <string name="onboard_screen_1_sub_tx">Profitez d&apos;un meilleur contrôle de votre musique grâce aux préréglages professionnels et intuitifs de l&apos;égaliseur.</string>
+    <string name="onboard_screen_1_sub_tx">Profitez d\&apos;un meilleur contrôle de votre musique grâce aux préréglages professionnels et intuitifs de l\&apos;égaliseur.</string>
 
     <string name="onboard_screen_2_main_tx">Optimisé pour tous les casques</string>
     <string name="onboard_screen_2_sub_tx">Sélectionnez votre « Type de casque » dans les « Paramètres » de l’appli pour donner vie à votre musique préférée.</string>
@@ -190,8 +190,8 @@
 
     <string name="all_speakers_off">Tous les haut-parleurs sont éteints.</string>
     <string name="some_speakers_off">Certains haut-parleurs sont éteints.</string>
-    <string name="boom_playlist_empty_placeholder_txt">Vous n&apos;avez encore créé aucune playlist.</string>
-    <string name="favorite_empty_placeholder_txt">Vous n&apos;avez encore aimé aucun morceau.</string>
+    <string name="boom_playlist_empty_placeholder_txt">Vous n\&apos;avez encore créé aucune playlist.</string>
+    <string name="favorite_empty_placeholder_txt">Vous n\&apos;avez encore aimé aucun morceau.</string>
     <string name="cloud_configure_placeholder_txt">Aucun compte configuré pour le moment. \nConfigurez les comptes dans les paramètres pour accéder aux morceaux.</string>
     <string name="playlist_track_already_added">Morceau déjà ajouté dans la playlist.</string>
 
@@ -215,7 +215,7 @@
     <string name="promocode_success_message">Merci de vérifier. Maintenant, vous pouvez lancer Boomin’ !</string>
     <string name="promocode_invalid_error">Oups ! Vous avez entré un code promotionnel erroné.</string>
     <string name="promocode_limit_exceeded">Désolé ! Le code promotionnel est déjà utilisé.</string>
-    <string name="promocode_network_error">Oups ! Pas d&apos;Internet disponible.</string>
+    <string name="promocode_network_error">Oups ! Pas d\&apos;Internet disponible.</string>
     <string name="promocode_generic_error">Oups ! Un problème est survenu. Réessayez plus tard.</string>
 
     <string name="update_drawer_title">Mettre à jour Boom</string>

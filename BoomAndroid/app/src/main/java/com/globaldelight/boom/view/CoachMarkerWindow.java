@@ -61,8 +61,6 @@ public class CoachMarkerWindow {
                 layout = R.layout.tooltip_top_layout;
                 break;
             case DRAW_BOTTOM_CENTER:
-                layout = R.layout.tooltip_bottom_layout;
-                break;
             case DRAW_BOTTOM_LEFT:
             case DRAW_BOTTOM_RIGHT:
                 layout = R.layout.tooltip_bottom_layout;
@@ -138,7 +136,7 @@ public class CoachMarkerWindow {
                 position_y = (int) (anchor_rect.top - contentViewHeight + getArrowHeight() * 0.5);
                 break;
             case DRAW_BOTTOM_RIGHT:
-                position_x = anchor_rect.left - contentViewWidth + anchor_rect.width() /2 + 40;
+                position_x = anchor_rect.right - contentViewWidth;
                 position_y = (int) (anchor_rect.bottom - getArrowHeight() * 0.5);
                 break;
             case DRAW_TOP_LEFT:
@@ -146,8 +144,8 @@ public class CoachMarkerWindow {
                 position_y = (int) (anchor_rect.top - contentViewHeight + getArrowHeight());
                 break;
             case DRAW_BOTTOM_LEFT:
-                position_x = anchor_rect.right - anchor_rect.width() /2 - 40;
-                position_y = (int) (anchor_rect.bottom - getArrowHeight());
+                position_x = anchor_rect.right - anchor_rect.width() /2 - Utils.dpToPx(ctx, 20);
+                position_y = anchor_rect.bottom - (getArrowHeight() / 2);
                 break;
             case DRAW_BOTTOM_CENTER:
                 position_x = anchor_rect.centerX() - contentViewWidth / 2;
@@ -173,7 +171,7 @@ public class CoachMarkerWindow {
         }
 
         // Fix arrow position
-        if ( position == DRAW_BOTTOM_CENTER || position == DRAW_TOP_CENTER ) {
+        if ( position == DRAW_BOTTOM_CENTER || position == DRAW_TOP_CENTER || position == DRAW_BOTTOM_LEFT ) {
             // Clips at left side
             if ( position_x < 0 ) {
                 layoutParams.setMargins(0, 0, -position_x , 0);

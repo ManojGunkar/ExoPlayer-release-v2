@@ -20,6 +20,7 @@
         android:layout_marginTop="@dimen/onboarding_txt_title_margin_top"
         android:textColor="@color/white"
         android:textSize="@dimen/onboarding_txt_title_size"
+        android:gravity="center_horizontal"
         android:textStyle="bold"/>
 
     <android.support.v7.widget.AppCompatTextView

@@ -80,6 +80,8 @@ import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.RE
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.SHUFFLE_OFF;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.SHUFFLE_ON;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_BOTTOM_CENTER;
+import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_BOTTOM_LEFT;
+import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_BOTTOM_RIGHT;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_TOP_CENTER;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_TOP_LEFT;
 
@@ -126,10 +128,10 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private NegativeSeekBar mIntensitySeek;
     private SwitchCompat mEffectSwitch;
     private ToggleButton mFullBassCheck;
-    private TextView mEffectSwitchTxt, mSelectedEqTxt;
+    private TextView mSelectedEqTxt;
     private ImageView mSpeakerBtn, mSelectedEqImg, mSelectedEqGoImg;
     private CheckBox m3DSurroundBtn, mIntensityBtn, mEqualizerBtn;
-    private LinearLayout mEqDialogPanel;
+    private View mEqDialogPanel;
 
     private List<String> eq_names;
     private TypedArray eq_active_off;
@@ -688,7 +690,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     private void showEffectSwitchTip() {
         if (null != mEffectContent && mEffectContent.getVisibility() == View.VISIBLE && Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) && !App.playbackManager().isStopped() && mRootView.findViewById(R.id.effect_switch).getVisibility() == View.VISIBLE) {
-            coachMarkEffectSwitcher = new CoachMarkerWindow(mActivity, DRAW_BOTTOM_CENTER, getResources().getString(R.string.effect_player_tooltip));
+            coachMarkEffectSwitcher = new CoachMarkerWindow(mActivity, DRAW_BOTTOM_RIGHT, getResources().getString(R.string.effect_player_tooltip));
             coachMarkEffectSwitcher.setAutoDismissBahaviour(true);
             coachMarkEffectSwitcher.showCoachMark(mRootView.findViewById(R.id.effect_switch));
         }
@@ -892,7 +894,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mEffectContent = (LinearLayout) mRootView.findViewById(R.id.effect_content);
 //        mEffectContent.setLayoutParams(effectParam);
 
-        mEffectSwitchTxt = mRootView.findViewById(R.id.effect_switch_txt);
         mEffectSwitch = mRootView.findViewById(R.id.effect_switch);
         mEffectSwitch.setChecked(audioEffects.isAudioEffectOn());
 
@@ -966,7 +967,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             mEffectSwitch.setChecked(isEffectOn);
         }
 
-        mEffectSwitchTxt.setText(isEffectOn ? R.string.on : R.string.off);
+        mEffectSwitch.setText(isEffectOn ? R.string.on : R.string.off);
         mEffectTab.setImageResource(isEffectOn? R.drawable.effect_tab_on : R.drawable.effect_tab_off);
 
         boolean isSurroundOn = audioEffects.is3DSurroundOn();
