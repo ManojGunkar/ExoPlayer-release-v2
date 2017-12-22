@@ -208,13 +208,13 @@
 	<!-- Modèle d’affaire B2B -->
 	<string name="promocode_page_title">Une dernière étape</string>
     <string name="promocode_hint">Fourni dans votre boîte de casque Wave.</string>
-    <string name="promocode_prompt">Veuillez entrer le code promotionnel</string>
+    <string name="promocode_prompt">Insérer le code d\'activation</string>
     <string name="verify_promocode_button_title">Vérifier</string>
     <string name="promocode_progress_text">Veuillez patienter...</string>
     <string name="promocode_congrats_message">FÉLICITATIONS</string>
     <string name="promocode_success_message">Merci de vérifier. Maintenant, vous pouvez lancer Boomin’ !</string>
-    <string name="promocode_invalid_error">Oups ! Vous avez entré un code promotionnel erroné.</string>
-    <string name="promocode_limit_exceeded">Désolé ! Le code promotionnel est déjà utilisé.</string>
+    <string name="promocode_invalid_error">Oups ! Vous avez inséré un code d\'activation non valide.</string>
+    <string name="promocode_limit_exceeded">Désolé ! Ce code d\'activation est déjà utilisé.</string>
     <string name="promocode_network_error">Oups ! Pas d\&apos;Internet disponible.</string>
     <string name="promocode_generic_error">Oups ! Un problème est survenu. Réessayez plus tard.</string>
 
