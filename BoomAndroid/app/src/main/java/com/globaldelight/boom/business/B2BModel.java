@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +20,6 @@ import com.globaldelight.boom.app.activities.MasterActivity;
 import com.globaldelight.boom.app.activities.UserVerificationActivity;
 import com.globaldelight.boom.app.activities.WebViewActivity;
 import com.globaldelight.boom.utils.DefaultActivityLifecycleCallbacks;
-import com.globaldelight.boom.utils.SecureStorage;
 import com.globaldelight.boom.utils.Utils;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -33,6 +31,8 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 public class B2BModel implements BusinessModel {
 
     private static final long UPDATE_CHECK_INTERVAL = (24 * 60 * 60 * 1000); // 24Hrs
+    private static final String AVAILABLE_VERSION = "available_version";
+
 
     private Context mContext;
     private Activity mCurrentActivity;
@@ -76,6 +76,7 @@ public class B2BModel implements BusinessModel {
     public void addItemsToDrawer(Menu menu, int groupId) {
         mUpdateMenuItem = menu.add(groupId, R.id.update, Menu.NONE, R.string.check_update_drawer_title).setIcon(R.drawable.ic_update);
         menu.add(groupId, R.id.feedback, Menu.NONE, R.string.title_feedback).setIcon(R.drawable.ic_feedback);
+        updateDrawer();
     }
 
     @Override
@@ -108,16 +109,11 @@ public class B2BModel implements BusinessModel {
 
     private void checkForUpdate() {
         final String LAST_CHECK_KEY = "last_update_check";
-        final String AVAILABLE_VERSION = "available_version";
 
         final SharedPreferences prefs = mContext.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
         long lastCheck = prefs.getLong(LAST_CHECK_KEY, 0);
         if ( System.currentTimeMillis() - lastCheck <  UPDATE_CHECK_INTERVAL ) {
-            String availableVersion = prefs.getString(AVAILABLE_VERSION, null);
-            if ( availableVersion != null && isNewerVersion(availableVersion) ) {
-                showUpdateAvailable();
-            }
-
+            updateDrawer();
             return;
         }
 
@@ -134,8 +130,9 @@ public class B2BModel implements BusinessModel {
                     showUpdateDialog();
                     prefs.edit().putLong(LAST_CHECK_KEY, System.currentTimeMillis()).apply();
                     prefs.edit().putString(AVAILABLE_VERSION, result.getObject()).apply();
-                    showUpdateAvailable();
                 }
+
+                updateDrawer();
             }
         }.execute();
     }
@@ -158,9 +155,17 @@ public class B2BModel implements BusinessModel {
         return isNewer;
     }
 
-    private void showUpdateAvailable() {
-        mUpdateMenuItem.setTitle(R.string.update_drawer_title);
-        mUpdateMenuItem.setIcon(R.drawable.ic_new_update);
+    private void updateDrawer() {
+        final SharedPreferences prefs = mContext.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
+        String availableVersion = prefs.getString(AVAILABLE_VERSION, null);
+        if ( availableVersion != null && isNewerVersion(availableVersion) ) {
+            mUpdateMenuItem.setTitle(R.string.update_drawer_title);
+            mUpdateMenuItem.setIcon(R.drawable.ic_new_update);
+        }
+        else {
+            mUpdateMenuItem.setTitle(R.string.check_update_drawer_title);
+            mUpdateMenuItem.setIcon(R.drawable.ic_update);
+        }
     }
 
     private void showUpdateDialog() {
