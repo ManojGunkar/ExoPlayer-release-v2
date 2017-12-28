@@ -24,11 +24,19 @@ public class WebViewActivity  extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.webview);
 
-        Uri uri = Uri.parse(BuildConfig.FEEDBACK_URL).buildUpon()
-                .appendQueryParameter("language", Locale.getDefault().getLanguage())
-                .appendQueryParameter("deviceid", Utils.getFingerPrint(this))
-                .build();
-        String webViewUrl = uri.toString();
+        String webViewUrl = null;
+        if ( BuildConfig.FLAVOR.equalsIgnoreCase("b2b") ) {
+            webViewUrl = String.format(BuildConfig.FEEDBACK_URL,
+                    Utils.getFingerPrint(this),
+                    Locale.getDefault().getLanguage());
+        }
+        else {
+            Uri uri = Uri.parse(BuildConfig.FEEDBACK_URL).buildUpon()
+                    .appendQueryParameter("language", Locale.getDefault().getLanguage())
+                    .appendQueryParameter("deviceid", Utils.getFingerPrint(this))
+                    .build();
+            webViewUrl = uri.toString();
+        }
 
         webView = findViewById(R.id.webView_layout);
         webView.getSettings().setJavaScriptEnabled(true);

@@ -91,7 +91,7 @@ android {
             buildConfigField "String",  EXPIRY_DATE,                 "null"
             buildConfigField "String",  'FLURRY_API_KEY',            STRING("G6P5DBXKYF5C3NH4S752")
             buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    "null"
-            buildConfigField "String",  'FEEDBACK_URL',               STRING("https://apimboom2.globaldelight.net/feedback.php?flaour=b2b")
+            buildConfigField "String",  'FEEDBACK_URL',               STRING("https://boom3dapp.com/feedback/android/deviceid/%s/language/%s/")
         }
     }
 }
