@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.utils.Utils;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 public class CoachMarkerWindow {
 
     public static final int DRAW_TOP_RIGHT = 1;
@@ -108,13 +110,6 @@ public class CoachMarkerWindow {
                 mImageArrow.setVisibility(View.GONE);
                 break;
         }
-        int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
-        mInfoText.setMaxWidth(screenWidth - 2 * Utils.dpToPx(ctx, 12));
-        tipWindow.setHeight(ActionBar.LayoutParams.WRAP_CONTENT);
-        tipWindow.setWidth(ActionBar.LayoutParams.WRAP_CONTENT);
-        tipWindow.setFocusable(false);
-        tipWindow.setBackgroundDrawable(new BitmapDrawable());
-        tipWindow.setContentView(contentView);
 
         int screen_pos[] = new int[2];
         anchor.getLocationOnScreen(screen_pos);
@@ -122,9 +117,9 @@ public class CoachMarkerWindow {
         final Rect anchor_rect = new Rect(screen_pos[0], screen_pos[1], screen_pos[0]
                 + anchor.getMeasuredWidth(), screen_pos[1] + anchor.getMeasuredHeight());
 
-        contentView.measure(ActionBar.LayoutParams.WRAP_CONTENT,
-                ActionBar.LayoutParams.WRAP_CONTENT);
-
+        int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+        mInfoText.setMaxWidth(screenWidth * 8 / 10);
+        contentView.measure(WRAP_CONTENT, WRAP_CONTENT);
         int contentViewHeight = contentView.getMeasuredHeight();
         int contentViewWidth = contentView.getMeasuredWidth();
         int position_x = 0;
@@ -187,6 +182,11 @@ public class CoachMarkerWindow {
             }
         }
 
+        tipWindow.setHeight(WRAP_CONTENT);
+        tipWindow.setWidth(contentViewWidth);
+        tipWindow.setFocusable(false);
+        tipWindow.setBackgroundDrawable(new BitmapDrawable());
+        tipWindow.setContentView(contentView);
         tipWindow.showAtLocation(anchor, Gravity.NO_GRAVITY, position_x, position_y);
     }
 

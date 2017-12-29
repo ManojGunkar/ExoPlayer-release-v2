@@ -208,13 +208,13 @@
 	<!-- Modello aziendale B2B -->
 	<string name="promocode_page_title">Ancora un passaggio</string>
     <string name="promocode_hint">Lo trovi all\&apos;interno del cofanetto delle cuffie Wave.</string>
-    <string name="promocode_prompt">Inserisci il codice promozionale</string>
+    <string name="promocode_prompt">Inserisci il codice di attivazione</string>
     <string name="verify_promocode_button_title">Verifica</string>
     <string name="promocode_progress_text">Attendi…</string>
     <string name="promocode_congrats_message">CONGRATULAZIONI</string>
     <string name="promocode_success_message">Grazie per aver eseguito la verifica. Ora puoi iniziare a usare Boom!</string>
-    <string name="promocode_invalid_error">Ops! Hai inserito un codice promozionale errato.</string>
-    <string name="promocode_limit_exceeded">Ci dispiace! Il codice promozionale è già stato usato.</string>
+    <string name="promocode_invalid_error">Ops! Hai inserito un condice di attivazione errato.</string>
+    <string name="promocode_limit_exceeded">Ci dispiace. Il codice di attivazione è già stato usato.</string>
     <string name="promocode_network_error">Ops! Internet non disponibile.</string>
     <string name="promocode_generic_error">Ops! Si è verificato un errore. Riprova più tardi.</string>
 
@@ -225,6 +225,9 @@
 
     <string name="remind_button_title">Ricordamelo più tardi</string>
     <string name="continue_button">Continua</string>
+
+    <!-- to be localized -->
+    <string name="check_update_drawer_title">Check for update</string>
 
     <!-- App Store Business Model -->
     <string name="install_google">Install</string>

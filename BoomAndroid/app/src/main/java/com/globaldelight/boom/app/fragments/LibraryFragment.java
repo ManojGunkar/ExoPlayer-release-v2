@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -168,14 +169,14 @@ public class LibraryFragment extends Fragment {
 
     private void autoOpenPlayer() {
         if ( Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) ) {
-            if ( !MainActivity.isPlayerExpended() ) {
-                new android.os.Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if ( !MainActivity.isPlayerExpended() ) {
                         ((MainActivity)getActivity()).toggleSlidingPanel();
                     }
-                }, 1000);
-            }
+                }
+            }, 1000);
         }
     }
 }

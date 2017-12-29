@@ -208,13 +208,13 @@
 	<!-- B2B Geschäftsmodell -->
 	<string name="promocode_page_title">Noch ein Schritt</string>
     <string name="promocode_hint">Er befindet sich in Ihrer Wave Headphone-Box.</string>
-    <string name="promocode_prompt">Bitte geben Sie den Promo-Code ein</string>
+    <string name="promocode_prompt">Aktierungscode eingeben</string>
     <string name="verify_promocode_button_title">Verifizieren</string>
     <string name="promocode_progress_text">Bitte warten…</string>
     <string name="promocode_congrats_message">GLÜCKWUNSCH</string>
     <string name="promocode_success_message">Danke für das Verifizieren. Jetzt können Sie mit Boom beginnen!</string>
-    <string name="promocode_invalid_error">Hoppla! Sie haben den falschen Promo-Code eingegeben.</string>
-    <string name="promocode_limit_exceeded">Entschuldigung! Der Promo-Code wurde bereits verwendet.</string>
+    <string name="promocode_invalid_error">Hoppla! Sie haben einen falschen Aktivierungscode eingegeben.</string>
+    <string name="promocode_limit_exceeded">Entschuldigung! Der Aktivierungscode wurde bereits verwendet.</string>
     <string name="promocode_network_error">Hoppla! Kein Internet verfügbar.</string>
     <string name="promocode_generic_error">Hoppla! Etwas lief falsch. Bitte später erneut versuchen.</string>
 
@@ -225,6 +225,9 @@
 
     <string name="remind_button_title">Später erinnern</string>
     <string name="continue_button">Fortfahren</string>
+
+    <!-- to be localized -->
+    <string name="check_update_drawer_title">Check for update</string>
 
     <!-- App Store Business Model -->
     <string name="install_google">Install</string>
