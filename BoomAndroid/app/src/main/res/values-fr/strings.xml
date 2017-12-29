@@ -226,9 +226,8 @@
     <string name="remind_button_title">Me rappeler plus tard</string>
     <string name="continue_button">Continuer</string>
 
-
+    <string name="check_update_drawer_title">Vérifier la mise à jour</string>
     <!-- to be localized -->
-    <string name="check_update_drawer_title">Check for update</string>
 
 
     <!-- App Store Business Model -->

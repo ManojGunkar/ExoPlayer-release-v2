@@ -225,9 +225,9 @@
 
     <string name="remind_button_title">Später erinnern</string>
     <string name="continue_button">Fortfahren</string>
+    <string name="check_update_drawer_title">Auf Aktualisierung prüfen</string>
 
     <!-- to be localized -->
-    <string name="check_update_drawer_title">Check for update</string>
 
     <!-- App Store Business Model -->
     <string name="install_google">Install</string>
