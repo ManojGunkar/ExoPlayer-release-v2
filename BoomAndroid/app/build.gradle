@@ -34,15 +34,15 @@ android {
         versionName "1.0.0"
         multiDexEnabled true
 
-        buildConfigField("String",  EXPIRY_DATE,                STRING(getExpiryDate()) )
-        buildConfigField("boolean", BUSINESS_MODEL_ENABLED,     businessModelEnabled)
-        buildConfigField "String", 'MIXPANEL_SENDER_ID',        STRING("862807752058")
-        buildConfigField "String", 'FLURRY_API_KEY',            STRING("MGGVKKG7JYXGC3N89B4V")
-        buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN',    STRING("598c4011c2d961ef3b7f248459fa30c7")
-        buildConfigField "String", 'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-3940256099942544/5224354917")
-        buildConfigField "String", 'GOOGLE_NATIVE_AD_ID',       STRING("ca-app-pub-3940256099942544/2247696110")
-        buildConfigField "String", 'AUDIO_CONFIG_URL',          STRING("http://devboom2.globaldelight.net/audioconfig.php")
-        buildConfigField "String", 'FEEDBACK_URL',              STRING("http://devboom2.globaldelight.net/feedback.php?os=android")
+        buildConfigField("String", EXPIRY_DATE, STRING(getExpiryDate()))
+        buildConfigField("boolean", BUSINESS_MODEL_ENABLED, businessModelEnabled)
+        buildConfigField "String", 'MIXPANEL_SENDER_ID', STRING("862807752058")
+        buildConfigField "String", 'FLURRY_API_KEY', STRING("MGGVKKG7JYXGC3N89B4V")
+        buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN', STRING("598c4011c2d961ef3b7f248459fa30c7")
+        buildConfigField "String", 'GOOGLE_VIDEO_AD_ID', STRING("ca-app-pub-3940256099942544/5224354917")
+        buildConfigField "String", 'GOOGLE_NATIVE_AD_ID', STRING("ca-app-pub-3940256099942544/2247696110")
+        buildConfigField "String", 'AUDIO_CONFIG_URL', STRING("http://devboom2.globaldelight.net/audioconfig.php")
+        buildConfigField "String", 'FEEDBACK_URL', STRING("http://devboom2.globaldelight.net/feedback.php?os=android")
 
     }
 
@@ -61,18 +61,23 @@ android {
         }
 
         demo {
-            buildConfigField "boolean", BUSINESS_MODEL_ENABLED,     "false"
+            buildConfigField "boolean", BUSINESS_MODEL_ENABLED, "false"
+        }
+
+        whitelable {
+            buildConfigField "boolean", BUSINESS_MODEL_ENABLED, "false"
         }
 
         production {
-            buildConfigField "String",  EXPIRY_DATE,                 "null"
-            buildConfigField "boolean", BUSINESS_MODEL_ENABLED,      "true"
-            buildConfigField "String",  'FLURRY_API_KEY',            STRING("XRPWTN4PDGJJQX6NNJPN")
-            buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    STRING("79a795acec1fbcc3d9d28f792c51fc24")
-            buildConfigField "String",  'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-2462021843550393/4811995067")
-            buildConfigField "String",  'GOOGLE_NATIVE_AD_ID',       STRING("ca-app-pub-2462021843550393/9799761460")
+            buildConfigField "String", EXPIRY_DATE, "null"
+            buildConfigField "boolean", BUSINESS_MODEL_ENABLED, "true"
+            buildConfigField "String", 'FLURRY_API_KEY', STRING("XRPWTN4PDGJJQX6NNJPN")
+            buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN', STRING("79a795acec1fbcc3d9d28f792c51fc24")
+            buildConfigField "String", 'GOOGLE_VIDEO_AD_ID', STRING("ca-app-pub-2462021843550393/4811995067")
+            buildConfigField "String", 'GOOGLE_NATIVE_AD_ID', STRING("ca-app-pub-2462021843550393/9799761460")
         }
     }
+    sourceSets { whitelable { res.srcDirs = ['src/whitelable/res', 'src/whitelable/res/'] } }
 }
 
 repositories {
@@ -98,11 +103,11 @@ dependencies {
     }
 
 
-    implementation(name:'library-core', ext:'aar') {
+    implementation(name: 'library-core', ext: 'aar') {
         force = true
     }
-    implementation(name:'extension-flac-release', ext:'aar')
-    implementation(name:'boom-extension-release', ext:'aar')
+    implementation(name: 'extension-flac-release', ext: 'aar')
+    implementation(name: 'boom-extension-release', ext: 'aar')
 
     implementation project(path: ':boom-engine')
 
@@ -130,10 +135,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-gcm:11.4.2'
     implementation "com.mixpanel.android:mixpanel-android:5.1.4"
     implementation 'com.google.android.gms:play-services-ads:11.4.2'
-    implementation ('com.facebook.android:audience-network-sdk:4.+') {
+    implementation('com.facebook.android:audience-network-sdk:4.+') {
         exclude group: 'com.google.android.exoplayer'
     }
-    implementation ('com.facebook.android:facebook-android-sdk:4.5.0') {
+    implementation('com.facebook.android:facebook-android-sdk:4.5.0') {
         exclude module: 'bolts-android'
     }
     implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0'
