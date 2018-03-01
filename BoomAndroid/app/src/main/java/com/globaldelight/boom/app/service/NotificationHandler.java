@@ -9,13 +9,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.service.PlayerService;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.utils.Log;
 import com.globaldelight.boom.utils.PlayerUtils;
 
 import static android.view.View.GONE;

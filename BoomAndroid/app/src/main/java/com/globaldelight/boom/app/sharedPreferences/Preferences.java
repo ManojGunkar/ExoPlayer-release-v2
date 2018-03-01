@@ -30,6 +30,7 @@ public class Preferences {
     public static final String ACTION_ONBOARDING_SHOWN = "ACTION_ONBOARDING_SHOWN";
     public static final String GOOGLE_DRIVE_ACCOUNT_CHANGED = "GOOGLE_DRIVE_ACCOUNT_CHANGED";
     public static final String INAPP_PURCHASE_PRICE_VALUE = "INAPP_PURCHASE_PRICE_VALUE";
+    public static final String LIBRARY_CURRENT_TAB = "LIBRARY_CURRENT_TAB";
 
     public static final String PLAYING_ITEM_INDEX_IN_UPNEXT= "PLAYING_ITEM_INDEX_IN_UPNEXT";
     public static final String ON_BOARDING_COMPLETED_ON_FIRST_ATTEMPT = "OnBoarding Completed on First Attempt";

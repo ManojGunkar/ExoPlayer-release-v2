@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="nav_store" type="id" />
+    <item name="nav_share" type="id" />
+    <item name="feedback" type="id" />
+    <item name="update" type="id" />
+</resources>

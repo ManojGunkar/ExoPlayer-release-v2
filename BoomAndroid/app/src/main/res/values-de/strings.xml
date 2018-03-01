@@ -1,0 +1,276 @@
+<resources>
+
+	<!-- Equalizer Namen -->
+	<string-array name="eq_names">
+        <item>AUTOM.</item>
+        <item>BASSVERSTÄRKER</item>
+        <item>AKUSTIK</item>
+        <item>60\&apos;s</item>
+        <item>KLASSIK</item>
+        <item>DUBSTEP</item>
+        <item>ELECTRONIC</item>
+        <item>FLACH</item>
+        <item>HIPHOP</item>
+        <item>HOUSE</item>
+        <item>JAZZ</item>
+        <item>LAUT</item>
+        <item>MUSIK</item>
+        <item>PARTY</item>
+        <item>POP</item>
+        <item>REGGAE</item>
+        <item>ROCK</item>
+        <item>WEICH</item>
+        <item>DREIFACH</item>
+        <item>GESANG</item>
+        <item>R &amp; B</item>
+        <item>METAL</item>
+    </string-array>
+
+
+    <string name="app_name">Boom</string>
+	
+	<!-- Fach -->
+	<string name="navigation_drawer_open">Fach öffnen</string>
+    <string name="navigation_drawer_close">Fach schließen</string>
+    <string name="music_library">Musik-Bibliothek</string>
+    <string name="drop_box">Dropbox</string>
+    <string name="google_drive">Google Drive</string>
+    <string name="title_feedback">Feedback</string>
+    <string name="title_settings">Einstellungen</string>
+	
+	<!--Bibliothek-->
+	<string name="all_songs">Alle Songs</string>
+    <string name="songs">Songs</string>
+    <string name="albums">Alben</string>
+    <string name="album">Album</string>
+    <string name="artists">Künstler</string>
+    <string name="playlists">Playlists</string>
+    <string name="genres">Genres</string>
+    <string name="new_playlist">Neue Playlist</string>
+    <string name="recently_played">Kürzlich wiedergegeben</string>
+    <string name="up_next">Als nächstes</string>
+
+    <string name="search_hint">Suche</string>
+    <string name="storage_permission">SD Card Lese-/Schreibberechtigung</string>
+    <string name="account_permission">„Diese App benötigt Zugriff auf Ihren Google-Account (über Kontakte).“</string>
+    <string name="ok">OK</string>
+	
+	<!--3D Surround-->
+	<string name="req_intensity">Für 3D muss die Intensität AN sein</string>
+    <string name="req_equlaizer">Für 3D muss der Equalizer AN sein</string>
+	
+	<!--Einstellung-->
+	<string name="title_headphone_type">Headphone-Typ auswählen</string>
+    <string name="on_ear">Auf dem Ohr</string>
+    <string name="in_canal">In-Ear</string>
+    <string name="over_ear">Über-Ohr</string>
+
+    <string name="timer_start">TIMER STARTEN</string>
+    <string name="timer_cancel">TIMER ABBRECHEN</string>
+    <string name="timer_reset">SCHLIEßEN</string>
+
+    <string name="cloud_services">Cloud Services</string>
+    <string name="cloud_setting_dropbox_subtitle">Tippen, um Dropbox-Account hinzuzufügen</string>
+    <string name="cloud_setting_google_subtitle">Tippen, um Google Drive-Account hinzuzufügen</string>
+    <string name="drop_box_account">Dropbox(%s)</string>
+    <string name="google_drive_account">Google Drive(%s)</string>
+
+    <string name="title_sleep_timer">Sleep Timer</string>
+    <string name="sleep_timer_description">Richten Sie einen Sleep Timer ein, um die Musik automatisch nach der eingerichteten Zeit auszuschalten.</string>
+    <string name="sleep_timer_description_active">Ihr Sleep Timer ist AN\nMusik-Wiedergaben wird beendet bei</string>
+    <string name="invalid_timer_entry">Gültigen Schlafintervall eingeben.</string>
+	
+	<!-- über-->
+	<string name="header_about">Über</string>
+    <string name="description_about">Herrlicher Surround Sound technisiert von\nGlobal Delight</string>
+    <string name="rate_app">Im Play Store bewerten</string>
+    <string name="about_technology">Das Patent für die Technologie Immersives Surround Audio auf Headphones ist zum Patent angemeldet.</string>
+    <string name="copyright">\u00a9 2017, Global Delight Technologies Pvt Ltd.\n Alle Rechte vorbehalten.</string>
+	
+	<!-- Tutorial-->
+	<string name="tutorial_use_headphones">Verwenden Sie Headphones für das beste Erlebnis.</string>
+	
+	<!-- Wiedergabe-Warteschlange-->
+	<string name="clear">Löschen</string>
+	
+	<!-- Menü-->
+	<string name="favourite_list">Favoriten</string>
+    <string name="song">Song</string>
+	
+	
+	<!-- Boom Playlist-->
+	<string name="boom_playlist">Boom Playlist</string>
+    <string name="playlist_created">Playlist erstellt.</string>
+    <string name="playlist_deleted">Playlist gelöscht.</string>
+    <string name="txt_undo">RÜCKGÄNGIG MACHEN</string>
+    <string name="dialog_txt_cancel">ABBRECHEN</string>
+	
+	
+	<!-- Favoriten-->
+	<string name="added_to_favorite">Als Favorit hinzugefügt.</string>
+    <string name="playing_added_to_favorite">Wiedergegebener Song wird den Favoriten hinzugefügt.</string>
+    <string name="removed_from_favorite">Von Favoriten entfernt.</string>
+    <string name="playing_removed_from_favorite">Wiedergegebener Song wird von den Favoriten entfernt.</string>
+	
+	
+	<!--PlayList-->
+	<string name="no_music_placeholder_txt">Keine Musik gefunden.</string>
+    <string name="added_to_playlist">Zur Playlist hinzugefügt</string>
+    <string name="rename">Umbenennen</string>
+    <string name="delete">Löschen</string>
+	
+	
+	<!--Menüs-->
+	<string name="menu_play_next">Nächsten wiedergeben</string>
+    <string name="menu_shuffle">Mischen</string>
+    <string name="menu_add_upnext">Zu Als nächstes hinzufügen</string>
+    <string name="menu_add_boom_playlist">Zur Playlist hinzufügen</string>
+    <string name="menu_add_songs">Songs hinzufügen</string>
+    <string name="menu_add_boom_fav">Zu Favoriten hinzufügen</string>
+    <string name="menu_remove_boom_fav">Von Favoriten entfernen</string>
+    <string name="unknown_artist">Unbekannter Künstler</string>
+    <string name="menu_remove_boom_item">Song entfernen</string>
+	
+	<!-- Player Bildschirm-->
+	<string name="eq_dialog_title">Equalizer auswählen</string>
+    <string name="speaker_dialog_title">Lautsprecher</string>
+    <string name="done">ERLEDIGT</string>
+    <string name="on">Effekte AN</string>
+    <string name="off">Effekte AUS</string>
+    <string name="effect">Effekt </string>
+    <string name="three_d_surround">3D Surround</string>
+    <string name="fullbass">Voller Bass</string>
+    <string name="intensity">Intensität</string>
+    <string name="equalizer">Equalizer</string>
+    <string name="more"> MEHR</string>
+    <string name="empty_list">Liste ist leer.</string>
+    <string name="require_google_play_service">Diese App erfordert Google Play Services. Bitte installieren Sie Google Play Services auf Ihrem Gerät und starten Sie diese App neu.</string>
+    <string name="remaning"> verbleibend.</string>
+    <string name="hour">Stunde</string>
+    <string name="minute">Minute</string>
+	
+	<!-- Fehlermeldungen -->
+	<string name="cant_play_song">Song kann nicht wiedergegeben werden!</string>
+    <string name="loading_problem">Laden fehlgeschlagen.</string>
+    <string name="request_cancelled">Anfrage abgebrochen.</string>
+    <string name="login_problem_dropbox">Login bei Dropbox nicht möglich</string>
+    <string name="login_problem_google_drive">Login bei Google Drive nicht möglich</string>
+    <string name="dropbox_authenticate_problem">Authentifizieren mit Dropbox nicht möglich:</string>
+    <string name="google_drive_loading_error">Ladefehler bei Google Drive:\n</string>
+    <string name="check_network">Bitte Ihre Netzwerk-Verbindung prüfen und erneut versuchen.</string>
+    <string name="app_expire">App abgelaufen!</string>
+    <string name="network_error">Keine Netzwerk-Verbindung verfügbar.</string>
+    <string name="error_fetch_data">Fehler beim Abrufen von Daten</string>
+    <string name="app_unsupported">App unterstützt dieses Gerät nicht.</string>
+	
+	<!-- Tooltipps -->
+	<string name="library_switch_effect_screen_tooltip">Hier tippen, um Boom Effekte schnell zu öffnen</string>
+    <string name="effect_player_tooltip">Tippen, um Effekte An-/Auszuschalten</string>
+    <string name="switch_effect_screen_tooltip">Hier tippen, um auf Boom Effekt umzuschalten</string>
+    <string name="use_headphone_tooltip">Verwenden Sie Headphones für das beste Erlebnis</string>
+    <string name="choose_headphone_tooltip">Für die beste Ausgabe, wählen Sie den Headphone-Typ unter Einstellungen</string>
+	
+	
+	<!-- Eingliederung -->
+	<string name="onboard_screen_0_main_tx">Definieren Sie Ihr Musik-Erlebnis neu</string>
+    <string name="onboard_screen_0_sub_tx">Mit dem magischen 3D Surround Sound wird Ihre Musik zum Leben erweckt.</string>
+
+    <string name="onboard_screen_1_main_tx">Drehen Sie Ihre Musik auf</string>
+    <string name="onboard_screen_1_sub_tx">Genießen Sie mit den professionellen und intuitiven Equalizer-Voreinstellungen mehr Kontrolle über Ihre Musik.</string>
+
+    <string name="onboard_screen_2_main_tx">Optimiert für alle Headphones</string>
+    <string name="onboard_screen_2_sub_tx">Wählen Sie aus den App „Einstellungen“ Ihren „Headphone-Typ“ aus, um Ihre Musik-Favoriten zum Leben zu erwecken.</string>
+
+    <string name="onboard_screen_3_main_tx">Ihre gesamte Musik an einem Ort</string>
+    <string name="onboard_screen_3_sub_tx">Hören Sie unterwegs Musik aus Ihrer Musik-Bibliothek, Google Drive und Dropbox.</string>
+
+    <string name="skip_text">Überspringen</string>
+    <string name="start_boomin">Mit Boom starten</string>
+    <string name="next">Nächster</string>
+
+    <string name="all_speakers_off">Alle Lautsprecher sind aus.</string>
+    <string name="some_speakers_off">Einige Lautsprecher sind aus.</string>
+    <string name="boom_playlist_empty_placeholder_txt">Sie haben bis jetzt noch keine Playlists erstellt.</string>
+    <string name="favorite_empty_placeholder_txt">Bis jetzt gibt es noch kein Gefällt mir für irgendwelche Songs.</string>
+    <string name="cloud_configure_placeholder_txt">Bis jetzt sind noch keine Konten konfiguriert. \nKonten in Einstellungen konfigurieren, um auf Songs zuzugreifen.</string>
+    <string name="playlist_track_already_added">Song ist bereits der Playlist hinzugefügt.</string>
+
+    <string name="delete_dialog_txt">Möchten Sie &quot;\&quot;&quot;%1$s&quot;\&quot;&quot; löschen?</string>
+    <string name="delete_dialog_title">Playlist löschen</string>
+    <string name="error_in_playing">Fehler bei der Wiedergabe des Songs</string>
+    <string name="ask_reset_timer">Möchten Sie den Sleeping Timer abbrechen?</string>
+    <string name="empty_search_result">Keine Ergebnisse gefunden!</string>
+    <string name="close_button">SCHLIEßEN</string>
+    <string name="cloud_setting_subtitle_change_account">Tippen, um den Account zu wechseln.</string>
+    <string name="settings_change_account_message">Wenn Sie den Account wechseln, werden alle Daten, die mit dem aktuellen Account verlinkt sind, verloren gehen.</string>
+    <string name="title_internet_alert">Keine Internetverbindung</string>
+	
+	<!-- B2B Geschäftsmodell -->
+	<string name="promocode_page_title">Noch ein Schritt</string>
+    <string name="promocode_hint">Er befindet sich in Ihrer Wave Headphone-Box.</string>
+    <string name="promocode_prompt">Aktierungscode eingeben</string>
+    <string name="verify_promocode_button_title">Verifizieren</string>
+    <string name="promocode_progress_text">Bitte warten…</string>
+    <string name="promocode_congrats_message">GLÜCKWUNSCH</string>
+    <string name="promocode_success_message">Danke für das Verifizieren. Jetzt können Sie mit Boom beginnen!</string>
+    <string name="promocode_invalid_error">Hoppla! Sie haben einen falschen Aktivierungscode eingegeben.</string>
+    <string name="promocode_limit_exceeded">Entschuldigung! Der Aktivierungscode wurde bereits verwendet.</string>
+    <string name="promocode_network_error">Hoppla! Kein Internet verfügbar.</string>
+    <string name="promocode_generic_error">Hoppla! Etwas lief falsch. Bitte später erneut versuchen.</string>
+
+    <string name="update_drawer_title">Boom aktualisieren</string>
+    <string name="update_dialog_title">Neue Aktualisierung verfügbar!</string>
+    <string name="update_dialog_message">Aktualisieren Sie auf die neues Boom-Version.</string>
+    <string name="update_now">Jetzt aktualisieren</string>
+
+    <string name="remind_button_title">Später erinnern</string>
+    <string name="continue_button">Fortfahren</string>
+    <string name="check_update_drawer_title">Auf Aktualisierung prüfen</string>
+
+    <!-- to be localized -->
+
+    <!-- App Store Business Model -->
+    <string name="install_google">Install</string>
+
+    <string name="store_page_header">Hassle free Boomin\'</string>
+    <string name="store_page_buy_description">Buy now to #FeelYourMusic without any hassle.</string>
+    <string name="store_page_buy_share_description">Buy or Share now to #FeelYourMusic without any hassle.</string>
+    <string name="share_title">Share Boom</string>
+    <string name="store_title">Store</string>
+
+    <string name="after_purchase_store_page_header">Happy Boomin\'!</string>
+    <string name="after_purchase_store_page_buy_description">Congratulations!You can now listen to your music the way it \n was intended!</string>
+    <string name="after_purchase_buy_button">Purchased</string>
+
+    <string name="title_share">Share</string>
+    <string name="message_share">Enjoying Boom? Share with your friends and spread the word!</string>
+    <string name="playstore_link">https://play.google.com/store/apps/details?id=com.globaldelight.boom  \n\n</string>
+    <string name="share_desc">\nLet me recommend you this application\n\n</string>
+
+    <string name="buy_button">BUY NOW</string>
+
+    <string name="inapp_process_error">Error while InApp Purchase!</string>
+    <string name="inapp_process_success">Purchase Success.</string>
+    <string name="inapp_process_restore">Purchase Restored.</string>
+
+    <string name="first_notification_title">Don’t Limit Your Boomin’!</string>
+    <string name="first_notification_message">Get immersed in surround sound to experience music like never before at just %s</string>
+    <string name="second_notification_title">Just Boom it!</string>
+    <string name="second_notification_message">Unlock the magical surround sound and remove Ads at just %1$s \nor\nSpread the musical fever, share Boom with your friends, and enjoy %2$d days free trial</string>
+    <string name="second_notification_message_no_share">Unlock the magical surround sound and remove Ads at just %s</string>
+    <string name="third_notification_title">Get More For Less!</string>
+    <string name="third_notification_message">Unlock all features, remove Ads and experience music like never before for only %s</string>
+    <string name="first_effect_on_title">Congratulations!</string>
+    <string name="first_effect_on_message">Enjoy all features for free for %d hours. Boom it before it ends.</string>
+    <string name="afterTrial_effect_on_title">Missed free usage of premium features?</string>
+    <string name="afterTrial_effect_on_message">Don’t worry; enjoy your first %d songs with all the premium features for free!</string>
+    <string name="share_success_title">Congratulations!</string>
+    <string name="share_success_message">Now you can enjoy all features for free for %d days!</string>
+    <string name="video_ad_message">Watch the video to get all features unlocked for %d hours!</string>
+    <string name="video_ad_success_message">You’ve unlocked all features for %d hours.</string>
+    <string name="buy_button_title">Buy</string>
+    <string name="share_button_title">Share</string>
+    <string name="watch_button_title">Watch</string>
+
+
+</resources>

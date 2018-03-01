@@ -3,9 +3,9 @@ package com.globaldelight.boom.business;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.util.Log;
 
 import com.globaldelight.boom.BuildConfig;
+import com.globaldelight.boom.utils.Log;
 
 import java.util.Date;
 

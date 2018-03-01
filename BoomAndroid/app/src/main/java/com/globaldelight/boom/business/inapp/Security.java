@@ -17,7 +17,8 @@ package com.globaldelight.boom.business.inapp;
 
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
+
+import com.globaldelight.boom.utils.Log;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;

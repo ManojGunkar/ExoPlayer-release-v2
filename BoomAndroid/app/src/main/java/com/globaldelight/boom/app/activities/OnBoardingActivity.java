@@ -29,7 +29,7 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     private Button startBoom;
     private ViewPager viewpager;
     private CircleIndicator indicator;
-    LinearLayout bottomPanel;
+    private View bottomPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,13 +134,13 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     @Override
     public void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(this).startSession();
+        FlurryAnalytics.getInstance(this).startSession(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(this).endSession();
+        FlurryAnalytics.getInstance(this).endSession(this);
     }
 
     @Override

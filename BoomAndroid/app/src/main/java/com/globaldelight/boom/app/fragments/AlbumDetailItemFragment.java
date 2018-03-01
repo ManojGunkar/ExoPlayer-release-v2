@@ -38,11 +38,22 @@ public class AlbumDetailItemFragment extends Fragment {
     private GridLayoutManager gridLayoutManager;
     private DetailAlbumGridAdapter detailAlbumGridAdapter;
     private Activity mActivity;
+    private LoadingCallback mLoadingCallback;
+
+    public interface LoadingCallback {
+        void onLoadingComplete();
+    }
+
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public AlbumDetailItemFragment() {
+    }
+
+    public void setLoadingCallback(LoadingCallback callback) {
+        mLoadingCallback = callback;
     }
 
     @Override
@@ -152,6 +163,9 @@ public class AlbumDetailItemFragment extends Fragment {
             });
             if (((IMediaItemCollection) iMediaItemBase).count() < 1) {
                 listIsEmpty();
+            }
+            if ( mLoadingCallback != null ) {
+                mLoadingCallback.onLoadingComplete();
             }
         }
     }

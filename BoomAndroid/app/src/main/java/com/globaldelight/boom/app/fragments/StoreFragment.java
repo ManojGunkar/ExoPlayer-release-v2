@@ -27,8 +27,9 @@ import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase;
 import com.globaldelight.boom.app.share.ShareDialog;
-import com.globaldelight.boom.business.BusinessStrategy;
+import com.globaldelight.boom.business.AppStoreBusinessModel;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
+import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.utils.Utils;
 
 import static com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase.SKU_INAPP_ITEM;
@@ -42,7 +43,7 @@ import static com.globaldelight.boom.app.businessmodel.inapp.InAppPurchase.SKU_I
 public class StoreFragment extends Fragment implements View.OnClickListener {
 
     ScrollView rootView;
-    private static final String TAG = "In-App-Handler";
+    private static final String TAG = "StoreFragment";
     private Context mContext;
     private Activity mActivity;
     public static final String ACTION_IN_APP_PURCHASE_SUCCESSFUL = "ACTION_INAPP_PURCHASE_SUCCESSFUL";
@@ -51,6 +52,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     private Button mStoreBuyBtn;
     private Button mClearButton;
     private boolean mUserPurchased = false; // to track if the user purchased
+
 
     //    ConnectivityReceiver.isNetworkAvailable(mActivity, true)
     private BroadcastReceiver mUpdateInAppItemReceiver = new BroadcastReceiver() {
@@ -117,9 +119,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
         if ( !InAppPurchase.getInstance(getContext()).isPurchased() ) {
             normalStoreUI(getCurrentPrice());
-            if (ConnectivityReceiver.isNetworkAvailable(mContext, true)) {
-                InAppPurchase.getInstance(getContext()).initInAppPurchase();
-            }
+            InAppPurchase.getInstance(getContext()).initInAppPurchase();
         }else{
             purchasedStoreUI();
         }
@@ -203,13 +203,14 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
 
     private String getCurrentInAppItem() {
-        switch (BusinessStrategy.getInstance(mContext).getPurchaseLevel()) {
+        AppStoreBusinessModel strategy = (AppStoreBusinessModel)BusinessModelFactory.getCurrentModel();
+        switch (strategy.getPurchaseLevel()) {
             default:
-            case BusinessStrategy.PRICE_FULL:
+            case AppStoreBusinessModel.PRICE_FULL:
                 return SKU_INAPP_ITEM;
-            case BusinessStrategy.PRICE_DISCOUNT:
+            case AppStoreBusinessModel.PRICE_DISCOUNT:
                 return SKU_INAPP_ITEM_2;
-            case BusinessStrategy.PRICE_DISCOUNT_2:
+            case AppStoreBusinessModel.PRICE_DISCOUNT_2:
                 return SKU_INAPP_ITEM_3;
         }
     }
@@ -235,28 +236,25 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
     public void onErrorAppPurchase() {
         normalStoreUI(getCurrentPrice());
-//        Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_error), Toast.LENGTH_SHORT).show();
     }
 
     public void onSuccessAppPurchase() {
         purchasedStoreUI();
-        BusinessStrategy.getInstance(mContext).onPurchaseSuccess();
         Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_success), Toast.LENGTH_SHORT).show();
     }
 
     public void onSuccessRestoreAppPurchase() {
         purchasedStoreUI();
-        BusinessStrategy.getInstance(mContext).onPurchaseSuccess();
         Toast.makeText(mActivity, getResources().getString(R.string.inapp_process_restore), Toast.LENGTH_SHORT).show();
     }
 
     private String getCurrentPrice() {
         String[] prices = InAppPurchase.getInstance(mContext).getPriceList();
         if ( prices.length >= 3 ) {
-            return prices[BusinessStrategy.getInstance(mContext).getPurchaseLevel()];
+            AppStoreBusinessModel strategy = (AppStoreBusinessModel)BusinessModelFactory.getCurrentModel();
+            return prices[strategy.getPurchaseLevel()];
         }
 
         return "";
     }
 }
-

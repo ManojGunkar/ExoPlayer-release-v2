@@ -213,11 +213,6 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
 
     public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
 
-
-        //For Header View
-        public TextView headerText;
-        public TextView buttonClrear;
-
         //For Song View
         public TextView name, artistName;//added by nidhin
         public View mainView, art_overlay;
@@ -232,9 +227,6 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
         public SimpleItemViewHolder(View itemView) {
             super(itemView);
             mainView = itemView;
-            headerText = (TextView) itemView.findViewById(R.id.queue_header_text);
-
-            buttonClrear = (TextView) itemView.findViewById(R.id.btn_clear);
             layout = (LinearLayout) itemView.findViewById(R.id.viewcontent);
             img = (ImageView) itemView.findViewById(R.id.song_item_img);
             art_overlay_play = (ImageView) itemView.findViewById(R.id.song_item_img_overlay_play);

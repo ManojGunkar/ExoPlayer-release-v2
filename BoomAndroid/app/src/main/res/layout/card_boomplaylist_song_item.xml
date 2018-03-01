@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@color/track_title"
+                android:textColor="@color/track_selection"
                 android:textSize="@dimen/play_queue_row_txt"
                 android:typeface="normal" />
 

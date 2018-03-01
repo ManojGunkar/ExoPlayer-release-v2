@@ -41,7 +41,7 @@ import java.util.ArrayList;
  * Created by Rahul Agarwal on 26-01-17.
  */
 
-public class AlbumSongListActivity extends MasterActivity {
+public class AlbumSongListActivity extends MasterActivity implements AlbumSongListFragment.Callback {
 
     private AlbumSongListFragment fragment;
     IMediaItemCollection currentItem;
@@ -130,6 +130,8 @@ public class AlbumSongListActivity extends MasterActivity {
                     }, 1000);                }
             }
         });
+        mFloatPlayAlbumSongs.setEnabled(false);
+        mFloatPlayAlbumSongs.setVisibility(View.GONE);
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -140,6 +142,7 @@ public class AlbumSongListActivity extends MasterActivity {
         Bundle arguments = new Bundle();
         arguments.putParcelable("mediaItemCollection", (MediaItemCollection)currentItem);
         fragment.setArguments(arguments);
+        fragment.setCallback(this);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.item_detail_container, fragment)
                 .commitAllowingStateLoss();
@@ -148,10 +151,6 @@ public class AlbumSongListActivity extends MasterActivity {
     @Override
     public void onStart() {
         super.onStart();
-
-        final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
-        mFloatPlayAlbumSongs.startAnimation(anim_in);
-
         fragment.updateAdapter();
     }
 
@@ -204,5 +203,13 @@ public class AlbumSongListActivity extends MasterActivity {
         fragment.updateBoomPlaylistIfOrderChanged();
         super.onBackPressed();
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+    @Override
+    public void onLoadingComplete() {
+        mFloatPlayAlbumSongs.setEnabled(true);
+        mFloatPlayAlbumSongs.setVisibility(View.VISIBLE);
+        final Animation anim_in = AnimationUtils.loadAnimation(this, R.anim.zoom_in);
+        mFloatPlayAlbumSongs.startAnimation(anim_in);
     }
 }

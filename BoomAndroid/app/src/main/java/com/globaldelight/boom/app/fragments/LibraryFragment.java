@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -16,12 +17,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.activities.MainActivity;
 import com.globaldelight.boom.app.service.HeadPhonePlugReceiver;
 import com.globaldelight.boom.app.adapters.utils.SectionsPagerAdapter;
 import com.globaldelight.boom.view.CoachMarkerWindow;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 
+import static com.globaldelight.boom.app.sharedPreferences.Preferences.LIBRARY_CURRENT_TAB;
+import static com.globaldelight.boom.app.sharedPreferences.Preferences.TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_NORMAL_BOTTOM;
 import static com.globaldelight.boom.app.sharedPreferences.Preferences.HEADPHONE_CONNECTED;
 import static com.globaldelight.boom.app.sharedPreferences.Preferences.TOOLTIP_CHOOSE_HEADPHONE_LIBRARY;
@@ -34,11 +38,10 @@ import static com.globaldelight.boom.app.sharedPreferences.Preferences.TOOLTIP_U
 
 public class LibraryFragment extends Fragment {
     private Activity mActivity;
-    View rootView;
+    private View rootView;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private TabLayout mTabBar;
     private ViewPager mViewPager;
-    private LinearLayout mAddsContainer;
     private CoachMarkerWindow coachMarkUseHeadPhone, coachMarkChooseHeadPhone;
 
     @Override
@@ -65,11 +68,11 @@ public class LibraryFragment extends Fragment {
     }
 
     private void initViews() {
-        mAddsContainer = rootView.findViewById(R.id.lib_add_container);
         mTabBar= rootView.findViewById(R.id.tabLayout);
         mViewPager = rootView.findViewById(R.id.container);
 
         setupViewPager(mViewPager);
+
 
         Typeface font = ResourcesCompat.getFont(mActivity, R.font.titilliumweb_semibold);
         for (int i = 0; i < mTabBar.getChildCount(); i++) {
@@ -79,6 +82,7 @@ public class LibraryFragment extends Fragment {
                 ((TextView) view).setTextSize(getResources().getDimension(R.dimen.music_tab_txt_size));
             }
         }
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -91,10 +95,12 @@ public class LibraryFragment extends Fragment {
         viewPager.setAdapter(mSectionsPagerAdapter);
         viewPager.setOffscreenPageLimit(5);
         mTabBar.setupWithViewPager(mViewPager);
+        viewPager.setCurrentItem(Preferences.readInteger(getActivity(), LIBRARY_CURRENT_TAB, 2));
     }
 
     public void useCoachMarkWindow(){
-        if(HeadPhonePlugReceiver.isHeadsetConnected()){
+        if( HeadPhonePlugReceiver.isHeadsetConnected() ){
+            autoOpenPlayer();
             Preferences.writeBoolean(mActivity, HEADPHONE_CONNECTED, false);
         }
         if (null != getActivity() && (Preferences.readBoolean(mActivity, TOOLTIP_USE_HEADPHONE_LIBRARY, true) || Preferences.readBoolean(mActivity, TOOLTIP_USE_24_HEADPHONE_LIBRARY, true))
@@ -104,6 +110,12 @@ public class LibraryFragment extends Fragment {
                 coachMarkUseHeadPhone = new CoachMarkerWindow(mActivity, DRAW_NORMAL_BOTTOM, getResources().getString(R.string.use_headphone_tooltip));
                 coachMarkUseHeadPhone.setAutoDismissBahaviour(true);
                 coachMarkUseHeadPhone.showCoachMark(mViewPager);
+                coachMarkUseHeadPhone.setOnDismissListener(new CoachMarkerWindow.OnDismissListener() {
+                    @Override
+                    public void onDismiss() {
+                        autoOpenPlayer();
+                    }
+                });
 
                 if(Utils.isMoreThan24Hour())
                     Preferences.writeBoolean(mActivity, TOOLTIP_USE_24_HEADPHONE_LIBRARY, false);
@@ -111,6 +123,12 @@ public class LibraryFragment extends Fragment {
 
             Preferences.writeBoolean(mActivity, TOOLTIP_USE_HEADPHONE_LIBRARY, false);
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Preferences.writeInteger(getActivity(), LIBRARY_CURRENT_TAB, mViewPager.getCurrentItem());
     }
 
     public void setDismissHeadphoneCoachmark(){
@@ -135,6 +153,10 @@ public class LibraryFragment extends Fragment {
     }
 
     public void chooseCoachMarkWindow(boolean isPlayerExpended, boolean isLibraryRendered) {
+        if ( Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) ) {
+            return;
+        }
+
         if (null != getActivity() &&  Preferences.readBoolean(mActivity, TOOLTIP_CHOOSE_HEADPHONE_LIBRARY, true) && !isPlayerExpended && HeadPhonePlugReceiver.isHeadsetConnected() && isLibraryRendered ) {
             if(null != coachMarkUseHeadPhone)
                 coachMarkUseHeadPhone.dismissTooltip();
@@ -142,6 +164,19 @@ public class LibraryFragment extends Fragment {
             coachMarkChooseHeadPhone.setAutoDismissBahaviour(true);
             coachMarkChooseHeadPhone.showCoachMark(mViewPager);
             Preferences.writeBoolean(mActivity, TOOLTIP_CHOOSE_HEADPHONE_LIBRARY, false);
+        }
+    }
+
+    private void autoOpenPlayer() {
+        if ( Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) ) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if ( !MainActivity.isPlayerExpended() ) {
+                        ((MainActivity)getActivity()).toggleSlidingPanel();
+                    }
+                }
+            }, 1000);
         }
     }
 }

@@ -20,35 +20,13 @@
             android:checked="false"
             android:checkable="true"
             android:title="@string/drop_box" />
-        <item
-            android:id="@+id/boom_palylist"
-            android:icon="@drawable/drawer_boom_playlist_selector"
-            android:checked="false"
-            android:checkable="true"
-            android:visible="false"
-            android:title="@string/boom_playlist" />
-        <item
-            android:id="@+id/favourite_list"
-            android:icon="@drawable/drawer_boom_fav_selector"
-            android:checked="false"
-            android:checkable="true"
-            android:visible="false"
-            android:title="@string/favourite_list" />
     </group>
-
     <group>
-        <item
-            android:id="@+id/nav_store"
-            android:icon="@drawable/ic_store"
-            android:title="@string/store_title" />
-        <item
-            android:id="@+id/nav_share"
-            android:icon="@drawable/ic_share"
-            android:title="@string/title_share" />
         <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_settings"
-            android:title="@string/title_settings" />
+            android:title="@string/title_settings"
+            android:orderInCategory="100"/>
     </group>
 
 </menu>

@@ -18,6 +18,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.AnyRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -64,9 +65,7 @@ public class Utils {
     public static final int LARGE_IMAGE_SIZE_DP = 128;
     public static final int SMALL_IMAGE_SIZE_DP = 62;
 
-
     private Utils(Context context) {
-
     }
 
     public static int dpToPx(Context context, int dp) {
@@ -175,8 +174,7 @@ public class Utils {
                             addToPlaylist(activity, song, fromPlaylist);
                         //    FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
                             FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_CREATED_NEW_PLAYLIST);
-
-                            MixPanelAnalyticHelper.getInstance(context).getPeople().set(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST, input.toString());
+                            MixPanelAnalyticHelper.getInstance(context).setPeopleAnalytics(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST, input.toString());
                         }
                     }
                 })
@@ -294,5 +292,10 @@ public class Utils {
             LARGE_IMAGE_SIZE = dpToPx(context, LARGE_IMAGE_SIZE_DP);
         }
         return LARGE_IMAGE_SIZE;
+    }
+
+    // Unique device id
+    public static String getFingerPrint(Context context) {
+        return Settings.Secure.getString(context.getApplicationContext().getContentResolver(),Settings.Secure.ANDROID_ID);
     }
 }

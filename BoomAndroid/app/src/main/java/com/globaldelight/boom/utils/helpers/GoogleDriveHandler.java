@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
@@ -19,6 +18,7 @@ import com.globaldelight.boom.collection.cloud.GoogleDriveMediaList;
 import com.globaldelight.boom.app.loaders.LoadGoogleDriveList;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.fragments.SettingFragment;
+import com.globaldelight.boom.utils.Log;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.common.ConnectionResult;
@@ -47,7 +47,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private static GoogleApiClient client;
+    private GoogleApiClient client;
     public static GoogleAccountCredential mCredential;
     public static final int REQUEST_ACCOUNT_PICKER = 1000;
     public static final int REQUEST_AUTHORIZATION = 1001;
@@ -58,7 +58,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     private static final String[] SCOPES = {DriveScopes.DRIVE_METADATA, DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPDATA, DriveScopes.DRIVE};
 //    private Activity mActivity;
     private Fragment mFragment;
-    private static LoadGoogleDriveList loadGoogleDriveList;
+    private LoadGoogleDriveList loadGoogleDriveList;
     private Context mContext;
 
     public GoogleDriveHandler(Context context){
@@ -73,7 +73,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     public GoogleAccountCredential getGoogleAccountCredential(){
         // Initialize credentials and service object.
         if(null == mCredential) {
-            mCredential = GoogleAccountCredential.usingOAuth2(mContext, Arrays.asList(SCOPES))
+            mCredential = GoogleAccountCredential.usingOAuth2(mContext.getApplicationContext(), Arrays.asList(SCOPES))
                     .setBackOff(new ExponentialBackOff());
         }
         return mCredential;
@@ -327,7 +327,10 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
                 }
             } catch (IntentSender.SendIntentException e) {
                 Log.e(TAG, "Exception while starting resolution activity", e);
-            } catch (Exception e){ }
+                e.printStackTrace();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
             if(null != loadGoogleDriveList){
                 loadGoogleDriveList.setCancelLoading();
             }

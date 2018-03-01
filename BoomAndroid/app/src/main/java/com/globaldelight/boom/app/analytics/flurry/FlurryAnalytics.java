@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.flurry.android.FlurryAgent;
 import com.globaldelight.boom.BuildConfig;
+import com.globaldelight.boom.utils.Log;
 
 import java.util.Map;
 
@@ -15,20 +16,26 @@ import static com.globaldelight.boom.BuildConfig.FLURRY_API_KEY;
  */
 
 public class FlurryAnalytics {
-
-    private Context context;
+    private final String TAG = "FlurryAnalytics";
+    private Context mContext;
     private static FlurryAnalytics instance;
+    private boolean enabled = true;
 
     private FlurryAnalytics(Context context) {
-        this.context = context.getApplicationContext();
+        this.mContext = context.getApplicationContext();
 
-        new FlurryAgent.Builder()
-                .withLogEnabled(true)
-                .withCaptureUncaughtExceptions(true)
-                .withContinueSessionMillis(10)
-                .withLogEnabled(true)
-                .withLogLevel(VERBOSE)
-                .build(context, FLURRY_API_KEY);
+        try {
+            new FlurryAgent.Builder()
+                    .withCaptureUncaughtExceptions(true)
+                    .withContinueSessionMillis(10)
+                    .withLogEnabled(true)
+                    .withLogLevel(VERBOSE)
+                    .build(context, FLURRY_API_KEY);
+            enabled = true;
+        }
+        catch (Exception e) {
+            enabled = false;
+        }
     }
 
     public static FlurryAnalytics getInstance(Context context) {
@@ -36,33 +43,48 @@ public class FlurryAnalytics {
         return instance;
     }
 
-    public FlurryAnalytics startSession() {
-        FlurryAgent.onStartSession(context);
+    public FlurryAnalytics startSession(Context context) {
+        Log.d(TAG, "startSession ");
+        if ( enabled ) {
+            FlurryAgent.onStartSession(context);
+
+        }
         return this;
     }
 
-    public FlurryAnalytics endSession() {
-        FlurryAgent.onEndSession(context);
+    public FlurryAnalytics endSession(Context context) {
+        Log.d(TAG, "endSession");
+        if ( enabled ) FlurryAgent.onEndSession(context);
         return this;
     }
 
     public FlurryAnalytics setEvent(String event) {
-        FlurryAgent.logEvent(event);
+        Log.d(TAG, event );
+        if ( enabled ) FlurryAgent.logEvent(event);
         return this;
     }
 
     public FlurryAnalytics setEvent(String event, boolean status) {
-        FlurryAgent.logEvent(event, status);
+        Log.d(TAG, event + " status: " + (status? "true" : "false"));
+        if ( enabled ) FlurryAgent.logEvent(event, status);
         return this;
     }
 
     public FlurryAnalytics setEvent(String event, Map<String, String> params) {
-        FlurryAgent.logEvent(event, params);
+        Log.d(TAG, event + " params: " + params.toString());
+        if ( enabled ) FlurryAgent.logEvent(event, params);
         return this;
     }
 
     public FlurryAnalytics setEvent(String event, Map<String, String> params, boolean status) {
-        FlurryAgent.logEvent(event, params, status);
+        Log.d(TAG, event + " status: " + (status? "true" : "false") + " params: " + params.toString());
+        if ( enabled ) FlurryAgent.logEvent(event, params, status);
+        return this;
+    }
+
+    public FlurryAnalytics pageView() {
+        Log.d(TAG, "pageView");
+        if ( enabled ) FlurryAgent.onPageView();
         return this;
     }
 }

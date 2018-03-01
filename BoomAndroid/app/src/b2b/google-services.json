@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "862807752058",
+    "firebase_url": "https://boom-android.firebaseio.com",
+    "project_id": "boom-android",
+    "storage_bucket": "boom-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:862807752058:android:baef44f692edbae8",
+        "android_client_info": {
+          "package_name": "com.globaldelight.boom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "862807752058-d5g81f41tptroo7p1ovihbvgg2cklq3j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCY8B3yLvklgveFILP7lrl9vwnmun_eCcM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:862807752058:android:7b3a623382468c89",
+        "android_client_info": {
+          "package_name": "com.globaldelight.boom.b2b"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "862807752058-d5g81f41tptroo7p1ovihbvgg2cklq3j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCY8B3yLvklgveFILP7lrl9vwnmun_eCcM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

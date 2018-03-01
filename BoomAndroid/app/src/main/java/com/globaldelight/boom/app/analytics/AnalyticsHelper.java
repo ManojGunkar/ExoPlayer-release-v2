@@ -2,11 +2,6 @@ package com.globaldelight.boom.app.analytics;
 
 import android.content.Context;
 
-import com.flurry.android.FlurryAgent;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.player.AudioEffect;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -114,74 +109,6 @@ public class AnalyticsHelper {
     public static final String PARAM_SONG_WITH_INTENSITY = "Song_with_effect_intensity";
 
 
-    public static void logCommonEventWithStatus(Context ctx, String eventName, boolean status) {
-        //flurry
-
-        Map<String, String> articleParams = new HashMap<>();
-        // JSONObject props = new JSONObject();
-        //param keys and values have to be of String type
-        if (status) {
-            articleParams.put(AnalyticsHelper.PARAM_STATUS, PARAM_STATUS_ON);
-        } else {
-            articleParams.put(AnalyticsHelper.PARAM_STATUS, PARAM_STATUS_OFF);
-        }
-        //up to 10 params can be logged with each event
-
-        FlurryAgent.logEvent(eventName, articleParams);
-
-        //Mixpanel
-
-        JSONObject props = new JSONObject(articleParams);
-
-        MixPanelAnalyticHelper.getInstance(ctx).registerSuperProperties(props);
-    }
-
-    public static void songSelectionChanged(Context context, IMediaItemBase songInfo) {
-        final AudioEffect audioEffectPreferenceHandler = AudioEffect.getInstance(context);
-//        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_TRACK_SELECTION_CHANGED);
-  //      FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_TRACK_SELECTION_CHANGED);
-
-        MixpanelAPI mixpanel = MixPanelAnalyticHelper.getInstance(context);
-        MixPanelAnalyticHelper.getInstance(context).getPeople().increment(EVENT_SONG_COUNT, 1);
-
-
-        JSONObject properties = new JSONObject();
-
-
-        // properties.put(AnalyticsHelper.EVENT_MOVE_TO_NEXT_SONG, 1);
-        if (audioEffectPreferenceHandler.isAudioEffectOn()) {
-            if (audioEffectPreferenceHandler.isEqualizerOn()) {
-                mixpanel.getPeople().increment(PARAM_SONG_WITH_EQ, 1);
-                try {
-                    properties.put(AnalyticsHelper.PARAM_SONG_WITH_EQ, true);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (audioEffectPreferenceHandler.is3DSurroundOn()) {
-                mixpanel.getPeople().increment(PARAM_SONG_WITH_3D, 1);
-                try {
-                    properties.put(AnalyticsHelper.PARAM_SONG_WITH_3D, true);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-            if (audioEffectPreferenceHandler.isIntensityOn()) {
-                mixpanel.getPeople().increment(PARAM_SONG_WITH_INTENSITY, 1);
-                try {
-                    properties.put(AnalyticsHelper.PARAM_SONG_WITH_INTENSITY, true);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-
-        mixpanel.track(EVENT_TRACK_SELECTION_CHANGED, properties);
-
-    }
-
     public static void trackHeadPhoneUsed(Context context, String headPhoneType) throws JSONException {
 
         HashMap<String, String> articleParams = new HashMap<>();
@@ -189,17 +116,11 @@ public class AnalyticsHelper {
       //  FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_HEADPHONE_TYPE_CHANGED, articleParams);
       //  FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.EVENT_HEADPHONE_TYPE_CHANGED, articleParams);
 
-        MixpanelAPI mixpanel = MixPanelAnalyticHelper.getInstance(context);
         JSONObject properties = new JSONObject();
         properties.put(PARAM_SELECTED_HEADPHONE_TYPE, headPhoneType);
-        mixpanel.track(EVENT_HEADPHONE_TYPE_CHANGED, properties);
-        mixpanel.registerSuperProperties(properties);
-        mixpanel.getPeople().set(properties);
-    }
-
-    public void logCommonEvent(Context context, String event) {
-        FlurryAgent.logEvent(event);
-        MixPanelAnalyticHelper.getInstance(context).track(event);
+        MixPanelAnalyticHelper.getInstance(context).track(EVENT_HEADPHONE_TYPE_CHANGED, properties);
+        MixPanelAnalyticHelper.getInstance(context).registerSuperProperties(properties);
+        MixPanelAnalyticHelper.getInstance(context).setPeopleAnalytics(properties);
     }
 
 }

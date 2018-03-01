@@ -2,9 +2,9 @@ package com.globaldelight.boom.app.analytics;
 
 import android.content.Context;
 import android.provider.Settings;
-import android.util.Log;
 
 import com.globaldelight.boom.BuildConfig;
+import com.globaldelight.boom.utils.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
@@ -19,11 +19,20 @@ import java.io.IOException;
 
 public class MixPanelAnalyticHelper {
 
-    public static MixpanelAPI mixpanel = null;
+    private MixpanelAPI mixpanel = null;
 
-    public static MixpanelAPI getInstance(Context context) {
-        if ( mixpanel != null ) {
-            return mixpanel;
+    private static MixPanelAnalyticHelper instance = null;
+
+    public static MixPanelAnalyticHelper getInstance(Context context) {
+        if ( instance == null ) {
+            instance = new MixPanelAnalyticHelper(context.getApplicationContext());
+        }
+        return instance;
+    }
+
+    private MixPanelAnalyticHelper(Context context) {
+        if ( BuildConfig.MIXPANEL_PROJECT_TOKEN == null ) {
+            return;
         }
 
         mixpanel = MixpanelAPI.getInstance(context.getApplicationContext(), BuildConfig.MIXPANEL_PROJECT_TOKEN);
@@ -43,7 +52,6 @@ public class MixPanelAnalyticHelper {
         people.set(props);
         people.identify(android_id);
         people.initPushHandling(BuildConfig.MIXPANEL_SENDER_ID);
-        return mixpanel;
     }
 
     public void registerPush(GoogleCloudMessaging gcm) {
@@ -60,11 +68,52 @@ public class MixPanelAnalyticHelper {
 
     public static void initPushNotification(Context context) {
         getInstance(context);
-
     }
 
     public static void track(Context context, String eventName) {
         MixPanelAnalyticHelper.getInstance(context).track(eventName);
+    }
+
+    public void track(String eventName) {
+        if ( mixpanel != null ) {
+            mixpanel.track(eventName);
+        }
+    }
+
+    public void track(String eventName, JSONObject json) {
+        if ( mixpanel != null ) {
+            mixpanel.track(eventName, json);
+        }
+    }
+
+    public void registerSuperPropertiesOnce(JSONObject json) {
+        if ( mixpanel != null ) {
+            mixpanel.registerSuperPropertiesOnce(json);
+        }
+    }
+
+    public void registerSuperProperties(JSONObject json) {
+        if ( mixpanel != null ) {
+            mixpanel.registerSuperProperties(json);
+        }
+    }
+
+    public void setPeopleAnalytics(String event, String value) {
+        if ( mixpanel != null ) {
+            mixpanel.getPeople().set(event, value);
+        }
+    }
+
+    public void setPeopleAnalytics(JSONObject json) {
+        if ( mixpanel != null ) {
+            mixpanel.getPeople().set(json);
+        }
+    }
+
+    public void flush() {
+        if ( mixpanel != null ) {
+            mixpanel.flush();
+        }
     }
 
    /* public static void track(Context context,String eventName, JSONObject properties) {

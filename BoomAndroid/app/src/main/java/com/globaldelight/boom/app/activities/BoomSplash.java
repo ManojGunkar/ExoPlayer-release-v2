@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
@@ -67,7 +66,6 @@ public class BoomSplash extends AppCompatActivity {
 
         //get current date
         currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-        mixpanel = MixPanelAnalyticHelper.getInstance(this);
         //new Launch of app.Use for tutorial
         if (Preferences.readBoolean(this, Preferences.APP_FRESH_LAUNCH, true)) {
             //register first app open once as super property
@@ -75,7 +73,7 @@ public class BoomSplash extends AppCompatActivity {
             propsFirst = new JSONObject();
             try {
                 propsFirst.put(AnalyticsHelper.EVENT_FIRST_VISIT, currentDate);
-                mixpanel.registerSuperPropertiesOnce(propsFirst);//super property
+                MixPanelAnalyticHelper.getInstance(this).registerSuperPropertiesOnce(propsFirst);//super property
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -88,13 +86,13 @@ public class BoomSplash extends AppCompatActivity {
 
         try {
             propsLast.put(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
-            mixpanel.registerSuperProperties(propsLast);//super property
+            MixPanelAnalyticHelper.getInstance(this).registerSuperProperties(propsLast);//super property
         } catch (JSONException e) {
             e.printStackTrace();
         }
 //        MixPanelAnalyticHelper.initPushNotification(this);
-        MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
-        MixPanelAnalyticHelper.getInstance(this).getPeople().set(AnalyticsHelper.EVENT_APP_OPEN, currentDate);
+        MixPanelAnalyticHelper.getInstance(this).setPeopleAnalytics(AnalyticsHelper.EVENT_LAST_APP_OPEN, lastOpen);
+        MixPanelAnalyticHelper.getInstance(this).setPeopleAnalytics(AnalyticsHelper.EVENT_APP_OPEN, currentDate);
           /*  String android_id = Settings.Secure.getString(this.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
             MixPanelAnalyticHelper.getInstance(this).getPeople().set("Device_ID", android_id);*/
@@ -124,12 +122,12 @@ public class BoomSplash extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FlurryAnalytics.getInstance(this).startSession();
+        FlurryAnalytics.getInstance(this).startSession(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FlurryAnalytics.getInstance(this).endSession();
+        FlurryAnalytics.getInstance(this).endSession(this);
     }
 }

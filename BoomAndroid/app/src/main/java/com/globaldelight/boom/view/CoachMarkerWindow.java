@@ -2,18 +2,24 @@ package com.globaldelight.boom.view;
 
 import android.app.ActionBar;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.utils.Utils;
+
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class CoachMarkerWindow {
 
@@ -36,6 +42,10 @@ public class CoachMarkerWindow {
 
     private int position = 1;
 
+    public interface OnDismissListener {
+        void onDismiss();
+    }
+
     public CoachMarkerWindow(Context ctx, int position, String text) {
         this.ctx = ctx;
         this.position = position;
@@ -53,8 +63,6 @@ public class CoachMarkerWindow {
                 layout = R.layout.tooltip_top_layout;
                 break;
             case DRAW_BOTTOM_CENTER:
-                layout = R.layout.tooltip_bottom_layout;
-                break;
             case DRAW_BOTTOM_LEFT:
             case DRAW_BOTTOM_RIGHT:
                 layout = R.layout.tooltip_bottom_layout;
@@ -102,148 +110,89 @@ public class CoachMarkerWindow {
                 mImageArrow.setVisibility(View.GONE);
                 break;
         }
-        tipWindow.setHeight(ActionBar.LayoutParams.WRAP_CONTENT);
-        tipWindow.setWidth(ActionBar.LayoutParams.WRAP_CONTENT);
-        tipWindow.setFocusable(false);
-        tipWindow.setBackgroundDrawable(new BitmapDrawable());
-
-        tipWindow.setContentView(contentView);
 
         int screen_pos[] = new int[2];
         anchor.getLocationOnScreen(screen_pos);
 
         final Rect anchor_rect = new Rect(screen_pos[0], screen_pos[1], screen_pos[0]
-                + anchor.getWidth(), screen_pos[1] + anchor.getHeight());
+                + anchor.getMeasuredWidth(), screen_pos[1] + anchor.getMeasuredHeight());
 
-        contentView.measure(ActionBar.LayoutParams.WRAP_CONTENT,
-                ActionBar.LayoutParams.WRAP_CONTENT);
+        int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+        mInfoText.setMaxWidth(screenWidth * 8 / 10);
+        contentView.measure(WRAP_CONTENT, WRAP_CONTENT);
+        int contentViewHeight = contentView.getMeasuredHeight();
+        int contentViewWidth = contentView.getMeasuredWidth();
+        int position_x = 0;
+        int position_y = 0;
 
-        final int[] contentViewHeight = {contentView.getMeasuredHeight()};
-        final int[] contentViewWidth = {contentView.getMeasuredWidth()};
-
-        final int[] position_x = {0};
-        final int[] position_y = { 0 };
         switch (position) {
             case DRAW_TOP_RIGHT:
-                contentView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        contentViewHeight[0] = contentView.getHeight();
-                        contentViewWidth[0] = contentView.getWidth();
-                        tipWindow.dismiss();
-                        position_x[0] = anchor_rect.left - contentViewWidth[0] + anchor_rect.width() /2 + 40;
-                        position_y[0] = (int) (anchor_rect.top - contentViewHeight[0] + getArrowHeight() * 0.5);
-                        tipWindow.showAtLocation(anchor,Gravity.NO_GRAVITY,position_x[0],position_y[0]);
-                    }
-                });
+                position_x = anchor_rect.left - contentViewWidth + anchor_rect.width() /2 + 40;
+                position_y = (int) (anchor_rect.top - contentViewHeight + getArrowHeight() * 0.5);
                 break;
             case DRAW_BOTTOM_RIGHT:
-                contentView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        contentViewHeight[0] = contentView.getHeight();
-                        contentViewWidth[0] = contentView.getWidth();
-                        tipWindow.dismiss();
-                        position_x[0] = anchor_rect.left - contentViewWidth[0] + anchor_rect.width() /2 + 40;
-                        position_y[0] = (int) (anchor_rect.bottom - getArrowHeight() * 0.5);
-                        tipWindow.showAtLocation(anchor,Gravity.NO_GRAVITY,position_x[0],position_y[0]);
-                    }
-                });
+                position_x = anchor_rect.right - contentViewWidth;
+                position_y = (int) (anchor_rect.bottom - getArrowHeight() * 0.5);
                 break;
             case DRAW_TOP_LEFT:
-                contentView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        contentViewHeight[0] = contentView.getHeight();
-                        contentViewWidth[0] = contentView.getWidth();
-                        tipWindow.dismiss();
-                        position_x[0] = anchor_rect.right  - anchor_rect.width() /2 - 10;
-                        position_y[0] = (int) (anchor_rect.top - contentViewHeight[0] + getArrowHeight() * 0.5);
-                        tipWindow.showAtLocation(anchor,Gravity.NO_GRAVITY,position_x[0],position_y[0]);
-                    }
-                });
+                position_x = anchor_rect.right  - anchor_rect.width() /2 - 10;
+                position_y = (int) (anchor_rect.top - contentViewHeight + getArrowHeight());
                 break;
             case DRAW_BOTTOM_LEFT:
-                contentView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        contentViewHeight[0] = contentView.getHeight();
-                        contentViewWidth[0] = contentView.getWidth();
-                        tipWindow.dismiss();
-                        position_x[0] = anchor_rect.right - anchor_rect.width() /2 - 40;
-                        position_y[0] = (int) (anchor_rect.bottom - getArrowHeight() * 0.5);
-                        tipWindow.showAtLocation(anchor,Gravity.NO_GRAVITY,position_x[0],position_y[0]);
-                    }
-                });
+                position_x = anchor_rect.right - anchor_rect.width() /2 - Utils.dpToPx(ctx, 20);
+                position_y = anchor_rect.bottom - (getArrowHeight() / 2);
                 break;
             case DRAW_BOTTOM_CENTER:
-                contentView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        contentViewHeight[0] = contentView.getHeight();
-                        contentViewWidth[0] = contentView.getWidth();
-                        tipWindow.dismiss();
-                        position_x[0] = anchor_rect.centerX() - contentViewWidth[0] / 4;
-                        position_y[0] = anchor_rect.bottom - getArrowHeight();
-                        tipWindow.showAtLocation(anchor,Gravity.NO_GRAVITY,position_x[0],position_y[0]);
-                    }
-                });
+                position_x = anchor_rect.centerX() - contentViewWidth / 2;
+                position_y = anchor_rect.bottom - getArrowHeight() / 2;
                 break;
             case DRAW_TOP_CENTER:
-                contentView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        contentViewHeight[0] = contentView.getHeight();
-                        contentViewWidth[0] = contentView.getWidth();
-                        tipWindow.dismiss();
-                        position_x[0] = anchor_rect.centerX()  - contentViewWidth[0] / 2;
-                        position_y[0] = (int) (anchor_rect.top - contentViewHeight[0] + getArrowHeight() * 0.5);
-                        tipWindow.showAtLocation(anchor,Gravity.NO_GRAVITY,position_x[0],position_y[0]);
-                    }
-                });
+                position_x = anchor_rect.centerX()  - contentViewWidth / 2;
+                position_y = (int) (anchor_rect.top - contentViewHeight - getArrowHeight() / 2);
                 break;
             case DRAW_NORMAL_LEFT:
-                contentView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        contentViewHeight[0] = contentView.getHeight();
-                        contentViewWidth[0] = contentView.getWidth();
-                        tipWindow.dismiss();
-                        position_x[0] = anchor_rect.left - contentViewWidth[0] - 10;
-                        position_y[0] = (int) (anchor_rect.centerY() - contentViewHeight[0] * 0.5);
-                        tipWindow.showAtLocation(anchor,Gravity.NO_GRAVITY,position_x[0],position_y[0]);
-                    }
-                });
+                position_x = anchor_rect.left - contentViewWidth - 10;
+                position_y = (int) (anchor_rect.centerY() - contentViewHeight * 0.5);
                 break;
             case DRAW_NORMAL_RIGHT:
-                contentView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        contentViewHeight[0] = contentView.getHeight();
-                        contentViewWidth[0] = contentView.getWidth();
-                        tipWindow.dismiss();
-                        position_x[0] = anchor_rect.right + 10;
-                        position_y[0] = (int) (anchor_rect.centerY() - contentViewHeight[0] * 0.5);
-                        tipWindow.showAtLocation(anchor,Gravity.NO_GRAVITY,position_x[0],position_y[0]);
-                    }
-                });
+                position_x = anchor_rect.right + 10;
+                position_y = (int) (anchor_rect.centerY() - contentViewHeight * 0.5);
+                break;
+
             case DRAW_NORMAL_BOTTOM:
-                contentView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        contentViewHeight[0] = contentView.getHeight();
-                        contentViewWidth[0] = contentView.getWidth();
-                        tipWindow.dismiss();
-                        position_x[0] = anchor_rect.centerX()  - contentViewWidth[0] / 2;
-                        position_y[0] = (int) (anchor_rect.top - getArrowHeight() * 0.5);
-                        tipWindow.showAtLocation(anchor,Gravity.NO_GRAVITY, position_x[0],position_y[0]);
-                    }
-                });
+                position_x = anchor_rect.centerX()  - contentViewWidth / 2;
+                position_y = (int) anchor_rect.top;
                 break;
         }
-        position_x[0] = 0;
-        position_y[0] = 0;
-        tipWindow.showAtLocation(anchor, Gravity.NO_GRAVITY, position_x[0], position_y[0]);
+
+        // Fix arrow position
+        if ( position == DRAW_BOTTOM_CENTER || position == DRAW_TOP_CENTER || position == DRAW_BOTTOM_LEFT ) {
+            // Clips at left side
+            if ( position_x < 0 ) {
+                layoutParams.setMargins(0, 0, -position_x , 0);
+                mImageArrow.setLayoutParams(layoutParams);
+                position_x = 0;
+            }
+            // Clips at right side
+            else if ( (position_x + contentViewWidth) > screenWidth) {
+                int diff =  (position_x + contentViewWidth) - screenWidth;
+                position_x = position_x - diff;
+                layoutParams.setMargins(diff, 0, 0 , 0);
+                mImageArrow.setLayoutParams(layoutParams);
+            }
+        }
+
+        tipWindow.setHeight(WRAP_CONTENT);
+        tipWindow.setWidth(contentViewWidth);
+        tipWindow.setFocusable(false);
+        tipWindow.setBackgroundDrawable(new BitmapDrawable());
+        tipWindow.setContentView(contentView);
+        tipWindow.showAtLocation(anchor, Gravity.NO_GRAVITY, position_x, position_y);
+    }
+
+
+    private void fixArrowPosition() {
+
     }
 
     private int getArrowHeight() {
@@ -286,5 +235,14 @@ public class CoachMarkerWindow {
 
     public void updateText(String updatedString) {
         mInfoText.setText(updatedString);
+    }
+
+    public void setOnDismissListener(final OnDismissListener listener) {
+        tipWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                listener.onDismiss();
+            }
+        });
     }
 }

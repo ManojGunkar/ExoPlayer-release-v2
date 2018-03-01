@@ -20,6 +20,7 @@ public final class FlurryEvents {
     public static final String play_pause_Button_Tapped_from_Notification_bar = "Play/Pause Button Tapped From NotificationBar";
     public static final String Store_Page_Opened_from_Drawer = "Store Page Opened From Drawer";
     public static final String Playlist_Edit_Button_Tapped = "Playlist Edit Button Tapped";
+    public static final String Playlist_Deleted = "Playlist Deleted";
     public static final String FAB_Tapped_from_Boom_playlist_section = "FAB Button Tapped  from Boom playlist section";
     public static final String FAB_Tapped_from_ARTIST_ALL_SONGS_section = "FAB Button Tapped  from ARTIST All Songs Section";
     public static final String FAB_Tapped_from_GENERE_ALL_SONGS_section = "FAB Button Tapped  from GENERE All Songs Section";
@@ -131,6 +132,10 @@ public final class FlurryEvents {
     public static final String EVENT_INVITE_FACEBOOK_CANCEL = "EVENT_INVITE_FACEBOOK_CANCEL";
     public static final String EVENT_ON_PURCHASE = "EVENT_ON_PURCHASE";
     public static final String EVENT_ON_PURCHASE_CANCEL = "EVENT_ON_PURCHASE_CANCEL";
+
+    public static final String EVENT_PROMOCODE_VERIFY_CLICKED = "PromoCode verify clicked";
+    public static final String EVENT_PROMOCODE_VERIFY_FAILED = "PromoCode verify failed";
+    public static final String EVENT_PROMOCODE_VERIFY_SUCCESS = "PromoCode verify succeeded";
 
 
 

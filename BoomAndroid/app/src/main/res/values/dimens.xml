@@ -140,7 +140,7 @@
 
 
     <dimen name="album_track_menu_margin">14.5dp</dimen>
-    <dimen name="card_grid_bottom_padding">10.5dp</dimen>
+    <dimen name="card_grid_bottom_padding">10dp</dimen>
     <dimen name="card_header_recycler_title_margine_top">18.5dp</dimen>
     <dimen name="card_playlist_dialog_margin">20.5dp</dimen>
     <dimen name="selected_eq_go_img">10.5dp</dimen>
@@ -156,7 +156,7 @@
     <dimen name="setting_cloud_item_height">58dp</dimen>
     <dimen name="onboarding_txt_title_margin_top">6dp</dimen>
     <dimen name="onboarding_txt_title_size">20sp</dimen>
-    <dimen name="onboarding_txt_title_margin_side">40dp</dimen>
+    <dimen name="onboarding_txt_title_margin_side">24dp</dimen>
     <dimen name="onboarding_txt_sub_title_margin_top">16dp</dimen>
     <dimen name="onboarding_bottom_height">66dp</dimen>
     <dimen name="onboarding_bottom_margin_side">24dp</dimen>

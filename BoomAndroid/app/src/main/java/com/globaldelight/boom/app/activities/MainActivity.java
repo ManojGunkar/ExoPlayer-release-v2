@@ -38,6 +38,8 @@ import com.globaldelight.boom.app.adapters.search.SearchSuggestionAdapter;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.app.fragments.SearchViewFragment;
 import com.globaldelight.boom.app.share.ShareDialog;
+import com.globaldelight.boom.business.BusinessConfig;
+import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.app.database.MusicSearchHelper;
@@ -75,12 +77,13 @@ public class MainActivity extends MasterActivity
             switch ( intent.getAction() ) {
                 case ACTION_HEADSET_PLUGGED:
                     if( null != mLibraryFragment) {
+                        ((LibraryFragment)mLibraryFragment).setDismissHeadphoneCoachmark();
                         ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
                     }
                     break;
 
                 case PlayerEvents.ACTION_PLAYER_STATE_CHANGED:
-                    if ( mLibraryFragment != null ) {
+                    if ( mLibraryFragment != null && App.playbackManager().isPlaying() ) {
                         ((LibraryFragment)mLibraryFragment).useCoachMarkWindow();
                         ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
                     }
@@ -94,12 +97,14 @@ public class MainActivity extends MasterActivity
         setContentView(R.layout.activity_main);
         initView();
         checkPermissions();
-
-
     }
 
     Runnable navigateLibrary = new Runnable() {
         public void run() {
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            if ( currentFragment == mLibraryFragment && mLibraryFragment != null ) {
+                return;
+            }
             isLibraryRendered = true;
             toolbarTitle.setText(getResources().getString(R.string.music_library));
             navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
@@ -214,17 +219,13 @@ public class MainActivity extends MasterActivity
         navigationView.setItemIconTintList(null);
         navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
         navigationView.setNavigationItemSelectedListener(this);
-        if ( !BuildConfig.BUSINESS_MODEL_ENABLED ) {
-            navigationView.getMenu().removeItem(R.id.nav_store);
-            navigationView.getMenu().removeItem(R.id.nav_share);
-        }
+        BusinessModelFactory.getCurrentModel().addItemsToDrawer(navigationView.getMenu(), Menu.NONE);
     }
 
     @Override
     public void onPanelCollapsed(View panel) {
         super.onPanelCollapsed(panel);
-        if(null != mLibraryFragment){
-        }
+        ((LibraryFragment)mLibraryFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
     }
 
     @Override
@@ -434,6 +435,10 @@ public class MainActivity extends MasterActivity
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Share_Opened_from_Boom);
                 return true;
+            default:
+                BusinessModelFactory.getCurrentModel().onDrawerItemClicked(item, this);
+                break;
+
         }
         if (runnable != null) {
             item.setChecked(true);
