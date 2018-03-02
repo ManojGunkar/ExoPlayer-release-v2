@@ -20,7 +20,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
-import com.globaldelight.boom.business.AdsController;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
@@ -41,7 +43,7 @@ public class SongsListFragment extends Fragment{
     private RecyclerView recyclerView;
     private SongListAdapter songListAdapter;
     private ProgressBar mLibLoad;
-    private AdsController mAdController;
+    private InlineAds mAdController;
 
 
     @Override
@@ -145,8 +147,15 @@ public class SongsListFragment extends Fragment{
             recyclerView.setHasFixedSize(true);
             songListAdapter = new SongListAdapter(mActivity, SongsListFragment.this, iMediaItemList, ItemType.SONGS);
 
-            mAdController = new AdsController(mActivity, recyclerView, songListAdapter, false);
-            recyclerView.setAdapter(mAdController.getAdAdapter());
+            Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+            if ( factory != null ) {
+                mAdController = factory.createInlineAds(mActivity, recyclerView, songListAdapter);
+                recyclerView.setAdapter(mAdController.getAdapter());
+            }
+            else {
+                recyclerView.setAdapter(songListAdapter);
+            }
+
             listIsEmpty(iMediaItemList.size());
         }
     }

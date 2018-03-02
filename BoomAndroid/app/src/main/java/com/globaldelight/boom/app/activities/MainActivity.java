@@ -37,8 +37,6 @@ import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.adapters.search.SearchSuggestionAdapter;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.app.fragments.SearchViewFragment;
-import com.globaldelight.boom.app.share.ShareDialog;
-import com.globaldelight.boom.business.BusinessConfig;
 import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
@@ -412,34 +410,13 @@ public class MainActivity extends MasterActivity
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Settings_Page_Opened);
                 return true;
-            case R.id.nav_store:
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startCompoundActivities(R.string.store_title);
-                    }
-                }, 300);
-                drawerLayout.closeDrawer(GravityCompat.START);
-                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Store_Page_Opened_from_Drawer);
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
-                return  true;
-            case R.id.nav_share:
-                new ShareDialog(this).show();
-                /*new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                       // startCompoundActivities(R.string.title_share);
-                    }
-                }, 300);*/
-                drawerLayout.closeDrawer(GravityCompat.START);
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
-                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Share_Opened_from_Boom);
-                return true;
+
             default:
                 BusinessModelFactory.getCurrentModel().onDrawerItemClicked(item, this);
+                drawerLayout.closeDrawer(GravityCompat.START);
                 break;
-
         }
+
         if (runnable != null) {
             item.setChecked(true);
             Handler handler = new Handler();

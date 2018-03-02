@@ -204,73 +204,10 @@
     <string name="cloud_setting_subtitle_change_account">Tippen, um den Account zu wechseln.</string>
     <string name="settings_change_account_message">Wenn Sie den Account wechseln, werden alle Daten, die mit dem aktuellen Account verlinkt sind, verloren gehen.</string>
     <string name="title_internet_alert">Keine Internetverbindung</string>
-	
-	<!-- B2B Geschäftsmodell -->
-	<string name="promocode_page_title">Noch ein Schritt</string>
-    <string name="promocode_hint">Er befindet sich in Ihrer Wave Headphone-Box.</string>
-    <string name="promocode_prompt">Aktierungscode eingeben</string>
-    <string name="verify_promocode_button_title">Verifizieren</string>
-    <string name="promocode_progress_text">Bitte warten…</string>
-    <string name="promocode_congrats_message">GLÜCKWUNSCH</string>
-    <string name="promocode_success_message">Danke für das Verifizieren. Jetzt können Sie mit Boom beginnen!</string>
-    <string name="promocode_invalid_error">Hoppla! Sie haben einen falschen Aktivierungscode eingegeben.</string>
-    <string name="promocode_limit_exceeded">Entschuldigung! Der Aktivierungscode wurde bereits verwendet.</string>
-    <string name="promocode_network_error">Hoppla! Kein Internet verfügbar.</string>
-    <string name="promocode_generic_error">Hoppla! Etwas lief falsch. Bitte später erneut versuchen.</string>
-
-    <string name="update_drawer_title">Boom aktualisieren</string>
-    <string name="update_dialog_title">Neue Aktualisierung verfügbar!</string>
-    <string name="update_dialog_message">Aktualisieren Sie auf die neues Boom-Version.</string>
-    <string name="update_now">Jetzt aktualisieren</string>
-
     <string name="remind_button_title">Später erinnern</string>
     <string name="continue_button">Fortfahren</string>
-    <string name="check_update_drawer_title">Auf Aktualisierung prüfen</string>
 
     <!-- to be localized -->
-
-    <!-- App Store Business Model -->
-    <string name="install_google">Install</string>
-
-    <string name="store_page_header">Hassle free Boomin\'</string>
-    <string name="store_page_buy_description">Buy now to #FeelYourMusic without any hassle.</string>
-    <string name="store_page_buy_share_description">Buy or Share now to #FeelYourMusic without any hassle.</string>
-    <string name="share_title">Share Boom</string>
-    <string name="store_title">Store</string>
-
-    <string name="after_purchase_store_page_header">Happy Boomin\'!</string>
-    <string name="after_purchase_store_page_buy_description">Congratulations!You can now listen to your music the way it \n was intended!</string>
-    <string name="after_purchase_buy_button">Purchased</string>
-
-    <string name="title_share">Share</string>
-    <string name="message_share">Enjoying Boom? Share with your friends and spread the word!</string>
-    <string name="playstore_link">https://play.google.com/store/apps/details?id=com.globaldelight.boom  \n\n</string>
-    <string name="share_desc">\nLet me recommend you this application\n\n</string>
-
-    <string name="buy_button">BUY NOW</string>
-
-    <string name="inapp_process_error">Error while InApp Purchase!</string>
-    <string name="inapp_process_success">Purchase Success.</string>
-    <string name="inapp_process_restore">Purchase Restored.</string>
-
-    <string name="first_notification_title">Don’t Limit Your Boomin’!</string>
-    <string name="first_notification_message">Get immersed in surround sound to experience music like never before at just %s</string>
-    <string name="second_notification_title">Just Boom it!</string>
-    <string name="second_notification_message">Unlock the magical surround sound and remove Ads at just %1$s \nor\nSpread the musical fever, share Boom with your friends, and enjoy %2$d days free trial</string>
-    <string name="second_notification_message_no_share">Unlock the magical surround sound and remove Ads at just %s</string>
-    <string name="third_notification_title">Get More For Less!</string>
-    <string name="third_notification_message">Unlock all features, remove Ads and experience music like never before for only %s</string>
-    <string name="first_effect_on_title">Congratulations!</string>
-    <string name="first_effect_on_message">Enjoy all features for free for %d hours. Boom it before it ends.</string>
-    <string name="afterTrial_effect_on_title">Missed free usage of premium features?</string>
-    <string name="afterTrial_effect_on_message">Don’t worry; enjoy your first %d songs with all the premium features for free!</string>
-    <string name="share_success_title">Congratulations!</string>
-    <string name="share_success_message">Now you can enjoy all features for free for %d days!</string>
-    <string name="video_ad_message">Watch the video to get all features unlocked for %d hours!</string>
-    <string name="video_ad_success_message">You’ve unlocked all features for %d hours.</string>
-    <string name="buy_button_title">Buy</string>
-    <string name="share_button_title">Share</string>
-    <string name="watch_button_title">Watch</string>
 
 
 </resources>

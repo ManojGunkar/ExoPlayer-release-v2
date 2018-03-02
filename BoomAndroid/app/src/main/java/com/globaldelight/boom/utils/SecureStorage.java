@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.security.KeyPairGeneratorSpec;
 import android.security.keystore.KeyProperties;
+import android.util.Base64;
 
 import com.globaldelight.boom.BuildConfig;
-import com.globaldelight.boom.business.inapp.Base64;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -67,7 +67,7 @@ public class SecureStorage {
             FileOutputStream fileStream = new FileOutputStream(path);
             CipherOutputStream encryptStream = new CipherOutputStream(fileStream, input);
 
-            byte[] encodedBytes = Base64.encode(data).getBytes("UTF-8");
+            byte[] encodedBytes = Base64.encode(data, Base64.DEFAULT);
             encryptStream.write(encodedBytes);
             encryptStream.close();
 
@@ -100,7 +100,7 @@ public class SecureStorage {
                 byteStream.write(encodedBytes, 0, length);
             }
 
-            byte[] data = Base64.decode(byteStream.toByteArray());
+            byte[] data = Base64.decode(byteStream.toByteArray(), Base64.DEFAULT);
             decryptStream.close();
 
             return verifySign(data) ? data : null;
@@ -143,7 +143,7 @@ public class SecureStorage {
             for ( int i = 0; i < bytes.length; i++ ) {
                 bytes[i] = (byte)(bytes[i] ^ 0xA1);
             }
-            return Base64.encode(bytes);
+            return new String(Base64.encode(bytes, Base64.DEFAULT), "UTF-8");
         }
         catch (Exception e) {
             return null;
@@ -167,7 +167,8 @@ public class SecureStorage {
             byte[] signature = s.sign();
 
             SharedPreferences pref = mContext.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-            pref.edit().putString(signatureKey(), Base64.encode(signature)).apply();
+            String signatureStr = new String(Base64.encode(signature, Base64.DEFAULT), "UTF-8");
+            pref.edit().putString(signatureKey(), signatureStr).apply();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -177,7 +178,7 @@ public class SecureStorage {
     private boolean verifySign(byte[] data) {
         try {
             SharedPreferences pref = mContext.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-            byte[] signature = Base64.decode(pref.getString(signatureKey(), ""));
+            byte[] signature = Base64.decode(pref.getString(signatureKey(), ""), Base64.DEFAULT);
 
             KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry)mKeyStore.getEntry(ALIAS, null);
             Signature s = Signature.getInstance(SIGN_ALGORITHM);

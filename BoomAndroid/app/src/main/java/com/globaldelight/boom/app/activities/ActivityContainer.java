@@ -15,7 +15,6 @@ import com.globaldelight.boom.app.fragments.FavouriteListFragment;
 import com.globaldelight.boom.app.fragments.RecentPlayedFragment;
 import com.globaldelight.boom.app.fragments.AboutFragment;
 import com.globaldelight.boom.app.fragments.SettingFragment;
-import com.globaldelight.boom.app.fragments.StoreFragment;
 import com.globaldelight.boom.app.fragments.UpNextListFragment;
 
 /**
@@ -43,8 +42,6 @@ public class ActivityContainer extends MasterActivity {
     private void initViews() {
         setDrawerLocked(true);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if(container == R.string.store_title)
-            toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
         ((TextView) findViewById(R.id.toolbar_txt)).setText(getResources().getString(container));
 
@@ -80,12 +77,6 @@ public class ActivityContainer extends MasterActivity {
                 setVisibleMiniPlayer(false);
                // FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Settings_Page_Opened);
-                break;
-
-            case R.string.store_title:
-                mFragment =  new StoreFragment();
-                setVisibleMiniPlayer(false);
-                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Store_Page_Opened_from_Drawer);
                 break;
 
             case R.string.header_about:

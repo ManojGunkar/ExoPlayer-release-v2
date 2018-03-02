@@ -27,7 +27,6 @@ import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.fragments.DropBoxListFragment;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
-import com.globaldelight.boom.app.share.ShareDialog;
 import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.utils.Utils;
 
@@ -187,27 +186,9 @@ public class CloudListActivity extends MasterActivity
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Settings_Page_Opened);
                 return true;
-            case R.id.nav_store:
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startCompoundActivities(R.string.store_title);
-                    }
-                }, 300);
-                drawerLayout.closeDrawer(GravityCompat.START);
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Store_Page_Opened_from_Drawer);
-                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Store_Page_Opened_from_Drawer);
-
-                return true;
-            case R.id.nav_share:
-//                Utils.shareStart(CloudListActivity.this);
-                new ShareDialog(this).show();
-                drawerLayout.closeDrawer(GravityCompat.START);
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Share_Opened_from_Boom);
-                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Share_Opened_from_Boom);
-                return true;
             default:
                 BusinessModelFactory.getCurrentModel().onDrawerItemClicked(item, this);
+                drawerLayout.closeDrawer(GravityCompat.START);
                 break;
         }
 

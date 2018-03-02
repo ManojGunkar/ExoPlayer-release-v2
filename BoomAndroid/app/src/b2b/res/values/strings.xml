@@ -1,0 +1,20 @@
+<resources>
+    <!-- B2B Business Model -->
+    <string name="promocode_page_title">One Last Step</string>
+    <string name="promocode_hint">Provided inside your Wave headphone box.</string>
+    <string name="promocode_prompt">Enter activation code</string>
+    <string name="verify_promocode_button_title">Verify</string>
+    <string name="promocode_progress_text">Please wait…</string>
+    <string name="promocode_congrats_message">CONGRATULATIONS</string>
+    <string name="promocode_success_message">Thank you for verifying. Now, you can start Boomin’!</string>
+    <string name="promocode_invalid_error">Oops! You’ve entered wrong activation code.</string>
+    <string name="promocode_limit_exceeded">Sorry! The activation code is already used.</string>
+    <string name="promocode_network_error">Oops! No Internet available.</string>
+    <string name="promocode_generic_error">Oops! Something went wrong. Please try again later.</string>
+
+    <string name="update_drawer_title">Update Boom</string>
+    <string name="update_dialog_title">New update available!</string>
+    <string name="update_dialog_message">Update to the latest version of Boom.</string>
+    <string name="update_now">Update Now</string>
+    <string name="check_update_drawer_title">Check for update</string>
+</resources>
