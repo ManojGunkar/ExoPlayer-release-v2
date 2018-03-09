@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,7 +28,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 /**
  * Created by adarsh on 08/12/17.
  */
-
+@Keep
 public class B2BModel implements BusinessModel {
 
     private static final long UPDATE_CHECK_INTERVAL = (24 * 60 * 60 * 1000); // 24Hrs

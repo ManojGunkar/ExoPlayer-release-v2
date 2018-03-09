@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.support.annotation.IntDef;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +36,7 @@ import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.utils.DefaultActivityLifecycleCallbacks;
 import com.globaldelight.boom.utils.Log;
 import com.globaldelight.boom.utils.Utils;
+import com.google.android.gms.common.annotation.KeepName;
 
 import java.util.Date;
 import java.util.Observable;
@@ -47,6 +49,7 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_S
  * Created by adarsh on 13/07/17.
  */
 
+@Keep
 public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackManager.Listener, VideoAd.Callback {
 
     private static final String TAG = "Business Model";
