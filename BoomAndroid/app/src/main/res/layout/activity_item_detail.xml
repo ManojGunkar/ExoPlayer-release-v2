@@ -23,7 +23,7 @@
             app:expandedTitleMarginBottom="40dp"
             app:expandedTitleTextAppearance="@style/ExpandedTransparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:toolbarId="@+id/toolbar">
+            app:toolbarId="@id/toolbar">
 
             <FrameLayout
                 android:layout_width="match_parent"

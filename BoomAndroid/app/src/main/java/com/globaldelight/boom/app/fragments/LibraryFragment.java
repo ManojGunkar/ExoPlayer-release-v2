@@ -11,13 +11,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.activities.MainActivity;
+import com.globaldelight.boom.app.activities.LibraryActivity;
 import com.globaldelight.boom.app.service.HeadPhonePlugReceiver;
 import com.globaldelight.boom.app.adapters.utils.SectionsPagerAdapter;
 import com.globaldelight.boom.view.CoachMarkerWindow;
@@ -172,8 +174,8 @@ public class LibraryFragment extends Fragment {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if ( !MainActivity.isPlayerExpended() ) {
-                        ((MainActivity)getActivity()).toggleSlidingPanel();
+                    if ( !LibraryActivity.isPlayerExpended() ) {
+                        ((LibraryActivity)getActivity()).toggleSlidingPanel();
                     }
                 }
             }, 1000);

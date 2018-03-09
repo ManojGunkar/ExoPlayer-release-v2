@@ -21,7 +21,6 @@ import com.globaldelight.boom.app.fragments.UpNextListFragment;
  * Created by Rahul Agarwal on 26-01-17.
  */
 
-
 public class ActivityContainer extends MasterActivity {
 
     private Toolbar toolbar;
@@ -43,15 +42,13 @@ public class ActivityContainer extends MasterActivity {
         setDrawerLocked(true);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ((TextView) findViewById(R.id.toolbar_txt)).setText(getResources().getString(container));
-
+        setTitle(container);
         findViewById(R.id.fab).setVisibility(View.GONE);
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("");
         }
         addFragment();
     }

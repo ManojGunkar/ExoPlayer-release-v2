@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -34,13 +33,9 @@ import com.globaldelight.boom.utils.Utils;
  * Created by Rahul Agarwal on 10-03-17.
  */
 
-public class CloudListActivity extends MasterActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+public class CloudListActivity extends  MainActivity{
 
-    private NavigationView navigationView;
-    private TextView toolbarTitle;
     public MenuItem cloudSyncItem;
-    Runnable runnable;
     ImageView emptyPlaceholderIcon;
     TextView emptyPlaceholderTitle;
     LinearLayout emptyPlaceHolder;
@@ -52,55 +47,7 @@ public class CloudListActivity extends MasterActivity
         initView();
     }
 
-    Runnable navigateLibrary= new Runnable() {
-        public void run() {
-            navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
-            Intent libraryIntent = new Intent(CloudListActivity.this, MainActivity.class);
-            libraryIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(libraryIntent);
-            overridePendingTransition(R.anim.com_mixpanel_android_fade_in, R.anim.com_mixpanel_android_fade_out);
-        }
-    };
-
-    Runnable navigateDropbox= new Runnable() {
-        public void run() {
-            navigationView.getMenu().findItem(R.id.drop_box).setChecked(true);
-            Fragment fragment = new DropBoxListFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
-        }
-    };
-
-    Runnable navigateGoogleDrive = new Runnable() {
-        public void run() {
-            navigationView.getMenu().findItem(R.id.google_drive).setChecked(true);
-            Fragment fragment = new GoogleDriveListFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
-        }
-    };
-
-    public void setTitle(String title){
-        toolbarTitle.setText(title);
-    }
-
     private void initView() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbarTitle = findViewById(R.id.toolbar_txt);
-        setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        setSupportActionBar(toolbar);
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setItemIconTintList(null);
-        navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
-        navigationView.setNavigationItemSelectedListener(this);
-        BusinessModelFactory.getCurrentModel().addItemsToDrawer(navigationView.getMenu(), Menu.NONE);
-
         emptyPlaceholderIcon = findViewById(R.id.list_empty_placeholder_icon);
         emptyPlaceholderTitle = findViewById(R.id.list_empty_placeholder_txt);
         emptyPlaceHolder = findViewById(R.id.list_empty_placeholder);
@@ -124,7 +71,6 @@ public class CloudListActivity extends MasterActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.cloud_menu, menu);
-
         cloudSyncItem = menu.findItem(R.id.action_cloud_sync);
         cloudSyncItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return super.onCreateOptionsMenu(menu);
@@ -140,71 +86,29 @@ public class CloudListActivity extends MasterActivity
         return false;
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(final MenuItem item) {
-        runnable = null;
-        switch (item.getItemId()){
-            case R.id.music_library:
-                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Music_library_Opened_From_Drawer);
-                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Music_library_Opened_From_Drawer);
-                runnable = navigateLibrary;
-                break;
-            case R.id.google_drive:
-                if (Utils.isOnline(this)){
-                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    runnable = navigateGoogleDrive;
-//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Google_Drive_OPENED_FROM_DRAWER);
-                    FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Google_Drive_OPENED_FROM_DRAWER);
-
-                }else {
-                    Utils.networkAlert(this);
-                    return false;
-                }
-                break;
-            case R.id.drop_box:
-                if (Utils.isOnline(this)){
-                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    runnable = navigateDropbox;
-//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.DROP_BOX_OPENED_FROM_DRAWER);
-                    FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.DROP_BOX_OPENED_FROM_DRAWER);
-
-                }else {
-                    Utils.networkAlert(this);
-                    return false;
-                }
-                break;
-            case R.id.nav_setting:
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startCompoundActivities(R.string.title_settings);
-                    }
-                }, 300);
-                drawerLayout.closeDrawer(GravityCompat.START);
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
-                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Settings_Page_Opened);
-                return true;
-            default:
-                BusinessModelFactory.getCurrentModel().onDrawerItemClicked(item, this);
-                drawerLayout.closeDrawer(GravityCompat.START);
-                break;
-        }
-
-        if (runnable != null) {
-            item.setChecked(true);
-            Handler handler = new Handler();
-            handler.postDelayed(runnable, 300);
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
+    protected void onNavigateToLibrary() {
+        navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
+        Intent libraryIntent = new Intent(CloudListActivity.this, LibraryActivity.class);
+        libraryIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(libraryIntent);
+        overridePendingTransition(R.anim.com_mixpanel_android_fade_in, R.anim.com_mixpanel_android_fade_out);
     }
 
-    private void startCompoundActivities(int activityName) {
-        Intent intent = new Intent(this, ActivityContainer.class);
-        intent.putExtra("container",activityName);
-        startActivity(intent);
+    @Override
+    protected void onNavigateToGoogleDrive() {
+        navigationView.getMenu().findItem(R.id.google_drive).setChecked(true);
+        Fragment fragment = new GoogleDriveListFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+    }
+
+    @Override
+    protected void onNavigateToDropbox() {
+        navigationView.getMenu().findItem(R.id.drop_box).setChecked(true);
+        Fragment fragment = new DropBoxListFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
     }
 
     @Override
@@ -215,9 +119,9 @@ public class CloudListActivity extends MasterActivity
 
     private void loadEveryThing(String title, boolean anim){
         if(null != title && title.equals(getResources().getString(R.string.drop_box))){
-            new Handler().postDelayed(navigateDropbox, anim ? 300 : 0);
+            new Handler().postDelayed(this::onNavigateToDropbox, anim ? 300 : 0);
         }else if(title.equals(getResources().getString(R.string.google_drive))){
-            new Handler().postDelayed(navigateGoogleDrive, anim ? 300 : 0);
+            new Handler().postDelayed(this::onNavigateToGoogleDrive, anim ? 300 : 0);
         }
     }
 

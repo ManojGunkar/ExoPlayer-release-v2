@@ -9,7 +9,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
@@ -87,7 +86,7 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
 
     private void jumpToHome() {
         Preferences.writeBoolean(OnBoardingActivity.this, Preferences.ACTION_ONBOARDING_SHOWN, false);
-        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        Intent i = new Intent(getApplicationContext(), LibraryActivity.class);
         startActivity(i);
         finish();
     }

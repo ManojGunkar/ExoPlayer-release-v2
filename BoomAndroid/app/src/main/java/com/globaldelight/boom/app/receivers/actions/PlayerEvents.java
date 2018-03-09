@@ -33,10 +33,6 @@ public interface PlayerEvents {
 
     String ACTION_CLOUD_SYNC = "ACTION_CLOUD_SYNC";
 
-    String NAVIGATE_LIBRARY = "music_library";
-    String NAVIGATE_GOOGLE_DRIVE = "google_drive";
-    String NAVIGATE_DROPBOX = "dropbox";
-
     String ACTION_SHARE_SUCCESS = "com.globaldelight.boom.SHARE_SUCCESS";
     String ACTION_SHARE_FAILED = "com.globaldelight.boom.SHARE_FAILED";
 }

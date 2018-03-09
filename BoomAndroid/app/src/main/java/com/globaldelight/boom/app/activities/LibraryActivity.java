@@ -11,7 +11,6 @@ import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -27,9 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
@@ -52,12 +49,10 @@ import static com.globaldelight.boom.app.fragments.MasterContentFragment.isUpdat
  * Created by Rahul Agarwal on 26-01-17.
  */
 
-public class MainActivity extends MasterActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class LibraryActivity extends MainActivity {
 
     private PermissionChecker permissionChecker;
     private ViewGroup mainContainer;
-    private NavigationView navigationView;
     private Fragment mSearchResult, mLibraryFragment;
     private boolean isLibraryRendered = false;
     public SearchView searchView;
@@ -65,9 +60,6 @@ public class MainActivity extends MasterActivity
     private MusicSearchHelper musicSearchHelper;
     private SearchSuggestionAdapter searchSuggestionAdapter;
     public static String[] columns = new String[]{"_id", "FEED_TITLE"};
-    Map<String, Runnable> navigationMap = new HashMap<String, Runnable>();
-    Runnable runnable;
-    String action;
 
     private BroadcastReceiver headPhoneReceiver = new BroadcastReceiver() {
         @Override
@@ -97,40 +89,6 @@ public class MainActivity extends MasterActivity
         checkPermissions();
     }
 
-    Runnable navigateLibrary = new Runnable() {
-        public void run() {
-            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-            if ( currentFragment == mLibraryFragment && mLibraryFragment != null ) {
-                return;
-            }
-            isLibraryRendered = true;
-            navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
-            mLibraryFragment = new LibraryFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, mLibraryFragment).commitAllowingStateLoss();
-        }
-    };
-
-    Runnable navigateDropbox= new Runnable() {
-        public void run() {
-            navigationView.getMenu().findItem(R.id.drop_box).setChecked(true);
-            Intent dropboxIntent = new Intent(MainActivity.this, CloudListActivity.class);
-            dropboxIntent.putExtra("title", getResources().getString(R.string.drop_box));
-            startActivity(dropboxIntent);
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        }
-    };
-
-    Runnable navigateGoogleDrive = new Runnable() {
-        public void run() {
-            navigationView.getMenu().findItem(R.id.google_drive).setChecked(true);
-            Intent driveIntent = new Intent(MainActivity.this, CloudListActivity.class);
-            driveIntent.putExtra("title", getResources().getString(R.string.google_drive));
-            startActivity(driveIntent);
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        }
-    };
-
     @Override
     protected void onResume() {
         if(null != navigationView)
@@ -149,14 +107,14 @@ public class MainActivity extends MasterActivity
     }
 
     private void checkPermissions() {
-        permissionChecker = new PermissionChecker(this, MainActivity.this, mainContainer);
+        permissionChecker = new PermissionChecker(this, LibraryActivity.this, mainContainer);
         permissionChecker.check(Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 getResources().getString(R.string.storage_permission),
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
                     public void onAccepted() {
                         isUpdateUpnextDB = true;
-                        loadEverything();
+                        onNavigateToLibrary();
                         initSearchAndArt();
                     }
 
@@ -165,15 +123,6 @@ public class MainActivity extends MasterActivity
                         finish();
                     }
                 });
-    }
-
-    private void loadEverything() {
-        Runnable navigation = navigationMap.get(action);
-        if (navigation != null) {
-            navigation.run();
-        } else {
-            navigateLibrary.run();
-        }
     }
 
     @Override
@@ -193,28 +142,9 @@ public class MainActivity extends MasterActivity
     }
 
     private void initView() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         setTitle(R.string.music_library);
-
-        navigationMap.put(PlayerEvents.NAVIGATE_LIBRARY, navigateLibrary);
-        navigationMap.put(PlayerEvents.NAVIGATE_GOOGLE_DRIVE, navigateGoogleDrive);
-        navigationMap.put(PlayerEvents.NAVIGATE_DROPBOX, navigateDropbox);
-
         mainContainer = findViewById(R.id.coordinate_main);
-
-        musicSearchHelper = new MusicSearchHelper(MainActivity.this);
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setItemIconTintList(null);
-        navigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.drawer_background));
-        navigationView.setNavigationItemSelectedListener(this);
-        BusinessModelFactory.getCurrentModel().addItemsToDrawer(navigationView.getMenu(), Menu.NONE);
+        musicSearchHelper = new MusicSearchHelper(LibraryActivity.this);
     }
 
     @Override
@@ -281,7 +211,7 @@ public class MainActivity extends MasterActivity
                 return true;
             }
         });
-        searchSuggestionAdapter = new SearchSuggestionAdapter(MainActivity.this, R.layout.card_search_suggestion_item, null, columns,null, -1000);
+        searchSuggestionAdapter = new SearchSuggestionAdapter(LibraryActivity.this, R.layout.card_search_suggestion_item, null, columns,null, -1000);
         searchView.setSuggestionsAdapter(searchSuggestionAdapter);
         registerSearchListeners();
 
@@ -368,66 +298,6 @@ public class MainActivity extends MasterActivity
         searchView.clearFocus();
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(final MenuItem item) {
-        runnable = null;
-        switch (item.getItemId()){
-            case R.id.music_library:
-                runnable = navigateLibrary;
-                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Music_library_Opened_From_Drawer);
-                break;
-            case R.id.google_drive:
-                if (Utils.isOnline(this)){
-                    runnable = navigateGoogleDrive;
-                    FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Google_Drive_OPENED_FROM_DRAWER);
-                }else {
-                    Utils.networkAlert(this);
-                    return false;
-                }
-                break;
-
-            case R.id.drop_box:
-                if (Utils.isOnline(this)){
-                    runnable = navigateDropbox;
-                    FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.DROP_BOX_OPENED_FROM_DRAWER);
-                }else {
-                    Utils.networkAlert(this);
-                    return false;
-                }
-                break;
-            case R.id.nav_setting:
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startCompoundActivities(R.string.title_settings);
-                    }
-                }, 300);
-                drawerLayout.closeDrawer(GravityCompat.START);
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
-                FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Settings_Page_Opened);
-                return true;
-
-            default:
-                BusinessModelFactory.getCurrentModel().onDrawerItemClicked(item, this);
-                drawerLayout.closeDrawer(GravityCompat.START);
-                break;
-        }
-
-        if (runnable != null) {
-            item.setChecked(true);
-            Handler handler = new Handler();
-            handler.postDelayed(runnable, 300);
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    private void startCompoundActivities(int activityName) {
-        Intent intent = new Intent(this, ActivityContainer.class);
-        intent.putExtra("container",activityName);
-        startActivity(intent);
-    }
 
     public void setVisibleLibrary(boolean visible){
         if(visible){
@@ -455,5 +325,36 @@ public class MainActivity extends MasterActivity
         LocalBroadcastManager.getInstance(this).unregisterReceiver(headPhoneReceiver);
         App.playbackManager().isLibraryResumes = false;
         super.onPause();
+    }
+
+    @Override
+    protected void onNavigateToLibrary() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if ( currentFragment == mLibraryFragment && mLibraryFragment != null ) {
+            return;
+        }
+        isLibraryRendered = true;
+        navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
+        mLibraryFragment = new LibraryFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, mLibraryFragment).commitAllowingStateLoss();
+    }
+
+    @Override
+    protected void onNavigateToDropbox() {
+        navigationView.getMenu().findItem(R.id.drop_box).setChecked(true);
+        Intent dropboxIntent = new Intent(LibraryActivity.this, CloudListActivity.class);
+        dropboxIntent.putExtra("title", getResources().getString(R.string.drop_box));
+        startActivity(dropboxIntent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+    @Override
+    protected void onNavigateToGoogleDrive() {
+        navigationView.getMenu().findItem(R.id.google_drive).setChecked(true);
+        Intent driveIntent = new Intent(LibraryActivity.this, CloudListActivity.class);
+        driveIntent.putExtra("title", getResources().getString(R.string.google_drive));
+        startActivity(driveIntent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }

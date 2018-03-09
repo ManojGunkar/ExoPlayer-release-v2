@@ -139,10 +139,6 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
         }
     }
 
-    public void setStatusBarColor(int statusBarColor) {
-//        getWindow().setStatusBarColor(statusBarColor);
-    }
-
     public void toggleSlidingPanel() {
         contentFragment.toggleSlidingPanel();
     }
