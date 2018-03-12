@@ -140,7 +140,7 @@
         android:max="100"
         android:progress="50"
         android:progressDrawable="@android:color/transparent"
-        android:thumbTint="#bfbfbf" />
+        android:thumb="@drawable/intensity_thumb" />
 
     <View
         android:layout_width="match_parent"

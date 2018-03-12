@@ -980,7 +980,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         boolean isIntensityOn = audioEffects.isIntensityOn();
         mIntensityBtn.setChecked(isIntensityOn);
         mIntensityBtn.setEnabled(isEffectOn);
-        mIntensitySeek.setDisable(!(isIntensityOn && isEffectOn));
+        mIntensitySeek.setEnabled(isIntensityOn && isEffectOn);
 
 
         boolean isEqualizerOn = audioEffects.isEqualizerOn();
