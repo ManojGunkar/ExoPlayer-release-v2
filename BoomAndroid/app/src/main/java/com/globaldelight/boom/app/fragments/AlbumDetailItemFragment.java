@@ -122,7 +122,6 @@ public class AlbumDetailItemFragment extends Fragment {
             ((IMediaItemCollection) collection.getItemAt(0)).setMediaElement(MediaController.getInstance(mActivity).getGenreTrackList(collection));
         }
         App.playbackManager().queue().addItemListToPlay((IMediaItemCollection) collection.getItemAt(0), 0);
-        detailAlbumGridAdapter.notifyDataSetChanged();
     }
 
     private class LoadAlbumItems extends AsyncTask<Void, Integer, IMediaItemBase> {
