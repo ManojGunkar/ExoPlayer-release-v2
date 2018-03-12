@@ -17,17 +17,25 @@ import java.net.Socket;
  * Created by Venkata N M on 2/8/2017.
  */
 
-public class ConnectivityReceiver
-        extends BroadcastReceiver {
+public class ConnectivityReceiver extends BroadcastReceiver {
 
+    private Context mContext;
     private ConnectivityReceiverListener connectivityReceiverListener;
-    private static boolean isNWConnected = false;
 
-    public ConnectivityReceiver(){}
 
-    public ConnectivityReceiver(ConnectivityReceiverListener connectivityReceiverListener) {
+    public ConnectivityReceiver(Context context, ConnectivityReceiverListener connectivityReceiverListener) {
         super();
+        mContext = context.getApplicationContext();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        mContext.registerReceiver(this, filter);
         this.connectivityReceiverListener = connectivityReceiverListener;
+    }
+
+
+    public void unregister() {
+        mContext.unregisterReceiver(this);
+        this.connectivityReceiverListener = null;
     }
 
     @Override
@@ -35,13 +43,10 @@ public class ConnectivityReceiver
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null
-                && activeNetwork.isConnected();
-
-        if (connectivityReceiverListener != null && isNWConnected != isConnected) {
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
+        if (connectivityReceiverListener != null ) {
             connectivityReceiverListener.onNetworkConnectionChanged(isConnected);
         }
-        isNWConnected = isConnected;
     }
 
     public static boolean isNetworkAvailable(Context context, boolean showToast) {
