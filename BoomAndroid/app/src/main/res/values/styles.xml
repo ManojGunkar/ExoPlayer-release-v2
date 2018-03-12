@@ -24,34 +24,11 @@
     </style>
 
 
-    <style name="AppTheme.Search" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:popupMenuStyle">@style/PopupMenu</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowAnimationStyle">@null</item>
-        <item name="searchViewStyle">@style/ToolbarTheme</item>
-        <item name="android:textColorHint">@android:color/white</item>
-    </style>
-
-
-    <style name="AppTheme.List" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-        <item name="searchViewStyle">@style/AppTheme.ToolbarTheme</item>
-        <item name="android:textColorHint">@android:color/white</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:itemBackground">@color/dialog_background</item>
-    </style>
-
-
-    <style name="AppTheme.ToolbarTheme">
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:textColorSecondary">@android:color/white</item>
+    <style name="AppTheme.Toolbar" parent="AppTheme.AppBarOverlay">
+        <item name="android:textColorPrimary">@color/toolbar_txt</item>
+        <item name="android:textColorSecondary">@color/toolbar_txt</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:background">@color/colorPrimary</item>
-        <item name="android:fontFamily">@font/titillium_web</item>
     </style>
 
     <style name="GenericProgressBackground" parent="android:Theme">
@@ -93,24 +70,6 @@
         <item name="android:background">@color/black_shade</item>
     </style>
 
-    <style name="MySearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <item name="queryBackground">@android:color/white</item>
-        <item name="submitBackground">@color/colorAccent</item>
-        <item name="closeIcon">@android:drawable/ic_menu_close_clear_cancel</item>
-        <item name="goIcon">@android:drawable/ic_menu_search</item>
-        <item name="searchHintIcon">@android:drawable/ic_menu_search</item>
-        <item name="android:width">10000dp</item>
-        <item name="android:fontFamily">@font/titillium_web</item>
-    </style>
-
-    <style name="ThemeToolbar" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">@color/colorPrimary</item>
-        <item name="colorPrimary">@android:color/white</item>
-        <item name="android:textColorSecondary">@color/colorAccent</item>
-        <item name="searchViewStyle">@style/MySearchViewStyle</item>
-        <item name="android:fontFamily">@font/titillium_web</item>
-
-    </style>
 
     <style name="ExpandedTransparent">
         <item name="android:textColor">@android:color/white</item>
@@ -183,18 +142,6 @@
         <item name="android:textColor">@color/music_tab_selected_color</item>
     </style>
 
-    <style name="ToolbarTheme" parent="Widget.AppCompat.SearchView">
-        <item name="searchViewStyle">@android:style/Widget.Material.Light.SearchView</item>
-        <item name="android:textColorPrimary">@color/toolbar_txt</item>
-        <item name="android:textColorSecondary">@color/toolbar_txt</item>
-        <item name="android:textColorHint">@color/toolbar_txt</item>
-        <item name="android:background">#1A0d0f11</item>
-        <item name="android:textSize">20dp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="searchHintIcon">@null</item>
-        <item name="android:fontFamily">@font/titillium_web</item>
-    </style>
-
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
@@ -209,7 +156,6 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/transparent</item>
-        <item name="android:autoCompleteTextViewStyle">@style/PopupMenu</item>
     </style>
 
 </resources>
