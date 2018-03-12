@@ -12,18 +12,6 @@
         <item name="android:fontFamily">@font/titillium_web</item>
     </style>
 
-
-    <style name="WidgetTheme">
-        <item name="android:textColorHint">@android:color/white</item>
-        <item name="android:fontFamily">@font/titillium_web</item>
-    </style>
-
-    <style name="PopupMenu" parent="android:Widget.Holo.Light.ListPopupWindow">
-        <item name="android:popupBackground">#888888</item>
-        <item name="android:fontFamily">@font/titillium_web</item>
-    </style>
-
-
     <style name="AppTheme.Toolbar" parent="AppTheme.AppBarOverlay">
         <item name="android:textColorPrimary">@color/toolbar_txt</item>
         <item name="android:textColorSecondary">@color/toolbar_txt</item>
@@ -43,43 +31,15 @@
         <item name="android:indeterminate">true</item>
     </style>
 
-    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:fontFamily">@font/titillium_web</item>
-    </style>
-
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
         <item name="android:fontFamily">@font/titillium_web</item>
     </style>
 
 
-    <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="android:displayOptions">homeAsUp</item>
-        <item name="android:fontFamily">@font/titillium_web</item>
-    </style>
-
-
-    <style name="FullscreenTheme" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
-        <item name="android:windowActionBarOverlay">true</item>
-    </style>
-
-    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/black_shade</item>
-    </style>
-
-
     <style name="ExpandedTransparent">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">24sp</item>
-    </style>
-
-    <style name="AppTheme.FullScreen" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowActionBarOverlay">true</item>
     </style>
 
     <style name="RedSwitch" parent="Theme.AppCompat.Light">
@@ -112,7 +72,6 @@
     <style name="AppTheme.PromoCode" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:itemBackground">@color/dialog_background</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
@@ -127,10 +86,6 @@
 
     <style name="AdsTheme">
         <item name="android:background">@drawable/ads_layout_bg</item>
-    </style>
-
-    <style name="BoomText">
-        <item name="android:fontFamily">@font/titillium_web</item>
     </style>
 
     <style name="NavigationViewStyle">
