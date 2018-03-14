@@ -3,6 +3,7 @@ package com.globaldelight.boom.utils;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,6 +34,7 @@ import android.view.WindowManager;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -59,7 +61,7 @@ import static android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
  */
 
 public class Utils {
-    private static BoomDialogView progressLoader;
+    private static ProgressDialog progressLoader;
     public static final int SHARE_COMPLETE = 1001;
     public static final int PURCHASE_FLOW_LAUNCH = 1002;
     public static final int LARGE_IMAGE_SIZE_DP = 128;
@@ -67,6 +69,28 @@ public class Utils {
 
     private Utils(Context context) {
     }
+
+    public static String getDeviceId(Context context){
+        return Settings.Secure.getString(context.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+    }
+
+    public static String getModelNumber(){
+        return Build.MODEL;
+    }
+
+    public static String getVersionCode(){
+        return BuildConfig.VERSION_NAME;
+    }
+
+    public static String getCountry(Context context){
+        return context.getResources().getConfiguration().locale.getCountry();
+    }
+
+    public static String getLocale(Context context){
+        return context.getResources().getConfiguration().locale.getLanguage();
+    }
+
 
     public static int dpToPx(Context context, int dp) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
@@ -243,7 +267,8 @@ public class Utils {
 
     public static void showProgressLoader(Context context){
         if((null == progressLoader || !progressLoader.isShowing()) && ConnectivityReceiver.isNetworkAvailable(context, true)) {
-            progressLoader = new BoomDialogView(context);
+            progressLoader = new ProgressDialog(context);
+            progressLoader.setMessage("Please wait...");
             progressLoader.setCanceledOnTouchOutside(false);
             progressLoader.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
@@ -271,8 +296,6 @@ public class Utils {
                 .titleColor(ContextCompat.getColor(context, R.color.dialog_title))
                 .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
                 .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
                 .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
                 .typeface(ResourcesCompat.getFont(context, R.font.titilliumweb_semibold), ResourcesCompat.getFont(context, R.font.titilliumweb_regular));
 

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_background">
+
+
+    <ImageView
+        android:id="@+id/img_logo_about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="93dp"
+        android:src="@drawable/ic_boom_about_icon" />
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txt_powered"
+        android:layout_alignStart="@+id/img_logo_about"
+        android:layout_marginBottom="27dp"
+        android:layout_marginStart="7dp"
+        android:background="@drawable/ic_boom_text_icon" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/txt_powered"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="75dp"
+        android:text="@string/boom_about_text"
+        android:textColor="@color/black"
+        android:textSize="24sp" />
+
+
+</RelativeLayout>

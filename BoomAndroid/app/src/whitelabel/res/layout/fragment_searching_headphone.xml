@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <com.globaldelight.boom.view.SearchingView
+            android:id="@+id/searching_headphones"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:rb_color="#f28a95"
+            app:rb_duration="3000"
+            app:rb_radius="40dp"
+            app:rb_rippleAmount="6"
+            app:rb_scale="5">
+
+            <ImageView
+                android:id="@+id/img_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/connect_logo" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/txt_searching_headphone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/img_logo"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="@string/searching_headphone"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+        </com.globaldelight.boom.view.SearchingView>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/search_desc"
+        android:id="@+id/appCompatTextView2" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/bluetooth_settings_button"
+        style="@style/AppTheme.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:text="@string/setting"
+        />
+
+</LinearLayout>

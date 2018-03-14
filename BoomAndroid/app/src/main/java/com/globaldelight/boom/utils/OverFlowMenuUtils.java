@@ -91,7 +91,6 @@ public class OverFlowMenuUtils {
         String content = activity.getResources().getString(R.string.delete_dialog_txt, itemTitle);
         Utils.createDialogBuilder(activity).title(R.string.delete_dialog_title)
                 .content(content)
-                .backgroundColor(ContextCompat.getColor(activity, R.color.dialog_background))
                 .positiveText(activity.getResources().getString(R.string.ok))
                 .negativeText(activity.getResources().getString(R.string.dialog_txt_cancel))
                 .onPositive(new MaterialDialog.SingleButtonCallback() {

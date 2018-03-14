@@ -631,8 +631,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     private void updateMiniPlayerEffectUI(boolean enable) {
         mMiniPlayerEffect.setImageResource(enable ?
-                R.drawable.ic_miniplayer_effects_on :
-                R.drawable.ic_miniplayer_effects);
+                R.drawable.ic_effects_active_on :
+                R.drawable.ic_effects_active);
     }
 
     public void setMiniPlayerVisible(boolean isMiniPlayerVisible) {

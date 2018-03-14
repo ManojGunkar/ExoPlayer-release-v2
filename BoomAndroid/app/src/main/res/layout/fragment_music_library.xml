@@ -17,7 +17,7 @@
         android:background="@color/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         app:tabIndicatorHeight="@dimen/pager_tab_indicator_height"
-        app:tabIndicatorColor="@color/colorAccent"
+        app:tabIndicatorColor="@color/music_tab_indicator_color"
         app:tabTextColor="@color/music_tab_selected_color"
         app:tabSelectedTextColor="@color/music_tab_normal_color"
         app:tabTextAppearance="@style/CustomTabBarStyle"

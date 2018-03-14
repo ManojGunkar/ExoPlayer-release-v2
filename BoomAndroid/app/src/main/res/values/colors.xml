@@ -4,6 +4,12 @@
     <color name="colorPrimary">#171718</color>
     <color name="colorPrimaryDark">#0f0f10</color>
     <color name="colorAccent">#00b0ff</color>
+    <color name="textColorPrimary">@color/white</color>
+    <color name="textColorSecondary">@android:color/darker_gray</color>
+    <color name="colorRipple">#1FEA0631</color>
+    <color name="colorButton">#10EA0631</color>
+
+    <color name="search_view_fade">@color/colorPrimary</color>
 
     <color name="glowyellow">#f2ff00</color>
     <color name="black_shade">#222327</color>
@@ -57,13 +63,19 @@
 
     <color name="player_track_title">@color/white</color>
     <color name="player_track_sub_title">@color/white</color>
-
+    <color name="actionbar_text_color">@color/white</color>
+    <color name="large_player_action_bar">@color/transparent</color>
     <color name="large_player_seek_time">@color/white</color>
 
     <color name="effect_active">@color/white</color>
     <color name="effect_inactive">#5f5d61</color>
     <color name="effect_checked">@color/effect_active</color>
+    <color name="eq_active">@color/white</color>
     <color name="fullbass_inactive">#4f4d51</color>
+    <color name="fullbass_inactive_background">@color/fullbass_inactive</color>
+    <color name="fullbass_border_checked">@color/colorAccent</color>
+    <color name="fullbass_border_disabled">@color/fullbass_inactive</color>
+    <color name="fullbass_border">@color/white</color>
     <color name="effect_intensity_seek_background">#313131</color>
     <color name="effect_intensity_seek_inactive">#5f5d61</color>
     <color name="effect_intensity_seek_active">#bfbfbf</color>

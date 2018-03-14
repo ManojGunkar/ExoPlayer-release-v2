@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:text="@string/onboard_screen_3_main_tx"
         android:layout_marginTop="@dimen/onboarding_txt_title_margin_top"
-        android:textColor="@color/white"
+        android:textColor="@color/textColorPrimary"
         android:textSize="@dimen/onboarding_txt_title_size"
         android:gravity="center_horizontal"
         android:textStyle="bold"/>
@@ -34,7 +34,7 @@
         android:layout_marginRight="@dimen/onboarding_txt_title_margin_side"
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"
-        android:textColor="@android:color/darker_gray"
+        android:textColor="@color/textColorSecondary"
         android:textSize="15dp" />
 
 </LinearLayout>

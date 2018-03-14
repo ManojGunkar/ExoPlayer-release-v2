@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
@@ -117,6 +118,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initViews() {
+
+        if (BuildConfig.FLAVOR.equals("whitelabel") ) {
+            rootView.findViewById(R.id.headset_group).setVisibility(View.GONE);
+        }
+
         RecyclerView recyclerView = rootView.findViewById(R.id.headset_recycler) ;
         LinearLayout dropbox = rootView.findViewById(R.id.setting_dropbox_panel);
         dropbox.setOnClickListener(this);

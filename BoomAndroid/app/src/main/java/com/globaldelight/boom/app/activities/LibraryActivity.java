@@ -1,13 +1,17 @@
 package com.globaldelight.boom.app.activities;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -25,7 +29,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.TranslateAnimation;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
@@ -223,6 +232,7 @@ public class LibraryActivity extends MainActivity {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.search_container, mSearchResult).commitAllowingStateLoss();
                 setVisibleLibrary(false);
+                animateSearchToolbar(1, true, true);
                 return true;
             }
 
@@ -230,6 +240,9 @@ public class LibraryActivity extends MainActivity {
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 setVisibleLibrary(true);
                 searchSuggestionAdapter.changeCursor(null);
+                if (searchMenuItem.isActionViewExpanded()) {
+                    animateSearchToolbar(1, false, false);
+                }
                 return true;
             }
         });
@@ -286,6 +299,79 @@ public class LibraryActivity extends MainActivity {
             }
         });
     }
+
+    private void animateSearchToolbar(int numberOfMenuIcon, boolean containsOverflow, boolean show) {
+
+        mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.search_view_fade));
+
+        if (show) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                int width = mToolbar.getWidth() -
+                        (containsOverflow ? getResources().
+                                getDimensionPixelSize(R.dimen.abc_action_button_min_width_overflow_material) : 0) -
+                        ((getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_material)
+                                * numberOfMenuIcon) / 2);
+                Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(mToolbar,
+                        isRtl(getResources())
+                                ? mToolbar.getWidth() - width : width, mToolbar.getHeight()
+                                / 2, 0.0f, (float) width);
+                createCircularReveal.setDuration(250);
+                createCircularReveal.start();
+            } else {
+                TranslateAnimation translateAnimation = new TranslateAnimation(0.0f, 0.0f, (float) (-mToolbar.getHeight()), 0.0f);
+                translateAnimation.setDuration(220);
+                mToolbar.clearAnimation();
+                mToolbar.startAnimation(translateAnimation);
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                int width = mToolbar.getWidth() -
+                        (containsOverflow ? getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_overflow_material) : 0) -
+                        ((getResources().getDimensionPixelSize(R.dimen.abc_action_button_min_width_material) * numberOfMenuIcon) / 2);
+                Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(mToolbar,
+                        isRtl(getResources()) ? mToolbar.getWidth() - width : width, mToolbar.getHeight() / 2, (float) width, 0.0f);
+                createCircularReveal.setDuration(250);
+                createCircularReveal.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        mToolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    }
+                });
+                createCircularReveal.start();
+            } else {
+                AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
+                Animation translateAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, (float) (-mToolbar.getHeight()));
+                AnimationSet animationSet = new AnimationSet(true);
+                animationSet.addAnimation(alphaAnimation);
+                animationSet.addAnimation(translateAnimation);
+                animationSet.setDuration(220);
+                animationSet.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        mToolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                mToolbar.startAnimation(animationSet);
+            }
+        }
+    }
+
+    private boolean isRtl(Resources resources) {
+        return resources.getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+    }
+
+
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {

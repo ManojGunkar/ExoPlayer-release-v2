@@ -10,30 +10,39 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.v7.widget.AppCompatTextView
+            <LinearLayout
+                android:id="@+id/headset_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/title_headphone_type"
-                android:layout_marginLeft="@dimen/setting_item_title_margine_left"
-                android:layout_marginTop="@dimen/setting_item_title_margine_top"
-                android:textColor="@color/setting_item_header_title"
-                android:textStyle="bold"
-                android:textSize="@dimen/settings_item_title_txt"/>
+                android:orientation="vertical">
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_headphone_type"
+                    android:layout_marginLeft="@dimen/setting_item_title_margine_left"
+                    android:layout_marginTop="@dimen/setting_item_title_margine_top"
+                    android:textColor="@color/setting_item_header_title"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/settings_item_title_txt"/>
 
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/headset_recycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/setting_item_margine_header"
-                android:overScrollMode="never" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/headset_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/setting_item_margine_header"
+                    android:overScrollMode="never" />
 
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:layout_marginTop="@dimen/setting_item_title_margine_top"
-                android:background="@color/setting_separator" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginTop="@dimen/setting_item_title_margine_top"
+                    android:background="@color/setting_separator" />
+
+            </LinearLayout>
+
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="match_parent"

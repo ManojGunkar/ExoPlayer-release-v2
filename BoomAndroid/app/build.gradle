@@ -96,6 +96,14 @@ android {
             buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    "null"
             buildConfigField "String",  'FEEDBACK_URL',               STRING("https://boom3dapp.com/feedback/android/deviceid/%s/language/%s/")
         }
+
+        whitelabel {
+            resConfigs "en"
+
+            buildConfigField "String",  'FLURRY_API_KEY',            "null"
+            buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    "null"
+            buildConfigField "String",  'FEEDBACK_URL',               STRING("https://boom3dapp.com/feedback/android/deviceid/%s/language/%s/")
+        }
     }
 
     sourceSets {

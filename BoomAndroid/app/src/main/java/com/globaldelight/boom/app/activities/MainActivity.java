@@ -27,16 +27,17 @@ abstract public class MainActivity extends MasterActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     protected NavigationView navigationView;
+    protected Toolbar mToolbar;
 
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 

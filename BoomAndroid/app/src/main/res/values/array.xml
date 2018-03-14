@@ -147,4 +147,12 @@
         <item>@integer/MUSIC</item>
     </integer-array>
 
+    <array name="onboarding_pages">
+        <item>@layout/onboard_0</item>
+        <item>@layout/onboard_1</item>
+        <item>@layout/onboard_2</item>
+        <item>@layout/onboard_3</item>
+    </array>
+
+
 </resources>
