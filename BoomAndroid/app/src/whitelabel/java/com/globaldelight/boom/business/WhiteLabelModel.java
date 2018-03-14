@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.annotation.Keep;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +30,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  * Created by Manoj Kumar on 24-01-2018.
  */
 
+@Keep
 public class WhiteLabelModel implements BusinessModel, BluetoothConnection.Callback, PlaybackManager.Listener {
 
     private static final String TAG = "WhiteLabelModel";

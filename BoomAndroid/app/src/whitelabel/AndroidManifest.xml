@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.globaldelight.boom">
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <application>
+        <meta-data android:name="business-model" android:value="com.globaldelight.boom.business.WhiteLabelModel" />
+
+        <activity
+            android:name=".app.activities.ConnectionActivity"
+            android:parentActivityName=".app.activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Statusbar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".app.activities.MainActivity" />
+        </activity>
+
+    </application>
+
+</manifest>

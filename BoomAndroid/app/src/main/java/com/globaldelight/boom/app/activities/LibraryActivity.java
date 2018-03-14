@@ -224,7 +224,7 @@ public class LibraryActivity extends MainActivity {
         searchView.setSuggestionsAdapter(searchSuggestionAdapter);
         registerSearchListeners();
 
-        MenuItemCompat.setOnActionExpandListener(searchMenuItem, new MenuItemCompat.OnActionExpandListener() {
+        searchMenuItem.setOnActionExpandListener( new MenuItem.OnActionExpandListener() {
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {

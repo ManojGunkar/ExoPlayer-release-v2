@@ -1,6 +1,8 @@
 <resources>
 
     <string name="app_name">Tunes Audio</string>
+    <string name="start_boomin">Let\'s Get Started</string>
+
     <string name="boom_about_text"><i>Powered by</i> <b>Boom</b></string>
     <string name="bluetooth_off">Bluetooth is Off</string>
     <string name="turn_on_bluetooth">Turn On Bluetooth</string>
