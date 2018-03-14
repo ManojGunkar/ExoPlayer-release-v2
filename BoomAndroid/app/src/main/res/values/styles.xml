@@ -10,6 +10,7 @@
         <item name="android:itemBackground">@color/dialog_background</item>
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
         <item name="android:fontFamily">@font/titillium_web</item>
+        <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="searchViewStyle">@style/SearchViewStyle</item>
     </style>
 
@@ -116,6 +117,15 @@
 
     <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Borderless.Colored">
         <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="DialogTheme" parent="Theme.AppCompat.Dialog">
+        <item name="android:alertDialogStyle">@style/AlertDialogTheme</item>
+        <item name="android:colorBackground">@color/dialog_background</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="android:background">@color/dialog_background</item>
     </style>
 
     <style name="SearchViewStyle" parent="Widget.AppCompat.Light.SearchView">
