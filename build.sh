@@ -5,7 +5,7 @@ BUILD_TOOLS="${ANDROID_HOME}/build-tools/24.0.3"
 APK_DIR_ROOT=app/build/outputs/apk
 MAPPING_ROOT_DIR=app/build/outputs/mapping
 EXPIRY_DATE=$(date -v+1m '+"%d-%m-%Y"')
-declare -a FLAVOURS=(b2b demo store production)
+declare -a FLAVOURS=(b2b demo store production whitelabel)
 
 check_error() {
 	if [ $1 -ne 0 ]; then
