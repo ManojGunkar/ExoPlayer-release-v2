@@ -25,19 +25,6 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="GenericProgressBackground" parent="android:Theme">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">fill_parent</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="GenericProgressIndicator" parent="@android:style/Widget.DeviceDefault.ProgressBar.Large">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:indeterminate">true</item>
-    </style>
-
-
 
     <style name="ExpandedTransparent">
         <item name="android:textColor">@android:color/white</item>
@@ -57,18 +44,6 @@
 
     <style name="TabTextAppearance" parent="Widget.Design.TabLayout">
         <item name="android:textSize">@dimen/music_tab_txt_size</item>
-    </style>
-
-
-    <style name="cart_dialog" parent="@android:style/Theme.Holo.Light.Dialog">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:backgroundDimEnabled">true</item>
-        <item name="android:backgroundDimAmount">0.6</item>
     </style>
 
     <style name="AppTheme.PromoCode" parent="AppTheme">
