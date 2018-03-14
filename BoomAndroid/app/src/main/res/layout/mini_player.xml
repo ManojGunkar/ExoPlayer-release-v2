@@ -51,7 +51,7 @@
                 android:ellipsize="end"
                 android:textColor="@color/player_track_title"
                 android:textAlignment="center"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/mini_player_song_sub_title"
@@ -62,7 +62,7 @@
                 android:textStyle="normal"
                 android:textColor="@color/player_track_sub_title"
                 android:textAlignment="center"
-                android:textSize="16sp"/>
+                android:textSize="14sp"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
