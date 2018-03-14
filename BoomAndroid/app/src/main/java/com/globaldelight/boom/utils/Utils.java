@@ -296,7 +296,6 @@ public class Utils {
                 .titleColor(ContextCompat.getColor(context, R.color.dialog_title))
                 .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
                 .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
                 .typeface(ResourcesCompat.getFont(context, R.font.titilliumweb_semibold), ResourcesCompat.getFont(context, R.font.titilliumweb_regular));
 
     }
