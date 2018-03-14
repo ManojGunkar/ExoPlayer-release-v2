@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.LibraryActivity;
 import com.globaldelight.boom.app.service.HeadPhonePlugReceiver;
@@ -101,6 +102,11 @@ public class LibraryFragment extends Fragment {
     }
 
     public void useCoachMarkWindow(){
+        if (BuildConfig.FLAVOR == "whitelabel" ) {
+            autoOpenPlayer();
+            return;
+        }
+
         if( HeadPhonePlugReceiver.isHeadsetConnected() ){
             autoOpenPlayer();
             Preferences.writeBoolean(mActivity, HEADPHONE_CONNECTED, false);
@@ -155,6 +161,10 @@ public class LibraryFragment extends Fragment {
     }
 
     public void chooseCoachMarkWindow(boolean isPlayerExpended, boolean isLibraryRendered) {
+        if (BuildConfig.FLAVOR == "whitelabel" ) {
+            return;
+        }
+
         if ( Preferences.readBoolean(mActivity, TOOLTIP_SWITCH_EFFECT_SCREEN_EFFECT, true) ) {
             return;
         }
