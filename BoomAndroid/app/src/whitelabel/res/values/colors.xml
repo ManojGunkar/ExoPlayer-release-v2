@@ -4,8 +4,8 @@
     <color name="colorPrimary">#EA0631</color>
     <color name="colorPrimaryDark">#b20627 </color>
     <color name="colorAccent">#EA0631</color>
-    <color name="textColorPrimary">@android:color/primary_text_light</color>
-    <color name="textColorSecondary">@android:color/secondary_text_light</color>
+    <color name="textColorPrimary">@color/black</color>
+    <color name="textColorSecondary">#5d5d5e</color>
     <color name="colorRipple">#1FEA0631</color>
     <color name="colorButton">#10EA0631</color>
 
@@ -56,8 +56,8 @@
 
     <color name="library_separator">#C0C0C0</color>
 
-    <color name="library_header_title">@color/black</color>
-    <color name="library_header_sub_title">#5d5d5e</color>
+    <color name="library_header_title">@color/textColorPrimary</color>
+    <color name="library_header_sub_title">@color/textColorSecondary</color>
 
     <color name="library_search_header_title">@color/black</color>
     <color name="library_search_header_more">@color/colorAccent</color>
@@ -88,22 +88,22 @@
     <color name="dialog_background">@color/white</color>
     <color name="dialog_submit_positive">@color/colorAccent</color>
     <color name="dialog_submit_negative">#7e7e7e</color>
-    <color name="dialog_content">#5d5d5e</color>
+    <color name="dialog_content">@color/textColorSecondary</color>
     <color name="dialog_widget">@color/white</color>
     <color name="dialog_selection">#D3D3D3</color>
     <color name="dialog_txt">#4f4f4f</color>
     <color name="dialog_selected_txt">@color/colorAccent</color>
-    <color name="dialog_list_separator">#1a1a1b</color>
+    <color name="dialog_list_separator">#f0f0f0</color>
 
     <color name="upnext_header_title">@color/white</color>
     <color name="upnext_header_clear">@color/white</color>
     <color name="upnext_header_separator">#313232</color>
-    <color name="upnext_header_background">@color/black</color>
+    <color name="upnext_header_background">@color/textColorPrimary</color>
     <color name="upnext_track_title">@color/black</color>
     <color name="upnext_playing_title">@color/colorAccent</color>
-    <color name="upnext_track_sub_title">#5d5d5e</color>
-    <color name="upnext_delete_background">@color/black</color>
-    <color name="swipe_delete_undo_btn">#fff084</color>
+    <color name="upnext_track_sub_title">@color/textColorSecondary</color>
+    <color name="upnext_delete_background">#D3D3D3</color>
+    <color name="swipe_delete_undo_btn">@color/colorAccent</color>
 
     <color name="coach_mark_background">@color/colorAccent</color>
     <color name="coachbubble">#9b002d</color>
