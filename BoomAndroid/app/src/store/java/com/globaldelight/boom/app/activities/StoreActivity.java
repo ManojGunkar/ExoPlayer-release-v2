@@ -41,16 +41,15 @@ public class StoreActivity extends MasterActivity {
         toolbar = findViewById(R.id.toolbar);
         toolbar.showOverflowMenu();
         setSupportActionBar(toolbar);
-        ((TextView) findViewById(R.id.toolbar_txt)).setText(R.string.store_title);
-
-        findViewById(R.id.fab).setVisibility(View.GONE);
-
-        // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("");
         }
+
+        setTitle(R.string.store_title);
+        findViewById(R.id.fab).setVisibility(View.GONE);
+
+        // Show the Up button in the action bar.
         addFragment();
     }
 
