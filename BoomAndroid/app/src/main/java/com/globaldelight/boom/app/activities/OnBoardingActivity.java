@@ -90,7 +90,7 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
 
     private void jumpToHome() {
         Preferences.writeBoolean(OnBoardingActivity.this, Preferences.ACTION_ONBOARDING_SHOWN, false);
-        Intent i = new Intent(getApplicationContext(), LibraryActivity.class);
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(i);
         finish();
     }

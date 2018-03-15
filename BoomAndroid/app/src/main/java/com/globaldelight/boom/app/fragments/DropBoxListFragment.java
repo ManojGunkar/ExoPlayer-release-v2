@@ -6,9 +6,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.View;
 
-import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -16,7 +14,6 @@ import com.globaldelight.boom.collection.cloud.DropboxMediaList;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.loaders.LoadDropBoxList;
-import com.globaldelight.boom.app.activities.CloudListActivity;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.helpers.DropBoxAPI;
 
@@ -59,7 +56,6 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
     }
 
     private void initViews() {
-        ((CloudListActivity)mActivity).setTitle(getResources().getString(R.string.drop_box));
         Utils.showProgressLoader(getContext());
         if ( !DropBoxAPI.getInstance(mActivity).isLoggedIn() ){
             isDropboxAccountConfigured = false;

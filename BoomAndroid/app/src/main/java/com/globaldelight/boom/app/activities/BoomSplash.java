@@ -102,7 +102,7 @@ public class BoomSplash extends AppCompatActivity {
         if(Preferences.readBoolean(this, Preferences.ACTION_ONBOARDING_SHOWN, true)){
             i = new Intent(BoomSplash.this, OnBoardingActivity.class);
         }else{
-            i = new Intent(BoomSplash.this, LibraryActivity.class);
+            i = new Intent(BoomSplash.this, MainActivity.class);
         }
         startActivity(i);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

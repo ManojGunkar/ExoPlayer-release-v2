@@ -187,10 +187,8 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
             if (size < 1) {
                 Drawable imgResource = getResources().getDrawable(R.drawable.ic_favorites_placeholder, null);
                 String placeHolderTxt = getResources().getString(R.string.favorite_empty_placeholder_txt);
-//                ((LibraryActivity) mActivity).setEmptyPlaceHolder(imgResource, placeHolderTxt, true);
                 rootView.setVisibility(View.GONE);
             } else {
-//                ((LibraryActivity) mActivity).setEmptyPlaceHolder(null, null, false);
                 rootView.setVisibility(View.VISIBLE);
             }
         }
