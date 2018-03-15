@@ -18,6 +18,7 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "MusicSearchDB";
     private static final String TABLE_SEARCH = "search_table";
     private Context context;
+    private volatile Boolean mFinishedLoading = false;
 
     public static final String ITEM_KEY_ID = "_id";
     public static final String SEARCH_KEY = "FEED_TITLE";
@@ -79,6 +80,8 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
         if (songListCursor != null) {
             songListCursor.close();
         }
+
+        mFinishedLoading = true;
     }
 
     private synchronized void addSong(String title) {
@@ -110,7 +113,10 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public synchronized Cursor getSongList(String arg) {
+    public Cursor getSongList(String arg) {
+        if ( !mFinishedLoading ) {
+            return null;
+        }
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor c = db.query(true, TABLE_SEARCH, new String[] { ITEM_KEY_ID,
                         SEARCH_KEY }, SEARCH_KEY + " LIKE ?",
