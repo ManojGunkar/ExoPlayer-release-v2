@@ -31,8 +31,6 @@ public interface PlayerEvents {
     String ACTION_ON_NETWORK_CONNECTED="ACTION_ON_NETWORK_CONNECTED";
     String ACTION_ON_NETWORK_DISCONNECTED="ACTION_ON_NETWORK_DISCONNECTED";
 
-    String ACTION_CLOUD_SYNC = "ACTION_CLOUD_SYNC";
-
     String ACTION_SHARE_SUCCESS = "com.globaldelight.boom.SHARE_SUCCESS";
     String ACTION_SHARE_FAILED = "com.globaldelight.boom.SHARE_FAILED";
 }

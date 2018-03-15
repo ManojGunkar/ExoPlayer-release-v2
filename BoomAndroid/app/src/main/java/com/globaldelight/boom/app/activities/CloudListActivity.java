@@ -35,11 +35,6 @@ import com.globaldelight.boom.utils.Utils;
 
 public class CloudListActivity extends  MainActivity{
 
-    public MenuItem cloudSyncItem;
-    ImageView emptyPlaceholderIcon;
-    TextView emptyPlaceholderTitle;
-    LinearLayout emptyPlaceHolder;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,43 +43,10 @@ public class CloudListActivity extends  MainActivity{
     }
 
     private void initView() {
-        emptyPlaceholderIcon = findViewById(R.id.list_empty_placeholder_icon);
-        emptyPlaceholderTitle = findViewById(R.id.list_empty_placeholder_txt);
-        emptyPlaceHolder = findViewById(R.id.list_empty_placeholder);
-
         setTitle(getIntent().getStringExtra("title"));
         loadEveryThing(getIntent().getStringExtra("title"), false);
     }
 
-    @Override
-    public void onBackPressed() {
-        if (isPlayerExpended()) {
-            toggleSlidingPanel();
-        } else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            moveTaskToBack(true);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.cloud_menu, menu);
-        cloudSyncItem = menu.findItem(R.id.action_cloud_sync);
-        cloudSyncItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if(id == R.id.action_cloud_sync){
-            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(PlayerEvents.ACTION_CLOUD_SYNC));
-            return true;
-        }
-        return false;
-    }
 
     @Override
     protected void onNavigateToLibrary() {
@@ -92,7 +54,7 @@ public class CloudListActivity extends  MainActivity{
         Intent libraryIntent = new Intent(CloudListActivity.this, LibraryActivity.class);
         libraryIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(libraryIntent);
-        overridePendingTransition(R.anim.com_mixpanel_android_fade_in, R.anim.com_mixpanel_android_fade_out);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     @Override
@@ -122,25 +84,6 @@ public class CloudListActivity extends  MainActivity{
             new Handler().postDelayed(this::onNavigateToDropbox, anim ? 300 : 0);
         }else if(title.equals(getResources().getString(R.string.google_drive))){
             new Handler().postDelayed(this::onNavigateToGoogleDrive, anim ? 300 : 0);
-        }
-    }
-
-    public void listIsEmpty(boolean enable, boolean isAccountConfigured) {
-        if (enable) {
-            emptyPlaceHolder.setVisibility(View.VISIBLE);
-            Drawable imgResource = null;
-            String placeHolderTxt = null;
-            if(isAccountConfigured){
-                imgResource = getResources().getDrawable(R.drawable.ic_no_music_placeholder, null);
-                placeHolderTxt = getResources().getString(R.string.no_music_placeholder_txt);
-            }else {
-                imgResource = getResources().getDrawable(R.drawable.ic_cloud_placeholder, null);
-                placeHolderTxt = getResources().getString(R.string.cloud_configure_placeholder_txt);
-            }
-            emptyPlaceholderIcon.setImageDrawable(imgResource);
-            emptyPlaceholderTitle.setText(placeHolderTxt);
-        } else {
-            emptyPlaceHolder.setVisibility(View.GONE);
         }
     }
 }

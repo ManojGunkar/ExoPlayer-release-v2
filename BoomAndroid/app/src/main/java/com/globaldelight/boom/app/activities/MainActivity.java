@@ -53,6 +53,18 @@ abstract public class MainActivity extends MasterActivity
     }
 
     @Override
+    public void onBackPressed() {
+        if (isPlayerExpended()) {
+            toggleSlidingPanel();
+        } else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            moveTaskToBack(true);
+        }
+    }
+
+
+    @Override
     public boolean onNavigationItemSelected(final MenuItem item) {
         Runnable runnable;
         runnable = null;

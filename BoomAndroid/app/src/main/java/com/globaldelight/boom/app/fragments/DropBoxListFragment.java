@@ -1,22 +1,13 @@
 package com.globaldelight.boom.app.fragments;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
@@ -31,23 +22,17 @@ import com.globaldelight.boom.utils.helpers.DropBoxAPI;
 
 import io.fabric.sdk.android.services.concurrency.AsyncTask;
 
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_CLOUD_SYNC;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.utils.helpers.DropBoxAPI.ACCOUNT_PREFS_NAME;
 
 /**
  * Created by Rahul Agarwal on 08-02-17.
  */
 
-public class DropBoxListFragment extends Fragment  implements DropboxMediaList.IDropboxUpdater {
+public class DropBoxListFragment extends CloudFragment  implements DropboxMediaList.IDropboxUpdater {
 
     private DropboxMediaList dropboxMediaList;
     private boolean isDropboxAccountConfigured = true;
-    private SongListAdapter adapter;
     SharedPreferences prefs;
-    private RecyclerView rootView;
-    Activity mActivity;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -56,52 +41,13 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     public DropBoxListFragment() {
     }
 
-    private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
-                case ACTION_PLAYER_STATE_CHANGED:
-                    if(null != adapter)
-                        adapter.notifyDataSetChanged();
-                    break;
-                case ACTION_ON_NETWORK_CONNECTED:
-                    LoadDropboxList();
-                    break;
-                case ACTION_CLOUD_SYNC:
-                    if(null != dropboxMediaList) {
-                        dropboxMediaList.clearDropboxContent();
-                    }
-                    LoadDropboxList();
-//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.Sync_Button_tapped_from_Drop_BOx);
-                    FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Sync_Button_tapped_from_Drop_BOx);
-                    break;
-            }
-        }
-    };
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof Activity){
-            mActivity = (Activity) context;
-        }
-    }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mActivity = null;
         dropboxMediaList.setDropboxUpdater(null);
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = (RecyclerView)  inflater.inflate(R.layout.recycler_view_layout, container, false);
-        if(null == mActivity)
-            mActivity = getActivity();
-        return rootView;
-    }
 
 
     @Override
@@ -128,31 +74,18 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     public void onResume() {
         super.onResume();
         DropBoxAPI.getInstance(mActivity).finishAuthorization();
-        registerReceiver();
         LoadDropboxList();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if(null != mActivity) {
-            LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mUpdateItemSongListReceiver);
-        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         dropboxMediaList.setDropboxUpdater(null);
-    }
-
-    private void registerReceiver(){
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
-        intentFilter.addAction(ACTION_ON_NETWORK_CONNECTED);
-        intentFilter.addAction(ACTION_CLOUD_SYNC);
-        if(null != mActivity)
-            LocalBroadcastManager.getInstance(mActivity).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 
     private void LoadDropboxList(){
@@ -189,7 +122,7 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     private void setForAnimation() {
-        rootView.scrollTo(0, 100);
+        mListView.scrollTo(0, 100);
     }
 
     private void setSongListAdapter() {
@@ -202,10 +135,10 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
                     new GridLayoutManager(mActivity, 1);
             gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             gridLayoutManager.scrollToPosition(0);
-            rootView.setLayoutManager(gridLayoutManager);
+            mListView.setLayoutManager(gridLayoutManager);
             adapter = new SongListAdapter(mActivity, DropBoxListFragment.this, dropboxMediaList.getDropboxMediaList(), ItemType.SONGS);
-            rootView.setAdapter(adapter);
-            rootView.setHasFixedSize(true);
+            mListView.setAdapter(adapter);
+            mListView.setHasFixedSize(true);
         }
     }
 
@@ -243,13 +176,20 @@ public class DropBoxListFragment extends Fragment  implements DropboxMediaList.I
     }
 
     public void listIsEmpty(boolean enable) {
-        if(null != getActivity()) {
-            if(enable){
-                rootView.setVisibility(View.GONE);
-            }else{
-                rootView.setVisibility(View.VISIBLE);
-            }
-            ((CloudListActivity)getActivity()).listIsEmpty(enable, isDropboxAccountConfigured);
+        showEmptyList(enable, isDropboxAccountConfigured);
+    }
+
+    @Override
+    void onSync() {
+        if(null != dropboxMediaList) {
+            dropboxMediaList.clearDropboxContent();
         }
+        LoadDropboxList();
+        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Sync_Button_tapped_from_Drop_BOx);
+    }
+
+    @Override
+    void loadSongList() {
+        LoadDropboxList();
     }
 }
