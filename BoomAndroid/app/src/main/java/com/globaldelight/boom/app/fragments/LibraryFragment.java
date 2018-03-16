@@ -181,10 +181,24 @@ public class LibraryFragment extends Fragment {
         }
     }
 
+    private float mToolbarElevation;
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        mToolbarElevation = toolbar.getElevation();
+        mTabBar.setElevation(mToolbarElevation);
+        toolbar.setElevation(0);
+    }
+
     @Override
     public void onStop() {
-        super.onStop();
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setElevation(mToolbarElevation);
         Preferences.writeInteger(getActivity(), LIBRARY_CURRENT_TAB, mViewPager.getCurrentItem());
+
+        super.onStop();
     }
 
 
