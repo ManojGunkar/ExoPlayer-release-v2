@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class DropboxMediaList {
 
     private ArrayList<IMediaItemBase> fileList;
-    private static boolean isAllSongsLoaded = false;
+    private boolean isAllSongsLoaded = false;
     private IDropboxUpdater dropboxUpdater;
     private static DropboxMediaList handler;
     private Handler postMessage;
@@ -35,6 +35,10 @@ public class DropboxMediaList {
         return handler;
     }
 
+    public boolean isLoaded() {
+        return isAllSongsLoaded;
+    }
+
     public void addFileInDropboxList(final IMediaItemBase entry){
         if(isAllSongsLoaded)
             clearDropboxContent();
@@ -46,7 +50,7 @@ public class DropboxMediaList {
             @Override
             public void run() {
                 if ( null != dropboxUpdater )
-                    dropboxUpdater.UpdateDropboxEntryList();
+                    dropboxUpdater.onUpdateEntry();
             }
         });
     }
@@ -68,7 +72,7 @@ public class DropboxMediaList {
             @Override
             public void run() {
                 if(null != dropboxUpdater)
-                    dropboxUpdater.ClearList();
+                    dropboxUpdater.onClearList();
             }
         });
 
@@ -80,7 +84,7 @@ public class DropboxMediaList {
             @Override
             public void run() {
                 if(null != dropboxUpdater)
-                    dropboxUpdater.finishDropboxLoading();
+                    dropboxUpdater.onFinishLoading();
             }
         });
 
@@ -95,18 +99,8 @@ public class DropboxMediaList {
         isAllSongsLoaded = true;
     }
 
-    public void EmptyDropboxList(){
-        postMessage.post(new Runnable() {
-            @Override
-            public void run() {
-                if(null != dropboxUpdater)
-                    dropboxUpdater.EmptyDropboxList();
-            }
-        });
-        isAllSongsLoaded = true;
-    }
 
-    public void ErrorOnLoadinfDropboxList(){
+    public void onLoadingError(){
         postMessage.post(new Runnable() {
             @Override
             public void run() {
@@ -122,10 +116,9 @@ public class DropboxMediaList {
     }
 
     public interface IDropboxUpdater {
-        void UpdateDropboxEntryList();
-        void finishDropboxLoading();
-        void EmptyDropboxList();
+        void onUpdateEntry();
+        void onFinishLoading();
         void onLoadingError();
-        void ClearList();
+        void onClearList();
     }
 }

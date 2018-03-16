@@ -52,35 +52,42 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
         super.onActivityCreated(savedInstanceState);
         prefs = mActivity.getSharedPreferences(
                 ACCOUNT_PREFS_NAME, 0);
-        initViews();
     }
 
-    private void initViews() {
-        Utils.showProgressLoader(getContext());
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        dropboxMediaList = DropboxMediaList.getInstance(mActivity);
+        dropboxMediaList.setDropboxUpdater(this);
+
         if ( !DropBoxAPI.getInstance(mActivity).isLoggedIn() ){
             isDropboxAccountConfigured = false;
             listIsEmpty(true);
+            DropBoxAPI.getInstance(mActivity).authorize();
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    DropBoxAPI.getInstance(mActivity).finishAuthorization();
+                    LoadDropboxList();
+                }
+            });
         }
-        DropBoxAPI.getInstance(mActivity).authorize();
-        dropboxMediaList = DropboxMediaList.getInstance(mActivity);
-        dropboxMediaList.setDropboxUpdater(this);
+        else if ( dropboxMediaList.isLoaded() ) {
+            boolean isListEmpty = dropboxMediaList.getDropboxMediaList().size() <= 0;
+            listIsEmpty(isListEmpty);
+            setSongListAdapter();
+        }
+        else {
+            LoadDropboxList();
+        }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        DropBoxAPI.getInstance(mActivity).finishAuthorization();
-        LoadDropboxList();
-    }
 
     @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onStop() {
+        super.onStop();
         dropboxMediaList.setDropboxUpdater(null);
     }
 
@@ -91,30 +98,18 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
                 isDropboxAccountConfigured = true;
                 if ( ConnectivityReceiver.isNetworkAvailable(mActivity, true) && isListEmpty) {
                     listIsEmpty(false);
-                    if(!Utils.isProgressLoaderActive())
-                        Utils.showProgressLoader(mActivity);
+                    Utils.showProgressLoader(getContext());
                     new LoadDropBoxList(mActivity).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 } else if (!isListEmpty) {
                     listIsEmpty(false);
                     setSongListAdapter();
-                    dismissProgressWithDelay();
                 }
             } else {
                 isDropboxAccountConfigured = false;
                 listIsEmpty(true);
-                Utils.dismissProgressLoader();
             }
             setForAnimation();
         }
-    }
-
-    private void dismissProgressWithDelay() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Utils.dismissProgressLoader();
-            }
-        }, 3000);
     }
 
     private void setForAnimation() {
@@ -143,19 +138,15 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
     }
 
     @Override
-    public void UpdateDropboxEntryList() {
+    public void onUpdateEntry() {
         LoadDropboxList();
     }
 
     @Override
-    public void finishDropboxLoading() {
-        dismissProgressWithDelay();
-    }
-
-
-    @Override
-    public void EmptyDropboxList() {
-        listIsEmpty(true);
+    public void onFinishLoading() {
+        if ( dropboxMediaList.getDropboxMediaList().size() == 0 ) {
+            listIsEmpty(true);
+        }
         Utils.dismissProgressLoader();
     }
 
@@ -166,7 +157,7 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
     }
 
     @Override
-    public void ClearList() {
+    public void onClearList() {
         if(null != adapter)
             notifyAdapter();
     }

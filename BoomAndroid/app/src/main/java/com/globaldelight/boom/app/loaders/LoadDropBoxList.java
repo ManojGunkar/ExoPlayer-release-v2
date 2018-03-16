@@ -35,12 +35,10 @@ public class LoadDropBoxList extends AsyncTask<Void, Void, Void>{
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        if(null != dropboxMediaList && dropboxMediaList.getDropboxMediaList().size() > 0) {
+        if(null != dropboxMediaList ) {
             dropboxMediaList.finishDropboxLoading();
-        }else if(null != dropboxMediaList){
-            dropboxMediaList.EmptyDropboxList();
-        }else{
-            dropboxMediaList.ErrorOnLoadinfDropboxList();
+        } else {
+            dropboxMediaList.onLoadingError();
         }
     }
 }
