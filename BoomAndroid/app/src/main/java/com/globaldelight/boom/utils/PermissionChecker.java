@@ -16,19 +16,24 @@ import com.globaldelight.boom.R;
  */
 
 public class PermissionChecker {
-
-    public static final int REQUEST_CODE = 7;
     private static final String TAG = "PermissionChecker";
+
+    public static final int STORAGE_READ_PERMISSION = 1000;
+    public static final int STORAGE_WRITE_PERMISSION = 1001;
+    public static final int ACCOUNTS_PERMISSION = 1002;
+
     private OnPermissionResponse response;
     private Context context;
     private Activity activity;
     private View baseView;
     private Handler handler;
+    private int mRequestCode;
 
-    public PermissionChecker(Context context, Activity activity, View baseView) {
-        this.context = context;
+    public PermissionChecker(Activity activity, View baseView, int requestCode) {
+        this.context = activity;
         this.activity = activity;
         this.baseView = baseView;
+        mRequestCode = requestCode;
         handler = new Handler();
     }
 
@@ -71,7 +76,7 @@ public class PermissionChecker {
                     } else {*/
                         ActivityCompat.requestPermissions(activity,
                                 new String[]{permission},
-                                REQUEST_CODE);
+                                mRequestCode);
                     /*}*/
                 }
             }
@@ -80,7 +85,7 @@ public class PermissionChecker {
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, final
     @NonNull int[] grantResults) {
-        if (requestCode == PermissionChecker.REQUEST_CODE) {
+        if (requestCode == mRequestCode) {
             handler.post(new Runnable() {
                 @Override
                 public void run() {

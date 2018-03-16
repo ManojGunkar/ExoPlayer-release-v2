@@ -39,6 +39,7 @@ public abstract class CloudFragment extends Fragment {
     ImageView emptyPlaceholderIcon;
     TextView emptyPlaceholderTitle;
     LinearLayout emptyPlaceHolder;
+    private View mProgressView;
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -63,6 +64,7 @@ public abstract class CloudFragment extends Fragment {
         emptyPlaceholderIcon = mRootView.findViewById(R.id.list_empty_placeholder_icon);
         emptyPlaceholderTitle = mRootView.findViewById(R.id.list_empty_placeholder_txt);
         emptyPlaceHolder = mRootView.findViewById(R.id.list_empty_placeholder);
+        mProgressView = mRootView.findViewById(R.id.progress_view);
 
         setHasOptionsMenu(true);
         if(null == mActivity)
@@ -142,6 +144,15 @@ public abstract class CloudFragment extends Fragment {
             emptyPlaceHolder.setVisibility(View.GONE);
         }
     }
+
+    public void showProgressView() {
+        mProgressView.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgressView() {
+        mProgressView.setVisibility(View.GONE);
+    }
+
 
     abstract void onSync();
 

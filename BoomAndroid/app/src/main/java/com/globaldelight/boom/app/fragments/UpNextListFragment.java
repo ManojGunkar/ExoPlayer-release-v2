@@ -117,8 +117,8 @@ public class UpNextListFragment extends Fragment implements OnStartDragListener 
     }
 
     private void checkPermissions() {
-        permissionChecker = new PermissionChecker(mActivity, mActivity, rootView);
-        permissionChecker.check(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        permissionChecker = new PermissionChecker(mActivity, rootView, PermissionChecker.STORAGE_WRITE_PERMISSION );
+        permissionChecker.check(Manifest.permission.READ_EXTERNAL_STORAGE,
                 getResources().getString(R.string.storage_permission),
                 new PermissionChecker.OnPermissionResponse() {
                     @Override

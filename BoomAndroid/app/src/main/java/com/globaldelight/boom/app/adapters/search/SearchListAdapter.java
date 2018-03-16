@@ -404,7 +404,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
     }
 
     private void setHeaderBg(SimpleItemViewHolder holder) {
-        holder.mainView.setBackgroundColor(ContextCompat.getColor(context, R.color.appBackground));
         holder.mainView.setElevation(Utils.dpToPx(context, 0));
     }
 

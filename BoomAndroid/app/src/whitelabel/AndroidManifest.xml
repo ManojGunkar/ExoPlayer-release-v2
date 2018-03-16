@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application>
-        <meta-data android:name="business-model" android:value="com.globaldelight.boom.business.WhiteLabelModel" />
 
         <activity
             android:name=".app.activities.ConnectionActivity"

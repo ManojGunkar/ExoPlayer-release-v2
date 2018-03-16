@@ -2,7 +2,6 @@ package com.globaldelight.boom.app.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,7 +13,6 @@ import com.globaldelight.boom.collection.cloud.DropboxMediaList;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.loaders.LoadDropBoxList;
-import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.helpers.DropBoxAPI;
 
 import io.fabric.sdk.android.services.concurrency.AsyncTask;
@@ -29,6 +27,7 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
 
     private DropboxMediaList dropboxMediaList;
     private boolean isDropboxAccountConfigured = true;
+    private boolean tryLogin = true;
     SharedPreferences prefs;
 
     /**
@@ -62,17 +61,17 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
         dropboxMediaList = DropboxMediaList.getInstance(mActivity);
         dropboxMediaList.setDropboxUpdater(this);
 
-        if ( !DropBoxAPI.getInstance(mActivity).isLoggedIn() ){
-            isDropboxAccountConfigured = false;
+        // finish any pending authorization
+        DropBoxAPI.getInstance(mActivity).finishAuthorization();
+        isDropboxAccountConfigured = DropBoxAPI.getInstance(mActivity).isLoggedIn();
+        if ( !isDropboxAccountConfigured ){
             listIsEmpty(true);
-            DropBoxAPI.getInstance(mActivity).authorize();
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    DropBoxAPI.getInstance(mActivity).finishAuthorization();
-                    LoadDropboxList();
-                }
-            });
+
+            // Attempt login once
+            if ( tryLogin ) {
+                DropBoxAPI.getInstance(mActivity).authorize();
+                tryLogin = false;
+            }
         }
         else if ( dropboxMediaList.isLoaded() ) {
             boolean isListEmpty = dropboxMediaList.getDropboxMediaList().size() <= 0;
@@ -94,18 +93,17 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
     private void LoadDropboxList(){
         if(null != getActivity()) {
             boolean isListEmpty = dropboxMediaList.getDropboxMediaList().size() <= 0;
-            if ( DropBoxAPI.getInstance(mActivity).isLoggedIn()) {
-                isDropboxAccountConfigured = true;
+            isDropboxAccountConfigured = DropBoxAPI.getInstance(mActivity).isLoggedIn();
+            if ( isDropboxAccountConfigured ) {
                 if ( ConnectivityReceiver.isNetworkAvailable(mActivity, true) && isListEmpty) {
                     listIsEmpty(false);
-                    Utils.showProgressLoader(getContext());
+                    showProgressView();
                     new LoadDropBoxList(mActivity).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 } else if (!isListEmpty) {
                     listIsEmpty(false);
                     setSongListAdapter();
                 }
             } else {
-                isDropboxAccountConfigured = false;
                 listIsEmpty(true);
             }
             setForAnimation();
@@ -146,14 +144,15 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
     public void onFinishLoading() {
         if ( dropboxMediaList.getDropboxMediaList().size() == 0 ) {
             listIsEmpty(true);
+
         }
-        Utils.dismissProgressLoader();
+        hideProgressView();
     }
 
     @Override
     public void onLoadingError() {
         listIsEmpty(true);
-        Utils.dismissProgressLoader();
+        hideProgressView();
     }
 
     @Override
@@ -168,6 +167,11 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
 
     @Override
     void onSync() {
+        if ( !isDropboxAccountConfigured ) {
+            DropBoxAPI.getInstance(mActivity).authorize();
+            return;
+        }
+
         if(null != dropboxMediaList) {
             dropboxMediaList.clearDropboxContent();
         }
