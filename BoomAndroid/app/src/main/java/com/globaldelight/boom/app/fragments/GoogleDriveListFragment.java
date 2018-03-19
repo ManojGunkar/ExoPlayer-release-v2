@@ -132,7 +132,7 @@ public class GoogleDriveListFragment extends CloudFragment  implements GoogleDri
             }
             else {
                 isGoogleAccountConfigured = true;
-                showProgressView();
+                onLoadingStarted();
                 googleDriveHandler.fetchMediaList();
             }
         }
@@ -181,19 +181,19 @@ public class GoogleDriveListFragment extends CloudFragment  implements GoogleDri
 
     @Override
     public void onFinishLoading() {
-        hideProgressView();
+        onLoadingFinished();
     }
 
     @Override
     public void onRequestCancelled() {
-        hideProgressView();
+        onLoadingFinished();
         if(null != getActivity())
             Toast.makeText(mActivity, getResources().getString(R.string.request_cancelled), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onError(String e) {
-        hideProgressView();
+        onLoadingFinished();
         if(null != getActivity() && googleDriveMediaList.getGoogleDriveMediaList().size() <= 0)
             Toast.makeText(mActivity, getResources().getString(R.string.google_drive_loading_error)
                 + e, Toast.LENGTH_SHORT).show();
@@ -201,7 +201,7 @@ public class GoogleDriveListFragment extends CloudFragment  implements GoogleDri
 
     @Override
     public void onEmptyList() {
-        hideProgressView();
+        onLoadingFinished();
         showEmptyList(true, isGoogleAccountConfigured);
     }
 
@@ -221,7 +221,7 @@ public class GoogleDriveListFragment extends CloudFragment  implements GoogleDri
         if(resultCode != RESULT_OK){
             isGoogleAccountConfigured = false;
             showEmptyList(true, isGoogleAccountConfigured);
-            hideProgressView();
+            onLoadingFinished();
             if(requestCode == GoogleDriveHandler.REQUEST_GOOGLE_PLAY_SERVICES)
                 Toast.makeText(mActivity, getResources().getString(R.string.require_google_play_service), Toast.LENGTH_SHORT).show();
             return;

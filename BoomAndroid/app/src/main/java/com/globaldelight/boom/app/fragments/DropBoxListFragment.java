@@ -97,7 +97,7 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
             if ( isDropboxAccountConfigured ) {
                 if ( ConnectivityReceiver.isNetworkAvailable(mActivity, true) && isListEmpty) {
                     listIsEmpty(false);
-                    showProgressView();
+                    onLoadingStarted();
                     new LoadDropBoxList(mActivity).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 } else if (!isListEmpty) {
                     listIsEmpty(false);
@@ -146,13 +146,13 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
             listIsEmpty(true);
 
         }
-        hideProgressView();
+        onLoadingFinished();
     }
 
     @Override
     public void onLoadingError() {
         listIsEmpty(true);
-        hideProgressView();
+        onLoadingFinished();
     }
 
     @Override

@@ -36,10 +36,11 @@ public abstract class CloudFragment extends Fragment {
     protected View mRootView;
     protected RecyclerView mListView;
     protected Activity mActivity;
-    ImageView emptyPlaceholderIcon;
-    TextView emptyPlaceholderTitle;
-    LinearLayout emptyPlaceHolder;
+    private ImageView emptyPlaceholderIcon;
+    private TextView emptyPlaceholderTitle;
+    private LinearLayout emptyPlaceHolder;
     private View mProgressView;
+    private boolean mIsLoading = false;
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -112,8 +113,10 @@ public abstract class CloudFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_cloud_sync){
-            onSync();
+        if(item.getItemId() == R.id.action_cloud_sync ){
+            if ( !mIsLoading ) {
+                onSync();
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -145,12 +148,14 @@ public abstract class CloudFragment extends Fragment {
         }
     }
 
-    public void showProgressView() {
+    public void onLoadingStarted() {
         mProgressView.setVisibility(View.VISIBLE);
+        mIsLoading = true;
     }
 
-    public void hideProgressView() {
+    public void onLoadingFinished() {
         mProgressView.setVisibility(View.GONE);
+        mIsLoading = false;
     }
 
 
