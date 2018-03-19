@@ -19,7 +19,7 @@ import java.util.ArrayList;
 /**
  * Created by Rahul Agarwal on 8/8/2016.
  */
-public class DeviceMediaQuery {
+public class DeviceMediaLibrary {
 
 
     public static ArrayList<? extends IMediaItem> getSongList(Context context){

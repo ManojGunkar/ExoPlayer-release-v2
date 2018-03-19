@@ -28,14 +28,7 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
     private DropboxMediaList dropboxMediaList;
     private boolean isDropboxAccountConfigured = true;
     private boolean tryLogin = true;
-    SharedPreferences prefs;
-
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public DropBoxListFragment() {
-    }
+    private SharedPreferences prefs;
 
 
     @Override

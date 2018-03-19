@@ -36,12 +36,6 @@ public class GoogleDriveListFragment extends CloudFragment  implements GoogleDri
     private PermissionChecker permissionChecker;
     private boolean shouldReload = true;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public GoogleDriveListFragment() {
-    }
 
 
     @Override
