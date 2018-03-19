@@ -3,6 +3,7 @@ package com.globaldelight.boom.app.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.MediaStore;
@@ -56,25 +57,26 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
             int Song_Name_Column = songListCursor.getColumnIndex
                     (MediaStore.Audio.Media.TITLE);
 
-            int Song_Display_Name_Column = songListCursor.getColumnIndex
-                    (MediaStore.Audio.Media.DISPLAY_NAME);
-
             int Album_Name_Column = songListCursor.getColumnIndex
                     (MediaStore.Audio.Media.ALBUM);
 
             int Artist_Name_Column = songListCursor.getColumnIndex
                     (MediaStore.Audio.Media.ARTIST);
 
+            SQLiteDatabase db = this.getWritableDatabase();
+
             do{
                 final String song = songListCursor.getString(Song_Name_Column);
                 final String album = songListCursor.getString(Album_Name_Column);
                 final String artist = songListCursor.getString(Artist_Name_Column);
 
-                addSong(song);
-                addSong(album);
-                addSong(artist);
+                addEntry(song, db);
+                addEntry(album, db);
+                addEntry(artist, db);
 
             }while (songListCursor.moveToNext());
+
+            db.close();
 
         }
         if (songListCursor != null) {
@@ -84,28 +86,18 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
         mFinishedLoading = true;
     }
 
-    private synchronized void addSong(String title) {
+    private void addEntry(String title, SQLiteDatabase db) {
         if ( title == null ) {
             return;
         }
-        removeSong(title);
-        try {
-            SQLiteDatabase db = this.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.putNull(ITEM_KEY_ID);
-            values.put(SEARCH_KEY, title.trim());
-            db.insert(TABLE_SEARCH, null, values);
-            db.close();
-        }catch (Exception e){}
+
+        ContentValues values = new ContentValues();
+        values.putNull(ITEM_KEY_ID);
+        values.put(SEARCH_KEY, title.trim());
+        db.replace(TABLE_SEARCH, null, values);
+
     }
 
-    public void removeSong(String title) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_SEARCH,
-                SEARCH_KEY+" = ?", new String[] { title } );
-
-        db.close();
-    }
 
     public synchronized void clearList(){
         SQLiteDatabase db = this.getWritableDatabase();
