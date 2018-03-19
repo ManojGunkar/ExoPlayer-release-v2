@@ -81,7 +81,7 @@ public class GoogleDriveListFragment extends CloudFragment  implements GoogleDri
             Preferences.writeBoolean(mActivity, Preferences.GOOGLE_DRIVE_ACCOUNT_CHANGED, false);
         }
         else {
-            setSongListAdapter(false);
+            updateSongList();
         }
 
 
@@ -143,21 +143,9 @@ public class GoogleDriveListFragment extends CloudFragment  implements GoogleDri
         showEmptyList(true, isGoogleAccountConfigured);
     }
 
-    private void setSongListAdapter(final boolean isUpdate) {
+    private void updateSongList() {
         if(null != googleDriveMediaList) {
-            if (null == adapter) {
-                final GridLayoutManager gridLayoutManager =
-                        new GridLayoutManager(mActivity, 1);
-                gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                gridLayoutManager.scrollToPosition(0);
-                mListView.setLayoutManager(gridLayoutManager);
-                adapter = new SongListAdapter(mActivity, GoogleDriveListFragment.this, googleDriveMediaList.getGoogleDriveMediaList(), ItemType.SONGS);
-                mListView.setAdapter(adapter);
-                mListView.setHasFixedSize(true);
-            } else {
-                adapter.updateMediaList(googleDriveMediaList.getGoogleDriveMediaList());
-            }
-
+            adapter.updateMediaList(googleDriveMediaList.getGoogleDriveMediaList());
             if (googleDriveMediaList.getGoogleDriveMediaList().size() <= 0) {
                 showEmptyList(true, isGoogleAccountConfigured);
             } else {
@@ -175,7 +163,7 @@ public class GoogleDriveListFragment extends CloudFragment  implements GoogleDri
 
     @Override
     public void onMediaListUpdate() {
-        setSongListAdapter(false);
+        updateSongList();
         setForAnimation();
     }
 
@@ -207,7 +195,7 @@ public class GoogleDriveListFragment extends CloudFragment  implements GoogleDri
 
     @Override
     public void onClearList() {
-        setSongListAdapter(false);
+        updateSongList();
         showEmptyList(false, isGoogleAccountConfigured);
     }
 

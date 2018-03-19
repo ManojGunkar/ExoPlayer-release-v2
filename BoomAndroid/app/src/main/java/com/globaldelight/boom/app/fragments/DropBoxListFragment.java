@@ -76,7 +76,7 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
         else if ( dropboxMediaList.isLoaded() ) {
             boolean isListEmpty = dropboxMediaList.getDropboxMediaList().size() <= 0;
             listIsEmpty(isListEmpty);
-            setSongListAdapter();
+            updateSongList();
         }
         else {
             LoadDropboxList();
@@ -101,7 +101,7 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
                     new LoadDropBoxList(mActivity).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 } else if (!isListEmpty) {
                     listIsEmpty(false);
-                    setSongListAdapter();
+                    updateSongList();
                 }
             } else {
                 listIsEmpty(true);
@@ -114,30 +114,23 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
         mListView.scrollTo(0, 100);
     }
 
-    private void setSongListAdapter() {
+    private void updateSongList() {
         boolean isEmpty = dropboxMediaList.getDropboxMediaList().size() <= 0;
 
         if(!isEmpty && null != adapter){
             notifyAdapter();
-        }else if(!isEmpty){
-            final GridLayoutManager gridLayoutManager =
-                    new GridLayoutManager(mActivity, 1);
-            gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            gridLayoutManager.scrollToPosition(0);
-            mListView.setLayoutManager(gridLayoutManager);
-            adapter = new SongListAdapter(mActivity, DropBoxListFragment.this, dropboxMediaList.getDropboxMediaList(), ItemType.SONGS);
-            mListView.setAdapter(adapter);
-            mListView.setHasFixedSize(true);
         }
     }
 
     private void notifyAdapter() {
-        adapter.updateMediaList(dropboxMediaList.getDropboxMediaList());
+        if(null != adapter) {
+            adapter.updateMediaList(dropboxMediaList.getDropboxMediaList());
+        }
     }
 
     @Override
     public void onUpdateEntry() {
-        LoadDropboxList();
+        updateSongList();
     }
 
     @Override
@@ -157,8 +150,7 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
 
     @Override
     public void onClearList() {
-        if(null != adapter)
-            notifyAdapter();
+        notifyAdapter();
     }
 
     public void listIsEmpty(boolean enable) {

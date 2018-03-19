@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +24,9 @@ import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
+
+import java.util.ArrayList;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
@@ -66,6 +71,15 @@ public abstract class CloudFragment extends Fragment {
         emptyPlaceholderTitle = mRootView.findViewById(R.id.list_empty_placeholder_txt);
         emptyPlaceHolder = mRootView.findViewById(R.id.list_empty_placeholder);
         mProgressView = mRootView.findViewById(R.id.progress_view);
+
+        final GridLayoutManager gridLayoutManager =
+                new GridLayoutManager(mActivity, 1);
+        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        gridLayoutManager.scrollToPosition(0);
+        mListView.setLayoutManager(gridLayoutManager);
+        adapter = new SongListAdapter(mActivity, this, new ArrayList<>(), ItemType.SONGS);
+        mListView.setAdapter(adapter);
+        mListView.setHasFixedSize(true);
 
         setHasOptionsMenu(true);
         if(null == mActivity)
