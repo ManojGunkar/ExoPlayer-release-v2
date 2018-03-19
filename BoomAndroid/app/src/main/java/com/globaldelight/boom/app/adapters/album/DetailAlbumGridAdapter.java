@@ -23,6 +23,7 @@ import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
@@ -102,7 +103,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     holder.subTitle.setText(currentItem.getItemSubTitle());
                     holder.defaultImg.setVisibility(View.VISIBLE);
                     if(null == currentItem.getItemArtUrl())
-                        currentItem.setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(currentItem.getItemTitle()));
+                        currentItem.setItemArtUrl(DeviceMediaLibrary.getInstance(activity).getAlbumArt(currentItem.getItemTitle()));
 
                     if(null == currentItem.getItemArtUrl())
                         currentItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);

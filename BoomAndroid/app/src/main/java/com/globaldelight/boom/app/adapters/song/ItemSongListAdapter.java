@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.R;
@@ -137,7 +138,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         holder.itemView.setElevation(0);
 
         if(null == currentItem.getItemArtUrl())
-            currentItem.setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(currentItem.getItemAlbum()));
+            currentItem.setItemArtUrl(DeviceMediaLibrary.getInstance(activity).getAlbumArt(currentItem.getItemAlbum()));
 
         if(null == currentItem.getItemArtUrl())
             currentItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -159,7 +160,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         holder.artistName.setVisibility(null != currentItem.getItemArtist() ? View.VISIBLE : View.GONE);
         holder.artistName.setText(currentItem.getItemArtist());
 
-        setAlbumArt(App.playbackManager().queue().getAlbumArtList().get(currentItem.getItemAlbum()), holder);
+        setAlbumArt(DeviceMediaLibrary.getInstance(activity).getAlbumArt(currentItem.getItemAlbum()), holder);
 
         if (selectedHolder != null)
             selectedHolder.itemView.setBackgroundColor(ContextCompat

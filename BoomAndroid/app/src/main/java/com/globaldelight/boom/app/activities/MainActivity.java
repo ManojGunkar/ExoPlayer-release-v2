@@ -27,6 +27,7 @@ import com.globaldelight.boom.app.fragments.DropBoxListFragment;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 
@@ -112,8 +113,7 @@ public class MainActivity extends MasterActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
-                musicSearchHelper.getAlbumList(getApplicationContext());
-                musicSearchHelper.getArtistList(getApplicationContext());
+                DeviceMediaLibrary.getInstance(MainActivity.this).initAlbumAndArtist();
                 musicSearchHelper.setSearchContent();
             }
         }).start();

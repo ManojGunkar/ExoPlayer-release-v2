@@ -98,7 +98,6 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
 
     }
 
-
     public synchronized void clearList(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_SEARCH);
@@ -117,76 +116,4 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
         return c;
     }
 
-    /************************************Albums Art****************************************************************/
-    public static void getAlbumList(Context context) {
-        HashMap<String, String> artWthAlbumName = new HashMap<>();
-        Cursor albumListCursor = context.getContentResolver().
-                query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, null, null, null, null);
-
-        if (albumListCursor != null && albumListCursor.moveToFirst()) {
-            //get columns
-            int Item_Title_Column = albumListCursor.getColumnIndex
-                    (MediaStore.Audio.Albums.ALBUM);
-
-            int Item_Album_Art_Path_Column = albumListCursor.getColumnIndex
-                    (MediaStore.Audio.Albums.ALBUM_ART);
-
-            //add albums to list
-            do {
-                artWthAlbumName.put(albumListCursor.getString(Item_Title_Column), albumListCursor.getString(Item_Album_Art_Path_Column));
-            }
-            while (albumListCursor.moveToNext());
-        }
-        if (albumListCursor != null) {
-            albumListCursor.close();
-        }
-        App.playbackManager().queue().setAlbumArtList(artWthAlbumName);
-        return;
-    }
-
-    public static void getArtistList(Context context) {
-        HashMap<Long, String> artistList = new HashMap<>();
-        System.gc();
-        final String orderBy = MediaStore.Audio.Artists.ARTIST;
-        Cursor artistListCursor = context.getContentResolver().
-                query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, null, null, null, orderBy);
-
-        if (artistListCursor != null && artistListCursor.moveToFirst()) {
-            //get columns
-
-            int Item_ID_Column = artistListCursor.getColumnIndex
-                    (MediaStore.Audio.Artists._ID);
-
-            //add albums to list
-            do {
-                artistList.put(artistListCursor.getLong(Item_ID_Column), getAlbumArtByArtist(context, artistListCursor.getLong(Item_ID_Column)));
-            }
-            while (artistListCursor.moveToNext());
-        }
-        if (artistListCursor != null) {
-            artistListCursor.close();
-        }
-        App.playbackManager().queue().setArtistArtList(artistList);
-        return;
-    }
-
-    public static String getAlbumArtByArtist(Context context, Long artistId) {
-        final String where = MediaStore.Audio.Media.ARTIST_ID + "=?";
-
-        Cursor albumListCursor = context.getContentResolver().
-                query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, new String[]{MediaStore.Audio.Albums.ALBUM_ART}, where, new String[]{String.valueOf(artistId)}, null);
-
-        String albumArt = null;
-        if (albumListCursor != null && albumListCursor.moveToFirst()) {
-            //get columns
-            int Item_Album_Art_Path_Column = albumListCursor.getColumnIndex
-                    (MediaStore.Audio.Albums.ALBUM_ART);
-
-            albumArt = albumListCursor.getString(Item_Album_Art_Path_Column);
-        }
-        if (albumListCursor != null) {
-            albumListCursor.close();
-        }
-        return albumArt;
-    }
 }

@@ -11,7 +11,6 @@ import com.globaldelight.boom.playbackEvent.utils.MediaType;
  * Created by Rahul Agarwal on 8/4/2016.
  */
 public class MediaItem implements IMediaItem, Parcelable {
-
     private long ItemId;
     private String ItemTitle;
     private String ItemDisplayName;

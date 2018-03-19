@@ -31,6 +31,7 @@ import com.globaldelight.boom.app.activities.SearchDetailActivity;
 import com.globaldelight.boom.app.fragments.SearchDetailFragment;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.app.adapters.search.utils.SearchResult;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.app.App;
@@ -243,7 +244,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             int size = setSize(holder);
 
             if(null == artists.get(getPosition(position)).getItemArtUrl())
-                artists.get(getPosition(position)).setItemArtUrl(App.playbackManager().queue().getArtistArtList().get(artists.get(getPosition(position)).getItemId()));
+                artists.get(getPosition(position)).setItemArtUrl(DeviceMediaLibrary.getInstance(context).getArtistArt(artists.get(getPosition(position)).getItemId()));
 
             if(null == artists.get(getPosition(position)).getItemArtUrl())
                 artists.get(getPosition(position)).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
@@ -323,7 +324,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             holder.artistName.setText(((MediaItem)songs.get(getPosition(position))).getItemArtist());
             holder.mainView.setElevation(0);
             if(null == songs.get(getPosition(position)).getItemArtUrl())
-                songs.get(getPosition(position)).setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(((MediaItem) songs.get(getPosition(position))).getItemAlbum()));
+                songs.get(getPosition(position)).setItemArtUrl(DeviceMediaLibrary.getInstance(activity).getAlbumArt(((MediaItem) songs.get(getPosition(position))).getItemAlbum()));
 
             if(null == songs.get(getPosition(position)).getItemArtUrl())
                 songs.get(getPosition(position)).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);

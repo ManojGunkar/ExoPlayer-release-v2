@@ -19,6 +19,7 @@ import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
 import com.globaldelight.boom.utils.helpers.DropBoxAPI;
@@ -381,7 +382,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
             mediaItemBase = params[0];
             if(mediaItemBase.getMediaType() == MediaType.DEVICE_MEDIA_LIB){
                 dataSource = ((MediaItem)mediaItemBase).getItemUrl();
-                mediaItemBase.setItemArtUrl(mQueue.getAlbumArtList().get(((MediaItem)mediaItemBase).getItemAlbum()));
+                mediaItemBase.setItemArtUrl(DeviceMediaLibrary.getInstance(context).getAlbumArt(((MediaItem)mediaItemBase).getItemAlbum()));
             }else if(mediaItemBase.getMediaType() == MediaType.DROP_BOX){
                 return DropBoxAPI.getInstance(context).getStreamingUrl(((MediaItem)mediaItemBase).getItemUrl());
             }else if(mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){

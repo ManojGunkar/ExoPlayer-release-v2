@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
@@ -94,7 +95,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 holder.undoButton.setVisibility(View.GONE);
                 holder.undoButton.setOnClickListener(null);
                 if (null == item.getItemArtUrl())
-                    item.setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(item.getItemAlbum()));
+                    item.setItemArtUrl(DeviceMediaLibrary.getInstance(context).getAlbumArt(item.getItemAlbum()));
 
                 if (null == item.getItemArtUrl())
                     item.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
