@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/include_bluetooth_layout"
+        layout="@layout/fragment_bluetooth"
+        android:visibility="gone" />
+
+   <!-- <include
+        android:id="@+id/include_bluetooth_setting_layout"
+        layout="@layout/fragment_bluetooth_setting"
+        android:visibility="gone" />-->
+
+    <include
+        android:id="@+id/include_heaphone_connection_layout"
+        layout="@layout/fragment_heaphone_connection"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/include_searching_headphone_layout"
+        layout="@layout/fragment_searching_headphone"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/include_network_connection_layout"
+        layout="@layout/fragment_network_connection"
+        android:visibility="gone"/>
+
+</LinearLayout>

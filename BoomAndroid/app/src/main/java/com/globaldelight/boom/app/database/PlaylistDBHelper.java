@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteStatement;
 
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaQuery;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
@@ -172,7 +172,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
             removeSong(songs.get(i).getItemId(), (int) playlistId, db);
 
             if(songs.get(i).getMediaType() == MediaType.DEVICE_MEDIA_LIB && null == songs.get(i).getItemArtUrl())
-                songs.get(i).setItemArtUrl(DeviceMediaQuery.getAlbumArtByAlbumId(mContext, ((IMediaItem)songs.get(i)).getItemAlbumId()));
+                songs.get(i).setItemArtUrl(DeviceMediaLibrary.getAlbumArtByAlbumId(mContext, ((IMediaItem)songs.get(i)).getItemAlbumId()));
             ContentValues values = new ContentValues();
             values.putNull(SONG_KEY_ID);
             values.put(SONG_KEY_REAL_ID, songs.get(i).getItemId());

@@ -34,14 +34,13 @@ public class SearchDetailActivity extends MasterActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("");
         }
 
         mSearchType = getIntent().getStringExtra(SearchDetailFragment.ARG_LIST_TYPE);
         mQuery = getIntent().getStringExtra(SearchDetailFragment.ARG_MEDIA_QUERY);
 
-        ((TextView) findViewById(R.id.toolbar_txt)).setText(mSearchType);
-
+        setTitle(mSearchType);
+        
         findViewById(R.id.fab).setVisibility(View.GONE);
 
 

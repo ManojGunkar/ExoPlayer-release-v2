@@ -2,7 +2,7 @@ package com.globaldelight.boom.app.adapters.search.utils;
 
 import android.content.Context;
 
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaQuery;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 
 import java.util.ArrayList;
@@ -62,19 +62,19 @@ public class  Search {
     }
 
     public void setSongResult() {
-        SearchResult result = DeviceMediaQuery.searchSong(context, query, isPartialResult);
+        SearchResult result = DeviceMediaLibrary.searchSong(context, query, isPartialResult);
         this.songResult = result.getItemList();
         this.songCount = result.getCount();
     }
 
     public void setAlbumResult() {
-        SearchResult result = DeviceMediaQuery.searchAlbum(context, query, isPartialResult);
+        SearchResult result = DeviceMediaLibrary.searchAlbum(context, query, isPartialResult);
         this.albumResult = result.getItemList();
         this.albumCount = result.getCount();
     }
 
     public void setArtistResult() {
-        SearchResult result = DeviceMediaQuery.searchArtist(context, query, isPartialResult);
+        SearchResult result = DeviceMediaLibrary.searchArtist(context, query, isPartialResult);
         this.artistResult = result.getItemList();
         this.artistCount = result.getCount();
     }

@@ -17,7 +17,9 @@ import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.adapters.media.MediaGridAdapter;
-import com.globaldelight.boom.business.AdsController;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
@@ -33,7 +35,7 @@ public abstract class MediaCollectionFragment extends Fragment {
     private Activity mActivity;
     private View mainView;
     private RecyclerView recyclerView;
-    private AdsController mAdController;
+    private InlineAds mAdController;
     private ProgressBar mLibLoad;
 
 
@@ -127,8 +129,15 @@ public abstract class MediaCollectionFragment extends Fragment {
             recyclerView.addItemDecoration(new AlbumListSpacesItemDecoration(Utils.dpToPx(mActivity, 0)));
             MediaGridAdapter mediaAdapter = new MediaGridAdapter(mActivity, recyclerView, iMediaCollectionList, isPhone);
 
-            mAdController = new AdsController(mActivity, recyclerView, mediaAdapter, true);
-            recyclerView.setAdapter(mAdController.getAdAdapter());
+            Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+            if ( factory != null ) {
+                mAdController = factory.createInlineAds(mActivity, recyclerView, mediaAdapter);
+                recyclerView.setAdapter(mAdController.getAdapter());
+            }
+            else {
+                recyclerView.setAdapter(mediaAdapter);
+            }
+
             recyclerView.setHasFixedSize(true);
             listIsEmpty(iMediaCollectionList.size());
         }

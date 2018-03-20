@@ -18,8 +18,7 @@
         android:gravity="right"
         android:paddingRight="23dp"
         android:text="@string/hour"
-        android:textColor="@color/white"
-
+        android:textColor="@color/dialog_txt"
         android:textSize="15sp" />
 
         <android.support.v7.widget.AppCompatTextView
@@ -30,7 +29,7 @@
             android:gravity="left"
             android:paddingLeft="18dp"
             android:text="@string/minute"
-            android:textColor="@color/white"
+            android:textColor="@color/dialog_txt"
             android:textSize="15sp" />
 
 

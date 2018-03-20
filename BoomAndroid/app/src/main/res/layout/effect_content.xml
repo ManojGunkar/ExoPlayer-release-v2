@@ -15,15 +15,14 @@
         android:padding="5dp">
         <com.globaldelight.boom.view.CustomSwitch
             android:id="@+id/effect_switch"
-            style="@style/RedSwitch"
+            android:theme="@style/RedSwitch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="@string/off"
             android:textColor="@color/effect_active"
             android:textSize="@dimen/effect_title_size"
-            android:textStyle="bold"
-            android:theme="@style/RedSwitch" />
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <View
@@ -140,7 +139,7 @@
         android:max="100"
         android:progress="50"
         android:progressDrawable="@android:color/transparent"
-        android:thumbTint="#bfbfbf" />
+        android:thumb="@drawable/intensity_thumb" />
 
     <View
         android:layout_width="match_parent"

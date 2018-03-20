@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
@@ -117,6 +118,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initViews() {
+
+        if (BuildConfig.FLAVOR.equals("whitelabel") ) {
+            rootView.findViewById(R.id.headset_group).setVisibility(View.GONE);
+        }
+
         RecyclerView recyclerView = rootView.findViewById(R.id.headset_recycler) ;
         LinearLayout dropbox = rootView.findViewById(R.id.setting_dropbox_panel);
         dropbox.setOnClickListener(this);
@@ -255,7 +261,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 break;
             case GoogleDriveHandler.REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
-//                    googleDriveHandler.getResultsFromApi();
+//                    googleDriveHandler.fetchMediaList();
                 }
                 break;
         }
@@ -266,7 +272,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
             try {
                 googleDriveHandler = new GoogleDriveHandler(SettingFragment.this);
                 googleDriveHandler.getGoogleAccountCredential();
-                googleDriveHandler.getGoogleApiClient();
                 googleDriveHandler.resetKeys(mActivity);
             }catch (Exception e){}
         }
@@ -280,7 +285,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     public void checkPermissions() {
-        permissionChecker = new PermissionChecker(mActivity, mActivity, rootView);
+        permissionChecker = new PermissionChecker(mActivity, rootView, PermissionChecker.ACCOUNTS_PERMISSION);
         permissionChecker.check(Manifest.permission.GET_ACCOUNTS,
                 getResources().getString(R.string.account_permission),
                 new PermissionChecker.OnPermissionResponse() {

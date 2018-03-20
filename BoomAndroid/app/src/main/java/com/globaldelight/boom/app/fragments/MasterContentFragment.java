@@ -120,7 +120,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private FrameLayout mPlayerContent;
     private FrameLayout mPlayerBackground;
 
-    private LinearLayout mMiniPlayerEffectPanel, mMiniTitlePanel;
+    private LinearLayout mMiniTitlePanel;
     private TextView mMiniSongTitle, mMiniSongSubTitle;
     private ImageView mMiniPlayerPlayPause, mMiniPlayerEffect;
     private AppCompatSeekBar mMiniPlayerSeek;
@@ -600,8 +600,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mMiniPlayerSeek.setPadding(0, 0, 0, 0);
         mMiniPlayerSeek.setOnTouchListener(this);
 
-        mMiniPlayerEffectPanel = (LinearLayout) mRootView.findViewById(R.id.mini_player_boom_effect);
-        mMiniPlayerEffectPanel.setOnClickListener(this);
         mMiniPlayerEffect = (ImageView) mRootView.findViewById(R.id.mini_player_effect_img);
         mMiniPlayerEffect.setOnClickListener(this);
 
@@ -631,8 +629,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     private void updateMiniPlayerEffectUI(boolean enable) {
         mMiniPlayerEffect.setImageResource(enable ?
-                R.drawable.ic_miniplayer_effects_on :
-                R.drawable.ic_miniplayer_effects);
+                R.drawable.ic_effects_active_on :
+                R.drawable.ic_effects_active);
     }
 
     public void setMiniPlayerVisible(boolean isMiniPlayerVisible) {
@@ -762,7 +760,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         switch (view.getId()) {
             case R.id.player_back_button:
             case R.id.mini_player_effect_img:
-            case R.id.mini_player_boom_effect:
                 if (!MasterActivity.isPlayerExpended()) {
                     setPlayerEnable(false);
                 }
@@ -980,7 +977,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         boolean isIntensityOn = audioEffects.isIntensityOn();
         mIntensityBtn.setChecked(isIntensityOn);
         mIntensityBtn.setEnabled(isEffectOn);
-        mIntensitySeek.setDisable(!(isIntensityOn && isEffectOn));
+        mIntensitySeek.setEnabled(isIntensityOn && isEffectOn);
 
 
         boolean isEqualizerOn = audioEffects.isEqualizerOn();

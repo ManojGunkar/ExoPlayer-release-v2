@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -179,17 +180,19 @@ public class AlbumSongListActivity extends MasterActivity implements AlbumSongLi
     }
 
     private void setDefaultImage() {
-        FrameLayout.LayoutParams param = new FrameLayout.LayoutParams(screenWidth, screenWidth);
-        findViewById(R.id.activity_album_art).setLayoutParams(param);
+        ViewGroup container = findViewById(R.id.toolbar_layout);
+        ViewGroup.LayoutParams lp = container.getLayoutParams();
+        lp.height = screenWidth;
+        container.setLayoutParams(lp);
         ((ImageView) findViewById(R.id.activity_album_art)).setImageDrawable(getResources().getDrawable(R.drawable.ic_default_art_grid, null));
     }
 
     private void setSongsArtImage(final ArrayList<String> Urls) {
-        TableRow.LayoutParams param = new TableRow.LayoutParams(screenWidth / 2, screenWidth / 2);
-        artImg1.setLayoutParams(param);
-        artImg2.setLayoutParams(param);
-        artImg3.setLayoutParams(param);
-        artImg4.setLayoutParams(param);
+        ViewGroup container = findViewById(R.id.toolbar_layout);
+        ViewGroup.LayoutParams lp = container.getLayoutParams();
+        lp.height = screenWidth;
+        container.setLayoutParams(lp);
+
         PlayerUtils.setSongsArtTable(this, Urls, new ImageView[]{artImg1, artImg2, artImg3, artImg4});
     }
 

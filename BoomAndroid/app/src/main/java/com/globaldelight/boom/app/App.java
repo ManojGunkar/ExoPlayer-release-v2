@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
-import com.facebook.FacebookSdk;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
@@ -116,7 +115,6 @@ public class App extends Application {
         registerActivityLifecycleCallbacks(mLifecycleCallbacks);
         BusinessModelFactory.initModel(this);
 
-        FacebookSdk.sdkInitialize(this);
 
         if ( BuildConfig.FLAVOR.equals("production") ) {
             final Fabric fabric = new Fabric.Builder(this)

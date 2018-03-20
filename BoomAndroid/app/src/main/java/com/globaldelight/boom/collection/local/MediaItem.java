@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 
@@ -11,7 +12,6 @@ import com.globaldelight.boom.playbackEvent.utils.MediaType;
  * Created by Rahul Agarwal on 8/4/2016.
  */
 public class MediaItem implements IMediaItem, Parcelable {
-
     private long ItemId;
     private String ItemTitle;
     private String ItemDisplayName;
@@ -137,6 +137,14 @@ public class MediaItem implements IMediaItem, Parcelable {
 
     @Override
     public String getItemArtUrl() {
+        if ( ItemArtUrl == null ) {
+            ItemArtUrl = DeviceMediaLibrary.getInstance(null).getAlbumArt(getItemAlbum());
+        }
+
+        if ( ItemArtUrl == null ) {
+            ItemArtUrl = UNKNOWN_ART_URL;
+        }
+
         return ItemArtUrl;
     }
 

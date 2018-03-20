@@ -3,6 +3,7 @@ package com.globaldelight.boom.app.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.MediaStore;
@@ -18,6 +19,7 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "MusicSearchDB";
     private static final String TABLE_SEARCH = "search_table";
     private Context context;
+    private volatile Boolean mFinishedLoading = false;
 
     public static final String ITEM_KEY_ID = "_id";
     public static final String SEARCH_KEY = "FEED_TITLE";
@@ -55,53 +57,45 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
             int Song_Name_Column = songListCursor.getColumnIndex
                     (MediaStore.Audio.Media.TITLE);
 
-            int Song_Display_Name_Column = songListCursor.getColumnIndex
-                    (MediaStore.Audio.Media.DISPLAY_NAME);
-
             int Album_Name_Column = songListCursor.getColumnIndex
                     (MediaStore.Audio.Media.ALBUM);
 
             int Artist_Name_Column = songListCursor.getColumnIndex
                     (MediaStore.Audio.Media.ARTIST);
 
+            SQLiteDatabase db = this.getWritableDatabase();
+
             do{
                 final String song = songListCursor.getString(Song_Name_Column);
                 final String album = songListCursor.getString(Album_Name_Column);
                 final String artist = songListCursor.getString(Artist_Name_Column);
 
-                addSong(song);
-                addSong(album);
-                addSong(artist);
+                addEntry(song, db);
+                addEntry(album, db);
+                addEntry(artist, db);
 
             }while (songListCursor.moveToNext());
+
+            db.close();
 
         }
         if (songListCursor != null) {
             songListCursor.close();
         }
+
+        mFinishedLoading = true;
     }
 
-    private synchronized void addSong(String title) {
+    private void addEntry(String title, SQLiteDatabase db) {
         if ( title == null ) {
             return;
         }
-        removeSong(title);
-        try {
-            SQLiteDatabase db = this.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.putNull(ITEM_KEY_ID);
-            values.put(SEARCH_KEY, title.trim());
-            db.insert(TABLE_SEARCH, null, values);
-            db.close();
-        }catch (Exception e){}
-    }
 
-    public void removeSong(String title) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_SEARCH,
-                SEARCH_KEY+" = ?", new String[] { title } );
+        ContentValues values = new ContentValues();
+        values.putNull(ITEM_KEY_ID);
+        values.put(SEARCH_KEY, title.trim());
+        db.replace(TABLE_SEARCH, null, values);
 
-        db.close();
     }
 
     public synchronized void clearList(){
@@ -110,7 +104,10 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public synchronized Cursor getSongList(String arg) {
+    public Cursor getSongList(String arg) {
+        if ( !mFinishedLoading ) {
+            return null;
+        }
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor c = db.query(true, TABLE_SEARCH, new String[] { ITEM_KEY_ID,
                         SEARCH_KEY }, SEARCH_KEY + " LIKE ?",
@@ -119,76 +116,4 @@ public class MusicSearchHelper extends SQLiteOpenHelper {
         return c;
     }
 
-    /************************************Albums Art****************************************************************/
-    public static void getAlbumList(Context context) {
-        HashMap<String, String> artWthAlbumName = new HashMap<>();
-        Cursor albumListCursor = context.getContentResolver().
-                query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, null, null, null, null);
-
-        if (albumListCursor != null && albumListCursor.moveToFirst()) {
-            //get columns
-            int Item_Title_Column = albumListCursor.getColumnIndex
-                    (MediaStore.Audio.Albums.ALBUM);
-
-            int Item_Album_Art_Path_Column = albumListCursor.getColumnIndex
-                    (MediaStore.Audio.Albums.ALBUM_ART);
-
-            //add albums to list
-            do {
-                artWthAlbumName.put(albumListCursor.getString(Item_Title_Column), albumListCursor.getString(Item_Album_Art_Path_Column));
-            }
-            while (albumListCursor.moveToNext());
-        }
-        if (albumListCursor != null) {
-            albumListCursor.close();
-        }
-        App.playbackManager().queue().setAlbumArtList(artWthAlbumName);
-        return;
-    }
-
-    public static void getArtistList(Context context) {
-        HashMap<Long, String> artistList = new HashMap<>();
-        System.gc();
-        final String orderBy = MediaStore.Audio.Artists.ARTIST;
-        Cursor artistListCursor = context.getContentResolver().
-                query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, null, null, null, orderBy);
-
-        if (artistListCursor != null && artistListCursor.moveToFirst()) {
-            //get columns
-
-            int Item_ID_Column = artistListCursor.getColumnIndex
-                    (MediaStore.Audio.Artists._ID);
-
-            //add albums to list
-            do {
-                artistList.put(artistListCursor.getLong(Item_ID_Column), getAlbumArtByArtist(context, artistListCursor.getLong(Item_ID_Column)));
-            }
-            while (artistListCursor.moveToNext());
-        }
-        if (artistListCursor != null) {
-            artistListCursor.close();
-        }
-        App.playbackManager().queue().setArtistArtList(artistList);
-        return;
-    }
-
-    public static String getAlbumArtByArtist(Context context, Long artistId) {
-        final String where = MediaStore.Audio.Media.ARTIST_ID + "=?";
-
-        Cursor albumListCursor = context.getContentResolver().
-                query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, new String[]{MediaStore.Audio.Albums.ALBUM_ART}, where, new String[]{String.valueOf(artistId)}, null);
-
-        String albumArt = null;
-        if (albumListCursor != null && albumListCursor.moveToFirst()) {
-            //get columns
-            int Item_Album_Art_Path_Column = albumListCursor.getColumnIndex
-                    (MediaStore.Audio.Albums.ALBUM_ART);
-
-            albumArt = albumListCursor.getString(Item_Album_Art_Path_Column);
-        }
-        if (albumListCursor != null) {
-            albumListCursor.close();
-        }
-        return albumArt;
-    }
 }

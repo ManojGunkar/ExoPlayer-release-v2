@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -116,8 +117,10 @@ public class AlbumDetailActivity extends MasterActivity implements AlbumDetailFr
     }
 
     private void setAlbumArtSize(int width, int height) {
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width, height);
-        findViewById(R.id.activity_album_art).setLayoutParams(lp);
+        FrameLayout container = findViewById(R.id.toolbar_layout);
+        ViewGroup.LayoutParams lp = container.getLayoutParams();
+        lp.height = height;
+        container.setLayoutParams(lp);
     }
 
     public void setAlbumArt(String albumArt) {

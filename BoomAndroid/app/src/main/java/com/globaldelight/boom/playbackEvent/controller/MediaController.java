@@ -7,7 +7,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaQuery;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
@@ -40,12 +40,12 @@ public class MediaController implements IMediaController {
 
     @Override
     public ArrayList<? extends IMediaItemBase> getPlayList() {
-        return DeviceMediaQuery.getPlayList(context);
+        return DeviceMediaLibrary.getPlayList(context);
     }
 
     @Override
     public ArrayList<? extends IMediaItemBase> getPlayListTrackList(IMediaItemCollection collection) {
-        return DeviceMediaQuery.getPlaylistSongs(context, collection.getItemId(), collection.getItemTitle());
+        return DeviceMediaLibrary.getPlaylistSongs(context, collection.getItemId(), collection.getItemTitle());
     }
 
     @Override
@@ -103,22 +103,22 @@ public class MediaController implements IMediaController {
 
     @Override
     public ArrayList<? extends IMediaItemBase> getAlbumList() {
-        return DeviceMediaQuery.getAlbumList(context);
+        return DeviceMediaLibrary.getAlbumList(context);
     }
 
     @Override
     public ArrayList<? extends IMediaItemBase> getSongList() {
-        return DeviceMediaQuery.getSongList(context);
+        return DeviceMediaLibrary.getSongList(context);
     }
 
     @Override
     public ArrayList<? extends IMediaItemBase> getArtistsList() {
-        return DeviceMediaQuery.getArtistList(context);
+        return DeviceMediaLibrary.getArtistList(context);
     }
 
     @Override
     public ArrayList<? extends IMediaItemBase> getGenreList() {
-        return DeviceMediaQuery.getGenreList(context);
+        return DeviceMediaLibrary.getGenreList(context);
     }
 
     @Override
@@ -138,37 +138,37 @@ public class MediaController implements IMediaController {
 
     @Override
     public ArrayList<? extends IMediaItemBase> getAlbumTrackList(IMediaItemCollection collection) {
-        return DeviceMediaQuery.getAlbumDetail(context, collection.getItemId(), collection.getItemTitle());
+        return DeviceMediaLibrary.getAlbumDetail(context, collection.getItemId(), collection.getItemTitle());
     }
 
     @Override
     public ArrayList<? extends IMediaItemBase> getArtistTrackList(IMediaItemCollection collection) {
-        return DeviceMediaQuery.getSongListOfArtist(context, collection.getItemId(), collection.getItemTitle());
+        return DeviceMediaLibrary.getSongListOfArtist(context, collection.getItemId(), collection.getItemTitle());
     }
 
     @Override
     public ArrayList<? extends IMediaItemBase> getGenreTrackList(IMediaItemCollection collection) {
-        return DeviceMediaQuery.getSongListOfGenre(context, collection.getItemId(), collection.getItemTitle());
+        return DeviceMediaLibrary.getSongListOfGenre(context, collection.getItemId(), collection.getItemTitle());
     }
 
     @Override
     public ArrayList<? extends IMediaItemBase> getArtistAlbumsList(IMediaItemCollection collection) {
-        return DeviceMediaQuery.getArtistsAlbumDetails(context, collection.getItemId(), collection.getItemTitle(), collection.getItemCount());
+        return DeviceMediaLibrary.getArtistsAlbumDetails(context, collection.getItemId(), collection.getItemTitle(), collection.getItemCount());
     }
 
     @Override
     public ArrayList<? extends IMediaItemBase> getGenreAlbumsList(IMediaItemCollection collection) {
-        return DeviceMediaQuery.getGenresAlbumDetails(context, collection.getItemId(), collection.getItemTitle(), collection.getItemCount());
+        return DeviceMediaLibrary.getGenresAlbumDetails(context, collection.getItemId(), collection.getItemTitle(), collection.getItemCount());
     }
 
     @Override
     public ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(IMediaItemCollection collection) {
-        return DeviceMediaQuery.getSongListOfArtistsAlbum(context, collection.getItemId(), collection.getItemAt(collection.getCurrentIndex()).getItemId());
+        return DeviceMediaLibrary.getSongListOfArtistsAlbum(context, collection.getItemId(), collection.getItemAt(collection.getCurrentIndex()).getItemId());
     }
 
     @Override
     public ArrayList<? extends IMediaItemBase> getGenreAlbumsTrackList(IMediaItemCollection collection) {
-        return DeviceMediaQuery.getSongListOfGenreAlbum(context, collection.getItemId(), collection.getItemTitle(), collection.getItemAt(collection.getCurrentIndex()).getItemId(), collection.getItemAt(collection.getCurrentIndex()).getItemTitle());
+        return DeviceMediaLibrary.getSongListOfGenreAlbum(context, collection.getItemId(), collection.getItemTitle(), collection.getItemAt(collection.getCurrentIndex()).getItemId(), collection.getItemAt(collection.getCurrentIndex()).getItemTitle());
     }
 
     @Override
@@ -197,11 +197,11 @@ public class MediaController implements IMediaController {
     public ArrayList<String> getArtUrlList(MediaItemCollection collection) {
         switch (collection.getItemType()){
             case ItemType.ARTIST:
-                return DeviceMediaQuery.getArtistsArtList(context, collection.getItemId(), collection.getItemTitle());
+                return DeviceMediaLibrary.getArtistsArtList(context, collection.getItemId(), collection.getItemTitle());
             case ItemType.PLAYLIST:
-                return DeviceMediaQuery.getPlaylistArtList(context, collection.getItemId(), collection.getItemTitle());
+                return DeviceMediaLibrary.getPlaylistArtList(context, collection.getItemId(), collection.getItemTitle());
             case ItemType.GENRE:
-                return DeviceMediaQuery.getGenreArtList(context, collection.getItemId(), collection.getItemTitle());
+                return DeviceMediaLibrary.getGenreArtList(context, collection.getItemId(), collection.getItemTitle());
             case ItemType.BOOM_PLAYLIST:
                 return App.getBoomPlayListHelper().getBoomPlayListArtList(collection.getItemId());
             case ItemType.RECENT_PLAYED:

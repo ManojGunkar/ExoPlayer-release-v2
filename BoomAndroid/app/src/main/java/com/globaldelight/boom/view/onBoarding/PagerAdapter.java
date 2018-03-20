@@ -1,6 +1,7 @@
 package com.globaldelight.boom.view.onBoarding;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +17,17 @@ import java.util.Random;
 public class PagerAdapter extends android.support.v4.view.PagerAdapter {
 
     private final Random random = new Random();
-    private int mSize;
     private Context context;
+    private TypedArray pages;
 
     public PagerAdapter(Context context) {
         this.context = context;
-        mSize = 4;
+        pages = context.getResources().obtainTypedArray(R.array.onboarding_pages);
     }
 
     @Override
     public int getCount() {
-        return mSize;
+        return pages.length();
     }
 
     @Override
@@ -44,16 +45,8 @@ public class PagerAdapter extends android.support.v4.view.PagerAdapter {
 
         View xmlView = null;
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (position==0){
-            xmlView = inflater.inflate(R.layout.onboard_0, null);
-        }if (position==1){
-            xmlView = inflater.inflate(R.layout.onboard_1, null);
-        }if (position==2){
-            xmlView = inflater.inflate(R.layout.onboard_2, null);
-        }if (position==3){
-            xmlView = inflater.inflate(R.layout.onboard_3, null);
-        }
-
+        int layoutId = pages.getResourceId(position, -1);
+        xmlView = inflater.inflate(layoutId, null);
         view.addView(xmlView);
         return xmlView;
     }

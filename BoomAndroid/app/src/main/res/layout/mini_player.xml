@@ -9,36 +9,28 @@
         android:id="@+id/mini_player_progress"
         android:layout_width="match_parent"
         android:layout_height="@dimen/mini_player_progress_height"
+        android:progressBackgroundTint="@color/transparent"
         android:thumb="@null"
-        android:enabled="false"
-        android:layout_weight="0"/>
+        android:enabled="false"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_weight="1"
         android:gravity="center_vertical">
-        <LinearLayout
-            android:id="@+id/mini_player_boom_effect"
+        <ImageView
+            android:id="@+id/mini_player_effect_img"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:gravity="center_vertical"
-            android:layout_weight="0">
-            <ImageView
-                android:id="@+id/mini_player_effect_img"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/MediaController"
-                android:src="@drawable/ic_miniplayer_effects" />
-        </LinearLayout>
+            style="@style/MediaController"
+            android:src="@drawable/ic_miniplayer_effects" />
         <LinearLayout
             android:id="@+id/mini_player_title_panel"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
+            android:layout_width="0dp"
             android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:orientation="vertical">
@@ -51,7 +43,7 @@
                 android:ellipsize="end"
                 android:textColor="@color/player_track_title"
                 android:textAlignment="center"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/mini_player_song_sub_title"
@@ -62,22 +54,17 @@
                 android:textStyle="normal"
                 android:textColor="@color/player_track_sub_title"
                 android:textAlignment="center"
-                android:textSize="16sp"/>
+                android:textSize="14sp"/>
         </LinearLayout>
-        <LinearLayout
+        <ImageView
+            android:id="@+id/mini_player_play_pause_btn"
+            android:tint="@color/effect_button_state"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:gravity="center_vertical"
-            android:layout_weight="0">
-            <ImageView
-                android:id="@+id/mini_player_play_pause_btn"
-                android:tint="@color/effect_button_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/MediaController"
-                android:src="@drawable/ic_miniplayer_play" />
-        </LinearLayout>
+            style="@style/MediaController"
+            android:src="@drawable/ic_miniplayer_play" />
     </LinearLayout>
 </LinearLayout>

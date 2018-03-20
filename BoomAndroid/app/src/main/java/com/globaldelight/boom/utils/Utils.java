@@ -1,28 +1,20 @@
 package com.globaldelight.boom.utils;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.AnyRes;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +25,7 @@ import android.view.WindowManager;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -43,23 +36,17 @@ import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
-import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.app.adapters.utils.AddToPlaylistAdapter;
-import com.globaldelight.boom.view.BoomDialogView;
-import com.globaldelight.boom.app.sharedPreferences.Preferences;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.regex.Matcher;
-
-import static android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
 
 /**
  * Created by Rahul Kumar Agrawal on 6/14/2016.
  */
 
 public class Utils {
-    private static BoomDialogView progressLoader;
+    private static ProgressDialog progressLoader;
     public static final int SHARE_COMPLETE = 1001;
     public static final int PURCHASE_FLOW_LAUNCH = 1002;
     public static final int LARGE_IMAGE_SIZE_DP = 128;
@@ -67,6 +54,28 @@ public class Utils {
 
     private Utils(Context context) {
     }
+
+    public static String getDeviceId(Context context){
+        return Settings.Secure.getString(context.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+    }
+
+    public static String getModelNumber(){
+        return Build.MODEL;
+    }
+
+    public static String getVersionCode(){
+        return BuildConfig.VERSION_NAME;
+    }
+
+    public static String getCountry(Context context){
+        return context.getResources().getConfiguration().locale.getCountry();
+    }
+
+    public static String getLocale(Context context){
+        return context.getResources().getConfiguration().locale.getLanguage();
+    }
+
 
     public static int dpToPx(Context context, int dp) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
@@ -205,7 +214,7 @@ public class Utils {
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+        if (netInfo != null && netInfo.isConnected()) {
             return true;
         }
         return false;
@@ -243,7 +252,8 @@ public class Utils {
 
     public static void showProgressLoader(Context context){
         if((null == progressLoader || !progressLoader.isShowing()) && ConnectivityReceiver.isNetworkAvailable(context, true)) {
-            progressLoader = new BoomDialogView(context);
+            progressLoader = new ProgressDialog(context);
+            progressLoader.setMessage("Please wait...");
             progressLoader.setCanceledOnTouchOutside(false);
             progressLoader.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
@@ -271,9 +281,6 @@ public class Utils {
                 .titleColor(ContextCompat.getColor(context, R.color.dialog_title))
                 .contentColor(ContextCompat.getColor(context, R.color.dialog_content))
                 .backgroundColor(ContextCompat.getColor(context, R.color.dialog_background))
-                .positiveColor(ContextCompat.getColor(context, R.color.dialog_submit_positive))
-                .negativeColor(ContextCompat.getColor(context, R.color.dialog_submit_negative))
-                .widgetColor(ContextCompat.getColor(context, R.color.dialog_widget))
                 .typeface(ResourcesCompat.getFont(context, R.font.titilliumweb_semibold), ResourcesCompat.getFont(context, R.font.titilliumweb_regular));
 
     }

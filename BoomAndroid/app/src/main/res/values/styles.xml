@@ -1,71 +1,17 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColor">@color/textColorPrimary</item>
+        <item name="android:itemBackground">@color/dialog_background</item>
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
         <item name="android:fontFamily">@font/titillium_web</item>
-    </style>
-
-
-    <style name="WidgetTheme">
-        <item name="android:textColorHint">@android:color/white</item>
-        <item name="android:fontFamily">@font/titillium_web</item>
-    </style>
-
-    <style name="PopupMenu" parent="android:Widget.Holo.Light.ListPopupWindow">
-        <item name="android:popupBackground">#888888</item>
-        <item name="android:fontFamily">@font/titillium_web</item>
-    </style>
-
-
-    <style name="AppTheme.Search" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:popupMenuStyle">@style/PopupMenu</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowAnimationStyle">@null</item>
-        <item name="searchViewStyle">@style/ToolbarTheme</item>
-        <item name="android:textColorHint">@android:color/white</item>
-    </style>
-
-
-    <style name="AppTheme.List" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-        <item name="searchViewStyle">@style/AppTheme.ToolbarTheme</item>
-        <item name="android:textColorHint">@android:color/white</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:itemBackground">@color/dialog_background</item>
-    </style>
-
-
-    <style name="AppTheme.ToolbarTheme">
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:textColorSecondary">@android:color/white</item>
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:fontFamily">@font/titillium_web</item>
-    </style>
-
-    <style name="GenericProgressBackground" parent="android:Theme">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">fill_parent</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="GenericProgressIndicator" parent="@android:style/Widget.DeviceDefault.ProgressBar.Large">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:indeterminate">true</item>
-    </style>
-
-    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:fontFamily">@font/titillium_web</item>
+        <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="searchViewStyle">@style/SearchViewStyle</item>
     </style>
 
 
@@ -73,52 +19,16 @@
         <item name="android:fontFamily">@font/titillium_web</item>
     </style>
 
-
-    <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="android:displayOptions">homeAsUp</item>
-        <item name="android:fontFamily">@font/titillium_web</item>
+    <style name="AppTheme.Toolbar" parent="AppTheme.AppBarOverlay">
+        <item name="android:textColorPrimary">@color/toolbar_txt</item>
+        <item name="android:textColorSecondary">@color/toolbar_txt</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
-
-    <style name="FullscreenTheme" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
-        <item name="android:windowActionBarOverlay">true</item>
-    </style>
-
-    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/black_shade</item>
-    </style>
-
-    <style name="MySearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <item name="queryBackground">@android:color/white</item>
-        <item name="submitBackground">@color/colorAccent</item>
-        <item name="closeIcon">@android:drawable/ic_menu_close_clear_cancel</item>
-        <item name="goIcon">@android:drawable/ic_menu_search</item>
-        <item name="searchHintIcon">@android:drawable/ic_menu_search</item>
-        <item name="android:width">10000dp</item>
-        <item name="android:fontFamily">@font/titillium_web</item>
-    </style>
-
-    <style name="ThemeToolbar" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">@color/colorPrimary</item>
-        <item name="colorPrimary">@android:color/white</item>
-        <item name="android:textColorSecondary">@color/colorAccent</item>
-        <item name="searchViewStyle">@style/MySearchViewStyle</item>
-        <item name="android:fontFamily">@font/titillium_web</item>
-
-    </style>
 
     <style name="ExpandedTransparent">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">24sp</item>
-    </style>
-
-    <style name="AppTheme.FullScreen" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowActionBarOverlay">true</item>
     </style>
 
     <style name="RedSwitch" parent="Theme.AppCompat.Light">
@@ -136,40 +46,10 @@
         <item name="android:textSize">@dimen/music_tab_txt_size</item>
     </style>
 
-
-    <style name="cart_dialog" parent="@android:style/Theme.Holo.Light.Dialog">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:backgroundDimEnabled">true</item>
-        <item name="android:backgroundDimAmount">0.6</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:statusBarColor">@color/transparent</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:itemBackground">@color/dialog_background</item>
-    </style>
-
     <style name="AppTheme.PromoCode" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:itemBackground">@color/dialog_background</item>
         <item name="android:windowTranslucentStatus">true</item>
-    </style>
-
-    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:background">@drawable/ic_splash</item>
     </style>
 
     <style name="MediaController" parent="@android:style/Widget.Material.Light.Button.Borderless">
@@ -185,10 +65,6 @@
         <item name="android:background">@drawable/ads_layout_bg</item>
     </style>
 
-    <style name="BoomText">
-        <item name="android:fontFamily">@font/titillium_web</item>
-    </style>
-
     <style name="NavigationViewStyle">
         <item name="android:textStyle">bold</item>
     </style>
@@ -198,5 +74,38 @@
         <item name="android:textColor">@color/music_tab_selected_color</item>
     </style>
 
+     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:background">@drawable/ic_boom_splash</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+    </style>
+
+    <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="DialogTheme" parent="Theme.AppCompat.Dialog">
+        <item name="android:alertDialogStyle">@style/AlertDialogTheme</item>
+        <item name="android:colorBackground">@color/dialog_background</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="android:background">@color/dialog_background</item>
+    </style>
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.Light.SearchView">
+        <!--  <item name="layout">@layout/search_view_layout</item> -->
+        <item name="searchHintIcon">@null</item>
+    </style>
 
 </resources>

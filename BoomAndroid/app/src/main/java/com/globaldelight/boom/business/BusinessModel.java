@@ -1,9 +1,10 @@
 package com.globaldelight.boom.business;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.globaldelight.boom.business.ads.Advertiser;
 
 /**
  * Created by adarsh on 07/12/17.
@@ -14,10 +15,21 @@ public interface BusinessModel {
 
     String ACTION_ADS_STATUS_CHANGED = "com.globaldelight.boom.ADS_STATUS_CHANGED";
 
-    boolean isAdsEnabled();
+    default boolean isAdsEnabled() {
+        return false;
+    }
 
-    void addItemsToDrawer(Menu menu, int groupId);
+    default Advertiser getAdFactory() {
+        return null;
+    }
 
-    void onDrawerItemClicked(MenuItem item, Context context);
+
+    default void addItemsToDrawer(Menu menu, int groupId) {
+
+    }
+
+    default void onDrawerItemClicked(MenuItem item, Context context) {
+
+    }
 
 }

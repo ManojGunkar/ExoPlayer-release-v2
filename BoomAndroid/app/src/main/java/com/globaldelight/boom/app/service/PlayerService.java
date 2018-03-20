@@ -76,7 +76,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
 
         Preferences.writeBoolean(this, Preferences.SLEEP_TIMER_ENABLED, false);
 
-        connectivityReceiver = new ConnectivityReceiver(this);
+        connectivityReceiver = new ConnectivityReceiver(this, this);
     }
 
     @Override
@@ -91,6 +91,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
         unregisterReceiver(headPhonePlugReceiver);
         serviceReceiver.unregisterService();
         mPlayback.unregisterListener(this);
+       // BusinessModelFactory.getCurrentModel().close();
         try {
             mServiceStopTime = SystemClock.currentThreadTimeMillis();
             mServiceStartTime = mServiceStopTime - mServiceStartTime;

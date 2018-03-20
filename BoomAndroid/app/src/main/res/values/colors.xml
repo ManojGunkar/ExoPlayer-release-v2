@@ -4,6 +4,15 @@
     <color name="colorPrimary">#171718</color>
     <color name="colorPrimaryDark">#0f0f10</color>
     <color name="colorAccent">#00b0ff</color>
+    <color name="textColorPrimary">@color/white</color>
+    <color name="textColorSecondary">#5d5d5e</color>
+    <color name="colorRipple">#1FEA0631</color>
+    <color name="colorButton">#10EA0631</color>
+
+
+    <color name="progress_background">#D9101011</color>
+
+    <color name="search_view_fade">@color/colorPrimary</color>
 
     <color name="glowyellow">#f2ff00</color>
     <color name="black_shade">#222327</color>
@@ -37,32 +46,39 @@
 
     <color name="noti_background">#1f1f20</color>
     <color name="noti_track_title">@color/white</color>
-    <color name="noti_track_sub_title">#5d5d5e</color>
+    <color name="noti_track_sub_title">@color/textColorSecondary</color>
 
     <color name="track_title">@color/white</color>
     <color name="track_selected_title">@color/colorAccent</color>
-    <color name="track_sub_title">#5d5d5e</color>
+    <color name="track_sub_title">@color/textColorSecondary</color>
 
     <color name="library_search_suggestion">@color/white</color>
 
     <color name="library_separator">#1d1e1f</color>
 
     <color name="library_header_title">@color/white</color>
-    <color name="library_header_sub_title">#5d5d5e</color>
+    <color name="library_header_sub_title">@color/textColorSecondary</color>
 
     <color name="library_search_header_title">@color/white</color>
     <color name="library_search_header_more">@color/white</color>
 
     <color name="library_album_footer">#1e1e20</color>
 
-    <color name="player_track_title">@color/white</color>
-    <color name="player_track_sub_title">@color/white</color>
-
+    <color name="player_track_title">@color/textColorPrimary</color>
+    <color name="player_track_sub_title">@color/textColorSecondary</color>
+    <color name="actionbar_text_color">@color/white</color>
+    <color name="large_player_action_bar">@color/transparent</color>
     <color name="large_player_seek_time">@color/white</color>
 
     <color name="effect_active">@color/white</color>
     <color name="effect_inactive">#5f5d61</color>
+    <color name="effect_checked">@color/effect_active</color>
+    <color name="eq_active">@color/white</color>
     <color name="fullbass_inactive">#4f4d51</color>
+    <color name="fullbass_inactive_background">@color/fullbass_inactive</color>
+    <color name="fullbass_border_checked">@color/colorAccent</color>
+    <color name="fullbass_border_disabled">@color/fullbass_inactive</color>
+    <color name="fullbass_border">@color/white</color>
     <color name="effect_intensity_seek_background">#313131</color>
     <color name="effect_intensity_seek_inactive">#5f5d61</color>
     <color name="effect_intensity_seek_active">#bfbfbf</color>
@@ -71,7 +87,7 @@
     <color name="dialog_background">#1f1f20</color>
     <color name="dialog_submit_positive">@color/colorAccent</color>
     <color name="dialog_submit_negative">#7e7e7e</color>
-    <color name="dialog_content">#5d5d5e</color>
+    <color name="dialog_content">@color/textColorSecondary</color>
     <color name="dialog_widget">@color/white</color>
     <color name="dialog_selection">#1a1a1b</color>
     <color name="dialog_txt">#4f4f4f</color>
@@ -84,9 +100,9 @@
     <color name="upnext_header_background">@color/black</color>
     <color name="upnext_track_title">#a6a6a6</color>
     <color name="upnext_playing_title">@color/colorAccent</color>
-    <color name="upnext_track_sub_title">#5d5d5e</color>
+    <color name="upnext_track_sub_title">@color/textColorSecondary</color>
     <color name="upnext_delete_background">@color/black</color>
-    <color name="swipe_delete_undo_btn">#fff084</color>
+    <color name="swipe_delete_undo_btn">@color/colorAccent</color>
 
     <color name="coach_mark_background">@color/colorAccent</color>
     <color name="coachbubble">#9b002d</color>

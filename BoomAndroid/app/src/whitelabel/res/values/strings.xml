@@ -1,0 +1,19 @@
+<resources>
+
+    <string name="app_name">Tunes Audio</string>
+    <string name="start_boomin">Let\'s Get Started</string>
+
+    <string name="boom_about_text"><i>Powered by</i> <b>Boom</b></string>
+    <string name="bluetooth_off">Bluetooth is Off</string>
+    <string name="turn_on_bluetooth">Turn On Bluetooth</string>
+    <string name="bluetooth_desc"><b>Turn on Bluetooth</b> and keep it connected with <b>Tunes Headphone/Speaker</b>.</string>
+    <string name="searching_headphone">Searching for Tunes Headphone/Speaker...</string>
+    <string name="search_desc">Keep your <b>Tunes Headphone/Speaker ON</b> and connected via <b>Bluetooth.</b></string>
+    <string name="headphone_name">Heaphone name</string>
+    <string name="connected">Connected! You’re good to go!</string>
+    <string name="setting">Go to Settings</string>
+    <string name="bluetooth_setting_desc"><b>Pair</b> the <b>Tunes H2</b> headphone with your phone.</string>
+    <string name="no_network">Network Error!</string>
+    <string name="network_desc">Oops, please check your network settings and try again.</string>
+
+</resources>

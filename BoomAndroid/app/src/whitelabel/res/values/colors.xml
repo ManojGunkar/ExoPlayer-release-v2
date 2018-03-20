@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#EA0631</color>
+    <color name="colorPrimaryDark">#b20627 </color>
+    <color name="colorAccent">#EA0631</color>
+    <color name="textColorPrimary">@color/black</color>
+    <color name="textColorSecondary">#5d5d5e</color>
+    <color name="colorRipple">#1FEA0631</color>
+    <color name="colorButton">#10EA0631</color>
+
+    <color name="glowyellow">#f2ff00</color>
+    <color name="black_shade">#222327</color>
+    <color name="appBackground">@color/white</color>
+
+    <color name="rippelColor">#0099CC</color>
+
+    <color name="progress_background">#0ffafafa</color>
+
+
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="text_off_state">#6f6d6f</color>
+    <color name="transparent">@android:color/transparent</color>
+
+    <color name="popup_secondary">#7e7c7f</color>
+    <color name="popup_message">#a8a9aa</color>
+
+    <color name="app_background">@color/white</color>
+
+    <color name="onBoardingBG">@color/white</color>
+
+    <color name="player_background">@color/white</color>
+    <color name="seperator_color">@color/white</color>
+
+
+    <color name="toolbar_txt">@color/white</color>
+
+    <color name="drawer_background">@color/white</color>
+    <color name="drawer_item_txt">@color/black</color>
+
+
+    <color name="card_grid_bg">#D9D9D9</color>
+
+    <color name="music_tab_selected_color">#f28a95</color>`
+    <color name="music_tab_normal_color">@color/white</color>
+    <color name="music_tab_indicator_color">@color/white</color>
+
+    <color name="noti_background">@color/white</color>
+    <color name="noti_track_title">@color/textColorPrimary</color>
+    <color name="noti_track_sub_title">@color/textColorSecondary</color>
+
+    <color name="track_title">@color/black</color>
+    <color name="track_selected_title">@color/colorAccent</color>
+    <color name="track_sub_title">#9F9F9F</color>
+
+    <color name="library_search_suggestion">@color/colorAccent</color>
+
+    <color name="library_separator">#C0C0C0</color>
+
+    <color name="library_header_title">@color/textColorPrimary</color>
+    <color name="library_header_sub_title">@color/textColorSecondary</color>
+
+    <color name="library_search_header_title">@color/black</color>
+    <color name="library_search_header_more">@color/colorAccent</color>
+
+    <color name="library_album_footer">@color/white</color>
+
+    <color name="player_track_title">@color/black</color>
+    <color name="player_track_sub_title">@color/black</color>
+
+    <color name="large_player_action_bar">@color/colorPrimary</color>
+    <color name="large_player_seek_time">@color/black</color>
+    <color name="actionbar_text_color">@color/white</color>
+    <color name="effect_active">@color/black</color>
+    <color name="eq_active">@color/colorAccent</color>
+    <color name="effect_inactive">#d6d6d6</color>
+    <color name="effect_checked">@color/white</color>
+    <color name="fullbass_inactive">#919191</color>
+    <color name="fullbass_inactive_background">#f0f0f0</color>
+    <color name="fullbass_border_checked">@color/colorAccent</color>
+    <color name="fullbass_border_disabled">@color/fullbass_inactive</color>
+    <color name="fullbass_border">@color/black</color>
+
+    <color name="effect_intensity_seek_background">#c0c0c0</color>
+    <color name="effect_intensity_seek_inactive">#c0c0c0</color>
+    <color name="effect_intensity_seek_active">@color/black</color>
+
+    <color name="dialog_title">@color/black</color>
+    <color name="dialog_background">@color/white</color>
+    <color name="dialog_submit_positive">@color/colorAccent</color>
+    <color name="dialog_submit_negative">#7e7e7e</color>
+    <color name="dialog_content">@color/textColorSecondary</color>
+    <color name="dialog_widget">@color/white</color>
+    <color name="dialog_selection">#D3D3D3</color>
+    <color name="dialog_txt">#4f4f4f</color>
+    <color name="dialog_selected_txt">@color/colorAccent</color>
+    <color name="dialog_list_separator">#f0f0f0</color>
+
+    <color name="upnext_header_title">@color/white</color>
+    <color name="upnext_header_clear">@color/white</color>
+    <color name="upnext_header_separator">#313232</color>
+    <color name="upnext_header_background">@color/textColorPrimary</color>
+    <color name="upnext_track_title">@color/black</color>
+    <color name="upnext_playing_title">@color/colorAccent</color>
+    <color name="upnext_track_sub_title">@color/textColorSecondary</color>
+    <color name="upnext_delete_background">#D3D3D3</color>
+    <color name="swipe_delete_undo_btn">@color/colorAccent</color>
+
+    <color name="coach_mark_background">@color/colorAccent</color>
+    <color name="coachbubble">#9b002d</color>
+
+
+    <color name="material_light_primary_text">#DE000000</color>
+    <color name="material_light_hint_text">#61000000</color>
+    <color name="material_light_active_icon">#8A000000</color>
+    <color name="material_ripple_light">#1F000000</color>
+    <color name="divider_color">#1F000000</color>
+    <color name="active_icon_color">#8A000000</color>
+    <color name="cards_and_dialogs_color">@android:color/white</color>
+    <color name="quantum_grey_600">#757575</color>
+    <color name="search_view_fade">#f7b9bf</color>
+
+
+    <color name="setting_item_header_title">@color/black</color>
+    <color name="setting_item_title">@color/black</color>
+    <color name="setting_item_sub_title">@color/black</color>
+    <color name="setting_separator">#1d1e1f</color>
+
+    <!--<color name="about_company_color">#1b221b</color>-->
+    <color name="about_company_color">#787979</color>
+
+    <color name="card_grid_item_title_background_tint">#434343</color>
+
+    <color name="black_overlay">#66000000</color>
+    <color name="pop_up_overlay">#1b2124</color>
+    
+
+    <color name="store_page_description_text_color">#8d8d8d</color>
+    <color name="store_page_button_color">@color/colorAccent</color>
+    <color name="share_text_color">#00b0ff</color>
+    <color name="share_popup_body">#a9a9aa</color>
+    <color name="library_empty_placeholder_txt_color">#909090</color>
+
+    <color name="promo_code_line">#999999</color>
+    <color name="promo_code_hint">#666666</color>
+    <color name="promo_code_error">#ffc600</color>
+
+</resources><!--
+<color name="colorAccent">#FF4081</color>-->

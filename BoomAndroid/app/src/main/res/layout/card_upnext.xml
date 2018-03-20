@@ -70,7 +70,7 @@
         android:text="@string/txt_undo"
         android:textAllCaps="true"
         android:visibility="gone"
-        android:textColor="@color/white" />
+        android:textColor="@color/swipe_delete_undo_btn" />
 
 
 </FrameLayout>

@@ -24,6 +24,7 @@ import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.Utils;
@@ -79,18 +80,6 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
         }
 
         int size = setSize(holder);
-        if(null == mediaItem.getItemArtUrl()) {
-            if ( mediaItem.getItemType() == ItemType.ARTIST ) {
-                mediaItem.setItemArtUrl(App.playbackManager().queue().getArtistArtList().get(mediaItem.getItemId()));
-            }
-            else {
-                mediaItem.setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(mediaItem.getItemSubTitle()));
-            }
-        }
-
-        if(null == mediaItem.getItemArtUrl())
-            mediaItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-
         setMediaImage(holder, mediaItem);
         holder.overflowMenu.setVisibility(View.VISIBLE);
     }

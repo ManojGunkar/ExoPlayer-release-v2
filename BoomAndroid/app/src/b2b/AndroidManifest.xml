@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.globaldelight.boom">
+
+    <application>
+        <meta-data android:name="business-model" android:value="com.globaldelight.boom.business.B2BModel" />
+
+        <activity
+            android:name=".app.activities.UserVerificationActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PromoCode" />
+
+    </application>
+
+</manifest>

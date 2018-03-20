@@ -17,10 +17,10 @@ import java.util.ArrayList;
 public class GoogleDriveMediaList {
 
     private ArrayList<IMediaItemBase> fileList;
-    private static boolean isAllSongsLoaded = false;
+    private boolean isAllSongsLoaded = false;
     private IGoogleDriveMediaUpdater googleDriveMediaUpdater;
     private static GoogleDriveMediaList sInstance;
-    private static GoogleDriveHandler mGoogleDriveHandler;
+    private GoogleDriveHandler mGoogleDriveHandler;
     private Context mContext;
     private Handler postMessage;
 
@@ -37,12 +37,17 @@ public class GoogleDriveMediaList {
         return sInstance;
     }
 
-    public static void setGoogleDriveHandler(GoogleDriveHandler googleDriveHandler) {
+    public void setGoogleDriveHandler(GoogleDriveHandler googleDriveHandler) {
         mGoogleDriveHandler = googleDriveHandler;
     }
 
-    public static GoogleDriveHandler getGoogleDriveHandler() {
+    public GoogleDriveHandler getGoogleDriveHandler() {
         return mGoogleDriveHandler;
+    }
+
+
+    public boolean isLoaded() {
+        return isAllSongsLoaded;
     }
 
     public ArrayList<IMediaItemBase> getGoogleDriveMediaList(){
@@ -81,7 +86,7 @@ public class GoogleDriveMediaList {
             @Override
             public void run() {
                 if(null != googleDriveMediaUpdater)
-                    googleDriveMediaUpdater.onGoogleDriveMediaListUpdate();
+                    googleDriveMediaUpdater.onMediaListUpdate();
             }
         });
     }
@@ -91,7 +96,7 @@ public class GoogleDriveMediaList {
             @Override
             public void run() {
                 if(null != googleDriveMediaUpdater)
-                    googleDriveMediaUpdater.onFinishListLoading();
+                    googleDriveMediaUpdater.onFinishLoading();
             }
         });
         if(fileList.size() > 0) {
@@ -140,8 +145,8 @@ public class GoogleDriveMediaList {
     }
 
     public interface IGoogleDriveMediaUpdater {
-        void onGoogleDriveMediaListUpdate();
-        void onFinishListLoading();
+        void onMediaListUpdate();
+        void onFinishLoading();
         void onRequestCancelled();
         void onError(String e);
         void onEmptyList();

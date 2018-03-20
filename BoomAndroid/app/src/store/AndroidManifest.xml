@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.globaldelight.boom">
+
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+    <application>
+        <meta-data android:name="business-model" android:value="com.globaldelight.boom.business.GooglePlayStoreModel" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <activity android:name="com.facebook.FacebookActivity" />
+
+        <activity
+            android:name=".app.activities.StoreActivity"
+            android:parentActivityName=".app.activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".app.activities.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".app.share.ShareDialog$ProxyActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+    </application>
+
+</manifest>

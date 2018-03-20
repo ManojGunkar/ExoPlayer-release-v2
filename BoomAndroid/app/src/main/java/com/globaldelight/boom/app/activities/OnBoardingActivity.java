@@ -9,9 +9,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
@@ -40,6 +40,8 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
         setContentView(R.layout.activity_onboarding);
         initComp();
         FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Started_OnBoarding);
+
+
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -48,7 +50,8 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
 
             @Override
             public void onPageSelected(int position) {
-                if (position==3){
+
+                if (position== viewpager.getAdapter().getCount() - 1 ){
                     startBoom.setVisibility(View.VISIBLE);
                     startBoom.startAnimation(AnimationUtils.loadAnimation(OnBoardingActivity.this, R.anim.zoom_in));
                     bottomPanel.setVisibility(View.GONE);
@@ -119,9 +122,9 @@ public class OnBoardingActivity extends Activity implements View.OnClickListener
     }
 
     private void jumpToNext() {
-        int position = viewpager.getCurrentItem();
-        viewpager.setCurrentItem(position + 1, true);
-        if (position>=2){
+        int nextPosition = viewpager.getCurrentItem() + 1;
+        viewpager.setCurrentItem(nextPosition, true);
+        if (nextPosition >= viewpager.getAdapter().getCount() - 1 ){
             txtSkip.setVisibility(View.INVISIBLE);
             txtNext.setVisibility(View.INVISIBLE);
         }else {

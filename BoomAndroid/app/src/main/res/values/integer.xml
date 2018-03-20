@@ -22,4 +22,5 @@
     <integer name="VOCALS">19</integer>
     <integer name="RNB">20</integer>
     <integer name="METAL">21</integer>
+
 </resources>

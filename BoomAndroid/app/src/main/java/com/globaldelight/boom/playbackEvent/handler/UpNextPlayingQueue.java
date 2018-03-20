@@ -63,8 +63,6 @@ public class UpNextPlayingQueue {
 
     ArrayList<IMediaItemBase> mUpNextList;
 
-    private HashMap<String, String> mAlbumArtList = new HashMap<>();
-    private HashMap<Long, String> mArtistArtList = new HashMap<>();
 
     private static
     @ShuffleMode
@@ -85,21 +83,6 @@ public class UpNextPlayingQueue {
         this.mUpNextMediaEvent = event;
     }
 
-    public void setAlbumArtList(HashMap<String, String> artList) {
-        this.mAlbumArtList = artList;
-    }
-
-    public HashMap<String, String> getAlbumArtList() {
-        return mAlbumArtList;
-    }
-
-    public void setArtistArtList(HashMap<Long, String> artList) {
-        this.mArtistArtList = artList;
-    }
-
-    public HashMap<Long, String> getArtistArtList() {
-        return mArtistArtList;
-    }
 
     public void clearUpNext() {
         mUpNextList.clear();

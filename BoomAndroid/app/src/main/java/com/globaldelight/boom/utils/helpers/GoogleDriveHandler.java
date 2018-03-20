@@ -48,7 +48,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-    public static GoogleAccountCredential mCredential;
+    private static GoogleAccountCredential mCredential;
     public static final int REQUEST_ACCOUNT_PICKER = 1000;
     public static final int REQUEST_AUTHORIZATION = 1001;
     public static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
@@ -60,6 +60,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     private Fragment mFragment;
     private LoadGoogleDriveList loadGoogleDriveList;
     private Context mContext;
+    private Runnable mLoadMediaList = null;
 
     public GoogleDriveHandler(Context context){
         this.mContext = context;
@@ -79,15 +80,15 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
         return mCredential;
     }
 
-    public GoogleApiClient getGoogleApiClient(){
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        if(null == client) {
+    private GoogleApiClient getGoogleApiClient(){
+        String accountName = getGoogleAccountCredential().getSelectedAccountName();
+        if(null == client && accountName != null ) {
             client = new GoogleApiClient.Builder(mContext).addApi(Drive.API)
                     .addScope(Drive.SCOPE_FILE)
                     .addScope(Drive.SCOPE_APPFOLDER) // required for App Folder sample
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
+                    .setAccountName(accountName)
                     .build();
         }
         return client;
@@ -98,16 +99,16 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     }
 
     public void connectGoogleAccount(){
+        GoogleApiClient client = getGoogleApiClient();
         if(null != client) {
             client.connect();
-//            AppIndex.AppIndexApi.start(client, getIndexApiAction());
         }
     }
 
     public void disconnectToGoogleAccount() {
         if (null != client){
-//            AppIndex.AppIndexApi.end(client, getIndexApiAction());
             client.disconnect();
+            client = null;
         }
     }
 
@@ -134,17 +135,30 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
      * of the preconditions are not satisfied, the app will prompt the user as
      * appropriate.
      */
-    public void getResultsFromApi() {
-        if (!isGooglePlayServicesAvailable()) {
-            acquireGooglePlayServices();
-        } else if (mCredential.getSelectedAccountName() == null) {
-            chooseAccount();
-        } else if (!isDeviceOnline()) {
-            GoogleDriveMediaList.getInstance(mContext).onErrorOccurred(mFragment.getResources().getString(R.string.network_error));
-        } else {
-            loadGoogleDriveList  = new LoadGoogleDriveList(mFragment, mCredential, 0);
-            loadGoogleDriveList.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    public void fetchMediaList() {
+        mLoadMediaList = this::loadGoogleDriveMedia;
+        GoogleApiClient client = getGoogleApiClient();
+        if ( client != null && client.isConnected() )  {
+            mLoadMediaList.run();
+            mLoadMediaList = null;
         }
+        else {
+            if (!isGooglePlayServicesAvailable()) {
+                acquireGooglePlayServices();
+            } else if (mCredential.getSelectedAccountName() == null) {
+                chooseAccount();
+            } else if (!isDeviceOnline()) {
+                GoogleDriveMediaList.getInstance(mContext).onErrorOccurred(mFragment.getResources().getString(R.string.network_error));
+            }
+            else {
+                connectGoogleAccount();
+            }
+        }
+    }
+
+    private void loadGoogleDriveMedia() {
+        loadGoogleDriveList  = new LoadGoogleDriveList(mContext, mFragment, mCredential, 0);
+        loadGoogleDriveList.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void connectToGoogleAccount(){
@@ -264,7 +278,7 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
             String accountName = App.getUserPreferenceHandler().getGoogleAccountName();
             if (accountName != null) {
                 mCredential.setSelectedAccountName(accountName);
-                getResultsFromApi();
+                fetchMediaList();
             } else {
                 // Start a dialog from which the user can choose an account
                 mFragment.startActivityForResult(
@@ -300,6 +314,10 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.i(TAG, "GoogleApiClient connected");
+        if ( mLoadMediaList != null ) {
+            mLoadMediaList.run();
+            mLoadMediaList = null;
+        }
     }
 
     /**
@@ -320,19 +338,6 @@ public class GoogleDriveHandler implements GoogleApiClient.ConnectionCallbacks, 
                 }
                     // show the localized error dialog.
                 return;
-            }
-            try {
-                if ( mFragment != null ) {
-                    result.startResolutionForResult(mFragment.getActivity(), GoogleDriveHandler.REQUEST_CODE_RESOLUTION);
-                }
-            } catch (IntentSender.SendIntentException e) {
-                Log.e(TAG, "Exception while starting resolution activity", e);
-                e.printStackTrace();
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-            if(null != loadGoogleDriveList){
-                loadGoogleDriveList.setCancelLoading();
             }
         }
     }
