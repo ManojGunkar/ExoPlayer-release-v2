@@ -94,11 +94,6 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 holder.layout.setVisibility(View.VISIBLE);
                 holder.undoButton.setVisibility(View.GONE);
                 holder.undoButton.setOnClickListener(null);
-                if (null == item.getItemArtUrl())
-                    item.setItemArtUrl(DeviceMediaLibrary.getInstance(context).getAlbumArt(item.getItemAlbum()));
-
-                if (null == item.getItemArtUrl())
-                    item.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
 
                 setArt(holder, item.getItemArtUrl());
                 holder.name.setText(item.getItemTitle());

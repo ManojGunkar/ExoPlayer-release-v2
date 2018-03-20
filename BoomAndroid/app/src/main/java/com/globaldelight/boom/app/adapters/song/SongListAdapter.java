@@ -69,13 +69,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         holder.title.setText(mediaItem.getItemTitle());
         holder.description.setVisibility(null != mediaItem.getItemArtist() ? View.VISIBLE : View.GONE);
         holder.description.setText(mediaItem.getItemArtist());
-        if (null == mediaItem.getItemArtUrl()) {
-            mediaItem.setItemArtUrl(DeviceMediaLibrary.getInstance(activity).getAlbumArt(mediaItem.getItemAlbum()));
-        }
-        if (null == mediaItem.getItemArtUrl()) {
-            mediaItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-        }
-
         setAlbumArt(mediaItem.getItemArtUrl(), holder);
 
         updatePlayingTrack(holder, itemList.get(position).getItemId());

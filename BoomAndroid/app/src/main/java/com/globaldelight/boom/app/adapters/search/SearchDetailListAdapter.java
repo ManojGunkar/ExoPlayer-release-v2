@@ -80,12 +80,6 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             holder.name.setText(resultItemList.get(position).getItemTitle());
             holder.artistName.setText(((MediaItem)resultItemList.get(position)).getItemArtist());
             holder.mainView.setElevation(0);
-            if(null == resultItemList.get(position).getItemArtUrl())
-                resultItemList.get(position).setItemArtUrl(DeviceMediaLibrary.getInstance(activity).getAlbumArt(((MediaItem) resultItemList.get(position)).getItemAlbum()));
-
-            if(null == resultItemList.get(position).getItemArtUrl())
-                resultItemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-
             setSongArt(resultItemList.get(position).getItemArtUrl(), holder);
 
             updatePlayingTrack(holder, resultItemList.get(position).getItemId());
@@ -148,12 +142,6 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             holder.subTitle.setText((count<=1 ? context.getResources().getString(R.string.song) : context.getResources().getString(R.string.songs)) +" "+count+" "+
                     (albumCount<=1 ? context.getResources().getString(R.string.album) : context.getResources().getString(R.string.albums)) +" "+albumCount);
             int size = setSize(holder);
-            if(null == resultItemList.get(position).getItemArtUrl())
-                selected.setItemArtUrl(DeviceMediaLibrary.getInstance(context).getArtistArt(selected.getItemId()));
-
-            if(null == resultItemList.get(position).getItemArtUrl())
-                resultItemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-
             setArtistImg(selected.getItemArtUrl(), holder);
 
             holder.grid_menu.setVisibility(View.VISIBLE);

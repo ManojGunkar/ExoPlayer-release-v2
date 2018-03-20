@@ -382,7 +382,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
             mediaItemBase = params[0];
             if(mediaItemBase.getMediaType() == MediaType.DEVICE_MEDIA_LIB){
                 dataSource = ((MediaItem)mediaItemBase).getItemUrl();
-                mediaItemBase.setItemArtUrl(DeviceMediaLibrary.getInstance(context).getAlbumArt(((MediaItem)mediaItemBase).getItemAlbum()));
             }else if(mediaItemBase.getMediaType() == MediaType.DROP_BOX){
                 return DropBoxAPI.getInstance(context).getStreamingUrl(((MediaItem)mediaItemBase).getItemUrl());
             }else if(mediaItemBase.getMediaType() == MediaType.GOOGLE_DRIVE){

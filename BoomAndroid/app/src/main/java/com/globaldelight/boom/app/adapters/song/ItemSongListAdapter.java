@@ -137,12 +137,6 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         holder.artistName.setText(currentItem.getItemArtist());
         holder.itemView.setElevation(0);
 
-        if(null == currentItem.getItemArtUrl())
-            currentItem.setItemArtUrl(DeviceMediaLibrary.getInstance(activity).getAlbumArt(currentItem.getItemAlbum()));
-
-        if(null == currentItem.getItemArtUrl())
-            currentItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-
         setAlbumArt(currentItem.getItemArtUrl(), holder);
         if (selectedHolder != null)
             selectedHolder.itemView.setBackgroundColor(ContextCompat
@@ -160,7 +154,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         holder.artistName.setVisibility(null != currentItem.getItemArtist() ? View.VISIBLE : View.GONE);
         holder.artistName.setText(currentItem.getItemArtist());
 
-        setAlbumArt(DeviceMediaLibrary.getInstance(activity).getAlbumArt(currentItem.getItemAlbum()), holder);
+        setAlbumArt(currentItem.getItemArtUrl(), holder);
 
         if (selectedHolder != null)
             selectedHolder.itemView.setBackgroundColor(ContextCompat

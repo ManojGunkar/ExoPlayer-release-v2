@@ -102,12 +102,6 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     holder.title.setText(currentItem.getItemTitle());
                     holder.subTitle.setText(currentItem.getItemSubTitle());
                     holder.defaultImg.setVisibility(View.VISIBLE);
-                    if(null == currentItem.getItemArtUrl())
-                        currentItem.setItemArtUrl(DeviceMediaLibrary.getInstance(activity).getAlbumArt(currentItem.getItemTitle()));
-
-                    if(null == currentItem.getItemArtUrl())
-                        currentItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-
                     setArtistImg(holder, currentItem.getItemArtUrl());
                     setOnClicks(holder, pos, ITEM_VIEW_ALBUM);
                     break;
