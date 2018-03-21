@@ -35,6 +35,7 @@ import java.io.File;
 public class AlbumDetailActivity extends MasterActivity implements AlbumDetailFragment.Callback{
 
     IMediaItemCollection collection, currentItem;
+    private int mItemIndex = -1;
     AlbumDetailFragment fragment;
     private FloatingActionButton mFloatPlayAllAlbums;
 
@@ -55,11 +56,12 @@ public class AlbumDetailActivity extends MasterActivity implements AlbumDetailFr
     private void initValues() {
         Bundle b = getIntent().getBundleExtra("bundle");
         collection = (MediaItemCollection) b.getParcelable("mediaItemCollection");
+        mItemIndex = b.getInt("itemIndex");
 
         if( collection.getParentType() == ItemType.ALBUM ){
             currentItem = collection;
         } else {
-            currentItem = (IMediaItemCollection) collection.getItemAt(collection.getCurrentIndex());
+            currentItem = (IMediaItemCollection) collection.getItemAt(mItemIndex);
         }
 
         int width = Utils.getWindowWidth(this);
@@ -108,6 +110,7 @@ public class AlbumDetailActivity extends MasterActivity implements AlbumDetailFr
 
         Bundle arguments = new Bundle();
         arguments.putParcelable("mediaItemCollection", (MediaItemCollection)collection);
+        arguments.putInt("itemIndex", mItemIndex);
         fragment = new AlbumDetailFragment();
         fragment.setArguments(arguments);
         fragment.setCallback(this);

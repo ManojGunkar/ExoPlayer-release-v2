@@ -154,19 +154,6 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
     }
 
     @Override
-    public int getCurrentIndex() {
-        return this.mCurrentIndex;
-    }
-
-    
-    /*setter*/
-    
-    @Override
-    public void setCurrentIndex(int mCurrentIndex) {
-        this.mCurrentIndex = mCurrentIndex;
-    }
-
-    @Override
     public void setArtUrlList(ArrayList<String> mArtUrlList) {
         this.mArtUrlList = mArtUrlList;
     }

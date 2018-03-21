@@ -49,6 +49,7 @@ public class AlbumSongListActivity extends MasterActivity implements AlbumSongLi
     private TableLayout tblAlbumArt;
     private FloatingActionButton mFloatPlayAlbumSongs;
     private static int screenWidth= 0;
+    private int mItemIndex = 0;
 
     public void updateAlbumArt() {
         final ArrayList<String> urlList = MediaController.getInstance(this).getArtUrlList((MediaItemCollection) currentItem);
@@ -79,6 +80,7 @@ public class AlbumSongListActivity extends MasterActivity implements AlbumSongLi
         setDrawerLocked(true);
         Bundle b = getIntent().getBundleExtra("bundle");
         currentItem = (MediaItemCollection) b.getParcelable("mediaItemCollection");
+        mItemIndex = b.getInt("itemIndex");
 
         fragment = new AlbumSongListFragment();
 
@@ -98,7 +100,7 @@ public class AlbumSongListActivity extends MasterActivity implements AlbumSongLi
         if(currentItem.getItemType() == ItemType.PLAYLIST || currentItem.getItemType() == ItemType.BOOM_PLAYLIST){
             artUrlList = currentItem.getArtUrlList();
         }else{
-            artUrlList = ((IMediaItemCollection)currentItem.getItemAt(currentItem.getCurrentIndex())).getArtUrlList();
+            artUrlList = ((IMediaItemCollection)currentItem.getItemAt(mItemIndex)).getArtUrlList();
         }
         setAlbumArt(artUrlList);
 
@@ -141,6 +143,7 @@ public class AlbumSongListActivity extends MasterActivity implements AlbumSongLi
 
         Bundle arguments = new Bundle();
         arguments.putParcelable("mediaItemCollection", (MediaItemCollection)currentItem);
+        arguments.putInt("itemIndex", mItemIndex);
         fragment.setArguments(arguments);
         fragment.setCallback(this);
         getSupportFragmentManager().beginTransaction()

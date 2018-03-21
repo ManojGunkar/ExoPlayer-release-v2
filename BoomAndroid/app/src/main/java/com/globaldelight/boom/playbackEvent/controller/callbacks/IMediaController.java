@@ -49,9 +49,9 @@ public interface IMediaController {
 
     ArrayList<? extends IMediaItemBase> getGenreAlbumsList(IMediaItemCollection collection);
 
-    ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(IMediaItemCollection collection);
+    ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(IMediaItemCollection collection, int index);
 
-    ArrayList<? extends IMediaItemBase> getGenreAlbumsTrackList(IMediaItemCollection collection);
+    ArrayList<? extends IMediaItemBase> getGenreAlbumsTrackList(IMediaItemCollection collection, int index);
 
     boolean isFavoriteItem(long trackId);
 

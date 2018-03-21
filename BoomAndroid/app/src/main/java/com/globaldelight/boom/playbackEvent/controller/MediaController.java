@@ -162,13 +162,13 @@ public class MediaController implements IMediaController {
     }
 
     @Override
-    public ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(IMediaItemCollection collection) {
-        return DeviceMediaLibrary.getSongListOfArtistsAlbum(context, collection.getItemId(), collection.getItemAt(collection.getCurrentIndex()).getItemId());
+    public ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(IMediaItemCollection collection, int index) {
+        return DeviceMediaLibrary.getSongListOfArtistsAlbum(context, collection.getItemId(), collection.getItemAt(index).getItemId());
     }
 
     @Override
-    public ArrayList<? extends IMediaItemBase> getGenreAlbumsTrackList(IMediaItemCollection collection) {
-        return DeviceMediaLibrary.getSongListOfGenreAlbum(context, collection.getItemId(), collection.getItemTitle(), collection.getItemAt(collection.getCurrentIndex()).getItemId(), collection.getItemAt(collection.getCurrentIndex()).getItemTitle());
+    public ArrayList<? extends IMediaItemBase> getGenreAlbumsTrackList(IMediaItemCollection collection, int index) {
+        return DeviceMediaLibrary.getSongListOfGenreAlbum(context, collection.getItemId(), collection.getItemTitle(), collection.getItemAt(index).getItemId(), collection.getItemAt(index).getItemTitle());
     }
 
     @Override

@@ -211,7 +211,6 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        collection.setCurrentIndex(position);
                         Intent i = null;
                         if(itemView == ITEM_VIEW_SONG){
                             i = new Intent(activity, AlbumSongListActivity.class);
@@ -220,6 +219,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                         }
                         Bundle b = new Bundle();
                         b.putParcelable("mediaItemCollection", collection);
+                        b.putInt("itemIndex", position);
                         i.putExtra("bundle", b);
                         activity.startActivity(i);
                     }
@@ -235,15 +235,13 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
                     if(currentItem.getItemType() == ItemType.SONGS){
                         currentItem.setMediaElement(MediaController.getInstance(activity).getArtistTrackList(collection));
                     }else{
-                        collection.setCurrentIndex(position);
-                        currentItem.setMediaElement(MediaController.getInstance(activity).getArtistAlbumsTrackList(collection));
+                        currentItem.setMediaElement(MediaController.getInstance(activity).getArtistAlbumsTrackList(collection, position));
                     }
                 }else if(collection.getParentType() == ItemType.GENRE && currentItem.count() == 0){
                     if(currentItem.getItemType() == ItemType.SONGS){
                         currentItem.setMediaElement(MediaController.getInstance(activity).getGenreTrackList(collection));
                     }else{
-                        collection.setCurrentIndex(position);
-                        currentItem.setMediaElement(MediaController.getInstance(activity).getGenreAlbumsTrackList(collection));
+                        currentItem.setMediaElement(MediaController.getInstance(activity).getGenreAlbumsTrackList(collection, position));
                     }
                 }
 
