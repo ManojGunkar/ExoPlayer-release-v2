@@ -128,33 +128,27 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
         return size;
     }
 
-
     private void setOnClicks(final ViewHolder holder) {
+        holder.mainView.setOnClickListener((v)->this.onItemClicked(v, holder));
+        holder.overflowMenu.setOnClickListener((v)->this.onMenuClicked(v, holder));
+    }
 
-        holder.mainView.setOnClickListener(new View.OnClickListener() {
+    private void onItemClicked(View view, ViewHolder holder) {
+        final int position = holder.position;
+        final MediaItemCollection mediaItem = itemList.get(position);
+
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View view) {
-
-                final int position = holder.position;
-                final MediaItemCollection mediaItem = itemList.get(position);
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        clickListener.onItemClicked(mediaItem);
-                    }
-                }, 100);
+            public void run() {
+                clickListener.onItemClicked(mediaItem);
             }
-        });
+        }, 100);
+    }
 
-        holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final int position = holder.position;
-                final MediaItemCollection mediaItem = itemList.get(position);
-                OverFlowMenuUtils.showCollectionMenu((Activity)context, view, R.menu.collection_popup, getCollectionToAdd(mediaItem));
-            }
-        });
+    private void onMenuClicked(View view, ViewHolder holder) {
+        final int position = holder.position;
+        final MediaItemCollection mediaItem = itemList.get(position);
+        OverFlowMenuUtils.showCollectionMenu((Activity)context, view, R.menu.collection_popup, getCollectionToAdd(mediaItem));
     }
 
     private IMediaItemCollection getCollectionToAdd(MediaItemCollection mediaItem) {

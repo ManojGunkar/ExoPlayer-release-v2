@@ -54,33 +54,29 @@ public class AboutFragment extends Fragment {
     private void initViews() {
         rateButton =  rootView.findViewById(R.id.btn_rate_app);
         rateButton.setTransformationMethod(null);
-        rateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                FlurryAnalyticHelper.logEvent(UtilAnalytics.About_Rate_Button_Tapped);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.About_Rate_Button_Tapped);
-                Uri uri = Uri.parse("market://details?id=" + mActivity.getPackageName());
-                Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
-                // To count with Play market backstack, After pressing back button,
-                // to taken back to our application, we need to add following flags to intent.
-                goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
-                        Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
-                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                try {
-                    startActivity(goToMarket);
-                } catch (ActivityNotFoundException e) {
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("http://play.google.com/store/apps/details?id=" + mActivity.getPackageName())));
-                }
-//                FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_ABOUT_RATE_BUTTON_TAPPED);
-                FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_ABOUT_RATE_BUTTON_TAPPED);
-
-            }
-        });
+        rateButton.setOnClickListener(this::onRateButtonClicked);
         rateButton.setEnabled(true);
         if ( BuildConfig.FLAVOR.equals("b2b") || BuildConfig.FLAVOR.equals("demo") ) {
             rateButton.setVisibility(View.INVISIBLE);
             rateButton.setEnabled(false);
         }
+    }
+
+    private void onRateButtonClicked(View view) {
+        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.About_Rate_Button_Tapped);
+        Uri uri = Uri.parse("market://details?id=" + mActivity.getPackageName());
+        Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+        // To count with Play market backstack, After pressing back button,
+        // to taken back to our application, we need to add following flags to intent.
+        goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        try {
+            startActivity(goToMarket);
+        } catch (ActivityNotFoundException e) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://play.google.com/store/apps/details?id=" + mActivity.getPackageName())));
+        }
+        FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.EVENT_ABOUT_RATE_BUTTON_TAPPED);
     }
 }

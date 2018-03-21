@@ -209,56 +209,55 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     }
 
     private void setOnMenuClickListener(SimpleItemViewHolder holder) {
-        holder.mMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View anchorView) {
-                if(collection.getItemType() == BOOM_PLAYLIST){
-                    OverFlowMenuUtils.showCollectionMenu(activity, anchorView, R.menu.boomplaylist_header_menu, collection);
-                }else{
-                    OverFlowMenuUtils.showCollectionMenu(activity, anchorView, R.menu.collection_header_popup, collection);
-                }
-            }
-        });
+        holder.mMore.setOnClickListener(this::onHeaderMenuClicked);
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position) {
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                animate(holder);
-                switch (collection.getParentType()) {
-                    case ItemType.BOOM_PLAYLIST:
-                        FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_Boom_playlist_Thumbnail);
-                        break;
-                    case ItemType.PLAYLIST:
-                        FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_playlist_Thumbnail);
-                        break;
-                    case ItemType.ARTIST:
-                        FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_ARTIST_AllSongs_Thumbnail);
-                        break;
-                    case ItemType.GENRE:
-                        FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_GENERE_AllSongs_Thumbnail);
-                        break;
-
-                }
-
-                App.playbackManager().queue().addItemListToPlay(collection, position);
-            }
-        });
-        holder.menu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View anchorView) {
-                switch ( collection.getItemType() ) {
-                    case BOOM_PLAYLIST:
-                        OverFlowMenuUtils.showPlaylistItemMenu(activity, anchorView, R.menu.boomplaylist_item_menu, collection.getItemAt(position), (int)collection.getItemId());
-                        break;
-                    default:
-                        OverFlowMenuUtils.showMediaItemMenu(activity, anchorView, R.menu.media_item_popup, collection.getItemAt(position));
-                        break;
-                }
-            }
-        });
+        holder.itemView.setOnClickListener((view)->onItemClicked(view, holder, position));
+        holder.menu.setOnClickListener((view)->onItemMenuClicked(view, position));
     }
+
+
+    private void onHeaderMenuClicked(View view) {
+        if(collection.getItemType() == BOOM_PLAYLIST){
+            OverFlowMenuUtils.showCollectionMenu(activity, view, R.menu.boomplaylist_header_menu, collection);
+        }else{
+            OverFlowMenuUtils.showCollectionMenu(activity, view, R.menu.collection_header_popup, collection);
+        }
+    }
+
+    private void onItemClicked(View view, SimpleItemViewHolder holder, int position) {
+        animate(holder);
+        switch (collection.getParentType()) {
+            case ItemType.BOOM_PLAYLIST:
+                FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_Boom_playlist_Thumbnail);
+                break;
+            case ItemType.PLAYLIST:
+                FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_playlist_Thumbnail);
+                break;
+            case ItemType.ARTIST:
+                FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_ARTIST_AllSongs_Thumbnail);
+                break;
+            case ItemType.GENRE:
+                FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Tapped_from_GENERE_AllSongs_Thumbnail);
+                break;
+
+        }
+
+        App.playbackManager().queue().addItemListToPlay(collection, position);
+    }
+
+    private void onItemMenuClicked(View view, int position) {
+        switch ( collection.getItemType() ) {
+            case BOOM_PLAYLIST:
+                OverFlowMenuUtils.showPlaylistItemMenu(activity, view, R.menu.boomplaylist_item_menu, collection.getItemAt(position), (int)collection.getItemId());
+                break;
+            default:
+                OverFlowMenuUtils.showMediaItemMenu(activity, view, R.menu.media_item_popup, collection.getItemAt(position));
+                break;
+        }
+    }
+
 
     public void setDragHandle(final SimpleItemViewHolder holder) {
         holder.imgHandle.setOnTouchListener(new View.OnTouchListener() {

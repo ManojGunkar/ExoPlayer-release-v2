@@ -105,33 +105,7 @@ public class AlbumSongListActivity extends MasterActivity implements AlbumSongLi
         setAlbumArt(artUrlList);
 
         mFloatPlayAlbumSongs = (FloatingActionButton) findViewById(R.id.fab);
-        mFloatPlayAlbumSongs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (currentItem.getItemType() == ItemType.BOOM_PLAYLIST) {
-         //           FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_Boom_playlist_section);
-                    FlurryAnalytics.getInstance(AlbumSongListActivity.this).setEvent(FlurryEvents.FAB_Tapped_from_Boom_playlist_section);
-                } else if (currentItem.getItemType() == ItemType.PLAYLIST) {
-//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_playlist_section);
-                    FlurryAnalytics.getInstance(AlbumSongListActivity.this).setEvent(FlurryEvents.FAB_Tapped_from_playlist_section);
-                }
-                if (currentItem.getItemType() == ItemType.ARTIST) {
-//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_ARTIST_ALL_SONGS_section);
-                    FlurryAnalytics.getInstance(AlbumSongListActivity.this).setEvent(FlurryEvents.FAB_Tapped_from_ARTIST_ALL_SONGS_section);
-                }else if(currentItem.getItemType() == ItemType.GENRE){
-//                    FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Tapped_from_GENERE_ALL_SONGS_section);
-                    FlurryAnalytics.getInstance(AlbumSongListActivity.this).setEvent(FlurryEvents.FAB_Tapped_from_GENERE_ALL_SONGS_section);
-                }
-                if(null != fragment ){
-                    fragment.onFloatPlayAlbumSongs();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            toggleSlidingPanel();
-                        }
-                    }, 1000);                }
-            }
-        });
+        mFloatPlayAlbumSongs.setOnClickListener(this::onPlay);
         mFloatPlayAlbumSongs.setEnabled(false);
         mFloatPlayAlbumSongs.setVisibility(View.GONE);
 
@@ -155,6 +129,23 @@ public class AlbumSongListActivity extends MasterActivity implements AlbumSongLi
     public void onStart() {
         super.onStart();
         fragment.updateAdapter();
+    }
+
+    private void onPlay(View v) {
+        if (currentItem.getItemType() == ItemType.BOOM_PLAYLIST) {
+            FlurryAnalytics.getInstance(AlbumSongListActivity.this).setEvent(FlurryEvents.FAB_Tapped_from_Boom_playlist_section);
+        } else if (currentItem.getItemType() == ItemType.PLAYLIST) {
+            FlurryAnalytics.getInstance(AlbumSongListActivity.this).setEvent(FlurryEvents.FAB_Tapped_from_playlist_section);
+        }
+        if (currentItem.getItemType() == ItemType.ARTIST) {
+            FlurryAnalytics.getInstance(AlbumSongListActivity.this).setEvent(FlurryEvents.FAB_Tapped_from_ARTIST_ALL_SONGS_section);
+        }else if(currentItem.getItemType() == ItemType.GENRE){
+            FlurryAnalytics.getInstance(AlbumSongListActivity.this).setEvent(FlurryEvents.FAB_Tapped_from_GENERE_ALL_SONGS_section);
+        }
+        if(null != fragment ){
+            fragment.onFloatPlayAlbumSongs();
+            new Handler().postDelayed(this::toggleSlidingPanel, 1000);
+        }
     }
 
     private void setAlbumArtSize() {
