@@ -27,6 +27,7 @@ import com.globaldelight.boom.app.fragments.DropBoxListFragment;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 
@@ -80,8 +81,8 @@ public class MainActivity extends MasterActivity
     }
 
     private void checkPermissions() {
-        permissionChecker = new PermissionChecker(this, this, mainContainer);
-        permissionChecker.check(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        permissionChecker = new PermissionChecker(this, mainContainer, PermissionChecker.STORAGE_READ_PERMISSION);
+        permissionChecker.check(Manifest.permission.READ_EXTERNAL_STORAGE,
                 getResources().getString(R.string.storage_permission),
                 new PermissionChecker.OnPermissionResponse() {
                     @Override
@@ -100,6 +101,11 @@ public class MainActivity extends MasterActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment != null) {
+            fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
         permissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
@@ -107,8 +113,7 @@ public class MainActivity extends MasterActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
-                musicSearchHelper.getAlbumList(getApplicationContext());
-                musicSearchHelper.getArtistList(getApplicationContext());
+                DeviceMediaLibrary.getInstance(MainActivity.this).initAlbumAndArtist();
                 musicSearchHelper.setSearchContent();
             }
         }).start();

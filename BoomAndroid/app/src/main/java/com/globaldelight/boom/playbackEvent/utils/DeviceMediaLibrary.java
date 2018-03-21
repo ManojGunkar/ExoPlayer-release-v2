@@ -15,11 +15,120 @@ import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.app.sharedPreferences.UserPreferenceHandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Rahul Agarwal on 8/8/2016.
  */
-public class DeviceMediaQuery {
+public class DeviceMediaLibrary {
+
+
+    private static DeviceMediaLibrary sInstance = null;
+
+    public static DeviceMediaLibrary getInstance(Context context) {
+        if ( sInstance == null ) {
+            sInstance = new DeviceMediaLibrary(context.getApplicationContext());
+        }
+
+        return sInstance;
+    }
+
+
+    private Context mContext;
+    private HashMap<String, String> mAlbumArtList = new HashMap<>();
+    private HashMap<Long, String> mArtistArtList = new HashMap<>();
+
+    private DeviceMediaLibrary(Context context) {
+        mContext = context;
+    }
+
+    public void initAlbumAndArtist() {
+        initAlbumArtList();
+        initArtistArtList();
+    }
+
+    public String getAlbumArt(String album) {
+        return mAlbumArtList.get(album);
+    }
+
+    public String getArtistArt(Long itemId) {
+        return mArtistArtList.get(itemId);
+    }
+
+    private void initAlbumArtList() {
+        HashMap<String, String> artWthAlbumName = new HashMap<>();
+        Cursor albumListCursor = mContext.getContentResolver().
+                query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, null, null, null, null);
+
+        if (albumListCursor != null && albumListCursor.moveToFirst()) {
+            //get columns
+            int Item_Title_Column = albumListCursor.getColumnIndex
+                    (MediaStore.Audio.Albums.ALBUM);
+
+            int Item_Album_Art_Path_Column = albumListCursor.getColumnIndex
+                    (MediaStore.Audio.Albums.ALBUM_ART);
+
+            //add albums to list
+            do {
+                artWthAlbumName.put(albumListCursor.getString(Item_Title_Column), albumListCursor.getString(Item_Album_Art_Path_Column));
+            }
+            while (albumListCursor.moveToNext());
+        }
+        if (albumListCursor != null) {
+            albumListCursor.close();
+        }
+
+        mAlbumArtList = artWthAlbumName;
+        return;
+    }
+
+    private void initArtistArtList() {
+        HashMap<Long, String> artistList = new HashMap<>();
+        System.gc();
+        final String orderBy = MediaStore.Audio.Artists.ARTIST;
+        Cursor artistListCursor = mContext.getContentResolver().
+                query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, null, null, null, orderBy);
+
+        if (artistListCursor != null && artistListCursor.moveToFirst()) {
+            //get columns
+
+            int Item_ID_Column = artistListCursor.getColumnIndex
+                    (MediaStore.Audio.Artists._ID);
+
+            //add albums to list
+            do {
+                artistList.put(artistListCursor.getLong(Item_ID_Column), getAlbumArtByArtist(mContext, artistListCursor.getLong(Item_ID_Column)));
+            }
+            while (artistListCursor.moveToNext());
+        }
+        if (artistListCursor != null) {
+            artistListCursor.close();
+        }
+
+        mArtistArtList = artistList;
+        return;
+    }
+
+    public static String getAlbumArtByArtist(Context context, Long artistId) {
+        final String where = MediaStore.Audio.Media.ARTIST_ID + "=?";
+
+        Cursor albumListCursor = context.getContentResolver().
+                query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, new String[]{MediaStore.Audio.Albums.ALBUM_ART}, where, new String[]{String.valueOf(artistId)}, null);
+
+        String albumArt = null;
+        if (albumListCursor != null && albumListCursor.moveToFirst()) {
+            //get columns
+            int Item_Album_Art_Path_Column = albumListCursor.getColumnIndex
+                    (MediaStore.Audio.Albums.ALBUM_ART);
+
+            albumArt = albumListCursor.getString(Item_Album_Art_Path_Column);
+        }
+        if (albumListCursor != null) {
+            albumListCursor.close();
+        }
+        return albumArt;
+    }
+
 
 
     public static ArrayList<? extends IMediaItem> getSongList(Context context){

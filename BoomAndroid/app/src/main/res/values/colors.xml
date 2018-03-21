@@ -9,6 +9,9 @@
     <color name="colorRipple">#1FEA0631</color>
     <color name="colorButton">#10EA0631</color>
 
+
+    <color name="progress_background">#D9101011</color>
+
     <color name="search_view_fade">@color/colorPrimary</color>
 
     <color name="glowyellow">#f2ff00</color>

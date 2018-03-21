@@ -31,6 +31,7 @@ import com.globaldelight.boom.app.activities.SearchDetailActivity;
 import com.globaldelight.boom.app.fragments.SearchDetailFragment;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.app.adapters.search.utils.SearchResult;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.app.App;
@@ -242,12 +243,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
                     (albumCount<=1 ? context.getResources().getString(R.string.album) : context.getResources().getString(R.string.albums)) +" "+albumCount);
             int size = setSize(holder);
 
-            if(null == artists.get(getPosition(position)).getItemArtUrl())
-                artists.get(getPosition(position)).setItemArtUrl(App.playbackManager().queue().getArtistArtList().get(artists.get(getPosition(position)).getItemId()));
-
-            if(null == artists.get(getPosition(position)).getItemArtUrl())
-                artists.get(getPosition(position)).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-
             setArtistImg(holder, artists.get(getPosition(position)).getItemArtUrl());
 
             holder.mainView.setOnClickListener(new View.OnClickListener() {
@@ -322,12 +317,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             holder.name.setText(songs.get(getPosition(position)).getItemTitle());
             holder.artistName.setText(((MediaItem)songs.get(getPosition(position))).getItemArtist());
             holder.mainView.setElevation(0);
-            if(null == songs.get(getPosition(position)).getItemArtUrl())
-                songs.get(getPosition(position)).setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(((MediaItem) songs.get(getPosition(position))).getItemAlbum()));
-
-            if(null == songs.get(getPosition(position)).getItemArtUrl())
-                songs.get(getPosition(position)).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-
             setSongArt(songs.get(getPosition(position)).getItemArtUrl(), holder);
 
             updatePlayingTrack(songs.get(getPosition(position)).getItemId(), holder, position);
@@ -404,7 +393,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
     }
 
     private void setHeaderBg(SimpleItemViewHolder holder) {
-        holder.mainView.setBackgroundColor(ContextCompat.getColor(context, R.color.appBackground));
         holder.mainView.setElevation(Utils.dpToPx(context, 0));
     }
 

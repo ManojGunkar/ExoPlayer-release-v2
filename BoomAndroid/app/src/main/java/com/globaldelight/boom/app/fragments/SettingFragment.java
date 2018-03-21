@@ -261,7 +261,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 break;
             case GoogleDriveHandler.REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
-//                    googleDriveHandler.getResultsFromApi();
+//                    googleDriveHandler.fetchMediaList();
                 }
                 break;
         }
@@ -272,7 +272,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
             try {
                 googleDriveHandler = new GoogleDriveHandler(SettingFragment.this);
                 googleDriveHandler.getGoogleAccountCredential();
-                googleDriveHandler.getGoogleApiClient();
                 googleDriveHandler.resetKeys(mActivity);
             }catch (Exception e){}
         }
@@ -286,7 +285,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     public void checkPermissions() {
-        permissionChecker = new PermissionChecker(mActivity, mActivity, rootView);
+        permissionChecker = new PermissionChecker(mActivity, rootView, PermissionChecker.ACCOUNTS_PERMISSION);
         permissionChecker.check(Manifest.permission.GET_ACCOUNTS,
                 getResources().getString(R.string.account_permission),
                 new PermissionChecker.OnPermissionResponse() {

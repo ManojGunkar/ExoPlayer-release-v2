@@ -127,10 +127,6 @@ public class SongsListFragment extends Fragment{
         new LoadDeviceMediaList().execute();
     }
 
-    public void killActivity() {
-        mActivity.finish();
-    }
-
     private class LoadDeviceMediaList extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {
         private Activity mActivity = SongsListFragment.this.mActivity;
         @Override

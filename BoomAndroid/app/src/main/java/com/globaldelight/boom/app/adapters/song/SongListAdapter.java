@@ -23,6 +23,7 @@ import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.fragments.FavouriteListFragment;
@@ -68,13 +69,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         holder.title.setText(mediaItem.getItemTitle());
         holder.description.setVisibility(null != mediaItem.getItemArtist() ? View.VISIBLE : View.GONE);
         holder.description.setText(mediaItem.getItemArtist());
-        if (null == mediaItem.getItemArtUrl()) {
-            mediaItem.setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(mediaItem.getItemAlbum()));
-        }
-        if (null == mediaItem.getItemArtUrl()) {
-            mediaItem.setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-        }
-
         setAlbumArt(mediaItem.getItemArtUrl(), holder);
 
         updatePlayingTrack(holder, itemList.get(position).getItemId());

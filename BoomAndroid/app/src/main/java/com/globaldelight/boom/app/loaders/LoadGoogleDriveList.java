@@ -4,6 +4,7 @@ package com.globaldelight.boom.app.loaders;
  * Created by Rahul Agarwal on 11-01-17.
  */
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 
@@ -37,12 +38,14 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
     private Fragment fragment;
     private GoogleDriveMediaList mediaListInstance;
     String access_token =    null;
+    private Context mContext;
     private static int  file_count;
     private String mediaUrl_1 = "https://www.googleapis.com/drive/v3/files/";
     private String mediaUrl_2 = "?alt=media&access_token=";
 
-    public LoadGoogleDriveList(Fragment fragment, GoogleAccountCredential googleAccountCredential, int count) {
+    public LoadGoogleDriveList(Context context, Fragment fragment, GoogleAccountCredential googleAccountCredential, int count) {
         this.fragment = fragment;
+        mContext = context;
         file_count = count;
         HttpTransport transport = AndroidHttp.newCompatibleTransport();
         JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
@@ -90,10 +93,12 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
         List<String> fileInfo = new ArrayList<String>();
         FileList result = mService.files().list()
                 .execute();
-        if(null != GoogleDriveMediaList.getGoogleDriveHandler()) {
-            GoogleDriveMediaList.getGoogleDriveHandler().retrieveNextPage();
+
+        GoogleDriveHandler googleDriveHandler = GoogleDriveMediaList.getInstance(mContext).getGoogleDriveHandler();
+        if(null != googleDriveHandler ) {
+            googleDriveHandler.retrieveNextPage();
             try {
-                access_token = GoogleDriveMediaList.getGoogleDriveHandler().mCredential.getToken();
+                access_token = googleDriveHandler.getGoogleAccountCredential().getToken();
             } catch (GoogleAuthException e) {
                 e.printStackTrace();
             }
@@ -132,8 +137,9 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
     public void onError() {
         try {
             if (mLastError != null) {
-                if (null != GoogleDriveMediaList.getGoogleDriveHandler() && mLastError instanceof GooglePlayServicesAvailabilityIOException) {
-                    GoogleDriveMediaList.getGoogleDriveHandler().showGooglePlayServicesAvailabilityErrorDialog(((GooglePlayServicesAvailabilityIOException) mLastError)
+                GoogleDriveHandler driveHandler  = GoogleDriveMediaList.getInstance(mContext).getGoogleDriveHandler();
+                if (null != driveHandler && mLastError instanceof GooglePlayServicesAvailabilityIOException) {
+                    driveHandler.showGooglePlayServicesAvailabilityErrorDialog(((GooglePlayServicesAvailabilityIOException) mLastError)
                             .getConnectionStatusCode());
                 } else if (mLastError instanceof UserRecoverableAuthIOException) {
                     fragment.startActivityForResult(

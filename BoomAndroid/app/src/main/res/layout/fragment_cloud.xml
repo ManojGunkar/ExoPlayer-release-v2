@@ -5,5 +5,18 @@
 
     <include layout="@layout/layout_empty_placeholder"/>
     <include layout="@layout/recycler_view_layout" android:id="@+id/cloud_list"/>
+    <FrameLayout
+        android:id="@+id/progress_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/progress_background"
+        android:visibility="gone"
+        >
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            />
+    </FrameLayout>
 
 </FrameLayout>

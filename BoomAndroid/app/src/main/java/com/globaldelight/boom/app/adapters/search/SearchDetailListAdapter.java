@@ -32,6 +32,7 @@ import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.app.adapters.search.utils.SearchResult;
+import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
@@ -79,12 +80,6 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             holder.name.setText(resultItemList.get(position).getItemTitle());
             holder.artistName.setText(((MediaItem)resultItemList.get(position)).getItemArtist());
             holder.mainView.setElevation(0);
-            if(null == resultItemList.get(position).getItemArtUrl())
-                resultItemList.get(position).setItemArtUrl(App.playbackManager().queue().getAlbumArtList().get(((MediaItem) resultItemList.get(position)).getItemAlbum()));
-
-            if(null == resultItemList.get(position).getItemArtUrl())
-                resultItemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-
             setSongArt(resultItemList.get(position).getItemArtUrl(), holder);
 
             updatePlayingTrack(holder, resultItemList.get(position).getItemId());
@@ -147,12 +142,6 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             holder.subTitle.setText((count<=1 ? context.getResources().getString(R.string.song) : context.getResources().getString(R.string.songs)) +" "+count+" "+
                     (albumCount<=1 ? context.getResources().getString(R.string.album) : context.getResources().getString(R.string.albums)) +" "+albumCount);
             int size = setSize(holder);
-            if(null == resultItemList.get(position).getItemArtUrl())
-                selected.setItemArtUrl(App.playbackManager().queue().getArtistArtList().get(selected.getItemId()));
-
-            if(null == resultItemList.get(position).getItemArtUrl())
-                resultItemList.get(position).setItemArtUrl(MediaItem.UNKNOWN_ART_URL);
-
             setArtistImg(selected.getItemArtUrl(), holder);
 
             holder.grid_menu.setVisibility(View.VISIBLE);
