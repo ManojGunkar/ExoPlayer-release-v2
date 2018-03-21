@@ -106,7 +106,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
     public PlayListAdapter.SimpleItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.card_grid_item, parent, false);
-        SimpleItemViewHolder holder = new SimpleItemViewHolder(itemView);
+        return new SimpleItemViewHolder(itemView);
     }
 
     @Override
