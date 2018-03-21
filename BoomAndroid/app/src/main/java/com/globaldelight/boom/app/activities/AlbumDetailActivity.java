@@ -73,32 +73,7 @@ public class AlbumDetailActivity extends MasterActivity implements AlbumDetailFr
     private void initViews() {
         setDrawerLocked(true);
         mFloatPlayAllAlbums = (FloatingActionButton) findViewById(R.id.fab);
-        mFloatPlayAllAlbums.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (null != currentItem) {
-                    if (currentItem.getItemType() == ItemType.GENRE) {
-                     //   FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Genere_Details_Section);
-                        FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Genere_Details_Section);
-                    } else if (currentItem.getItemType() == ItemType.ARTIST) {
-//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Artist_details_Section);
-                        FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Artist_details_Section);
-                    }else if (currentItem.getItemType() == ItemType.ALBUM ) {
-//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Button_Tapped_from_Album_Section);
-                        FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_Button_Tapped_from_Album_Section);
-                    }
-                }
-                if(null != fragment){
-                    fragment.onFloatPlayAlbums();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            toggleSlidingPanel();
-                        }
-                    }, 1000);
-                }
-            }
-        });
+        mFloatPlayAllAlbums.setOnClickListener(this::onPlay);
         mFloatPlayAllAlbums.setEnabled(false);
         mFloatPlayAllAlbums.setVisibility(View.GONE);
 
@@ -119,6 +94,22 @@ public class AlbumDetailActivity extends MasterActivity implements AlbumDetailFr
                 .commitAllowingStateLoss();
     }
 
+    private void onPlay(View view) {
+        if (null != currentItem) {
+            if (currentItem.getItemType() == ItemType.GENRE) {
+                FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Genere_Details_Section);
+            } else if (currentItem.getItemType() == ItemType.ARTIST) {
+                FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Artist_details_Section);
+            }else if (currentItem.getItemType() == ItemType.ALBUM ) {
+                FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_Button_Tapped_from_Album_Section);
+            }
+        }
+        if(null != fragment){
+            fragment.onFloatPlayAlbums();
+            new Handler().postDelayed(this::toggleSlidingPanel, 1000);
+        }
+    }
+
     private void setAlbumArtSize(int width, int height) {
         FrameLayout container = findViewById(R.id.toolbar_layout);
         ViewGroup.LayoutParams lp = container.getLayoutParams();
@@ -128,7 +119,7 @@ public class AlbumDetailActivity extends MasterActivity implements AlbumDetailFr
 
     public void setAlbumArt(String albumArt) {
         ImageView imageView = (ImageView) findViewById(R.id.activity_album_art);
-        Glide.with(AlbumDetailActivity.this)
+        Glide.with(this)
                 .load(albumArt)
                 .placeholder(R.drawable.ic_default_art_player_header)
                 .centerCrop()
