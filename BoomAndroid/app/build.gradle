@@ -168,6 +168,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-gcm:11.4.2'
     implementation "com.mixpanel.android:mixpanel-android:5.1.4"
 
+    //Google Firebase App Indexing
+    implementation 'com.google.firebase:firebase-appindexing:11.8.0'
+
     // Dependencies for store
     storeImplementation 'com.google.android.gms:play-services-ads:11.4.2'
     storeImplementation('com.facebook.android:audience-network-sdk:4.+' ) {
