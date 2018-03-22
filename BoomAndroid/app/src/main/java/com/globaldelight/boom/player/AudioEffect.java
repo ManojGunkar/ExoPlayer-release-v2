@@ -3,6 +3,7 @@ package com.globaldelight.boom.player;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.IntDef;
 
 import com.globaldelight.boom.Constants;
@@ -47,10 +48,12 @@ public class AudioEffect extends Observable {
     private final SharedPreferences shp;
     private final SharedPreferences.Editor editor;
     private Context context;
+    private Handler mHandler = null;
 
     private AudioEffect(Context context) {
         this.context = context;
         shp = context.getSharedPreferences(AUDIO_EFFECT_SETTING, Context.MODE_PRIVATE);
+        mHandler = new Handler(Looper.getMainLooper());
         editor = shp.edit();
     }
 
@@ -226,12 +229,7 @@ public class AudioEffect extends Observable {
 
 
     public void notify(final String property) {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                notifyChanges(property);
-            }
-        });
+        mHandler.post(()->notifyChanges(property));
     }
 
 
