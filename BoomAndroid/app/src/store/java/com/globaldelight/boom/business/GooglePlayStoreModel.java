@@ -194,7 +194,8 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
                 break;
 
             case R.id.nav_share:
-                new ShareDialog((Activity)context).show();
+               // new ShareDialog((Activity)context).show();
+                BranchShare.getInstance(mCurrentActivity).startShare();
                 FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Share_Opened_from_Boom);
                 break;
         }

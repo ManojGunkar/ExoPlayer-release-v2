@@ -171,6 +171,9 @@ dependencies {
     //Google Firebase App Indexing
     implementation 'com.google.firebase:firebase-appindexing:11.8.0'
 
+    //Branch SDK
+    implementation 'io.branch.sdk.android:library:2.+'
+
     // Dependencies for store
     storeImplementation 'com.google.android.gms:play-services-ads:11.4.2'
     storeImplementation('com.facebook.android:audience-network-sdk:4.+' ) {

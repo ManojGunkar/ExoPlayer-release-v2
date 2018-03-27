@@ -68,7 +68,7 @@ public class BluetoothConnection {
 
     public BluetoothConnection(Context context, List<Headset> headsets) {
         this.mContext = context;
-        mSupportedHeadsets = new ArrayList<Headset>();
+        mSupportedHeadsets = new ArrayList<>();
         mSupportedHeadsets.addAll(headsets);
     }
 
@@ -84,13 +84,15 @@ public class BluetoothConnection {
 
 
     public void unregisterReceiver() {
-        BluetoothAdapter.getDefaultAdapter().closeProfileProxy(BluetoothProfile.HEADSET, mHeadset);
+        BluetoothAdapter.getDefaultAdapter()
+                .closeProfileProxy(BluetoothProfile.HEADSET, mHeadset);
         mContext.unregisterReceiver(mConnectedDeviceReceiver);
         mHeadset = null;
     }
 
     private void registerReceiver() {
-        BluetoothAdapter.getDefaultAdapter().getProfileProxy(mContext, mBluetoothServiceListener, BluetoothProfile.HEADSET);
+        BluetoothAdapter.getDefaultAdapter()
+                .getProfileProxy(mContext, mBluetoothServiceListener, BluetoothProfile.HEADSET);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);

@@ -5,7 +5,45 @@
     <uses-permission android:name="com.android.vending.BILLING" />
 
     <application>
-        <meta-data android:name="business-model" android:value="com.globaldelight.boom.business.GooglePlayStoreModel" />
+        <meta-data android:name="business-model"
+            android:value="com.globaldelight.boom.business.GooglePlayStoreModel" />
+
+        <activity
+            android:name=".app.activities.BoomSplash"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+
+            <!-- Branch URI Scheme -->
+            <intent-filter>
+                <data android:scheme="androidexample" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+
+            <!-- Branch App Links (optional) -->
+            <intent-filter
+                android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="boom"
+                    android:host="example.app.link" />
+
+                <data
+                    android:scheme="boom"
+                    android:host="example-alternate.app.link" />
+            </intent-filter>
+
+        </activity>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -26,6 +64,18 @@
         <activity
             android:name=".app.share.ShareDialog$ProxyActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!-- Branch init -->
+        <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_lnq3nkbVdqrMxos44cJBMcjjyAjlBTPW" />
+        <meta-data android:name="io.branch.sdk.BranchKey.test" android:value="key_test_iky9nfpScCzHAgq16nOBTafiBsfnyJYh" />
+        <meta-data android:name="io.branch.sdk.TestMode" android:value="true" /> <!-- Set to true to use Branch_Test_Key -->
+
+
+        <receiver android:name="io.branch.referral.InstallListener" android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

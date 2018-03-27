@@ -12,12 +12,16 @@ import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
+import com.globaldelight.boom.business.BranchShare;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import io.branch.referral.Branch;
+import io.branch.referral.BranchError;
 
 public class BoomSplash extends AppCompatActivity {
     private static final long SPLASH_TIME_OUT = 1000;
@@ -26,6 +30,7 @@ public class BoomSplash extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BranchShare.getInstance(this).initBranchSdk();
         if (!isTaskRoot()){
             finish();
             return;
@@ -107,6 +112,20 @@ public class BoomSplash extends AppCompatActivity {
         startActivity(i);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         finish();
+    }
+
+    private void intiBranchSDK(){
+        Branch.getInstance().initSession(new Branch.BranchReferralInitListener() {
+            @Override
+            public void onInitFinished(JSONObject referringParams, BranchError error) {
+
+            }
+        },this.getIntent().getData());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
     }
 
     @Override
