@@ -43,18 +43,14 @@ public class AlbumDetailFragment extends Fragment {
     }
 
     private IMediaItemCollection dataCollection;
+    private IMediaItemCollection collection = null;
     private ListDetail listDetail;
     private RecyclerView rootView;
     private AlbumDetailAdapter albumDetailAdapter;
+    private int mItemIndex = -1;
     Activity mActivity;
     Callback mCallback;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public AlbumDetailFragment() {
-    }
 
     public void setCallback(Callback callback) {
         mCallback = callback;
@@ -100,6 +96,9 @@ public class AlbumDetailFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Bundle b = mActivity.getIntent().getBundleExtra("bundle");
         dataCollection = (MediaItemCollection) b.getParcelable("mediaItemCollection");
+        mItemIndex = b.getInt("itemIndex");
+        collection = (dataCollection.getParentType() == ItemType.ALBUM)? dataCollection : (IMediaItemCollection) dataCollection.getItemAt(mItemIndex);
+
         initValues();
         new LoadAlbumSongs().execute();
         setForAnimation();
@@ -113,11 +112,7 @@ public class AlbumDetailFragment extends Fragment {
 
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) mActivity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                if (dataCollection.getParentType() == ItemType.ALBUM) {
-                    appBarLayout.setTitle(dataCollection.getItemTitle());
-                } else {
-                    appBarLayout.setTitle(dataCollection.getItemAt(dataCollection.getCurrentIndex()).getItemTitle());
-                }
+                appBarLayout.setTitle(collection.getItemTitle());
                 appBarLayout.setCollapsedTitleTypeface(ResourcesCompat.getFont(getActivity(), R.font.titilliumweb_semibold));
                 appBarLayout.setExpandedTitleTypeface(ResourcesCompat.getFont(getActivity(), R.font.titilliumweb_semibold));
             }
@@ -130,12 +125,8 @@ public class AlbumDetailFragment extends Fragment {
 
     public void onFloatPlayAlbums() {
         App.playbackManager().stop();
-        if (dataCollection.getParentType() == ItemType.ALBUM && dataCollection.count() > 0) {
-            App.playbackManager().queue().addItemListToPlay(dataCollection, 0);
-        } else if (dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex())).count() > 0) {
-            App.playbackManager().queue().addItemListToPlay((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex()), 0);
-        } else if (dataCollection.getParentType() == ItemType.GENRE && ((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex())).count() > 0) {
-            App.playbackManager().queue().addItemListToPlay((IMediaItemCollection)dataCollection.getItemAt(dataCollection.getCurrentIndex()), 0);
+        if ( collection.count() > 0) {
+            App.playbackManager().queue().addItemListToPlay(collection, 0);
         }
 
         if ( albumDetailAdapter != null ) {
@@ -149,15 +140,15 @@ public class AlbumDetailFragment extends Fragment {
 
         @Override
         protected IMediaItemCollection doInBackground(Void... params) {
-            if(dataCollection.getParentType() == ItemType.ALBUM && dataCollection.count() == 0) {
-                dataCollection.setMediaElement(MediaController.getInstance(mActivity).getAlbumTrackList(dataCollection));
-            }else if(dataCollection.getParentType() == ItemType.ARTIST && ((IMediaItemCollection) dataCollection.getItemAt(dataCollection.getCurrentIndex())).count() == 0){
-                ((IMediaItemCollection) dataCollection.getItemAt(dataCollection.getCurrentIndex())).setMediaElement(MediaController.getInstance(mActivity).getArtistAlbumsTrackList(dataCollection));
-            }else if(dataCollection.getParentType() == ItemType.GENRE &&
-                    ((IMediaItemCollection) dataCollection.getItemAt(dataCollection.getCurrentIndex())).count() == 0){
-                ((IMediaItemCollection) dataCollection.getItemAt(dataCollection.getCurrentIndex())).setMediaElement(MediaController.getInstance(mActivity).getGenreAlbumsTrackList(dataCollection));
+            if(dataCollection.getParentType() == ItemType.ALBUM && collection.count() == 0) {
+                collection.setMediaElement(MediaController.getInstance(mActivity).getAlbumTrackList(collection));
+            }else if(dataCollection.getParentType() == ItemType.ARTIST && collection.count() == 0){
+                collection.setMediaElement(MediaController.getInstance(mActivity).getArtistAlbumsTrackList(dataCollection, mItemIndex));
+            }else if(dataCollection.getParentType() == ItemType.GENRE && collection.count() == 0){
+                collection.setMediaElement(MediaController.getInstance(mActivity).getGenreAlbumsTrackList(dataCollection, mItemIndex));
             }
-            return dataCollection;
+
+            return collection;
         }
 
         @Override
@@ -166,7 +157,7 @@ public class AlbumDetailFragment extends Fragment {
 
             IMediaItemCollection collection = iMediaItemBase;
             if(iMediaItemBase.getItemType() != ItemType.ALBUM) {
-                collection = (IMediaItemCollection) iMediaItemBase.getItemAt(iMediaItemBase.getCurrentIndex());
+                collection = (IMediaItemCollection) iMediaItemBase.getItemAt(mItemIndex);
             }
 
             StringBuilder itemCount = new StringBuilder();

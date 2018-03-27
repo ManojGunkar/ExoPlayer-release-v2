@@ -55,25 +55,24 @@ public class HeadPhoneItemAdapter extends RecyclerView.Adapter<HeadPhoneItemAdap
             holder.type.setTextColor(ContextCompat.getColor(context, R.color.effect_inactive));
         }
         holder.type.setText(headPhoneList.getString(position));
-        holder.mainView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                audioEffectPreferenceHandler.setHeadPhoneType(toHeadphoneType(position));
-                selectedHeadPhoneType = audioEffectPreferenceHandler.getHeadPhoneType();
-                notifyDataSetChanged();
-                recyclerView.scrollToPosition(position);
-                try {
-                    AnalyticsHelper.trackHeadPhoneUsed(context, String.valueOf(selectedHeadPhoneType));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        holder.mainView.setOnClickListener((v)->this.onItemClicked(v,position));
     }
 
     @Override
     public int getItemCount() {
         return headPhoneList.length();
+    }
+
+    private void onItemClicked(View v, int position) {
+        audioEffectPreferenceHandler.setHeadPhoneType(toHeadphoneType(position));
+        selectedHeadPhoneType = audioEffectPreferenceHandler.getHeadPhoneType();
+        notifyDataSetChanged();
+        recyclerView.scrollToPosition(position);
+        try {
+            AnalyticsHelper.trackHeadPhoneUsed(context, String.valueOf(selectedHeadPhoneType));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     int toHeadphoneType(int pos) {

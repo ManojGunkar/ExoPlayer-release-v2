@@ -18,10 +18,6 @@ public interface IMediaItemCollection extends IMediaItemBase {
 
     ArrayList<String> getArtUrlList();
 
-    int getCurrentIndex();
-
-    void setCurrentIndex(int currentIndex);
-
     void setArtUrlList(ArrayList<String> artUrlList);
 
     void setMediaElement(ArrayList<? extends IMediaItemBase> iMediaItemList);

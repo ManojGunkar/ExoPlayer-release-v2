@@ -35,16 +35,17 @@ public class NegativeSeekBar extends AppCompatSeekBar {
 
     @Override
     protected synchronized void onDraw(Canvas canvas) {
-
         // Draw track
         Context context = getContext();
         Rect rect = new Rect();
         Paint paint = new Paint();
 
+        int height = getHeight();
+
         rect.set(0 + getThumbOffset()*2 ,
-                (getHeight() / 2) - (seekbar_height/2),
+                (height / 2) - (seekbar_height/2),
                 getWidth()- getThumbOffset()*2,
-                (getHeight() / 2) + (seekbar_height/2));
+                 (height / 2) + (seekbar_height/2));
 
         paint.setColor(ContextCompat.getColor(context, R.color.effect_intensity_seek_background));
         canvas.drawRect(rect, paint);
@@ -55,9 +56,9 @@ public class NegativeSeekBar extends AppCompatSeekBar {
         int progressPtX = availableWidth * getProgress() / getMax();
         
         rect.set( Math.min(midPtX, progressPtX),
-                (getHeight() / 2) - (seekbar_height / 2),
+                (height / 2) - (seekbar_height / 2),
                 Math.max(midPtX, progressPtX),
-                getHeight() / 2 + (seekbar_height / 2));
+                height / 2 + (seekbar_height / 2));
         rect.offset(getThumbOffset()*2, 0);
 
         ColorStateList csl = ContextCompat.getColorStateList(context, R.color.intensity_thumb);

@@ -66,28 +66,7 @@ public class AlbumDetailItemActivity extends MasterActivity implements AlbumDeta
     private void initViews() {
         setDrawerLocked(true);
         mFloatPlayAlbums = (FloatingActionButton) findViewById(R.id.fab);
-        mFloatPlayAlbums.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (null != currentItem) {
-                    if (currentItem.getItemType() == ItemType.GENRE) {
-//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Genere_Section);
-                        FlurryAnalytics.getInstance(AlbumDetailItemActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Genere_Section);
-                    } else if (currentItem.getItemType() == ItemType.ARTIST) {
-//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Artist_Section);
-                        FlurryAnalytics.getInstance(AlbumDetailItemActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Artist_Section);
-                    }
-                }
-            if( null != fragment ){
-                fragment.onFloatPlayAlbums();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        toggleSlidingPanel();
-                    }
-                }, 1000);            }
-            }
-        });
+        mFloatPlayAlbums.setOnClickListener(this::onPlay);
         mFloatPlayAlbums.setEnabled(false);
         mFloatPlayAlbums.setVisibility(View.GONE);
 
@@ -105,6 +84,22 @@ public class AlbumDetailItemActivity extends MasterActivity implements AlbumDeta
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.item_detail_container, fragment)
                 .commit();
+    }
+
+    private void onPlay(View v) {
+        if (null != currentItem) {
+            if (currentItem.getItemType() == ItemType.GENRE) {
+//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Genere_Section);
+                FlurryAnalytics.getInstance(AlbumDetailItemActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Genere_Section);
+            } else if (currentItem.getItemType() == ItemType.ARTIST) {
+//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Artist_Section);
+                FlurryAnalytics.getInstance(AlbumDetailItemActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Artist_Section);
+            }
+        }
+        if( null != fragment ){
+            fragment.onFloatPlayAlbums();
+            new Handler().postDelayed(this::toggleSlidingPanel, 1000);
+        }
     }
 
     private void setAlbumArtSize(int width, int height) {

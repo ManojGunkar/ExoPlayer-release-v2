@@ -118,7 +118,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private ImageView mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
     private LinearLayout mEffectContent, mPlayerLarge, mPlayerTitlePanel;
     private FrameLayout mPlayerContent;
-    private FrameLayout mPlayerBackground;
+    private View mPlayerBackground;
 
     private LinearLayout mMiniTitlePanel;
     private TextView mMiniSongTitle, mMiniSongSubTitle;
@@ -254,7 +254,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         audioEffects = AudioEffect.getInstance(mActivity);
 
         playerUIController = new PlayerUIController(mActivity);
-        mPlayerBackground = (FrameLayout) mRootView.findViewById(R.id.player_src_background);
+        mPlayerBackground = mRootView.findViewById(R.id.player_src_background);
 
         initMiniPlayer();
         initLargePlayer();
@@ -916,7 +916,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mIntensityBtn.setOnClickListener(this);
         mIntensitySeek = mRootView.findViewById(R.id.intensity_seek);
         mIntensitySeek.setProgress((int) (audioEffects.getIntensity() * 50 + 50));
-        mIntensitySeek.setOnClickListener(this);
 
         mEqualizerBtn = mRootView.findViewById(R.id.equalizer_btn);
         mEqualizerBtn.setOnClickListener(this);
@@ -1053,8 +1052,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mIntensitySeek.setOnSeekBarChangeListener(new NegativeSeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, final int progress, boolean isUser) {
-                audioEffects.setIntensity((progress - 50) / 50.0f);
-
+                if ( isUser ) {
+                    audioEffects.setIntensity((progress - 50) / 50.0f);
+                }
             }
 
             @Override

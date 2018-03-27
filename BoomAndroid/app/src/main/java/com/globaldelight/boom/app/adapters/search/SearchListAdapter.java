@@ -99,10 +99,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             return ITEM_VIEW_TYPE_LIST_SONG;
     }
 
-    public void updateList(Search searchRes) {
-        init(searchRes.getSongResult(), searchRes.getAlbumResult(), searchRes.getArtistResult());
-        notifyDataSetChanged();
-    }
 
     private int getPosition(int position) {
         if (position > headerArtistPos && position < headerAlbumPos) {

@@ -48,6 +48,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
     }
 
     private IMediaItemCollection collection;
+    private int mItemIndex;
     private ListDetail listDetail;
     private RecyclerView rootView;
     private ItemSongListAdapter itemSongListAdapter;
@@ -92,6 +93,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         super.onActivityCreated(savedInstanceState);
         Bundle b = getActivity().getIntent().getBundleExtra("bundle");
         collection = (MediaItemCollection) b.getParcelable("mediaItemCollection");
+        mItemIndex = b.getInt("itemIndex");
         setDetail(collection);
 //        FlurryAnalyticHelper.init(mActivity);
     }
@@ -105,8 +107,8 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
             count = collection.getMediaElement().size();
 
         }else{
-            title = collection.getItemAt(collection.getCurrentIndex()).getItemTitle();
-            count = ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).getItemCount();
+            title = collection.getItemAt(mItemIndex).getItemTitle();
+            count = ((IMediaItemCollection)collection.getItemAt(mItemIndex)).getItemCount();
         }
         itemCount.append(count > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
         itemCount.append(" ").append(count);
@@ -131,7 +133,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
             if (collection.getParentType() == PLAYLIST || collection.getParentType() == BOOM_PLAYLIST) {
                 App.playbackManager().queue().addItemListToPlay(collection, 0);
             } else {
-                App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())), 0);
+                App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection)collection.getItemAt(mItemIndex)), 0);
             }
         }catch (Exception e){}
     }
@@ -152,11 +154,11 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
             } else if (collection.getParentType() == ItemType.PLAYLIST && collection.getMediaElement().isEmpty()) {
                 collection.setMediaElement(MediaController.getInstance(activity).getPlayListTrackList(collection));
             }else if(collection.getParentType() == ItemType.ARTIST &&
-                        ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).count() == 0){ //ItemType.ARTIST && ItemType.GENRE
-                    ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(getActivity()).getArtistTrackList(collection));
+                        ((IMediaItemCollection)collection.getItemAt(mItemIndex)).count() == 0){ //ItemType.ARTIST && ItemType.GENRE
+                    ((IMediaItemCollection)collection.getItemAt(mItemIndex)).setMediaElement(MediaController.getInstance(getActivity()).getArtistTrackList(collection));
             }else if(collection.getParentType() == ItemType.GENRE &&
-                    ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).count() == 0){ //ItemType.ARTIST && ItemType.GENRE
-                ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(getActivity()).getGenreTrackList(collection));
+                    ((IMediaItemCollection)collection.getItemAt(mItemIndex)).count() == 0){ //ItemType.ARTIST && ItemType.GENRE
+                ((IMediaItemCollection)collection.getItemAt(mItemIndex)).setMediaElement(MediaController.getInstance(getActivity()).getGenreTrackList(collection));
             }
             setDetail(collection);
 
@@ -164,7 +166,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
                 return collection;
             }
             else {
-                return (IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex());
+                return (IMediaItemCollection)collection.getItemAt(mItemIndex);
             }
         }
 

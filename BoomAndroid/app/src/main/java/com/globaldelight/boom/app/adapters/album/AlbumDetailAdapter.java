@@ -94,48 +94,12 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
     }
 
     private void setOnMenuClickListener(SimpleItemViewHolder holder) {
-        holder.mMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View anchorView) {
-                OverFlowMenuUtils.showCollectionMenu(activity, anchorView, R.menu.collection_header_popup, collection);
-            }
-        });
+        holder.mMore.setOnClickListener(this::onHeaderMenuClicked);
     }
 
     private void setOnClickListeners(final SimpleItemViewHolder holder) {
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final int position = holder.getAdapterPosition() - 1;
-                if ( position == -1 ) {
-                    return;
-                }
-                if (App.playbackManager().queue() != null ) {
-                    if ( collection.count() > 0) {
-                        App.playbackManager().queue().addItemListToPlay(collection, position);
-                    }
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyDataSetChanged();
-                        }
-                    }, 500);
-                }
-                FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_On_Tapping_Alumb_Thumbnail);
-            }
-        });
-
-        holder.menu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View anchorView) {
-                final int position = holder.getAdapterPosition() - 1;
-                if ( position == -1 ) {
-                    return;
-                }
-                OverFlowMenuUtils.showMediaItemMenu(activity, anchorView, R.menu.media_item_popup, collection.getItemAt(position));
-            }
-        });
+        holder.itemView.setOnClickListener((view)->onItemClicked(view, holder));
+        holder.menu.setOnClickListener((view)->onItemMenuClicked(view,holder));
     }
 
     @Override
@@ -150,6 +114,40 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
         }else{
             return TYPE_ITEM;
         }
+    }
+
+
+    private void onHeaderMenuClicked(View view) {
+        OverFlowMenuUtils.showCollectionMenu(activity, view, R.menu.collection_header_popup, collection);
+    }
+
+
+    private void onItemClicked(View view, SimpleItemViewHolder holder) {
+        final int position = holder.getAdapterPosition() - 1;
+        if ( position == -1 ) {
+            return;
+        }
+        if (App.playbackManager().queue() != null ) {
+            if ( collection.count() > 0) {
+                App.playbackManager().queue().addItemListToPlay(collection, position);
+            }
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    notifyDataSetChanged();
+                }
+            }, 500);
+        }
+        FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_On_Tapping_Alumb_Thumbnail);
+    }
+
+    private void onItemMenuClicked(View view, SimpleItemViewHolder holder) {
+        final int position = holder.getAdapterPosition() - 1;
+        if ( position == -1 ) {
+            return;
+        }
+        OverFlowMenuUtils.showMediaItemMenu(activity, view, R.menu.media_item_popup, collection.getItemAt(position));
     }
 
     public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
