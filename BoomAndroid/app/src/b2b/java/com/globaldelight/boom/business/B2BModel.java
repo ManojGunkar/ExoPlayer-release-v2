@@ -21,6 +21,7 @@ import com.globaldelight.boom.app.activities.MasterActivity;
 import com.globaldelight.boom.app.activities.UserVerificationActivity;
 import com.globaldelight.boom.app.activities.WebViewActivity;
 import com.globaldelight.boom.utils.DefaultActivityLifecycleCallbacks;
+import com.globaldelight.boom.utils.Result;
 import com.globaldelight.boom.utils.Utils;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
