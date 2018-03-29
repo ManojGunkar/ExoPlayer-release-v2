@@ -38,12 +38,12 @@ import java.util.ArrayList;
 public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGridAdapter.SimpleItemViewHolder> {
 
     private static final String TAG = "ArtistListAdapter-TAG";
-    public static final int TYPE_HEADER = 111;
+    private static final int TYPE_HEADER = 111;
     private static final int ITEM_VIEW_ALBUM = 222;
     private static final int ITEM_VIEW_SONG = 333;
     private MediaItemCollection collection;
     private Activity activity;
-    private  RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private ListDetail listDetail;
     private boolean isPhone;
 
@@ -263,12 +263,12 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     }
 
     public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, subTitle;
-        public ImageView defaultImg, artImg1, artImg2, artImg3, artImg4;
-        public View gridBottomBg, grid_menu;
-        public TableLayout artTable;
-        public FrameLayout imgPanel;
-        public TextView headerSubTitle, headerDetail;
+        TextView title, subTitle;
+        ImageView defaultImg, artImg1, artImg2, artImg3, artImg4;
+        View gridBottomBg, grid_menu;
+        TableLayout artTable;
+        FrameLayout imgPanel;
+        TextView headerSubTitle, headerDetail;
         ImageView mMore;
 
         public SimpleItemViewHolder(View itemView) {
