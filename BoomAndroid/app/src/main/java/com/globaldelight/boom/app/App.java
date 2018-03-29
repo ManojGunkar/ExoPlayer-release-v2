@@ -12,7 +12,6 @@ import com.crashlytics.android.Crashlytics;
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.business.BranchShare;
 import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.app.service.PlayerService;
@@ -29,7 +28,6 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import io.branch.referral.Branch;
 import io.fabric.sdk.android.DefaultLogger;
 import io.fabric.sdk.android.Fabric;
 
@@ -117,8 +115,6 @@ public class App extends Application {
         registerActivityLifecycleCallbacks(mLifecycleCallbacks);
         BusinessModelFactory.initModel(this);
 
-        // Branch SDK initialisation
-        BranchShare.initApplication(this);
 
         if ( BuildConfig.FLAVOR.equals("production") ) {
             final Fabric fabric = new Fabric.Builder(this)
