@@ -1,16 +1,13 @@
 package com.globaldelight.boom.app.activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -29,7 +26,7 @@ import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
-import com.globaldelight.boom.radio.ui.RadioActivity;
+import com.globaldelight.boom.radio.ui.RadioMainFragment;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 
@@ -213,7 +210,12 @@ public class MainActivity extends MasterActivity
                 return true;
 
             case R.id.radio:
-                startActivity(new Intent(this, RadioActivity.class));
+                if (Utils.isOnline(this)){
+                    runnable = this::onNavigateToRadio;
+                }else {
+                    Utils.networkAlert(this);
+                    return false;
+                }
                 break;
 
             default:
@@ -250,6 +252,19 @@ public class MainActivity extends MasterActivity
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, mLibraryFragment).commitAllowingStateLoss();
+    }
+
+    private void onNavigateToRadio(){
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if ( currentFragment instanceof RadioMainFragment ) {
+            return;
+        }
+
+        navigationView.getMenu().findItem(R.id.radio).setChecked(true);
+        setTitle(getResources().getString(R.string.radio));
+        Fragment fragment = new RadioMainFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
     }
 
     private void onNavigateToDropbox() {
