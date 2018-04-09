@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.webconnector.responsepojo.AccessTokenPojo;
+import com.globaldelight.boom.radio.webconnector.responsepojo.LocalRadioResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +17,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManagerFactory;
@@ -32,6 +34,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -53,13 +56,10 @@ public class ApiRequestController {
                     .sslSocketFactory(sslCertificatePinning(context).getSocketFactory())
                     .addInterceptor(new CustomInterceptor(context))
                     .addInterceptor(interceptor)
-                    .hostnameVerifier(new HostnameVerifier() {
-                        @Override
-                        public boolean verify(String hostname, SSLSession session) {
-                            return hostname.equals("service.globaldelight.api.radioline.fr")
-                                    || hostname.equals("test.auth.radioline.fr");
-                        }
-                    })
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .hostnameVerifier((hostname, session) -> hostname.equals("service.globaldelight.api.radioline.fr")
+                            || hostname.equals("test.auth.radioline.fr"))
                     .build();
         }
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -124,8 +124,9 @@ public class ApiRequestController {
                 @Field(("refresh_token")) String refreshToken,
                 @Field(("client_id")) String clientId);
 
-        @GET("/Pillow/categories/radioline_countries")
-        Call<Object> getCatalog(
+        @GET("/Pillow/categories/radioline_countries/{country_code}/a_z")
+        Call<LocalRadioResponse> getLocalRadio(
+                @Path("country_code") String countryCode,
                 @Query("page") String page,
                 @Query("pageSize") String pageSize);
     }
