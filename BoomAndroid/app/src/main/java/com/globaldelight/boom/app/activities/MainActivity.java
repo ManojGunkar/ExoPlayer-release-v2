@@ -1,6 +1,7 @@
 package com.globaldelight.boom.app.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +29,7 @@ import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
+import com.globaldelight.boom.radio.ui.RadioActivity;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 
@@ -209,6 +211,10 @@ public class MainActivity extends MasterActivity
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Settings_Page_Opened);
                 return true;
+
+            case R.id.radio:
+                startActivity(new Intent(this, RadioActivity.class));
+                break;
 
             default:
                 BusinessModelFactory.getCurrentModel().onDrawerItemClicked(item, this);

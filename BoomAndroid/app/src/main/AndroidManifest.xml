@@ -149,6 +149,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".app.activities.MainActivity" />
         </activity>
+        <activity
+            android:name=".radio.ui.RadioActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".app.activities.MainActivity" />
+        </activity>
 
         <activity
             android:name=".app.activities.OnBoardingActivity"

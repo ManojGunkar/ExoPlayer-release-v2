@@ -212,5 +212,10 @@
 
     <!-- non translatable -->
     <string name="facebook_app_id" translatable="false">218364201905576</string>
+    <string name="radio">Radio</string>
+    <string name="local_radio">Local</string>
+    <string name="favourite_radio">Favourite</string>
+    <string name="country_radio">Country</string>
+    <string name="explore_radio">Explore</string>
 
 </resources>
