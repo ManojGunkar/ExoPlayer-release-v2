@@ -22,7 +22,7 @@ public class CountryFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
-        return recyclerView;
+        View view =  inflater.inflate(R.layout.radio_layout, container, false);
+        return view;
     }
 }
