@@ -2,10 +2,7 @@ package com.globaldelight.boom.utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
@@ -16,14 +13,11 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
-import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
-import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
+import com.globaldelight.boom.collection.base.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 
 import java.util.ArrayList;
 
@@ -32,7 +26,7 @@ import java.util.ArrayList;
  */
 
 public class OverFlowMenuUtils {
-    public static void setDefaultPlaylistMenu(final Activity activity, View view, final IMediaItemBase itemBase) {
+    public static void setDefaultPlaylistMenu(final Activity activity, View view, final IMediaElement itemBase) {
         PopupMenu pm = new PopupMenu(activity, view);
         pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -54,7 +48,7 @@ public class OverFlowMenuUtils {
         pm.show();
     }
 
-    public static void setBoomPlaylistMenu(final Activity activity, View view, final IMediaItemBase itemBase) {
+    public static void setBoomPlaylistMenu(final Activity activity, View view, final IMediaElement itemBase) {
         PopupMenu pm = new PopupMenu(activity, view);
         pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -62,18 +56,18 @@ public class OverFlowMenuUtils {
                 try {
                     switch (menuItem.getItemId()) {
                         case R.id.popup_play_next:
-                            App.playbackManager().queue().addItemAsPlayNext(MediaController.getInstance(activity).getBoomPlayListTrackList(itemBase.getItemId()));
+                            App.playbackManager().queue().addItemAsPlayNext(MediaController.getInstance(activity).getBoomPlayListTrackList(itemBase));
                             break;
                         case R.id.popup_add_queue:
-                            App.playbackManager().queue().addItemAsUpNext(MediaController.getInstance(activity).getBoomPlayListTrackList(itemBase.getItemId()));
+                            App.playbackManager().queue().addItemAsUpNext(MediaController.getInstance(activity).getBoomPlayListTrackList(itemBase));
                             break;
                         case R.id.popup_playlist_rename:
-                            renameDialog(activity, itemBase.getItemTitle(), itemBase.getItemId());
+                            renameDialog(activity, itemBase);
                             FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Playlist_Edit_Button_Tapped);
 
                             break;
                         case R.id.popup_playlist_delete:
-                            deletePlaylistDialog(activity, itemBase.getItemTitle(), itemBase.getItemId());
+                            deletePlaylistDialog(activity, itemBase);
                             FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Playlist_Deleted);
                             break;
                     }
@@ -87,8 +81,8 @@ public class OverFlowMenuUtils {
         pm.show();
     }
 
-    private static void deletePlaylistDialog(final Activity activity, final String itemTitle, final long itemId) {
-        String content = activity.getResources().getString(R.string.delete_dialog_txt, itemTitle);
+    private static void deletePlaylistDialog(final Activity activity, final IMediaElement item) {
+        String content = activity.getResources().getString(R.string.delete_dialog_txt, item.getTitle());
         Utils.createDialogBuilder(activity).title(R.string.delete_dialog_title)
                 .content(content)
                 .positiveText(activity.getResources().getString(R.string.ok))
@@ -96,7 +90,7 @@ public class OverFlowMenuUtils {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                        @Override
                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                           MediaController.getInstance(activity).deleteBoomPlaylist(itemId);
+                           MediaController.getInstance(activity).deleteBoomPlaylist(item);
                            Toast.makeText(activity, activity.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
                        }
                    }).show();
@@ -146,28 +140,28 @@ public class OverFlowMenuUtils {
         pm.show();
     }
 
-    private static void renameDialog(final Activity activity, final String itemTitle, final long itemId) {
+    private static void renameDialog(final Activity activity, final IMediaElement item) {
         Utils.createDialogBuilder(activity)
                 .title(R.string.rename)
                 .cancelable(true)
                 .positiveText(activity.getResources().getString(R.string.done))
                 .negativeText(activity.getResources().getString(R.string.dialog_txt_cancel))
-                .input(null, itemTitle, new MaterialDialog.InputCallback() {
+                .input(null, item.getTitle(), new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
                         if (input.toString().matches("")) {
-                            renameDialog(activity, itemTitle, itemId);
+                            renameDialog(activity, item);
                         } else {
-                            MediaController.getInstance(activity).renamePlaylist(input.toString(), itemId);
+                            MediaController.getInstance(activity).renamePlaylist(input.toString(), item);
                         }
                     }
                 }).show();
     }
 
-    private static void updateFavoritesMenuItem(Context context, IMediaItemBase itemBase, PopupMenu popup) {
+    private static void updateFavoritesMenuItem(Context context, IMediaElement itemBase, PopupMenu popup) {
         MenuItem favItem = popup.getMenu().findItem(R.id.song_add_fav_item);
         if ( favItem != null ) {
-            if ( MediaController.getInstance(context).isFavoriteItem(itemBase.getItemId()) ) {
+            if ( MediaController.getInstance(context).isFavoriteItem(itemBase) ) {
                 favItem.setTitle(R.string.menu_remove_boom_fav);
             }
             else {
@@ -176,7 +170,7 @@ public class OverFlowMenuUtils {
         }
     }
 
-    private static void onSongMenuItemClicked(Activity activity, int itemId, IMediaItemBase item) {
+    private static void onSongMenuItemClicked(Activity activity, int itemId, IMediaElement item) {
         switch (itemId) {
             case R.id.song_play_next_item:
                 App.playbackManager().queue().addItemAsPlayNext(item);
@@ -193,8 +187,8 @@ public class OverFlowMenuUtils {
 
                 break;
             case R.id.song_add_fav_item:
-                if (MediaController.getInstance(activity).isFavoriteItem(item.getItemId())) {
-                    MediaController.getInstance(activity).removeItemToFavoriteList(item.getItemId());
+                if (MediaController.getInstance(activity).isFavoriteItem(item)) {
+                    MediaController.getInstance(activity).removeItemToFavoriteList(item);
                     Toast.makeText(activity, activity.getResources().getString(R.string.removed_from_favorite), Toast.LENGTH_SHORT).show();
                 } else {
                     MediaController.getInstance(activity).addItemToFavoriteList((IMediaItem) item);
@@ -205,7 +199,7 @@ public class OverFlowMenuUtils {
         }
     }
 
-    public static void showPlaylistItemMenu(final Activity activity, View anchorView, int resId, final IMediaItemBase itemBase, final int playlistId) {
+    public static void showPlaylistItemMenu(final Activity activity, View anchorView, int resId, final IMediaElement itemBase, final IMediaElement playlist) {
         PopupMenu pm = new PopupMenu(activity, anchorView);
         pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -215,7 +209,7 @@ public class OverFlowMenuUtils {
                         onSongMenuItemClicked(activity, item.getItemId(), itemBase);
                         break;
                     case R.id.song_delete_item:
-                        MediaController.getInstance(activity).removeSongToPlayList(itemBase.getItemId(), playlistId);
+                        MediaController.getInstance(activity).removeSongToPlayList(itemBase, playlist);
                         break;
 
                 }
@@ -229,7 +223,7 @@ public class OverFlowMenuUtils {
     }
 
 
-    public static void showMediaItemMenu(final Activity activity, View anchorView, int resId, final IMediaItemBase itemBase ) {
+    public static void showMediaItemMenu(final Activity activity, View anchorView, int resId, final IMediaElement itemBase ) {
         PopupMenu pm = new PopupMenu(activity, anchorView);
         pm.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -268,11 +262,11 @@ public class OverFlowMenuUtils {
                             break;
 
                         case R.id.playlist_rename_item:
-                            renameDialog(activity, collection.getItemTitle(), collection.getItemId());
+                            renameDialog(activity, collection);
                             break;
 
                         case R.id.playlist_delete_item:
-                            MediaController.getInstance(activity).deleteBoomPlaylist(collection.getItemId());
+                            MediaController.getInstance(activity).deleteBoomPlaylist(collection);
                             Toast.makeText(activity, activity.getResources().getString(R.string.playlist_deleted), Toast.LENGTH_SHORT).show();
                             break;
                     }

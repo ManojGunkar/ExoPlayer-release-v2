@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 
@@ -51,13 +51,13 @@ public class CloudMediaItemDBHelper  extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public synchronized void addSong(IMediaItemBase song) {
+    public synchronized void addSong(IMediaElement song) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.putNull(SONG_KEY_ID);
-        values.put(SONG_KEY_REAL_ID, song.getItemId());
-        values.put(TITLE, song.getItemTitle());
+        values.put(SONG_KEY_REAL_ID, song.getId());
+        values.put(TITLE, song.getTitle());
         values.put(DATA_PATH, ((IMediaItem)song).getItemUrl());
         values.put(MEDIA_TYPE, song.getMediaType());
 
@@ -65,15 +65,15 @@ public class CloudMediaItemDBHelper  extends SQLiteOpenHelper {
         db.close();
     }
 
-    public synchronized void addSongs(@MediaType int mediaType, ArrayList<? extends IMediaItemBase> songs) {
+    public synchronized void addSongs(@MediaType int mediaType, ArrayList<? extends IMediaElement> songs) {
         clearList(mediaType);
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
             ContentValues values = new ContentValues();
 
             values.putNull(SONG_KEY_ID);
-            values.put(SONG_KEY_REAL_ID, songs.get(i).getItemId());
-            values.put(TITLE, songs.get(i).getItemTitle());
+            values.put(SONG_KEY_REAL_ID, songs.get(i).getId());
+            values.put(TITLE, songs.get(i).getTitle());
             values.put(DATA_PATH, ((IMediaItem)songs.get(i)).getItemUrl());
             values.put(MEDIA_TYPE, songs.get(i).getMediaType());
 
@@ -89,7 +89,7 @@ public class CloudMediaItemDBHelper  extends SQLiteOpenHelper {
         db.close();
     }
 
-    public synchronized ArrayList<? extends IMediaItemBase> getSongList(@MediaType int mediaType) {
+    public synchronized ArrayList<? extends IMediaElement> getSongList(@MediaType int mediaType) {
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<MediaItem> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_CLOUD_DATA + " WHERE " +
@@ -101,7 +101,12 @@ public class CloudMediaItemDBHelper  extends SQLiteOpenHelper {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     //noinspection ResourceType
-                    songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), ItemType.SONGS, cursor.getInt(4), ItemType.SONGS));
+                    songList.add(new MediaItem(String.valueOf(cursor.getInt(1)),
+                            cursor.getString(2),
+                            cursor.getString(3),
+                            ItemType.SONGS,
+                            cursor.getInt(4),
+                            ItemType.SONGS));
                 } while (cursor.moveToNext());
             }
 //        }catch (Exception e){

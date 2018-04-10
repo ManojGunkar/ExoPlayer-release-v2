@@ -11,11 +11,11 @@ import android.database.sqlite.SQLiteStatement;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 
 import java.util.ArrayList;
 
@@ -85,16 +85,16 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
 
 
 /***********************************************************************************************************************************/
-    public void renamePlaylist(String name, long playlistId) {
+    public void renamePlaylist(String name, String playlistId) {
         String query = "UPDATE " + TABLE_PLAYLIST + " SET " + PLAYLIST_KEY_NAME
                 + "='" + name + "' WHERE "
-                + PLAYLIST_KEY_ID + "='" + playlistId + "'";
+                + PLAYLIST_KEY_ID + "='" + Long.parseLong(playlistId) + "'";
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(query);
         db.close();
     }
 
-    public ArrayList<? extends IMediaItemBase> getAllPlaylist() {
+    public ArrayList<? extends IMediaElement> getAllPlaylist() {
         String query = "SELECT  * FROM " + TABLE_PLAYLIST;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -114,7 +114,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         return playlist;
     }
 
-    public IMediaItemCollection gePlaylist(long id) {
+    public IMediaItemCollection gePlaylist(String id) {
         String query = "SELECT  * FROM " + TABLE_PLAYLIST +" WHERE "+PLAYLIST_KEY_ID +"="+id;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -133,7 +133,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
     }
 
     private MediaItemCollection getPlaylistFromCursor(Cursor cursor) {
-        int playlistId = cursor.getInt(0);
+        String playlistId = Integer.toString(cursor.getInt(0));
 
         MediaItemCollection collection = new MediaItemCollection(playlistId, cursor.getString(1),
                 null, null,
@@ -142,41 +142,19 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         return collection;
     }
 
-    public void addSong(long playlistId, IMediaItemBase song) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.putNull(SONG_KEY_ID);
-        values.put(SONG_KEY_REAL_ID, song.getItemId());
-        values.put(TITLE, song.getItemTitle());
-        values.put(DISPLAY_NAME, ((IMediaItem)song).getItemDisplayName());
-        values.put(DATA_PATH, ((IMediaItem)song).getItemUrl());
-        values.put(ALBUM_ID, ((IMediaItem)song).getItemAlbumId());
-        values.put(ALBUM, ((IMediaItem)song).getItemAlbum());
-        values.put(ARTIST_ID, ((IMediaItem)song).getItemArtistId());
-        values.put(ARTIST, ((IMediaItem)song).getItemArtist());
-        values.put(DURATION, ((IMediaItem)song).getDurationLong());
-        values.put(DATE_ADDED, ((IMediaItem)song).getDateAdded());
-        values.put(ALBUM_ART, ((IMediaItem)song).getItemArtUrl());
-        values.put(MEDIA_TYPE, ((IMediaItem)song).getMediaType());
-        values.put(SONG_KEY_PLAYLIST_ID, playlistId);
-
-        db.insert(TABLE_PLAYLIST_SONGS, null, values);
-        db.close();
-    }
-
-    public void addSongs(ArrayList<? extends IMediaItemBase> songs, long playlistId, boolean isUpdate) {
+    public void addSongs(ArrayList<? extends IMediaElement> songs, String playlistId, boolean isUpdate) {
         if(isUpdate)
             clearList(playlistId);
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
-            removeSong(songs.get(i).getItemId(), (int) playlistId, db);
+            removeSong(songs.get(i).getId(), playlistId, db);
 
             if(songs.get(i).getMediaType() == MediaType.DEVICE_MEDIA_LIB && null == songs.get(i).getItemArtUrl())
                 songs.get(i).setItemArtUrl(DeviceMediaLibrary.getAlbumArtByAlbumId(mContext, ((IMediaItem)songs.get(i)).getItemAlbumId()));
             ContentValues values = new ContentValues();
             values.putNull(SONG_KEY_ID);
-            values.put(SONG_KEY_REAL_ID, songs.get(i).getItemId());
-            values.put(TITLE, songs.get(i).getItemTitle());
+            values.put(SONG_KEY_REAL_ID, songs.get(i).getId());
+            values.put(TITLE, songs.get(i).getTitle());
             values.put(DISPLAY_NAME, ((IMediaItem)songs.get(i)).getItemDisplayName());
             values.put(DATA_PATH, ((IMediaItem)songs.get(i)).getItemUrl());
             values.put(ALBUM_ID, ((IMediaItem)songs.get(i)).getItemAlbumId());
@@ -197,13 +175,13 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void removeSong(long songId, int playlistId, SQLiteDatabase db) {
+    public void removeSong(String songId, String playlistId, SQLiteDatabase db) {
         db.execSQL("DELETE FROM " + TABLE_PLAYLIST_SONGS + " WHERE " +
                 SONG_KEY_REAL_ID + "='" + songId + "' AND "
                 + SONG_KEY_PLAYLIST_ID + "='" + playlistId + "'");
     }
 
-    public boolean isAlreadyAddedToPlaylist(long playlistId, long trackId) {
+    public boolean isAlreadyAddedToPlaylist(String playlistId, String trackId) {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT  * FROM " + TABLE_PLAYLIST_SONGS+ " WHERE " +
                 SONG_KEY_REAL_ID + "='" + trackId + "' AND "
@@ -217,7 +195,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public void removeSong(long songId, int playlistId) {
+    public void removeSong(String songId, String playlistId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_PLAYLIST_SONGS + " WHERE " +
                 SONG_KEY_REAL_ID + "='" + songId + "' AND "
@@ -225,15 +203,8 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void removeSong(String songTitle, int playlistId) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + TABLE_PLAYLIST_SONGS + " WHERE " +
-                TITLE + "='" + songTitle + "' AND "
-                + SONG_KEY_PLAYLIST_ID + "='" + playlistId + "'");
-        db.close();
-    }
 
-    public void deletePlaylist(long playlistId) {
+    public void deletePlaylist(String playlistId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_PLAYLIST + " WHERE " +
                 PLAYLIST_KEY_ID + "='" + playlistId + "'");
@@ -252,7 +223,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<? extends IMediaItemBase> getPlaylistSongs(long playlistId) {
+    public ArrayList<? extends IMediaElement> getPlaylistSongs(String playlistId) {
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<MediaItem> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_PLAYLIST_SONGS + " WHERE "
@@ -266,8 +237,8 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
                     String dateAdded = cursor.getString(10);
 
                     //noinspection ResourceType
-                    songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5),
-                            cursor.getString(6), cursor.getInt(7), cursor.getString(8), Long.parseLong(duration),
+                    songList.add(new MediaItem(Integer.toString(cursor.getInt(1)), cursor.getString(2), cursor.getString(3), cursor.getString(4), Integer.toString(cursor.getInt(5)),
+                            cursor.getString(6), Integer.toString(cursor.getInt(7)), cursor.getString(8), Long.parseLong(duration),
                             Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, cursor.getInt(12), ItemType.BOOM_PLAYLIST, playlistId, null));
                 } while (cursor.moveToNext());
             }
@@ -280,7 +251,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         return songList;
     }
 
-    public int getPlaylistSongCount(long playlistId) {
+    public int getPlaylistSongCount(String playlistId) {
         String query = "select count(*) from " + TABLE_PLAYLIST_SONGS + " where "
                 + SONG_KEY_PLAYLIST_ID + "='" + playlistId + "'";
         SQLiteDatabase db = this.getWritableDatabase();
@@ -296,7 +267,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    public ArrayList<String> getBoomPlayListArtList(long playlistId) {
+    public ArrayList<String> getBoomPlayListArtList(String playlistId) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<String> artList = new ArrayList<>();
@@ -320,7 +291,7 @@ public class PlaylistDBHelper extends SQLiteOpenHelper {
         return artList;
     }
 
-    public void clearList(long playlistId){
+    public void clearList(String playlistId){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_PLAYLIST_SONGS + " WHERE " +
                 SONG_KEY_PLAYLIST_ID + "='" + playlistId + "'");

@@ -3,7 +3,7 @@ package com.globaldelight.boom.app.adapters.search.utils;
 import android.content.Context;
 
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 
 import java.util.ArrayList;
 
@@ -13,9 +13,9 @@ import java.util.ArrayList;
 
 public class  Search {
 
-    private ArrayList<? extends IMediaItemBase> songResult;
-    private ArrayList<? extends IMediaItemBase> albumResult;
-    private ArrayList<? extends IMediaItemBase> artistResult;
+    private ArrayList<? extends IMediaElement> songResult;
+    private ArrayList<? extends IMediaElement> albumResult;
+    private ArrayList<? extends IMediaElement> artistResult;
     private String query;
     private Context context;
     private int songCount, albumCount, artistCount;
@@ -37,7 +37,7 @@ public class  Search {
         return query;
     }
 
-    public ArrayList<? extends IMediaItemBase> getResultSongList(Context context, String query, boolean partial){
+    public ArrayList<? extends IMediaElement> getResultSongList(Context context, String query, boolean partial){
         this.query = query;
         this.context = context;
         this.isPartialResult = partial;
@@ -45,7 +45,7 @@ public class  Search {
         return getSongResult();
     }
 
-    public ArrayList<? extends IMediaItemBase> getResultAlbumList(Context context, String query, boolean partial){
+    public ArrayList<? extends IMediaElement> getResultAlbumList(Context context, String query, boolean partial){
         this.query = query;
         this.context = context;
         this.isPartialResult = partial;
@@ -53,7 +53,7 @@ public class  Search {
         return getAlbumResult();
     }
 
-    public ArrayList<? extends IMediaItemBase> getResultArtistList(Context context, String query, boolean partial){
+    public ArrayList<? extends IMediaElement> getResultArtistList(Context context, String query, boolean partial){
         this.query = query;
         this.context = context;
         this.isPartialResult = partial;
@@ -79,15 +79,15 @@ public class  Search {
         this.artistCount = result.getCount();
     }
 
-    public ArrayList<? extends IMediaItemBase> getSongResult() {
+    public ArrayList<? extends IMediaElement> getSongResult() {
         return songResult;
     }
 
-    public ArrayList<? extends IMediaItemBase> getAlbumResult() {
+    public ArrayList<? extends IMediaElement> getAlbumResult() {
         return albumResult;
     }
 
-    public ArrayList<? extends IMediaItemBase> getArtistResult() {
+    public ArrayList<? extends IMediaElement> getArtistResult() {
         return artistResult;
     }
 

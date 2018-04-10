@@ -20,10 +20,8 @@ import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumSongListActivity;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
@@ -99,7 +97,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
             switch (holder.getItemViewType()) {
 
                 case ITEM_VIEW_ALBUM:
-                    holder.title.setText(currentItem.getItemTitle());
+                    holder.title.setText(currentItem.getTitle());
                     holder.subTitle.setText(currentItem.getItemSubTitle());
                     holder.defaultImg.setVisibility(View.VISIBLE);
                     setArtistImg(holder, currentItem.getItemArtUrl());
@@ -125,7 +123,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
 
                         setDefaultImage(holder.defaultImg, size, size);
                     }
-                    holder.title.setText(currentItem.getItemTitle());
+                    holder.title.setText(currentItem.getTitle());
 
                     StringBuilder countStr = new StringBuilder();
                     countStr.append(currentItem.getItemCount() > 1 ? activity.getResources().getString(R.string.songs) : activity.getResources().getString(R.string.song));

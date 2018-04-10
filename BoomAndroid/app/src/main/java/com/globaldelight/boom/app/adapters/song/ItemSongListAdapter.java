@@ -24,13 +24,12 @@ import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.app.fragments.AlbumSongListFragment;
@@ -133,7 +132,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     private void bindSongs(final ItemSongListAdapter.SimpleItemViewHolder holder, final int position) {
         IMediaItem currentItem = (MediaItem) collection.getItemAt(position);
 
-        holder.name.setText(currentItem.getItemTitle());
+        holder.name.setText(currentItem.getTitle());
         holder.artistName.setText(currentItem.getItemArtist());
         holder.itemView.setElevation(0);
 
@@ -149,7 +148,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     private void bindBoomPlaylist(final ItemSongListAdapter.SimpleItemViewHolder holder, final int position) {
         IMediaItem currentItem = (IMediaItem) collection.getItemAt(position);
         holder.undoButton.setVisibility(View.INVISIBLE);
-        holder.name.setText(currentItem.getItemTitle());
+        holder.name.setText(currentItem.getTitle());
         holder.itemView.setElevation(0);
         holder.artistName.setVisibility(null != currentItem.getItemArtist() ? View.VISIBLE : View.GONE);
         holder.artistName.setText(currentItem.getItemArtist());
@@ -168,10 +167,10 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
 
     private void updatePlayingTrack(SimpleItemViewHolder holder, int position){
         IMediaItem currentItem = (IMediaItem) collection.getItemAt(position);
-        IMediaItemBase nowPlayingItem = App.playbackManager().queue().getPlayingItem();
+        IMediaElement nowPlayingItem = App.playbackManager().queue().getPlayingItem();
         if(null != nowPlayingItem ){
             boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
-            if(currentItem.getItemId() == nowPlayingItem.getItemId()){
+            if(currentItem.equalTo(nowPlayingItem)){
                 holder.name.setSelected(true);
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);
@@ -250,7 +249,7 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
     private void onItemMenuClicked(View view, int position) {
         switch ( collection.getItemType() ) {
             case BOOM_PLAYLIST:
-                OverFlowMenuUtils.showPlaylistItemMenu(activity, view, R.menu.boomplaylist_item_menu, collection.getItemAt(position), (int)collection.getItemId());
+                OverFlowMenuUtils.showPlaylistItemMenu(activity, view, R.menu.boomplaylist_item_menu, collection.getItemAt(position), collection);
                 break;
             default:
                 OverFlowMenuUtils.showMediaItemMenu(activity, view, R.menu.media_item_popup, collection.getItemAt(position));

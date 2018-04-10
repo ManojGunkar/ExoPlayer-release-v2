@@ -8,10 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.playbackEvent.utils.ItemType;
-import com.globaldelight.boom.playbackEvent.utils.MediaType;
+import com.globaldelight.boom.collection.base.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaElement;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -74,14 +73,14 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
 
 /*History Table List*/
 
-    public synchronized void addItemsToRecentPlayedList(IMediaItemBase song) {
-        removeSong(song.getItemId());
+    public synchronized void addItemsToRecentPlayedList(IMediaElement song) {
+        removeSong(song.getId());
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.putNull(SONG_KEY_ID);
-        values.put(SONG_KEY_REAL_ID, song.getItemId());
-        values.put(TITLE, song.getItemTitle());
+        values.put(SONG_KEY_REAL_ID, song.getId());
+        values.put(TITLE, song.getTitle());
         values.put(DISPLAY_NAME, ((IMediaItem)song).getItemDisplayName());
         values.put(DATA_PATH, ((IMediaItem)song).getItemUrl());
         values.put(ALBUM_ID, ((IMediaItem)song).getItemAlbumId());
@@ -102,7 +101,7 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
     }
 
 
-    public synchronized void removeSong(long songId) {
+    public synchronized void removeSong(String songId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_UPNEXT + " WHERE " +
                 SONG_KEY_REAL_ID + "='" + songId + "'");
@@ -115,11 +114,11 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public synchronized ArrayList<? extends IMediaItemBase> getRecentPlayedItemList() {
+    public synchronized ArrayList<? extends IMediaElement> getRecentPlayedItemList() {
         limit25();
         SQLiteDatabase db = this.getWritableDatabase();
 
-        ArrayList<IMediaItemBase> songList = new ArrayList<>();
+        ArrayList<IMediaElement> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_UPNEXT ;
 
         Cursor cursor = db.rawQuery(query, null);
@@ -130,9 +129,21 @@ public class UpNextDBHelper extends SQLiteOpenHelper {
                     String duration = cursor.getString(9);
                     String dateAdded = cursor.getString(10);
                     //noinspection ResourceType
-                        songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5),
-                                cursor.getString(6), cursor.getInt(7), cursor.getString(8), Long.parseLong(duration), Long.parseLong(dateAdded), cursor.getString(11),
-                                cursor.getInt(12), cursor.getInt(13), cursor.getInt(14), cursor.getInt(15), cursor.getString(16)));
+                        songList.add(new MediaItem(String.valueOf(cursor.getInt(1)),
+                                cursor.getString(2),
+                                cursor.getString(3),
+                                cursor.getString(4),
+                                String.valueOf(cursor.getInt(5)),
+                                cursor.getString(6),
+                                String.valueOf(cursor.getInt(7)),
+                                cursor.getString(8), Long.parseLong(duration),
+                                Long.parseLong(dateAdded),
+                                cursor.getString(11),
+                                cursor.getInt(12),
+                                cursor.getInt(13),
+                                cursor.getInt(14),
+                                String.valueOf(cursor.getInt(15)),
+                                cursor.getString(16)));
                 } while (cursor.moveToNext());
             }
         }catch (Exception e){

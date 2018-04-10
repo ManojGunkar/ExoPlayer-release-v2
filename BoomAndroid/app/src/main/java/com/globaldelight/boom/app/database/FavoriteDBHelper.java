@@ -8,10 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.playbackEvent.utils.MediaType;
+import com.globaldelight.boom.collection.base.IMediaElement;
+
 import java.util.ArrayList;
 
 /**
@@ -62,13 +62,13 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public void addSong(IMediaItemBase song) {
+    public void addSong(IMediaElement song) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.putNull(SONG_KEY_ID);
-        values.put(SONG_KEY_REAL_ID, song.getItemId());
-        values.put(TITLE, song.getItemTitle());
+        values.put(SONG_KEY_REAL_ID, song.getId());
+        values.put(TITLE, song.getTitle());
         values.put(DISPLAY_NAME, ((IMediaItem)song).getItemDisplayName());
         values.put(DATA_PATH, ((IMediaItem)song).getItemUrl());
         values.put(ALBUM_ID, ((IMediaItem)song).getItemAlbumId());
@@ -84,14 +84,14 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addSongs(ArrayList<? extends IMediaItemBase> songs) {
+    public void addSongs(ArrayList<? extends IMediaElement> songs) {
         SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < songs.size(); i++) {
             ContentValues values = new ContentValues();
 
             values.putNull(SONG_KEY_ID);
-            values.put(SONG_KEY_REAL_ID, songs.get(i).getItemId());
-            values.put(TITLE, songs.get(i).getItemTitle());
+            values.put(SONG_KEY_REAL_ID, songs.get(i).getId());
+            values.put(TITLE, songs.get(i).getTitle());
             values.put(DISPLAY_NAME, ((IMediaItem)songs.get(i)).getItemDisplayName());
             values.put(DATA_PATH, ((IMediaItem)songs.get(i)).getItemUrl());
             values.put(ALBUM_ID, ((IMediaItem)songs.get(i)).getItemAlbumId());
@@ -128,7 +128,7 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<? extends IMediaItemBase> getFavouriteItemList() {
+    public ArrayList<? extends IMediaElement> getFavouriteItemList() {
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<MediaItem> songList = new ArrayList<>();
         String query = "SELECT  * FROM " + TABLE_FAVORITE + " ORDER BY "+SONG_KEY_ID + " DESC";
@@ -141,9 +141,21 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
                     String duration = cursor.getString(9);
                     String dateAdded = cursor.getString(10);
                     //noinspection ResourceType
-                    songList.add(new MediaItem(cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5),
-                            cursor.getString(6), cursor.getInt(7), cursor.getString(8), Long.parseLong(duration),
-                            Long.parseLong(dateAdded), cursor.getString(11), ItemType.SONGS, cursor.getInt(12), ItemType.FAVOURITE, 0, null));
+                    songList.add(new MediaItem(String.valueOf(cursor.getInt(1)),
+                            cursor.getString(2),
+                            cursor.getString(3),
+                            cursor.getString(4),
+                            String.valueOf(cursor.getInt(5)),
+                            cursor.getString(6),
+                            String.valueOf(cursor.getInt(7)),
+                            cursor.getString(8),
+                            Long.parseLong(duration),
+                            Long.parseLong(dateAdded),
+                            cursor.getString(11),
+                            ItemType.SONGS, cursor.getInt(12),
+                            ItemType.FAVOURITE,
+                            "0",
+                            null));
                 } while (cursor.moveToNext());
             }
         }catch (Exception e){

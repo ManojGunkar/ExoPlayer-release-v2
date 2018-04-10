@@ -19,7 +19,7 @@ import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.player.AudioConfiguration;
