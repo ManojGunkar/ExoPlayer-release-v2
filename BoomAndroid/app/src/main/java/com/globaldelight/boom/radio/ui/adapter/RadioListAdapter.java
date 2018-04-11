@@ -2,11 +2,15 @@ package com.globaldelight.boom.radio.ui.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -21,20 +25,25 @@ import java.util.List;
  * Created by Manoj Kumar on 09-04-2018.
  * ©Global Delight Technologies Pvt. Ltd.
  */
-public class LocalRadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     private final static int DISPLAYING=0;
     private final static int LOADING=1;
 
     private boolean isLoadingAdded = false;
+    private boolean retryPageLoad = false;
+
+    private String errorMsg;
 
     private Context mContext;
     private List<LocalRadioResponse.Content> contentList;
+    private Callback mCallback;
 
-    public LocalRadioListAdapter(Context context,List<LocalRadioResponse.Content> contentList){
+    public RadioListAdapter(Context context,Callback callback, List<LocalRadioResponse.Content> contentList){
         this.mContext=context;
         this.contentList=contentList;
+        this.mCallback=callback;
     }
 
     @Override
@@ -47,7 +56,7 @@ public class LocalRadioListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 viewHolder = getViewHolder(parent, inflater);
                 break;
             case LOADING:
-                viewHolder = new LoadingViewHolder(inflater.inflate(R.layout.footer_loader, parent, false));
+                viewHolder = new LoadingViewHolder(inflater.inflate(R.layout.item_progress, parent, false));
                 break;
         }
         return viewHolder;
@@ -75,7 +84,21 @@ public class LocalRadioListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 break;
 
             case LOADING:
+                LoadingViewHolder loadingVH = (LoadingViewHolder) holder;
 
+                if (retryPageLoad) {
+                    loadingVH.mErrorLayout.setVisibility(View.VISIBLE);
+                    loadingVH.mProgressBar.setVisibility(View.GONE);
+
+                    loadingVH.mErrorTxt.setText(
+                            errorMsg != null ?
+                                    errorMsg :
+                                    mContext.getString(R.string.error_msg_unknown));
+
+                } else {
+                    loadingVH.mErrorLayout.setVisibility(View.GONE);
+                    loadingVH.mProgressBar.setVisibility(View.VISIBLE);
+                }
                 break;
         }
 
@@ -139,6 +162,13 @@ public class LocalRadioListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
+    public void showRetry(boolean show, @Nullable String errorMsg) {
+        retryPageLoad = show;
+        notifyItemChanged(contentList.size() - 1);
+
+        if (errorMsg != null) this.errorMsg = errorMsg;
+    }
+
     public LocalRadioResponse.Content getItem(int position) {
         return contentList.get(position);
     }
@@ -158,10 +188,39 @@ public class LocalRadioListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    protected class LoadingViewHolder extends RecyclerView.ViewHolder {
+    protected class LoadingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private ProgressBar mProgressBar;
+        private ImageButton mRetryBtn;
+        private TextView mErrorTxt;
+        private LinearLayout mErrorLayout;
 
         public LoadingViewHolder(View itemView) {
             super(itemView);
+
+            mProgressBar =  itemView.findViewById(R.id.loadmore_progress);
+            mRetryBtn =  itemView.findViewById(R.id.loadmore_retry);
+            mErrorTxt =  itemView.findViewById(R.id.loadmore_errortxt);
+            mErrorLayout =  itemView.findViewById(R.id.loadmore_errorlayout);
+
+            mRetryBtn.setOnClickListener(this);
+            mErrorLayout.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.loadmore_retry:
+                case R.id.loadmore_errorlayout:
+
+                    showRetry(false, null);
+                    mCallback.retryPageLoad();
+
+                    break;
+            }
+        }
+    }
+
+    public interface Callback{
+        void retryPageLoad();
     }
 }

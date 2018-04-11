@@ -5,7 +5,9 @@ import android.content.Context;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.webconnector.responsepojo.AccessTokenPojo;
+import com.globaldelight.boom.radio.webconnector.responsepojo.CountryResponse;
 import com.globaldelight.boom.radio.webconnector.responsepojo.LocalRadioResponse;
+import com.globaldelight.boom.radio.webconnector.responsepojo.RadioPlayResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -129,6 +131,18 @@ public class ApiRequestController {
                 @Path("country_code") String countryCode,
                 @Query("page") String page,
                 @Query("pageSize") String pageSize);
+
+
+        @GET("/Pillow/categories/radioline_countries")
+        Call<CountryResponse> getCountry(
+                @Query("page") String page,
+                @Query("pageSize") String pageSize);
+
+
+        @GET("/Pillow/radios/{radio_name}/play")
+        Call<RadioPlayResponse> getRadioPlayService(
+                @Path("radio_name") String radioName);
+
     }
 
 }

@@ -14,21 +14,21 @@
         android:scrollbars="vertical"
         app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior" />
 
+    <ProgressBar
+        android:id="@+id/progress_local"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="visible" />
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txt_log"
         android:layout_centerInParent="true"/>
 
-    <android.support.design.widget.FloatingActionButton
+    <include layout="@layout/error_layout" />
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:src="@android:drawable/ic_lock_power_off"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        app:layout_anchorGravity="bottom|right|end"
-        android:id="@+id/fab_load"/>
 
 </RelativeLayout>
