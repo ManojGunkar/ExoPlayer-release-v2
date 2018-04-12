@@ -23,7 +23,7 @@ import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.webconnector.ApiRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
-import com.globaldelight.boom.radio.webconnector.responsepojo.LocalRadioResponse;
+import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -52,7 +52,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     private TextView txtError;
 
     private RadioListAdapter radioListAdapter;
-    private List<LocalRadioResponse.Content> contentList = new ArrayList<>();
+    private List<RadioStationResponse.Content> contentList = new ArrayList<>();
 
     private int totalPage = 0;
     private int currentPage = 1;
@@ -105,7 +105,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         return view;
     }
 
-    private Call<LocalRadioResponse> requestForContent() {
+    private Call<RadioStationResponse> requestForContent() {
         ApiRequestController.RequestCallback requestCallback = null;
         try {
             requestCallback = ApiRequestController
@@ -128,13 +128,13 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
 
     private void getContent() {
         hideErrorView();
-        requestForContent().enqueue(new Callback<LocalRadioResponse>() {
+        requestForContent().enqueue(new Callback<RadioStationResponse>() {
             @Override
-            public void onResponse(Call<LocalRadioResponse> call, Response<LocalRadioResponse> response) {
+            public void onResponse(Call<RadioStationResponse> call, Response<RadioStationResponse> response) {
                 if (response.isSuccessful()) {
                     hideErrorView();
                     progressBar.setVisibility(View.GONE);
-                    LocalRadioResponse radioResponse = response.body();
+                    RadioStationResponse radioResponse = response.body();
                     contentList = radioResponse.getBody().getContent();
                     totalPage = radioResponse.getBody().getTotalPages();
                     currentPage = radioResponse.getBody().getPage();
@@ -149,7 +149,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
             }
 
             @Override
-            public void onFailure(Call<LocalRadioResponse> call, Throwable t) {
+            public void onFailure(Call<RadioStationResponse> call, Throwable t) {
                 t.printStackTrace();
                 progressBar.setVisibility(View.GONE);
                 showErrorView(t);
@@ -158,14 +158,14 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     }
 
     private void getNextPageContent() {
-        requestForContent().enqueue(new Callback<LocalRadioResponse>() {
+        requestForContent().enqueue(new Callback<RadioStationResponse>() {
             @Override
-            public void onResponse(Call<LocalRadioResponse> call, Response<LocalRadioResponse> response) {
+            public void onResponse(Call<RadioStationResponse> call, Response<RadioStationResponse> response) {
                 if (response.isSuccessful()) {
                     progressBar.setVisibility(View.GONE);
                     radioListAdapter.removeLoadingFooter();
                     isLoading = false;
-                    LocalRadioResponse radioResponse = response.body();
+                    RadioStationResponse radioResponse = response.body();
                     contentList = radioResponse.getBody().getContent();
                     totalPage = radioResponse.getBody().getTotalPages();
                     radioListAdapter.addAll(contentList);
@@ -179,7 +179,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
             }
 
             @Override
-            public void onFailure(Call<LocalRadioResponse> call, Throwable t) {
+            public void onFailure(Call<RadioStationResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
             }
         });

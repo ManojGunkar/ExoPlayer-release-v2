@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Manoj Kumar on 09-04-2018.
  * ©Global Delight Technologies Pvt. Ltd.
  */
-public class LocalRadioResponse {
+public class RadioStationResponse {
 
 
     @SerializedName("message")

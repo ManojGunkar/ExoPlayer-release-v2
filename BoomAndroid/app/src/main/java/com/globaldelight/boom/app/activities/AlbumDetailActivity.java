@@ -22,11 +22,8 @@ import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
-import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.fragments.AlbumDetailFragment;
 import com.globaldelight.boom.utils.Utils;
-
-import java.io.File;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.

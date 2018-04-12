@@ -15,10 +15,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.radio.webconnector.responsepojo.LocalRadioResponse;
+import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
 import com.globaldelight.boom.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,10 +36,10 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private String errorMsg;
 
     private Context mContext;
-    private List<LocalRadioResponse.Content> contentList;
+    private List<RadioStationResponse.Content> contentList;
     private Callback mCallback;
 
-    public RadioListAdapter(Context context,Callback callback, List<LocalRadioResponse.Content> contentList){
+    public RadioListAdapter(Context context,Callback callback, List<RadioStationResponse.Content> contentList){
         this.mContext=context;
         this.contentList=contentList;
         this.mCallback=callback;
@@ -114,18 +113,18 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return (position == contentList.size() - 1 && isLoadingAdded) ? LOADING : DISPLAYING;
     }
 
-    public void add(LocalRadioResponse.Content content) {
+    public void add(RadioStationResponse.Content content) {
         contentList.add(content);
         notifyItemInserted(contentList.size() - 1);
     }
 
-    public void addAll(List<LocalRadioResponse.Content> moveResults) {
-        for (LocalRadioResponse.Content result : moveResults) {
+    public void addAll(List<RadioStationResponse.Content> moveResults) {
+        for (RadioStationResponse.Content result : moveResults) {
             add(result);
         }
     }
 
-    public void remove(LocalRadioResponse.Content content) {
+    public void remove(RadioStationResponse.Content content) {
         int position = contentList.indexOf(content);
         if (position > -1) {
             contentList.remove(position);
@@ -147,14 +146,14 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void addLoadingFooter() {
         isLoadingAdded = true;
-        add(new LocalRadioResponse().new Content());
+        add(new RadioStationResponse().new Content());
     }
 
     public void removeLoadingFooter() {
         isLoadingAdded = false;
 
         int position = contentList.size() - 1;
-        LocalRadioResponse.Content result = getItem(position);
+        RadioStationResponse.Content result = getItem(position);
 
         if (result != null) {
             contentList.remove(position);
@@ -169,7 +168,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (errorMsg != null) this.errorMsg = errorMsg;
     }
 
-    public LocalRadioResponse.Content getItem(int position) {
+    public RadioStationResponse.Content getItem(int position) {
         return contentList.get(position);
     }
 

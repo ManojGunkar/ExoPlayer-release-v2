@@ -6,7 +6,7 @@ import android.content.Context;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.webconnector.responsepojo.AccessTokenPojo;
 import com.globaldelight.boom.radio.webconnector.responsepojo.CountryResponse;
-import com.globaldelight.boom.radio.webconnector.responsepojo.LocalRadioResponse;
+import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
 import com.globaldelight.boom.radio.webconnector.responsepojo.RadioPlayResponse;
 
 import java.io.IOException;
@@ -21,10 +21,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManagerFactory;
 
 import okhttp3.OkHttpClient;
@@ -127,7 +125,7 @@ public class ApiRequestController {
                 @Field(("client_id")) String clientId);
 
         @GET("/Pillow/categories/radioline_countries/{country_code}/a_z")
-        Call<LocalRadioResponse> getLocalRadio(
+        Call<RadioStationResponse> getLocalRadio(
                 @Path("country_code") String countryCode,
                 @Query("page") String page,
                 @Query("pageSize") String pageSize);
