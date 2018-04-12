@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
 import com.globaldelight.boom.utils.Utils;
 
@@ -63,9 +64,19 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @NonNull
     private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
-        return new LocalViewHolder(inflater.inflate(R.layout.item_local_radio, parent, false));
+        LocalViewHolder vh = new LocalViewHolder(inflater.inflate(R.layout.item_local_radio, parent, false));
+        vh.itemView.setOnClickListener(v -> onClick(vh));
+        return vh;
     }
 
+    private void onClick(LocalViewHolder vh) {
+        int position = vh.getAdapterPosition();
+        if (position < 0) {
+            return;
+        }
+
+        App.playbackManager().queue().addItemToPlay(contentList.get(position));
+    }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
