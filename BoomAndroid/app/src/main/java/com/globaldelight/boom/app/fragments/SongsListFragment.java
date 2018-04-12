@@ -25,7 +25,7 @@ import com.globaldelight.boom.business.ads.Advertiser;
 import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 
 import java.util.ArrayList;
@@ -127,15 +127,15 @@ public class SongsListFragment extends Fragment{
         new LoadDeviceMediaList().execute();
     }
 
-    private class LoadDeviceMediaList extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {
+    private class LoadDeviceMediaList extends AsyncTask<Void, Integer, ArrayList<? extends IMediaElement>> {
         private Activity mActivity = SongsListFragment.this.mActivity;
         @Override
-        protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
+        protected ArrayList<? extends IMediaElement> doInBackground(Void... params) {
             return MediaController.getInstance(mActivity).getSongList();
         }
 
         @Override
-        protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
+        protected void onPostExecute(ArrayList<? extends IMediaElement> iMediaItemList) {
             super.onPostExecute(iMediaItemList);
 //            FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_SONG_COUNT);
             final LinearLayoutManager llm = new LinearLayoutManager(mActivity);

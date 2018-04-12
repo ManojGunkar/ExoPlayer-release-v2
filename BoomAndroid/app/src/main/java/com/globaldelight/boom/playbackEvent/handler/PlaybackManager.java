@@ -17,9 +17,8 @@ import android.widget.Toast;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
 import com.globaldelight.boom.utils.helpers.DropBoxAPI;
@@ -50,7 +49,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
 
     private ArrayList<Listener> mListeners = new ArrayList<>();
-    private IMediaItemBase playingItem;
+    private IMediaElement playingItem;
     private AudioPlayer mPlayer;
     private Context context;
     private AudioManager audioManager;
@@ -114,7 +113,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     private MediaSession.Callback mediaSessionCallback = new MediaSession.Callback(){
         @Override
         public void onPlay() {
-            if ( mPlayer.getDataSourceId() == -1 ) {
+            if ( mPlayer.getDataSourceId() == null ) {
                 onPlayingItemChanged();
                 return;
             }
@@ -215,7 +214,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
 
 
-    public long getPlayerDataSourceId(){
+    public String getPlayerDataSourceId(){
         return mPlayer.getDataSourceId();
     }
 
@@ -339,14 +338,14 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     }
 
-    private Bitmap getAlbumart(Context context, Long album_id) {
+    private Bitmap getAlbumart(Context context, String album_id) {
         Bitmap albumArtBitMap = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
         try {
 
             final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
 
-            Uri uri = ContentUris.withAppendedId(sArtworkUri, album_id);
+            Uri uri = ContentUris.withAppendedId(sArtworkUri, Long.parseLong(album_id));
 
             ParcelFileDescriptor pfd = context.getContentResolver()
                     .openFileDescriptor(uri, "r");
@@ -367,8 +366,8 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     }
 
 
-    private class PlayingItemChanged extends AsyncTask<IMediaItemBase, Void, String>{
-        IMediaItemBase mediaItemBase;
+    private class PlayingItemChanged extends AsyncTask<IMediaElement, Void, String>{
+        IMediaElement mediaItemBase;
 
 
         @Override
@@ -377,7 +376,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         }
 
         @Override
-        protected String doInBackground(IMediaItemBase... params) {
+        protected String doInBackground(IMediaElement... params) {
             String dataSource = null;
             mediaItemBase = params[0];
             if(mediaItemBase.getMediaType() == MediaType.DEVICE_MEDIA_LIB){
@@ -400,12 +399,12 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
             if( null != mediaItemBase && null != dataSource) {
                 if ( requestAudioFocus() ) {
                     mPlayer.setPath(dataSource);
-                    mPlayer.setDataSourceId(mediaItemBase.getItemId());
+                    mPlayer.setDataSourceId(mediaItemBase.getId());
 
                     MediaItem item = (MediaItem)mediaItemBase;
 
                     MediaMetadata.Builder builder = new MediaMetadata.Builder();
-                    builder.putString(MediaMetadata.METADATA_KEY_TITLE, item.getItemTitle());
+                    builder.putString(MediaMetadata.METADATA_KEY_TITLE, item.getTitle());
                     builder.putString(MediaMetadata.METADATA_KEY_ALBUM, item.getItemAlbum());
                     builder.putString(MediaMetadata.METADATA_KEY_ARTIST, item.getItemArtist());
                     Bitmap bitmap = getAlbumart(context,item.getItemAlbumId());
@@ -421,7 +420,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
             if ( mediaItemBase == null || dataSource == null )
             {
                 mPlayer.setPath(null);
-                mPlayer.setDataSourceId(-1);
+                mPlayer.setDataSourceId(null);
                 setSessionState(PlaybackState.STATE_STOPPED);
                 if ( ConnectivityReceiver.isNetworkAvailable(context, true) ) {
                     Toast.makeText(context, context.getResources().getString(R.string.loading_problem), Toast.LENGTH_SHORT).show();
@@ -459,7 +458,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     }
 
     public void playPause() {
-        if ( mPlayer.getDataSourceId() == -1 ) {
+        if ( mPlayer.getDataSourceId() == null ) {
             onPlayingItemChanged();
             return;
         }

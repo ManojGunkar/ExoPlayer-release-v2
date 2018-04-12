@@ -29,10 +29,9 @@ import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumDetailItemActivity;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.app.adapters.search.utils.SearchResult;
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.async.Action;
@@ -47,13 +46,13 @@ import java.util.ArrayList;
 public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailListAdapter.SimpleItemViewHolder> {
     private Context context;
     private Activity activity;
-    private ArrayList<? extends IMediaItemBase> resultItemList;
+    private ArrayList<? extends IMediaElement> resultItemList;
     private String mResultType;
     public static final int TYPE_ROW = 111;
     public static final int TYPE_GRID = 222;
     private boolean isPhone;
 
-    public SearchDetailListAdapter(Activity searchDetailListActivity, ArrayList<? extends IMediaItemBase> resultItemList, String mResultType, boolean isPhone) {
+    public SearchDetailListAdapter(Activity searchDetailListActivity, ArrayList<? extends IMediaElement> resultItemList, String mResultType, boolean isPhone) {
         this.context = searchDetailListActivity;
         activity = searchDetailListActivity;
         this.resultItemList = resultItemList;
@@ -77,12 +76,12 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
     @Override
     public void onBindViewHolder(final SimpleItemViewHolder holder, final int position) {
         if(mResultType.equals(SearchResult.SONGS)){
-            holder.name.setText(resultItemList.get(position).getItemTitle());
+            holder.name.setText(resultItemList.get(position).getTitle());
             holder.artistName.setText(((MediaItem)resultItemList.get(position)).getItemArtist());
             holder.mainView.setElevation(0);
             setSongArt(resultItemList.get(position).getItemArtUrl(), holder);
 
-            updatePlayingTrack(holder, resultItemList.get(position).getItemId());
+            updatePlayingTrack(holder, resultItemList.get(position));
             holder.mainView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -100,7 +99,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
         }else if(mResultType.equals(SearchResult.ALBUMS)){
             final MediaItemCollection theCollection = (MediaItemCollection) resultItemList.get(position);
             holder.defaultImg.setVisibility(View.VISIBLE);
-            holder.title.setText(theCollection.getItemTitle());
+            holder.title.setText(theCollection.getTitle());
             holder.subTitle.setText(theCollection.getItemSubTitle());
             int size = setSize(holder);
             setArtistImg(theCollection.getItemArtUrl(), holder);
@@ -136,7 +135,7 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
             final MediaItemCollection selected = (MediaItemCollection) resultItemList.get(position);
 
 
-            holder.title.setText(selected.getItemTitle());
+            holder.title.setText(selected.getTitle());
             final int count = selected.getItemCount();
             int albumCount = selected.getItemListCount();
             holder.subTitle.setText((count<=1 ? context.getResources().getString(R.string.song) : context.getResources().getString(R.string.songs)) +" "+count+" "+
@@ -178,10 +177,10 @@ public class SearchDetailListAdapter extends RecyclerView.Adapter<SearchDetailLi
         }
         holder.mainView.setElevation(Utils.dpToPx(context, 2));
     }
-    private void updatePlayingTrack(SimpleItemViewHolder holder, long itemId){
-        IMediaItemBase nowPlayingItem = App.playbackManager().queue().getPlayingItem();
+    private void updatePlayingTrack(SimpleItemViewHolder holder, IMediaElement item){
+        IMediaElement nowPlayingItem = App.playbackManager().queue().getPlayingItem();
         if(null != nowPlayingItem){
-            if(itemId == nowPlayingItem.getItemId()){
+            if(item.equalTo(nowPlayingItem)){
                 holder.name.setSelected(true);
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);

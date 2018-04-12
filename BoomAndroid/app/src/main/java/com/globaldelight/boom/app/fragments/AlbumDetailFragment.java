@@ -15,17 +15,14 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telecom.Call;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.globaldelight.boom.app.App;
-import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.app.adapters.album.AlbumDetailAdapter;
@@ -112,7 +109,7 @@ public class AlbumDetailFragment extends Fragment {
 
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) mActivity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(collection.getItemTitle());
+                appBarLayout.setTitle(collection.getTitle());
                 appBarLayout.setCollapsedTitleTypeface(ResourcesCompat.getFont(getActivity(), R.font.titilliumweb_semibold));
                 appBarLayout.setExpandedTitleTypeface(ResourcesCompat.getFont(getActivity(), R.font.titilliumweb_semibold));
             }
@@ -165,9 +162,9 @@ public class AlbumDetailFragment extends Fragment {
             itemCount.append(" ").append(collection.count());
 
             if(collection.getItemType() == ItemType.ALBUM){
-                listDetail = new ListDetail(collection.getItemTitle(), collection.getItemSubTitle(), itemCount.toString());
+                listDetail = new ListDetail(collection.getTitle(), collection.getItemSubTitle(), itemCount.toString());
             }else{
-                listDetail = new ListDetail(iMediaItemBase.getItemTitle(), collection.getItemSubTitle(), itemCount.toString());
+                listDetail = new ListDetail(iMediaItemBase.getTitle(), collection.getItemSubTitle(), itemCount.toString());
             }
 
             rootView.setLayoutManager(new LinearLayoutManager(mActivity));

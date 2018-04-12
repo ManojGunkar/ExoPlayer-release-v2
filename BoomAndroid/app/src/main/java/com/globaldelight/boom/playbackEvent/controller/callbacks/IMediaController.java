@@ -2,9 +2,9 @@ package com.globaldelight.boom.playbackEvent.controller.callbacks;
 
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import java.util.ArrayList;
 
 /**
@@ -13,45 +13,43 @@ import java.util.ArrayList;
 
 public interface IMediaController {
 
-    ArrayList<? extends IMediaItemBase> getAlbumList();
+    ArrayList<? extends IMediaElement> getAlbumList();
 
-    ArrayList<? extends IMediaItemBase> getSongList();
+    ArrayList<? extends IMediaElement> getSongList();
 
-    ArrayList<? extends IMediaItemBase> getArtistsList();
+    ArrayList<? extends IMediaElement> getArtistsList();
 
-    ArrayList<? extends IMediaItemBase> getPlayList();
+    ArrayList<? extends IMediaElement> getPlayList();
 
-    ArrayList<? extends IMediaItemBase> getGenreList();
+    ArrayList<? extends IMediaElement> getGenreList();
 
     IMediaItemCollection getBoomPlayListItem(long itemId);
 
-    ArrayList<? extends IMediaItemBase> getBoomPlayList();
+    ArrayList<? extends IMediaElement> getBoomPlayList();
 
     int getFavouriteCount();
 
-    ArrayList<? extends IMediaItemBase> getFavoriteList();
+    ArrayList<? extends IMediaElement> getFavoriteList();
 
-    ArrayList<? extends IMediaItemBase> getCloudList(@MediaType int mediaType);
-
-
-    ArrayList<? extends IMediaItemBase> getAlbumTrackList(IMediaItemCollection collection);
-
-    ArrayList<? extends IMediaItemBase> getArtistTrackList(IMediaItemCollection collection);
-
-    ArrayList<? extends IMediaItemBase> getPlayListTrackList(IMediaItemCollection collection);
-
-    ArrayList<? extends IMediaItemBase> getGenreTrackList(IMediaItemCollection collection);
-
-    ArrayList<? extends IMediaItemBase> getBoomPlayListTrackList(long id);
+    ArrayList<? extends IMediaElement> getCloudList(@MediaType int mediaType);
 
 
-    ArrayList<? extends IMediaItemBase> getArtistAlbumsList(IMediaItemCollection collection);
+    ArrayList<? extends IMediaElement> getAlbumTrackList(IMediaItemCollection collection);
 
-    ArrayList<? extends IMediaItemBase> getGenreAlbumsList(IMediaItemCollection collection);
+    ArrayList<? extends IMediaElement> getArtistTrackList(IMediaItemCollection collection);
 
-    ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(IMediaItemCollection collection, int index);
+    ArrayList<? extends IMediaElement> getPlayListTrackList(IMediaItemCollection collection);
 
-    ArrayList<? extends IMediaItemBase> getGenreAlbumsTrackList(IMediaItemCollection collection, int index);
+    ArrayList<? extends IMediaElement> getGenreTrackList(IMediaItemCollection collection);
+
+
+    ArrayList<? extends IMediaElement> getArtistAlbumsList(IMediaItemCollection collection);
+
+    ArrayList<? extends IMediaElement> getGenreAlbumsList(IMediaItemCollection collection);
+
+    ArrayList<? extends IMediaElement> getArtistAlbumsTrackList(IMediaItemCollection collection, int index);
+
+    ArrayList<? extends IMediaElement> getGenreAlbumsTrackList(IMediaItemCollection collection, int index);
 
     boolean isFavoriteItem(long trackId);
 
@@ -65,7 +63,7 @@ public interface IMediaController {
 
     void renamePlaylist(String playlistTitle, long itemId);
 
-    void addSongToBoomPlayList(long itemId, ArrayList<? extends IMediaItemBase> mediaElement, boolean isUpdate) ;
+    void addSongToBoomPlayList(long itemId, ArrayList<? extends IMediaElement> mediaElement, boolean isUpdate) ;
 
     void removeSongToPlayList(long itemId, int playlistId) ;
 
@@ -73,13 +71,13 @@ public interface IMediaController {
 
     void createBoomPlaylist(String playlist) ;
 
-    void addSongsToCloudItemList(@MediaType int mediaType, ArrayList<IMediaItemBase> fileList);
+    void addSongsToCloudItemList(@MediaType int mediaType, ArrayList<IMediaElement> fileList);
 
     int getRecentPlayedItemCount();
 
-    ArrayList<? extends IMediaItemBase> getRecentPlayedList();
+    ArrayList<? extends IMediaElement> getRecentPlayedList();
 
-    void setRecentPlayedItem(IMediaItemBase recentPlayedItem);
+    void setRecentPlayedItem(IMediaElement recentPlayedItem);
 }
 
 

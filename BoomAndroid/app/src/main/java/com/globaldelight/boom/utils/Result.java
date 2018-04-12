@@ -1,14 +1,13 @@
-package com.globaldelight.boom.business;
+package com.globaldelight.boom.utils;
 
 /**
  * Created by adarsh on 13/12/17.
  */
 public class Result<T> {
-    private @ErrorCode
-    int mStatus;
+    private int mStatus;
     private T mObject;
 
-    public Result(@ErrorCode int status) {
+    public Result(int status) {
         mStatus = status;
         mObject = null;
     }
@@ -19,11 +18,10 @@ public class Result<T> {
     }
 
     public boolean isSuccess() {
-        return mStatus == ErrorCode.SUCCESS;
+        return mStatus == 0;
     }
 
-    public @ErrorCode
-    int getStatus() {
+    public int getStatus() {
         return mStatus;
     }
 

@@ -16,7 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.app.adapters.search.utils.Search;
 import com.globaldelight.boom.app.adapters.search.utils.SearchResult;
 import com.globaldelight.boom.app.adapters.search.SearchDetailListAdapter;
@@ -93,11 +93,11 @@ public class SearchDetailFragment extends Fragment{
         LocalBroadcastManager.getInstance(mActivity).registerReceiver(mUpdatePlayingItem, intentFilter);
     }
 
-    private class LoadSearchDetailList extends AsyncTask<String, Void, ArrayList<? extends IMediaItemBase>> {
+    private class LoadSearchDetailList extends AsyncTask<String, Void, ArrayList<? extends IMediaElement>> {
         private Activity mActivity = SearchDetailFragment.this.mActivity;
         private String mResultType, mQuery;
         @Override
-        protected ArrayList<? extends IMediaItemBase> doInBackground(String... params) {
+        protected ArrayList<? extends IMediaElement> doInBackground(String... params) {
             Search result = new Search();
             mResultType = params[0];
             mQuery = params[1];
@@ -112,7 +112,7 @@ public class SearchDetailFragment extends Fragment{
         }
 
         @Override
-        protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
+        protected void onPostExecute(ArrayList<? extends IMediaElement> iMediaItemList) {
             super.onPostExecute(iMediaItemList);
             final boolean isPhone = Utils.isPhone(mActivity);
             if(isPhone){

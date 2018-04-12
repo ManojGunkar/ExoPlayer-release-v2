@@ -29,12 +29,12 @@ import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
 import com.globaldelight.boom.app.analytics.MixPanelAnalyticHelper;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.adapters.utils.AddToPlaylistAdapter;
 
@@ -123,16 +123,16 @@ public class Utils {
         return resUri;
     }
 
-    public static void  addToPlaylist(final Activity activity, final ArrayList<? extends IMediaItemBase> songList, final String fromPlaylist) {
+    public static void  addToPlaylist(final Activity activity, final ArrayList<? extends IMediaElement> songList, final String fromPlaylist) {
         Context context = activity;
         if(songList.size() == 0)
             return;
 
-        ArrayList<? extends IMediaItemBase>  playList = MediaController.getInstance(activity).getBoomPlayList();
+        ArrayList<? extends IMediaElement>  playList = MediaController.getInstance(activity).getBoomPlayList();
 
         if(fromPlaylist != null){
             for(int i=0; i< playList.size(); i++){
-                if(playList.get(i).getItemTitle().equalsIgnoreCase(fromPlaylist)){
+                if(playList.get(i).getTitle().equalsIgnoreCase(fromPlaylist)){
                     playList.remove(i);
                 }
             }
@@ -171,7 +171,7 @@ public class Utils {
     }
 
 
-    public static void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaItemBase> song, final String fromPlaylist) {
+    public static void newPlaylistDialog(final Activity activity, final ArrayList<? extends IMediaElement> song, final String fromPlaylist) {
         final Context context = activity;
         Utils.createDialogBuilder(activity)
                 .title(R.string.new_playlist)

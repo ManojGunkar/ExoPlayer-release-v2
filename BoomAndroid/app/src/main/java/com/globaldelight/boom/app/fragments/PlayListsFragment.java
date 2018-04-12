@@ -24,7 +24,7 @@ import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.adapters.song.PlayListAdapter;
 import com.globaldelight.boom.utils.Utils;
@@ -42,8 +42,8 @@ public class PlayListsFragment extends Fragment {
     private View mainView;
     private RecyclerView recyclerView;
     private PlayListAdapter playListAdapter;
-    private ArrayList<? extends IMediaItemBase> defaultPlayList, mBoomPlayList;
-    private IMediaItemBase mFavourite, mRecentPlayed;
+    private ArrayList<? extends IMediaElement> defaultPlayList, mBoomPlayList;
+    private IMediaElement mFavourite, mRecentPlayed;
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -118,9 +118,17 @@ public class PlayListsFragment extends Fragment {
         protected Void doInBackground(Void... voids) {
             defaultPlayList = MediaController.getInstance(mActivity).getPlayList();
             mBoomPlayList = MediaController.getInstance(mActivity).getBoomPlayList();
-            mFavourite = new MediaItemCollection(0, mActivity.getResources().getString(R.string.favourite_list), null, null, MediaController.getInstance(mActivity).getFavouriteCount(),
-                    0, ItemType.FAVOURITE, MediaType.DEVICE_MEDIA_LIB, ItemType.FAVOURITE);
-            mRecentPlayed = new MediaItemCollection(0, getResources().getString(R.string.recently_played), null, null, MediaController.getInstance(mActivity).getRecentPlayedItemCount(),
+            mFavourite = new MediaItemCollection("0",
+                    mActivity.getResources().getString(R.string.favourite_list),
+                    null,
+                    null,
+                    MediaController.getInstance(mActivity).getFavouriteCount(),
+                    0,
+                    ItemType.FAVOURITE,
+                    MediaType.DEVICE_MEDIA_LIB,
+                    ItemType.FAVOURITE);
+
+            mRecentPlayed = new MediaItemCollection("0", getResources().getString(R.string.recently_played), null, null, MediaController.getInstance(mActivity).getRecentPlayedItemCount(),
                     0, ItemType.RECENT_PLAYED, MediaType.DEVICE_MEDIA_LIB, ItemType.RECENT_PLAYED);
             return null;
         }

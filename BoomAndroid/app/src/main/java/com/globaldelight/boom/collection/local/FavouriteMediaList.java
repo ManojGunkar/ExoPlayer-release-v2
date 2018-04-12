@@ -3,7 +3,7 @@ package com.globaldelight.boom.collection.local;
 import android.content.Context;
 import android.os.Handler;
 
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 
 import java.util.ArrayList;
 
@@ -13,13 +13,13 @@ import java.util.ArrayList;
 
 public class FavouriteMediaList {
 
-    private ArrayList<IMediaItemBase> fileList;
+    private ArrayList<IMediaElement> fileList;
     private IFavouriteUpdater favouriteUpdater;
     private static FavouriteMediaList instance;
     private Handler postMessage;
 
     private FavouriteMediaList(Context context){
-        fileList = new ArrayList<IMediaItemBase>();
+        fileList = new ArrayList<IMediaElement>();
         postMessage = new Handler();
     }
 
@@ -30,11 +30,11 @@ public class FavouriteMediaList {
         return instance;
     }
 
-    public void addFilesInFavouriteList(ArrayList<? extends IMediaItemBase> entries){
+    public void addFilesInFavouriteList(ArrayList<? extends IMediaElement> entries){
         fileList.addAll(entries);
     }
 
-    public ArrayList<IMediaItemBase> getFavouriteMediaList(){
+    public ArrayList<IMediaElement> getFavouriteMediaList(){
         return fileList;
     }
 

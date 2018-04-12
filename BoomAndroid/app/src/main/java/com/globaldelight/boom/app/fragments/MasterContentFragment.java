@@ -47,7 +47,8 @@ import com.globaldelight.boom.app.dialogs.SpeakerDialog;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.controller.PlayerUIController;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.player.AudioEffect;
@@ -79,11 +80,8 @@ import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.RE
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_ONE;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.SHUFFLE_OFF;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.SHUFFLE_ON;
-import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_BOTTOM_CENTER;
-import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_BOTTOM_LEFT;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_BOTTOM_RIGHT;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_TOP_CENTER;
-import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_TOP_LEFT;
 
 /**
  * Created by Rahul Agarwal on 16-01-17.
@@ -97,7 +95,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private static boolean mIsPlaying, mIsLastPlayed;
 
 
-    private long mItemId = -1;
+    private IMediaElement mCurrentItem = null;
     private boolean isUser = false;
 
     private Activity mActivity;
@@ -411,9 +409,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
                 final Bitmap bitmap = bitmaps[0];
                 final Bitmap blurredBitmap = bitmaps[1];
-                if (mItemId == -1 || mItemId != item.getItemId()) {
+                if (mCurrentItem == null || !mCurrentItem.equalTo(item)) {
                     PlayerUtils.ImageViewAnimatedChange(context, mLargeAlbumArt, bitmap);
-                    mItemId = item.getItemId();
+                    mCurrentItem = item;
                 } else {
                     mLargeAlbumArt.setImageBitmap(bitmap);
                 }
@@ -560,7 +558,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             mLargeSongTitle.setSelected(true);
             mLargeSongSubTitle.setSelected(true);
 
-            mLargeSongTitle.setText(item.getItemTitle());
+            mLargeSongTitle.setText(item.getTitle());
             mLargeSongSubTitle.setVisibility(null != item.getItemArtist() ? View.VISIBLE : View.GONE);
             mLargeSongSubTitle.setText(item.getItemArtist());
 
@@ -615,7 +613,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         updateMiniPlayerEffectUI(audioEffects.isAudioEffectOn());
         mMiniPlayerPlayPause.setEnabled(true);
         if (null != item) {
-            mMiniSongTitle.setText(item.getItemTitle());
+            mMiniSongTitle.setText(item.getTitle());
             mMiniSongSubTitle.setVisibility(null != item.getItemArtist() ? View.VISIBLE : View.GONE);
             mMiniSongSubTitle.setText(item.getItemArtist());
             if (isPlaying)

@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.collection.local.RecentPlayedMediaList;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 
 import java.util.ArrayList;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Created by Rahul Agarwal on 12-01-17.
  */
 
-public class LoadRecentPlayedList extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {
+public class LoadRecentPlayedList extends AsyncTask<Void, Integer, ArrayList<? extends IMediaElement>> {
     private Context mContext;
     private RecentPlayedMediaList recentPlayedMediaList;
     public LoadRecentPlayedList(Context context){
@@ -21,12 +21,12 @@ public class LoadRecentPlayedList extends AsyncTask<Void, Integer, ArrayList<? e
         recentPlayedMediaList = RecentPlayedMediaList.getInstance(mContext);
     }
     @Override
-    protected ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
+    protected ArrayList<? extends IMediaElement> doInBackground(Void... params) {
         return MediaController.getInstance(mContext).getRecentPlayedList();
     }
 
     @Override
-    protected void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaItemList) {
+    protected void onPostExecute(ArrayList<? extends IMediaElement> iMediaItemList) {
         super.onPostExecute(iMediaItemList);
         recentPlayedMediaList.addFilesInRecentPlayedList(iMediaItemList);
         recentPlayedMediaList.finishRecentPlayedLoading();

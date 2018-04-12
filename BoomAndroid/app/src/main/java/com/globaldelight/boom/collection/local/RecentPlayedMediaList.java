@@ -3,7 +3,7 @@ package com.globaldelight.boom.collection.local;
 import android.content.Context;
 import android.os.Handler;
 
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 
 import java.util.ArrayList;
 
@@ -13,13 +13,13 @@ import java.util.ArrayList;
 
 public class RecentPlayedMediaList {
 
-    private ArrayList<IMediaItemBase> fileList;
+    private ArrayList<IMediaElement> fileList;
     private IRecentPlayedUpdater recentPlayedUpdater;
     private static RecentPlayedMediaList instance;
     private Handler postMessage;
 
     private RecentPlayedMediaList(Context context){
-        fileList = new ArrayList<IMediaItemBase>();
+        fileList = new ArrayList<IMediaElement>();
         postMessage = new Handler();
     }
 
@@ -30,11 +30,11 @@ public class RecentPlayedMediaList {
         return instance;
     }
 
-    public void addFilesInRecentPlayedList(ArrayList<? extends IMediaItemBase> entries){
+    public void addFilesInRecentPlayedList(ArrayList<? extends IMediaElement> entries){
         fileList.addAll(entries);
     }
 
-    public ArrayList<IMediaItemBase> getRecentPlayedMediaList(){
+    public ArrayList<IMediaElement> getRecentPlayedMediaList(){
         return fileList;
     }
 

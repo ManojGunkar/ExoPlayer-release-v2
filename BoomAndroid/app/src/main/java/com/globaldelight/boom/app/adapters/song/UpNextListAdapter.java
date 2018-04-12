@@ -20,7 +20,6 @@ import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
@@ -96,11 +95,11 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 holder.undoButton.setOnClickListener(null);
 
                 setArt(holder, item.getItemArtUrl());
-                holder.name.setText(item.getItemTitle());
+                holder.name.setText(item.getTitle());
                 holder.artistName.setText(item.getItemArtist());
 
                 if (null != App.playbackManager().getPlayingItem() && position == App.playbackManager().queue().getPlayingItemIndex()
-                       && item.getItemId() == App.playbackManager().getPlayingItem().getItemId()) {
+                       && item.equalTo(App.playbackManager().getPlayingItem())) {
                     playingItemPosition = position;
                     holder.art_overlay.setVisibility(View.VISIBLE);
                     holder.art_overlay_play.setVisibility(View.VISIBLE);

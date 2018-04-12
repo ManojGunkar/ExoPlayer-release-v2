@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class DropboxMediaList {
 
-    private ArrayList<IMediaItemBase> fileList;
+    private ArrayList<IMediaElement> fileList;
     private boolean isAllSongsLoaded = false;
     private IDropboxUpdater dropboxUpdater;
     private static DropboxMediaList handler;
@@ -24,7 +24,7 @@ public class DropboxMediaList {
 
     private DropboxMediaList(Context context){
         this.mContext = context;
-        fileList = new ArrayList<IMediaItemBase>();
+        fileList = new ArrayList<IMediaElement>();
         postMessage = new Handler();
     }
 
@@ -39,7 +39,7 @@ public class DropboxMediaList {
         return isAllSongsLoaded;
     }
 
-    public void addFileInDropboxList(final IMediaItemBase entry){
+    public void addFileInDropboxList(final IMediaElement entry){
         if(isAllSongsLoaded)
             clearDropboxContent();
 
@@ -55,7 +55,7 @@ public class DropboxMediaList {
         });
     }
 
-    public ArrayList<IMediaItemBase> getDropboxMediaList(){
+    public ArrayList<IMediaElement> getDropboxMediaList(){
         if(null != fileList && fileList.size() <= 0){
             fileList.addAll(MediaController.getInstance(mContext).getCloudList(MediaType.DROP_BOX));
         }
