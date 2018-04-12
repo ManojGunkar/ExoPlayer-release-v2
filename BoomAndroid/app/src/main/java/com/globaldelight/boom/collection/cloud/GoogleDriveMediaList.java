@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class GoogleDriveMediaList {
 
-    private ArrayList<IMediaItemBase> fileList;
+    private ArrayList<IMediaElement> fileList;
     private boolean isAllSongsLoaded = false;
     private IGoogleDriveMediaUpdater googleDriveMediaUpdater;
     private static GoogleDriveMediaList sInstance;
@@ -26,7 +26,7 @@ public class GoogleDriveMediaList {
 
     private GoogleDriveMediaList(Context context){
         this.mContext = context;
-        fileList = new ArrayList<IMediaItemBase>();
+        fileList = new ArrayList<IMediaElement>();
         postMessage = new Handler();
     }
 
@@ -50,7 +50,7 @@ public class GoogleDriveMediaList {
         return isAllSongsLoaded;
     }
 
-    public ArrayList<IMediaItemBase> getGoogleDriveMediaList(){
+    public ArrayList<IMediaElement> getGoogleDriveMediaList(){
         if(null == fileList)
             fileList = new ArrayList<>();
 
@@ -76,7 +76,7 @@ public class GoogleDriveMediaList {
         isAllSongsLoaded = false;
     }
 
-    public void addFileInGoogleDriveMediaList(final IMediaItemBase entry){
+    public void addFileInGoogleDriveMediaList(final IMediaElement entry){
         if(isAllSongsLoaded)
             clearGoogleDriveMediaContent();
 

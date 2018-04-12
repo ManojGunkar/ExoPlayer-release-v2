@@ -10,7 +10,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 
 import java.util.ArrayList;
 import static android.view.LayoutInflater.from;
@@ -24,12 +24,12 @@ import static android.widget.Toast.makeText;
 
 public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdapter.SimpleItemViewHolder> {
 
-    private ArrayList<? extends IMediaItemBase> playList;
-    private ArrayList<? extends IMediaItemBase> songList;
+    private ArrayList<? extends IMediaElement> playList;
+    private ArrayList<? extends IMediaElement> songList;
     private Context context;
     private MaterialDialog dialog;
 
-    public AddToPlaylistAdapter(Context context, ArrayList<? extends IMediaItemBase>  playList, ArrayList<? extends IMediaItemBase> songList) {
+    public AddToPlaylistAdapter(Context context, ArrayList<? extends IMediaElement>  playList, ArrayList<? extends IMediaElement> songList) {
         this.context = context;
         this.playList = playList;
         this.songList = songList;
@@ -44,7 +44,7 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
 
     @Override
     public void onBindViewHolder(final SimpleItemViewHolder holder, final int position) {
-        holder.name.setText(playList.get(position).getItemTitle());
+        holder.name.setText(playList.get(position).getTitle());
         holder.count.setText(context.getResources().getString(R.string.songs)
                 + " " + ((MediaItemCollection) playList.get(position)).getItemCount());
         holder.mainView.setOnClickListener(new OnClickListener() {
@@ -52,7 +52,7 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
             public void onClick(View view) {
 
                 if(songList.size() == 1){
-                    if(MediaController.getInstance(context).isAlreadyAdded(playList.get(position).getItemId(), songList.get(0).getItemId())){
+                    if(MediaController.getInstance(context).isAlreadyAdded(playList.get(position), songList.get(0))){
                         makeText(context, R.string.playlist_track_already_added, LENGTH_SHORT).show();
                     }else{
                         addToPlayList(position);
@@ -68,7 +68,7 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
     }
 
     private void addToPlayList(int position){
-        MediaController.getInstance(context).addSongToBoomPlayList(playList.get(position).getItemId(), songList, false);
+        MediaController.getInstance(context).addSongToBoomPlayList(playList.get(position), songList, false);
         playList = MediaController.getInstance(context).getBoomPlayList();
         notifyDataSetChanged();
     }

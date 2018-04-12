@@ -16,7 +16,7 @@ import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 
@@ -72,8 +72,8 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
             int pos = position -1;
             MediaItem nowPlayingItem = (MediaItem) App.playbackManager().queue().getPlayingItem();
             MediaItem curItem = (MediaItem)collection.getItemAt(pos);
-            updatePlayingItem(null != nowPlayingItem && curItem.getItemId() == nowPlayingItem.getItemId(), holder);
-            holder.name.setText(curItem.getItemTitle());
+            updatePlayingItem(null != nowPlayingItem && curItem.equalTo(nowPlayingItem), holder);
+            holder.name.setText(curItem.getTitle());
             holder.count.setText(String.valueOf(pos + 1));
             holder.duration.setText(curItem.getDuration());
 

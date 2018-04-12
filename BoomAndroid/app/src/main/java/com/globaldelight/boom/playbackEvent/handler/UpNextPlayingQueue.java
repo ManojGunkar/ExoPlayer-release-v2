@@ -1,18 +1,16 @@
 package com.globaldelight.boom.playbackEvent.handler;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.IntDef;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
-import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
 import com.google.gson.Gson;
@@ -23,7 +21,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -61,7 +58,7 @@ public class UpNextPlayingQueue {
 
     Handler eventHandler = new Handler();
 
-    ArrayList<IMediaItemBase> mUpNextList;
+    ArrayList<IMediaElement> mUpNextList;
 
 
     private static
@@ -89,11 +86,11 @@ public class UpNextPlayingQueue {
         clearUpNextSavedList();
     }
 
-    public ArrayList<? extends IMediaItemBase> getHistoryList() {
+    public ArrayList<? extends IMediaElement> getHistoryList() {
         return MediaController.getInstance(context).getRecentPlayedList();
     }
 
-    private void insertToHistory(IMediaItemBase itemBase) {
+    private void insertToHistory(IMediaElement itemBase) {
         if (null != itemBase)
             MediaController.getInstance(context).setRecentPlayedItem(itemBase);
     }
@@ -106,13 +103,13 @@ public class UpNextPlayingQueue {
         this.mPlayingItemIndex = index;
     }
 
-    public IMediaItemBase getPlayingItem() {
+    public IMediaElement getPlayingItem() {
         if (null != mUpNextList && mUpNextList.size() > 0 && mPlayingItemIndex >= 0 && mPlayingItemIndex < mUpNextList.size() )
             return mUpNextList.get(mPlayingItemIndex);
         return null;
     }
 
-    public ArrayList<? extends IMediaItemBase> getUpNextItemList() {
+    public ArrayList<? extends IMediaElement> getUpNextItemList() {
         return mUpNextList;
     }
 
@@ -214,7 +211,7 @@ public class UpNextPlayingQueue {
 
     public void updateShuffleList() {
         if (mUpNextList.size() > 0) {
-            IMediaItemBase playingItem = getPlayingItem();
+            IMediaElement playingItem = getPlayingItem();
             if (mShuffle == UpNextPlayingQueue.SHUFFLE_ON) {
                 insertUpNextList(UNSHUFFLE);
                 mUpNextList.remove(getPlayingItemIndex());
@@ -232,7 +229,7 @@ public class UpNextPlayingQueue {
         Preferences.writeString(context, shuffleType, new Gson().toJson(mUpNextList));
     }
 
-    private void retrieveUpNextList(String shuffleType, IMediaItemBase playingItem) {
+    private void retrieveUpNextList(String shuffleType, IMediaElement playingItem) {
         try {
             List list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, shuffleType, null), MediaItem[].class));
             mUpNextList = new ArrayList<>(list);
@@ -241,8 +238,8 @@ public class UpNextPlayingQueue {
                     mPlayingItemIndex = 0;
                 else {
                     int count = 0;
-                    for (IMediaItemBase item : mUpNextList) {
-                        if (playingItem.getItemId() == item.getItemId())
+                    for (IMediaElement item : mUpNextList) {
+                        if ( playingItem.equalTo(item) )
                             mPlayingItemIndex = count;
                         count++;
                     }
@@ -267,8 +264,8 @@ public class UpNextPlayingQueue {
             mUpNextList = new ArrayList<>();
     }
 
-    private void updateUnshuffledList(int position, IMediaItemBase item) {
-        ArrayList<IMediaItemBase> tempList = null;
+    private void updateUnshuffledList(int position, IMediaElement item) {
+        ArrayList<IMediaElement> tempList = null;
         try {
             List list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, UNSHUFFLE, null), MediaItem[].class));
             tempList = new ArrayList<>(list);
@@ -284,8 +281,8 @@ public class UpNextPlayingQueue {
         }
     }
 
-    private void updateUnshuffledList(int position, ArrayList<? extends IMediaItemBase> itemList) {
-        ArrayList<IMediaItemBase> tempList = null;
+    private void updateUnshuffledList(int position, ArrayList<? extends IMediaElement> itemList) {
+        ArrayList<IMediaElement> tempList = null;
         try {
             List list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, UNSHUFFLE, null), MediaItem[].class));
             tempList = new ArrayList<>(list);
@@ -308,18 +305,18 @@ public class UpNextPlayingQueue {
 
     public void removeItem(int itemPosition) {
         if (mUpNextList.size() > itemPosition) {
-            IMediaItemBase item = mUpNextList.remove(itemPosition);
+            IMediaElement item = mUpNextList.remove(itemPosition);
             if (mShuffle == SHUFFLE_ON) {
-                removeItemFromUnShuffledList(item.getItemId());
+                removeItemFromUnShuffledList(item);
             }
         }
     }
 
-    private void removeItemFromUnShuffledList(long deletedId) {
-        ArrayList<IMediaItemBase> tempList = retrieveUpNextList(UNSHUFFLE);
+    private void removeItemFromUnShuffledList(IMediaElement deleted) {
+        ArrayList<IMediaElement> tempList = retrieveUpNextList(UNSHUFFLE);
         if (null != tempList) {
-            for (IMediaItemBase item : tempList) {
-                if (deletedId == item.getItemId()) {
+            for (IMediaElement item : tempList) {
+                if (deleted.equalTo(item)) {
                     tempList.remove(item);
                     break;
                 }
@@ -338,14 +335,14 @@ public class UpNextPlayingQueue {
         }
     }
 
-    public void addItemAsUpNext(IMediaItemBase item) {
+    public void addItemAsUpNext(IMediaElement item) {
         if (mShuffle == SHUFFLE_ON) {
             updateUnshuffledList(mUpNextList.size() - 1, item);
         }
         mUpNextList.add(item);
     }
 
-    public void addItemAsUpNext(ArrayList<? extends IMediaItemBase> itemList) {
+    public void addItemAsUpNext(ArrayList<? extends IMediaElement> itemList) {
         if (mShuffle == SHUFFLE_ON) {
 //            Collections.shuffle(itemList, new Random(itemList.size()));
             updateUnshuffledList(mUpNextList.size() - 1, itemList);
@@ -357,14 +354,14 @@ public class UpNextPlayingQueue {
         addItemAsUpNext(collection.getMediaElement());
     }
 
-    public void addItemAsPlayNext(IMediaItemBase item) {
+    public void addItemAsPlayNext(IMediaElement item) {
         if (mShuffle == SHUFFLE_ON) {
             updateUnshuffledList(getPlayNextPosition(), item);
         }
         mUpNextList.add(getPlayNextPosition(), item);
     }
 
-    public void addItemAsPlayNext(ArrayList<? extends IMediaItemBase> itemList) {
+    public void addItemAsPlayNext(ArrayList<? extends IMediaElement> itemList) {
         if (mShuffle == SHUFFLE_ON) {
             updateUnshuffledList(getPlayNextPosition(), itemList);
         }
@@ -429,10 +426,10 @@ public class UpNextPlayingQueue {
         }
     }
 
-    public void addItemToPlay(final IMediaItemBase item) {
+    public void addItemToPlay(final IMediaElement item) {
         long mTime = System.currentTimeMillis();
-        boolean isPlayPause = App.playbackManager().getPlayerDataSourceId() == item.getItemId() ? true : false;
-        if (null != item && null != getPlayingItem() && item.getItemId() == getPlayingItem().getItemId() && isPlayPause) {
+        boolean isPlayPause = App.playbackManager().getPlayerDataSourceId() != null && App.playbackManager().getPlayerDataSourceId().equals(item.getId()) ? true : false;
+        if (null != item && null != getPlayingItem() && item.equalTo(getPlayingItem()) && isPlayPause) {
             PlayPause();
         } else if (null != mUpNextList && null != item && mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
@@ -449,10 +446,11 @@ public class UpNextPlayingQueue {
         }
     }
 
-    public void addItemListToPlay(final ArrayList<? extends IMediaItemBase> itemList, final int position, final boolean shuffle) {
+    public void addItemListToPlay(final ArrayList<? extends IMediaElement> itemList, final int position, final boolean shuffle) {
         long mTime = System.currentTimeMillis();
-        boolean isPlayPause = !shuffle && App.playbackManager().getPlayerDataSourceId() == itemList.get(position).getItemId() ? true : false;
-        if (null != itemList && null != getPlayingItem() && itemList.get(position).getItemId() == getPlayingItem().getItemId() && isPlayPause) {
+        String dsId = App.playbackManager().getPlayerDataSourceId();
+        boolean isPlayPause = !shuffle && dsId != null && dsId.equals(itemList.get(position).getId()) ? true : false;
+        if (null != itemList && null != getPlayingItem() && itemList.get(position).equalTo(getPlayingItem()) && isPlayPause) {
             PlayPause();
         } else if (null != mUpNextList && null != itemList && itemList.size() > 0 && mTime - mShiftingTime > 500) {
             mShiftingTime = mTime;
@@ -474,7 +472,7 @@ public class UpNextPlayingQueue {
         }
     }
 
-    public void addItemListToPlay(final ArrayList<? extends IMediaItemBase> itemList, final int position) {
+    public void addItemListToPlay(final ArrayList<? extends IMediaElement> itemList, final int position) {
         addItemListToPlay(itemList, position, false);
     }
 
@@ -489,7 +487,7 @@ public class UpNextPlayingQueue {
 
     private void newShuffleList() {
         if (mUpNextList.size() > 0) {
-            IMediaItemBase playingItem = getPlayingItem();
+            IMediaElement playingItem = getPlayingItem();
             if (mShuffle == UpNextPlayingQueue.SHUFFLE_ON) {
                 insertUpNextList(UNSHUFFLE);
                 mUpNextList.remove(getPlayingItemIndex());
@@ -511,7 +509,7 @@ public class UpNextPlayingQueue {
         mPlayingItemIndex = Preferences.readInteger(context, PLAYING_ITEM_INDEX_IN_UPNEXT, -1);
     }
 
-    private ArrayList<IMediaItemBase> retrieveUpNextList(String shuffleType) {
+    private ArrayList<IMediaElement> retrieveUpNextList(String shuffleType) {
         try {
             List list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, shuffleType, null), MediaItem[].class));
             return new ArrayList<>(list);

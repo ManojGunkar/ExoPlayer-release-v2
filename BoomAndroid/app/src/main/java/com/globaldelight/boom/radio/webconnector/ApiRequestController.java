@@ -137,7 +137,7 @@ public class ApiRequestController {
                 @Query("pageSize") String pageSize);
 
 
-        @GET("/Pillow/radios/{radio_name}/play")
+        @GET("/Pillow/{radio_name}/play")
         Call<RadioPlayResponse> getRadioPlayService(
                 @Path("radio_name") String radioName);
 

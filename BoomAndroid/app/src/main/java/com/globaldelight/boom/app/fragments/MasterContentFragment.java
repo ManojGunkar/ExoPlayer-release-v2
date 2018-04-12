@@ -47,8 +47,10 @@ import com.globaldelight.boom.app.dialogs.SpeakerDialog;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.controller.PlayerUIController;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
@@ -79,11 +81,8 @@ import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.RE
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.REPEAT_ONE;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.SHUFFLE_OFF;
 import static com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue.SHUFFLE_ON;
-import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_BOTTOM_CENTER;
-import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_BOTTOM_LEFT;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_BOTTOM_RIGHT;
 import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_TOP_CENTER;
-import static com.globaldelight.boom.view.CoachMarkerWindow.DRAW_TOP_LEFT;
 
 /**
  * Created by Rahul Agarwal on 16-01-17.
@@ -93,11 +92,11 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private final String TAG = "MasterContentFragment";
     private static boolean isCloudSeek = false;
     public static boolean isUpdateUpnextDB = true;
-    private static MediaItem mPlayingMediaItem;
+    private static IMediaElement mPlayingMediaItem;
     private static boolean mIsPlaying, mIsLastPlayed;
 
 
-    private long mItemId = -1;
+    private IMediaElement mCurrentItem = null;
     private boolean isUser = false;
 
     private Activity mActivity;
@@ -145,12 +144,12 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private BroadcastReceiver mPlayerBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            IMediaItem item;
+            IMediaElement item;
             switch (intent.getAction()) {
                 case ACTION_SONG_CHANGED:
-                    item = intent.getParcelableExtra("playing_song");
+                    item = App.playbackManager().getPlayingItem();
                     if (item != null) {
-                        mPlayingMediaItem = (MediaItem) item;
+                        mPlayingMediaItem = item;
                         mIsPlaying = intent.getBooleanExtra("playing", false);
                         mIsLastPlayed = false;
                         mTrackSeek.setProgress(0);
@@ -366,7 +365,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mNext.setEnabled(next_enable);
     }
 
-    private void updateAlbumArt(final IMediaItem item) {
+    private void updateAlbumArt(final IMediaElement item) {
         new AsyncTask<Void, Void, Bitmap[]>() {
 
             private Context context = mActivity;
@@ -411,9 +410,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
                 final Bitmap bitmap = bitmaps[0];
                 final Bitmap blurredBitmap = bitmaps[1];
-                if (mItemId == -1 || mItemId != item.getItemId()) {
+                if (mCurrentItem == null || !mCurrentItem.equalTo(item)) {
                     PlayerUtils.ImageViewAnimatedChange(context, mLargeAlbumArt, bitmap);
-                    mItemId = item.getItemId();
+                    mCurrentItem = item;
                 } else {
                     mLargeAlbumArt.setImageBitmap(bitmap);
                 }
@@ -423,8 +422,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void changeProgress(int progress) {
-        if (null != mPlayingMediaItem) {
-            long totalTime = mPlayingMediaItem.getDurationLong();
+        if (null != mPlayingMediaItem && mPlayingMediaItem.getItemType() == ItemType.SONGS ) {
+            IMediaItem song = (IMediaItem)mPlayingMediaItem;
+            long totalTime = song.getDurationLong();
             int totalProgress = 100;
             long currentTime = (totalTime / totalProgress) * progress;
             updateTrackPlayTime(totalTime, currentTime);
@@ -546,7 +546,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         updateActionBarButtons();
     }
 
-    private void updateLargePlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
+    private void updateLargePlayerUI(IMediaElement item, boolean isPlaying, boolean isLastPlayedItem) {
         mPlayPause.setEnabled(true);
         if (null != item) {
             updateShuffle();
@@ -560,19 +560,27 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             mLargeSongTitle.setSelected(true);
             mLargeSongSubTitle.setSelected(true);
 
-            mLargeSongTitle.setText(item.getItemTitle());
-            mLargeSongSubTitle.setVisibility(null != item.getItemArtist() ? View.VISIBLE : View.GONE);
-            mLargeSongSubTitle.setText(item.getItemArtist());
+            mLargeSongTitle.setText(item.getTitle());
+            mLargeSongSubTitle.setVisibility(null != item.getDescription() ? View.VISIBLE : View.GONE);
+            mLargeSongSubTitle.setText(item.getDescription());
 
             if (isLastPlayedItem) {
                 mTrackSeek.setProgress(0);
                 mPlayPause.setImageResource(R.drawable.ic_player_play);
 
-                long totalMillis = item.getDurationLong();
-                long currentMillis = 0;
+                if ( item.getItemType() == ItemType.SONGS ) {
+                    IMediaItem song = (IMediaItem)item;
+                    long totalMillis = song.getDurationLong();
+                    long currentMillis = 0;
 
-                if (!isUser)
-                    updateTrackPlayTime(totalMillis, currentMillis);
+                    if (!isUser)
+                        updateTrackPlayTime(totalMillis, currentMillis);
+                }
+                else {
+                    mTrackSeek.setVisibility(View.INVISIBLE);
+                    mTotalSeekTime.setVisibility(View.INVISIBLE);
+                    mCurrentSeekTime.setVisibility(View.INVISIBLE);
+                }
 
             } else {
                 mPlayPause.setImageResource(isPlaying? R.drawable.ic_player_pause : R.drawable.ic_player_play);
@@ -611,13 +619,13 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mMiniSongSubTitle = mRootView.findViewById(R.id.mini_player_song_sub_title);
     }
 
-    private void updateMiniPlayerUI(MediaItem item, boolean isPlaying, boolean isLastPlayedItem) {
+    private void updateMiniPlayerUI(IMediaElement item, boolean isPlaying, boolean isLastPlayedItem) {
         updateMiniPlayerEffectUI(audioEffects.isAudioEffectOn());
         mMiniPlayerPlayPause.setEnabled(true);
         if (null != item) {
-            mMiniSongTitle.setText(item.getItemTitle());
-            mMiniSongSubTitle.setVisibility(null != item.getItemArtist() ? View.VISIBLE : View.GONE);
-            mMiniSongSubTitle.setText(item.getItemArtist());
+            mMiniSongTitle.setText(item.getTitle());
+            mMiniSongSubTitle.setVisibility(null != item.getDescription() ? View.VISIBLE : View.GONE);
+            mMiniSongSubTitle.setText(item.getDescription());
             if (isPlaying)
                 mMiniPlayerPlayPause.setImageResource(R.drawable.ic_miniplayer_pause);
             else

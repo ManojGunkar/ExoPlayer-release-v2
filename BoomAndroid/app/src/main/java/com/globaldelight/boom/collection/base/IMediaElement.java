@@ -1,4 +1,4 @@
-package com.globaldelight.boom.collection.local.callback;
+package com.globaldelight.boom.collection.base;
 
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
@@ -6,11 +6,13 @@ import com.globaldelight.boom.playbackEvent.utils.MediaType;
 /**
  * Created by Rahul Agarwal on 8/4/2016.
  */
-public interface IMediaItemBase {
+public interface IMediaElement {
 
-    long getItemId();
+    String getId();
 
-    String getItemTitle();
+    String getTitle();
+
+    String getDescription();
 
     String getItemArtUrl();
 
@@ -19,4 +21,8 @@ public interface IMediaItemBase {
     @ItemType int getItemType();
 
     @MediaType int getMediaType();
+
+    default boolean equalTo(IMediaElement another) {
+        return another == this || (another != null && another.equals(this.getId()));
+    }
 }

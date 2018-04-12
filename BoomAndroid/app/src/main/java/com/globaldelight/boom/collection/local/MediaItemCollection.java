@@ -2,8 +2,8 @@ package com.globaldelight.boom.collection.local;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class MediaItemCollection implements IMediaItemCollection, Parcelable {
 
-    private long mItemId;
+    private String mItemId;
     private String mItemTitle;
     private String mItemSubTitle;
     private String mItemArtUrl;
@@ -23,11 +23,11 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
     private @ItemType int mParentType;
     private int mItemCount;
     private int mItemListCount;
-    protected ArrayList<? extends IMediaItemBase> mMediaElement = new ArrayList<>();
+    protected ArrayList<? extends IMediaElement> mMediaElement = new ArrayList<>();
     protected ArrayList<String> mArtUrlList = new ArrayList<>();
     private int mCurrentIndex;
 
-    public MediaItemCollection(long mItemId, String mItemTitle, String mItemSubTitle, String mItemArtUrl,
+    public MediaItemCollection(String mItemId, String mItemTitle, String mItemSubTitle, String mItemArtUrl,
                                int mItemCount, int mItemListCount, @ItemType int mItemType, @MediaType int mMediaType, @ItemType int mParentType){
         this.mItemId = mItemId;
         this.mItemTitle = mItemTitle;
@@ -41,7 +41,7 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
     }
 
     protected MediaItemCollection(Parcel in) {
-        mItemId = in.readLong();
+        mItemId = in.readString();
         mItemTitle = in.readString();
         mItemSubTitle = in.readString();
         mItemArtUrl = in.readString();
@@ -55,7 +55,7 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
         //noinspection ResourceType
         this.mParentType = Integer.parseInt(in.readString());
         mCurrentIndex = in.readInt();
-        mMediaElement = in.readArrayList(IMediaItemBase.class.getClassLoader());
+        mMediaElement = in.readArrayList(IMediaElement.class.getClassLoader());
     }
 
     public static final Creator<MediaItemCollection> CREATOR = new Creator<MediaItemCollection>() {
@@ -71,12 +71,12 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
     };
 
     @Override
-    public long getItemId() {
+    public String getId() {
         return mItemId;
     }
 
     @Override
-    public String getItemTitle() {
+    public String getTitle() {
         return mItemTitle;
     }
 
@@ -95,6 +95,11 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
         }
 
         return mItemArtUrl;
+    }
+
+    @Override
+    public String getDescription() {
+        return getItemSubTitle();
     }
 
     @Override
@@ -139,12 +144,12 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
 
 
     @Override
-    public IMediaItemBase getItemAt(int index) {
+    public IMediaElement getItemAt(int index) {
         return this.mMediaElement.get(index);
     }
 
     @Override
-    public ArrayList<? extends IMediaItemBase> getMediaElement(){
+    public ArrayList<? extends IMediaElement> getMediaElement(){
         return this.mMediaElement;
     }
 
@@ -159,7 +164,7 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
     }
 
     @Override
-    public void setMediaElement(ArrayList<? extends IMediaItemBase> iMediaItemBases) {
+    public void setMediaElement(ArrayList<? extends IMediaElement> iMediaItemBases) {
         this.mMediaElement = iMediaItemBases;
     }
 
@@ -185,7 +190,7 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
      */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(mItemId);
+        dest.writeString(mItemId);
         dest.writeString(mItemTitle);
         dest.writeString(mItemSubTitle);
         dest.writeString(mItemArtUrl);

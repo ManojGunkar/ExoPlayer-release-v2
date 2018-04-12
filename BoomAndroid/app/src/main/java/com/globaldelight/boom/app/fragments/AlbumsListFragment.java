@@ -1,12 +1,11 @@
 package com.globaldelight.boom.app.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.GridLayoutManager;
 
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 
 import java.util.ArrayList;
 
@@ -21,16 +20,16 @@ public class AlbumsListFragment extends MediaCollectionFragment {
         new LoadCollectionList().execute();
     }
 
-    private class LoadCollectionList extends AsyncTask<Void, Integer, ArrayList<? extends IMediaItemBase>> {
+    private class LoadCollectionList extends AsyncTask<Void, Integer, ArrayList<? extends IMediaElement>> {
         private Context context = getContext();
         GridLayoutManager gridLayoutManager;
         @Override
-        protected synchronized ArrayList<? extends IMediaItemBase> doInBackground(Void... params) {
+        protected synchronized ArrayList<? extends IMediaElement> doInBackground(Void... params) {
             return MediaController.getInstance(context).getAlbumList();
         }
 
         @Override
-        protected synchronized void onPostExecute(ArrayList<? extends IMediaItemBase> iMediaCollectionList) {
+        protected synchronized void onPostExecute(ArrayList<? extends IMediaElement> iMediaCollectionList) {
             super.onPostExecute(iMediaCollectionList);
             onCollectionLoaded(iMediaCollectionList);
         }

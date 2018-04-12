@@ -15,11 +15,15 @@ import java.util.Map;
         MediaType.DEVICE_MEDIA_LIB,
         MediaType.DROP_BOX,
         MediaType.GOOGLE_DRIVE,
-        MediaType.SEARCH})
+        MediaType.SEARCH,
+        MediaType.RADIO
+})
+
 @Retention(RetentionPolicy.SOURCE)
 public @interface MediaType {
     int     DEVICE_MEDIA_LIB = 0,
             DROP_BOX = 1,
             GOOGLE_DRIVE = 2,
-            SEARCH = 4;
+            SEARCH = 4,
+            RADIO = 5;
 }

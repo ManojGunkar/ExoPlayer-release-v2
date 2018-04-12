@@ -14,12 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.globaldelight.boom.app.App;
-import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.app.adapters.album.DetailAlbumGridAdapter;
@@ -101,10 +100,10 @@ public class AlbumDetailItemFragment extends Fragment {
         songCount.append(" ");
         songCount.append(collection.getItemCount());
 
-        listDetail = new ListDetail(collection.getItemTitle(), albumCount.toString(), songCount.toString());
+        listDetail = new ListDetail(collection.getTitle(), albumCount.toString(), songCount.toString());
         CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) this.mActivity.findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
-            appBarLayout.setTitle(collection.getItemTitle());
+            appBarLayout.setTitle(collection.getTitle());
             appBarLayout.setCollapsedTitleTypeface(ResourcesCompat.getFont(getActivity(), R.font.titilliumweb_semibold));
             appBarLayout.setExpandedTitleTypeface(ResourcesCompat.getFont(getActivity(), R.font.titilliumweb_semibold));
         }
@@ -124,12 +123,12 @@ public class AlbumDetailItemFragment extends Fragment {
         App.playbackManager().queue().addItemListToPlay((IMediaItemCollection) collection.getItemAt(0), 0);
     }
 
-    private class LoadAlbumItems extends AsyncTask<Void, Integer, IMediaItemBase> {
+    private class LoadAlbumItems extends AsyncTask<Void, Integer, IMediaElement> {
 
         private Activity mActivity = AlbumDetailItemFragment.this.mActivity;
 
         @Override
-        protected IMediaItemBase doInBackground(Void... params) {
+        protected IMediaElement doInBackground(Void... params) {
 //            ItemType.ARTIST && ItemType.GENRE
             if(collection.getParentType() == ItemType.ARTIST && collection.count() == 0)
                 collection.setMediaElement(MediaController.getInstance(mActivity).getArtistAlbumsList(collection));
@@ -139,8 +138,8 @@ public class AlbumDetailItemFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(IMediaItemBase iMediaItemBase) {
-            super.onPostExecute(iMediaItemBase);
+        protected void onPostExecute(IMediaElement iMediaElement) {
+            super.onPostExecute(iMediaElement);
             boolean isPhone = Utils.isPhone(mActivity);
             if(isPhone){
                 gridLayoutManager =
@@ -152,7 +151,7 @@ public class AlbumDetailItemFragment extends Fragment {
             rootView.setLayoutManager(gridLayoutManager);
             rootView.addItemDecoration(new MarginDecoration(mActivity));
             rootView.setHasFixedSize(true);
-            detailAlbumGridAdapter = new DetailAlbumGridAdapter(mActivity, rootView, (IMediaItemCollection) iMediaItemBase, listDetail, isPhone);
+            detailAlbumGridAdapter = new DetailAlbumGridAdapter(mActivity, rootView, (IMediaItemCollection) iMediaElement, listDetail, isPhone);
             rootView.setAdapter(detailAlbumGridAdapter);
             gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
@@ -160,7 +159,7 @@ public class AlbumDetailItemFragment extends Fragment {
                     return detailAlbumGridAdapter.isHeader(position) ? gridLayoutManager.getSpanCount() : 1;
                 }
             });
-            if (((IMediaItemCollection) iMediaItemBase).count() < 1) {
+            if (((IMediaItemCollection) iMediaElement).count() < 1) {
                 listIsEmpty();
             }
             if ( mLoadingCallback != null ) {

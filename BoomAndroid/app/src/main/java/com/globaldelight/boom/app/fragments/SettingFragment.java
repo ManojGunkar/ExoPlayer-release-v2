@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -33,7 +32,8 @@ import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.app.activities.WebViewActivity;
 import com.globaldelight.boom.app.adapters.utils.HeadPhoneItemAdapter;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
@@ -382,7 +382,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
     private boolean isPlayingFrom(@MediaType int mediaType) {
         if ( App.playbackManager().isPlaying() ) {
-            IMediaItem item = App.playbackManager().getPlayingItem();
+            IMediaElement item = App.playbackManager().getPlayingItem();
             if ( item != null && item.getMediaType() == mediaType ) {
                 return true;
             }

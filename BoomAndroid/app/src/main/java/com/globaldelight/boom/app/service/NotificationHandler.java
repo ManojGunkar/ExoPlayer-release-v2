@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,8 +12,8 @@ import android.widget.RemoteViews;
 
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.service.PlayerService;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.utils.Log;
 import com.globaldelight.boom.utils.PlayerUtils;
 
@@ -53,7 +52,7 @@ public class NotificationHandler  {
     }
 
 
-    public void update(IMediaItem item, boolean playing, boolean isLastPlayed) {
+    public void update(IMediaElement item, boolean playing, boolean isLastPlayed) {
 
         if(item == null && !isLastPlayed){
             removeNotification();
@@ -93,14 +92,14 @@ public class NotificationHandler  {
         notificationCompat.priority = Notification.PRIORITY_MAX;
 
         notificationCompat.bigContentView.setViewVisibility(R.id.noti_name, VISIBLE);
-        notificationCompat.bigContentView.setViewVisibility(R.id.noti_artist, null != item.getItemArtist() ? VISIBLE : GONE);
-        notificationCompat.bigContentView.setTextViewText(R.id.noti_name, item.getItemTitle());
-        notificationCompat.bigContentView.setTextViewText(R.id.noti_artist, item.getItemArtist());
+        notificationCompat.bigContentView.setViewVisibility(R.id.noti_artist, null != item.getDescription() ? VISIBLE : GONE);
+        notificationCompat.bigContentView.setTextViewText(R.id.noti_name, item.getTitle());
+        notificationCompat.bigContentView.setTextViewText(R.id.noti_artist, item.getDescription());
 
         notificationCompat.contentView.setViewVisibility(R.id.noti_name, VISIBLE);
-        notificationCompat.contentView.setViewVisibility(R.id.noti_artist, null != item.getItemArtist() ? VISIBLE : GONE);
-        notificationCompat.contentView.setTextViewText(R.id.noti_name, item.getItemTitle());
-        notificationCompat.contentView.setTextViewText(R.id.noti_artist, item.getItemArtist());
+        notificationCompat.contentView.setViewVisibility(R.id.noti_artist, null != item.getDescription() ? VISIBLE : GONE);
+        notificationCompat.contentView.setTextViewText(R.id.noti_name, item.getTitle());
+        notificationCompat.contentView.setTextViewText(R.id.noti_artist, item.getDescription());
 
         notificationCompat.bigContentView.setViewVisibility(R.id.noti_play_button, VISIBLE);
         notificationCompat.contentView.setViewVisibility(R.id.noti_play_button, VISIBLE);

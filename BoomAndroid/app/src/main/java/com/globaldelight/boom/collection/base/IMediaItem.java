@@ -1,19 +1,19 @@
-package com.globaldelight.boom.collection.local.callback;
+package com.globaldelight.boom.collection.base;
 
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 
 /**
  * Created by Rahul Agarwal on 8/4/2016.
  */
-public interface IMediaItem extends IMediaItemBase {
+public interface IMediaItem extends IMediaElement {
 
     String getItemDisplayName();
 
-    long getItemAlbumId();
+    String getItemAlbumId();
 
     String getItemAlbum();
 
-    long getItemArtistId();
+    String getItemArtistId();
 
     String getItemArtist();
 
@@ -27,13 +27,10 @@ public interface IMediaItem extends IMediaItemBase {
 
     @ItemType int getItemType();
 
-    long getParentId();
+    String getParentId();
 
     String getParentTitle();
 
-    void setParentId(long parentId);
-
     @ItemType int getParentType();
 
-    void setParentItemType(@ItemType int parentType);
 }

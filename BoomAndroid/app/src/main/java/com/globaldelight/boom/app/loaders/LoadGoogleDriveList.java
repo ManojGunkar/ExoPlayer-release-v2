@@ -106,7 +106,8 @@ public class LoadGoogleDriveList extends AsyncTask<Void, Void, List<String>> {
             if (files != null) {
                 for (File file : files) {
                     if (file.get("mimeType").toString().startsWith("audio")) {
-                        mediaListInstance.addFileInGoogleDriveMediaList(new MediaItem(200000+file_count, file.getName(),
+                        String id = String.valueOf(200000+file_count);
+                        mediaListInstance.addFileInGoogleDriveMediaList(new MediaItem(id, file.getName(),
                                 mediaUrl_1 + file.getId() + mediaUrl_2, ItemType.SONGS, MediaType.GOOGLE_DRIVE, ItemType.SONGS));
                         file_count++;
                     }

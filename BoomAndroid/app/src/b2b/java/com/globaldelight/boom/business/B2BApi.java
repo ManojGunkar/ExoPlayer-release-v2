@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 
 import com.globaldelight.boom.BuildConfig;
+import com.globaldelight.boom.utils.Result;
 import com.globaldelight.boom.utils.Utils;
 
 import org.json.JSONException;
