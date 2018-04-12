@@ -132,10 +132,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                 }
                 if(listItemType == ItemType.RECENT_PLAYED){
                     FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_Recent_Playlist);
-
                 }else if(listItemType == ItemType.FAVOURITE){
                     FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_favourite_Playlist);
-
                 }
             }
         });

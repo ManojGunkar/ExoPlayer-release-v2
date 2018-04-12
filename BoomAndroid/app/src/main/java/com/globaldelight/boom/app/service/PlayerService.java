@@ -18,6 +18,7 @@ import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.app.analytics.AnalyticsHelper;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
@@ -121,7 +122,7 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
     }
 
 
-    private void updateNotificationPlayer(IMediaItem playingItem, boolean playing, boolean isLastPlayed) {
+    private void updateNotificationPlayer(IMediaElement playingItem, boolean playing, boolean isLastPlayed) {
         if( !playing ){
             if ( !mIsTaskRunning ) {
                 stopSelf();
@@ -222,11 +223,6 @@ public class PlayerService extends Service implements HeadPhonePlugReceiver.Call
     public void onMediaChanged() {
         Intent i = new Intent();
         i.setAction(PlayerEvents.ACTION_SONG_CHANGED);
-        i.putExtra("playing_song", (MediaItem) mPlayback.getPlayingItem());
-        i.putExtra("playing", true);
-        i.putExtra("is_previous", mPlayback.isPrevious());
-        i.putExtra("is_next", mPlayback.isNext());
-
         sendLocalBroadcast(i);
         try {
             Thread.sleep(50);

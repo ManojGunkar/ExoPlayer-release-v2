@@ -1,5 +1,8 @@
 package com.globaldelight.boom.radio.webconnector.responsepojo;
 
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -106,7 +109,7 @@ public class LocalRadioResponse {
 
     }
 
-    public class Content {
+    public class Content implements IMediaElement {
 
         @SerializedName("type")
         @Expose
@@ -186,8 +189,38 @@ public class LocalRadioResponse {
             this.baseline = baseline;
         }
 
+        @Override
+        public String getId() {
+            return permalink;
+        }
+
+        @Override
+        public String getTitle() {
+            return name;
+        }
+
         public String getDescription() {
             return description;
+        }
+
+        @Override
+        public String getItemArtUrl() {
+            return logo;
+        }
+
+        @Override
+        public void setItemArtUrl(String url) {
+
+        }
+
+        @Override
+        public int getItemType() {
+            return ItemType.LIVE_STREAM;
+        }
+
+        @Override
+        public int getMediaType() {
+            return MediaType.RADIO;
         }
 
         public void setDescription(String description) {

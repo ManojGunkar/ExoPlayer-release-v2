@@ -32,6 +32,7 @@ import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.app.activities.WebViewActivity;
 import com.globaldelight.boom.app.adapters.utils.HeadPhoneItemAdapter;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.utils.PermissionChecker;
@@ -381,7 +382,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
     private boolean isPlayingFrom(@MediaType int mediaType) {
         if ( App.playbackManager().isPlaying() ) {
-            IMediaItem item = App.playbackManager().getPlayingItem();
+            IMediaElement item = App.playbackManager().getPlayingItem();
             if ( item != null && item.getMediaType() == mediaType ) {
                 return true;
             }

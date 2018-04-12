@@ -107,6 +107,11 @@ public class MediaItem implements IMediaItem, Parcelable {
     }
 
     @Override
+    public String getDescription() {
+        return getItemArtist();
+    }
+
+    @Override
     public String getItemDisplayName() {
         return ItemDisplayName;
     }
@@ -162,16 +167,6 @@ public class MediaItem implements IMediaItem, Parcelable {
     @Override
     public String getParentId() {
         return parentId;
-    }
-
-    @Override
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
-    @Override
-    public void setParentItemType(@ItemType int parentType) {
-        this.parentType = parentType;
     }
 
     @Override

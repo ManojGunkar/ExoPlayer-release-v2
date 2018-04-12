@@ -202,7 +202,9 @@ public class MediaController {
     }
 
     public void setRecentPlayedItem(IMediaElement recentPlayedItem) {
-        App.getUPNEXTDBHelper().addItemsToRecentPlayedList(recentPlayedItem);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+        if ( recentPlayedItem.getMediaType() != MediaType.RADIO ) {
+            App.getUPNEXTDBHelper().addItemsToRecentPlayedList(recentPlayedItem);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+        }
     }
 }

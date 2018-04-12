@@ -98,6 +98,11 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
     }
 
     @Override
+    public String getDescription() {
+        return getItemSubTitle();
+    }
+
+    @Override
     public void setItemArtUrl(String url) {
         this.mItemArtUrl = url;
     }

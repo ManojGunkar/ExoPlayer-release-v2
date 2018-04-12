@@ -21,15 +21,28 @@ import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
+import com.globaldelight.boom.radio.webconnector.ApiRequestController;
+import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
+import com.globaldelight.boom.radio.webconnector.responsepojo.RadioPlayResponse;
 import com.globaldelight.boom.utils.helpers.DropBoxAPI;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.player.AudioPlayer;
 
 import java.io.FileDescriptor;
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 import static android.media.AudioManager.AUDIOFOCUS_GAIN;
 import static android.media.AudioManager.AUDIOFOCUS_GAIN_TRANSIENT;
@@ -390,6 +403,25 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 }
                 return null;
             }
+            else if(mediaItemBase.getMediaType() == MediaType.RADIO) {
+                ApiRequestController.RequestCallback requestCallback = null;
+                try {
+                    requestCallback = ApiRequestController.getClient(context, RadioApiUtils.BASE_URL);
+                    Call<RadioPlayResponse> call = requestCallback.getRadioPlayService(mediaItemBase.getId());
+                    Response<RadioPlayResponse> resp = call.execute();
+                    if ( resp.isSuccessful() ) {
+                        List<RadioPlayResponse.Stream> streams = resp.body().getBody().getContent().getStreams();
+                        if ( streams.size() > 0 ) {
+                            return streams.get(0).getUrl();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+
+            }
             return dataSource;
         }
 
@@ -401,18 +433,20 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                     mPlayer.setPath(dataSource);
                     mPlayer.setDataSourceId(mediaItemBase.getId());
 
-                    MediaItem item = (MediaItem)mediaItemBase;
+                    if ( mediaItemBase instanceof  MediaItem ) {
+                        MediaItem item = (MediaItem)mediaItemBase;
 
-                    MediaMetadata.Builder builder = new MediaMetadata.Builder();
-                    builder.putString(MediaMetadata.METADATA_KEY_TITLE, item.getTitle());
-                    builder.putString(MediaMetadata.METADATA_KEY_ALBUM, item.getItemAlbum());
-                    builder.putString(MediaMetadata.METADATA_KEY_ARTIST, item.getItemArtist());
-                    Bitmap bitmap = getAlbumart(context,item.getItemAlbumId());
-                    if ( bitmap != null ) {
-                        builder.putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, bitmap);
+                        MediaMetadata.Builder builder = new MediaMetadata.Builder();
+                        builder.putString(MediaMetadata.METADATA_KEY_TITLE, item.getTitle());
+                        builder.putString(MediaMetadata.METADATA_KEY_ALBUM, item.getItemAlbum());
+                        builder.putString(MediaMetadata.METADATA_KEY_ARTIST, item.getItemArtist());
+                        Bitmap bitmap = getAlbumart(context,item.getItemAlbumId());
+                        if ( bitmap != null ) {
+                            builder.putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, bitmap);
+                        }
+                        session.setMetadata(builder.build());
                     }
 
-                    session.setMetadata(builder.build());
                     setSessionState(PlaybackState.STATE_PLAYING);
                 }
             }
@@ -479,8 +513,8 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         setSessionState(PlaybackState.STATE_STOPPED);
     }
 
-    public IMediaItem getPlayingItem() {
-        return (IMediaItem) mQueue.getPlayingItem();
+    public IMediaElement getPlayingItem() {
+        return (IMediaElement) mQueue.getPlayingItem();
     }
 
     public void seek(final int progress) {

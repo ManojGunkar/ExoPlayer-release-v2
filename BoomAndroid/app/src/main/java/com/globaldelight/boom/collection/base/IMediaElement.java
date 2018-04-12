@@ -12,6 +12,8 @@ public interface IMediaElement {
 
     String getTitle();
 
+    String getDescription();
+
     String getItemArtUrl();
 
     void setItemArtUrl(String url);
