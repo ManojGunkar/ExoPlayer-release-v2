@@ -1,4 +1,4 @@
-package com.globaldelight.boom.radio;
+package com.globaldelight.boom.radio.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -53,8 +53,8 @@ public class SaveFavouriteRadio {
     public void addFavRadioStation(RadioStationResponse.Content radioStation){
         List<RadioStationResponse.Content> favRadioStation = getFavRadioStation();
 
-        if(favRadioStation == null)
-            favRadioStation = new ArrayList<>();
+        if(favRadioStation == null) favRadioStation = new ArrayList<>();
+        if (favRadioStation.contains(radioStation)) return;
         favRadioStation.add(radioStation);
         saveRadioStation(favRadioStation);
     }

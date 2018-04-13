@@ -290,7 +290,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void setPlayerInfo() {
-        mPlayingMediaItem = (MediaItem) App.playbackManager().queue().getPlayingItem();
+        mPlayingMediaItem = App.playbackManager().queue().getPlayingItem();
         mIsPlaying = App.playbackManager().isPlaying();
         mIsLastPlayed = (null != App.playbackManager().getPlayingItem() ?
                 (!App.playbackManager().isPlaying() && !App.playbackManager().isPaused() ? true : false) :

@@ -6,7 +6,7 @@ package com.globaldelight.boom.radio.webconnector;
 
 public interface RadioApiUtils {
 
-     String BASE_URL = "https://service.globaldelight.api.radioline.fr";
+     String BASE_URL = "http://service.globaldelight.api.radioline.fr";
      String TOKEN_URL = "https://test.auth.radioline.fr";
      String AUTH_URL="/auth/token";
      String CA_CERT_PASSWORD = "825:\\7Edxlg5";

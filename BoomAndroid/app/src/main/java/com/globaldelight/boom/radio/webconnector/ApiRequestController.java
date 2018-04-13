@@ -123,10 +123,13 @@ public class ApiRequestController {
                 @Field(("grant_type")) String grantType,
                 @Field(("refresh_token")) String refreshToken,
                 @Field(("client_id")) String clientId);
+// Pillow/search?query=mantra&type=radio&category=fm&language=indie&location=IN
 
-        @GET("/Pillow/categories/radioline_countries/{country_code}/a_z")
+        @GET("/Pillow/search")
         Call<RadioStationResponse> getLocalRadio(
-                @Path("country_code") String countryCode,
+                @Query("country") String location,
+                @Query("type") String type,
+                @Query("priority") String priority,
                 @Query("page") String page,
                 @Query("pageSize") String pageSize);
 

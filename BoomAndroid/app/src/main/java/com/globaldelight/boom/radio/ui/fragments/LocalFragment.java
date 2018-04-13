@@ -33,6 +33,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeoutException;
 
 import retrofit2.Call;
@@ -58,7 +59,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
-    private String countryCode = "in";
+    private String countryCode = "IN";
 
 
     @Nullable
@@ -123,7 +124,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
-        return requestCallback.getLocalRadio(countryCode, currentPage + "", "25");
+        return requestCallback.getLocalRadio(countryCode,"radio","popularity", String.valueOf(currentPage), "25");
     }
 
     private void getContent() {
@@ -145,6 +146,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
                     else isLastPage = true;
                 } else {
                     progressBar.setVisibility(View.GONE);
+                    showErrorView();
                 }
             }
 
@@ -152,7 +154,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
             public void onFailure(Call<RadioStationResponse> call, Throwable t) {
                 t.printStackTrace();
                 progressBar.setVisibility(View.GONE);
-                showErrorView(t);
+                showErrorView();
             }
         });
     }
@@ -185,24 +187,23 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         });
     }
 
-    private void showErrorView(Throwable throwable) {
+    private void showErrorView() {
 
         if (errorLayout.getVisibility() == View.GONE) {
             errorLayout.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
 
-            txtError.setText(fetchErrorMessage(throwable));
+            txtError.setText(fetchErrorMessage());
         }
     }
 
-    private String fetchErrorMessage(Throwable throwable) {
+    private String fetchErrorMessage( ) {
         String errorMsg = getResources().getString(R.string.error_msg_unknown);
 
         if (!isNetworkConnected()) {
             errorMsg = getResources().getString(R.string.error_msg_no_internet);
-        } else if (throwable instanceof TimeoutException) {
+        } else
             errorMsg = getResources().getString(R.string.error_msg_timeout);
-        }
 
         return errorMsg;
     }
