@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -81,6 +82,11 @@ public class SaveFavouriteRadio {
             favRadioStations = new ArrayList<>(favRadioStations);
         } else
             return null;
+
+        HashSet<RadioStationResponse.Content> hashSet = new HashSet<>();
+        hashSet.addAll(favRadioStations);
+        favRadioStations.clear();
+        favRadioStations.addAll(hashSet);
 
         return (ArrayList<RadioStationResponse.Content>) favRadioStations;
     }
