@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -198,12 +199,7 @@ public class MainActivity extends MasterActivity
                 }
                 break;
             case R.id.nav_setting:
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startCompoundActivities(R.string.title_settings);
-                    }
-                }, 300);
+                new Handler().postDelayed(() -> startCompoundActivities(R.string.title_settings), 300);
                 drawerLayout.closeDrawer(GravityCompat.START);
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Settings_Page_Opened);
@@ -255,16 +251,14 @@ public class MainActivity extends MasterActivity
     }
 
     private void onNavigateToRadio(){
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if ( currentFragment instanceof RadioMainFragment ) {
-            return;
-        }
-
         navigationView.getMenu().findItem(R.id.radio).setChecked(true);
         setTitle(getResources().getString(R.string.radio));
-        Fragment fragment = new RadioMainFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, new RadioMainFragment());
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
     private void onNavigateToDropbox() {

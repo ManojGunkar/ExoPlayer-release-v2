@@ -25,6 +25,7 @@ public class FavRadioStationAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private Context mContext;
     private List<RadioStationResponse.Content> mContents;
 
+    private int mSelectedPosition=-1;
 
     public FavRadioStationAdapter(Context context, List<RadioStationResponse.Content> contents) {
         this.mContents = contents;
@@ -48,7 +49,18 @@ public class FavRadioStationAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 .centerCrop()
                 .override(size, size)
                 .into(viewHolder.imgLocalRadioLogo);
+        if (mSelectedPosition==position){
+            viewHolder.txtTitle.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
+        }else {
+            viewHolder.txtTitle.setTextColor(mContext.getResources().getColor(R.color.white));
+        }
         viewHolder.imgFavRadio.setImageDrawable(mContext.getDrawable(R.drawable.fav_selected));
+
+        viewHolder.itemView.setOnClickListener(v -> {
+            mSelectedPosition=position;
+            App.playbackManager().queue().addItemToPlay(mContents.get(position));
+            notifyDataSetChanged();
+        });
     }
 
     @Override
@@ -56,7 +68,7 @@ public class FavRadioStationAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return mContents == null ? 0 : mContents.size();
     }
 
-    protected class FavViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    protected class FavViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView imgLocalRadioLogo;
         private ImageView imgFavRadio;
@@ -70,17 +82,6 @@ public class FavRadioStationAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             imgFavRadio = itemView.findViewById(R.id.img_fav_radio_station);
             txtTitle = itemView.findViewById(R.id.txt_title_local_radio);
             txtSubTitle = itemView.findViewById(R.id.txt_sub_title_local_radio);
-            this.itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-            if (position < 0) {
-                return;
-            }
-
-            App.playbackManager().queue().addItemToPlay(mContents.get(position));
         }
     }
 }

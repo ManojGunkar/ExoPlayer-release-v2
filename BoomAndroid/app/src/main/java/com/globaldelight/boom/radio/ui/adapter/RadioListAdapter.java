@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +29,11 @@ import java.util.List;
  */
 public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-
     private final static int DISPLAYING=0;
     private final static int LOADING=1;
+
+    private int mSelectedPosition=-1;
+    private SparseBooleanArray mFavRadios=new SparseBooleanArray();
 
     private boolean isLoadingAdded = false;
     private boolean retryPageLoad = false;
@@ -66,7 +69,6 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @NonNull
     private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
         LocalViewHolder vh = new LocalViewHolder(inflater.inflate(R.layout.item_local_radio, parent, false));
-        vh.itemView.setOnClickListener(v -> onClick(vh));
         return vh;
     }
 
@@ -92,6 +94,29 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         .centerCrop()
                         .override(size, size)
                         .into(viewHolder.imgLocalRadioLogo);
+                if (mSelectedPosition==position){
+                   viewHolder.txtTitle.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
+                }else {
+                    viewHolder.txtTitle.setTextColor(mContext.getResources().getColor(R.color.white));
+                }
+                viewHolder.imgFavRadio.setOnClickListener(v -> {
+                    if (!mFavRadios.get(position,false)){
+                        mFavRadios.put(position,true);
+                        SaveFavouriteRadio.getInstance(mContext).addFavRadioStation(mContents.get(position));
+                        viewHolder.imgFavRadio.setImageDrawable(mContext.getDrawable(R.drawable.fav_selected));
+
+                    }else {
+                        mFavRadios.delete(position);
+                        SaveFavouriteRadio.getInstance(mContext).removeFavRadioStation(mContents.get(position));
+                        viewHolder.imgFavRadio.setImageDrawable(mContext.getDrawable(R.drawable.fav_normal));                            notifyDataSetChanged();
+                    }
+                });
+                viewHolder.itemView.setOnClickListener(v -> {
+                    onClick(viewHolder);
+                    mSelectedPosition=position;
+                    notifyDataSetChanged();
+                });
+
                 break;
 
             case LOADING:
@@ -183,7 +208,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return mContents.get(position);
     }
 
-    protected class LocalViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    protected class LocalViewHolder extends RecyclerView.ViewHolder{
 
         private ImageView imgLocalRadioLogo;
         private ImageView imgFavRadio;
@@ -198,31 +223,9 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             txtTitle=itemView.findViewById(R.id.txt_title_local_radio);
             txtSubTitle=itemView.findViewById(R.id.txt_sub_title_local_radio);
 
-            imgFavRadio.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.img_fav_radio_station:
-                    int position = getAdapterPosition();
-                    if (position < 0) {
-                        return;
-                    }
-                    saveRadio(imgFavRadio,position);
-                    break;
-            }
 
-        }
-    }
-
-    private void saveRadio(ImageView img,int position){
-        SaveFavouriteRadio.getInstance(mContext).addFavRadioStation(mContents.get(position));
-        img.setImageDrawable(mContext.getDrawable(R.drawable.fav_selected));
-    }
-    private void removeRadio(ImageView img,int position){
-        SaveFavouriteRadio.getInstance(mContext).removeFavRadioStation(mContents.get(position));
-        img.setImageDrawable(mContext.getDrawable(R.drawable.fav_normal));
     }
 
     protected class LoadingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
