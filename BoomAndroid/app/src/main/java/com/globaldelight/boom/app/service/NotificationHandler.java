@@ -6,10 +6,18 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.widget.RemoteViews;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BaseTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.base.IMediaElement;
@@ -116,16 +124,24 @@ public class NotificationHandler  {
                     .setImageViewResource(R.id.noti_play_button, R.drawable.ic_play_notification);
         }
 
-        if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
-            Uri bitmapUri = Uri.parse(item.getItemArtUrl());
-            notificationCompat.bigContentView.setImageViewUri(R.id.noti_album_art, bitmapUri);
-            notificationCompat.contentView.setImageViewUri(R.id.noti_album_art, bitmapUri);
-        } else {
-            notificationCompat.bigContentView.setImageViewResource(R.id.noti_album_art,
-                    R.drawable.ic_default_art_grid);
-            notificationCompat.contentView.setImageViewResource(R.id.noti_album_art,
-                    R.drawable.ic_default_art_grid);
-        }
+        Glide.with(context)
+                .load(item.getItemArtUrl()).asBitmap()
+                .placeholder(R.drawable.ic_default_art_grid)
+                .skipMemoryCache(true)
+                .into(new BaseTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        notificationCompat.bigContentView.setImageViewBitmap(R.id.noti_album_art, resource);
+                        notificationCompat.contentView.setImageViewBitmap(R.id.noti_album_art, resource);
+                        notificationManager.notify(NOTIFICATION_ID, notificationCompat);
+                    }
+
+                    @Override
+                    public void getSize(SizeReadyCallback cb) {
+                        cb.onSizeReady(250, 250);
+                    }
+                });
+
 
         if ( playing ) {
             service.startForeground(NOTIFICATION_ID, notificationCompat);
@@ -133,7 +149,6 @@ public class NotificationHandler  {
         else {
             notificationManager.notify(NOTIFICATION_ID, notificationCompat);
         }
-
     }
 
     public void removeNotification(){

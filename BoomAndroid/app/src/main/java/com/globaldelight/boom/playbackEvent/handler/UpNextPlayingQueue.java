@@ -58,7 +58,7 @@ public class UpNextPlayingQueue {
 
     Handler eventHandler = new Handler();
 
-    ArrayList<IMediaElement> mUpNextList;
+    List<IMediaElement> mUpNextList;
 
 
     private static
@@ -109,7 +109,7 @@ public class UpNextPlayingQueue {
         return null;
     }
 
-    public ArrayList<? extends IMediaElement> getUpNextItemList() {
+    public List<? extends IMediaElement> getUpNextItemList() {
         return mUpNextList;
     }
 
@@ -344,7 +344,6 @@ public class UpNextPlayingQueue {
 
     public void addItemAsUpNext(ArrayList<? extends IMediaElement> itemList) {
         if (mShuffle == SHUFFLE_ON) {
-//            Collections.shuffle(itemList, new Random(itemList.size()));
             updateUnshuffledList(mUpNextList.size() - 1, itemList);
         }
         mUpNextList.addAll(itemList);
@@ -446,7 +445,7 @@ public class UpNextPlayingQueue {
         }
     }
 
-    public void addItemListToPlay(final ArrayList<? extends IMediaElement> itemList, final int position, final boolean shuffle) {
+    public void addItemListToPlay(final List<? extends IMediaElement> itemList, final int position, final boolean shuffle) {
         long mTime = System.currentTimeMillis();
         String dsId = App.playbackManager().getPlayerDataSourceId();
         boolean isPlayPause = !shuffle && dsId != null && dsId.equals(itemList.get(position).getId()) ? true : false;

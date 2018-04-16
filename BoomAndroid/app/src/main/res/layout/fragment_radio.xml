@@ -12,6 +12,7 @@
         android:background="@color/colorPrimary"
         android:elevation="0dp"
         android:minHeight="?attr/actionBarSize"
+        app:tabMode="scrollable"
         app:tabGravity="fill"
         app:tabIndicatorColor="@color/music_tab_indicator_color"
         app:tabIndicatorHeight="@dimen/pager_tab_indicator_height"

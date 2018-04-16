@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.ActivityContainer;
@@ -107,7 +108,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     /************************************************************************************/
 
-    public View miniController, mPlayerActionPanel;
+    public View miniController, mPlayerActionPanel, mProgressPanel;
 
     private TextView mLargeSongTitle, mLargeSongSubTitle, mTotalSeekTime, mCurrentSeekTime;
     private View mRootView;
@@ -170,7 +171,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                     stopLoadProgress();
                     break;
                 case ACTION_QUEUE_COMPLETED:
-                    mPlayingMediaItem = (MediaItem) App.playbackManager().queue().getPlayingItem();
+                    mPlayingMediaItem = App.playbackManager().queue().getPlayingItem();
                     mIsPlaying = false;
                     mIsLastPlayed = true;
                     mTrackSeek.setProgress(0);
@@ -336,17 +337,33 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void updateShuffle() {
-        switch (App.getUserPreferenceHandler().getShuffle()) {
-            case SHUFFLE_OFF:
-                mShuffle.setImageResource(R.drawable.ic_shuffle_off);
-                break;
-            case SHUFFLE_ON:
-                mShuffle.setImageResource(R.drawable.ic_shuffle_on);
-                break;
+        if ( mPlayingMediaItem != null && mPlayingMediaItem.getMediaType() == MediaType.RADIO ) {
+            mShuffle.setEnabled(false);
+            mShuffle.setVisibility(View.INVISIBLE);
+        }
+        else {
+            mShuffle.setEnabled(true);
+            mShuffle.setVisibility(View.VISIBLE);
+            switch (App.getUserPreferenceHandler().getShuffle()) {
+                case SHUFFLE_OFF:
+                    mShuffle.setImageResource(R.drawable.ic_shuffle_off);
+                    break;
+                case SHUFFLE_ON:
+                    mShuffle.setImageResource(R.drawable.ic_shuffle_on);
+                    break;
+            }
         }
     }
 
     private void updateRepeat() {
+        if ( mPlayingMediaItem != null && mPlayingMediaItem.getMediaType() == MediaType.RADIO ) {
+            mRepeat.setEnabled(false);
+            mRepeat.setVisibility(View.INVISIBLE);
+            return;
+        }
+
+        mRepeat.setEnabled(true);
+        mRepeat.setVisibility(View.VISIBLE);
         switch (App.getUserPreferenceHandler().getRepeat()) {
             case REPEAT_NONE:
                 mRepeat.setImageResource(R.drawable.ic_repeat_off);
@@ -366,57 +383,53 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void updateAlbumArt(final IMediaElement item) {
-        new AsyncTask<Void, Void, Bitmap[]>() {
+        if ( mPlayingMediaItem != null ) {
+            Glide.with(mActivity)
+                    .load(mPlayingMediaItem.getItemArtUrl())
+                    .placeholder(R.drawable.ic_default_art_player_header)
+                    .centerCrop()
+                    .skipMemoryCache(true)
+                    .into(mLargeAlbumArt);
+        }
+
+
+        new AsyncTask<Void, Void, Bitmap>() {
 
             private Context context = mActivity;
 
             @Override
-            protected Bitmap[] doInBackground(Void... params) {
+            protected Bitmap doInBackground(Void... params) {
                 if (context == null) {
                     return null;
                 }
 
-                Bitmap[] result = new Bitmap[2];
-                boolean failed = false;
-                if (PlayerUtils.isPathValid(item.getItemArtUrl())) {
+                Bitmap result = null;
+                if (true) {
                     try {
                         Bitmap bitmap = BitmapFactory.decodeFile(item.getItemArtUrl());
                         Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(context, bitmap, ScreenWidth / 10, ScreenHeight / 10);
-                        result[0] = bitmap;
-                        result[1] = blurredBitmap;
+                        bitmap.recycle();
+                        result = blurredBitmap;
                     } catch (Exception e) {
-                        failed = true;
                     }
-                } else {
-                    failed = true;
                 }
 
-                if (failed) {
+                if ( result == null ) {
                     Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),
                             R.drawable.ic_default_art_player_header);
                     Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(context, bitmap, ScreenWidth / 10, ScreenHeight / 10);
-                    result[0] = bitmap;
-                    result[1] = blurredBitmap;
+                    bitmap.recycle();
+                    result = blurredBitmap;
                 }
 
                 return result;
             }
 
             @Override
-            protected void onPostExecute(Bitmap[] bitmaps) {
-                if (bitmaps == null || bitmaps.length != 2) {
-                    return;
+            protected void onPostExecute(Bitmap bitmap) {
+                if (bitmap != null ) {
+                    mPlayerBackground.setBackground(new BitmapDrawable(context.getResources(), bitmap));
                 }
-
-                final Bitmap bitmap = bitmaps[0];
-                final Bitmap blurredBitmap = bitmaps[1];
-                if (mCurrentItem == null || !mCurrentItem.equalTo(item)) {
-                    PlayerUtils.ImageViewAnimatedChange(context, mLargeAlbumArt, bitmap);
-                    mCurrentItem = item;
-                } else {
-                    mLargeAlbumArt.setImageBitmap(bitmap);
-                }
-                mPlayerBackground.setBackground(new BitmapDrawable(context.getResources(), blurredBitmap));
             }
         }.execute();
     }
@@ -448,6 +461,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mPlayerLarge = mRootView.findViewById(R.id.player_large);
         mPlayerLarge.setOnTouchListener(this);
 
+        mProgressPanel = mRootView.findViewById(R.id.progress_panel);
         mPlayerActionPanel = mRootView.findViewById(R.id.player_action_bar);
 
         mLoadingProgress = mRootView.findViewById(R.id.load_cloud);
@@ -549,6 +563,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private void updateLargePlayerUI(IMediaElement item, boolean isPlaying, boolean isLastPlayedItem) {
         mPlayPause.setEnabled(true);
         if (null != item) {
+            mProgressPanel.setVisibility(View.VISIBLE);
             updateShuffle();
             updateRepeat();
             mLargeSongTitle.setVisibility(View.VISIBLE);
@@ -597,6 +612,10 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         updatePreviousNext(App.playbackManager().queue().isPrevious(), App.playbackManager().queue().isNext());
         updateShuffle();
         updateRepeat();
+
+        if ( mPlayingMediaItem != null && mPlayingMediaItem.getMediaType() == MediaType.RADIO ) {
+            mProgressPanel.setVisibility(View.INVISIBLE);
+        }
     }
 
     /* Mini Player UI & Functionality*/
