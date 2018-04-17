@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.radio.utils.SaveFavouriteRadio;
 import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
@@ -34,7 +35,6 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final static int DISPLAYING=0;
     private final static int LOADING=1;
 
-    private int mSelectedPosition=-1;
     private SparseBooleanArray mFavRadios=new SparseBooleanArray();
 
     private boolean isLoadingAdded = false;
@@ -71,6 +71,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @NonNull
     private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
         LocalViewHolder vh = new LocalViewHolder(inflater.inflate(R.layout.item_local_radio, parent, false));
+        vh.itemView.setOnClickListener(v->onClick(vh));
         return vh;
     }
 
@@ -80,7 +81,6 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return;
         }
 
-        RadioStationResponse.Content item = mContents.get(position);
         App.playbackManager().queue().addItemListToPlay(mContents, position, false);
     }
 
@@ -98,11 +98,8 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         .centerCrop()
                         .override(size, size)
                         .into(viewHolder.imgStationThumbnail);
-                if (mSelectedPosition==position){
-                   viewHolder.txtTitle.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
-                }else {
-                    viewHolder.txtTitle.setTextColor(mContext.getResources().getColor(R.color.white));
-                }
+                IMediaElement playingItem = PlaybackManager.getInstance(mContext).getPlayingItem();
+
                 viewHolder.imgFavRadio.setOnClickListener(v -> {
                     if (!mFavRadios.get(position,false)){
                         mFavRadios.put(position,true);
@@ -115,11 +112,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         viewHolder.imgFavRadio.setImageDrawable(mContext.getDrawable(R.drawable.fav_normal));                            notifyDataSetChanged();
                     }
                 });
-                viewHolder.itemView.setOnClickListener(v -> {
-                    onClick(viewHolder);
-                    mSelectedPosition=position;
-                    notifyDataSetChanged();
-                });
+
                 updatePlayingStation(viewHolder,mContents.get(position));
                 break;
 
@@ -146,22 +139,18 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private void updatePlayingStation(LocalViewHolder holder, IMediaElement item){
         IMediaElement nowPlayingItem = App.playbackManager().queue().getPlayingItem();
         if(null != nowPlayingItem) {
-            boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.RADIO);
             if ( item.equalTo(nowPlayingItem) ) {
                 holder.overlay.setVisibility(View.VISIBLE );
                 holder.imgOverlayPlay.setVisibility( View.VISIBLE );
                 holder.txtTitle.setSelected(true);
+                holder.progressBar.setVisibility(View.GONE);
+                holder.imgOverlayPlay.setImageResource(R.drawable.ic_player_play);
                 if (App.playbackManager().isTrackPlaying()) {
                     holder.progressBar.setVisibility(View.GONE);
                     holder.imgOverlayPlay.setImageResource(R.drawable.ic_player_pause);
-                    if( !isMediaItem && App.playbackManager().isTrackLoading() ) {
+                    if( App.playbackManager().isTrackLoading() ) {
                         holder.progressBar.setVisibility(View.VISIBLE);
-                    } else {
-                        holder.progressBar.setVisibility(View.GONE);
                     }
-                } else {
-                    holder.progressBar.setVisibility(View.VISIBLE);
-                    holder.imgOverlayPlay.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_play, null));
                 }
             } else {
                 holder.overlay.setVisibility( View.GONE );
