@@ -80,8 +80,8 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return;
         }
 
-        RadioStationResponse.Content item = contentList.get(position);
-        App.playbackManager().queue().addItemListToPlay(contentList, position, false);
+        RadioStationResponse.Content item = mContents.get(position);
+        App.playbackManager().queue().addItemListToPlay(mContents, position, false);
     }
 
     @Override
