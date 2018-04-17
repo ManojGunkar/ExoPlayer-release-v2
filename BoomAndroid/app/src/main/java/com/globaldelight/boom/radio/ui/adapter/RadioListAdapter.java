@@ -17,6 +17,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.radio.utils.SaveFavouriteRadio;
 import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
 import com.globaldelight.boom.utils.Utils;
@@ -86,6 +88,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         switch (getItemViewType(position)){
             case DISPLAYING:
                 LocalViewHolder viewHolder= (LocalViewHolder) holder;
+                viewHolder.mainView.setElevation(0);
                 viewHolder.txtTitle.setText(mContents.get(position).getName());
                 viewHolder.txtSubTitle.setText(mContents.get(position).getDescription());
                 final int size = Utils.largeImageSize(mContext);
@@ -93,7 +96,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         .placeholder(R.drawable.ic_default_art_grid)
                         .centerCrop()
                         .override(size, size)
-                        .into(viewHolder.imgLocalRadioLogo);
+                        .into(viewHolder.imgStationThumbnail);
                 if (mSelectedPosition==position){
                    viewHolder.txtTitle.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
                 }else {
@@ -116,27 +119,56 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     mSelectedPosition=position;
                     notifyDataSetChanged();
                 });
-
+                updatePlayingStation(viewHolder,mContents.get(position));
                 break;
 
             case LOADING:
                 LoadingViewHolder loadingVH = (LoadingViewHolder) holder;
 
                 if (retryPageLoad) {
-                    loadingVH.mErrorLayout.setVisibility(View.VISIBLE);
-                    loadingVH.mProgressBar.setVisibility(View.GONE);
+                    loadingVH.llError.setVisibility(View.VISIBLE);
+                    loadingVH.progressBar.setVisibility(View.GONE);
 
-                    loadingVH.mErrorTxt.setText(
+                    loadingVH.txtError.setText(
                             errorMsg != null ?
                                     errorMsg :
                                     mContext.getString(R.string.error_msg_unknown));
                 } else {
-                    loadingVH.mErrorLayout.setVisibility(View.GONE);
-                    loadingVH.mProgressBar.setVisibility(View.VISIBLE);
+                    loadingVH.llError.setVisibility(View.GONE);
+                    loadingVH.progressBar.setVisibility(View.VISIBLE);
                 }
                 break;
         }
 
+    }
+
+    private void updatePlayingStation(LocalViewHolder holder, IMediaElement item){
+        IMediaElement nowPlayingItem = App.playbackManager().queue().getPlayingItem();
+        if(null != nowPlayingItem) {
+            boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.RADIO);
+            if ( item.equalTo(nowPlayingItem) ) {
+                holder.overlay.setVisibility(View.VISIBLE );
+                holder.imgOverlayPlay.setVisibility( View.VISIBLE );
+                holder.txtTitle.setSelected(true);
+                if (App.playbackManager().isTrackPlaying()) {
+                    holder.progressBar.setVisibility(View.GONE);
+                    holder.imgOverlayPlay.setImageResource(R.drawable.ic_player_pause);
+                    if( !isMediaItem && App.playbackManager().isTrackLoading() ) {
+                        holder.progressBar.setVisibility(View.VISIBLE);
+                    } else {
+                        holder.progressBar.setVisibility(View.GONE);
+                    }
+                } else {
+                    holder.progressBar.setVisibility(View.VISIBLE);
+                    holder.imgOverlayPlay.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_play, null));
+                }
+            } else {
+                holder.overlay.setVisibility( View.GONE );
+                holder.imgOverlayPlay.setVisibility( View.GONE );
+                holder.progressBar.setVisibility(View.GONE);
+                holder.txtTitle.setSelected(false);
+            }
+        }
     }
 
     @Override
@@ -210,40 +242,47 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     protected class LocalViewHolder extends RecyclerView.ViewHolder{
 
-        private ImageView imgLocalRadioLogo;
-        private ImageView imgFavRadio;
         private TextView txtTitle;
         private TextView txtSubTitle;
+        private View mainView;
+        private View overlay;
+        private ImageView imgStationThumbnail;
+        private ImageView imgOverlayPlay;
+        private ImageView imgFavRadio;
+        private ProgressBar progressBar;
 
         public LocalViewHolder(View itemView) {
             super(itemView);
 
-            imgLocalRadioLogo=itemView.findViewById(R.id.img_title_logo_local_radio);
-            imgFavRadio=itemView.findViewById(R.id.img_fav_radio_station);
-            txtTitle=itemView.findViewById(R.id.txt_title_local_radio);
-            txtSubTitle=itemView.findViewById(R.id.txt_sub_title_local_radio);
+            mainView = itemView;
+            imgStationThumbnail = itemView.findViewById(R.id.song_item_img);
+            imgFavRadio=itemView.findViewById(R.id.img_fav_station);
+            imgOverlayPlay = itemView.findViewById(R.id.song_item_img_overlay_play);
+            overlay = itemView.findViewById(R.id.song_item_img_overlay);
+            progressBar = itemView.findViewById(R.id.load_cloud );
+            txtTitle =  itemView.findViewById(R.id.txt_title_station);
+            txtSubTitle = itemView.findViewById(R.id.txt_sub_title_station);
 
         }
-
 
     }
 
     protected class LoadingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private ProgressBar mProgressBar;
-        private ImageButton mRetryBtn;
-        private TextView mErrorTxt;
-        private LinearLayout mErrorLayout;
+        private ProgressBar progressBar;
+        private ImageButton btnRetry;
+        private TextView txtError;
+        private LinearLayout llError;
 
         public LoadingViewHolder(View itemView) {
             super(itemView);
 
-            mProgressBar =  itemView.findViewById(R.id.loadmore_progress);
-            mRetryBtn =  itemView.findViewById(R.id.loadmore_retry);
-            mErrorTxt =  itemView.findViewById(R.id.loadmore_errortxt);
-            mErrorLayout =  itemView.findViewById(R.id.loadmore_errorlayout);
+            progressBar =  itemView.findViewById(R.id.loadmore_progress);
+            btnRetry =  itemView.findViewById(R.id.loadmore_retry);
+            txtError =  itemView.findViewById(R.id.loadmore_errortxt);
+            llError =  itemView.findViewById(R.id.loadmore_errorlayout);
 
-            mRetryBtn.setOnClickListener(this);
-            mErrorLayout.setOnClickListener(this);
+            btnRetry.setOnClickListener(this);
+            llError.setOnClickListener(this);
         }
 
         @Override

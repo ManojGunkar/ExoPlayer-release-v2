@@ -19,20 +19,14 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.adapters.utils.SectionsPagerAdapter;
 import com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter;
-import com.globaldelight.boom.radio.ui.fragments.CountryFragment;
-import com.globaldelight.boom.radio.ui.fragments.ExploreFragment;
-import com.globaldelight.boom.radio.ui.fragments.FavouriteFragment;
-import com.globaldelight.boom.radio.ui.fragments.LocalFragment;
 
 /**
  * Created by Manoj Kumar on 09-04-2018.
  * ©Global Delight Technologies Pvt. Ltd.
  */
-public class RadioMainFragment extends Fragment {
+public class RadioMainFragment extends Fragment implements SearchRadioStaion {
 
-  //  private SectionsPagerAdapter mPagerAdapter;
     private RadioFragmentStateAdapter mStateAdapter;
     private TabLayout mTabBar;
     private ViewPager mViewPager;
@@ -42,23 +36,11 @@ public class RadioMainFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof Activity){
+        if (context instanceof Activity) {
             mActivity = (Activity) context;
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mActivity = null;
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mActivity = null;
-    }
 
     @Nullable
     @Override
@@ -78,16 +60,24 @@ public class RadioMainFragment extends Fragment {
     }
 
     private void setViewPager(ViewPager viewPager) {
-       /* mPagerAdapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager());
-        mPagerAdapter.addFragment(mActivity, new LocalFragment(), R.string.local_radio);
-        mPagerAdapter.addFragment(mActivity, new FavouriteFragment(), R.string.favourite_radio);
-        mPagerAdapter.addFragment(mActivity, new CountryFragment(), R.string.country_radio);
-        mPagerAdapter.addFragment(mActivity, new ExploreFragment(), R.string.explore_radio);*/
-       mStateAdapter=new RadioFragmentStateAdapter(getActivity().getSupportFragmentManager());
+        mStateAdapter = new RadioFragmentStateAdapter(getActivity().getSupportFragmentManager());
         viewPager.setAdapter(mStateAdapter);
         viewPager.setOffscreenPageLimit(4);
         mTabBar.setupWithViewPager(mViewPager);
         viewPager.setCurrentItem(0);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mActivity = null;
+
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
     }
 
     @Override
@@ -111,11 +101,15 @@ public class RadioMainFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_search ){
-            Toast.makeText(mActivity,"search",Toast.LENGTH_LONG).show();
+        if (item.getItemId() == R.id.action_search) {
+            Toast.makeText(mActivity, "search", Toast.LENGTH_LONG).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onSearchRadio(String searchQuery) {
+
+    }
 }

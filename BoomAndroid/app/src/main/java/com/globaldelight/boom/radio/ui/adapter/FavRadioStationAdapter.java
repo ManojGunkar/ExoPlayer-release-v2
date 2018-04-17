@@ -6,11 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
 import com.globaldelight.boom.utils.Utils;
 
@@ -48,7 +51,7 @@ public class FavRadioStationAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 .placeholder(R.drawable.ic_default_art_grid)
                 .centerCrop()
                 .override(size, size)
-                .into(viewHolder.imgLocalRadioLogo);
+                .into(viewHolder.imgStationThumbnail);
         if (mSelectedPosition==position){
             viewHolder.txtTitle.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
         }else {
@@ -61,6 +64,36 @@ public class FavRadioStationAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             App.playbackManager().queue().addItemToPlay(mContents.get(position));
             notifyDataSetChanged();
         });
+        updatePlayingStation(viewHolder,mContents.get(position));
+    }
+
+    private void updatePlayingStation(FavViewHolder holder, IMediaElement item){
+        IMediaElement nowPlayingItem = App.playbackManager().queue().getPlayingItem();
+        if(null != nowPlayingItem) {
+            boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.RADIO);
+            if ( item.equalTo(nowPlayingItem) ) {
+                holder.overlay.setVisibility(View.VISIBLE );
+                holder.imgOverlayPlay.setVisibility( View.VISIBLE );
+                //  holder.title.setSelected(true);
+                if (App.playbackManager().isTrackPlaying()) {
+                    holder.progressBar.setVisibility(View.GONE);
+                    holder.imgOverlayPlay.setImageResource(R.drawable.ic_player_pause);
+                    if( !isMediaItem && App.playbackManager().isTrackLoading() ) {
+                        holder.progressBar.setVisibility(View.VISIBLE);
+                    } else {
+                        holder.progressBar.setVisibility(View.GONE);
+                    }
+                } else {
+                    holder.progressBar.setVisibility(View.GONE);
+                    holder.imgOverlayPlay.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_player_play, null));
+                }
+            } else {
+                holder.overlay.setVisibility( View.GONE );
+                holder.imgOverlayPlay.setVisibility( View.GONE );
+                holder.progressBar.setVisibility(View.GONE);
+                //   holder.title.setSelected(false);
+            }
+        }
     }
 
     @Override
@@ -70,18 +103,27 @@ public class FavRadioStationAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     protected class FavViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView imgLocalRadioLogo;
-        private ImageView imgFavRadio;
         private TextView txtTitle;
         private TextView txtSubTitle;
+        private View mainView;
+        private View overlay;
+        private ImageView imgStationThumbnail;
+        private ImageView imgOverlayPlay;
+        private ImageView imgFavRadio;
+        private ProgressBar progressBar;
 
         public FavViewHolder(View itemView) {
             super(itemView);
 
-            imgLocalRadioLogo = itemView.findViewById(R.id.img_title_logo_local_radio);
-            imgFavRadio = itemView.findViewById(R.id.img_fav_radio_station);
-            txtTitle = itemView.findViewById(R.id.txt_title_local_radio);
-            txtSubTitle = itemView.findViewById(R.id.txt_sub_title_local_radio);
+            mainView = itemView;
+            imgStationThumbnail = itemView.findViewById(R.id.song_item_img);
+            imgFavRadio=itemView.findViewById(R.id.img_fav_station);
+            imgOverlayPlay = itemView.findViewById(R.id.song_item_img_overlay_play);
+            overlay = itemView.findViewById(R.id.song_item_img_overlay);
+            progressBar = itemView.findViewById(R.id.load_cloud );
+            txtTitle =  itemView.findViewById(R.id.txt_title_station);
+            txtSubTitle = itemView.findViewById(R.id.txt_sub_title_station);
+
         }
     }
 }
