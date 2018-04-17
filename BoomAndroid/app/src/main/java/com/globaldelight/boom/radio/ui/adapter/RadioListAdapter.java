@@ -45,12 +45,18 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private Context mContext;
     private List<RadioStationResponse.Content> mContents;
     private Callback mCallback;
+    private boolean isPaginationEnabled = true;
 
     public RadioListAdapter(Context context,Callback callback, List<RadioStationResponse.Content> contentList){
         this.mContext=context;
         this.mContents =contentList;
         this.mCallback=callback;
     }
+
+    public void setPaginationEnabled(boolean enable) {
+        isPaginationEnabled = enable;
+    }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -98,7 +104,6 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         .centerCrop()
                         .override(size, size)
                         .into(viewHolder.imgStationThumbnail);
-                IMediaElement playingItem = PlaybackManager.getInstance(mContext).getPlayingItem();
 
                 viewHolder.imgFavRadio.setOnClickListener(v -> {
                     if (!mFavRadios.get(position,false)){
@@ -138,6 +143,11 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private void updatePlayingStation(LocalViewHolder holder, IMediaElement item){
         IMediaElement nowPlayingItem = App.playbackManager().queue().getPlayingItem();
+        holder.overlay.setVisibility( View.GONE );
+        holder.imgOverlayPlay.setVisibility( View.GONE );
+        holder.progressBar.setVisibility(View.GONE);
+        holder.txtTitle.setSelected(false);
+
         if(null != nowPlayingItem) {
             if ( item.equalTo(nowPlayingItem) ) {
                 holder.overlay.setVisibility(View.VISIBLE );
@@ -146,17 +156,11 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 holder.progressBar.setVisibility(View.GONE);
                 holder.imgOverlayPlay.setImageResource(R.drawable.ic_player_play);
                 if (App.playbackManager().isTrackPlaying()) {
-                    holder.progressBar.setVisibility(View.GONE);
                     holder.imgOverlayPlay.setImageResource(R.drawable.ic_player_pause);
                     if( App.playbackManager().isTrackLoading() ) {
                         holder.progressBar.setVisibility(View.VISIBLE);
                     }
                 }
-            } else {
-                holder.overlay.setVisibility( View.GONE );
-                holder.imgOverlayPlay.setVisibility( View.GONE );
-                holder.progressBar.setVisibility(View.GONE);
-                holder.txtTitle.setSelected(false);
             }
         }
     }
@@ -168,7 +172,11 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        return (position == mContents.size() - 1 && isLoadingAdded) ? LOADING : DISPLAYING;
+        if ( isPaginationEnabled ) {
+            return (position == mContents.size() - 1 && isLoadingAdded) ? LOADING : DISPLAYING;
+        }
+
+        return DISPLAYING;
     }
 
     public void add(RadioStationResponse.Content content) {
