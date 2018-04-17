@@ -84,6 +84,7 @@ public class RadioSearchFragment extends Fragment {
     }
 
     public void updateResult(String query){
+        hideKeyboard();
         mRecyclerView.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
         try {
@@ -116,7 +117,6 @@ public class RadioSearchFragment extends Fragment {
                     mProgressBar.setVisibility(View.GONE);
                     mContents = response.body().getBody().getContent();
                     mAdapter = new RadioListAdapter(getActivity(),null, mContents);
-                    hideKeyboard();
                     mRecyclerView.setAdapter(mAdapter);
                     mRecyclerView.setVisibility(View.VISIBLE);
 
