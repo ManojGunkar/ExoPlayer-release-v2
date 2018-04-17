@@ -46,14 +46,12 @@ public class RadioMainFragment extends Fragment implements SearchRadioStaion {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_radio, null, false);
+        setHasOptionsMenu(true);
         initComp(view);
         return view;
     }
 
     private void initComp(View view) {
-        mToolbar = view.findViewById(R.id.toolbar);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar(mToolbar);
         mTabBar = view.findViewById(R.id.tab_radio);
         mViewPager = view.findViewById(R.id.viewpager_radio);
         setViewPager(mViewPager);
@@ -107,9 +105,22 @@ public class RadioMainFragment extends Fragment implements SearchRadioStaion {
         }
         return super.onOptionsItemSelected(item);
     }
-
+    
+    private float mToolbarElevation;
     @Override
-    public void onSearchRadio(String searchQuery) {
-
+    public void onStart() {
+        super.onStart();
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        mToolbarElevation = toolbar.getElevation();
+        mTabBar.setElevation(mToolbarElevation);
+        toolbar.setElevation(0);
     }
+    
+    @Override
+    public void onStop() {
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setElevation(mToolbarElevation);
+        super.onStop();
+    }
+
 }
