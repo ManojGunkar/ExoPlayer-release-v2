@@ -13,10 +13,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.radio.ui.adapter.RadioSearchAdapter;
+import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.webconnector.ApiRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
 import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
@@ -43,7 +44,7 @@ public class RadioSearchFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
-    private RadioSearchAdapter mAdapter;
+    private RadioListAdapter mAdapter;
     private List<RadioStationResponse.Content> mContents;
 
     private BroadcastReceiver mUpdatePlayingItem = new BroadcastReceiver() {
@@ -69,10 +70,24 @@ public class RadioSearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_radio_search, container, false);
+        init(view);
+        return view;
+    }
 
-        String searchQuery = getArguments().getString(RadioMainFragment.KEY_SEARCH_QUERY);
+    private void init(View view) {
+        mProgressBar = view.findViewById(R.id.progress_radio_search);
+        mRecyclerView = view.findViewById(R.id.rv_search_radio);
+        LinearLayoutManager llm = new LinearLayoutManager(
+                getActivity(), LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(llm);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    public void updateResult(String query){
+        mRecyclerView.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
         try {
-            getResult(searchQuery);
+            getResult(query);
         } catch (CertificateException e) {
             e.printStackTrace();
         } catch (UnrecoverableKeyException e) {
@@ -86,20 +101,6 @@ public class RadioSearchFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        init(view);
-        return view;
-    }
-
-    private void init(View view) {
-        mProgressBar = view.findViewById(R.id.progress_radio_search);
-        mRecyclerView = view.findViewById(R.id.rv_search_radio);
-        LinearLayoutManager llm = new LinearLayoutManager(
-                getActivity(), LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(llm);
-        mAdapter = new RadioSearchAdapter(getActivity(), mContents);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     private void getResult(String query) throws CertificateException, UnrecoverableKeyException,
@@ -107,15 +108,18 @@ public class RadioSearchFragment extends Fragment {
         ApiRequestController.RequestCallback requestCallback = ApiRequestController
                 .getClient(getActivity(), RadioApiUtils.BASE_URL);
         Call<RadioStationResponse> call = requestCallback
-                .getSearchResult("in", "radio", query, "popularity", "1", "100");
+                .getSearchResult("radio", query, "popularity", "1", "100");
         call.enqueue(new Callback<RadioStationResponse>() {
             @Override
             public void onResponse(Call<RadioStationResponse> call, Response<RadioStationResponse> response) {
                 if (response.isSuccessful()) {
                     mProgressBar.setVisibility(View.GONE);
                     mContents = response.body().getBody().getContent();
-                    mAdapter=new RadioSearchAdapter(getActivity(),mContents);
-                    mAdapter.notifyDataSetChanged();
+                    mAdapter = new RadioListAdapter(getActivity(),null, mContents);
+                    hideKeyboard();
+                    mRecyclerView.setAdapter(mAdapter);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+
                 } else {
                     mProgressBar.setVisibility(View.GONE);
                 }
@@ -126,6 +130,14 @@ public class RadioSearchFragment extends Fragment {
                 mProgressBar.setVisibility(View.GONE);
             }
         });
+    }
+
+    private void hideKeyboard(){
+        View hideKey = getActivity().getCurrentFocus();
+        if (hideKey != null) {
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(hideKey.getWindowToken(), 0);
+        }
     }
 
 

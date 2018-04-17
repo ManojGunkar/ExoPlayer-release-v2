@@ -135,7 +135,6 @@ public class ApiRequestController {
 
         @GET("/Pillow/search")
         Call<RadioStationResponse> getSearchResult(
-                @Query("country") String location,
                 @Query("type") String type,
                 @Query("query") String query,
                 @Query("priority") String priority,

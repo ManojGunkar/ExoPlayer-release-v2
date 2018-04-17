@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.radio.ui.adapter.FavRadioStationAdapter;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.utils.SaveFavouriteRadio;
 import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
@@ -26,7 +25,7 @@ import java.util.List;
 public class FavouriteFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private FavRadioStationAdapter mAdapter;
+    private RadioListAdapter mAdapter;
     private List<RadioStationResponse.Content> mContents;
 
     @Nullable
@@ -43,7 +42,7 @@ public class FavouriteFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         mContents= SaveFavouriteRadio.getInstance(getContext()).getFavRadioStation();
-        mAdapter = new FavRadioStationAdapter(getActivity(),mContents);
+        mAdapter = new RadioListAdapter(getActivity(),null,mContents);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }

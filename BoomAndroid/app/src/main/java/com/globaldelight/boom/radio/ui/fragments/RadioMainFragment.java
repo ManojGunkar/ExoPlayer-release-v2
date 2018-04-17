@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -40,6 +41,7 @@ public class RadioMainFragment extends Fragment {
     private SearchView searchView;
 
     public final static String KEY_SEARCH_QUERY="SEARCH_QUERY";
+    private RadioSearchFragment radioSearchFragment;
 
     @Override
     public void onAttach(Context context) {
@@ -112,11 +114,32 @@ public class RadioMainFragment extends Fragment {
         searchView.setDrawingCacheBackgroundColor(ContextCompat.getColor(getActivity(), R.color.transparent));
         searchView.setMaxWidth(2000);
         searchView.setIconified(true);
+        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                 radioSearchFragment=new RadioSearchFragment();
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .add(R.id.fragment_container, radioSearchFragment)
+                        .commitAllowingStateLoss();
+                return true;
+            }
 
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .remove(radioSearchFragment)
+                        .commitAllowingStateLoss();
+                radioSearchFragment=null;
+                return true;
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                return false;
+                radioSearchFragment.updateResult(query);
+                return true;
             }
 
             @Override
@@ -126,6 +149,15 @@ public class RadioMainFragment extends Fragment {
         });
 
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_search) {
+            return true;
+        }
+        return false;
     }
 
     @Override
