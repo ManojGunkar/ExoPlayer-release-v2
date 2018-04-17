@@ -34,13 +34,17 @@ public class FavouriteFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
 
+        return recyclerView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         mContents= SaveFavouriteRadio.getInstance(getContext()).getFavRadioStation();
         mAdapter = new FavRadioStationAdapter(getActivity(),mContents);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        return recyclerView;
     }
 }

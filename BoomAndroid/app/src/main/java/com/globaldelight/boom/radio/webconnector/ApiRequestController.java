@@ -133,6 +133,15 @@ public class ApiRequestController {
                 @Query("page") String page,
                 @Query("pageSize") String pageSize);
 
+        @GET("/Pillow/search")
+        Call<RadioStationResponse> getSearchResult(
+                @Query("country") String location,
+                @Query("type") String type,
+                @Query("query") String query,
+                @Query("priority") String priority,
+                @Query("page") String page,
+                @Query("pageSize") String pageSize);
+
 
         @GET("/Pillow/categories/radioline_countries")
         Call<CountryResponse> getCountry(
