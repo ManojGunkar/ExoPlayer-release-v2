@@ -1,12 +1,16 @@
 package com.globaldelight.boom.radio.ui.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,6 +46,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
+
 /**
  * Created by Manoj Kumar on 09-04-2018.
  * ©Global Delight Technologies Pvt. Ltd.
@@ -62,6 +69,19 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private String countryCode = "IN";
+
+    private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()){
+                case ACTION_PLAYER_STATE_CHANGED:
+                    if(null != radioListAdapter)
+                        radioListAdapter.notifyDataSetChanged();
+                    break;
+            }
+        }
+    };
+
 
 
     @Nullable
@@ -227,5 +247,19 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     @Override
     public void retryPageLoad() {
         getNextPageContent();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 }

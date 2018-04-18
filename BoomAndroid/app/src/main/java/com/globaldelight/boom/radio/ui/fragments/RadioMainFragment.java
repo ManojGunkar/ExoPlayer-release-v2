@@ -35,7 +35,6 @@ public class RadioMainFragment extends Fragment {
     private RadioFragmentStateAdapter mStateAdapter;
     private TabLayout mTabBar;
     private ViewPager mViewPager;
-    private Toolbar mToolbar;
     private Activity mActivity;
     private float mToolbarElevation;
     private SearchView searchView;
@@ -174,5 +173,4 @@ public class RadioMainFragment extends Fragment {
         toolbar.setElevation(mToolbarElevation);
         super.onStop();
     }
-
 }

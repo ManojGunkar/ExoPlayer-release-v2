@@ -23,6 +23,6 @@ public interface IMediaElement {
     @MediaType int getMediaType();
 
     default boolean equalTo(IMediaElement another) {
-        return another == this || (another != null && another.equals(this.getId()));
+        return another == this || (another != null && this.getId() != null && another.getId() != null && this.getId().equals(another.getId()));
     }
 }
