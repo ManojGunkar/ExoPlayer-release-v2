@@ -41,7 +41,7 @@ import retrofit2.Response;
  * Created by Manoj Kumar on 09-04-2018.
  * ©Global Delight Technologies Pvt. Ltd.
  */
-public class CountryFragment extends Fragment implements OnItemClickListener{
+public class CountryFragment extends Fragment{
 
     private RecyclerView recyclerView;
     private TextView txtResCode;
@@ -64,7 +64,6 @@ public class CountryFragment extends Fragment implements OnItemClickListener{
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         countryListAdapter =new CountryListAdapter(getActivity(), mContents);
-        countryListAdapter.setItemClickListener(this::onItemClick);
         recyclerView.setAdapter(countryListAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(new OnPaginationListener(llm) {
@@ -178,16 +177,5 @@ public class CountryFragment extends Fragment implements OnItemClickListener{
     public final static String KEY_COUNTRY_NAME="NAME";
     public final static String KEY_COUNTRY_URL="URL";
 
-    @Override
-    public void onItemClick(View view, int position) {
-        String country=mContents.get(position).getName();
-        String code=mContents.get(position).getPermalink();
-        code=code.substring(code.length()-2,code.length()).toUpperCase();
-        String url=mContents.get(position).getLogo();
-        Intent intent=new Intent(getActivity(), CountryDetailedActivity.class);
-        intent.putExtra(KEY_COUNTRY_NAME,country);
-        intent.putExtra(KEY_COUNTRY_URL,url);
-        intent.putExtra(KEY_COUNTRY_CODE,code);
-        startActivity(intent);
-    }
+
 }

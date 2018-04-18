@@ -1,6 +1,7 @@
 package com.globaldelight.boom.radio.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,10 +12,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.radio.ui.CountryDetailedActivity;
 import com.globaldelight.boom.radio.webconnector.responsepojo.CountryResponse;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.List;
+
+import static com.globaldelight.boom.radio.ui.fragments.CountryFragment.KEY_COUNTRY_CODE;
+import static com.globaldelight.boom.radio.ui.fragments.CountryFragment.KEY_COUNTRY_NAME;
+import static com.globaldelight.boom.radio.ui.fragments.CountryFragment.KEY_COUNTRY_URL;
 
 /**
  * Created by Manoj Kumar on 11-04-2018.
@@ -28,14 +34,13 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private boolean isLoadingAdded = false;
 
-    private OnItemClickListener mOnItemClickListener;
 
     private Context mContext;
-    private List<CountryResponse.Content> contentList;
+    private List<CountryResponse.Content> mContents;
 
     public CountryListAdapter(Context context, List<CountryResponse.Content> contentList) {
         this.mContext = context;
-        this.contentList = contentList;
+        this.mContents = contentList;
     }
 
     @Override
@@ -65,14 +70,25 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         switch (getItemViewType(position)) {
             case DISPLAYING:
                 LocalViewHolder viewHolder = (LocalViewHolder) holder;
-                viewHolder.txtTitle.setText(contentList.get(position).getName());
+                viewHolder.txtTitle.setText(mContents.get(position).getName());
                 final int size = Utils.largeImageSize(mContext);
-                Glide.with(mContext).load(contentList.get(position).getLogo())
+                Glide.with(mContext).load(mContents.get(position).getLogo())
                         .placeholder(R.drawable.ic_default_art_grid)
                         .centerCrop()
                         .override(size, size)
                         .into(viewHolder.imgLocalRadioLogo);
 
+                viewHolder.itemView.setOnClickListener(v -> {
+                    String country=mContents.get(position).getName();
+                    String code=mContents.get(position).getPermalink();
+                    code=code.substring(code.length()-2,code.length()).toUpperCase();
+                    String url=mContents.get(position).getLogo();
+                    Intent intent=new Intent(mContext, CountryDetailedActivity.class);
+                    intent.putExtra(KEY_COUNTRY_NAME,country);
+                    intent.putExtra(KEY_COUNTRY_URL,url);
+                    intent.putExtra(KEY_COUNTRY_CODE,code);
+                    mContext.startActivity(intent);
+                });
                 break;
 
             case LOADING:
@@ -84,17 +100,17 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        return contentList == null ? 0 : contentList.size();
+        return mContents == null ? 0 : mContents.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return (position == contentList.size() - 1 && isLoadingAdded) ? LOADING : DISPLAYING;
+        return (position == mContents.size() - 1 && isLoadingAdded) ? LOADING : DISPLAYING;
     }
 
     public void add(CountryResponse.Content content) {
-        contentList.add(content);
-        notifyItemInserted(contentList.size() - 1);
+        mContents.add(content);
+        notifyItemInserted(mContents.size() - 1);
     }
 
     public void addAll(List<CountryResponse.Content> moveResults) {
@@ -104,9 +120,9 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void remove(CountryResponse.Content content) {
-        int position = contentList.indexOf(content);
+        int position = mContents.indexOf(content);
         if (position > -1) {
-            contentList.remove(position);
+            mContents.remove(position);
             notifyItemRemoved(position);
         }
     }
@@ -123,10 +139,6 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
-    public void setItemClickListener(OnItemClickListener onItemClickListener){
-        this.mOnItemClickListener=onItemClickListener;
-    }
-
     public void addLoadingFooter() {
         isLoadingAdded = true;
         add(new CountryResponse().new Content());
@@ -135,20 +147,20 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void removeLoadingFooter() {
         isLoadingAdded = false;
 
-        int position = contentList.size() - 1;
+        int position = mContents.size() - 1;
         CountryResponse.Content result = getItem(position);
 
         if (result != null) {
-            contentList.remove(position);
+            mContents.remove(position);
             notifyItemRemoved(position);
         }
     }
 
     public CountryResponse.Content getItem(int position) {
-        return contentList.get(position);
+        return mContents.get(position);
     }
 
-    protected class LocalViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    protected class LocalViewHolder extends RecyclerView.ViewHolder  {
 
         private ImageView imgLocalRadioLogo;
         private TextView txtTitle;
@@ -157,14 +169,9 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             super(itemView);
 
             imgLocalRadioLogo = itemView.findViewById(R.id.img_country_radio);
-            txtTitle = itemView.findViewById(R.id.txt_coutry_name_radio);
-            itemView.setOnClickListener(this::onClick);
+            txtTitle = itemView.findViewById(R.id.txt_country_name_radio);
         }
 
-        @Override
-        public void onClick(View v) {
-            mOnItemClickListener.onItemClick(v,getAdapterPosition());
-        }
     }
 
     protected class LoadingViewHolder extends RecyclerView.ViewHolder {

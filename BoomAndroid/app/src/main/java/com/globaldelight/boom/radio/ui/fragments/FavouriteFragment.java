@@ -1,9 +1,14 @@
 package com.globaldelight.boom.radio.ui.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +23,9 @@ import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationRespon
 
 import java.util.List;
 
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
+
 /**
  * Created by Manoj Kumar on 09-04-2018.
  * ©Global Delight Technologies Pvt. Ltd.
@@ -27,6 +35,20 @@ public class FavouriteFragment extends Fragment {
     private RecyclerView recyclerView;
     private RadioListAdapter mAdapter;
     private List<RadioStationResponse.Content> mContents;
+
+    private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()){
+                case ACTION_PLAYER_STATE_CHANGED:
+                case ACTION_SONG_CHANGED:
+
+                    if(null != mAdapter)
+                        mAdapter.notifyDataSetChanged();
+                    break;
+            }
+        }
+    };
 
     @Nullable
     @Override
@@ -45,5 +67,20 @@ public class FavouriteFragment extends Fragment {
         mAdapter = new RadioListAdapter(getActivity(),null,mContents);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
+        intentFilter.addAction(ACTION_SONG_CHANGED);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 }

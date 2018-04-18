@@ -35,6 +35,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
 
 /**
  * Created by Manoj Kumar on 17-04-2018.
@@ -52,6 +53,7 @@ public class RadioSearchFragment extends Fragment {
         public void onReceive(Context mActivity, Intent intent) {
             switch (intent.getAction()) {
                 case ACTION_PLAYER_STATE_CHANGED:
+                case ACTION_SONG_CHANGED:
                     if (null != mAdapter)
                         mAdapter.notifyDataSetChanged();
                     break;
@@ -64,6 +66,7 @@ public class RadioSearchFragment extends Fragment {
         super.onStart();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
+        intentFilter.addAction(ACTION_SONG_CHANGED);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdatePlayingItem, intentFilter);
     }
 

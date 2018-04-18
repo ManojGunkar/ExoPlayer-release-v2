@@ -48,6 +48,7 @@ import retrofit2.Response;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
 
 /**
  * Created by Manoj Kumar on 09-04-2018.
@@ -75,14 +76,14 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
                 case ACTION_PLAYER_STATE_CHANGED:
+                case ACTION_SONG_CHANGED:
+
                     if(null != radioListAdapter)
                         radioListAdapter.notifyDataSetChanged();
                     break;
             }
         }
     };
-
-
 
     @Nullable
     @Override
@@ -254,6 +255,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         super.onStart();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
+        intentFilter.addAction(ACTION_SONG_CHANGED);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 
