@@ -40,7 +40,6 @@ public class RadioMainFragment extends Fragment {
     private float mToolbarElevation;
     private SearchView searchView;
 
-    public final static String KEY_SEARCH_QUERY="SEARCH_QUERY";
     private RadioSearchFragment radioSearchFragment;
 
     @Override

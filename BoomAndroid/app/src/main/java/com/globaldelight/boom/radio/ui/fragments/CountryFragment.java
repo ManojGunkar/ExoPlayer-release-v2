@@ -1,5 +1,6 @@
 package com.globaldelight.boom.radio.ui.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -15,7 +16,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.radio.ui.CountryDetailedActivity;
 import com.globaldelight.boom.radio.ui.adapter.CountryListAdapter;
+import com.globaldelight.boom.radio.ui.adapter.OnItemClickListener;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.webconnector.ApiRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
@@ -38,13 +41,13 @@ import retrofit2.Response;
  * Created by Manoj Kumar on 09-04-2018.
  * ©Global Delight Technologies Pvt. Ltd.
  */
-public class CountryFragment extends Fragment{
+public class CountryFragment extends Fragment implements OnItemClickListener{
 
     private RecyclerView recyclerView;
     private TextView txtResCode;
     private CountryListAdapter countryListAdapter;
     private ProgressBar progressBar;
-    private List<CountryResponse.Content> contentList=new ArrayList<>();
+    private List<CountryResponse.Content> mContents =new ArrayList<>();
 
     private int totalPage = 0;
     private int currentPage = 1;
@@ -60,7 +63,8 @@ public class CountryFragment extends Fragment{
         progressBar=view.findViewById(R.id.progress_local);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
-        countryListAdapter =new CountryListAdapter(getActivity(),contentList);
+        countryListAdapter =new CountryListAdapter(getActivity(), mContents);
+        countryListAdapter.setItemClickListener(this::onItemClick);
         recyclerView.setAdapter(countryListAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(new OnPaginationListener(llm) {
@@ -119,10 +123,10 @@ public class CountryFragment extends Fragment{
                 if (response.isSuccessful()){
                     progressBar.setVisibility(View.GONE);
                     CountryResponse radioResponse=response.body();
-                    contentList=radioResponse.getBody().getContent();
+                    mContents =radioResponse.getBody().getContent();
                     totalPage=radioResponse.getBody().getTotalPages();
                     currentPage=radioResponse.getBody().getPage();
-                    countryListAdapter.addAll(contentList);
+                    countryListAdapter.addAll(mContents);
                     countryListAdapter.notifyDataSetChanged();
 
                     if (currentPage <= totalPage) countryListAdapter.addLoadingFooter();
@@ -150,9 +154,9 @@ public class CountryFragment extends Fragment{
                     countryListAdapter.removeLoadingFooter();
                     isLoading = false;
                     CountryResponse radioResponse=response.body();
-                    contentList=radioResponse.getBody().getContent();
+                    mContents =radioResponse.getBody().getContent();
                     totalPage=radioResponse.getBody().getTotalPages();
-                    countryListAdapter.addAll(contentList);
+                    countryListAdapter.addAll(mContents);
                     countryListAdapter.notifyDataSetChanged();
 
                     if (currentPage <= totalPage) countryListAdapter.addLoadingFooter();
@@ -170,5 +174,20 @@ public class CountryFragment extends Fragment{
         });
     }
 
+    public final static String KEY_COUNTRY_CODE="CODE";
+    public final static String KEY_COUNTRY_NAME="NAME";
+    public final static String KEY_COUNTRY_URL="URL";
 
+    @Override
+    public void onItemClick(View view, int position) {
+        String country=mContents.get(position).getName();
+        String code=mContents.get(position).getPermalink();
+        code=code.substring(code.length()-2,code.length()).toUpperCase();
+        String url=mContents.get(position).getLogo();
+        Intent intent=new Intent(getActivity(), CountryDetailedActivity.class);
+        intent.putExtra(KEY_COUNTRY_NAME,country);
+        intent.putExtra(KEY_COUNTRY_URL,url);
+        intent.putExtra(KEY_COUNTRY_CODE,code);
+        startActivity(intent);
+    }
 }

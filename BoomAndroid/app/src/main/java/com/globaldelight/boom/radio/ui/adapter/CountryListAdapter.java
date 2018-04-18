@@ -28,6 +28,8 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private boolean isLoadingAdded = false;
 
+    private OnItemClickListener mOnItemClickListener;
+
     private Context mContext;
     private List<CountryResponse.Content> contentList;
 
@@ -70,6 +72,7 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         .centerCrop()
                         .override(size, size)
                         .into(viewHolder.imgLocalRadioLogo);
+
                 break;
 
             case LOADING:
@@ -120,6 +123,10 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
+    public void setItemClickListener(OnItemClickListener onItemClickListener){
+        this.mOnItemClickListener=onItemClickListener;
+    }
+
     public void addLoadingFooter() {
         isLoadingAdded = true;
         add(new CountryResponse().new Content());
@@ -141,7 +148,7 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return contentList.get(position);
     }
 
-    protected class LocalViewHolder extends RecyclerView.ViewHolder {
+    protected class LocalViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView imgLocalRadioLogo;
         private TextView txtTitle;
@@ -151,6 +158,12 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             imgLocalRadioLogo = itemView.findViewById(R.id.img_country_radio);
             txtTitle = itemView.findViewById(R.id.txt_coutry_name_radio);
+            itemView.setOnClickListener(this::onClick);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mOnItemClickListener.onItemClick(v,getAdapterPosition());
         }
     }
 
