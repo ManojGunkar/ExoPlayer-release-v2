@@ -97,6 +97,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         radioListAdapter = new RadioListAdapter(getActivity(),this, contentList);
+
         recyclerView.setAdapter(radioListAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(new OnPaginationListener(llm) {

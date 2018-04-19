@@ -62,15 +62,15 @@
             android:padding="10dp"
             android:theme="@style/Theme.AppCompat.Light">
 
-            <ImageView
-                android:id="@+id/img_fav_station"
+            <CheckBox
+                android:id="@+id/check_fav_station"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:layout_marginRight="5dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/fav_normal" />
+                android:button="@drawable/fav_selector" />
 
         </LinearLayout>
     </RelativeLayout>

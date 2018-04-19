@@ -4,10 +4,10 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,9 +18,7 @@ import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.base.IMediaElement;
-import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
-import com.globaldelight.boom.playbackEvent.utils.MediaType;
-import com.globaldelight.boom.radio.utils.SaveFavouriteRadio;
+import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
 import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
 import com.globaldelight.boom.utils.Utils;
 
@@ -32,10 +30,8 @@ import java.util.List;
  */
 public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final static int DISPLAYING=0;
-    private final static int LOADING=1;
-
-    private SparseBooleanArray mFavRadios=new SparseBooleanArray();
+    private final static int DISPLAYING = 0;
+    private final static int LOADING = 1;
 
     private boolean isLoadingAdded = false;
     private boolean retryPageLoad = false;
@@ -47,14 +43,13 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private Callback mCallback;
     private boolean isPaginationEnabled = true;
 
-    public RadioListAdapter(Context context,Callback callback, List<RadioStationResponse.Content> contentList){
-        this.mContext=context;
-        this.mContents =contentList;
-        this.mCallback=callback;
-    }
 
-    public void setPaginationEnabled(boolean enable) {
-        isPaginationEnabled = enable;
+
+
+    public RadioListAdapter(Context context, Callback callback, List<RadioStationResponse.Content> contentList) {
+        this.mContext = context;
+        this.mContents = contentList;
+        this.mCallback = callback;
     }
 
 
@@ -77,7 +72,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @NonNull
     private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
         LocalViewHolder vh = new LocalViewHolder(inflater.inflate(R.layout.item_local_radio, parent, false));
-        vh.itemView.setOnClickListener(v->onClick(vh));
+        vh.itemView.setOnClickListener(v -> onClick(vh));
         return vh;
     }
 
@@ -92,33 +87,36 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        switch (getItemViewType(position)){
+        switch (getItemViewType(position)) {
             case DISPLAYING:
-                LocalViewHolder viewHolder= (LocalViewHolder) holder;
+                RadioStationResponse.Content content = mContents.get(position);
+                LocalViewHolder viewHolder = (LocalViewHolder) holder;
                 viewHolder.mainView.setElevation(0);
-                viewHolder.txtTitle.setText(mContents.get(position).getName());
-                viewHolder.txtSubTitle.setText(mContents.get(position).getDescription());
+                viewHolder.txtTitle.setText(content.getName());
+                viewHolder.txtSubTitle.setText(content.getDescription());
                 final int size = Utils.largeImageSize(mContext);
-                Glide.with(mContext).load(mContents.get(position).getLogo())
+                Glide.with(mContext).load(content.getLogo())
                         .placeholder(R.drawable.ic_default_art_grid)
                         .centerCrop()
                         .override(size, size)
                         .into(viewHolder.imgStationThumbnail);
 
-                viewHolder.imgFavRadio.setOnClickListener(v -> {
-                    if (!mFavRadios.get(position,false)){
-                        mFavRadios.put(position,true);
-                        SaveFavouriteRadio.getInstance(mContext).addFavRadioStation(mContents.get(position));
-                        viewHolder.imgFavRadio.setImageDrawable(mContext.getDrawable(R.drawable.fav_selected));
-
+                viewHolder.checkFavRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked){
+                        FavouriteRadioManager.getInstance(mContext).addRadioStation(content);
                     }else {
-                        mFavRadios.delete(position);
-                        SaveFavouriteRadio.getInstance(mContext).removeFavRadioStation(mContents.get(position));
-                        viewHolder.imgFavRadio.setImageDrawable(mContext.getDrawable(R.drawable.fav_normal));                            notifyDataSetChanged();
+                        FavouriteRadioManager.getInstance(mContext).removeRadioSation(content);
                     }
                 });
 
-                updatePlayingStation(viewHolder,mContents.get(position));
+                if (FavouriteRadioManager.getInstance(mContext).containsRadioStation(content)) {
+                    viewHolder.checkFavRadio.setChecked(true);
+                } else {
+                    viewHolder.checkFavRadio.setChecked(false);
+                }
+
+
+                updatePlayingStation(viewHolder, mContents.get(position));
                 break;
 
             case LOADING:
@@ -141,23 +139,23 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
-    private void updatePlayingStation(LocalViewHolder holder, IMediaElement item){
+    private void updatePlayingStation(LocalViewHolder holder, IMediaElement item) {
         IMediaElement nowPlayingItem = App.playbackManager().queue().getPlayingItem();
-        holder.overlay.setVisibility( View.GONE );
-        holder.imgOverlayPlay.setVisibility( View.GONE );
+        holder.overlay.setVisibility(View.GONE);
+        holder.imgOverlayPlay.setVisibility(View.GONE);
         holder.progressBar.setVisibility(View.GONE);
         holder.txtTitle.setSelected(false);
 
-        if(null != nowPlayingItem) {
-            if ( item.equalTo(nowPlayingItem) ) {
-                holder.overlay.setVisibility(View.VISIBLE );
-                holder.imgOverlayPlay.setVisibility( View.VISIBLE );
+        if (null != nowPlayingItem) {
+            if (item.equalTo(nowPlayingItem)) {
+                holder.overlay.setVisibility(View.VISIBLE);
+                holder.imgOverlayPlay.setVisibility(View.VISIBLE);
                 holder.txtTitle.setSelected(true);
                 holder.progressBar.setVisibility(View.GONE);
                 holder.imgOverlayPlay.setImageResource(R.drawable.ic_player_play);
                 if (App.playbackManager().isTrackPlaying()) {
                     holder.imgOverlayPlay.setImageResource(R.drawable.ic_player_pause);
-                    if( App.playbackManager().isTrackLoading() ) {
+                    if (App.playbackManager().isTrackLoading()) {
                         holder.progressBar.setVisibility(View.VISIBLE);
                     }
                 }
@@ -172,7 +170,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        if ( isPaginationEnabled ) {
+        if (isPaginationEnabled) {
             return (position == mContents.size() - 1 && isLoadingAdded) ? LOADING : DISPLAYING;
         }
 
@@ -238,7 +236,11 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return mContents.get(position);
     }
 
-    protected class LocalViewHolder extends RecyclerView.ViewHolder{
+    public interface Callback {
+        void retryPageLoad();
+    }
+
+    protected class LocalViewHolder extends RecyclerView.ViewHolder {
 
         private TextView txtTitle;
         private TextView txtSubTitle;
@@ -246,7 +248,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private View overlay;
         private ImageView imgStationThumbnail;
         private ImageView imgOverlayPlay;
-        private ImageView imgFavRadio;
+        private CheckBox checkFavRadio;
         private ProgressBar progressBar;
 
         public LocalViewHolder(View itemView) {
@@ -254,11 +256,11 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             mainView = itemView;
             imgStationThumbnail = itemView.findViewById(R.id.song_item_img);
-            imgFavRadio=itemView.findViewById(R.id.img_fav_station);
+            checkFavRadio = itemView.findViewById(R.id.check_fav_station);
             imgOverlayPlay = itemView.findViewById(R.id.song_item_img_overlay_play);
             overlay = itemView.findViewById(R.id.song_item_img_overlay);
-            progressBar = itemView.findViewById(R.id.load_cloud );
-            txtTitle =  itemView.findViewById(R.id.txt_title_station);
+            progressBar = itemView.findViewById(R.id.load_cloud);
+            txtTitle = itemView.findViewById(R.id.txt_title_station);
             txtSubTitle = itemView.findViewById(R.id.txt_sub_title_station);
 
         }
@@ -274,10 +276,10 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public LoadingViewHolder(View itemView) {
             super(itemView);
 
-            progressBar =  itemView.findViewById(R.id.loadmore_progress);
-            btnRetry =  itemView.findViewById(R.id.loadmore_retry);
-            txtError =  itemView.findViewById(R.id.loadmore_errortxt);
-            llError =  itemView.findViewById(R.id.loadmore_errorlayout);
+            progressBar = itemView.findViewById(R.id.loadmore_progress);
+            btnRetry = itemView.findViewById(R.id.loadmore_retry);
+            txtError = itemView.findViewById(R.id.loadmore_errortxt);
+            llError = itemView.findViewById(R.id.loadmore_errorlayout);
 
             btnRetry.setOnClickListener(this);
             llError.setOnClickListener(this);
@@ -295,9 +297,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     break;
             }
         }
+
     }
 
-    public interface Callback{
-        void retryPageLoad();
-    }
 }

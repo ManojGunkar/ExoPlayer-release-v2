@@ -15,26 +15,59 @@ import java.util.List;
  * Created by Manoj Kumar on 12-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class SaveFavouriteRadio {
+public class FavouriteRadioManager {
 
     private final static String FAV_SHARED_PREF="FAV_SHARED_PREF";
     private final static String KEY_FAV_RADIO="KEY_FAV_RADIO";
 
     public static final int MODE = Context.MODE_PRIVATE;
 
-    private static SaveFavouriteRadio instance;
+    private static FavouriteRadioManager instance;
 
     private SharedPreferences mSharedPreferences;
 
     private Context mContext;
 
-    private  SaveFavouriteRadio(Context context){
+    private ArrayList<RadioStationResponse.Content> mContents=new ArrayList<>();
+    private HashSet<String> mFavIds=new HashSet<>();
+
+    public boolean containsRadioStation(RadioStationResponse.Content content){
+        return mFavIds.contains(content.getId());
+    }
+
+    public void addRadioStation(RadioStationResponse.Content content){
+
+       if (containsRadioStation(content)){
+          return;
+       }
+        mContents.add(content);
+        mFavIds.add(content.getId());
+        saveRadioStation(mContents);
+
+    }
+
+    public void removeRadioSation(RadioStationResponse.Content content){
+        if (containsRadioStation(content)){
+            mContents.remove(content);
+            mFavIds.remove(content.getId());
+            saveRadioStation(mContents);
+        }
+    }
+
+    public List<RadioStationResponse.Content> getRadioStations(){
+        return mContents;
+    }
+
+    private FavouriteRadioManager(Context context){
         this.mContext=context;
         mSharedPreferences=context.getSharedPreferences(FAV_SHARED_PREF,MODE);
     }
 
-    public static SaveFavouriteRadio getInstance(Context context){
-        if (instance==null)instance=new SaveFavouriteRadio(context);
+    public static FavouriteRadioManager getInstance(Context context){
+        if (instance==null){
+            instance=new FavouriteRadioManager(context.getApplicationContext());
+            instance.getFavRadioStation();
+        }
         return instance;
     }
 
@@ -48,29 +81,10 @@ public class SaveFavouriteRadio {
         String jsonFav = gson.toJson(favRadioStations);
         SharedPreferences.Editor editor=getEditor();
         editor.putString(KEY_FAV_RADIO, jsonFav);
-        editor.commit();
+        editor.apply();
     }
 
-    public void addFavRadioStation(RadioStationResponse.Content radioStation){
-        List<RadioStationResponse.Content> favRadioStation = getFavRadioStation();
-
-        if(favRadioStation == null) favRadioStation = new ArrayList<>();
-        if (favRadioStation.contains(radioStation)) return;
-        favRadioStation.add(radioStation);
-        saveRadioStation(favRadioStation);
-    }
-
-    public void removeFavRadioStation(RadioStationResponse.Content code) {
-        ArrayList<RadioStationResponse.Content> favRadioStations = getFavRadioStation();
-        if (favRadioStations != null) {
-            favRadioStations.remove(code);
-            saveRadioStation(favRadioStations);
-        }
-    }
-
-
-    public ArrayList<RadioStationResponse.Content> getFavRadioStation() {
-        List<RadioStationResponse.Content> favRadioStations;
+    private void getFavRadioStation() {
 
         if (mSharedPreferences.contains(KEY_FAV_RADIO)) {
             String jsonFavorites = mSharedPreferences.getString(KEY_FAV_RADIO, null);
@@ -78,17 +92,13 @@ public class SaveFavouriteRadio {
             RadioStationResponse.Content[] favoriteItems = gson.fromJson(jsonFavorites,
                     RadioStationResponse.Content[].class);
 
-            favRadioStations = Arrays.asList(favoriteItems);
-            favRadioStations = new ArrayList<>(favRadioStations);
-        } else
-            return null;
+            mContents.addAll(Arrays.asList(favoriteItems));
+            for (RadioStationResponse.Content content: favoriteItems) {
+                mFavIds.add(content.getId());
+            }
+        }
 
-        HashSet<RadioStationResponse.Content> hashSet = new HashSet<>();
-        hashSet.addAll(favRadioStations);
-        favRadioStations.clear();
-        favRadioStations.addAll(hashSet);
 
-        return (ArrayList<RadioStationResponse.Content>) favRadioStations;
     }
 
 
