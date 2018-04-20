@@ -101,7 +101,7 @@ public class RadioMainFragment extends Fragment {
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
 
         searchView = (SearchView)searchMenuItem.getActionView();
-        searchView.setQueryHint(getResources().getString(R.string.search_hint));
+        searchView.setQueryHint(getResources().getString(R.string.search_hint_radio));
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(SEARCH_SERVICE);
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));

@@ -9,6 +9,7 @@ import com.globaldelight.boom.radio.ui.fragments.CountryFragment;
 import com.globaldelight.boom.radio.ui.fragments.ExploreFragment;
 import com.globaldelight.boom.radio.ui.fragments.FavouriteFragment;
 import com.globaldelight.boom.radio.ui.fragments.LocalFragment;
+import com.globaldelight.boom.radio.ui.fragments.PopularFragment;
 
 /**
  * Created by Manoj Kumar on 16-04-2018.
@@ -16,7 +17,7 @@ import com.globaldelight.boom.radio.ui.fragments.LocalFragment;
  */
 public class RadioFragmentStateAdapter extends FragmentStatePagerAdapter {
 
-    private String mTabTitle[] = new String[]{"Local", "Favourite", "Country","Explore"};
+    private String mTabTitle[] = new String[]{"Local", "Favourite", "Country","Popular","Explore"};
 
 
     public RadioFragmentStateAdapter(FragmentManager fm) {
@@ -33,6 +34,8 @@ public class RadioFragmentStateAdapter extends FragmentStatePagerAdapter {
                 case 2:
                 return new CountryFragment();
             case 3:
+                return new PopularFragment();
+            case 4:
                 return new ExploreFragment();
 
         }
@@ -47,6 +50,6 @@ public class RadioFragmentStateAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 4;
+        return 5;
     }
 }

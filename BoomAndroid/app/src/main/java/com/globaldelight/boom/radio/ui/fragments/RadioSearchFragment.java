@@ -144,10 +144,6 @@ public class RadioSearchFragment extends Fragment {
     }
 
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdatePlayingItem);
-    }
+
 
 }

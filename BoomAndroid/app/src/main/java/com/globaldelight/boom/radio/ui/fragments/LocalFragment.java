@@ -40,13 +40,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeoutException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_CONNECTED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
 
@@ -69,16 +67,17 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
-    private String countryCode = "IN";
+    private String countryCode = Locale.getDefault().getCountry().toUpperCase();
+
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
+            switch (intent.getAction()) {
                 case ACTION_PLAYER_STATE_CHANGED:
                 case ACTION_SONG_CHANGED:
 
-                    if(null != radioListAdapter)
+                    if (null != radioListAdapter)
                         radioListAdapter.notifyDataSetChanged();
                     break;
             }
@@ -96,7 +95,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         txtError = view.findViewById(R.id.error_txt_cause);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
-        radioListAdapter = new RadioListAdapter(getActivity(),this, contentList);
+        radioListAdapter = new RadioListAdapter(getActivity(), this, contentList);
 
         recyclerView.setAdapter(radioListAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -148,7 +147,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
-        return requestCallback.getLocalRadio(countryCode,"radio","popularity", String.valueOf(currentPage), "25");
+        return requestCallback.getLocalRadio(countryCode, "radio", "popularity", String.valueOf(currentPage), "25");
     }
 
     private void getContent() {
@@ -156,12 +155,19 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         requestForContent().enqueue(new Callback<RadioStationResponse>() {
             @Override
             public void onResponse(Call<RadioStationResponse> call, Response<RadioStationResponse> response) {
+                if (response.code()==404){
+                    showErrorView(1);
+                    return;
+                }
                 if (response.isSuccessful()) {
                     hideErrorView();
                     progressBar.setVisibility(View.GONE);
                     RadioStationResponse radioResponse = response.body();
                     contentList = radioResponse.getBody().getContent();
-                    Collections.sort(contentList,new ContentComparator());
+                    if (contentList.size() == 0) {
+                        showErrorView(1);
+                    }
+                    Collections.sort(contentList, new ContentComparator());
                     totalPage = radioResponse.getBody().getTotalPages();
                     currentPage = radioResponse.getBody().getPage();
                     radioListAdapter.addAll(contentList);
@@ -171,7 +177,8 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
                     else isLastPage = true;
                 } else {
                     progressBar.setVisibility(View.GONE);
-                    showErrorView();
+                    if (response.code()==504)
+                    showErrorView(3);
                 }
             }
 
@@ -179,7 +186,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
             public void onFailure(Call<RadioStationResponse> call, Throwable t) {
                 t.printStackTrace();
                 progressBar.setVisibility(View.GONE);
-                showErrorView();
+                showErrorView(1);
             }
         });
     }
@@ -194,7 +201,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
                     isLoading = false;
                     RadioStationResponse radioResponse = response.body();
                     contentList = radioResponse.getBody().getContent();
-                    Collections.sort(contentList,new ContentComparator());
+                    Collections.sort(contentList, new ContentComparator());
                     totalPage = radioResponse.getBody().getTotalPages();
                     radioListAdapter.addAll(contentList);
                     radioListAdapter.notifyDataSetChanged();
@@ -213,25 +220,28 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         });
     }
 
-    private void showErrorView() {
+    private void showErrorView(int errorCase) {
 
         if (errorLayout.getVisibility() == View.GONE) {
             errorLayout.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
 
-            txtError.setText(fetchErrorMessage());
+            txtError.setText(fetchErrorMessage(errorCase));
         }
     }
 
-    private String fetchErrorMessage( ) {
-        String errorMsg = getResources().getString(R.string.error_msg_unknown);
+    private String fetchErrorMessage(int errorCase) {
+        switch (errorCase) {
+            case 1:
+                return getResources().getString(R.string.error_msg_unknown);
+            case 2:
+                return getResources().getString(R.string.error_msg_no_internet);
+            case 3:
+                return getResources().getString(R.string.error_msg_timeout);
+            default:
+                return getResources().getString(R.string.error_msg_unknown);
+        }
 
-        if (!isNetworkConnected()) {
-            errorMsg = getResources().getString(R.string.error_msg_no_internet);
-        } else
-            errorMsg = getResources().getString(R.string.error_msg_timeout);
-
-        return errorMsg;
     }
 
     private void hideErrorView() {

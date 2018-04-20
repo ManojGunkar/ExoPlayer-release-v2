@@ -147,6 +147,13 @@ public class ApiRequestController {
                 @Query("page") String page,
                 @Query("pageSize") String pageSize);
 
+        //http://test.api.radioline.fr:80/Pillow/search?page=2&pageSize=20&type=radio&priority=popularity
+        @GET("/Pillow/search")
+        Call<RadioStationResponse> getPopularStation(
+                @Query("type") String type,
+                @Query("priority") String priority,
+                @Query("page") String page,
+                @Query("pageSize") String pageSize);
 
         @GET("/Pillow/{radio_name}/play")
         Call<RadioPlayResponse> getRadioPlayService(

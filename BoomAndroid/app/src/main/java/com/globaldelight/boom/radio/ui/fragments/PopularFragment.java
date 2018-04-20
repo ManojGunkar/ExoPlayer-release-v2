@@ -1,10 +1,15 @@
 package com.globaldelight.boom.radio.ui.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,9 +22,12 @@ import android.widget.TextView;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.ui.adapter.CountryListAdapter;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
+import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
+import com.globaldelight.boom.radio.utils.ContentComparator;
 import com.globaldelight.boom.radio.webconnector.ApiRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
 import com.globaldelight.boom.radio.webconnector.responsepojo.CountryResponse;
+import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -28,42 +36,66 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
+
 /**
- * Created by Manoj Kumar on 09-04-2018.
+ * Created by Manoj Kumar on 20-04-2018.
  * ©Global Delight Technologies Pvt. Ltd.
  */
-public class CountryFragment extends Fragment {
+public class PopularFragment extends Fragment {
 
-    public final static String KEY_COUNTRY_CODE = "CODE";
-    public final static String KEY_COUNTRY_NAME = "NAME";
-    public final static String KEY_COUNTRY_URL = "URL";
     private RecyclerView recyclerView;
-    private TextView txtResCode;
-    private CountryListAdapter countryListAdapter;
+
+    private RadioListAdapter mAdapter;
     private ProgressBar progressBar;
-    private List<CountryResponse.Content> mContents = new ArrayList<>();
+    private List<RadioStationResponse.Content> mContents = new ArrayList<>();
     private int totalPage = 0;
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
+
+    private BroadcastReceiver mUpdatePlayingItem = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context mActivity, Intent intent) {
+            switch (intent.getAction()) {
+                case ACTION_PLAYER_STATE_CHANGED:
+                case ACTION_SONG_CHANGED:
+                    if (null != mAdapter)
+                        mAdapter.notifyDataSetChanged();
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
+        intentFilter.addAction(ACTION_SONG_CHANGED);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdatePlayingItem, intentFilter);
+    }
+
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.radio_layout, container, false);
         recyclerView = view.findViewById(R.id.rv_local_radio);
-        txtResCode = view.findViewById(R.id.txt_log);
         progressBar = view.findViewById(R.id.progress_local);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
-        countryListAdapter = new CountryListAdapter(getActivity(), mContents);
-        recyclerView.setAdapter(countryListAdapter);
+        mAdapter = new RadioListAdapter(getActivity(),null, mContents);
+        recyclerView.setAdapter(mAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(new OnPaginationListener(llm) {
             @Override
@@ -93,7 +125,7 @@ public class CountryFragment extends Fragment {
         return view;
     }
 
-    private Call<CountryResponse> requestForContent() {
+    private Call<RadioStationResponse> requestForContent() {
         ApiRequestController.RequestCallback requestCallback = null;
         try {
             requestCallback = ApiRequestController
@@ -111,32 +143,43 @@ public class CountryFragment extends Fragment {
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
-        return requestCallback.getCountry(String.valueOf(currentPage), "100");
+        return requestCallback.getPopularStation("radio","popularity",String.valueOf(currentPage), "25");
     }
 
     private void getContent() {
-        requestForContent().enqueue(new Callback<CountryResponse>() {
+       // hideErrorView();
+        requestForContent().enqueue(new Callback<RadioStationResponse>() {
             @Override
-            public void onResponse(Call<CountryResponse> call, Response<CountryResponse> response) {
+            public void onResponse(Call<RadioStationResponse> call, Response<RadioStationResponse> response) {
+                if (response.code()==404){
+             //       showErrorView(1);
+                    return;
+                }
                 if (response.isSuccessful()) {
+               //     hideErrorView();
                     progressBar.setVisibility(View.GONE);
-                    CountryResponse radioResponse = response.body();
+                    RadioStationResponse radioResponse = response.body();
                     mContents = radioResponse.getBody().getContent();
+                    if (mContents.size() == 0) {
+                       // showErrorView(1);
+                    }
                     totalPage = radioResponse.getBody().getTotalPages();
                     currentPage = radioResponse.getBody().getPage();
-                    countryListAdapter.addAll(mContents);
-                    countryListAdapter.notifyDataSetChanged();
+                    mAdapter.addAll(mContents);
+                    mAdapter.notifyDataSetChanged();
 
-                    if (currentPage <= totalPage) countryListAdapter.addLoadingFooter();
+                    if (currentPage <= totalPage) mAdapter.addLoadingFooter();
                     else isLastPage = true;
                 } else {
-                    txtResCode.setText("Error Code = " + response.code());
                     progressBar.setVisibility(View.GONE);
+                    if (response.code()==504){
+
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<CountryResponse> call, Throwable t) {
+            public void onFailure(Call<RadioStationResponse> call, Throwable t) {
                 t.printStackTrace();
                 progressBar.setVisibility(View.GONE);
             }
@@ -144,33 +187,36 @@ public class CountryFragment extends Fragment {
     }
 
     private void getNextPageContent() {
-        requestForContent().enqueue(new Callback<CountryResponse>() {
+        requestForContent().enqueue(new Callback<RadioStationResponse>() {
             @Override
-            public void onResponse(Call<CountryResponse> call, Response<CountryResponse> response) {
+            public void onResponse(Call<RadioStationResponse> call, Response<RadioStationResponse> response) {
                 if (response.isSuccessful()) {
                     progressBar.setVisibility(View.GONE);
-                    countryListAdapter.removeLoadingFooter();
+                    mAdapter.removeLoadingFooter();
                     isLoading = false;
-                    CountryResponse radioResponse = response.body();
+                    RadioStationResponse radioResponse = response.body();
                     mContents = radioResponse.getBody().getContent();
                     totalPage = radioResponse.getBody().getTotalPages();
-                    countryListAdapter.addAll(mContents);
-                    countryListAdapter.notifyDataSetChanged();
+                    mAdapter.addAll(mContents);
+                    mAdapter.notifyDataSetChanged();
 
-                    if (currentPage <= totalPage) countryListAdapter.addLoadingFooter();
+                    if (currentPage <= totalPage) mAdapter.addLoadingFooter();
                     else isLastPage = true;
                 } else {
-                    txtResCode.setText("Error Code = " + response.code());
                     progressBar.setVisibility(View.GONE);
                 }
             }
 
             @Override
-            public void onFailure(Call<CountryResponse> call, Throwable t) {
+            public void onFailure(Call<RadioStationResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
             }
         });
     }
 
-
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdatePlayingItem);
+    }
 }
