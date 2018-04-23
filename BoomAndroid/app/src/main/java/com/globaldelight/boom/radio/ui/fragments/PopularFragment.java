@@ -17,17 +17,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.radio.ui.adapter.CountryListAdapter;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
-import com.globaldelight.boom.radio.utils.ContentComparator;
 import com.globaldelight.boom.radio.webconnector.ApiRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
-import com.globaldelight.boom.radio.webconnector.responsepojo.CountryResponse;
-import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
+import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -36,7 +32,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -83,8 +78,6 @@ public class PopularFragment extends Fragment {
         intentFilter.addAction(ACTION_SONG_CHANGED);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdatePlayingItem, intentFilter);
     }
-
-
 
     @Nullable
     @Override

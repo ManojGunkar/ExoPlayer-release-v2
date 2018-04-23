@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
-import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
+import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 
 import java.util.List;
 

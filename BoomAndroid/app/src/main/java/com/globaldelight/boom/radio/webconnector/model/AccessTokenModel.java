@@ -1,10 +1,10 @@
-package com.globaldelight.boom.radio.webconnector.responsepojo;
+package com.globaldelight.boom.radio.webconnector.model;
 
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class AccessTokenPojo {
+public class AccessTokenModel {
 
     @SerializedName("access_token")
     @Expose

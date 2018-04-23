@@ -3,7 +3,7 @@ package com.globaldelight.boom.radio.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
+import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;

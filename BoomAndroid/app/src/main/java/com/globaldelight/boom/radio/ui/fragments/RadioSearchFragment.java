@@ -20,7 +20,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.webconnector.ApiRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
-import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
+import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 
 import java.io.IOException;
 import java.security.KeyManagementException;

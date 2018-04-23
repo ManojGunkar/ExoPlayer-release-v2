@@ -1,0 +1,55 @@
+{
+  "message": [],
+  "path": [],
+  "body": {
+    "type": "list",
+    "page": 1,
+    "totalPages": 1,
+    "totalResults": 17,
+    "content": [
+      {
+        "type": "category",
+        "permalink": "categories/radioline_music~~",
+        "name": "Music Genre",
+        "ChildCount": 1,
+        "logo": "http://db.radioline.fr/pictures/directory_cb8551646b51bd5c403e33d3a62230d4/logo200.jpg"
+      },
+      {
+        "type": "category",
+        "permalink": "categories/radioline_radios~~",
+        "name": "Topic",
+        "ChildCount": 1,
+        "logo": "http://db.radioline.fr/pictures/directory_cfa0907167491e33544704cdc7c4b992/logo200.jpg"
+      },
+      {
+        "type": "category",
+        "permalink": "categories/radioline_moods",
+        "ChildCount": 1,
+        "name": "Moods"
+      },
+      {
+        "type": "category",
+        "permalink": "categories/shows_on_air~",
+        "ChildCount": 0,
+        "name": "Shows on Air"
+      },
+      {
+        "type": "category",
+        "permalink": "categories/special_selection~",
+        "name": "Special Selection",
+        "ChildCount": 0,
+         "logo": "http://db.radioline.fr/pictures/directory_d887a68a9fea8f9c98b155d4ae39e2d6/logo200.jpg"
+      },
+      {
+        "type": "category",
+        "permalink": "categories/spotlight",
+        "name": "Spotlight"
+      },
+      {
+        "type": "tag",
+        "permalink": "file://tags.json",
+        "name": "Tags"
+      }
+    ]
+  }
+}

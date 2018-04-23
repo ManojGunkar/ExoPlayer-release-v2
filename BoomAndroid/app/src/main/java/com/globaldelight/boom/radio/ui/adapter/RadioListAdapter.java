@@ -19,7 +19,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
-import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
+import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.List;

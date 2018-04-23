@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.ui.CountryDetailedActivity;
-import com.globaldelight.boom.radio.webconnector.responsepojo.CountryResponse;
+import com.globaldelight.boom.radio.webconnector.model.CountryResponse;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.List;

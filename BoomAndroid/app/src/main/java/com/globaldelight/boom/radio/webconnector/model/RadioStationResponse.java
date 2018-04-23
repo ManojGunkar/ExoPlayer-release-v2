@@ -1,4 +1,4 @@
-package com.globaldelight.boom.radio.webconnector.responsepojo;
+package com.globaldelight.boom.radio.webconnector.model;
 
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;

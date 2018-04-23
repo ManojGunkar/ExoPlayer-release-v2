@@ -4,10 +4,10 @@ package com.globaldelight.boom.radio.webconnector;
 import android.content.Context;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.radio.webconnector.responsepojo.AccessTokenPojo;
-import com.globaldelight.boom.radio.webconnector.responsepojo.CountryResponse;
-import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
-import com.globaldelight.boom.radio.webconnector.responsepojo.RadioPlayResponse;
+import com.globaldelight.boom.radio.webconnector.model.AccessTokenModel;
+import com.globaldelight.boom.radio.webconnector.model.CountryResponse;
+import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
+import com.globaldelight.boom.radio.webconnector.model.RadioPlayResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,8 +80,7 @@ public class ApiRequestController {
             KeyStoreException, NoSuchAlgorithmException, KeyManagementException,
             java.security.cert.CertificateException, UnrecoverableKeyException {
 
-        CertificateFactory cf = null;
-        cf = CertificateFactory.getInstance("X.509");
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
         Certificate ca;
         try (InputStream cert = context.getResources().openRawResource(R.raw.ca_sha2)) {
@@ -106,12 +105,11 @@ public class ApiRequestController {
         return sslContext;
     }
 
-
     public interface RequestCallback {
 
         @FormUrlEncoded
         @POST(RadioApiUtils.AUTH_URL)
-        Call<AccessTokenPojo> getToken(
+        Call<AccessTokenModel> getToken(
                 @Field(("grant_type")) String grantType,
                 @Field(("device_serial")) String deviceSerial,
                 @Field(("scope")) String scope,
@@ -119,11 +117,10 @@ public class ApiRequestController {
 
         @FormUrlEncoded
         @POST(RadioApiUtils.AUTH_URL)
-        Call<AccessTokenPojo> getRefreshToken(
+        Call<AccessTokenModel> getRefreshToken(
                 @Field(("grant_type")) String grantType,
                 @Field(("refresh_token")) String refreshToken,
                 @Field(("client_id")) String clientId);
-// Pillow/search?query=mantra&type=radio&category=fm&language=indie&location=IN
 
         @GET("/Pillow/search")
         Call<RadioStationResponse> getLocalRadio(
@@ -147,7 +144,6 @@ public class ApiRequestController {
                 @Query("page") String page,
                 @Query("pageSize") String pageSize);
 
-        //http://test.api.radioline.fr:80/Pillow/search?page=2&pageSize=20&type=radio&priority=popularity
         @GET("/Pillow/search")
         Call<RadioStationResponse> getPopularStation(
                 @Query("type") String type,

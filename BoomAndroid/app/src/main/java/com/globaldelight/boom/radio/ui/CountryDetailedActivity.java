@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +25,7 @@ import com.globaldelight.boom.radio.ui.fragments.CountryFragment;
 import com.globaldelight.boom.radio.utils.ContentComparator;
 import com.globaldelight.boom.radio.webconnector.ApiRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
-import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
+import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 
 import java.io.IOException;
 import java.security.KeyManagementException;

@@ -1,4 +1,4 @@
-package com.globaldelight.boom.radio.webconnector.responsepojo;
+package com.globaldelight.boom.radio.webconnector.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

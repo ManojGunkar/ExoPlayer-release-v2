@@ -1,6 +1,6 @@
 package com.globaldelight.boom.radio.utils;
 
-import com.globaldelight.boom.radio.webconnector.responsepojo.RadioStationResponse;
+import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 
 import java.util.Comparator;
 

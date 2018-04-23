@@ -2,7 +2,7 @@ package com.globaldelight.boom.radio.webconnector;
 
 import android.content.Context;
 
-import com.globaldelight.boom.radio.webconnector.responsepojo.AccessTokenPojo;
+import com.globaldelight.boom.radio.webconnector.model.AccessTokenModel;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -49,7 +49,7 @@ public class CustomInterceptor implements Interceptor {
                 ApiRequestController.RequestCallback requestCallback=ApiRequestController.getClient(context,RadioApiUtils.TOKEN_URL);
                // Call call= requestCallback.getRefreshToken("refresh_token",refreshToken,RadioApiUtils.CLIENT_ID);
                 Call call= requestCallback.getToken("password","test","read",RadioApiUtils.CLIENT_ID);
-                AccessTokenPojo accessTokenPojo= (AccessTokenPojo) call.execute().body();
+                AccessTokenModel accessTokenPojo= (AccessTokenModel) call.execute().body();
                 accessToken=accessTokenPojo.getAccessToken();
                 refreshToken=accessTokenPojo.getRefreshToken();
 
