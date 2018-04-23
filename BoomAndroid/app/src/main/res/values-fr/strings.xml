@@ -208,6 +208,15 @@
     <string name="continue_button">Continuer</string>
 
     <!-- to be localized -->
+    <string name="radio">Radio</string>
+    <string name="local_radio">Local</string>
+    <string name="favourite_radio">Favourite</string>
+    <string name="country_radio">Country</string>
+    <string name="explore_radio">Explore</string>
+    <string name="error_msg_no_internet">Not connected to internet</string>
+    <string name="error_msg_timeout">The server took too long to respond</string>
+    <string name="error_msg_unknown">An unexpected error occurred</string>
+    <string name="search_hint_radio">Search Radio Station</string>
 
 
 </resources>
