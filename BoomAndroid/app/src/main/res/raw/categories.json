@@ -49,7 +49,9 @@
       {
         "type": "tag",
         "permalink": "file://tags.json",
-        "name": "Tags"
+        "name": "Tags",
+        "ChildCount": 1
+
       }
     ]
   }
