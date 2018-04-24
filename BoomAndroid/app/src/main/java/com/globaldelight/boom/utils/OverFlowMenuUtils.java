@@ -18,6 +18,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.collection.base.IMediaItemCollection;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
 
 import java.util.ArrayList;
 
@@ -45,6 +46,10 @@ public class OverFlowMenuUtils {
             }
         });
         pm.inflate(R.menu.recent_popup);
+        if ( App.playbackManager().queue().getPlayingItem().getMediaType() == MediaType.RADIO ) {
+            pm.getMenu().removeItem(R.id.collection_play_next_item);
+            pm.getMenu().removeItem(R.id.collection_add_to_queue_item);
+        }
         pm.show();
     }
 
@@ -78,6 +83,10 @@ public class OverFlowMenuUtils {
             }
         });
         pm.inflate(R.menu.playlist_boom_menu);
+        if ( App.playbackManager().queue().getPlayingItem().getMediaType() == MediaType.RADIO ) {
+            pm.getMenu().removeItem(R.id.popup_play_next);
+            pm.getMenu().removeItem(R.id.popup_add_queue);
+        }
         pm.show();
     }
 
@@ -115,6 +124,10 @@ public class OverFlowMenuUtils {
             }
         });
         pm.inflate(R.menu.recent_popup);
+        if ( App.playbackManager().queue().getPlayingItem().getMediaType() == MediaType.RADIO ) {
+            pm.getMenu().removeItem(R.id.collection_play_next_item);
+            pm.getMenu().removeItem(R.id.collection_add_to_queue_item);
+        }
         pm.show();
     }
 
@@ -137,6 +150,10 @@ public class OverFlowMenuUtils {
             }
         });
         pm.inflate(R.menu.recent_popup);
+        if ( App.playbackManager().queue().getPlayingItem().getMediaType() == MediaType.RADIO ) {
+            pm.getMenu().removeItem(R.id.collection_play_next_item);
+            pm.getMenu().removeItem(R.id.collection_add_to_queue_item);
+        }
         pm.show();
     }
 
@@ -219,6 +236,10 @@ public class OverFlowMenuUtils {
 
         pm.inflate(resId);
         updateFavoritesMenuItem(activity, itemBase, pm);
+        if ( App.playbackManager().queue().getPlayingItem().getMediaType() == MediaType.RADIO ) {
+            pm.getMenu().removeItem(R.id.song_play_next_item);
+            pm.getMenu().removeItem(R.id.song_add_queue_item);
+        }
         pm.show();
     }
 
@@ -235,6 +256,10 @@ public class OverFlowMenuUtils {
 
         pm.inflate(resId);
         updateFavoritesMenuItem(activity, itemBase, pm);
+        if ( App.playbackManager().queue().getPlayingItem().getMediaType() == MediaType.RADIO ) {
+            pm.getMenu().removeItem(R.id.song_play_next_item);
+            pm.getMenu().removeItem(R.id.song_add_queue_item);
+        }
         pm.show();
     }
 
@@ -277,6 +302,10 @@ public class OverFlowMenuUtils {
             }
         });
         pm.inflate(resId);
+        if ( App.playbackManager().queue().getPlayingItem().getMediaType() == MediaType.RADIO ) {
+            pm.getMenu().removeItem(R.id.collection_play_next_item);
+            pm.getMenu().removeItem(R.id.collection_add_to_queue_item);
+        }
         pm.show();
     }
 
