@@ -43,7 +43,8 @@
       {
         "type": "category",
         "permalink": "categories/spotlight",
-        "name": "Spotlight"
+        "name": "Spotlight",
+        "ChildCount": 0
       },
       {
         "type": "tag",

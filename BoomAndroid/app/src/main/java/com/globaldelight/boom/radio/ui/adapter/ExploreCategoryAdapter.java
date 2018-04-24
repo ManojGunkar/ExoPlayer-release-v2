@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.ui.SubCategoryActivity;
+import com.globaldelight.boom.radio.ui.SubCategoryDetailedActivity;
 import com.globaldelight.boom.radio.webconnector.model.ExploreCategory;
 import com.globaldelight.boom.utils.Utils;
 
@@ -56,15 +57,23 @@ public class ExploreCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 .into(viewHolder.imgCatThumb);
 
         viewHolder.itemView.setOnClickListener(v -> {
-            Toast.makeText(mContext, "pos " + position, Toast.LENGTH_SHORT).show();
-            Intent intent=new Intent(mContext, SubCategoryActivity.class);
-            if (mContents.get(position).getPermalink().equals("file://tags.json")){
-                intent.putExtra("isTag",true);
+            if ( mContents.get(position).getChildCount() != null && mContents.get(position).getChildCount() > 0 ) {
+                Toast.makeText(mContext, "pos " + position, Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(mContext, SubCategoryActivity.class);
+                if (mContents.get(position).getPermalink().equals("file://tags.json")){
+                    intent.putExtra("isTag",true);
+                }
+                intent.putExtra("title",mContents.get(position).getName());
+                intent.putExtra("permalink",mContents.get(position).getPermalink());
+                mContext.startActivity(intent);
             }
-            intent.putExtra("title",mContents.get(position).getName());
-            intent.putExtra("permalink",mContents.get(position).getPermalink());
-            mContext.startActivity(intent);
-
+            else {
+                Intent intent=new Intent(mContext, SubCategoryDetailedActivity.class);
+                intent.putExtra("title",mContents.get(position).getName());
+                intent.putExtra("permalink",mContents.get(position).getPermalink());
+                intent.putExtra("url",mContents.get(position).getLogo());
+                mContext.startActivity(intent);
+            }
         });
 
     }
