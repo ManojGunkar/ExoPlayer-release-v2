@@ -13,6 +13,8 @@ import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
+import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -227,12 +229,13 @@ public class UpNextPlayingQueue {
 
     private void insertUpNextList(String shuffleType) {
         Preferences.writeString(context, shuffleType, new Gson().toJson(mUpNextList));
+        Preferences.writeBoolean(context, "isRadioQueue", getPlayingItem().getMediaType() == MediaType.RADIO);
+
     }
 
     private void retrieveUpNextList(String shuffleType, IMediaElement playingItem) {
         try {
-            List list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, shuffleType, null), MediaItem[].class));
-            mUpNextList = new ArrayList<>(list);
+            mUpNextList = fetchSavedItems(shuffleType);
             if ((null != mUpNextList || !mUpNextList.isEmpty()) && mUpNextList.size() > 0) {
                 if (mUpNextList.size() == 1)
                     mPlayingItemIndex = 0;
@@ -267,8 +270,7 @@ public class UpNextPlayingQueue {
     private void updateUnshuffledList(int position, IMediaElement item) {
         ArrayList<IMediaElement> tempList = null;
         try {
-            List list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, UNSHUFFLE, null), MediaItem[].class));
-            tempList = new ArrayList<>(list);
+            tempList = fetchSavedItems(UNSHUFFLE);
         } catch (JsonSyntaxException e) {
 
         } catch (NullPointerException e) {
@@ -284,8 +286,7 @@ public class UpNextPlayingQueue {
     private void updateUnshuffledList(int position, ArrayList<? extends IMediaElement> itemList) {
         ArrayList<IMediaElement> tempList = null;
         try {
-            List list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, UNSHUFFLE, null), MediaItem[].class));
-            tempList = new ArrayList<>(list);
+            tempList = fetchSavedItems(UNSHUFFLE);
         } catch (JsonSyntaxException e) {
 
         } catch (NullPointerException e) {
@@ -296,6 +297,14 @@ public class UpNextPlayingQueue {
             tempList.addAll(position, itemList);
             Preferences.writeString(context, UNSHUFFLE, new Gson().toJson(tempList));
         }
+    }
+
+    private Class getQueueClass() {
+        Class cls = MediaItem[].class;
+        if ( Preferences.readBoolean(context, "isRadioQueue", false) ) {
+            cls = RadioStationResponse.Content[].class;
+        }
+        return cls;
     }
 
     private void clearUpNextSavedList() {
@@ -510,8 +519,7 @@ public class UpNextPlayingQueue {
 
     private ArrayList<IMediaElement> retrieveUpNextList(String shuffleType) {
         try {
-            List list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, shuffleType, null), MediaItem[].class));
-            return new ArrayList<>(list);
+            return fetchSavedItems(shuffleType);
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
@@ -544,6 +552,22 @@ public class UpNextPlayingQueue {
 
     private void savePlayingItemIndex() {
         Preferences.writeInteger(context, PLAYING_ITEM_INDEX_IN_UPNEXT, mPlayingItemIndex);
+    }
+
+    private ArrayList<IMediaElement> fetchSavedItems(String shuffleType) {
+        try {
+            List list = null;
+            if ( Preferences.readBoolean(context, "isRadioQueue", false) ) {
+                list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, shuffleType, null), RadioStationResponse.Content[].class));
+            }
+            else {
+                list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, shuffleType, null), MediaItem[].class));
+            }
+            return new ArrayList<>(list);
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
 }
