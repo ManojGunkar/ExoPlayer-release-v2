@@ -51,8 +51,6 @@ public class ExploreTagAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         viewHolder.txtTitle.setText(mTags.get(position).getName());
 
         viewHolder.itemView.setOnClickListener(v -> {
-            Toast.makeText(mContext, "pos " + position, Toast.LENGTH_SHORT).show();
-
             Intent intent=new Intent(mContext, SubCategoryDetailedActivity.class);
             intent.putExtra("title",mTags.get(position).getName());
             intent.putExtra("permalink",mTags.get(position).getSearchName());

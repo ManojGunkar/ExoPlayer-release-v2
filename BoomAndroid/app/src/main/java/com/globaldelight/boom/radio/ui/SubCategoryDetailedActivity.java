@@ -34,6 +34,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -175,7 +176,7 @@ public class SubCategoryDetailedActivity extends MasterActivity implements Radio
         if (isTagDisable){
             return requestCallback.getRadioSation(permalink, String.valueOf(currentPage), "25");
         }else {
-            return requestCallback.getTagsRadioStation(permalink, String.valueOf(currentPage), "25");
+            return requestCallback.getTagsRadioStation(permalink, Locale.getDefault().getCountry().toUpperCase(),"radio","popularity", String.valueOf(currentPage), "25");
         }
 
     }

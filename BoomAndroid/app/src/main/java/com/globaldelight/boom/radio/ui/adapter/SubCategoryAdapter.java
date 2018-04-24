@@ -62,7 +62,6 @@ public class SubCategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 .into(viewHolder.imgCatThumb);
 
         viewHolder.itemView.setOnClickListener(v -> {
-            Toast.makeText(mContext, "pos " + position, Toast.LENGTH_SHORT).show();
             if (content.getProductCount()==null||content.getProductCount()==0){
                     Intent intent=new Intent(mContext, SubCategoryActivity.class);
                     intent.putExtra("title",content.getName());

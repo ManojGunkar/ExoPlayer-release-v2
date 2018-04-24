@@ -133,6 +133,9 @@ public class ApiRequestController {
         @GET("/Pillow/search")
         Call<RadioStationResponse> getTagsRadioStation(
                 @Query("tags") String tag,
+                @Query("country") String location,
+                @Query("type") String type,
+                @Query("priority") String priority,
                 @Query("page") String page,
                 @Query("pageSize") String pageSize);
 

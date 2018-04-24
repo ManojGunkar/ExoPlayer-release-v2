@@ -56,7 +56,6 @@ public class ExploreCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 .into(viewHolder.imgCatThumb);
 
         viewHolder.itemView.setOnClickListener(v -> {
-            Toast.makeText(mContext, "pos " + position, Toast.LENGTH_SHORT).show();
             Intent intent=new Intent(mContext, SubCategoryActivity.class);
             if (mContents.get(position).getPermalink().equals("file://tags.json")){
                 intent.putExtra("isTag",true);

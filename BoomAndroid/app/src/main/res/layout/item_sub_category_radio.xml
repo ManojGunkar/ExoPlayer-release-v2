@@ -4,15 +4,14 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/img_sub_category_radio"
             android:layout_width="62dp"
+            android:layout_alignParentLeft="true"
             android:layout_margin="5dp"
             android:layout_height="62dp"
             android:scaleType="centerCrop"
@@ -22,14 +21,26 @@
             android:id="@+id/txt_title_sub_category_radio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center|left"
+            android:layout_centerInParent="true"
+            android:layout_toRightOf="@+id/img_sub_category_radio"
+            android:layout_toLeftOf="@id/img_path_arrow"
             android:padding="10dp"
             android:text="title"
             android:textColor="@color/track_selection"
             android:textSize="18sp"
             android:textStyle="normal" />
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/img_path_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/path" />
+
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"

@@ -51,16 +51,13 @@
 
         <LinearLayout
             android:id="@+id/ll_fav_station"
-            style="@style/MediaController"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:clickable="true"
-            android:foregroundTint="#f73d5c"
             android:gravity="center"
-            android:padding="10dp"
-            android:theme="@style/Theme.AppCompat.Light">
+            android:padding="10dp">
 
             <CheckBox
                 android:id="@+id/check_fav_station"
