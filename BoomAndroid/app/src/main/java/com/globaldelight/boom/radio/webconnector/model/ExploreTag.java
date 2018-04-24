@@ -13,13 +13,13 @@ public class ExploreTag {
 
     @SerializedName("tags")
     @Expose
-    private List<ExploreTag> tags = null;
+    private List<Tags> tags = null;
 
-    public List<ExploreTag> getTags() {
+    public List<Tags> getTags() {
         return tags;
     }
 
-    public void setTags(List<ExploreTag> tags) {
+    public void setTags(List<Tags> tags) {
         this.tags = tags;
     }
 

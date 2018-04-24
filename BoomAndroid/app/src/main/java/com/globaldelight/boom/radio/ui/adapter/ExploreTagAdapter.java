@@ -1,6 +1,7 @@
 package com.globaldelight.boom.radio.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.radio.ui.SubCategoryDetailedActivity;
 import com.globaldelight.boom.radio.webconnector.model.ExploreTag;
 
 import java.util.Collections;
@@ -39,7 +41,7 @@ public class ExploreTagAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @NonNull
     private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
-        return new TagViewHolder(inflater.inflate(R.layout.item_country_radio, parent, false));
+        return new TagViewHolder(inflater.inflate(R.layout.item_category_radio, parent, false));
     }
 
 
@@ -50,6 +52,14 @@ public class ExploreTagAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         viewHolder.itemView.setOnClickListener(v -> {
             Toast.makeText(mContext, "pos " + position, Toast.LENGTH_SHORT).show();
+
+            Intent intent=new Intent(mContext, SubCategoryDetailedActivity.class);
+            intent.putExtra("title",mTags.get(position).getName());
+            intent.putExtra("permalink",mTags.get(position).getSearchName());
+            intent.putExtra("url","");
+            mContext.startActivity(intent);
+
+
         });
 
     }
@@ -67,8 +77,8 @@ public class ExploreTagAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         public TagViewHolder(View itemView) {
             super(itemView);
 
-            imgTagThumb = itemView.findViewById(R.id.img_tag_radio);
-            txtTitle = itemView.findViewById(R.id.txt_title_tag_radio);
+            imgTagThumb = itemView.findViewById(R.id.img_category_radio);
+            txtTitle = itemView.findViewById(R.id.txt_title_category_radio);
         }
 
     }

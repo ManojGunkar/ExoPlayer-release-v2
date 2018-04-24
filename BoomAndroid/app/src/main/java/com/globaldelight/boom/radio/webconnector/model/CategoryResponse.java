@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Manoj Kumar on 11-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class CountryResponse {
+public class CategoryResponse {
     @SerializedName("message")
     @Expose
     private List<Object> message = null;

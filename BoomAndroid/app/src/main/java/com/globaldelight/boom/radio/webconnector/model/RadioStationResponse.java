@@ -307,6 +307,15 @@ public class RadioStationResponse {
             this.monitoring = monitoring;
         }
 
+        @Override
+        public boolean equals(Object another) {
+            if ( another instanceof  Content ) {
+                return equalTo((Content)another);
+            }
+
+            return false;
+        }
+
     }
 
     public class Error {

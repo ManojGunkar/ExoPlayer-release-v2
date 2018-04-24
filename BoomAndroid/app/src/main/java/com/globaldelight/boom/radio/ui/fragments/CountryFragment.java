@@ -19,7 +19,7 @@ import com.globaldelight.boom.radio.ui.adapter.CountryListAdapter;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.webconnector.ApiRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
-import com.globaldelight.boom.radio.webconnector.model.CountryResponse;
+import com.globaldelight.boom.radio.webconnector.model.CategoryResponse;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -47,7 +47,7 @@ public class CountryFragment extends Fragment {
     private TextView txtResCode;
     private CountryListAdapter countryListAdapter;
     private ProgressBar progressBar;
-    private List<CountryResponse.Content> mContents = new ArrayList<>();
+    private List<CategoryResponse.Content> mContents = new ArrayList<>();
     private int totalPage = 0;
     private int currentPage = 1;
     private boolean isLoading = false;
@@ -93,7 +93,7 @@ public class CountryFragment extends Fragment {
         return view;
     }
 
-    private Call<CountryResponse> requestForContent() {
+    private Call<CategoryResponse> requestForContent() {
         ApiRequestController.RequestCallback requestCallback = null;
         try {
             requestCallback = ApiRequestController
@@ -115,12 +115,12 @@ public class CountryFragment extends Fragment {
     }
 
     private void getContent() {
-        requestForContent().enqueue(new Callback<CountryResponse>() {
+        requestForContent().enqueue(new Callback<CategoryResponse>() {
             @Override
-            public void onResponse(Call<CountryResponse> call, Response<CountryResponse> response) {
+            public void onResponse(Call<CategoryResponse> call, Response<CategoryResponse> response) {
                 if (response.isSuccessful()) {
                     progressBar.setVisibility(View.GONE);
-                    CountryResponse radioResponse = response.body();
+                    CategoryResponse radioResponse = response.body();
                     mContents = radioResponse.getBody().getContent();
                     totalPage = radioResponse.getBody().getTotalPages();
                     currentPage = radioResponse.getBody().getPage();
@@ -136,7 +136,7 @@ public class CountryFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<CountryResponse> call, Throwable t) {
+            public void onFailure(Call<CategoryResponse> call, Throwable t) {
                 t.printStackTrace();
                 progressBar.setVisibility(View.GONE);
             }
@@ -144,14 +144,14 @@ public class CountryFragment extends Fragment {
     }
 
     private void getNextPageContent() {
-        requestForContent().enqueue(new Callback<CountryResponse>() {
+        requestForContent().enqueue(new Callback<CategoryResponse>() {
             @Override
-            public void onResponse(Call<CountryResponse> call, Response<CountryResponse> response) {
+            public void onResponse(Call<CategoryResponse> call, Response<CategoryResponse> response) {
                 if (response.isSuccessful()) {
                     progressBar.setVisibility(View.GONE);
                     countryListAdapter.removeLoadingFooter();
                     isLoading = false;
-                    CountryResponse radioResponse = response.body();
+                    CategoryResponse radioResponse = response.body();
                     mContents = radioResponse.getBody().getContent();
                     totalPage = radioResponse.getBody().getTotalPages();
                     countryListAdapter.addAll(mContents);
@@ -166,7 +166,7 @@ public class CountryFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<CountryResponse> call, Throwable t) {
+            public void onFailure(Call<CategoryResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
             }
         });

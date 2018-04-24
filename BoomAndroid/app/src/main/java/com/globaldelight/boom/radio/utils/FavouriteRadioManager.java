@@ -1,7 +1,9 @@
 package com.globaldelight.boom.radio.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.google.gson.Gson;
@@ -16,6 +18,8 @@ import java.util.List;
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
 public class FavouriteRadioManager {
+
+    public static final String FAVOURITES_CHANGED = "con.globaldelight.FAVOURITES_CHANGED";
 
     private final static String FAV_SHARED_PREF="FAV_SHARED_PREF";
     private final static String KEY_FAV_RADIO="KEY_FAV_RADIO";
@@ -43,6 +47,7 @@ public class FavouriteRadioManager {
         mContents.add(content);
         mFavIds.add(content.getId());
         saveRadioStation(mContents);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(FAVOURITES_CHANGED));
 
     }
 
@@ -51,6 +56,7 @@ public class FavouriteRadioManager {
             mContents.remove(content);
             mFavIds.remove(content.getId());
             saveRadioStation(mContents);
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(FAVOURITES_CHANGED));
         }
     }
 

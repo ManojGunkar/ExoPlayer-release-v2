@@ -40,6 +40,7 @@ public class FavouriteFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
+                case FavouriteRadioManager.FAVOURITES_CHANGED:
                 case ACTION_PLAYER_STATE_CHANGED:
                 case ACTION_SONG_CHANGED:
 
@@ -76,6 +77,7 @@ public class FavouriteFragment extends Fragment {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
+        intentFilter.addAction(FavouriteRadioManager.FAVOURITES_CHANGED);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 

@@ -33,7 +33,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -47,7 +46,7 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_S
  * Created by Manoj Kumar on 18-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class CountryDetailedActivity extends MasterActivity implements RadioListAdapter.Callback {
+public class SubCategoryDetailedActivity extends MasterActivity implements RadioListAdapter.Callback {
 
     private RecyclerView mRecyclerView;
     private RadioListAdapter mAdapter;
@@ -58,6 +57,8 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
+    private boolean isTagDisable=false;
+
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -97,12 +98,13 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
     private void init() {
         setContentView(R.layout.activity_country_detail);
         Bundle bundle = getIntent().getExtras();
-        String country = bundle.getString(CountryFragment.KEY_COUNTRY_NAME);
-        String code = bundle.getString(CountryFragment.KEY_COUNTRY_CODE);
-        String url = bundle.getString(CountryFragment.KEY_COUNTRY_URL);
+        String title = bundle.getString("title");
+        String permalink = bundle.getString("permalink");
+        String url = bundle.getString("url");
+        isTagDisable=bundle.getBoolean("isTagDisable");
 
         Toolbar toolbar = findViewById(R.id.toolbar_country_detail);
-        toolbar.setTitle(country);
+        toolbar.setTitle(title);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ImageView imageView = findViewById(R.id.img_country_detail);
@@ -112,6 +114,7 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
                 .centerCrop()
                 .skipMemoryCache(true)
                 .into(imageView);
+        imageView.setImageDrawable(getDrawable(R.drawable.ic_default_art_player_header));
 
         mProgressBar = findViewById(R.id.progress_country_details);
 
@@ -128,7 +131,7 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
                 isLoading = true;
                 currentPage = currentPage + 1;
 
-                new Handler().postDelayed(() -> getNextPageContent(code), 1000);
+                new Handler().postDelayed(() -> getNextPageContent(permalink), 1000);
             }
 
             @Override
@@ -147,11 +150,11 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
             }
         });
 
-        getContent(code);
+        getContent(permalink);
 
     }
 
-    private Call<RadioStationResponse> requestForContent(String countryCode) {
+    private Call<RadioStationResponse> requestForContent(String permalink) {
         ApiRequestController.RequestCallback requestCallback = null;
         try {
             requestCallback = ApiRequestController
@@ -169,7 +172,12 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
-        return requestCallback.getLocalRadio(countryCode, "radio", "popularity", String.valueOf(currentPage), "25");
+        if (isTagDisable){
+            return requestCallback.getRadioSation(permalink, String.valueOf(currentPage), "25");
+        }else {
+            return requestCallback.getTagsRadioStation(permalink, String.valueOf(currentPage), "25");
+        }
+
     }
 
     private void getContent(String countryCode) {

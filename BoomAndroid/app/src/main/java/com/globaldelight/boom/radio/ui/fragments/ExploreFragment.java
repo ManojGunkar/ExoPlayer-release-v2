@@ -28,8 +28,6 @@ import java.util.List;
  */
 public class ExploreFragment extends Fragment {
 
-    private final static int _ID_TAG = R.raw.tags;
-    private final static int _ID_CATEGORY = R.raw.categories;
     private RecyclerView recyclerView;
     private ProgressBar mProgressBar;
 
@@ -49,23 +47,11 @@ public class ExploreFragment extends Fragment {
         return view;
     }
 
-    private ExploreTag getTags() {
-        ExploreTag exploreTag = null;
-        try {
-            String json = readJsonFile(_ID_TAG);
-            System.out.println(json);
-            Gson gson = new Gson();
-            exploreTag = gson.fromJson(json, ExploreTag.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return exploreTag;
-    }
 
     private ExploreCategory getCategories() {
         ExploreCategory exploreCategories = null;
         try {
-            String json = readJsonFile(_ID_CATEGORY);
+            String json = readJsonFile(R.raw.categories);
             System.out.println(json);
             Gson gson = new Gson();
             exploreCategories = gson.fromJson(json, ExploreCategory.class);

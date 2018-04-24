@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.ui.CountryDetailedActivity;
-import com.globaldelight.boom.radio.webconnector.model.CountryResponse;
+import com.globaldelight.boom.radio.webconnector.model.CategoryResponse;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.List;
@@ -36,9 +36,9 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
     private Context mContext;
-    private List<CountryResponse.Content> mContents;
+    private List<CategoryResponse.Content> mContents;
 
-    public CountryListAdapter(Context context, List<CountryResponse.Content> contentList) {
+    public CountryListAdapter(Context context, List<CategoryResponse.Content> contentList) {
         this.mContext = context;
         this.mContents = contentList;
     }
@@ -108,18 +108,18 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return (position == mContents.size() - 1 && isLoadingAdded) ? LOADING : DISPLAYING;
     }
 
-    public void add(CountryResponse.Content content) {
+    public void add(CategoryResponse.Content content) {
         mContents.add(content);
         notifyItemInserted(mContents.size() - 1);
     }
 
-    public void addAll(List<CountryResponse.Content> moveResults) {
-        for (CountryResponse.Content result : moveResults) {
+    public void addAll(List<CategoryResponse.Content> moveResults) {
+        for (CategoryResponse.Content result : moveResults) {
             add(result);
         }
     }
 
-    public void remove(CountryResponse.Content content) {
+    public void remove(CategoryResponse.Content content) {
         int position = mContents.indexOf(content);
         if (position > -1) {
             mContents.remove(position);
@@ -141,14 +141,14 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void addLoadingFooter() {
         isLoadingAdded = true;
-        add(new CountryResponse().new Content());
+        add(new CategoryResponse().new Content());
     }
 
     public void removeLoadingFooter() {
         isLoadingAdded = false;
 
         int position = mContents.size() - 1;
-        CountryResponse.Content result = getItem(position);
+        CategoryResponse.Content result = getItem(position);
 
         if (result != null) {
             mContents.remove(position);
@@ -156,7 +156,7 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    public CountryResponse.Content getItem(int position) {
+    public CategoryResponse.Content getItem(int position) {
         return mContents.get(position);
     }
 

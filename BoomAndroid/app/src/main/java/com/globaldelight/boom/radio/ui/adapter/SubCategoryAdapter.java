@@ -14,21 +14,25 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.ui.SubCategoryActivity;
+import com.globaldelight.boom.radio.ui.SubCategoryDetailedActivity;
+import com.globaldelight.boom.radio.webconnector.model.CategoryResponse;
 import com.globaldelight.boom.radio.webconnector.model.ExploreCategory;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.List;
 
+import retrofit2.Callback;
+
 /**
- * Created by Manoj Kumar on 20-04-2018.
+ * Created by Manoj Kumar on 24-04-2018.
  * ©Global Delight Technologies Pvt. Ltd.
  */
-public class ExploreCategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SubCategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private List<ExploreCategory.Content> mContents;
+    private List<CategoryResponse.Content> mContents;
 
-    public ExploreCategoryAdapter(Context context, List<ExploreCategory.Content> contentList) {
+    public SubCategoryAdapter(Context context, List<CategoryResponse.Content> contentList) {
         this.mContext = context;
         this.mContents = contentList;
     }
@@ -41,15 +45,17 @@ public class ExploreCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @NonNull
     private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
-        return new LocalViewHolder(inflater.inflate(R.layout.item_category_radio, parent, false));
+        return new LocalViewHolder(inflater.inflate(R.layout.item_sub_category_radio, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+        CategoryResponse.Content content=mContents.get(position);
         LocalViewHolder viewHolder = (LocalViewHolder) holder;
-        viewHolder.txtTitle.setText(mContents.get(position).getName());
+        viewHolder.txtTitle.setText(content.getName());
         final int size = Utils.largeImageSize(mContext);
-        Glide.with(mContext).load(mContents.get(position).getLogo())
+        Glide.with(mContext).load(content.getLogo())
                 .placeholder(R.drawable.ic_default_art_grid)
                 .centerCrop()
                 .override(size, size)
@@ -57,13 +63,20 @@ public class ExploreCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         viewHolder.itemView.setOnClickListener(v -> {
             Toast.makeText(mContext, "pos " + position, Toast.LENGTH_SHORT).show();
-            Intent intent=new Intent(mContext, SubCategoryActivity.class);
-            if (mContents.get(position).getPermalink().equals("file://tags.json")){
-                intent.putExtra("isTag",true);
+            if (content.getProductCount()==null||content.getProductCount()==0){
+                    Intent intent=new Intent(mContext, SubCategoryActivity.class);
+                    intent.putExtra("title",content.getName());
+                    intent.putExtra("permalink",content.getPermalink());
+                    mContext.startActivity(intent);
             }
-            intent.putExtra("title",mContents.get(position).getName());
-            intent.putExtra("permalink",mContents.get(position).getPermalink());
-            mContext.startActivity(intent);
+            else {
+                Intent intent=new Intent(mContext, SubCategoryDetailedActivity.class);
+                intent.putExtra("title",content.getName());
+                intent.putExtra("isTagDisable",true);
+                intent.putExtra("permalink",content.getPermalink());
+                intent.putExtra("url",content.getLogo());
+                mContext.startActivity(intent);
+            }
 
         });
 
@@ -82,8 +95,8 @@ public class ExploreCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         public LocalViewHolder(View itemView) {
             super(itemView);
 
-            imgCatThumb = itemView.findViewById(R.id.img_category_radio);
-            txtTitle = itemView.findViewById(R.id.txt_title_category_radio);
+            imgCatThumb = itemView.findViewById(R.id.img_sub_category_radio);
+            txtTitle = itemView.findViewById(R.id.txt_title_sub_category_radio);
         }
 
     }

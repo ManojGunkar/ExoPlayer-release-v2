@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
-import com.globaldelight.boom.radio.utils.ContentComparator;
+import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
 import com.globaldelight.boom.radio.webconnector.ApiRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
@@ -76,6 +76,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
             switch (intent.getAction()) {
                 case ACTION_PLAYER_STATE_CHANGED:
                 case ACTION_SONG_CHANGED:
+                case FavouriteRadioManager.FAVOURITES_CHANGED:
 
                     if (null != radioListAdapter)
                         radioListAdapter.notifyDataSetChanged();
@@ -167,7 +168,6 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
                     if (contentList.size() == 0) {
                         showErrorView(1);
                     }
-                    Collections.sort(contentList, new ContentComparator());
                     totalPage = radioResponse.getBody().getTotalPages();
                     currentPage = radioResponse.getBody().getPage();
                     radioListAdapter.addAll(contentList);
@@ -201,7 +201,6 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
                     isLoading = false;
                     RadioStationResponse radioResponse = response.body();
                     contentList = radioResponse.getBody().getContent();
-                    Collections.sort(contentList, new ContentComparator());
                     totalPage = radioResponse.getBody().getTotalPages();
                     radioListAdapter.addAll(contentList);
                     radioListAdapter.notifyDataSetChanged();
@@ -267,6 +266,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
+        intentFilter.addAction(FavouriteRadioManager.FAVOURITES_CHANGED);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 

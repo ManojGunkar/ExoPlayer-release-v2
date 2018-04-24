@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.webconnector.model.AccessTokenModel;
-import com.globaldelight.boom.radio.webconnector.model.CountryResponse;
+import com.globaldelight.boom.radio.webconnector.model.CategoryResponse;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.globaldelight.boom.radio.webconnector.model.RadioPlayResponse;
 
@@ -131,6 +131,22 @@ public class ApiRequestController {
                 @Query("pageSize") String pageSize);
 
         @GET("/Pillow/search")
+        Call<RadioStationResponse> getTagsRadioStation(
+                @Query("tags") String tag,
+                @Query("page") String page,
+                @Query("pageSize") String pageSize);
+
+        @GET("/Pillow/{category}")
+        Call<RadioStationResponse> getRadioSation(
+                @Path(value = "category",encoded = true) String category,
+                @Query("page") String page,
+                @Query("pageSize") String pageSize);
+
+        @GET("/Pillow/{category}")
+        Call<CategoryResponse> getCategoryWiseStation(
+                @Path(value = "category",encoded = true) String category);
+
+        @GET("/Pillow/search")
         Call<RadioStationResponse> getSearchResult(
                 @Query("type") String type,
                 @Query("query") String query,
@@ -140,7 +156,7 @@ public class ApiRequestController {
 
 
         @GET("/Pillow/categories/radioline_countries")
-        Call<CountryResponse> getCountry(
+        Call<CategoryResponse> getCountry(
                 @Query("page") String page,
                 @Query("pageSize") String pageSize);
 

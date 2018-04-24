@@ -44,8 +44,6 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private boolean isPaginationEnabled = true;
 
 
-
-
     public RadioListAdapter(Context context, Callback callback, List<RadioStationResponse.Content> contentList) {
         this.mContext = context;
         this.mContents = contentList;
