@@ -2,12 +2,15 @@ package com.globaldelight.boom.radio.ui.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +44,7 @@ public class ExploreTagAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @NonNull
     private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
-        return new TagViewHolder(inflater.inflate(R.layout.item_category_radio, parent, false));
+        return new TagViewHolder(inflater.inflate(R.layout.item_tag_radio, parent, false));
     }
 
 
@@ -49,6 +52,16 @@ public class ExploreTagAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         TagViewHolder viewHolder = (TagViewHolder) holder;
         viewHolder.txtTitle.setText(mTags.get(position).getName());
+
+        int[] tagColors=mContext.getResources().getIntArray(R.array.radio_tag_colors);
+        for (int i=0;i<mTags.size();i++){
+            ColorStateList csl = new ColorStateList(new int[][]{{i}}, tagColors);
+            viewHolder.llTagBorder.setBackgroundTintList(csl);
+        }
+
+
+
+
 
         viewHolder.itemView.setOnClickListener(v -> {
             Intent intent=new Intent(mContext, SubCategoryDetailedActivity.class);
@@ -69,14 +82,14 @@ public class ExploreTagAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     protected class TagViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView imgTagThumb;
+        private LinearLayout llTagBorder;
         private TextView txtTitle;
 
         public TagViewHolder(View itemView) {
             super(itemView);
 
-            imgTagThumb = itemView.findViewById(R.id.img_category_radio);
-            txtTitle = itemView.findViewById(R.id.txt_title_category_radio);
+            llTagBorder = itemView.findViewById(R.id.ll_tag_radio);
+            txtTitle = itemView.findViewById(R.id.txt_title_tag_radio);
         }
 
     }

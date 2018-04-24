@@ -41,27 +41,46 @@ public class ExploreCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @NonNull
     private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
-        return new LocalViewHolder(inflater.inflate(R.layout.item_category_radio, parent, false));
+        return new LocalViewHolder(inflater.inflate(R.layout.item_explore_radio, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         LocalViewHolder viewHolder = (LocalViewHolder) holder;
-        viewHolder.txtTitle.setText(mContents.get(position).getName());
-        final int size = Utils.largeImageSize(mContext);
-        Glide.with(mContext).load(mContents.get(position).getLogo())
-                .placeholder(R.drawable.ic_default_art_grid)
-                .centerCrop()
-                .override(size, size)
-                .into(viewHolder.imgCatThumb);
+        ExploreCategory.Content content = mContents.get(position);
+        viewHolder.txtTitle.setText(content.getName());
+
+        switch (content.getName()){
+            case "Music Genre":
+                viewHolder.imgCatThumb.setImageDrawable(mContext.getDrawable(R.drawable.geners));
+            break;
+            case "Topic":
+                viewHolder.imgCatThumb.setImageDrawable(mContext.getDrawable(R.drawable.topic));
+                break;
+            case "Moods":
+                viewHolder.imgCatThumb.setImageDrawable(mContext.getDrawable(R.drawable.mood));
+                break;
+            case "Shows on Air":
+                viewHolder.imgCatThumb.setImageDrawable(mContext.getDrawable(R.drawable.on_air));
+                break;
+            case "Special Selection":
+                viewHolder.imgCatThumb.setImageDrawable(mContext.getDrawable(R.drawable.special_season));
+                break;
+            case "Spotlight":
+                viewHolder.imgCatThumb.setImageDrawable(mContext.getDrawable(R.drawable.geners));
+                break;
+            case "Tags":
+                viewHolder.imgCatThumb.setImageDrawable(mContext.getDrawable(R.drawable.tag));
+                break;
+        }
 
         viewHolder.itemView.setOnClickListener(v -> {
             Intent intent=new Intent(mContext, SubCategoryActivity.class);
-            if (mContents.get(position).getPermalink().equals("file://tags.json")){
+            if (content.getPermalink().equals("file://tags.json")){
                 intent.putExtra("isTag",true);
             }
-            intent.putExtra("title",mContents.get(position).getName());
-            intent.putExtra("permalink",mContents.get(position).getPermalink());
+            intent.putExtra("title",content.getName());
+            intent.putExtra("permalink",content.getPermalink());
             mContext.startActivity(intent);
 
         });
@@ -81,8 +100,8 @@ public class ExploreCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         public LocalViewHolder(View itemView) {
             super(itemView);
 
-            imgCatThumb = itemView.findViewById(R.id.img_category_radio);
-            txtTitle = itemView.findViewById(R.id.txt_title_category_radio);
+            imgCatThumb = itemView.findViewById(R.id.img_explore_radio);
+            txtTitle = itemView.findViewById(R.id.txt_title_explore_radio);
         }
 
     }

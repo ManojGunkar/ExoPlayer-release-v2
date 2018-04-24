@@ -76,6 +76,15 @@
             android:src="@drawable/ic_player_more_button"
             android:tint="@color/white" />
 
+        <CheckBox
+            android:id="@+id/check_fav_station"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:padding="3dp"
+            android:button="@drawable/fav_selector"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
 

@@ -1,40 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/ll_tag_radio"
+        <ImageView
+            android:id="@+id/img_explore_radio"
             android:layout_width="62dp"
             android:layout_height="62dp"
-            android:layout_margin="5dp"
             android:padding="15dp"
-            style="@style/RadioTagBorder"
-            android:layout_alignParentLeft="true"
-            android:shape="ring">
-
-            <ImageView
-                android:id="@+id/img_tag_radio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="centerCrop"
-                android:src="@drawable/tag" />
-        </LinearLayout>
+            android:layout_margin="5dp"
+            android:src="@drawable/geners" />
 
         <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/txt_title_tag_radio"
+            android:id="@+id/txt_title_explore_radio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/ll_tag_radio"
-            android:layout_toLeftOf="@+id/img_path_arrow"
             android:layout_centerInParent="true"
+            android:layout_toLeftOf="@+id/path_explore"
+            android:layout_toRightOf="@+id/img_explore_radio"
             android:padding="10dp"
             android:text="title"
             android:textColor="@color/track_selection"
@@ -42,13 +30,13 @@
             android:textStyle="normal" />
 
         <ImageView
-            android:id="@+id/img_path_arrow"
+            android:id="@+id/path_explore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:padding="10dp"
+            android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
+            android:padding="10dp"
             android:src="@drawable/path" />
 
     </RelativeLayout>
@@ -57,5 +45,4 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/library_separator" />
-
 </LinearLayout>
