@@ -54,6 +54,8 @@ import com.globaldelight.boom.playbackEvent.controller.PlayerUIController;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.player.AudioEffect;
+import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
+import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.view.CoachMarkerWindow;
@@ -116,6 +118,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private ImageView mNext, mPlayPause, mPrevious, mShuffle, mRepeat, mPlayerBackBtn, mLargeAlbumArt;
     private ImageView mEffectTab, mPlayerTab;
     private ImageView mUpNextBtnPanel, mPlayerOverFlowMenuPanel;
+    private CheckBox mFavouritesCheckbox;
     private LinearLayout mEffectContent, mPlayerLarge, mPlayerTitlePanel;
     private FrameLayout mPlayerContent;
     private View mPlayerBackground;
@@ -323,6 +326,15 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     /* Large Player UI and Functionality*/
     private void updateActionBarButtons() {
+
+        if ( mPlayingMediaItem != null && mPlayingMediaItem.getMediaType() == MediaType.RADIO ) {
+            mUpNextBtnPanel.setVisibility(View.GONE);
+            mPlayerOverFlowMenuPanel.setVisibility(View.GONE);
+            mFavouritesCheckbox.setVisibility(View.VISIBLE);
+            mFavouritesCheckbox.setChecked(FavouriteRadioManager.getInstance(getContext()).containsRadioStation((RadioStationResponse.Content)mPlayingMediaItem));
+            return;
+        }
+
         if (App.playbackManager().queue().getUpNextItemCount() > 0) {
             mUpNextBtnPanel.setVisibility(View.VISIBLE);
             mPlayerOverFlowMenuPanel.setVisibility(View.VISIBLE);
@@ -476,6 +488,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mUpNextBtnPanel.setOnClickListener(this);
         mPlayerOverFlowMenuPanel = mRootView.findViewById(R.id.player_overflow_button);
         mPlayerOverFlowMenuPanel.setOnClickListener(this);
+
+        mFavouritesCheckbox = mRootView.findViewById(R.id.check_fav_station);
+        mFavouritesCheckbox.setOnCheckedChangeListener(this::onFavouritesChanged);
 
         mLargeAlbumArt = mRootView.findViewById(R.id.player_album_art);
 
@@ -887,6 +902,15 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 FlurryAnalytics.getInstance(getActivity()).setEvent(FlurryEvents.Speaker_Dialog_Opened_From_Arrow);
                 openSpeakerDialog();
                 break;
+        }
+    }
+
+    private void onFavouritesChanged(CompoundButton button, boolean isChecked) {
+        if ( isChecked ) {
+            FavouriteRadioManager.getInstance(getContext()).addRadioStation((RadioStationResponse.Content)mPlayingMediaItem);
+        }
+        else {
+            FavouriteRadioManager.getInstance(getContext()).removeRadioSation((RadioStationResponse.Content)mPlayingMediaItem);
         }
     }
 
