@@ -4,6 +4,7 @@
     android:background="@color/black_overlay"
     android:layout_height="wrap_content">
 <RelativeLayout
+    android:id="@+id/progress_panel"
     android:layout_width="match_parent"
     android:padding="10dp"
     android:layout_height="wrap_content">

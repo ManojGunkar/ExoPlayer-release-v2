@@ -6,6 +6,7 @@ import android.security.keystore.KeyProperties;
 import android.util.Base64;
 
 import com.globaldelight.boom.BuildConfig;
+import com.google.common.base.Charsets;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -186,37 +187,26 @@ public class SecureStorage {
     }
 
     private static byte[] toBase64Data(String string) {
-        return toBase64(string).getBytes();
+        return toBase64(string).getBytes(Charsets.UTF_8);
     }
 
     private static String toBase64(String string) {
-        return toBase64(string.getBytes());
+        return toBase64(string.getBytes(Charsets.UTF_8));
     }
 
     private static String toBase64(byte[] data) {
-        try {
-            return new String(Base64.encode(data, Base64.DEFAULT), "UTF-8");
-        }
-        catch (UnsupportedEncodingException e) {
-            return null;
-        }
+        return new String(Base64.encode(data, Base64.DEFAULT), Charsets.UTF_8);
     }
 
     private static byte[] dataFromBase64(String string) {
-        return fromBase64(string).getBytes();
+        return Base64.decode(string.getBytes(Charsets.UTF_8), Base64.DEFAULT);
     }
 
     private static String fromBase64(String string) {
-        return fromBase64(string.getBytes());
+        return fromBase64(string.getBytes(Charsets.UTF_8));
     }
 
     private static String fromBase64(byte[] data) {
-        try {
-            return new String(Base64.decode(data, Base64.DEFAULT), "UTF-8");
-        }
-        catch (UnsupportedEncodingException e) {
-            return null;
-        }
+        return new String(Base64.decode(data, Base64.DEFAULT), Charsets.UTF_8);
     }
-
 }

@@ -3,7 +3,6 @@ package com.globaldelight.boom.app.adapters.song;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -22,8 +21,7 @@ import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.app.fragments.FavouriteListFragment;
@@ -38,13 +36,13 @@ import java.util.ArrayList;
 public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongViewHolder> {
 
     private static final String TAG = "SongListAdapter-TAG";
-    ArrayList<? extends IMediaItemBase> itemList;
+    ArrayList<? extends IMediaElement> itemList;
     private Activity activity;
     private @ItemType int listItemType;
     Fragment fragment;
 
 
-    public SongListAdapter(Activity activity, Fragment fragment, ArrayList<? extends IMediaItemBase> itemList, @ItemType int listItemType) {
+    public SongListAdapter(Activity activity, Fragment fragment, ArrayList<? extends IMediaElement> itemList, @ItemType int listItemType) {
         this.activity = activity;
         this.fragment = fragment;
         this.itemList = itemList;
@@ -66,19 +64,19 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         MediaItem mediaItem = (MediaItem) itemList.get(position);
         holder.position = position;
         holder.mainView.setElevation(0);
-        holder.title.setText(mediaItem.getItemTitle());
+        holder.title.setText(mediaItem.getTitle());
         holder.description.setVisibility(null != mediaItem.getItemArtist() ? View.VISIBLE : View.GONE);
         holder.description.setText(mediaItem.getItemArtist());
         setAlbumArt(mediaItem.getItemArtUrl(), holder);
 
-        updatePlayingTrack(holder, itemList.get(position).getItemId());
+        updatePlayingTrack(holder, itemList.get(position));
     }
 
-    private void updatePlayingTrack(SongViewHolder holder, long itemId){
-        IMediaItemBase nowPlayingItem = App.playbackManager().queue().getPlayingItem();
+    private void updatePlayingTrack(SongViewHolder holder, IMediaElement item){
+        IMediaElement nowPlayingItem = App.playbackManager().queue().getPlayingItem();
         if(null != nowPlayingItem) {
             boolean isMediaItem = (nowPlayingItem.getMediaType() == MediaType.DEVICE_MEDIA_LIB);
-            if (itemId == nowPlayingItem.getItemId()) {
+            if ( item.equalTo(nowPlayingItem) ) {
                 holder.overlay.setVisibility(View.VISIBLE );
                 holder.overlayPlay.setVisibility( View.VISIBLE );
                 holder.title.setSelected(true);
@@ -134,10 +132,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
                 }
                 if(listItemType == ItemType.RECENT_PLAYED){
                     FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_Recent_Playlist);
-
                 }else if(listItemType == ItemType.FAVOURITE){
                     FlurryAnalytics.getInstance(activity.getApplicationContext()).setEvent(FlurryEvents.Song_Played_favourite_Playlist);
-
                 }
             }
         });
@@ -155,7 +151,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         });
     }
 
-    private void updateFavoriteList(ArrayList<? extends IMediaItemBase> newList) {
+    private void updateFavoriteList(ArrayList<? extends IMediaElement> newList) {
         if(listItemType == ItemType.FAVOURITE) {
             itemList = newList;
             notifyDataSetChanged();
@@ -170,7 +166,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.SongVi
         return null == itemList ? 0 : itemList.size();
     }
 
-    public void updateMediaList(ArrayList<? extends IMediaItemBase> mediaList) {
+    public void updateMediaList(ArrayList<? extends IMediaElement> mediaList) {
         if(null != mediaList){
             this.itemList = mediaList;
         }

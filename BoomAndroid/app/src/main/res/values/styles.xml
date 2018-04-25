@@ -108,4 +108,8 @@
         <item name="searchHintIcon">@null</item>
     </style>
 
+    <style name="RadioTagBorder">
+        <item name="android:background">@drawable/radio_tag_border</item>
+    </style>
+
 </resources>

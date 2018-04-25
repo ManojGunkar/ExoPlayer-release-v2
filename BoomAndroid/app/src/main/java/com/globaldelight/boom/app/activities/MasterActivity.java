@@ -76,8 +76,7 @@ public class MasterActivity extends AppCompatActivity implements SlidingUpPanelL
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id){
+        switch (item.getItemId()){
             case android.R.id.home:
                 onBackPressed();
                 return true;

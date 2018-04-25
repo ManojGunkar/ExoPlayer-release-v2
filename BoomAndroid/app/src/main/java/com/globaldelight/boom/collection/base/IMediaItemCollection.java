@@ -1,4 +1,4 @@
-package com.globaldelight.boom.collection.local.callback;
+package com.globaldelight.boom.collection.base;
 
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Created by Rahul Agarwal on 8/4/2016.
  */
-public interface IMediaItemCollection extends IMediaItemBase {
+public interface IMediaItemCollection extends IMediaElement {
 
     String getItemSubTitle();
 
@@ -18,15 +18,11 @@ public interface IMediaItemCollection extends IMediaItemBase {
 
     ArrayList<String> getArtUrlList();
 
-    int getCurrentIndex();
-
-    void setCurrentIndex(int currentIndex);
-
     void setArtUrlList(ArrayList<String> artUrlList);
 
-    void setMediaElement(ArrayList<? extends IMediaItemBase> iMediaItemList);
+    void setMediaElement(ArrayList<? extends IMediaElement> iMediaItemList);
 
-    ArrayList<? extends IMediaItemBase> getMediaElement();
+    ArrayList<? extends IMediaElement> getMediaElement();
 
     @ItemType int getItemType();
 
@@ -34,7 +30,7 @@ public interface IMediaItemCollection extends IMediaItemBase {
 
     @ItemType int getParentType();
 
-    IMediaItemBase getItemAt(int index);
+    IMediaElement getItemAt(int index);
 
     int count();
 }

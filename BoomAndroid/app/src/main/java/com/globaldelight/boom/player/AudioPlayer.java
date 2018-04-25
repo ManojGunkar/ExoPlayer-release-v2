@@ -70,7 +70,7 @@ public class AudioPlayer implements ExoPlayer.EventListener {
     private Callback mCallback = null;
     private @State int  state = STOPPED;
     private String sourcePath = null;
-    private long sourceId = -1;
+    private String sourceId = null;
     private Context mContext;
     private Handler handler = new Handler();
     private AudioConfiguration mAudioConfig;
@@ -116,11 +116,11 @@ public class AudioPlayer implements ExoPlayer.EventListener {
         sourcePath = src;
     }
 
-    public void setDataSourceId(long srcId) {
+    public void setDataSourceId(String srcId) {
         sourceId = srcId;
     }
 
-    public long getDataSourceId(){
+    public String getDataSourceId(){
         return sourceId;
     }
 

@@ -1,32 +1,25 @@
 package com.globaldelight.boom.app.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
-import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.app.fragments.AlbumDetailItemFragment;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.utils.Utils;
-
-import java.io.File;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -66,28 +59,7 @@ public class AlbumDetailItemActivity extends MasterActivity implements AlbumDeta
     private void initViews() {
         setDrawerLocked(true);
         mFloatPlayAlbums = (FloatingActionButton) findViewById(R.id.fab);
-        mFloatPlayAlbums.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (null != currentItem) {
-                    if (currentItem.getItemType() == ItemType.GENRE) {
-//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Genere_Section);
-                        FlurryAnalytics.getInstance(AlbumDetailItemActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Genere_Section);
-                    } else if (currentItem.getItemType() == ItemType.ARTIST) {
-//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Artist_Section);
-                        FlurryAnalytics.getInstance(AlbumDetailItemActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Artist_Section);
-                    }
-                }
-            if( null != fragment ){
-                fragment.onFloatPlayAlbums();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        toggleSlidingPanel();
-                    }
-                }, 1000);            }
-            }
-        });
+        mFloatPlayAlbums.setOnClickListener(this::onPlay);
         mFloatPlayAlbums.setEnabled(false);
         mFloatPlayAlbums.setVisibility(View.GONE);
 
@@ -105,6 +77,22 @@ public class AlbumDetailItemActivity extends MasterActivity implements AlbumDeta
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.item_detail_container, fragment)
                 .commit();
+    }
+
+    private void onPlay(View v) {
+        if (null != currentItem) {
+            if (currentItem.getItemType() == ItemType.GENRE) {
+//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Genere_Section);
+                FlurryAnalytics.getInstance(AlbumDetailItemActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Genere_Section);
+            } else if (currentItem.getItemType() == ItemType.ARTIST) {
+//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Artist_Section);
+                FlurryAnalytics.getInstance(AlbumDetailItemActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Artist_Section);
+            }
+        }
+        if( null != fragment ){
+            fragment.onFloatPlayAlbums();
+            new Handler().postDelayed(this::toggleSlidingPanel, 1000);
+        }
     }
 
     private void setAlbumArtSize(int width, int height) {

@@ -124,7 +124,6 @@ public class LibraryFragment extends Fragment {
         mViewPager = rootView.findViewById(R.id.container);
 
         setupViewPager(mViewPager);
-        getActivity().setTitle(R.string.music_library);
     }
 
 

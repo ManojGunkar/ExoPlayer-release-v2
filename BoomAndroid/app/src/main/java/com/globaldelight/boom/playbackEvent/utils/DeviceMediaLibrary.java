@@ -7,10 +7,10 @@ import android.provider.MediaStore;
 
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.app.adapters.search.utils.SearchResult;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.app.sharedPreferences.UserPreferenceHandler;
 
@@ -36,7 +36,7 @@ public class DeviceMediaLibrary {
 
     private Context mContext;
     private HashMap<String, String> mAlbumArtList = new HashMap<>();
-    private HashMap<Long, String> mArtistArtList = new HashMap<>();
+    private HashMap<String, String> mArtistArtList = new HashMap<>();
 
     private DeviceMediaLibrary(Context context) {
         mContext = context;
@@ -51,7 +51,7 @@ public class DeviceMediaLibrary {
         return mAlbumArtList.get(album);
     }
 
-    public String getArtistArt(Long itemId) {
+    public String getArtistArt(String itemId) {
         return mArtistArtList.get(itemId);
     }
 
@@ -83,7 +83,7 @@ public class DeviceMediaLibrary {
     }
 
     private void initArtistArtList() {
-        HashMap<Long, String> artistList = new HashMap<>();
+        HashMap<String, String> artistList = new HashMap<>();
         System.gc();
         final String orderBy = MediaStore.Audio.Artists.ARTIST;
         Cursor artistListCursor = mContext.getContentResolver().
@@ -97,7 +97,9 @@ public class DeviceMediaLibrary {
 
             //add albums to list
             do {
-                artistList.put(artistListCursor.getLong(Item_ID_Column), getAlbumArtByArtist(mContext, artistListCursor.getLong(Item_ID_Column)));
+                String id = String.valueOf(artistListCursor.getLong(Item_ID_Column));
+                String artistId = String.valueOf(artistListCursor.getLong(Item_ID_Column));
+                artistList.put(id, getAlbumArtByArtist(mContext, artistId));
             }
             while (artistListCursor.moveToNext());
         }
@@ -109,11 +111,11 @@ public class DeviceMediaLibrary {
         return;
     }
 
-    public static String getAlbumArtByArtist(Context context, Long artistId) {
+    public static String getAlbumArtByArtist(Context context, String artistId) {
         final String where = MediaStore.Audio.Media.ARTIST_ID + "=?";
 
         Cursor albumListCursor = context.getContentResolver().
-                query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, new String[]{MediaStore.Audio.Albums.ALBUM_ART}, where, new String[]{String.valueOf(artistId)}, null);
+                query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, new String[]{MediaStore.Audio.Albums.ALBUM_ART}, where, new String[]{artistId}, null);
 
         String albumArt = null;
         if (albumListCursor != null && albumListCursor.moveToFirst()) {
@@ -175,13 +177,19 @@ public class DeviceMediaLibrary {
                 if ( artistName == null || artistName.equalsIgnoreCase("<unknown>") ) {
                     artistName = context.getResources().getString(R.string.unknown_artist);
                 }
-                songList.add(new MediaItem(songListCursor.getLong(Song_Id_Column), songListCursor.getString(Song_Name_Column),
+                songList.add(new MediaItem(Long.toString(songListCursor.getLong(Song_Id_Column)),
+                        songListCursor.getString(Song_Name_Column),
                         songListCursor.getString(Song_Display_Name_Column), songListCursor.getString(Song_Path_Column),
-                        songListCursor.getLong(Album_ID_Column), songListCursor.getString(Album_Name_Column),
-                        songListCursor.getLong(Artist_ID_Column), artistName,
-                        songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
+                        Long.toString(songListCursor.getLong(Album_ID_Column)),
+                        songListCursor.getString(Album_Name_Column),
+                        Long.toString(songListCursor.getLong(Artist_ID_Column)),
+                        artistName,
+                        songListCursor.getLong(Duration_Column),
+                        songListCursor.getLong(Date_Added_Column),
                         /*getAlbumArtByAlbum(context, songListCursor.getString(Album_Name_Column))*/ null, ItemType.SONGS,
-                        MediaType.DEVICE_MEDIA_LIB, ItemType.SONGS, 0, null));
+                        MediaType.DEVICE_MEDIA_LIB, ItemType.SONGS,
+                        Long.toString(0),
+                        null));
             }while (songListCursor.moveToNext());
 
         }
@@ -208,7 +216,7 @@ public class DeviceMediaLibrary {
         return str;
     }
 
-    public static String getAlbumArtByAlbumId(Context context, long albumId) {
+    public static String getAlbumArtByAlbumId(Context context, String albumId) {
         Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                 new String[]{MediaStore.Audio.Albums.ALBUM_ART},
                 MediaStore.Audio.Albums._ID + "=?",
@@ -227,7 +235,7 @@ public class DeviceMediaLibrary {
 
 /*****************************************************Albums Query****************************************************************/
 
-    public static ArrayList<? extends IMediaItemBase> getAlbumList(Context context) {
+    public static ArrayList<? extends IMediaElement> getAlbumList(Context context) {
         ArrayList<MediaItemCollection> albumList = new ArrayList<>();
         System.gc();
         String orderBy;
@@ -259,7 +267,7 @@ public class DeviceMediaLibrary {
             //add albums to list
             do {
                 if(albumListCursor.getInt(Item_Count_Column) > 0)
-                albumList.add(new MediaItemCollection(albumListCursor.getLong(Item_ID_Column),
+                albumList.add(new MediaItemCollection(Long.toString(albumListCursor.getLong(Item_ID_Column)),
                         albumListCursor.getString(Item_Title_Column),
                         albumListCursor.getString(Item_Sub_Title_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : albumListCursor.getString(Item_Sub_Title_Column),
                         albumListCursor.getString(Item_Album_Art_Path_Column),
@@ -273,7 +281,7 @@ public class DeviceMediaLibrary {
         return albumList;
     }
 
-    public static ArrayList<? extends IMediaItem> getAlbumDetail(Context context, long itemId, String itemTitle) {
+    public static ArrayList<? extends IMediaItem> getAlbumDetail(Context context, String itemId, String itemTitle) {
         System.gc();
         ArrayList<IMediaItem> songList = new ArrayList<>();
 
@@ -318,9 +326,13 @@ public class DeviceMediaLibrary {
                     (MediaStore.Audio.Media.DATE_ADDED);
 
             do{
-                songList.add(new MediaItem(songListCursor.getLong(Song_Id_Column), songListCursor.getString(Song_Title_Column),
-                        songListCursor.getString(Song_Display_Name_Column), songListCursor.getString(Song_Path_Column),
-                        songListCursor.getLong(Album_ID_Column), songListCursor.getString(Album_Name_Column), songListCursor.getLong(Artist_ID_Column),
+                songList.add(new MediaItem(Long.toString(songListCursor.getLong(Song_Id_Column)),
+                        songListCursor.getString(Song_Title_Column),
+                        songListCursor.getString(Song_Display_Name_Column),
+                        songListCursor.getString(Song_Path_Column),
+                        Long.toString(songListCursor.getLong(Album_ID_Column)),
+                        songListCursor.getString(Album_Name_Column),
+                        Long.toString(songListCursor.getLong(Artist_ID_Column)),
                         songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
                         songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
                         getAlbumArtByAlbum(context, songListCursor.getString(Album_Name_Column)), ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.ALBUM, itemId, null));
@@ -363,7 +375,7 @@ public class DeviceMediaLibrary {
                     artistTitle = context.getResources().getString(R.string.unknown_artist);
                 }
 
-                artistList.add(new MediaItemCollection(artistListCursor.getLong(Item_ID_Column),
+                artistList.add(new MediaItemCollection(Long.toString(artistListCursor.getLong(Item_ID_Column)),
                         artistTitle,
                         null, /*getAlbumArtByArtist(context, artistListCursor.getString(Item_Title_Column))*/ null,
                         artistListCursor.getInt(Item_Count_Column), artistListCursor.getInt(numOfAlbumsColumn), ItemType.ARTIST,
@@ -377,11 +389,11 @@ public class DeviceMediaLibrary {
         return artistList;
     }
 
-    public static ArrayList<? extends IMediaItemBase> getArtistsAlbumDetails(Context context, long itemId, String itemTitle, int itemCount) {
+    public static ArrayList<? extends IMediaElement> getArtistsAlbumDetails(Context context, String itemId, String itemTitle, int itemCount) {
         final ArrayList<MediaItemCollection> albumList = new ArrayList<>();
         System.gc();
         Cursor albumListCursor = context.getContentResolver().
-                query(MediaStore.Audio.Artists.Albums.getContentUri("external", itemId),
+                query(MediaStore.Audio.Artists.Albums.getContentUri("external", Long.parseLong(itemId)),
                         null, null, null, MediaStore.Audio.Albums.DEFAULT_SORT_ORDER);
         if (albumListCursor != null && albumListCursor.moveToFirst()) {
             //get columns
@@ -404,7 +416,7 @@ public class DeviceMediaLibrary {
             albumList.add(new MediaItemCollection(itemId, context.getResources().getString(R.string.all_songs), null, null, itemCount, 0, ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.ARTIST));
 
             do {
-                albumList.add(new MediaItemCollection(albumListCursor.getLong(Item_ID_Column), albumListCursor.getString(Item_Title_Column),
+                albumList.add(new MediaItemCollection(Long.toString(albumListCursor.getLong(Item_ID_Column)), albumListCursor.getString(Item_Title_Column),
                         albumListCursor.getString(Item_Sub_Title_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : albumListCursor.getString(Item_Sub_Title_Column),
                         albumListCursor.getString(Item_Album_Art_Path_Column),
                         albumListCursor.getInt(Item_Count_Column), 0, ItemType.ALBUM, MediaType.DEVICE_MEDIA_LIB, ItemType.ARTIST));
@@ -417,7 +429,7 @@ public class DeviceMediaLibrary {
         return albumList;
     }
 
-    public static ArrayList<String> getArtistsArtList(Context context, long itemId, String itemTitle) {
+    public static ArrayList<String> getArtistsArtList(Context context, String itemId, String itemTitle) {
         System.gc();
         ArrayList<String> urlList = new ArrayList<>();
         StringBuilder where = new StringBuilder();
@@ -435,7 +447,7 @@ public class DeviceMediaLibrary {
                     (MediaStore.Audio.Media.ALBUM_ID);
 
             do{
-                String url = getAlbumArtByAlbumId(context, songListCursor.getLong(Album_ID_Column));
+                String url = getAlbumArtByAlbumId(context, Long.toString(songListCursor.getLong(Album_ID_Column)));
                 if(url != null){
                     urlList.add(url);
                 }
@@ -447,7 +459,7 @@ public class DeviceMediaLibrary {
         return urlList;
     }
 
-    public static ArrayList<? extends IMediaItem> getSongListOfArtistsAlbum(Context context, long parentId, long itemId) {
+    public static ArrayList<? extends IMediaItem> getSongListOfArtistsAlbum(Context context, String parentId, String itemId) {
         System.gc();
         ArrayList<IMediaItem> songList = new ArrayList<>();
 
@@ -493,14 +505,20 @@ public class DeviceMediaLibrary {
                     (MediaStore.Audio.Media.DATE_ADDED);
 
             do{
-                songList.add(new MediaItem(songListCursor.getLong(Song_Id_Column), songListCursor.getString(Song_Name_Column),
-                        songListCursor.getString(Song_Display_Name_Column), songListCursor.getString(Song_Path_Column),
-                        songListCursor.getLong(Album_ID_Column), songListCursor.getString(Album_Name_Column),
-                        songListCursor.getLong(Artist_ID_Column),
+                songList.add(new MediaItem(Long.toString(songListCursor.getLong(Song_Id_Column)),
+                        songListCursor.getString(Song_Name_Column),
+                        songListCursor.getString(Song_Display_Name_Column),
+                        songListCursor.getString(Song_Path_Column),
+                        Long.toString(songListCursor.getLong(Album_ID_Column)),
+                        songListCursor.getString(Album_Name_Column),
+                        Long.toString(songListCursor.getLong(Artist_ID_Column)),
                         songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
-                        songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
+                        songListCursor.getLong(Duration_Column),
+                        songListCursor.getLong(Date_Added_Column),
                         null, ItemType.SONGS,
-                        MediaType.DEVICE_MEDIA_LIB, ItemType.ARTIST, parentId, null));
+                        MediaType.DEVICE_MEDIA_LIB, ItemType.ARTIST,
+                        parentId,
+                        null));
             }while (songListCursor.moveToNext());
         }
         if (songListCursor != null) {
@@ -509,7 +527,7 @@ public class DeviceMediaLibrary {
         return songList;
     }
 
-    public static ArrayList<? extends IMediaItem> getSongListOfArtist(Context context, long itemId, String itemTitle) {
+    public static ArrayList<? extends IMediaItem> getSongListOfArtist(Context context, String itemId, String itemTitle) {
         if(itemTitle.equalsIgnoreCase(context.getResources().getString(R.string.unknown_artist))){
             itemTitle = "<unknown>";
         }
@@ -561,14 +579,17 @@ public class DeviceMediaLibrary {
                     (MediaStore.Audio.Media.DATE_ADDED);
 
             do{
-                songList.add(new MediaItem(songListCursor.getLong(Song_Id_Column), songListCursor.getString(Song_Name_Column),
+                songList.add(new MediaItem(Long.toString(songListCursor.getLong(Song_Id_Column)),
+                        songListCursor.getString(Song_Name_Column),
                         songListCursor.getString(Song_Display_Name_Column), songListCursor.getString(Song_Path_Column),
-                        songListCursor.getLong(Album_ID_Column), songListCursor.getString(Album_Name_Column),
-                        songListCursor.getLong(Artist_ID_Column),
+                        Long.toString(songListCursor.getLong(Album_ID_Column)),
+                        songListCursor.getString(Album_Name_Column),
+                        Long.toString(songListCursor.getLong(Artist_ID_Column)),
                         songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
                         songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
                         null, ItemType.SONGS,
-                        MediaType.DEVICE_MEDIA_LIB, ItemType.ARTIST, itemId, null));
+                        MediaType.DEVICE_MEDIA_LIB, ItemType.ARTIST,
+                        itemId, null));
             }while (songListCursor.moveToNext());
         }
         if (songListCursor != null) {
@@ -594,11 +615,11 @@ public class DeviceMediaLibrary {
            do{
                int count = 0;
                try {
-                   count = makePlayListSongCursor(context, playListCursor.getLong(playListCursor.getColumnIndex(MediaStore.Audio.Playlists._ID))).getCount();
+                   count = makePlayListSongCursor(context, Long.toString(playListCursor.getLong(playListCursor.getColumnIndex(MediaStore.Audio.Playlists._ID)))).getCount();
                }catch (Exception e){}
 
                playList.add(new MediaItemCollection(
-                       playListCursor.getLong(playListCursor.getColumnIndex(MediaStore.Audio.Playlists._ID)),
+                       Long.toString(playListCursor.getLong(playListCursor.getColumnIndex(MediaStore.Audio.Playlists._ID))),
                        playListCursor.getString(playListCursor.getColumnIndex(MediaStore.Audio.Playlists.NAME)),
                        null, null, count, 0, ItemType.PLAYLIST, MediaType.DEVICE_MEDIA_LIB, ItemType.PLAYLIST));
            }while (playListCursor.moveToNext());
@@ -606,7 +627,7 @@ public class DeviceMediaLibrary {
         return playList;
     }
 
-    public static ArrayList<String> getPlaylistArtList(Context context, long itemId, String itemTitle) {
+    public static ArrayList<String> getPlaylistArtList(Context context, String itemId, String itemTitle) {
         Cursor songListCursor = makePlayListSongCursor(context, itemId);
         ArrayList<String> urlList = new ArrayList<>();
         // Gather the data
@@ -623,13 +644,13 @@ public class DeviceMediaLibrary {
         return urlList;
     }
 
-    private static Cursor makePlayListSongCursor(Context context, long playlistId) {
+    private static Cursor makePlayListSongCursor(Context context, String playlistId) {
         // Match the songs up with the playList
         final StringBuilder selection = new StringBuilder();
         selection.append(MediaStore.Audio.Playlists.Members.IS_MUSIC + "=1");
         selection.append(" AND " + MediaStore.Audio.Playlists.Members.TITLE + "!=''"); //$NON-NLS-2$
         return context.getContentResolver().query(
-                MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId), new String[] {
+                MediaStore.Audio.Playlists.Members.getContentUri("external", Long.parseLong(playlistId)), new String[] {
                         /* 0 */
                         MediaStore.Audio.Playlists.Members._ID,
                         /* 1 */
@@ -644,7 +665,7 @@ public class DeviceMediaLibrary {
                 }, selection.toString(), null, MediaStore.Audio.Playlists.Members.PLAY_ORDER);
     }
 
-    public static ArrayList<? extends IMediaItem> getPlaylistSongs(Context context, long itemId, String itemTitle) {
+    public static ArrayList<? extends IMediaItem> getPlaylistSongs(Context context, String itemId, String itemTitle) {
 //        returns all the songs of playlist
         System.gc();
         ArrayList<IMediaItem> songList = new ArrayList<>();
@@ -654,7 +675,7 @@ public class DeviceMediaLibrary {
         String whereVal[] = {String.valueOf(itemId)};
         String orderBy = MediaStore.Audio.Playlists.Members.TITLE+ " COLLATE NOCASE ASC";
 
-        Cursor songListCursor = context.getContentResolver().query(MediaStore.Audio.Playlists.Members.getContentUri("external", itemId),
+        Cursor songListCursor = context.getContentResolver().query(MediaStore.Audio.Playlists.Members.getContentUri("external", Long.parseLong(itemId)),
                 null, where, null, orderBy);
 
         if (songListCursor != null && songListCursor.moveToFirst()) {
@@ -690,12 +711,18 @@ public class DeviceMediaLibrary {
                     (MediaStore.Audio.Media.DATE_ADDED);
 
             do{
-                songList.add(new MediaItem(songListCursor.getLong(Song_Id_Column), songListCursor.getString(Song_Name_Column),
+                songList.add(new MediaItem(
+                        Long.toString(songListCursor.getLong(Song_Id_Column)),
+                        songListCursor.getString(Song_Name_Column),
                         songListCursor.getString(Song_Display_Name_Column), songListCursor.getString(Song_Path_Column),
-                        songListCursor.getLong(Album_ID_Column), songListCursor.getString(Album_Name_Column),
-                        songListCursor.getLong(Artist_ID_Column), songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
-                        songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
-                        null, ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.PLAYLIST, itemId, null));
+                        Long.toString(songListCursor.getLong(Album_ID_Column)),
+                        songListCursor.getString(Album_Name_Column),
+                        Long.toString(songListCursor.getLong(Artist_ID_Column)),
+                        songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
+                        songListCursor.getLong(Duration_Column),
+                        songListCursor.getLong(Date_Added_Column),
+                        null, ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.PLAYLIST,
+                        itemId, null));
             }while (songListCursor.moveToNext());
         }
         if (songListCursor != null) {
@@ -731,10 +758,10 @@ public class DeviceMediaLibrary {
 
                     int genreAlbumCount = 0;
                     try{
-                        genreAlbumCount = getGenreAlbumCursor(context, genreId).getCount();
+                        genreAlbumCount = getGenreAlbumCursor(context, Long.toString(genreId)).getCount();
                     }catch (Exception e){}
 
-                    genreList.add(new MediaItemCollection(genreId, genreListCursor.getString(genreListCursor.getColumnIndex(MediaStore.Audio.Genres.NAME)),
+                    genreList.add(new MediaItemCollection(Long.toString(genreId), genreListCursor.getString(genreListCursor.getColumnIndex(MediaStore.Audio.Genres.NAME)),
                             genreSongCursor.getString(3), /*getAlbumArtByAlbum(context, genreSongCursor.getString(3))*/ null, genreSongCount, genreAlbumCount,
                             ItemType.GENRE, MediaType.DEVICE_MEDIA_LIB, ItemType.GENRE));
                 }
@@ -770,14 +797,14 @@ public class DeviceMediaLibrary {
                 }, selection.toString(), null, MediaStore.Audio.Genres.Members._ID);
     }
 
-    private static Cursor getGenreAlbumCursor(Context context, long genreId){
-        Uri uri = MediaStore.Audio.Genres.Members.getContentUri("external", genreId);
+    private static Cursor getGenreAlbumCursor(Context context, String genreId){
+        Uri uri = MediaStore.Audio.Genres.Members.getContentUri("external", Long.parseLong(genreId));
         String selection = MediaStore.Audio.Media.ALBUM + " IS NOT NULL) GROUP BY (" + MediaStore.Audio.Media.ALBUM;
         String orderBy = MediaStore.Audio.Media.ALBUM;
         return context.getContentResolver().query(uri, null, selection, null, orderBy);
     }
 
-    public static ArrayList<? extends IMediaItemBase> getGenresAlbumDetails(Context context, long itemId, String itemTitle, int itemCount) {
+    public static ArrayList<? extends IMediaElement> getGenresAlbumDetails(Context context, String itemId, String itemTitle, int itemCount) {
         Cursor albumListCursor = getGenreAlbumCursor(context, itemId);
         ArrayList<MediaItemCollection> genreAlbumList = new ArrayList<MediaItemCollection>();
 
@@ -804,7 +831,7 @@ public class DeviceMediaLibrary {
 
                 }
 
-                genreAlbumList.add(new MediaItemCollection(albumListCursor.getLong(Item_ID_Column), albumTitle,
+                genreAlbumList.add(new MediaItemCollection(Long.toString(albumListCursor.getLong(Item_ID_Column)), albumTitle,
                         albumListCursor.getString(Item_Sub_Title_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : albumListCursor.getString(Item_Sub_Title_Column),
                         null, count, 0, ItemType.ALBUM, MediaType.DEVICE_MEDIA_LIB, ItemType.GENRE));
 
@@ -817,14 +844,14 @@ public class DeviceMediaLibrary {
         return genreAlbumList;
     }
 
-    public static ArrayList<String> getGenreArtList(Context context, long itemId, String itemTitle) {
+    public static ArrayList<String> getGenreArtList(Context context, String itemId, String itemTitle) {
         ArrayList<String> artList = new ArrayList<String>();
         System.gc();
         StringBuilder selection = new StringBuilder();
         selection.append(MediaStore.Audio.Genres.Members.IS_MUSIC + "=1");
         selection.append(" AND " + MediaStore.Audio.Genres.Members.TITLE + "!=''"); //$NON-NLS-2$
         Cursor songListCursor = context.getContentResolver().query(
-                MediaStore.Audio.Genres.Members.getContentUri("external", itemId), null, selection.toString(), null, MediaStore.Audio.Genres.Members._ID);
+                MediaStore.Audio.Genres.Members.getContentUri("external", Long.parseLong(itemId)), null, selection.toString(), null, MediaStore.Audio.Genres.Members._ID);
 
         if (songListCursor != null && songListCursor.moveToFirst()) {
 
@@ -832,7 +859,7 @@ public class DeviceMediaLibrary {
                     (MediaStore.Audio.Media.ALBUM_ID);
 
             do{
-                String url = getAlbumArtByAlbumId(context, songListCursor.getLong(Album_ID_Column));
+                String url = getAlbumArtByAlbumId(context, Long.toString(songListCursor.getLong(Album_ID_Column)));
                 if(url != null){
                     artList.add(url);
                 }
@@ -845,7 +872,7 @@ public class DeviceMediaLibrary {
         return artList;
     }
 
-    public static ArrayList<? extends IMediaItem> getSongListOfGenreAlbum(Context context, long parentId, String parentTitle, long itemId, String itemTitle) {
+    public static ArrayList<? extends IMediaItem> getSongListOfGenreAlbum(Context context, String parentId, String parentTitle, String itemId, String itemTitle) {
         ArrayList<IMediaItem> songList = new ArrayList<>();
         Cursor songListCursor = getSongOfGenreAlbumCursor(context, parentId, itemTitle);
         int Song_Id_Column = songListCursor.getColumnIndex
@@ -879,12 +906,17 @@ public class DeviceMediaLibrary {
                 (MediaStore.Audio.Media.DATE_ADDED);
         if (songListCursor != null && songListCursor.moveToFirst()) {
             do {
-                songList.add(new MediaItem(songListCursor.getLong(Song_Id_Column), songListCursor.getString(Song_Name_Column),
+                songList.add(new MediaItem(Long.toString(songListCursor.getLong(Song_Id_Column)),
+                        songListCursor.getString(Song_Name_Column),
                         songListCursor.getString(Song_Display_Name_Column), songListCursor.getString(Song_Path_Column),
-                        songListCursor.getLong(Album_ID_Column), songListCursor.getString(Album_Name_Column),
-                        songListCursor.getLong(Artist_ID_Column), songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
-                        songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
-                        null, ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.GENRE, parentId, null));
+                        Long.toString(songListCursor.getLong(Album_ID_Column)),
+                        songListCursor.getString(Album_Name_Column),
+                        Long.toString(songListCursor.getLong(Artist_ID_Column)),
+                        songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
+                        songListCursor.getLong(Duration_Column),
+                        songListCursor.getLong(Date_Added_Column),
+                        null, ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.GENRE,
+                        parentId, null));
             } while (songListCursor.moveToNext());
             if (songListCursor != null) {
                 songListCursor.close();
@@ -893,8 +925,8 @@ public class DeviceMediaLibrary {
         return songList;
     }
 
-    private static Cursor getSongOfGenreAlbumCursor(Context context, final Long genreId, final String album){
-        Uri uri = MediaStore.Audio.Genres.Members.getContentUri("external", genreId);
+    private static Cursor getSongOfGenreAlbumCursor(Context context,  String genreId, final String album){
+        Uri uri = MediaStore.Audio.Genres.Members.getContentUri("external", Long.parseLong(genreId));
         final String where = MediaStore.Audio.Media.IS_MUSIC + "=1 AND "
                 + MediaStore.Audio.Media.ALBUM + "=?";
         final String orderBy = MediaStore.Audio.Media.TITLE;
@@ -902,14 +934,14 @@ public class DeviceMediaLibrary {
         return context.getContentResolver().query(uri, null, where, new String[]{album}, orderBy)/*.getCount()*/;
     }
 
-    public static ArrayList<? extends IMediaItem> getSongListOfGenre(Context context, long itemId, String itemTitle) {
+    public static ArrayList<? extends IMediaItem> getSongListOfGenre(Context context, String itemId, String itemTitle) {
         //Get a cursor of all genres in MediaStore.
         ArrayList<IMediaItem> songList = new ArrayList<>();
         StringBuilder selection = new StringBuilder();
         selection.append(MediaStore.Audio.Genres.Members.IS_MUSIC + "=1");
         selection.append(" AND " + MediaStore.Audio.Genres.Members.TITLE + "!=''"); //$NON-NLS-2$
         Cursor songListCursor = context.getContentResolver().query(
-                MediaStore.Audio.Genres.Members.getContentUri("external", itemId), null, selection.toString(), null, MediaStore.Audio.Genres.Members._ID);
+                MediaStore.Audio.Genres.Members.getContentUri("external", Long.parseLong(itemId)), null, selection.toString(), null, MediaStore.Audio.Genres.Members._ID);
 
         if (songListCursor != null && songListCursor.moveToFirst()) {
             int Song_Id_Column = songListCursor.getColumnIndex
@@ -943,10 +975,13 @@ public class DeviceMediaLibrary {
                     (MediaStore.Audio.Media.DATE_ADDED);
 
             do {
-                songList.add(new MediaItem(songListCursor.getLong(Song_Id_Column), songListCursor.getString(Song_Name_Column),
+                songList.add(new MediaItem(Long.toString(songListCursor.getLong(Song_Id_Column)),
+                        songListCursor.getString(Song_Name_Column),
                         songListCursor.getString(Song_Display_Name_Column), songListCursor.getString(Song_Path_Column),
-                        songListCursor.getLong(Album_ID_Column), songListCursor.getString(Album_Name_Column),
-                        songListCursor.getLong(Artist_ID_Column), songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
+                        Long.toString(songListCursor.getLong(Album_ID_Column)),
+                        songListCursor.getString(Album_Name_Column),
+                        Long.toString(songListCursor.getLong(Artist_ID_Column)),
+                        songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
                         songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
                         null, ItemType.SONGS, MediaType.DEVICE_MEDIA_LIB, ItemType.GENRE, itemId, null));
             } while (songListCursor.moveToNext());
@@ -1002,13 +1037,14 @@ public class DeviceMediaLibrary {
                     (MediaStore.Audio.Media.DATE_ADDED);
 
             do{
-                songList.add(new MediaItem(songListCursor.getLong(Song_Id_Column), songListCursor.getString(Song_Name_Column),
+                songList.add(new MediaItem(Long.toString(songListCursor.getLong(Song_Id_Column)),
+                        songListCursor.getString(Song_Name_Column),
                         songListCursor.getString(Song_Display_Name_Column), songListCursor.getString(Song_Path_Column),
-                        songListCursor.getLong(Album_ID_Column), songListCursor.getString(Album_Name_Column),
-                        songListCursor.getLong(Artist_ID_Column), songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
+                        Long.toString(songListCursor.getLong(Album_ID_Column)), songListCursor.getString(Album_Name_Column),
+                        Long.toString(songListCursor.getLong(Artist_ID_Column)), songListCursor.getString(Artist_Name_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : songListCursor.getString(Artist_Name_Column),
                         songListCursor.getLong(Duration_Column), songListCursor.getLong(Date_Added_Column),
                         null, ItemType.SONGS,
-                        MediaType.DEVICE_MEDIA_LIB, ItemType.SONGS, 0, null));
+                        MediaType.DEVICE_MEDIA_LIB, ItemType.SONGS, "0", null));
 
                 if(isPartial && count == 3){
                     break;
@@ -1051,7 +1087,7 @@ public class DeviceMediaLibrary {
             //add albums to list
             do {
                 if(albumListCursor.getInt(Item_Count_Column) > 0)
-                    albumList.add(new MediaItemCollection(albumListCursor.getLong(Item_ID_Column),
+                    albumList.add(new MediaItemCollection(Long.toString(albumListCursor.getLong(Item_ID_Column)),
                             albumListCursor.getString(Item_Title_Column),
                             albumListCursor.getString(Item_Sub_Title_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : albumListCursor.getString(Item_Sub_Title_Column),
                             albumListCursor.getString(Item_Album_Art_Path_Column),
@@ -1096,7 +1132,7 @@ public class DeviceMediaLibrary {
             //add albums to list
             do {
 
-                artistList.add(new MediaItemCollection(artistListCursor.getLong(Item_ID_Column),
+                artistList.add(new MediaItemCollection(Long.toString(artistListCursor.getLong(Item_ID_Column)),
                         artistListCursor.getString(Item_Title_Column).equalsIgnoreCase("<unknown>") ? context.getResources().getString(R.string.unknown_artist) : artistListCursor.getString(Item_Title_Column),
                         null, /*getAlbumArtByArtist(context, artistListCursor.getString(Item_Title_Column))*/ null,
                         artistListCursor.getInt(Item_Count_Column), artistListCursor.getInt(numOfAlbumsColumn), ItemType.ARTIST,

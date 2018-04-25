@@ -6,10 +6,8 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.globaldelight.boom.app.App;
-import com.globaldelight.boom.R;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.app.receivers.PlayerServiceReceiver;
-import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IPlayerUIController;
 
 /**
@@ -25,7 +23,7 @@ public class PlayerUIController implements IPlayerUIController {
 
     @Override
     public void OnPlayPause() {
-        IMediaItemBase item =  App.playbackManager().queue().getPlayingItem();
+        IMediaElement item =  App.playbackManager().queue().getPlayingItem();
         if(null != item ) {
             LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(PlayerServiceReceiver.ACTION_PLAY_PAUSE_SONG));
         }
@@ -33,7 +31,7 @@ public class PlayerUIController implements IPlayerUIController {
 
     @Override
     public void OnPlayerSeekChange(int progress) {
-        IMediaItemBase item =  App.playbackManager().queue().getPlayingItem();
+        IMediaElement item =  App.playbackManager().queue().getPlayingItem();
         if(null != item ) {
             Intent intent = new Intent(PlayerServiceReceiver.ACTION_SEEK_SONG);
             intent.putExtra("seek", progress);

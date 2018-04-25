@@ -20,6 +20,12 @@
             android:checked="false"
             android:checkable="true"
             android:title="@string/drop_box" />
+        <item
+            android:id="@+id/radio"
+            android:icon="@drawable/drawer_radio_selector"
+            android:checked="false"
+            android:checkable="true"
+            android:title="@string/radio" />
     </group>
     <group>
         <item

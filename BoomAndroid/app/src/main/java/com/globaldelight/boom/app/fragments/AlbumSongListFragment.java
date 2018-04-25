@@ -20,11 +20,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import com.globaldelight.boom.app.App;
-import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.app.activities.AlbumSongListActivity;
@@ -48,6 +47,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
     }
 
     private IMediaItemCollection collection;
+    private int mItemIndex;
     private ListDetail listDetail;
     private RecyclerView rootView;
     private ItemSongListAdapter itemSongListAdapter;
@@ -92,6 +92,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         super.onActivityCreated(savedInstanceState);
         Bundle b = getActivity().getIntent().getBundleExtra("bundle");
         collection = (MediaItemCollection) b.getParcelable("mediaItemCollection");
+        mItemIndex = b.getInt("itemIndex");
         setDetail(collection);
 //        FlurryAnalyticHelper.init(mActivity);
     }
@@ -101,12 +102,12 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         String title;
         int count;
         if(collection.getParentType() == BOOM_PLAYLIST || collection.getParentType() == PLAYLIST){
-            title = collection.getItemTitle();
+            title = collection.getTitle();
             count = collection.getMediaElement().size();
 
         }else{
-            title = collection.getItemAt(collection.getCurrentIndex()).getItemTitle();
-            count = ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).getItemCount();
+            title = collection.getItemAt(mItemIndex).getTitle();
+            count = ((IMediaItemCollection)collection.getItemAt(mItemIndex)).getItemCount();
         }
         itemCount.append(count > 1 ? getResources().getString(R.string.songs): getResources().getString(R.string.song));
         itemCount.append(" ").append(count);
@@ -131,7 +132,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
             if (collection.getParentType() == PLAYLIST || collection.getParentType() == BOOM_PLAYLIST) {
                 App.playbackManager().queue().addItemListToPlay(collection, 0);
             } else {
-                App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())), 0);
+                App.playbackManager().queue().addItemListToPlay(((IMediaItemCollection)collection.getItemAt(mItemIndex)), 0);
             }
         }catch (Exception e){}
     }
@@ -148,15 +149,15 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
         protected IMediaItemCollection doInBackground(Void... params) {
             //ItemType.PLAYLIST, ItemType.ARTIST && ItemType.GENRE
             if (collection.getParentType() == ItemType.BOOM_PLAYLIST && collection.count() == 0) {
-                collection.setMediaElement(MediaController.getInstance(activity).getBoomPlayListTrackList(collection.getItemId()));
+                collection.setMediaElement(MediaController.getInstance(activity).getBoomPlayListTrackList(collection));
             } else if (collection.getParentType() == ItemType.PLAYLIST && collection.getMediaElement().isEmpty()) {
                 collection.setMediaElement(MediaController.getInstance(activity).getPlayListTrackList(collection));
             }else if(collection.getParentType() == ItemType.ARTIST &&
-                        ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).count() == 0){ //ItemType.ARTIST && ItemType.GENRE
-                    ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(getActivity()).getArtistTrackList(collection));
+                        ((IMediaItemCollection)collection.getItemAt(mItemIndex)).count() == 0){ //ItemType.ARTIST && ItemType.GENRE
+                    ((IMediaItemCollection)collection.getItemAt(mItemIndex)).setMediaElement(MediaController.getInstance(getActivity()).getArtistTrackList(collection));
             }else if(collection.getParentType() == ItemType.GENRE &&
-                    ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).count() == 0){ //ItemType.ARTIST && ItemType.GENRE
-                ((IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex())).setMediaElement(MediaController.getInstance(getActivity()).getGenreTrackList(collection));
+                    ((IMediaItemCollection)collection.getItemAt(mItemIndex)).count() == 0){ //ItemType.ARTIST && ItemType.GENRE
+                ((IMediaItemCollection)collection.getItemAt(mItemIndex)).setMediaElement(MediaController.getInstance(getActivity()).getGenreTrackList(collection));
             }
             setDetail(collection);
 
@@ -164,7 +165,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
                 return collection;
             }
             else {
-                return (IMediaItemCollection)collection.getItemAt(collection.getCurrentIndex());
+                return (IMediaItemCollection)collection.getItemAt(mItemIndex);
             }
         }
 
@@ -218,9 +219,9 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
 
     public void updateBoomPlayList(){
         if (collection.getParentType() == ItemType.BOOM_PLAYLIST) {
-            collection = MediaController.getInstance(getActivity()).getBoomPlayListItem(collection.getItemId());
+            collection = MediaController.getInstance(getActivity()).getBoomPlayListItem(collection);
             if(null != collection) {
-                collection.setMediaElement(MediaController.getInstance(getActivity()).getBoomPlayListTrackList(collection.getItemId()));
+                collection.setMediaElement(MediaController.getInstance(getActivity()).getBoomPlayListTrackList(collection));
                 setDetail(collection);
                 itemSongListAdapter.updateNewList(collection, listDetail);
                 ((AlbumSongListActivity)getActivity()).updateAlbumArt();
@@ -233,7 +234,7 @@ public class AlbumSongListFragment extends Fragment implements OnStartDragListen
     public void updateBoomPlaylistIfOrderChanged(){
         if(collection.getParentType() == BOOM_PLAYLIST && isMoved && collection.getMediaElement().size() > 0){
             isMoved= false;
-            MediaController.getInstance(getActivity()).addSongToBoomPlayList(collection.getItemId(), collection.getMediaElement(), true);
+            MediaController.getInstance(getActivity()).addSongToBoomPlayList(collection, collection.getMediaElement(), true);
         }
     }
 

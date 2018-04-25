@@ -29,16 +29,15 @@ import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumDetailItemActivity;
 import com.globaldelight.boom.app.activities.SearchDetailActivity;
 import com.globaldelight.boom.app.fragments.SearchDetailFragment;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.app.adapters.search.utils.SearchResult;
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.async.Action;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.app.adapters.search.utils.Search;
 import com.globaldelight.boom.utils.Utils;
 
@@ -54,9 +53,9 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
     public static final int ITEM_VIEW_TYPE_LIST_ARTIST = 3;
     public static final int ITEM_VIEW_TYPE_LIST_ALBUM = 4;
     public static final int ITEM_VIEW_TYPE_LIST_SONG = 5;
-    private ArrayList<? extends IMediaItemBase> songs;
-    private ArrayList<? extends IMediaItemBase> albums;
-    private ArrayList<? extends IMediaItemBase> artists;
+    private ArrayList<? extends IMediaElement> songs;
+    private ArrayList<? extends IMediaElement> albums;
+    private ArrayList<? extends IMediaElement> artists;
     private int headerArtistPos, headerAlbumPos, headerSongPos,
             totalSize;
     private Context context;
@@ -73,7 +72,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
         init(searchRes.getSongResult(), searchRes.getAlbumResult(), searchRes.getArtistResult());
     }
 
-    private void init(ArrayList<? extends IMediaItemBase> songs, ArrayList<? extends IMediaItemBase> albums, ArrayList<? extends IMediaItemBase> artists) {
+    private void init(ArrayList<? extends IMediaElement> songs, ArrayList<? extends IMediaElement> albums, ArrayList<? extends IMediaElement> artists) {
         this.songs = songs;
         this.albums = albums;
         this.artists = artists;
@@ -99,10 +98,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             return ITEM_VIEW_TYPE_LIST_SONG;
     }
 
-    public void updateList(Search searchRes) {
-        init(searchRes.getSongResult(), searchRes.getAlbumResult(), searchRes.getArtistResult());
-        notifyDataSetChanged();
-    }
 
     private int getPosition(int position) {
         if (position > headerArtistPos && position < headerAlbumPos) {
@@ -236,7 +231,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
 
             holder.defaultImg.setVisibility(View.VISIBLE);
 
-            holder.title.setText(artists.get(getPosition(position)).getItemTitle());
+            holder.title.setText(artists.get(getPosition(position)).getTitle());
             final int count = ((MediaItemCollection)artists.get(getPosition(position))).getItemCount();
             int albumCount = ((MediaItemCollection)artists.get(getPosition(position))).getItemListCount();
             holder.subTitle.setText((count<=1 ? context.getResources().getString(R.string.song) : context.getResources().getString(R.string.songs)) +" "+count+" "+
@@ -279,7 +274,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
             if (albums.size() == 0)
                 return;
             holder.defaultImg.setVisibility(View.VISIBLE);
-            holder.title.setText(albums.get(getPosition(position)).getItemTitle());
+            holder.title.setText(albums.get(getPosition(position)).getTitle());
             holder.subTitle.setText(((MediaItemCollection) albums.get(getPosition(position))).getItemSubTitle());
             int size = setSize(holder);
             setArtistImg(holder, albums.get(getPosition(position)).getItemArtUrl());
@@ -314,12 +309,12 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
         } else {
             if (songs.size() == 0)
                 return;
-            holder.name.setText(songs.get(getPosition(position)).getItemTitle());
+            holder.name.setText(songs.get(getPosition(position)).getTitle());
             holder.artistName.setText(((MediaItem)songs.get(getPosition(position))).getItemArtist());
             holder.mainView.setElevation(0);
             setSongArt(songs.get(getPosition(position)).getItemArtUrl(), holder);
 
-            updatePlayingTrack(songs.get(getPosition(position)).getItemId(), holder, position);
+            updatePlayingTrack(songs.get(getPosition(position)), holder, position);
 
             holder.mainView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -339,10 +334,10 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Si
         holder.mainView.setElevation(Utils.dpToPx(context, 2));
     }
 
-    private void updatePlayingTrack(long itemId, SimpleItemViewHolder holder, int position) {
-        IMediaItemBase nowPlayingItem = App.playbackManager().queue().getPlayingItem();
+    private void updatePlayingTrack(IMediaElement item, SimpleItemViewHolder holder, int position) {
+        IMediaElement nowPlayingItem = App.playbackManager().queue().getPlayingItem();
         if(null != nowPlayingItem){
-            if(itemId == nowPlayingItem.getItemId()){
+            if( item.equalTo(nowPlayingItem) ){
                 holder.name.setSelected(true);
                 holder.art_overlay.setVisibility(View.VISIBLE);
                 holder.art_overlay_play.setVisibility(View.VISIBLE);

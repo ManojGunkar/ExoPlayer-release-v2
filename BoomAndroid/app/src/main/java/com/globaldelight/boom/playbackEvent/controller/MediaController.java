@@ -11,10 +11,9 @@ import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
-import com.globaldelight.boom.playbackEvent.controller.callbacks.IMediaController;
+import com.globaldelight.boom.collection.base.IMediaItem;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
  * Created by Rahul Agarwal on 18-02-17.
  */
 
-public class MediaController implements IMediaController {
+public class MediaController {
 
     private static MediaController handler;
     private Context context;
@@ -38,17 +37,14 @@ public class MediaController implements IMediaController {
         return handler;
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getPlayList() {
+    public ArrayList<? extends IMediaElement> getPlayList() {
         return DeviceMediaLibrary.getPlayList(context);
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getPlayListTrackList(IMediaItemCollection collection) {
-        return DeviceMediaLibrary.getPlaylistSongs(context, collection.getItemId(), collection.getItemTitle());
+    public ArrayList<? extends IMediaElement> getPlayListTrackList(IMediaItemCollection collection) {
+        return DeviceMediaLibrary.getPlaylistSongs(context, collection.getId(), collection.getTitle());
     }
 
-    @Override
     public void createBoomPlaylist(String playlist) {
         App.getBoomPlayListHelper().createPlaylist(playlist);
 //        FlurryAnalyticHelper.logEvent(AnalyticsHelper.EVENT_CREATED_NEW_PLAYLIST);
@@ -56,135 +52,111 @@ public class MediaController implements IMediaController {
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getBoomPlayList() {
+    public ArrayList<? extends IMediaElement> getBoomPlayList() {
         return App.getBoomPlayListHelper().getAllPlaylist();
     }
 
-    @Override
-    public IMediaItemCollection getBoomPlayListItem(long itemId) {
-        return App.getBoomPlayListHelper().gePlaylist(itemId);
+    public IMediaItemCollection getBoomPlayListItem(IMediaElement item) {
+        return App.getBoomPlayListHelper().gePlaylist(item.getId());
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getBoomPlayListTrackList(long id) {
-        return App.getBoomPlayListHelper().getPlaylistSongs(id);
+    public ArrayList<? extends IMediaElement> getBoomPlayListTrackList(IMediaElement item) {
+        return App.getBoomPlayListHelper().getPlaylistSongs(item.getId());
     }
 
-    public boolean isAlreadyAdded(long playlistId, long trackId) {
-        return App.getBoomPlayListHelper().isAlreadyAddedToPlaylist(playlistId, trackId);
+    public boolean isAlreadyAdded(IMediaElement playlist, IMediaElement track) {
+        return App.getBoomPlayListHelper().isAlreadyAddedToPlaylist(playlist.getId(), track.getId());
     }
 
-    @Override
-    public void addSongToBoomPlayList(long itemId, ArrayList<? extends IMediaItemBase> mediaElement, boolean isUpdate) {
-        App.getBoomPlayListHelper().addSongs(mediaElement, itemId, isUpdate);
+    public void addSongToBoomPlayList(IMediaElement item, ArrayList<? extends IMediaElement> mediaElement, boolean isUpdate) {
+        App.getBoomPlayListHelper().addSongs(mediaElement, item.getId(), isUpdate);
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
-    @Override
-    public void removeSongToPlayList(long itemId, int playlistId) {
-        App.getBoomPlayListHelper().removeSong(itemId, playlistId);
+    public void removeSongToPlayList(IMediaElement item, IMediaElement playlist) {
+        App.getBoomPlayListHelper().removeSong(item.getId(), playlist.getId());
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_BOOM_ITEM_LIST));
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
-    @Override
-    public void deleteBoomPlaylist(long itemId) {
-        App.getBoomPlayListHelper().deletePlaylist(itemId);
+    public void deleteBoomPlaylist(IMediaElement item) {
+        App.getBoomPlayListHelper().deletePlaylist(item.getId());
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
-    @Override
-    public void renamePlaylist(String playlistTitle, long itemId) {
-        App.getBoomPlayListHelper().renamePlaylist(playlistTitle, itemId);
+    public void renamePlaylist(String playlistTitle, IMediaElement item) {
+        App.getBoomPlayListHelper().renamePlaylist(playlistTitle, item.getId());
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_BOOM_ITEM_LIST));
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getAlbumList() {
+    public ArrayList<? extends IMediaElement> getAlbumList() {
         return DeviceMediaLibrary.getAlbumList(context);
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getSongList() {
+    public ArrayList<? extends IMediaElement> getSongList() {
         return DeviceMediaLibrary.getSongList(context);
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getArtistsList() {
+    public ArrayList<? extends IMediaElement> getArtistsList() {
         return DeviceMediaLibrary.getArtistList(context);
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getGenreList() {
+    public ArrayList<? extends IMediaElement> getGenreList() {
         return DeviceMediaLibrary.getGenreList(context);
     }
 
-    @Override
     public int getFavouriteCount(){
         return App.getFavoriteDBHelper().getFavouriteItemCount();
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getFavoriteList() {
+    public ArrayList<? extends IMediaElement> getFavoriteList() {
         return App.getFavoriteDBHelper().getFavouriteItemList();
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getCloudList(@MediaType int mediaType) {
+    public ArrayList<? extends IMediaElement> getCloudList(@MediaType int mediaType) {
         return App.getCloudMediaItemDBHelper().getSongList(mediaType);
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getAlbumTrackList(IMediaItemCollection collection) {
-        return DeviceMediaLibrary.getAlbumDetail(context, collection.getItemId(), collection.getItemTitle());
+    public ArrayList<? extends IMediaElement> getAlbumTrackList(IMediaItemCollection collection) {
+        return DeviceMediaLibrary.getAlbumDetail(context, collection.getId(), collection.getTitle());
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getArtistTrackList(IMediaItemCollection collection) {
-        return DeviceMediaLibrary.getSongListOfArtist(context, collection.getItemId(), collection.getItemTitle());
+    public ArrayList<? extends IMediaElement> getArtistTrackList(IMediaItemCollection collection) {
+        return DeviceMediaLibrary.getSongListOfArtist(context, collection.getId(), collection.getTitle());
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getGenreTrackList(IMediaItemCollection collection) {
-        return DeviceMediaLibrary.getSongListOfGenre(context, collection.getItemId(), collection.getItemTitle());
+    public ArrayList<? extends IMediaElement> getGenreTrackList(IMediaItemCollection collection) {
+        return DeviceMediaLibrary.getSongListOfGenre(context, collection.getId(), collection.getTitle());
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getArtistAlbumsList(IMediaItemCollection collection) {
-        return DeviceMediaLibrary.getArtistsAlbumDetails(context, collection.getItemId(), collection.getItemTitle(), collection.getItemCount());
+    public ArrayList<? extends IMediaElement> getArtistAlbumsList(IMediaItemCollection collection) {
+        return DeviceMediaLibrary.getArtistsAlbumDetails(context, collection.getId(), collection.getTitle(), collection.getItemCount());
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getGenreAlbumsList(IMediaItemCollection collection) {
-        return DeviceMediaLibrary.getGenresAlbumDetails(context, collection.getItemId(), collection.getItemTitle(), collection.getItemCount());
+    public ArrayList<? extends IMediaElement> getGenreAlbumsList(IMediaItemCollection collection) {
+        return DeviceMediaLibrary.getGenresAlbumDetails(context, collection.getId(), collection.getTitle(), collection.getItemCount());
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getArtistAlbumsTrackList(IMediaItemCollection collection) {
-        return DeviceMediaLibrary.getSongListOfArtistsAlbum(context, collection.getItemId(), collection.getItemAt(collection.getCurrentIndex()).getItemId());
+    public ArrayList<? extends IMediaElement> getArtistAlbumsTrackList(IMediaItemCollection collection, int index) {
+        return DeviceMediaLibrary.getSongListOfArtistsAlbum(context, collection.getId(), collection.getItemAt(index).getId());
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getGenreAlbumsTrackList(IMediaItemCollection collection) {
-        return DeviceMediaLibrary.getSongListOfGenreAlbum(context, collection.getItemId(), collection.getItemTitle(), collection.getItemAt(collection.getCurrentIndex()).getItemId(), collection.getItemAt(collection.getCurrentIndex()).getItemTitle());
+    public ArrayList<? extends IMediaElement> getGenreAlbumsTrackList(IMediaItemCollection collection, int index) {
+        return DeviceMediaLibrary.getSongListOfGenreAlbum(context, collection.getId(), collection.getTitle(), collection.getItemAt(index).getId(), collection.getItemAt(index).getTitle());
     }
 
-    @Override
-    public boolean isFavoriteItem(long trackId){
-        return App.getFavoriteDBHelper().isFavouriteItems(trackId);
+    public boolean isFavoriteItem(IMediaElement item){
+        return App.getFavoriteDBHelper().isFavouriteItems(item.getId());
     }
 
-    @Override
-    public void removeItemToFavoriteList(long trackId){
-        App.getFavoriteDBHelper().removeSong(trackId);
+    public void removeItemToFavoriteList(IMediaElement item){
+        App.getFavoriteDBHelper().removeSong(item.getId());
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
 //        FlurryAnalyticHelper.logEvent(UtilAnalytics.Remove_Favorites);
         FlurryAnalytics.getInstance(context).setEvent(FlurryEvents.Remove_Favorites);
     }
 
-    @Override
     public void addItemToFavoriteList(IMediaItem item){
         App.getFavoriteDBHelper().addSong(item);
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
@@ -193,17 +165,16 @@ public class MediaController implements IMediaController {
 
     }
 
-    @Override
     public ArrayList<String> getArtUrlList(MediaItemCollection collection) {
         switch (collection.getItemType()){
             case ItemType.ARTIST:
-                return DeviceMediaLibrary.getArtistsArtList(context, collection.getItemId(), collection.getItemTitle());
+                return DeviceMediaLibrary.getArtistsArtList(context, collection.getId(), collection.getTitle());
             case ItemType.PLAYLIST:
-                return DeviceMediaLibrary.getPlaylistArtList(context, collection.getItemId(), collection.getItemTitle());
+                return DeviceMediaLibrary.getPlaylistArtList(context, collection.getId(), collection.getTitle());
             case ItemType.GENRE:
-                return DeviceMediaLibrary.getGenreArtList(context, collection.getItemId(), collection.getItemTitle());
+                return DeviceMediaLibrary.getGenreArtList(context, collection.getId(), collection.getTitle());
             case ItemType.BOOM_PLAYLIST:
-                return App.getBoomPlayListHelper().getBoomPlayListArtList(collection.getItemId());
+                return App.getBoomPlayListHelper().getBoomPlayListArtList(collection.getId());
             case ItemType.RECENT_PLAYED:
                 return App.getUPNEXTDBHelper().getRecentArtList();
             case ItemType.FAVOURITE:
@@ -214,29 +185,26 @@ public class MediaController implements IMediaController {
         return null;
     }
 
-    @Override
     public void removeCloudMediaItemList(@MediaType int mediaType) {
         App.getCloudMediaItemDBHelper().clearList(mediaType);
     }
 
-    @Override
-    public void addSongsToCloudItemList(@MediaType int mediaType, ArrayList<IMediaItemBase> fileList) {
+    public void addSongsToCloudItemList(@MediaType int mediaType, ArrayList<IMediaElement> fileList) {
         App.getCloudMediaItemDBHelper().addSongs(mediaType, fileList);
     }
 
-    @Override
     public int getRecentPlayedItemCount(){
         return App.getUPNEXTDBHelper().getRecentPlayedCount();
     }
 
-    @Override
-    public ArrayList<? extends IMediaItemBase> getRecentPlayedList() {
+    public ArrayList<? extends IMediaElement> getRecentPlayedList() {
         return App.getUPNEXTDBHelper().getRecentPlayedItemList();
     }
 
-    @Override
-    public void setRecentPlayedItem(IMediaItemBase recentPlayedItem) {
-        App.getUPNEXTDBHelper().addItemsToRecentPlayedList(recentPlayedItem);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+    public void setRecentPlayedItem(IMediaElement recentPlayedItem) {
+        if ( recentPlayedItem.getMediaType() != MediaType.RADIO ) {
+            App.getUPNEXTDBHelper().addItemsToRecentPlayedList(recentPlayedItem);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(PlayerEvents.ACTION_UPDATE_PLAYLIST));
+        }
     }
 }

@@ -132,5 +132,19 @@
     <color name="promo_code_hint">#666666</color>
     <color name="promo_code_error">#ffc600</color>
 
+    <array name="radio_tag_colors">
+        <item>#D0021B</item>
+        <item>#F5A623</item>
+        <item>#FF5C00</item>
+        <item>#67BF00</item>
+        <item>#50E3C2</item>
+        <item>#0076FF</item>
+        <item>#8B00FF</item>
+        <item>#D2FF00</item>
+        <item>#00DCEA</item>
+        <item>#EA00D0</item>
+
+    </array>
+
 </resources><!--
 <color name="colorAccent">#FF4081</color>-->

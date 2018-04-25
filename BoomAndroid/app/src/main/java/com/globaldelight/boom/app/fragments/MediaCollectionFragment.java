@@ -20,7 +20,7 @@ import com.globaldelight.boom.app.adapters.media.MediaGridAdapter;
 import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.business.ads.Advertiser;
 import com.globaldelight.boom.business.ads.InlineAds;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.utils.Utils;
 import com.globaldelight.boom.utils.decorations.AlbumListSpacesItemDecoration;
 import com.globaldelight.boom.utils.decorations.SimpleDividerItemDecoration;
@@ -111,7 +111,7 @@ public abstract class MediaCollectionFragment extends Fragment {
 
     protected abstract void loadCollection();
 
-    protected void onCollectionLoaded(ArrayList<? extends IMediaItemBase> iMediaCollectionList) {
+    protected void onCollectionLoaded(ArrayList<? extends IMediaElement> iMediaCollectionList) {
         GridLayoutManager gridLayoutManager;
         if (null != mActivity) {
             boolean isPhone = Utils.isPhone(mActivity);

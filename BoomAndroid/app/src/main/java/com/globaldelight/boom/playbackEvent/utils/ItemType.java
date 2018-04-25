@@ -17,7 +17,9 @@ import java.lang.annotation.RetentionPolicy;
         ItemType.GENRE,
         ItemType.BOOM_PLAYLIST,
         ItemType.FAVOURITE,
-        ItemType.RECENT_PLAYED})
+        ItemType.RECENT_PLAYED,
+        ItemType.LIVE_STREAM
+})
 @Retention(RetentionPolicy.SOURCE)
 
 public @interface ItemType {
@@ -28,6 +30,7 @@ public @interface ItemType {
                 GENRE = 5,
                 BOOM_PLAYLIST = 6,
                 FAVOURITE = 7,
-                RECENT_PLAYED = 8;
+                RECENT_PLAYED = 8,
+                LIVE_STREAM = 9;
 }
 

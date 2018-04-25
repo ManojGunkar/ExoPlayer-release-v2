@@ -3,7 +3,8 @@ package com.globaldelight.boom.collection.local;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
+import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
@@ -12,13 +13,13 @@ import com.globaldelight.boom.playbackEvent.utils.MediaType;
  * Created by Rahul Agarwal on 8/4/2016.
  */
 public class MediaItem implements IMediaItem, Parcelable {
-    private long ItemId;
+    private String ItemId;
     private String ItemTitle;
     private String ItemDisplayName;
     private String ItemUrl;
-    private long ItemAlbumId;
+    private String ItemAlbumId;
     private String ItemAlbum;
-    private long ItemArtistId;
+    private String ItemArtistId;
     private String ItemArtist;
     private long Duration;
     private long DateAdded;
@@ -26,14 +27,14 @@ public class MediaItem implements IMediaItem, Parcelable {
     private @ItemType int itemType;
     private @MediaType int mediaType;
     private @ItemType int parentType;
-    private long parentId;
+    private String parentId;
     private String parentTitle;
     public static String UNKNOWN_ART_URL = "unknown_art_url";
 
     /*Only for Device Media Item*/
-    public MediaItem(long ItemId, String ItemTitle, String ItemDisplayName, String ItemUrl, long ItemAlbumId, String ItemAlbum, long ItemArtistId,
-                     String ItemArtist, long Duration, long DateAdded, String ItemArtUrl, @ItemType int itemType, @MediaType int mediaType, @ItemType int parentType, long parentId, String parentTitle){
-        this.ItemId = ItemId;
+    public MediaItem(String ItemId, String ItemTitle, String ItemDisplayName, String ItemUrl, String ItemAlbumId, String ItemAlbum, String ItemArtistId,
+                     String ItemArtist, long Duration, long DateAdded, String ItemArtUrl, @ItemType int itemType, @MediaType int mediaType, @ItemType int parentType, String parentId, String parentTitle){
+        this.ItemId =ItemId;
         this.ItemTitle = ItemTitle;
         this.ItemDisplayName = ItemDisplayName;
         this.ItemUrl = ItemUrl;
@@ -52,7 +53,7 @@ public class MediaItem implements IMediaItem, Parcelable {
     }
 
     /*Only for Dropbox*/
-    public MediaItem(long itemId, String ItemTitle, String  ItemUrl, @ItemType int itemType, @MediaType int mediaType, @ItemType int parentType) {
+    public MediaItem(String itemId, String ItemTitle, String  ItemUrl, @ItemType int itemType, @MediaType int mediaType, @ItemType int parentType) {
         this.ItemId = itemId;
         this.ItemUrl = ItemUrl;
         this.ItemTitle = ItemTitle;
@@ -62,13 +63,13 @@ public class MediaItem implements IMediaItem, Parcelable {
     }
 
     protected MediaItem(Parcel in) {
-        ItemId = in.readLong();
+        ItemId = in.readString();
         ItemTitle = in.readString();
         ItemDisplayName = in.readString();
         ItemUrl = in.readString();
-        ItemAlbumId = in.readLong();
+        ItemAlbumId = in.readString();
         ItemAlbum = in.readString();
-        ItemArtistId = in.readLong();
+        ItemArtistId = in.readString();
         ItemArtist = in.readString();
         Duration = in.readLong();
         DateAdded = in.readLong();
@@ -79,7 +80,7 @@ public class MediaItem implements IMediaItem, Parcelable {
         mediaType = Integer.parseInt(in.readString());
         //noinspection ResourceType
         parentType = Integer.parseInt(in.readString());
-        parentId = in.readLong();
+        parentId = in.readString();
         parentTitle = in.readString();
     }
 
@@ -96,13 +97,18 @@ public class MediaItem implements IMediaItem, Parcelable {
     };
 
     @Override
-    public long getItemId() {
+    public String getId() {
         return ItemId;
     }
 
     @Override
-    public String getItemTitle() {
+    public String getTitle() {
         return ItemTitle;
+    }
+
+    @Override
+    public String getDescription() {
+        return getItemArtist();
     }
 
     @Override
@@ -111,7 +117,7 @@ public class MediaItem implements IMediaItem, Parcelable {
     }
 
     @Override
-    public long getItemAlbumId() {
+    public String getItemAlbumId() {
         return ItemAlbumId;
     }
 
@@ -121,7 +127,7 @@ public class MediaItem implements IMediaItem, Parcelable {
     }
 
     @Override
-    public long getItemArtistId() {
+    public String getItemArtistId() {
         return ItemArtistId;
     }
 
@@ -138,7 +144,7 @@ public class MediaItem implements IMediaItem, Parcelable {
     @Override
     public String getItemArtUrl() {
         if ( ItemArtUrl == null ) {
-            ItemArtUrl = DeviceMediaLibrary.getInstance(null).getAlbumArt(getItemAlbum());
+            ItemArtUrl = DeviceMediaLibrary.getInstance(App.getApplication()).getAlbumArt(getItemAlbum());
         }
 
         if ( ItemArtUrl == null ) {
@@ -159,18 +165,8 @@ public class MediaItem implements IMediaItem, Parcelable {
     }
 
     @Override
-    public long getParentId() {
+    public String getParentId() {
         return parentId;
-    }
-
-    @Override
-    public void setParentId(long parentId) {
-        this.parentId = parentId;
-    }
-
-    @Override
-    public void setParentItemType(@ItemType int parentType) {
-        this.parentType = parentType;
     }
 
     @Override
@@ -237,13 +233,13 @@ public class MediaItem implements IMediaItem, Parcelable {
      */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(ItemId);
+        dest.writeString(ItemId);
         dest.writeString(ItemTitle);
         dest.writeString(ItemDisplayName);
         dest.writeString(ItemUrl);
-        dest.writeLong(ItemAlbumId);
+        dest.writeString(ItemAlbumId);
         dest.writeString(ItemAlbum);
-        dest.writeLong(ItemArtistId);
+        dest.writeString(ItemArtistId);
         dest.writeString(ItemArtist);
         dest.writeLong(Duration);
         dest.writeLong(DateAdded);
@@ -251,7 +247,7 @@ public class MediaItem implements IMediaItem, Parcelable {
         dest.writeString(Integer.toString(itemType));
         dest.writeString(Integer.toString(mediaType));
         dest.writeString(Integer.toString(parentType));
-        dest.writeLong(parentId);
+        dest.writeString(parentId);
         dest.writeString(parentTitle);
     }
 }

@@ -14,17 +14,16 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.app.activities.ActivityContainer;
 import com.globaldelight.boom.app.activities.AlbumSongListActivity;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.utils.Utils;
-import java.io.File;
+
 import java.util.ArrayList;
 
 /**
@@ -41,11 +40,11 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
             playlistStartPos;
     private Activity activity;
     private  RecyclerView recyclerView;
-    private ArrayList<? extends IMediaItemBase> defaultPlayList, mBoomPlayList;
-    private IMediaItemBase mFavourite, mRecentPlayed;
+    private ArrayList<? extends IMediaElement> defaultPlayList, mBoomPlayList;
+    private IMediaElement mFavourite, mRecentPlayed;
     private boolean isPhone;
 
-    public PlayListAdapter(Activity activity, RecyclerView recyclerView, IMediaItemBase mRecentPlayed, IMediaItemBase mFavourite, ArrayList<? extends IMediaItemBase> mBoomPlayList, ArrayList<? extends IMediaItemBase> defaultPlayList, boolean isPhone) {
+    public PlayListAdapter(Activity activity, RecyclerView recyclerView, IMediaElement mRecentPlayed, IMediaElement mFavourite, ArrayList<? extends IMediaElement> mBoomPlayList, ArrayList<? extends IMediaElement> defaultPlayList, boolean isPhone) {
         this.activity = activity;
         this.recyclerView = recyclerView;
         this.mRecentPlayed = mRecentPlayed;
@@ -64,7 +63,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
         playlistStartPos = this.mBoomPlayList.size() + 2;
     }
 
-    public void updateNewList(IMediaItemBase mRecentPlayed, IMediaItemBase mFavourite, ArrayList<? extends IMediaItemBase> boomPlayList) {
+    public void updateNewList(IMediaElement mRecentPlayed, IMediaElement mFavourite, ArrayList<? extends IMediaElement> boomPlayList) {
         this.mRecentPlayed = mRecentPlayed;
         this.mFavourite = mFavourite;
         this.mBoomPlayList = boomPlayList;
@@ -115,28 +114,28 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
         int size= setSize(holder);
         switch (whatView(position)){
             case ITEM_VIEW_TYPE_RECENT:
-                holder.title.setText(mRecentPlayed.getItemTitle());
+                holder.title.setText(mRecentPlayed.getTitle());
                 itemCount = ((MediaItemCollection)mRecentPlayed).getItemCount();
 
                 setSongsArtImage(holder, size, MediaController.getInstance(activity).
                         getArtUrlList((MediaItemCollection) mRecentPlayed));
                 break;
             case ITEM_VIEW_TYPE_FAVOURITE:
-                holder.title.setText(mFavourite.getItemTitle());
+                holder.title.setText(mFavourite.getTitle());
                 itemCount = ((MediaItemCollection)mFavourite).getItemCount();
 
                 setSongsArtImage(holder, size, MediaController.getInstance(activity).
                         getArtUrlList((MediaItemCollection) mFavourite));
                 break;
             case ITEM_VIEW_TYPE_BOOM_PLAYLIST:
-                holder.title.setText(mBoomPlayList.get(getPosition(position)).getItemTitle());
+                holder.title.setText(mBoomPlayList.get(getPosition(position)).getTitle());
                 itemCount = ((MediaItemCollection)mBoomPlayList.get(getPosition(position))).getItemCount();
 
                 setSongsArtImage(holder, size, MediaController.getInstance(activity).
                         getArtUrlList((MediaItemCollection) mBoomPlayList.get(getPosition(position))));
                 break;
             case ITEM_VIEW_TYPE_PLAYLIST:
-                holder.title.setText(defaultPlayList.get(getPosition(position)).getItemTitle());
+                holder.title.setText(defaultPlayList.get(getPosition(position)).getTitle());
                 itemCount = ((MediaItemCollection)defaultPlayList.get(getPosition(position))).getItemCount();
 
                 if(((MediaItemCollection)defaultPlayList.get(getPosition(position))).getArtUrlList().isEmpty())
@@ -149,7 +148,9 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
         holder.subTitle.setText((itemCount > 1 ? activity.getResources().getString(R.string.songs):  activity.getResources().getString(R.string.song))+" "+ itemCount);
 
         holder.grid_menu.setVisibility(View.VISIBLE);
-        setOnClicks(holder, position);
+
+        holder.mainView.setOnClickListener((v)-> this.onItemClicked(v, position));
+        holder.grid_menu.setOnClickListener((v)->this.onMenuClicked(v, position));
     }
 
     private int setSize(SimpleItemViewHolder holder) {
@@ -191,70 +192,61 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.Simple
         img.setImageDrawable(activity.getResources().getDrawable( R.drawable.ic_default_art_grid, null));
     }
 
-    private void setOnClicks(final SimpleItemViewHolder holder, final int position) {
-
-        holder.mainView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recyclerView.smoothScrollToPosition(position);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        switch (whatView(position)){
-                            case ITEM_VIEW_TYPE_RECENT:
-                                Intent recentIntent = new Intent(activity, ActivityContainer.class);
-                                recentIntent.putExtra("container", R.string.recently_played);
-                                activity.startActivity(recentIntent);
-                                break;
-                            case ITEM_VIEW_TYPE_FAVOURITE:
-                                Intent favIntent = new Intent(activity, ActivityContainer.class);
-                                favIntent.putExtra("container", R.string.favourite_list);
-                                activity.startActivity(favIntent);
-                                break;
-                            case ITEM_VIEW_TYPE_BOOM_PLAYLIST:
-                                Intent boomIntent = new Intent(activity, AlbumSongListActivity.class);
-                                Bundle b = new Bundle();
-                                b.putParcelable("mediaItemCollection", (MediaItemCollection)mBoomPlayList.get(getPosition(position)));
-                                boomIntent.putExtra("bundle", b);
-                                activity.startActivity(boomIntent);
-                                break;
-                            case ITEM_VIEW_TYPE_PLAYLIST:
-                                Intent listIntent = new Intent(activity, AlbumSongListActivity.class);
-                                Bundle b2 = new Bundle();
-                                b2.putParcelable("mediaItemCollection", (MediaItemCollection)defaultPlayList.get(getPosition(position)));
-                                listIntent.putExtra("bundle", b2);
-                                activity.startActivity(listIntent);
-                                break;
-                        }
-                    }
-                }, 100);
-            }
-        });
-
-        holder.grid_menu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                switch (whatView(position)){
-                    case ITEM_VIEW_TYPE_RECENT:
-                        OverFlowMenuUtils.setRecentPlayedMenu(activity, view);
-                        break;
-                    case ITEM_VIEW_TYPE_FAVOURITE:
-                        OverFlowMenuUtils.setFavouriteMenu(activity, view);
-                        break;
-                    case ITEM_VIEW_TYPE_BOOM_PLAYLIST:
-                        OverFlowMenuUtils.setBoomPlaylistMenu(activity, view, mBoomPlayList.get(getPosition(position)));
-                        break;
-                    case ITEM_VIEW_TYPE_PLAYLIST:
-                        OverFlowMenuUtils.setDefaultPlaylistMenu(activity, view, defaultPlayList.get(getPosition(position)));
-                        break;
-                }
-            }
-        });
-    }
-
     @Override
     public int getItemCount() {
         return mBoomPlayList.size() + defaultPlayList.size() + 2;
+    }
+
+    private void onItemClicked(View view, final int position) {
+        recyclerView.smoothScrollToPosition(position);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                switch (whatView(position)){
+                    case ITEM_VIEW_TYPE_RECENT:
+                        Intent recentIntent = new Intent(activity, ActivityContainer.class);
+                        recentIntent.putExtra("container", R.string.recently_played);
+                        activity.startActivity(recentIntent);
+                        break;
+                    case ITEM_VIEW_TYPE_FAVOURITE:
+                        Intent favIntent = new Intent(activity, ActivityContainer.class);
+                        favIntent.putExtra("container", R.string.favourite_list);
+                        activity.startActivity(favIntent);
+                        break;
+                    case ITEM_VIEW_TYPE_BOOM_PLAYLIST:
+                        Intent boomIntent = new Intent(activity, AlbumSongListActivity.class);
+                        Bundle b = new Bundle();
+                        b.putParcelable("mediaItemCollection", (MediaItemCollection)mBoomPlayList.get(getPosition(position)));
+                        boomIntent.putExtra("bundle", b);
+                        activity.startActivity(boomIntent);
+                        break;
+                    case ITEM_VIEW_TYPE_PLAYLIST:
+                        Intent listIntent = new Intent(activity, AlbumSongListActivity.class);
+                        Bundle b2 = new Bundle();
+                        b2.putParcelable("mediaItemCollection", (MediaItemCollection)defaultPlayList.get(getPosition(position)));
+                        listIntent.putExtra("bundle", b2);
+                        activity.startActivity(listIntent);
+                        break;
+                }
+            }
+        }, 100);
+    }
+
+    private void onMenuClicked(View view, final int position) {
+        switch (whatView(position)){
+            case ITEM_VIEW_TYPE_RECENT:
+                OverFlowMenuUtils.setRecentPlayedMenu(activity, view);
+                break;
+            case ITEM_VIEW_TYPE_FAVOURITE:
+                OverFlowMenuUtils.setFavouriteMenu(activity, view);
+                break;
+            case ITEM_VIEW_TYPE_BOOM_PLAYLIST:
+                OverFlowMenuUtils.setBoomPlaylistMenu(activity, view, mBoomPlayList.get(getPosition(position)));
+                break;
+            case ITEM_VIEW_TYPE_PLAYLIST:
+                OverFlowMenuUtils.setDefaultPlaylistMenu(activity, view, defaultPlayList.get(getPosition(position)));
+                break;
+        }
     }
 
     public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {

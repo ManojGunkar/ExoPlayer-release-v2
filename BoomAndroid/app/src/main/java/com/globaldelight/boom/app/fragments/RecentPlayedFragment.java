@@ -23,7 +23,7 @@ import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.RecentPlayedMediaList;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.app.loaders.LoadRecentPlayedList;
 
 import java.util.ArrayList;
@@ -107,7 +107,7 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
         setSongListAdapter(recentPlayedMediaList.getRecentPlayedMediaList());
     }
 
-    private void setSongListAdapter(ArrayList<IMediaItemBase> recentPlayedMediaList) {
+    private void setSongListAdapter(ArrayList<IMediaElement> recentPlayedMediaList) {
         final GridLayoutManager gridLayoutManager =
                 new GridLayoutManager(mActivity, 1);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -157,7 +157,7 @@ public class RecentPlayedFragment extends Fragment implements RecentPlayedMediaL
         rootView.scrollTo(0, 100);
     }
 
-    private void notifyAdapter(ArrayList<IMediaItemBase> mediaList){
+    private void notifyAdapter(ArrayList<IMediaElement> mediaList){
         if(null != adapter){
             adapter.updateMediaList(mediaList);
             listIsEmpty(adapter.getItemCount());

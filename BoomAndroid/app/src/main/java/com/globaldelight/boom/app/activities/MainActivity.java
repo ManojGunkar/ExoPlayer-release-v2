@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -27,7 +25,11 @@ import com.globaldelight.boom.app.fragments.DropBoxListFragment;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
+import com.globaldelight.boom.radio.ui.fragments.RadioMainFragment;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 
@@ -42,7 +44,6 @@ public class MainActivity extends MasterActivity
 
     private PermissionChecker permissionChecker;
     private ViewGroup mainContainer;
-    private LibraryFragment mLibraryFragment;
     public boolean isLibraryRendered = false;
     public MusicSearchHelper musicSearchHelper;
     protected NavigationView navigationView;
@@ -88,8 +89,14 @@ public class MainActivity extends MasterActivity
                     @Override
                     public void onAccepted() {
                         isUpdateUpnextDB = true;
-                        onNavigateToLibrary();
                         initSearchAndArt();
+                        IMediaElement playingItem = PlaybackManager.getInstance(MainActivity.this).getPlayingItem();
+                        if (playingItem != null && playingItem.getMediaType() == MediaType.RADIO ) {
+                            onNavigateToRadio();
+                        }
+                        else {
+                            onNavigateToLibrary();
+                        }
                     }
 
                     @Override
@@ -127,13 +134,22 @@ public class MainActivity extends MasterActivity
     @Override
     public void onPanelCollapsed(View panel) {
         super.onPanelCollapsed(panel);
-        mLibraryFragment.chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
+
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if ( currentFragment instanceof LibraryFragment ) {
+            ((LibraryFragment)currentFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
+        }
+
     }
 
     @Override
     public void onPanelExpanded(View panel) {
         super.onPanelExpanded(panel);
-        mLibraryFragment.setDismissHeadphoneCoachmark();
+
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if ( currentFragment instanceof LibraryFragment ) {
+            ((LibraryFragment)currentFragment).setDismissHeadphoneCoachmark();
+        }
     }
 
 
@@ -157,9 +173,11 @@ public class MainActivity extends MasterActivity
     @Override
     public void onBackPressed() {
         contentFragment.onBackPressed();
-        if ( mLibraryFragment != null ) {
-            mLibraryFragment.setAutoDismissBahaviour();
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if ( currentFragment instanceof LibraryFragment ) {
+            ((LibraryFragment)currentFragment).setAutoDismissBahaviour();
         }
+
         if (isPlayerExpended()) {
             toggleSlidingPanel();
         } else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -199,16 +217,20 @@ public class MainActivity extends MasterActivity
                 }
                 break;
             case R.id.nav_setting:
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startCompoundActivities(R.string.title_settings);
-                    }
-                }, 300);
+                new Handler().postDelayed(() -> startCompoundActivities(R.string.title_settings), 300);
                 drawerLayout.closeDrawer(GravityCompat.START);
 //                FlurryAnalyticHelper.logEvent(UtilAnalytics.Settings_Page_Opened);
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Settings_Page_Opened);
                 return true;
+
+            case R.id.radio:
+                if (Utils.isOnline(this)){
+                    runnable = this::onNavigateToRadio;
+                }else {
+                    Utils.networkAlert(this);
+                    return false;
+                }
+                break;
 
             default:
                 BusinessModelFactory.getCurrentModel().onDrawerItemClicked(item, this);
@@ -233,17 +255,25 @@ public class MainActivity extends MasterActivity
 
     private void onNavigateToLibrary() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if ( currentFragment == mLibraryFragment && mLibraryFragment != null ) {
+        if ( currentFragment instanceof LibraryFragment ) {
             return;
         }
+
         isLibraryRendered = true;
         navigationView.getMenu().findItem(R.id.music_library).setChecked(true);
-        if ( mLibraryFragment == null ) {
-            mLibraryFragment = new LibraryFragment();
-        }
+        setTitle(R.string.music_library);
 
+        Fragment fragment = new LibraryFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, mLibraryFragment).commitAllowingStateLoss();
+        transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+    }
+
+    private void onNavigateToRadio(){
+        navigationView.getMenu().findItem(R.id.radio).setChecked(true);
+        setTitle(R.string.radio);
+        Fragment fragment = new RadioMainFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
     }
 
     private void onNavigateToDropbox() {
@@ -253,7 +283,7 @@ public class MainActivity extends MasterActivity
         }
 
         navigationView.getMenu().findItem(R.id.drop_box).setChecked(true);
-        setTitle(getResources().getString(R.string.drop_box));
+        setTitle(R.string.drop_box);
         Fragment fragment = new DropBoxListFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
@@ -266,7 +296,7 @@ public class MainActivity extends MasterActivity
         }
 
         navigationView.getMenu().findItem(R.id.google_drive).setChecked(true);
-        setTitle(getResources().getString(R.string.google_drive));
+        setTitle(R.string.google_drive);
 
         Fragment fragment = new GoogleDriveListFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

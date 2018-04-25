@@ -16,15 +16,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumDetailItemActivity;
-import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.Utils;
@@ -47,7 +44,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
 
 
     public MediaGridAdapter(Activity activity, RecyclerView recyclerView,
-                            ArrayList<? extends IMediaItemBase> itemList, boolean isPhone) {
+                            ArrayList<? extends IMediaElement> itemList, boolean isPhone) {
         this.context = activity;
         this.activity = activity;
         this.recyclerView = recyclerView;
@@ -71,7 +68,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
         holder.position = position;
         MediaItemCollection mediaItem = itemList.get(position);
 
-        holder.title.setText(mediaItem.getItemTitle());
+        holder.title.setText(mediaItem.getTitle());
         if ( mediaItem.getItemType() == ItemType.ALBUM ) {
             holder.subTitle.setText(mediaItem.getItemSubTitle());
         }
@@ -128,33 +125,27 @@ public class MediaGridAdapter extends RecyclerView.Adapter<MediaGridAdapter.View
         return size;
     }
 
-
     private void setOnClicks(final ViewHolder holder) {
+        holder.mainView.setOnClickListener((v)->this.onItemClicked(v, holder));
+        holder.overflowMenu.setOnClickListener((v)->this.onMenuClicked(v, holder));
+    }
 
-        holder.mainView.setOnClickListener(new View.OnClickListener() {
+    private void onItemClicked(View view, ViewHolder holder) {
+        final int position = holder.position;
+        final MediaItemCollection mediaItem = itemList.get(position);
+
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View view) {
-
-                final int position = holder.position;
-                final MediaItemCollection mediaItem = itemList.get(position);
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        clickListener.onItemClicked(mediaItem);
-                    }
-                }, 100);
+            public void run() {
+                clickListener.onItemClicked(mediaItem);
             }
-        });
+        }, 100);
+    }
 
-        holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final int position = holder.position;
-                final MediaItemCollection mediaItem = itemList.get(position);
-                OverFlowMenuUtils.showCollectionMenu((Activity)context, view, R.menu.collection_popup, getCollectionToAdd(mediaItem));
-            }
-        });
+    private void onMenuClicked(View view, ViewHolder holder) {
+        final int position = holder.position;
+        final MediaItemCollection mediaItem = itemList.get(position);
+        OverFlowMenuUtils.showCollectionMenu((Activity)context, view, R.menu.collection_popup, getCollectionToAdd(mediaItem));
     }
 
     private IMediaItemCollection getCollectionToAdd(MediaItemCollection mediaItem) {

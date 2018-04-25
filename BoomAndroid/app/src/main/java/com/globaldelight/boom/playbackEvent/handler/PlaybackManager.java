@@ -17,11 +17,12 @@ import android.widget.Toast;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.collection.local.MediaItem;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
-import com.globaldelight.boom.collection.local.callback.IMediaItem;
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
+import com.globaldelight.boom.radio.webconnector.ApiRequestController;
+import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
+import com.globaldelight.boom.radio.webconnector.model.RadioPlayResponse;
 import com.globaldelight.boom.utils.helpers.DropBoxAPI;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boom.player.AudioEffect;
@@ -29,8 +30,12 @@ import com.globaldelight.boom.player.AudioPlayer;
 
 import java.io.FileDescriptor;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 import static android.media.AudioManager.AUDIOFOCUS_GAIN;
 import static android.media.AudioManager.AUDIOFOCUS_GAIN_TRANSIENT;
@@ -50,7 +55,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
 
     private ArrayList<Listener> mListeners = new ArrayList<>();
-    private IMediaItemBase playingItem;
+    private IMediaElement playingItem;
     private AudioPlayer mPlayer;
     private Context context;
     private AudioManager audioManager;
@@ -114,7 +119,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     private MediaSession.Callback mediaSessionCallback = new MediaSession.Callback(){
         @Override
         public void onPlay() {
-            if ( mPlayer.getDataSourceId() == -1 ) {
+            if ( mPlayer.getDataSourceId() == null ) {
                 onPlayingItemChanged();
                 return;
             }
@@ -215,7 +220,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
 
 
-    public long getPlayerDataSourceId(){
+    public String getPlayerDataSourceId(){
         return mPlayer.getDataSourceId();
     }
 
@@ -339,14 +344,14 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     }
 
-    private Bitmap getAlbumart(Context context, Long album_id) {
+    private Bitmap getAlbumart(Context context, String album_id) {
         Bitmap albumArtBitMap = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
         try {
 
             final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
 
-            Uri uri = ContentUris.withAppendedId(sArtworkUri, album_id);
+            Uri uri = ContentUris.withAppendedId(sArtworkUri, Long.parseLong(album_id));
 
             ParcelFileDescriptor pfd = context.getContentResolver()
                     .openFileDescriptor(uri, "r");
@@ -367,8 +372,8 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     }
 
 
-    private class PlayingItemChanged extends AsyncTask<IMediaItemBase, Void, String>{
-        IMediaItemBase mediaItemBase;
+    private class PlayingItemChanged extends AsyncTask<IMediaElement, Void, String>{
+        IMediaElement mediaItemBase;
 
 
         @Override
@@ -377,7 +382,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         }
 
         @Override
-        protected String doInBackground(IMediaItemBase... params) {
+        protected String doInBackground(IMediaElement... params) {
             String dataSource = null;
             mediaItemBase = params[0];
             if(mediaItemBase.getMediaType() == MediaType.DEVICE_MEDIA_LIB){
@@ -391,6 +396,25 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 }
                 return null;
             }
+            else if(mediaItemBase.getMediaType() == MediaType.RADIO) {
+                ApiRequestController.RequestCallback requestCallback = null;
+                try {
+                    requestCallback = ApiRequestController.getClient(context, RadioApiUtils.BASE_URL);
+                    Call<RadioPlayResponse> call = requestCallback.getRadioPlayService(mediaItemBase.getId());
+                    Response<RadioPlayResponse> resp = call.execute();
+                    if ( resp.isSuccessful() ) {
+                        List<RadioPlayResponse.Stream> streams = resp.body().getBody().getContent().getStreams();
+                        if ( streams.size() > 0 ) {
+                            return streams.get(0).getUrl();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+
+            }
             return dataSource;
         }
 
@@ -400,20 +424,22 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
             if( null != mediaItemBase && null != dataSource) {
                 if ( requestAudioFocus() ) {
                     mPlayer.setPath(dataSource);
-                    mPlayer.setDataSourceId(mediaItemBase.getItemId());
+                    mPlayer.setDataSourceId(mediaItemBase.getId());
 
-                    MediaItem item = (MediaItem)mediaItemBase;
+                    if ( mediaItemBase instanceof  MediaItem ) {
+                        MediaItem item = (MediaItem)mediaItemBase;
 
-                    MediaMetadata.Builder builder = new MediaMetadata.Builder();
-                    builder.putString(MediaMetadata.METADATA_KEY_TITLE, item.getItemTitle());
-                    builder.putString(MediaMetadata.METADATA_KEY_ALBUM, item.getItemAlbum());
-                    builder.putString(MediaMetadata.METADATA_KEY_ARTIST, item.getItemArtist());
-                    Bitmap bitmap = getAlbumart(context,item.getItemAlbumId());
-                    if ( bitmap != null ) {
-                        builder.putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, bitmap);
+                        MediaMetadata.Builder builder = new MediaMetadata.Builder();
+                        builder.putString(MediaMetadata.METADATA_KEY_TITLE, item.getTitle());
+                        builder.putString(MediaMetadata.METADATA_KEY_ALBUM, item.getItemAlbum());
+                        builder.putString(MediaMetadata.METADATA_KEY_ARTIST, item.getItemArtist());
+                        Bitmap bitmap = getAlbumart(context,item.getItemAlbumId());
+                        if ( bitmap != null ) {
+                            builder.putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, bitmap);
+                        }
+                        session.setMetadata(builder.build());
                     }
 
-                    session.setMetadata(builder.build());
                     setSessionState(PlaybackState.STATE_PLAYING);
                 }
             }
@@ -421,7 +447,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
             if ( mediaItemBase == null || dataSource == null )
             {
                 mPlayer.setPath(null);
-                mPlayer.setDataSourceId(-1);
+                mPlayer.setDataSourceId(null);
                 setSessionState(PlaybackState.STATE_STOPPED);
                 if ( ConnectivityReceiver.isNetworkAvailable(context, true) ) {
                     Toast.makeText(context, context.getResources().getString(R.string.loading_problem), Toast.LENGTH_SHORT).show();
@@ -459,7 +485,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
     }
 
     public void playPause() {
-        if ( mPlayer.getDataSourceId() == -1 ) {
+        if ( mPlayer.getDataSourceId() == null ) {
             onPlayingItemChanged();
             return;
         }
@@ -480,8 +506,8 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         setSessionState(PlaybackState.STATE_STOPPED);
     }
 
-    public IMediaItem getPlayingItem() {
-        return (IMediaItem) mQueue.getPlayingItem();
+    public IMediaElement getPlayingItem() {
+        return (IMediaElement) mQueue.getPlayingItem();
     }
 
     public void seek(final int progress) {

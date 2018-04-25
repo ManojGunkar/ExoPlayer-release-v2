@@ -99,7 +99,7 @@ public class DropBoxAPI {
                     int i = path.lastIndexOf('.');
                     String ext = (i > 0)? path.substring(i) : "";
                     if ( AUDIO_FILE_TYPES.contains(ext) ) {
-                        dropboxMediaList.addFileInDropboxList(new MediaItem(100000+count, file.getName(), path, ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
+                        dropboxMediaList.addFileInDropboxList(new MediaItem(String.valueOf(100000+count), file.getName(), path, ItemType.SONGS, MediaType.DROP_BOX, ItemType.SONGS));
                         count++;
                     }
                 }

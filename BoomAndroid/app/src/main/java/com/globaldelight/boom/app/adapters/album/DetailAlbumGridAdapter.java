@@ -20,10 +20,8 @@ import com.globaldelight.boom.app.activities.AlbumDetailActivity;
 import com.globaldelight.boom.app.activities.AlbumSongListActivity;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.adapters.model.ListDetail;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
@@ -38,12 +36,12 @@ import java.util.ArrayList;
 public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGridAdapter.SimpleItemViewHolder> {
 
     private static final String TAG = "ArtistListAdapter-TAG";
-    public static final int TYPE_HEADER = 111;
+    private static final int TYPE_HEADER = 111;
     private static final int ITEM_VIEW_ALBUM = 222;
     private static final int ITEM_VIEW_SONG = 333;
     private MediaItemCollection collection;
     private Activity activity;
-    private  RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private ListDetail listDetail;
     private boolean isPhone;
 
@@ -99,7 +97,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
             switch (holder.getItemViewType()) {
 
                 case ITEM_VIEW_ALBUM:
-                    holder.title.setText(currentItem.getItemTitle());
+                    holder.title.setText(currentItem.getTitle());
                     holder.subTitle.setText(currentItem.getItemSubTitle());
                     holder.defaultImg.setVisibility(View.VISIBLE);
                     setArtistImg(holder, currentItem.getItemArtUrl());
@@ -125,7 +123,7 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
 
                         setDefaultImage(holder.defaultImg, size, size);
                     }
-                    holder.title.setText(currentItem.getItemTitle());
+                    holder.title.setText(currentItem.getTitle());
 
                     StringBuilder countStr = new StringBuilder();
                     countStr.append(currentItem.getItemCount() > 1 ? activity.getResources().getString(R.string.songs) : activity.getResources().getString(R.string.song));
@@ -189,67 +187,63 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     }
 
     private void setOnMenuClickListener(SimpleItemViewHolder holder, final int position) {
-        holder.mMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View anchorView) {
-                IMediaItemCollection theCollection = (IMediaItemCollection) collection.getItemAt(0);
-                if(collection.getParentType() == ItemType.ARTIST && theCollection.count() == 0){
-                    theCollection.setMediaElement(MediaController.getInstance(activity).getArtistTrackList(collection));
-                }else if(collection.getParentType() == ItemType.GENRE && theCollection.count() == 0){
-                    theCollection.setMediaElement(MediaController.getInstance(activity).getGenreTrackList(collection));
-                }
-                OverFlowMenuUtils.showCollectionMenu(activity, anchorView, R.menu.collection_header_popup, theCollection);
-            }
-        });
+        holder.mMore.setOnClickListener((v)->onHeaderMenuClicked(v, position));
     }
 
     private void setOnClicks(final SimpleItemViewHolder holder, final int position, final int itemView) {
+        holder.itemView.setOnClickListener((v)->onItemClicked(v, position, itemView));
+        holder.grid_menu.setOnClickListener((v)->onMenuClicked(v,position));
+    }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        collection.setCurrentIndex(position);
-                        Intent i = null;
-                        if(itemView == ITEM_VIEW_SONG){
-                            i = new Intent(activity, AlbumSongListActivity.class);
-                        }else if (itemView == ITEM_VIEW_ALBUM) {
-                            i = new Intent(activity, AlbumDetailActivity.class);
-                        }
-                        Bundle b = new Bundle();
-                        b.putParcelable("mediaItemCollection", collection);
-                        i.putExtra("bundle", b);
-                        activity.startActivity(i);
-                    }
-                }, 100);
-            }
-        });
 
-        holder.grid_menu.setOnClickListener(new View.OnClickListener() {
+    private void onItemClicked(View view, int position, int itemView) {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View view) {
-                IMediaItemCollection currentItem = ((IMediaItemCollection)collection.getItemAt(position));
-                if(collection.getParentType() == ItemType.ARTIST && currentItem.count() == 0){
-                    if(currentItem.getItemType() == ItemType.SONGS){
-                        currentItem.setMediaElement(MediaController.getInstance(activity).getArtistTrackList(collection));
-                    }else{
-                        collection.setCurrentIndex(position);
-                        currentItem.setMediaElement(MediaController.getInstance(activity).getArtistAlbumsTrackList(collection));
-                    }
-                }else if(collection.getParentType() == ItemType.GENRE && currentItem.count() == 0){
-                    if(currentItem.getItemType() == ItemType.SONGS){
-                        currentItem.setMediaElement(MediaController.getInstance(activity).getGenreTrackList(collection));
-                    }else{
-                        collection.setCurrentIndex(position);
-                        currentItem.setMediaElement(MediaController.getInstance(activity).getGenreAlbumsTrackList(collection));
-                    }
+            public void run() {
+                Intent i = null;
+                if(itemView == ITEM_VIEW_SONG){
+                    i = new Intent(activity, AlbumSongListActivity.class);
+                }else if (itemView == ITEM_VIEW_ALBUM) {
+                    i = new Intent(activity, AlbumDetailActivity.class);
                 }
-
-                OverFlowMenuUtils.showCollectionMenu(activity, view, R.menu.collection_popup, currentItem);
+                Bundle b = new Bundle();
+                b.putParcelable("mediaItemCollection", collection);
+                b.putInt("itemIndex", position);
+                i.putExtra("bundle", b);
+                activity.startActivity(i);
             }
-        });
+        }, 100);
+    }
+
+
+    private void onMenuClicked(View view, int position) {
+        IMediaItemCollection currentItem = ((IMediaItemCollection)collection.getItemAt(position));
+        if(collection.getParentType() == ItemType.ARTIST && currentItem.count() == 0){
+            if(currentItem.getItemType() == ItemType.SONGS){
+                currentItem.setMediaElement(MediaController.getInstance(activity).getArtistTrackList(collection));
+            }else{
+                currentItem.setMediaElement(MediaController.getInstance(activity).getArtistAlbumsTrackList(collection, position));
+            }
+        }else if(collection.getParentType() == ItemType.GENRE && currentItem.count() == 0){
+            if(currentItem.getItemType() == ItemType.SONGS){
+                currentItem.setMediaElement(MediaController.getInstance(activity).getGenreTrackList(collection));
+            }else{
+                currentItem.setMediaElement(MediaController.getInstance(activity).getGenreAlbumsTrackList(collection, position));
+            }
+        }
+
+        OverFlowMenuUtils.showCollectionMenu(activity, view, R.menu.collection_popup, currentItem);
+    }
+
+
+    private void onHeaderMenuClicked(View view, int position) {
+        IMediaItemCollection theCollection = (IMediaItemCollection) collection.getItemAt(0);
+        if(collection.getParentType() == ItemType.ARTIST && theCollection.count() == 0){
+            theCollection.setMediaElement(MediaController.getInstance(activity).getArtistTrackList(collection));
+        }else if(collection.getParentType() == ItemType.GENRE && theCollection.count() == 0){
+            theCollection.setMediaElement(MediaController.getInstance(activity).getGenreTrackList(collection));
+        }
+        OverFlowMenuUtils.showCollectionMenu(activity, view, R.menu.collection_header_popup, theCollection);
     }
 
     private int setSize(SimpleItemViewHolder holder) {
@@ -267,12 +261,12 @@ public class DetailAlbumGridAdapter extends RecyclerView.Adapter<DetailAlbumGrid
     }
 
     public static class SimpleItemViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, subTitle;
-        public ImageView defaultImg, artImg1, artImg2, artImg3, artImg4;
-        public View gridBottomBg, grid_menu;
-        public TableLayout artTable;
-        public FrameLayout imgPanel;
-        public TextView headerSubTitle, headerDetail;
+        TextView title, subTitle;
+        ImageView defaultImg, artImg1, artImg2, artImg3, artImg4;
+        View gridBottomBg, grid_menu;
+        TableLayout artTable;
+        FrameLayout imgPanel;
+        TextView headerSubTitle, headerDetail;
         ImageView mMore;
 
         public SimpleItemViewHolder(View itemView) {

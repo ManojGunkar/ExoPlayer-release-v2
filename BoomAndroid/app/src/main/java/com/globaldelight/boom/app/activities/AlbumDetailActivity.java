@@ -1,12 +1,10 @@
 package com.globaldelight.boom.app.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -15,18 +13,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
-import com.globaldelight.boom.collection.local.callback.IMediaItemCollection;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
-import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.app.fragments.AlbumDetailFragment;
 import com.globaldelight.boom.utils.Utils;
-
-import java.io.File;
 
 /**
  * Created by Rahul Agarwal on 26-01-17.
@@ -35,6 +29,7 @@ import java.io.File;
 public class AlbumDetailActivity extends MasterActivity implements AlbumDetailFragment.Callback{
 
     IMediaItemCollection collection, currentItem;
+    private int mItemIndex = -1;
     AlbumDetailFragment fragment;
     private FloatingActionButton mFloatPlayAllAlbums;
 
@@ -55,11 +50,12 @@ public class AlbumDetailActivity extends MasterActivity implements AlbumDetailFr
     private void initValues() {
         Bundle b = getIntent().getBundleExtra("bundle");
         collection = (MediaItemCollection) b.getParcelable("mediaItemCollection");
+        mItemIndex = b.getInt("itemIndex");
 
         if( collection.getParentType() == ItemType.ALBUM ){
             currentItem = collection;
         } else {
-            currentItem = (IMediaItemCollection) collection.getItemAt(collection.getCurrentIndex());
+            currentItem = (IMediaItemCollection) collection.getItemAt(mItemIndex);
         }
 
         int width = Utils.getWindowWidth(this);
@@ -71,32 +67,7 @@ public class AlbumDetailActivity extends MasterActivity implements AlbumDetailFr
     private void initViews() {
         setDrawerLocked(true);
         mFloatPlayAllAlbums = (FloatingActionButton) findViewById(R.id.fab);
-        mFloatPlayAllAlbums.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (null != currentItem) {
-                    if (currentItem.getItemType() == ItemType.GENRE) {
-                     //   FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Genere_Details_Section);
-                        FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Genere_Details_Section);
-                    } else if (currentItem.getItemType() == ItemType.ARTIST) {
-//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_BUtton_Tapped_from_Artist_details_Section);
-                        FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Artist_details_Section);
-                    }else if (currentItem.getItemType() == ItemType.ALBUM ) {
-//                        FlurryAnalyticHelper.logEvent(UtilAnalytics.FAB_Button_Tapped_from_Album_Section);
-                        FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_Button_Tapped_from_Album_Section);
-                    }
-                }
-                if(null != fragment){
-                    fragment.onFloatPlayAlbums();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            toggleSlidingPanel();
-                        }
-                    }, 1000);
-                }
-            }
-        });
+        mFloatPlayAllAlbums.setOnClickListener(this::onPlay);
         mFloatPlayAllAlbums.setEnabled(false);
         mFloatPlayAllAlbums.setVisibility(View.GONE);
 
@@ -108,12 +79,29 @@ public class AlbumDetailActivity extends MasterActivity implements AlbumDetailFr
 
         Bundle arguments = new Bundle();
         arguments.putParcelable("mediaItemCollection", (MediaItemCollection)collection);
+        arguments.putInt("itemIndex", mItemIndex);
         fragment = new AlbumDetailFragment();
         fragment.setArguments(arguments);
         fragment.setCallback(this);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.item_detail_container, fragment)
                 .commitAllowingStateLoss();
+    }
+
+    private void onPlay(View view) {
+        if (null != currentItem) {
+            if (currentItem.getItemType() == ItemType.GENRE) {
+                FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Genere_Details_Section);
+            } else if (currentItem.getItemType() == ItemType.ARTIST) {
+                FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_BUtton_Tapped_from_Artist_details_Section);
+            }else if (currentItem.getItemType() == ItemType.ALBUM ) {
+                FlurryAnalytics.getInstance(AlbumDetailActivity.this).setEvent(FlurryEvents.FAB_Button_Tapped_from_Album_Section);
+            }
+        }
+        if(null != fragment){
+            fragment.onFloatPlayAlbums();
+            new Handler().postDelayed(this::toggleSlidingPanel, 1000);
+        }
     }
 
     private void setAlbumArtSize(int width, int height) {
@@ -125,7 +113,7 @@ public class AlbumDetailActivity extends MasterActivity implements AlbumDetailFr
 
     public void setAlbumArt(String albumArt) {
         ImageView imageView = (ImageView) findViewById(R.id.activity_album_art);
-        Glide.with(AlbumDetailActivity.this)
+        Glide.with(this)
                 .load(albumArt)
                 .placeholder(R.drawable.ic_default_art_player_header)
                 .centerCrop()

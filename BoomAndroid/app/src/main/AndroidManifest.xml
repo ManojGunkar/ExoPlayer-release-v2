@@ -172,6 +172,33 @@
             android:name=".app.activities.WebViewActivity"
             android:theme="@android:style/Theme.NoTitleBar" />
 
+        <activity
+            android:name=".radio.ui.CountryDetailedActivity"
+            android:parentActivityName=".app.activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".app.activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".radio.ui.SubCategoryDetailedActivity"
+            android:parentActivityName=".app.activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".app.activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".radio.ui.SubCategoryActivity"
+            android:parentActivityName=".app.activities.MainActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".app.activities.MainActivity" />
+        </activity>
+
         <receiver
             android:name=".app.analytics.GCMHelper"
             android:permission="com.google.android.c2dm.permission.SEND">

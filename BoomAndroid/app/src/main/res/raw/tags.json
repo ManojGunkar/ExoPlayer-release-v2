@@ -1,0 +1,204 @@
+{
+    "tags": [
+             {
+             "type": "tag",
+             "name": "Acoustic music",
+             "searchName": "tags.music.acoustic"
+             },
+             {
+             "type": "tag",
+             "name": "Ambient",
+             "searchName": "tags.music.ambient"
+             },
+             {
+             "type": "tag",
+             "name": "Art",
+             "searchName": "tags.topic.arts"
+             },
+             {
+             "type": "tag",
+             "name": "Astrology",
+             "searchName": "tags.topic.astrology"
+             },
+             {
+             "type": "tag",
+             "name": "Bass music",
+             "searchName": "tags.music.bass_music"
+             },
+             {
+             "type": "tag",
+             "name": "Bhangra Music",
+             "searchName": "tags.music.bhangra_music"
+             },
+             {
+             "type": "tag",
+             "name": "Bollywood",
+             "searchName": "tags.music.bollywood"
+             },
+             {
+             "type": "tag",
+             "name": "Business",
+             "searchName": "tags.topic.business"
+             },
+             {
+             "type": "tag",
+             "name": "Calm",
+             "searchName": "calm"
+             },
+             {
+             "type": "tag",
+             "name": "Classical Music",
+             "searchName": "tags.music.classic"
+             },
+             {
+             "type": "tag",
+             "name": "Country",
+             "searchName": "tags.music.country"
+             },
+             {
+             "type": "tag",
+             "name": "DJ mixes",
+             "searchName": "tags.music.dj_mixes"
+             },
+             {
+             "type": "tag",
+             "name": "Dance",
+             "searchName": "tags.music.dance"
+             },
+             {
+             "type": "tag",
+             "name": "Dark",
+             "searchName": "dark"
+             },
+             {
+             "type": "tag",
+             "name": "Disco",
+             "searchName": "tags.music.disco"
+             },
+             {
+             "type": "tag",
+             "name": "Dreamy",
+             "searchName": "dreamy"
+             },
+             {
+             "type": "tag",
+             "name": "Electro",
+             "searchName": "tags.music.electro"
+             },
+             {
+             "type": "tag",
+             "name": "Employment",
+             "searchName": "tags.topic.employment"
+             },
+             {
+             "type": "tag",
+             "name": "Energic",
+             "searchName": "energic"
+             },
+             {
+             "type": "tag",
+             "name": "Entertainment",
+             "searchName": "tags.topic.entertainment"
+             },
+             {
+             "type": "tag",
+             "name": "Happy",
+             "searchName": "happy"
+             },
+             {
+             "type": "tag",
+             "name": "Hip Hop",
+             "searchName": "tags.music.hip_hop"
+             },
+             {
+             "type": "tag",
+             "name": "Hits 60s",
+             "searchName": "tags.music.hits_60"
+             },
+             {
+             "type": "tag",
+             "name": "House",
+             "searchName": "tags.music.house"
+             },
+             {
+             "type": "tag",
+             "name": "Jazz",
+             "searchName": "tags.music.jazz"
+             },
+             {
+             "type": "tag",
+             "name": "Kids & family",
+             "searchName": "tags.topic.youth_and_family"
+             },
+             {
+             "type": "tag",
+             "name": "Latin music",
+             "searchName": "tags.music.latin"
+             },
+             {
+             "type": "tag",
+             "name": "Love",
+             "searchName": "tags.topic.love"
+             },
+             {
+             "type": "tag",
+             "name": "Lucky",
+             "searchName": "lucky"
+             },
+             {
+             "type": "tag",
+             "name": "Metal",
+             "searchName": "tags.music.metal_us"
+             },
+             {
+             "type": "tag",
+             "name": "Music",
+             "searchName": "tags.topic.music"
+             },
+             {
+             "type": "tag",
+             "name": "News",
+             "searchName": "tags.topic.news"
+             },
+             {
+             "type": "tag",
+             "name": "Pop",
+             "searchName": "tags.music.pop"
+             },
+             {
+             "type": "tag",
+             "name": "Positive",
+             "searchName": "positive"
+             },
+             {
+             "type": "tag",
+             "name": "R&B",
+             "searchName": "tags.music.rnb"
+             },
+             {
+             "type": "tag",
+             "name": "Rock",
+             "searchName": "tags.music.rock"
+             },
+             {
+             "type": "tag",
+             "name": "Romantic",
+             "searchName": "romantic"
+             },
+             {
+             "type": "tag",
+             "name": "Science",
+             "searchName": "tags.topic.science"
+             },
+             {
+             "type": "tag",
+             "name": "Sport",
+             "searchName": "tags.topic.sport"
+             },
+             {
+             "type": "tag",
+             "name": "Travel",
+             "searchName": "tags.topic.travel"
+             }
+             ]
+}

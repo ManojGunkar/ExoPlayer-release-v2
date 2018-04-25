@@ -23,7 +23,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.app.receivers.actions.PlayerEvents;
 import com.globaldelight.boom.collection.local.FavouriteMediaList;
-import com.globaldelight.boom.collection.local.callback.IMediaItemBase;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.loaders.LoadFavouriteList;
@@ -120,7 +120,7 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
         setSongListAdapter(favouriteMediaList.getFavouriteMediaList());
     }
 
-    private void setSongListAdapter(ArrayList<IMediaItemBase> favouriteMediaList) {
+    private void setSongListAdapter(ArrayList<IMediaElement> favouriteMediaList) {
         final GridLayoutManager gridLayoutManager =
                 new GridLayoutManager(mActivity, 1);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -170,7 +170,7 @@ public class FavouriteListFragment extends Fragment implements FavouriteMediaLis
         rootView.scrollTo(0, 100);
     }
 
-    private void notifyAdapter(ArrayList<? extends IMediaItemBase> mediaList){
+    private void notifyAdapter(ArrayList<? extends IMediaElement> mediaList){
         if(null != adapter){
             adapter.updateMediaList(mediaList);
             listIsEmpty(adapter.getItemCount());

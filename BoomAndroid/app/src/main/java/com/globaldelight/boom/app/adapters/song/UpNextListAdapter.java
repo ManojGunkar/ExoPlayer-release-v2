@@ -20,7 +20,7 @@ import com.bumptech.glide.Glide;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
-import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.collection.local.MediaItem;
@@ -87,7 +87,7 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 }
             }, 500);
         } else if(App.playbackManager().queue().getUpNextItemCount() > 0){
-            MediaItem item = (MediaItem) App.playbackManager().queue().getUpNextItemList().get(position);
+            IMediaElement item = App.playbackManager().queue().getUpNextItemList().get(position);
             if(null != item) {
                 // we need to show the "normal" state
                 holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.app_background));
@@ -96,11 +96,11 @@ public class UpNextListAdapter extends RecyclerView.Adapter<UpNextListAdapter.Si
                 holder.undoButton.setOnClickListener(null);
 
                 setArt(holder, item.getItemArtUrl());
-                holder.name.setText(item.getItemTitle());
-                holder.artistName.setText(item.getItemArtist());
+                holder.name.setText(item.getTitle());
+                holder.artistName.setText(item.getDescription());
 
                 if (null != App.playbackManager().getPlayingItem() && position == App.playbackManager().queue().getPlayingItemIndex()
-                       && item.getItemId() == App.playbackManager().getPlayingItem().getItemId()) {
+                       && item.equalTo(App.playbackManager().getPlayingItem())) {
                     playingItemPosition = position;
                     holder.art_overlay.setVisibility(View.VISIBLE);
                     holder.art_overlay_play.setVisibility(View.VISIBLE);
