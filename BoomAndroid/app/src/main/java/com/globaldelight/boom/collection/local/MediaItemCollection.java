@@ -2,6 +2,8 @@ package com.globaldelight.boom.collection.local;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
@@ -84,13 +86,13 @@ public class MediaItemCollection implements IMediaItemCollection, Parcelable {
     public String getItemArtUrl() {
         if ( mItemArtUrl == null ) {
             if ( mItemType == ItemType.ARTIST ){
-                mItemArtUrl = DeviceMediaLibrary.getInstance(null).getArtistArt(mItemId);
+                mItemArtUrl = DeviceMediaLibrary.getInstance(App.getApplication()).getArtistArt(mItemId);
             }
             else if ( mItemType == ItemType.ALBUM ) {
-                mItemArtUrl = DeviceMediaLibrary.getInstance(null).getAlbumArt(mItemTitle);
+                mItemArtUrl = DeviceMediaLibrary.getInstance(App.getApplication()).getAlbumArt(mItemTitle);
             }
             else {
-                mItemArtUrl = DeviceMediaLibrary.getInstance(null).getAlbumArt(mItemSubTitle);
+                mItemArtUrl = DeviceMediaLibrary.getInstance(App.getApplication()).getAlbumArt(mItemSubTitle);
             }
         }
 

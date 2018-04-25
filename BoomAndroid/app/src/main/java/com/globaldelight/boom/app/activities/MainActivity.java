@@ -25,7 +25,10 @@ import com.globaldelight.boom.app.fragments.DropBoxListFragment;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.radio.ui.fragments.RadioMainFragment;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
@@ -86,8 +89,14 @@ public class MainActivity extends MasterActivity
                     @Override
                     public void onAccepted() {
                         isUpdateUpnextDB = true;
-                        onNavigateToLibrary();
                         initSearchAndArt();
+                        IMediaElement playingItem = PlaybackManager.getInstance(MainActivity.this).getPlayingItem();
+                        if (playingItem != null && playingItem.getMediaType() == MediaType.RADIO ) {
+                            onNavigateToRadio();
+                        }
+                        else {
+                            onNavigateToLibrary();
+                        }
                     }
 
                     @Override

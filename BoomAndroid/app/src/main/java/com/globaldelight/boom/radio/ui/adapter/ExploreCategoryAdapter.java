@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.ui.SubCategoryActivity;
+import com.globaldelight.boom.radio.ui.SubCategoryDetailedActivity;
 import com.globaldelight.boom.radio.webconnector.model.ExploreCategory;
 import com.globaldelight.boom.utils.Utils;
 
@@ -74,7 +75,12 @@ public class ExploreCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 break;
         }
 
-        viewHolder.itemView.setOnClickListener(v -> {
+        viewHolder.itemView.setOnClickListener(v->onItemClicked(v, content));
+
+    }
+
+    private void onItemClicked(View view, ExploreCategory.Content content) {
+        if ( content.getChildCount() != null && content.getChildCount() > 0) {
             Intent intent=new Intent(mContext, SubCategoryActivity.class);
             if (content.getPermalink().equals("file://tags.json")){
                 intent.putExtra("isTag",true);
@@ -82,8 +88,14 @@ public class ExploreCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             intent.putExtra("title",content.getName());
             intent.putExtra("permalink",content.getPermalink());
             mContext.startActivity(intent);
+        }
+        else {
+            Intent intent=new Intent(mContext, SubCategoryDetailedActivity.class);
+            intent.putExtra("title",content.getName());
+            intent.putExtra("permalink",content.getPermalink());
+            mContext.startActivity(intent);
 
-        });
+        }
 
     }
 

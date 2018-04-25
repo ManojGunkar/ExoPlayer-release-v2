@@ -335,6 +335,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             return;
         }
 
+        mFavouritesCheckbox.setVisibility(View.GONE);
         if (App.playbackManager().queue().getUpNextItemCount() > 0) {
             mUpNextBtnPanel.setVisibility(View.VISIBLE);
             mPlayerOverFlowMenuPanel.setVisibility(View.VISIBLE);
