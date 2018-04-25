@@ -147,7 +147,9 @@ public class ApiRequestController {
 
         @GET("/Pillow/{category}")
         Call<CategoryResponse> getCategoryWiseStation(
-                @Path(value = "category",encoded = true) String category);
+                @Path(value = "category",encoded = true) String category,
+                @Query("page") String page,
+                @Query("pageSize") String pageSize);
 
         @GET("/Pillow/search")
         Call<RadioStationResponse> getSearchResult(
