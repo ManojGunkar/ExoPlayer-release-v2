@@ -26,7 +26,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
-import com.globaldelight.boom.radio.webconnector.ApiRequestController;
+import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 
@@ -37,7 +37,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -131,9 +130,9 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     }
 
     private Call<RadioStationResponse> requestForContent() {
-        ApiRequestController.RequestCallback requestCallback = null;
+        RadioRequestController.RequestCallback requestCallback = null;
         try {
-            requestCallback = ApiRequestController
+            requestCallback = RadioRequestController
                     .getClient(getActivity(), RadioApiUtils.BASE_URL);
         } catch (CertificateException e) {
             e.printStackTrace();

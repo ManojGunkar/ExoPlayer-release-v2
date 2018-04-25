@@ -46,7 +46,7 @@ public class CustomInterceptor implements Interceptor {
         Response response =  chain.proceed(request);
         if (response.code() == 401||response.code()==403){
             try {
-                ApiRequestController.RequestCallback requestCallback=ApiRequestController.getClient(context,RadioApiUtils.TOKEN_URL);
+                RadioRequestController.RequestCallback requestCallback= RadioRequestController.getClient(context,RadioApiUtils.TOKEN_URL);
                // Call call= requestCallback.getRefreshToken("refresh_token",refreshToken,RadioApiUtils.CLIENT_ID);
                 Call call= requestCallback.getToken("password","test","read",RadioApiUtils.CLIENT_ID);
                 AccessTokenModel accessTokenPojo= (AccessTokenModel) call.execute().body();
