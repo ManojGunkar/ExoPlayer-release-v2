@@ -68,7 +68,7 @@ public class ExploreCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 viewHolder.imgCatThumb.setImageDrawable(mContext.getDrawable(R.drawable.special_season));
                 break;
             case "Spotlight":
-                viewHolder.imgCatThumb.setImageDrawable(mContext.getDrawable(R.drawable.geners));
+                viewHolder.imgCatThumb.setImageDrawable(mContext.getDrawable(R.drawable.spotlight));
                 break;
             case "Tags":
                 viewHolder.imgCatThumb.setImageDrawable(mContext.getDrawable(R.drawable.tag));
