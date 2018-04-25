@@ -10,23 +10,27 @@
         android:layout_height="match_parent"
         >
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/ll_tag_radio"
             android:layout_width="62dp"
             android:layout_height="62dp"
             android:layout_margin="5dp"
-            android:padding="15dp"
-            style="@style/RadioTagBorder"
-            android:layout_alignParentLeft="true"
-            android:shape="ring">
-
+            android:layout_alignParentLeft="true">
+            <ImageView
+                android:id="@+id/tag_background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:tint="@color/colorAccent"
+                android:src="@drawable/radio_tag_border" />
             <ImageView
                 android:id="@+id/img_tag_radio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:scaleType="centerCrop"
                 android:src="@drawable/tag" />
-        </LinearLayout>
+        </FrameLayout>
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/txt_title_tag_radio"

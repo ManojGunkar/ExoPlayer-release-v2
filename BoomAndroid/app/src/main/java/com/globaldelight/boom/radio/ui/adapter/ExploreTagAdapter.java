@@ -3,16 +3,13 @@ package com.globaldelight.boom.radio.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.ui.SubCategoryDetailedActivity;
@@ -54,10 +51,10 @@ public class ExploreTagAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         viewHolder.txtTitle.setText(mTags.get(position).getName());
 
         int[] tagColors=mContext.getResources().getIntArray(R.array.radio_tag_colors);
-        for (int i=0;i<mTags.size();i++){
-            ColorStateList csl = new ColorStateList(new int[][]{{i}}, tagColors);
-            viewHolder.llTagBorder.setBackgroundTintList(csl);
-        }
+
+        int color = tagColors[position % tagColors.length];
+
+        viewHolder.imgBgTag.getDrawable().setTint(color);
 
 
 
@@ -82,13 +79,13 @@ public class ExploreTagAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     protected class TagViewHolder extends RecyclerView.ViewHolder {
 
-        private LinearLayout llTagBorder;
+        private ImageView imgBgTag;
         private TextView txtTitle;
 
         public TagViewHolder(View itemView) {
             super(itemView);
 
-            llTagBorder = itemView.findViewById(R.id.ll_tag_radio);
+            imgBgTag = itemView.findViewById(R.id.tag_background);
             txtTitle = itemView.findViewById(R.id.txt_title_tag_radio);
         }
 
