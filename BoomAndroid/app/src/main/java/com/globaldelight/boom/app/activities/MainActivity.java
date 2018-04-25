@@ -30,6 +30,7 @@ import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.radio.ui.fragments.RadioMainFragment;
+import com.globaldelight.boom.tidal.ui.TidalLoginFragment;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 
@@ -232,6 +233,10 @@ public class MainActivity extends MasterActivity
                 }
                 break;
 
+            case R.id.tidal:
+                runnable=this::onNavigateToTidal;
+                break;
+
             default:
                 BusinessModelFactory.getCurrentModel().onDrawerItemClicked(item, this);
                 drawerLayout.closeDrawer(GravityCompat.START);
@@ -274,6 +279,14 @@ public class MainActivity extends MasterActivity
         Fragment fragment = new RadioMainFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+    }
+
+    private void onNavigateToTidal(){
+        navigationView.getMenu().findItem(R.id.tidal).setChecked(true);
+        setTitle(R.string.tidal);
+        TidalLoginFragment loginFragment=new TidalLoginFragment();
+        FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, loginFragment).commitAllowingStateLoss();
     }
 
     private void onNavigateToDropbox() {
