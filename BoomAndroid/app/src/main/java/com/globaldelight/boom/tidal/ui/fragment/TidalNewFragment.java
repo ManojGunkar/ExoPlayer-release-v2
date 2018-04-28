@@ -18,7 +18,12 @@ import com.globaldelight.boom.R;
  */
 public class TidalNewFragment extends Fragment {
     private ProgressBar mProgressBar;
-    private RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerNewPlaylist;
+    private RecyclerView mRecyclerRecPlayList;
+    private RecyclerView mRecyclerNewTrack;
+    private RecyclerView mRecyclerRecTrack;
+    private RecyclerView mRecyclerNewAlbum;
+    private RecyclerView mRecyclerRecAlbum;
 
     @Nullable
     @Override
