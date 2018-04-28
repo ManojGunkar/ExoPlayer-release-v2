@@ -1,4 +1,4 @@
-package com.globaldelight.boom.tidal.tidalconnector.model;
+package com.globaldelight.boom.tidal.tidalconnector.model.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

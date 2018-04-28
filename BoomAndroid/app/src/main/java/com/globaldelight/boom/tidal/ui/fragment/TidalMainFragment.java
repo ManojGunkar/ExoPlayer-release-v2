@@ -1,8 +1,6 @@
-package com.globaldelight.boom.radio.ui.fragments;
+package com.globaldelight.boom.tidal.ui.fragment;
 
-import android.app.Activity;
 import android.app.SearchManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,32 +19,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter;
+import com.globaldelight.boom.tidal.ui.adapter.TidalTabAdapter;
 
 import static android.content.Context.SEARCH_SERVICE;
 
 /**
- * Created by Manoj Kumar on 09-04-2018.
- * ©Global Delight Technologies Pvt. Ltd.
+ * Created by Manoj Kumar on 28-04-2018.
+ * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class RadioMainFragment extends Fragment {
+public class TidalMainFragment extends Fragment {
 
-    private RadioFragmentStateAdapter mStateAdapter;
     private TabLayout mTabBar;
     private ViewPager mViewPager;
-    private Activity mActivity;
-    private float mToolbarElevation;
+    private TidalTabAdapter mStateAdapter;
     private SearchView searchView;
-
-    private RadioSearchFragment radioSearchFragment;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof Activity) {
-            mActivity = (Activity) context;
-        }
-    }
+    private TidalSearchFragment tidalSearch;
 
     @Nullable
     @Override
@@ -65,35 +51,13 @@ public class RadioMainFragment extends Fragment {
     }
 
     private void setViewPager(ViewPager viewPager) {
-        mStateAdapter = new RadioFragmentStateAdapter(getActivity().getSupportFragmentManager());
+        mStateAdapter = new TidalTabAdapter(getActivity().getSupportFragmentManager());
         viewPager.setAdapter(mStateAdapter);
         viewPager.setOffscreenPageLimit(4);
         mTabBar.setupWithViewPager(mViewPager);
         viewPager.setCurrentItem(0);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mActivity = null;
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mActivity = null;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -101,7 +65,7 @@ public class RadioMainFragment extends Fragment {
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
 
         searchView = (SearchView)searchMenuItem.getActionView();
-        searchView.setQueryHint(getResources().getString(R.string.search_hint_radio));
+        searchView.setQueryHint(getResources().getString(R.string.search_hint_tidal));
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(SEARCH_SERVICE);
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
@@ -115,10 +79,10 @@ public class RadioMainFragment extends Fragment {
         searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                 radioSearchFragment=new RadioSearchFragment();
+                tidalSearch=new TidalSearchFragment();
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .add(R.id.fragment_container, radioSearchFragment)
+                        .add(R.id.fragment_container, tidalSearch)
                         .commitAllowingStateLoss();
                 return true;
             }
@@ -127,16 +91,16 @@ public class RadioMainFragment extends Fragment {
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .remove(radioSearchFragment)
+                        .remove(tidalSearch)
                         .commitAllowingStateLoss();
-                radioSearchFragment=null;
+                tidalSearch=null;
                 return true;
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                radioSearchFragment.updateResult(query);
+                tidalSearch.getSearchQuery(query);
                 return true;
             }
 
@@ -157,23 +121,5 @@ public class RadioMainFragment extends Fragment {
         }
         return false;
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        mToolbarElevation = toolbar.getElevation();
-        mTabBar.setElevation(mToolbarElevation);
-        toolbar.setElevation(0);
-    }
-
-    @Override
-    public void onStop() {
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        toolbar.setElevation(mToolbarElevation);
-        super.onStop();
-    }
-
-
 
 }

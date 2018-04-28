@@ -1,4 +1,4 @@
-package com.globaldelight.boom.tidal.ui;
+package com.globaldelight.boom.tidal.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
-import com.globaldelight.boom.tidal.tidalconnector.model.TidalLoginResponse;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalLoginResponse;
 import com.globaldelight.boom.utils.Log;
 
 import retrofit2.Call;
@@ -37,7 +37,7 @@ public class TidalLoginFragment extends Fragment implements View.OnClickListener
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tidal_login, null, false);
+        View view = inflater.inflate(R.layout.tidal_login, null, false);
         setHasOptionsMenu(true);
         init(view);
         return view;
@@ -54,7 +54,7 @@ public class TidalLoginFragment extends Fragment implements View.OnClickListener
 
     private void userLogin(String userid,String password){
         TidalRequestController.Callback callback=TidalRequestController.getTidalClient();
-        Call<TidalLoginResponse> call=callback.userLogin(userid,password,CLIENT_UNIQUE_KEY);
+        Call<TidalLoginResponse> call=callback.userLogin(TidalRequestController.AUTH_TOKEN,userid,password,CLIENT_UNIQUE_KEY);
         call.enqueue(new Callback<TidalLoginResponse>() {
             @Override
             public void onResponse(Call<TidalLoginResponse> call, Response<TidalLoginResponse> response) {

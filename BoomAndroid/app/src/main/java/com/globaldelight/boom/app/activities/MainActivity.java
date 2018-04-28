@@ -30,7 +30,7 @@ import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.radio.ui.fragments.RadioMainFragment;
-import com.globaldelight.boom.tidal.ui.TidalLoginFragment;
+import com.globaldelight.boom.tidal.ui.fragment.TidalMainFragment;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 
@@ -43,12 +43,12 @@ import static com.globaldelight.boom.app.fragments.MasterContentFragment.isUpdat
 public class MainActivity extends MasterActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private PermissionChecker permissionChecker;
-    private ViewGroup mainContainer;
     public boolean isLibraryRendered = false;
     public MusicSearchHelper musicSearchHelper;
     protected NavigationView navigationView;
     protected Toolbar mToolbar;
+    private PermissionChecker permissionChecker;
+    private ViewGroup mainContainer;
 
     @Override
     public void setContentView(int layoutResID) {
@@ -92,10 +92,9 @@ public class MainActivity extends MasterActivity
                         isUpdateUpnextDB = true;
                         initSearchAndArt();
                         IMediaElement playingItem = PlaybackManager.getInstance(MainActivity.this).getPlayingItem();
-                        if (playingItem != null && playingItem.getMediaType() == MediaType.RADIO ) {
+                        if (playingItem != null && playingItem.getMediaType() == MediaType.RADIO) {
                             onNavigateToRadio();
-                        }
-                        else {
+                        } else {
                             onNavigateToLibrary();
                         }
                     }
@@ -117,7 +116,7 @@ public class MainActivity extends MasterActivity
         permissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private void initSearchAndArt(){
+    private void initSearchAndArt() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -137,8 +136,8 @@ public class MainActivity extends MasterActivity
         super.onPanelCollapsed(panel);
 
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if ( currentFragment instanceof LibraryFragment ) {
-            ((LibraryFragment)currentFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
+        if (currentFragment instanceof LibraryFragment) {
+            ((LibraryFragment) currentFragment).chooseCoachMarkWindow(isPlayerExpended(), isLibraryRendered);
         }
 
     }
@@ -148,8 +147,8 @@ public class MainActivity extends MasterActivity
         super.onPanelExpanded(panel);
 
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if ( currentFragment instanceof LibraryFragment ) {
-            ((LibraryFragment)currentFragment).setDismissHeadphoneCoachmark();
+        if (currentFragment instanceof LibraryFragment) {
+            ((LibraryFragment) currentFragment).setDismissHeadphoneCoachmark();
         }
     }
 
@@ -175,8 +174,8 @@ public class MainActivity extends MasterActivity
     public void onBackPressed() {
         contentFragment.onBackPressed();
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if ( currentFragment instanceof LibraryFragment ) {
-            ((LibraryFragment)currentFragment).setAutoDismissBahaviour();
+        if (currentFragment instanceof LibraryFragment) {
+            ((LibraryFragment) currentFragment).setAutoDismissBahaviour();
         }
 
         if (isPlayerExpended()) {
@@ -193,26 +192,26 @@ public class MainActivity extends MasterActivity
     public boolean onNavigationItemSelected(final MenuItem item) {
         Runnable runnable;
         runnable = null;
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.music_library:
                 runnable = this::onNavigateToLibrary;
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Music_library_Opened_From_Drawer);
                 break;
             case R.id.google_drive:
-                if (Utils.isOnline(this)){
+                if (Utils.isOnline(this)) {
                     runnable = this::onNavigateToGoogleDrive;
                     FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Google_Drive_OPENED_FROM_DRAWER);
-                }else {
+                } else {
                     Utils.networkAlert(this);
                     return false;
                 }
                 break;
 
             case R.id.drop_box:
-                if (Utils.isOnline(this)){
+                if (Utils.isOnline(this)) {
                     runnable = this::onNavigateToDropbox;
                     FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.DROP_BOX_OPENED_FROM_DRAWER);
-                }else {
+                } else {
                     Utils.networkAlert(this);
                     return false;
                 }
@@ -225,16 +224,16 @@ public class MainActivity extends MasterActivity
                 return true;
 
             case R.id.radio:
-                if (Utils.isOnline(this)){
+                if (Utils.isOnline(this)) {
                     runnable = this::onNavigateToRadio;
-                }else {
+                } else {
                     Utils.networkAlert(this);
                     return false;
                 }
                 break;
 
             case R.id.tidal:
-                runnable=this::onNavigateToTidal;
+                runnable = this::onNavigateToTidal;
                 break;
 
             default:
@@ -254,13 +253,13 @@ public class MainActivity extends MasterActivity
 
     private void startCompoundActivities(int activityName) {
         Intent intent = new Intent(this, ActivityContainer.class);
-        intent.putExtra("container",activityName);
+        intent.putExtra("container", activityName);
         startActivity(intent);
     }
 
     private void onNavigateToLibrary() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if ( currentFragment instanceof LibraryFragment ) {
+        if (currentFragment instanceof LibraryFragment) {
             return;
         }
 
@@ -273,7 +272,7 @@ public class MainActivity extends MasterActivity
         transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
     }
 
-    private void onNavigateToRadio(){
+    private void onNavigateToRadio() {
         navigationView.getMenu().findItem(R.id.radio).setChecked(true);
         setTitle(R.string.radio);
         Fragment fragment = new RadioMainFragment();
@@ -281,17 +280,17 @@ public class MainActivity extends MasterActivity
         transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
     }
 
-    private void onNavigateToTidal(){
+    private void onNavigateToTidal() {
         navigationView.getMenu().findItem(R.id.tidal).setChecked(true);
         setTitle(R.string.tidal);
-        TidalLoginFragment loginFragment=new TidalLoginFragment();
-        FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
+        TidalMainFragment loginFragment = new TidalMainFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, loginFragment).commitAllowingStateLoss();
     }
 
     private void onNavigateToDropbox() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if ( currentFragment instanceof DropBoxListFragment ) {
+        if (currentFragment instanceof DropBoxListFragment) {
             return;
         }
 
@@ -304,7 +303,7 @@ public class MainActivity extends MasterActivity
 
     private void onNavigateToGoogleDrive() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if ( currentFragment instanceof GoogleDriveListFragment ) {
+        if (currentFragment instanceof GoogleDriveListFragment) {
             return;
         }
 
