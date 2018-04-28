@@ -1,5 +1,6 @@
 package com.globaldelight.boom.tidal.tidalconnector;
 
+import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalLoginResponse;
 
 import java.util.concurrent.TimeUnit;
@@ -11,8 +12,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * Created by Manoj Kumar on 25-04-2018.
@@ -22,6 +25,12 @@ public class TidalRequestController {
 
     public final static String AUTH_TOKEN = "xxb2MAG8HwjUFhTZ";
     private final static String BASE_URL = "https://api.tidal.com/v1/";
+
+    /**
+     * @implNote Please Suffix the size of image eg:- /80x80.jpg
+     * https://resources.tidal.com/images/3e76aaa2/2dee/4f8f/bcd8/6b10a44a875a/220x146.jpg
+     */
+    public final static String IMAGE_BASE_URL = "https://resources.tidal.com/images/";
     private static OkHttpClient client;
     private static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
 
@@ -62,13 +71,41 @@ public class TidalRequestController {
                 @Field("clientUniqueKey") String clientUniqueKey);
 
         /*
-        TidalBaseResponse
+        Playlist
             – New – GET https://api.tidal.com/v1/featured/new/playlists?US&limit=1&offset=1}
             – Recommended – GET https://api.tidal.com/v1/featured/recommended/playlists?US&limit=1&offset=1
             – Local (not applicable all regions)
                 – GET https://api.tidal.com/v1/featured/local/playlists?US&limit=1&offset=1
             – Exclusive – GET https://api.tidal.com/v1/featured/exclusive/playlists?US&limit=1&offset=1
         */
+
+        @GET("featured/new/playlists")
+        Call<TidalBaseResponse> getNewPlaylists(
+                @Header("X-Tidal-Token") String token,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
+
+        @GET("/featured/recommended/playlists")
+        Call<TidalBaseResponse> getRecommendedPlaylists(
+                @Header("X-Tidal-Token") String token,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
+
+        @GET("featured/local/playlists")
+        Call<TidalBaseResponse> getLocalPlaylists(
+                @Header("X-Tidal-Token") String token,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
+
+        @GET("featured/exclusive/playlists")
+        Call<TidalBaseResponse> getExclusivePlaylists(
+                @Header("X-Tidal-Token") String token,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
 
         /*
         Album
@@ -79,6 +116,33 @@ public class TidalRequestController {
                 – GET https://api.tidal.com/v1/featured/local/albums?US&limit=1&offset=1
         */
 
+        @GET("featured/new/albums")
+        Call<TidalBaseResponse> getNewAlbums(
+                @Header("X-Tidal-Token") String token,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
+
+        @GET("featured/recommended/albums")
+        Call<TidalBaseResponse> getRecommendedAlbums(
+                @Header("X-Tidal-Token") String token,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
+
+        @GET("featured/top/albums")
+        Call<TidalBaseResponse> getTop20Albums(
+                @Header("X-Tidal-Token") String token,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
+
+        @GET("featured/local/albums")
+        Call<TidalBaseResponse> getLocalAlbums(
+                @Header("X-Tidal-Token") String token,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
 
         /*
         Tracks
@@ -88,6 +152,48 @@ public class TidalRequestController {
             – Local (not applicable all regions)
                 – GET https://api.tidal.com/v1/featured/local/tracks?US&limit=1&offset=1
         */
+
+        @GET("featured/new/tracks")
+        Call<TidalBaseResponse> getNewTracks(
+                @Header("X-Tidal-Token") String token,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
+
+        @GET("featured/recommended/tracks")
+        Call<TidalBaseResponse> getRecommendedTracks(
+                @Header("X-Tidal-Token") String token,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
+
+        @GET("featured/top/tracks")
+        Call<TidalBaseResponse> getTop20Tracks(
+                @Header("X-Tidal-Token") String token,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
+
+        @GET("featured/local/tracks")
+        Call<TidalBaseResponse> getLocalTracks(
+                @Header("X-Tidal-Token") String token,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
+
+        @GET("rising/new/albums")
+        Call<TidalBaseResponse> getRisingAlbums(
+                @Header("X-Tidal-SessionId") String sessionID,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
+
+        @GET("rising/new/tracks")
+        Call<TidalBaseResponse> getRisingTracks(
+                @Header("X-Tidal-SessionId") String sessionID,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
 
     }
 }
