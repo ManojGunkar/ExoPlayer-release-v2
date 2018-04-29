@@ -13,7 +13,7 @@
         android:visibility="visible" />
 
     <android.support.v4.widget.NestedScrollView
-        android:id="@+id/scroll_search_all"
+        android:id="@+id/scroll_new_tidal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true">
@@ -33,7 +33,7 @@
                     android:layout_alignParentRight="true"
                     android:padding="5dp"
                     android:text="Show more"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/colorAccent" />
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/txt_new_playlist"
@@ -42,10 +42,10 @@
                     android:layout_alignParentLeft="true"
                     android:padding="5dp"
                     android:text="New Playlists"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/colorAccent" />
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_new_"
+                    android:id="@+id/rv_new_playlist"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/txt_new_playlist"
@@ -64,7 +64,7 @@
                     android:layout_alignParentRight="true"
                     android:padding="5dp"
                     android:text="Show more"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/colorAccent" />
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/txt_recommended_playlist"
@@ -73,7 +73,7 @@
                     android:layout_alignParentLeft="true"
                     android:padding="5dp"
                     android:text="Recommended Playlists"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/colorAccent" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_recommended_playlist"
@@ -95,7 +95,7 @@
                     android:layout_alignParentRight="true"
                     android:padding="5dp"
                     android:text="Show more"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/colorAccent" />
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/txt_new_track"
@@ -104,7 +104,7 @@
                     android:layout_alignParentLeft="true"
                     android:padding="5dp"
                     android:text="New Tracks"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/colorAccent" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_new_track"
@@ -126,7 +126,7 @@
                     android:layout_alignParentRight="true"
                     android:padding="5dp"
                     android:text="Show more"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/colorAccent" />
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/txt_recommended_track"
@@ -135,7 +135,7 @@
                     android:layout_alignParentLeft="true"
                     android:padding="5dp"
                     android:text="Recommended Track"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/colorAccent" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_recommended_track"

@@ -2,15 +2,17 @@ package com.globaldelight.boom.tidal.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
-import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
+import com.globaldelight.boom.utils.Utils;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,24 +24,43 @@ import java.util.List;
 public class TidalNewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private List<Item> mItems= Collections.emptyList();
+    private List<Item> mItems = Collections.emptyList();
 
-    public TidalNewAdapter(Context context,List<Item> items){
-        this.mContext=context;
-        this.mItems=items;
+    public TidalNewAdapter(Context context, List<Item> items) {
+        this.mContext = context;
+        this.mItems = items;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        return new ItemViewHolder(inflater.inflate(R.layout.item_tidal_new, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Item item=mItems.get(position);
-        String image=item.getCover();
-        image=image.replace("-","/");
-        String imageUrl= TidalRequestController.IMAGE_BASE_URL+image+"/320×320.jpg";
+        ItemViewHolder viewHolder = (ItemViewHolder) holder;
+        Item item = mItems.get(position);
+        String image = null;
+        if (item.getAlbum() != null) {
+            image = item.getAlbum().getCover();
+            image = image.replace("-", "/");
+            image = TidalRequestController.IMAGE_BASE_URL + image + "/320×320.jpg";
+        }
+        if (item.getImage() != null) {
+            image = item.getImage();
+            image = image.replace("-", "/");
+            image = TidalRequestController.IMAGE_BASE_URL + image + "/320×320.jpg";
+        }
+
+        final int size = Utils.largeImageSize(mContext);
+        Glide.with(mContext).load(image)
+                .placeholder(R.drawable.ic_default_art_grid)
+                .centerCrop()
+                .override(size, size)
+                .into(viewHolder.imgItemCover);
+
+        viewHolder.txtItemTitle.setText(item.getTitle());
 
     }
 
@@ -55,8 +76,8 @@ public class TidalNewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            txtItemTitle=itemView.findViewById(R.id.txt_tidal_title);
-            imgItemCover=itemView.findViewById(R.id.img_tidal_cover);
+            txtItemTitle = itemView.findViewById(R.id.txt_tidal_title);
+            imgItemCover = itemView.findViewById(R.id.img_tidal_cover);
         }
     }
 }

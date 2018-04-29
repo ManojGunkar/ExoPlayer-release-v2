@@ -83,6 +83,20 @@ public class Item {
     @SerializedName("creator")
     @Expose
     private Creator creator;
+    @SerializedName("album")
+    @Expose
+    private Album album;
+    @SerializedName("image")
+    @Expose
+    private String image;
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public Creator getCreator() {
         return creator;
@@ -92,6 +106,13 @@ public class Item {
         this.creator = creator;
     }
 
+    public Album getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(Album album) {
+        this.album = album;
+    }
 
     public Integer getId() {
         return id;
@@ -349,6 +370,44 @@ public class Item {
 
         public void setType(String type) {
             this.type = type;
+        }
+
+    }
+
+    public class Album {
+
+        @SerializedName("id")
+        @Expose
+        private Integer id;
+        @SerializedName("title")
+        @Expose
+        private String title;
+        @SerializedName("cover")
+        @Expose
+        private String cover;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getCover() {
+            return cover;
+        }
+
+        public void setCover(String cover) {
+            this.cover = cover;
         }
 
     }
