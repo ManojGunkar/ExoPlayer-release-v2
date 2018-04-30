@@ -15,11 +15,10 @@ import com.globaldelight.boom.app.activities.MasterActivity;
 import com.globaldelight.boom.radio.ui.adapter.ExploreTagAdapter;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.ui.adapter.SubCategoryAdapter;
-import com.globaldelight.boom.radio.webconnector.ApiRequestController;
+import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
 import com.globaldelight.boom.radio.webconnector.model.CategoryResponse;
 import com.globaldelight.boom.radio.webconnector.model.ExploreTag;
-import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -107,9 +106,9 @@ public class SubCategoryActivity extends MasterActivity {
     }
 
     private Call<CategoryResponse> requestForContent(String permalink) {
-        ApiRequestController.RequestCallback requestCallback = null;
+        RadioRequestController.RequestCallback requestCallback = null;
         try {
-            requestCallback = ApiRequestController
+            requestCallback = RadioRequestController
                     .getClient(this, RadioApiUtils.BASE_URL);
         } catch (CertificateException e) {
             e.printStackTrace();

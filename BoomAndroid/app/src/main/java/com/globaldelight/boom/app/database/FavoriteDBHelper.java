@@ -47,7 +47,7 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_FAVORITE_SONG_TABLE = "CREATE TABLE "+TABLE_FAVORITE+" (" +
                 SONG_KEY_ID+" INTEGER PRIMARY KEY AUTOINCREMENT," +
-                SONG_KEY_REAL_ID+" INTEGER," + TITLE+" TEXT," + DISPLAY_NAME+" TEXT,"+
+                SONG_KEY_REAL_ID+" TEXT," + TITLE+" TEXT," + DISPLAY_NAME+" TEXT,"+
                 DATA_PATH+" TEXT," + ALBUM_ID+" INTEGER," +
                 ALBUM+" TEXT," + ARTIST_ID+" INTEGER," +
                 ARTIST+" TEXT," + DURATION+" TEXT," +
@@ -108,17 +108,10 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void removeSong(long songId) {
+    public void removeSong(String songId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_FAVORITE + " WHERE " +
                 SONG_KEY_REAL_ID + "='" + songId + "'");
-        db.close();
-    }
-
-    public void removeSong(String songTitle) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + TABLE_FAVORITE + " WHERE " +
-                TITLE + "='" + songTitle + "'");
         db.close();
     }
 
@@ -180,7 +173,7 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    public boolean isFavouriteItems(long itemId) {
+    public boolean isFavouriteItems(String itemId) {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT  * FROM " + TABLE_FAVORITE+ " WHERE " +
                 SONG_KEY_REAL_ID + "='" + itemId + "'";
@@ -193,18 +186,18 @@ public class FavoriteDBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean isFavouriteItems(String itemTitle) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT  * FROM " + TABLE_FAVORITE+ " WHERE " +
-                TITLE + "='" + itemTitle + "'";
-        Cursor cursor = db.rawQuery(query, null);
-        if(cursor.getCount() <= 0){
-            cursor.close();
-            return false;
-        }
-        cursor.close();
-        return true;
-    }
+//    public boolean isFavouriteItems(String itemTitle) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        String query = "SELECT  * FROM " + TABLE_FAVORITE+ " WHERE " +
+//                TITLE + "='" + itemTitle + "'";
+//        Cursor cursor = db.rawQuery(query, null);
+//        if(cursor.getCount() <= 0){
+//            cursor.close();
+//            return false;
+//        }
+//        cursor.close();
+//        return true;
+//    }
 
     public ArrayList<String> getFavouriteArtList() {
         SQLiteDatabase db = this.getWritableDatabase();

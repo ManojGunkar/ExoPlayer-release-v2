@@ -14,6 +14,7 @@ import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.local.MediaItemCollection;
 import com.globaldelight.boom.collection.base.IMediaItemCollection;
@@ -70,7 +71,7 @@ public class AlbumDetailAdapter extends RecyclerView.Adapter<AlbumDetailAdapter.
             }
         }else if(position >= 1) {
             int pos = position -1;
-            MediaItem nowPlayingItem = (MediaItem) App.playbackManager().queue().getPlayingItem();
+            IMediaElement nowPlayingItem = App.playbackManager().queue().getPlayingItem();
             MediaItem curItem = (MediaItem)collection.getItemAt(pos);
             updatePlayingItem(null != nowPlayingItem && curItem.equalTo(nowPlayingItem), holder);
             holder.name.setText(curItem.getTitle());

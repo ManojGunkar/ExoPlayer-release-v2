@@ -21,8 +21,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.MasterActivity;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
-import com.globaldelight.boom.radio.ui.fragments.CountryFragment;
-import com.globaldelight.boom.radio.webconnector.ApiRequestController;
+import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 
@@ -111,7 +110,7 @@ public class SubCategoryDetailedActivity extends MasterActivity implements Radio
         ImageView imageView = findViewById(R.id.img_country_detail);
         Glide.with(this)
                 .load(url)
-                .placeholder(R.drawable.ic_default_art_player_header)
+                .placeholder(R.drawable.radio_place_holder)
                 .centerCrop()
                 .skipMemoryCache(true)
                 .into(imageView);
@@ -156,9 +155,9 @@ public class SubCategoryDetailedActivity extends MasterActivity implements Radio
     }
 
     private Call<RadioStationResponse> requestForContent(String permalink) {
-        ApiRequestController.RequestCallback requestCallback = null;
+        RadioRequestController.RequestCallback requestCallback = null;
         try {
-            requestCallback = ApiRequestController
+            requestCallback = RadioRequestController
                     .getClient(this, RadioApiUtils.BASE_URL);
         } catch (CertificateException e) {
             e.printStackTrace();

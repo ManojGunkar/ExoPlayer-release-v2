@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.ui.adapter.CountryListAdapter;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
-import com.globaldelight.boom.radio.webconnector.ApiRequestController;
+import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
 import com.globaldelight.boom.radio.webconnector.model.CategoryResponse;
 
@@ -94,9 +94,9 @@ public class CountryFragment extends Fragment {
     }
 
     private Call<CategoryResponse> requestForContent() {
-        ApiRequestController.RequestCallback requestCallback = null;
+        RadioRequestController.RequestCallback requestCallback = null;
         try {
-            requestCallback = ApiRequestController
+            requestCallback = RadioRequestController
                     .getClient(getActivity(), RadioApiUtils.BASE_URL);
         } catch (CertificateException e) {
             e.printStackTrace();
