@@ -17,7 +17,7 @@ public class UserCredentials {
 
     private final static String USER_CREDENTIALS="USER_CREDENTIALS";
     private final static String KEY_SESSION_ID="KEY_SESSION_ID";
-    private final static String KEY_USER_ID="KEY_SESSION_ID";
+    private final static String KEY_USER_ID="KEY_USER_ID";
     public static final int MODE = Context.MODE_PRIVATE;
     private SharedPreferences mSharedPreferences;
 

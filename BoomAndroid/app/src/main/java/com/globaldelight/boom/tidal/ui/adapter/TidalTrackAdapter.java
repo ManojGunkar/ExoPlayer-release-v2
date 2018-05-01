@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.utils.Utils;
@@ -34,7 +35,9 @@ public class TidalTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        return new ItemViewHolder(inflater.inflate(R.layout.item_track, parent, false));
+        ItemViewHolder vh = new ItemViewHolder(inflater.inflate(R.layout.item_track, parent, false));
+        vh.itemView.setOnClickListener((v)->onClick(vh));
+        return vh;
     }
 
     @Override
@@ -56,6 +59,15 @@ public class TidalTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public int getItemCount() {
         return mItems.size();
+    }
+
+    private void onClick(ItemViewHolder holder) {
+        final int position = holder.getAdapterPosition();
+        if ( position < 0 ) {
+            return;
+        }
+
+        App.playbackManager().queue().addItemListToPlay(mItems, position, false);
     }
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {

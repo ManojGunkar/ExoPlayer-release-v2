@@ -136,6 +136,8 @@ public class Item implements IMediaElement {
 
     @Override
     public String getDescription() {
+
+
         switch (getItemType()) {
             default:
                 return "";
@@ -175,6 +177,10 @@ public class Item implements IMediaElement {
 
     @Override
     public int getItemType() {
+        if ( getType() == null ) {
+            return ItemType.SONGS;
+        }
+
         switch (getType()) {
             case "ALBUM":
                 return ItemType.ALBUM;
