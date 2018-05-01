@@ -81,7 +81,8 @@ public class TidalRequestController {
         @GET("tracks/{track_id}/streamurl")
         Call<TrackPlayResponse> playTrack(
                 @Header("X-Tidal-SessionId") String sessionId,
-                @Path("track_id") String trackId);
+                @Path("track_id") String trackId,
+                @Query("soundQuality") String quality);
 
         /*
         Playlist
