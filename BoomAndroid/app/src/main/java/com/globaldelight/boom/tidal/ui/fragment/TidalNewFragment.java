@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +18,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.ui.adapter.TidalNewAdapter;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -32,17 +31,10 @@ import retrofit2.Response;
  */
 public class TidalNewFragment extends Fragment {
     private ProgressBar mProgressBar;
-    private NestedScrollView mNestedScrollView;
 
-    private RecyclerView mRecyclerNewPlaylist;
-    private RecyclerView mRecyclerRecPlayList;
-    private RecyclerView mRecyclerNewTrack;
-    private RecyclerView mRecyclerRecTrack;
-    private RecyclerView mRecyclerNewAlbum;
-    private RecyclerView mRecyclerRecAlbum;
-
-    private List<Item> items = new ArrayList<>();
+    private RecyclerView mRecyclerView;
     private TidalNewAdapter mAdapter;
+    private HashMap<String, List<Item>> mItemsMap = new HashMap<>();
 
     @Nullable
     @Override
@@ -54,27 +46,33 @@ public class TidalNewFragment extends Fragment {
 
     private void initView(View view) {
         mProgressBar = view.findViewById(R.id.progress_tidal_new);
-        mNestedScrollView=view.findViewById(R.id.scroll_new_tidal);
-        mNestedScrollView.setVisibility(View.GONE);
-        mRecyclerNewPlaylist = view.findViewById(R.id.rv_new_playlist);
-        mRecyclerRecPlayList = view.findViewById(R.id.rv_recommended_playlist);
-        mRecyclerNewTrack = view.findViewById(R.id.rv_new_track);
-        mRecyclerRecTrack = view.findViewById(R.id.rv_recommended_track);
-        setAdapter(mRecyclerNewPlaylist);
-        setAdapter(mRecyclerRecPlayList);
-        setAdapter(mRecyclerNewTrack);
-        setAdapter(mRecyclerRecTrack);
+
+        mRecyclerView = view.findViewById(R.id.rv_tidal_new);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(llm);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mProgressBar.setVisibility(View.VISIBLE);
+
+
         getNewPlaylists();
-        getNewTracks();
         getRecommPlaylists();
-        getRecomTracks();
+        getExclusivePlaylists();
+        getLocalPlaylists();
 
-    }
+        getNewAlbums();
+        getRecommAlbums();
+        getTop20Albums();
+        getLocalAlbums();
 
-    private void setAdapter(RecyclerView recyclerView) {
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(llm);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        getNewTracks();
+        getRecommTracks();
+        getTop20Tracks();
+        getLocalTracks();
+
+
+
+
     }
 
     private TidalRequestController.Callback getCallback() {
@@ -82,16 +80,32 @@ public class TidalNewFragment extends Fragment {
     }
 
     private void getNewPlaylists() {
-        Call<TidalBaseResponse> call = getCallback().getNewPlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+        Call<TidalBaseResponse> call = getCallback()
+                .getNewPlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
-                if (response.isSuccessful()) {
-                    items = response.body().getItems();
-                    mAdapter=new TidalNewAdapter(getActivity(),items);
-                    mRecyclerNewPlaylist.setAdapter(mAdapter);
-                    mProgressBar.setVisibility(View.GONE);
-                    mNestedScrollView.setVisibility(View.VISIBLE);
+                if (response.isSuccessful()){
+                    mItemsMap.put("New PlayLists",response.body().getItems());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+    private void getRecommPlaylists() {
+        Call<TidalBaseResponse> call = getCallback()
+                .getRecommendedPlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+        call.enqueue(new Callback<TidalBaseResponse>() {
+            @Override
+            public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
+                if (response.isSuccessful()){
+                    mItemsMap.put("Recomm PlayLists",response.body().getItems());
                 }
             }
 
@@ -102,15 +116,104 @@ public class TidalNewFragment extends Fragment {
         });
     }
 
-    private void getRecommPlaylists() {
-        Call<TidalBaseResponse> call = getCallback().getRecommendedPlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+    private void getLocalPlaylists() {
+        Call<TidalBaseResponse> call = getCallback()
+                .getLocalPlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
-                if (response.isSuccessful()) {
-                    items = response.body().getItems();
-                    mAdapter=new TidalNewAdapter(getActivity(),items);
-                    mRecyclerRecPlayList.setAdapter(mAdapter);
+                if (response.isSuccessful()){
+                    mItemsMap.put("Local PlayLists",response.body().getItems());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getExclusivePlaylists() {
+        Call<TidalBaseResponse> call = getCallback()
+                .getExclusivePlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+        call.enqueue(new Callback<TidalBaseResponse>() {
+            @Override
+            public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
+                if (response.isSuccessful()){
+                    mItemsMap.put("Exclusive PlayLists",response.body().getItems());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getNewAlbums() {
+        Call<TidalBaseResponse> call = getCallback()
+                .getNewAlbums(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+        call.enqueue(new Callback<TidalBaseResponse>() {
+            @Override
+            public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
+                if (response.isSuccessful()){
+                    mItemsMap.put("New Albums",response.body().getItems());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getRecommAlbums() {
+        Call<TidalBaseResponse> call = getCallback()
+                .getRecommendedAlbums(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+        call.enqueue(new Callback<TidalBaseResponse>() {
+            @Override
+            public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
+                if (response.isSuccessful()){
+                    mItemsMap.put("Recomm Albums",response.body().getItems());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getTop20Albums() {
+        Call<TidalBaseResponse> call = getCallback()
+                .getTop20Albums(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+        call.enqueue(new Callback<TidalBaseResponse>() {
+            @Override
+            public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
+                if (response.isSuccessful()){
+                    mItemsMap.put("Top20s Albums",response.body().getItems());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getLocalAlbums() {
+        Call<TidalBaseResponse> call = getCallback()
+                .getLocalAlbums(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+        call.enqueue(new Callback<TidalBaseResponse>() {
+            @Override
+            public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
+                if (response.isSuccessful()){
+                    mItemsMap.put("Local Albums",response.body().getItems());
                 }
             }
 
@@ -122,14 +225,13 @@ public class TidalNewFragment extends Fragment {
     }
 
     private void getNewTracks() {
-        Call<TidalBaseResponse> call = getCallback().getNewTracks(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+        Call<TidalBaseResponse> call = getCallback()
+                .getNewTracks(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
-                if (response.isSuccessful()) {
-                    items = response.body().getItems();
-                    mAdapter=new TidalNewAdapter(getActivity(),items);
-                    mRecyclerNewTrack.setAdapter(mAdapter);
+                if (response.isSuccessful()){
+                    mItemsMap.put("New Tracks",response.body().getItems());
                 }
             }
 
@@ -140,15 +242,56 @@ public class TidalNewFragment extends Fragment {
         });
     }
 
-    private void getRecomTracks() {
-        Call<TidalBaseResponse> call = getCallback().getRecommendedTracks(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+    private void getRecommTracks() {
+        Call<TidalBaseResponse> call = getCallback()
+                .getRecommendedTracks(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
-                if (response.isSuccessful()) {
-                    items = response.body().getItems();
-                    mAdapter=new TidalNewAdapter(getActivity(),items);
-                    mRecyclerRecTrack.setAdapter(mAdapter);
+                if (response.isSuccessful()){
+                    mItemsMap.put("Recomm Tracks",response.body().getItems());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getTop20Tracks() {
+        Call<TidalBaseResponse> call = getCallback()
+                .getTop20Tracks(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+        call.enqueue(new Callback<TidalBaseResponse>() {
+            @Override
+            public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
+                if (response.isSuccessful()){
+                    mItemsMap.put("Top20 Tracks",response.body().getItems());
+                    mAdapter = new TidalNewAdapter(getActivity(), mItemsMap);
+                    mRecyclerView.setAdapter(mAdapter);
+                    mProgressBar.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getLocalTracks() {
+        Call<TidalBaseResponse> call = getCallback()
+                .getLocalTracks(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+        call.enqueue(new Callback<TidalBaseResponse>() {
+            @Override
+            public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
+                if (response.isSuccessful()){
+                    mItemsMap.put("Local Tracks",response.body().getItems());
+                    mAdapter = new TidalNewAdapter(getActivity(), mItemsMap);
+                    mRecyclerView.setAdapter(mAdapter);
+                    mProgressBar.setVisibility(View.GONE);
                 }
             }
 

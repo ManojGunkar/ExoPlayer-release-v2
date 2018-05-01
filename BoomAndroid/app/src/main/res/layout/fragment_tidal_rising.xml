@@ -6,11 +6,16 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_tidal_rising"
+        android:id="@+id/rv_tidal_rising_albums"
+        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
-        android:layout_centerInParent="true"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_tidal_rising_tracks"
+        android:layout_below="@id/rv_tidal_rising_albums"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <ProgressBar
         android:id="@+id/progress_tidal_rising"

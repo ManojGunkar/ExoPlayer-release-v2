@@ -1,83 +1,86 @@
 package com.globaldelight.boom.tidal.ui.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
-import com.globaldelight.boom.utils.Utils;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Manoj Kumar on 28-04-2018.
+ * Created by Manoj Kumar on 30-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
 public class TidalNewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private List<Item> mItems = Collections.emptyList();
+    private HashMap<String, List<Item>> mMapItems;
+    private String[] mKeys;
 
-    public TidalNewAdapter(Context context, List<Item> items) {
+    public TidalNewAdapter(Context context, HashMap<String, List<Item>> mapItems) {
         this.mContext = context;
-        this.mItems = items;
+        this.mMapItems = mapItems;
+        this.mKeys = mMapItems.keySet().toArray(new String[mMapItems.size()]);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        return new ItemViewHolder(inflater.inflate(R.layout.item_tidal_new, parent, false));
+        return new CustomViewHolder(inflater.inflate(R.layout.item_album_tidal, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ItemViewHolder viewHolder = (ItemViewHolder) holder;
-        Item item = mItems.get(position);
-        String image = null;
-        if (item.getAlbum() != null) {
-            image = item.getAlbum().getCover();
-            image = image.replace("-", "/");
-            image = TidalRequestController.IMAGE_BASE_URL + image + "/320×320.jpg";
-        }
-        if (item.getImage() != null) {
-            image = item.getImage();
-            image = image.replace("-", "/");
-            image = TidalRequestController.IMAGE_BASE_URL + image + "/320×320.jpg";
+        CustomViewHolder customViewHolder = (CustomViewHolder) holder;
+        String key = mKeys[position];
+        customViewHolder.txtTitleItem.setText(key);
+        TidalItemAdapter adapter = new TidalItemAdapter(mContext, mMapItems.get(key));
+        LinearLayoutManager llm;
+        if (key.equalsIgnoreCase("New Tracks")
+                || key.equalsIgnoreCase("Recomm Tracks")
+                || key.equalsIgnoreCase("Top20 Tracks")
+                || key.equalsIgnoreCase("Local Tracks")) {
+            llm = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
+            customViewHolder.recyclerView.setLayoutManager(llm);
+            customViewHolder.recyclerView.setItemAnimator(new DefaultItemAnimator());
+            customViewHolder.recyclerView.setAdapter(new TidalTrackAdapter(mContext,mMapItems.get(key)));
+        } else {
+            llm = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
+            customViewHolder.recyclerView.setLayoutManager(llm);
+            customViewHolder.recyclerView.setItemAnimator(new DefaultItemAnimator());
+            customViewHolder.recyclerView.setAdapter(adapter);
         }
 
-        final int size = Utils.largeImageSize(mContext);
-        Glide.with(mContext).load(image)
-                .placeholder(R.drawable.ic_default_art_grid)
-                .centerCrop()
-                .override(size, size)
-                .into(viewHolder.imgItemCover);
 
-        viewHolder.txtItemTitle.setText(item.getTitle());
 
     }
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return mMapItems == null ? 0 : mMapItems.size();
     }
 
-    protected class ItemViewHolder extends RecyclerView.ViewHolder {
+    protected class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView txtItemTitle;
-        private ImageView imgItemCover;
+        private TextView txtTitleItem;
+        private Button btnMoreItem;
+        private RecyclerView recyclerView;
 
-        public ItemViewHolder(View itemView) {
+        public CustomViewHolder(View itemView) {
             super(itemView);
-            txtItemTitle = itemView.findViewById(R.id.txt_tidal_title);
-            imgItemCover = itemView.findViewById(R.id.img_tidal_cover);
+
+            txtTitleItem = itemView.findViewById(R.id.txt_title_album);
+            btnMoreItem = itemView.findViewById(R.id.btn_more_album);
+            recyclerView = itemView.findViewById(R.id.rv_tidal_album);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.globaldelight.boom.tidal.tidalconnector;
 
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalLoginResponse;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayResponse;
 
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +16,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -73,6 +75,13 @@ public class TidalRequestController {
                 @Field("username") String userId,
                 @Field("password") String password,
                 @Field("clientUniqueKey") String clientUniqueKey);
+
+        // Play track http://api.tidal.com/v1/tracks/87002321/streamurl
+
+        @GET("tracks/{track_id}/streamurl")
+        Call<TrackPlayResponse> playTrack(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Path("track_id") String trackId);
 
         /*
         Playlist
@@ -187,14 +196,14 @@ public class TidalRequestController {
 
         @GET("rising/new/albums")
         Call<TidalBaseResponse> getRisingAlbums(
-                @Header("X-Tidal-SessionId") String sessionID,
+                @Header("X-Tidal-Token") String token,
                 @Query("countryCode") String countryCode,
                 @Query("offset") String offSet,
                 @Query("limit") String limit);
 
         @GET("rising/new/tracks")
         Call<TidalBaseResponse> getRisingTracks(
-                @Header("X-Tidal-SessionId") String sessionID,
+                @Header("X-Tidal-Token") String token,
                 @Query("countryCode") String countryCode,
                 @Query("offset") String offSet,
                 @Query("limit") String limit);
