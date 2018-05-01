@@ -35,6 +35,9 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BaseTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.ActivityContainer;
@@ -69,6 +72,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.TimeUnit;
 
+import static android.graphics.Bitmap.Config.ARGB_8888;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_ON_NETWORK_DISCONNECTED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_QUEUE_COMPLETED;
@@ -395,20 +399,14 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         mNext.setEnabled(next_enable);
     }
 
-    private void updateAlbumArt(final IMediaElement item) {
-        if ( mPlayingMediaItem != null ) {
-            Glide.with(mActivity)
-                    .load(mPlayingMediaItem.getItemArtUrl())
-                    .placeholder(R.drawable.ic_default_art_player_header)
-                    .centerCrop()
-                    .skipMemoryCache(true)
-                    .into(mLargeAlbumArt);
-        }
-
-
-        new AsyncTask<Void, Void, Bitmap>() {
+    class BlurTask extends AsyncTask<Void, Void, Bitmap> {
 
             private Context context = mActivity;
+            private IMediaElement item;
+
+            BlurTask(IMediaElement item) {
+                this.item = item;
+            }
 
             @Override
             protected Bitmap doInBackground(Void... params) {
@@ -444,7 +442,87 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                     mPlayerBackground.setBackground(new BitmapDrawable(context.getResources(), bitmap));
                 }
             }
-        }.execute();
+        }
+
+
+
+    class BlurBitmapTarget extends  BaseTarget<Bitmap> {
+        private IMediaElement item;
+
+        BlurBitmapTarget(IMediaElement item) {
+            this.item = item;
+        }
+
+        @Override
+        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+            new AsyncTask<Void, Void, Bitmap>() {
+
+                private Context context = mActivity;
+
+                @Override
+                protected Bitmap doInBackground(Void... params) {
+                    if (context == null) {
+                        return null;
+                    }
+
+                    Bitmap result = null;
+                    if (true) {
+                        try {
+                            final Bitmap bitmap = resource.copy(ARGB_8888, false);
+                            Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(context, bitmap, ScreenWidth / 10, ScreenHeight / 10);
+                            resource.recycle();
+                            result = blurredBitmap;
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    return result;
+                }
+
+                @Override
+                protected void onPostExecute(Bitmap bitmap) {
+                    if (bitmap != null ) {
+                        mPlayerBackground.setBackground(new BitmapDrawable(context.getResources(), bitmap));
+                    }
+                }
+            }.execute();
+
+        }
+
+        @Override
+        public void getSize(SizeReadyCallback cb) {
+            cb.onSizeReady(mLargeAlbumArt.getWidth(), mLargeAlbumArt.getHeight());
+        }
+    }
+
+
+    private void UpdateBackground(final IMediaElement item) {
+        if ( item.getMediaType() == MediaType.RADIO ) {
+            Glide.with(getContext())
+                    .load(item.getItemArtUrl()).asBitmap()
+                    .placeholder(R.drawable.ic_default_art_grid)
+                    .centerCrop()
+                    .skipMemoryCache(true)
+                    .into(new BlurBitmapTarget(item));
+        }
+        else {
+            new BlurTask(item).execute();
+        }
+    }
+
+    private void updateAlbumArt(final IMediaElement item) {
+        if ( mPlayingMediaItem != null ) {
+            Glide.with(mActivity)
+                    .load(mPlayingMediaItem.getItemArtUrl())
+                    .placeholder(R.drawable.ic_default_art_player_header)
+                    .centerCrop()
+                    .skipMemoryCache(true)
+                    .into(mLargeAlbumArt);
+        }
+
+        UpdateBackground(item);
+
+        return;
     }
 
     private void changeProgress(int progress) {

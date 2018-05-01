@@ -124,6 +124,9 @@ public class NotificationHandler  {
                     .setImageViewResource(R.id.noti_play_button, R.drawable.ic_play_notification);
         }
 
+        notificationCompat.bigContentView.setImageViewResource(R.id.noti_album_art, R.drawable.ic_default_art_grid);
+        notificationCompat.contentView.setImageViewResource(R.id.noti_album_art, R.drawable.ic_default_art_grid);
+
         Glide.with(context)
                 .load(item.getItemArtUrl()).asBitmap()
                 .placeholder(R.drawable.ic_default_art_grid)

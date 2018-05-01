@@ -20,7 +20,7 @@ import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
-import com.globaldelight.boom.radio.webconnector.ApiRequestController;
+import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
 import com.globaldelight.boom.radio.webconnector.model.RadioPlayResponse;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
@@ -400,9 +400,9 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 return null;
             }
             else if(mediaItemBase.getMediaType() == MediaType.RADIO) {
-                ApiRequestController.RequestCallback requestCallback = null;
+                RadioRequestController.RequestCallback requestCallback = null;
                 try {
-                    requestCallback = ApiRequestController.getClient(context, RadioApiUtils.BASE_URL);
+                    requestCallback = RadioRequestController.getClient(context, RadioApiUtils.BASE_URL);
                     Call<RadioPlayResponse> call = requestCallback.getRadioPlayService(mediaItemBase.getId());
                     Response<RadioPlayResponse> resp = call.execute();
                     if ( resp.isSuccessful() ) {

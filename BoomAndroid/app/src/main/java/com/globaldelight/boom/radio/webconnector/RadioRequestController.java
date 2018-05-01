@@ -41,7 +41,7 @@ import retrofit2.http.Query;
  * Created by Manoj Kumar on 05-04-2018.
  */
 
-public class ApiRequestController {
+public class RadioRequestController {
 
     private static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
     private static OkHttpClient client;
