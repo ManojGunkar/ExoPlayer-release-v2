@@ -497,7 +497,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
 
     private void UpdateBackground(final IMediaElement item) {
-        if ( item.getMediaType() == MediaType.RADIO ) {
+        if ( item.getMediaType() == MediaType.RADIO || item.getMediaType() == MediaType.TIDAL) {
             Glide.with(getContext())
                     .load(item.getItemArtUrl()).asBitmap()
                     .placeholder(R.drawable.ic_default_art_grid)
