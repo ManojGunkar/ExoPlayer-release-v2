@@ -30,7 +30,9 @@ import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.radio.ui.fragments.RadioMainFragment;
+import com.globaldelight.boom.tidal.ui.fragment.TidalLoginFragment;
 import com.globaldelight.boom.tidal.ui.fragment.TidalMainFragment;
+import com.globaldelight.boom.tidal.utils.UserCredentials;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 
@@ -283,9 +285,14 @@ public class MainActivity extends MasterActivity
     private void onNavigateToTidal() {
         navigationView.getMenu().findItem(R.id.tidal).setChecked(true);
         setTitle(R.string.tidal);
-        TidalMainFragment loginFragment = new TidalMainFragment();
+        Fragment fragment=null;
+        if (UserCredentials.getCredentials(this).isUserLogged()){
+             fragment = new TidalMainFragment();
+        }else {
+            fragment=new TidalLoginFragment();
+        }
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, loginFragment).commitAllowingStateLoss();
+        transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
     }
 
     private void onNavigateToDropbox() {

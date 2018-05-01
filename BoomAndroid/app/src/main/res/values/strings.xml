@@ -230,5 +230,8 @@
     <string name="login">Login</string>
     <string name="newUser">New User</string>
     <string name="search_hint_tidal">Tidal Search</string>
+    <string name="tidal_sign_up">Sign Up</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_user">User Id</string>
 
 </resources>

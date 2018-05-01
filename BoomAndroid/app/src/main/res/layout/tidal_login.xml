@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/black_overlay"
     android:padding="20dp" >
 
     <LinearLayout
@@ -20,43 +21,36 @@
             android:textSize="25sp"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/et_user_id_tidal"
-            android:singleLine="true"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@android:color/transparent"
-            android:drawableLeft="@android:drawable/ic_dialog_email"
-            android:drawablePadding="8dp"
-            android:gravity="center_vertical"
-            android:hint="@string/user_id"
-            android:inputType="textEmailAddress"
-            android:padding="10dp"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            android:textSize="16sp" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_user_id"
+            android:layout_width="match_parent"
+            android:textColorHint="@color/colorAccent"
+            android:layout_height="wrap_content">
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1px"
-            android:background="@color/white" />
+            <EditText
+                android:id="@+id/et_user_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:hint="@string/hint_user" />
+        </android.support.design.widget.TextInputLayout>
 
-        <EditText
-            android:id="@+id/et_password_tidal"
-            android:singleLine="true"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:drawableLeft="@android:drawable/ic_partial_secure"
-            android:drawablePadding="8dp"
-            android:gravity="center_vertical"
-            android:hint="@string/enter_password"
-            android:inputType="textPassword"
-            android:padding="10dp"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            android:textSize="16sp" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_password"
+            android:layout_width="match_parent"
+            android:textColorHint="@color/colorAccent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:textColor="@color/white"
+                android:hint="@string/hint_password" />
+        </android.support.design.widget.TextInputLayout>
+
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -64,15 +58,6 @@
             android:orientation="horizontal"
             android:paddingBottom="5dp"
             android:paddingTop="8dp" >
-
-            <CheckBox
-                android:id="@+id/show_hide_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/show_password"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/forgot_password"
@@ -93,7 +78,7 @@
             android:layout_marginTop="3dp"
             android:padding="3dp"
             android:text="@string/login"
-            android:textColor="#009688"
+            android:textColor="@color/colorAccent"
             android:textSize="17sp"
             android:textStyle="bold" />
     </LinearLayout>

@@ -54,7 +54,6 @@ public class TidalNewFragment extends Fragment {
 
         mProgressBar.setVisibility(View.VISIBLE);
 
-
         getNewPlaylists();
         getRecommPlaylists();
         getExclusivePlaylists();
@@ -69,9 +68,6 @@ public class TidalNewFragment extends Fragment {
         getRecommTracks();
         getTop20Tracks();
         getLocalTracks();
-
-
-
 
     }
 
