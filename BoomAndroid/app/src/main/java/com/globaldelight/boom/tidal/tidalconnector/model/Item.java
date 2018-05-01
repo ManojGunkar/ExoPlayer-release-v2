@@ -1,5 +1,11 @@
 package com.globaldelight.boom.tidal.tidalconnector.model;
 
+import android.provider.MediaStore;
+
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
+import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -9,7 +15,9 @@ import java.util.List;
  * Created by Manoj Kumar on 28-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class Item {
+public class Item implements IMediaElement {
+
+    public final static String IMAGE_BASE_URL = "https://resources.tidal.com/images/";
 
     @SerializedName("id")
     @Expose
@@ -114,8 +122,8 @@ public class Item {
         this.album = album;
     }
 
-    public Integer getId() {
-        return id;
+    public String getId() {
+        return String.valueOf(id);
     }
 
     public void setId(Integer id) {
@@ -124,6 +132,64 @@ public class Item {
 
     public String getTitle() {
         return title;
+    }
+
+    @Override
+    public String getDescription() {
+        switch (getItemType()) {
+            default:
+                return "";
+
+            case ItemType.SONGS:
+                if ( getArtist() != null ) {
+                    return getArtist().getName();
+                }
+                return "";
+        }
+    }
+
+    @Override
+    public String getItemArtUrl() {
+        String imageId = getImage();
+        if ( imageId != null ) {
+            return IMAGE_BASE_URL + imageId.replace("-", "/") + "/320x214.jpg";
+        }
+
+        if ( getCover() != null ) {
+            imageId = getCover();
+            return IMAGE_BASE_URL + imageId.replace("-", "/") + "/320x320.jpg";
+        }
+
+        if (  getAlbum() != null && getAlbum().getCover() != null) {
+            imageId = getAlbum().getCover();
+            return IMAGE_BASE_URL + imageId.replace("-", "/") + "/320x320.jpg";
+        }
+
+        return "" ;
+    }
+
+    @Override
+    public void setItemArtUrl(String url) {
+
+    }
+
+    @Override
+    public int getItemType() {
+        switch (getType()) {
+            case "ALBUM":
+                return ItemType.ALBUM;
+            case "ARTIST":
+                return ItemType.ARTIST;
+            case "PLAYLIST":
+                return ItemType.PLAYLIST;
+            default:
+                return ItemType.SONGS;
+        }
+    }
+
+    @Override
+    public int getMediaType() {
+        return MediaType.TIDAL;
     }
 
     public void setTitle(String title) {

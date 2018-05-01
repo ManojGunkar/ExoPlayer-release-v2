@@ -297,6 +297,4 @@ public class TidalNewFragment extends Fragment {
             }
         });
     }
-
-
 }

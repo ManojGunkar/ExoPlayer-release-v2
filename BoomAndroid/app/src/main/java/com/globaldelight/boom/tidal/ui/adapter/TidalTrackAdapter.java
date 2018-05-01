@@ -41,20 +41,9 @@ public class TidalTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ItemViewHolder viewHolder = (ItemViewHolder) holder;
         Item item = mItems.get(position);
-        String image = null;
-        if (item.getAlbum() != null) {
-            image = item.getAlbum().getCover();
-            image = image.replace("-", "/");
-            image = TidalRequestController.IMAGE_BASE_URL + image + "/320x320.jpg";
-        }
-        if (item.getImage() != null) {
-            image = item.getImage();
-            image = image.replace("-", "/");
-            image = TidalRequestController.IMAGE_BASE_URL + image + "/320x214.jpg";
-        }
-
+        String imageUrl = item.getItemArtUrl();
         final int size = Utils.largeImageSize(mContext);
-        Glide.with(mContext).load(image)
+        Glide.with(mContext).load(imageUrl)
                 .placeholder(R.drawable.ic_default_art_grid)
                 .centerCrop()
                 .override(size, size)
