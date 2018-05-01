@@ -59,6 +59,13 @@ public class TidalNewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             customViewHolder.recyclerView.setItemAnimator(new DefaultItemAnimator());
             customViewHolder.recyclerView.setAdapter(adapter);
         }
+        customViewHolder.recyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                // Call smooth scroll
+                customViewHolder.recyclerView.smoothScrollToPosition(adapter.getItemCount());
+            }
+        });
 
 
 
