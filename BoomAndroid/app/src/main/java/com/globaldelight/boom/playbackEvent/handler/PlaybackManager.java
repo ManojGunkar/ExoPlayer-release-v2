@@ -420,7 +420,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
             else if (mediaItemBase.getMediaType() == MediaType.TIDAL ) {
                 try {
                     String sessionId = UserCredentials.getCredentials(context).getSessionId();
-                    Call<TrackPlayResponse> call = TidalRequestController.getTidalClient().playTrack(sessionId, mediaItemBase.getId());
+                    Call<TrackPlayResponse> call = TidalRequestController.getTidalClient().playTrack(sessionId, mediaItemBase.getId(), "LOSSLESS");
                     Response<TrackPlayResponse> resp = call.execute();
                     if ( resp.isSuccessful() ) {
                         return resp.body().getUrl();
