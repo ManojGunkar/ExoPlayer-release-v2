@@ -1,6 +1,7 @@
 package com.globaldelight.boom.tidal.tidalconnector.model;
 
 import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.google.gson.annotations.Expose;
@@ -12,7 +13,7 @@ import java.util.List;
  * Created by Manoj Kumar on 28-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class Item implements IMediaElement {
+public class Item implements IMediaItem {
 
     public final static String IMAGE_BASE_URL = "https://resources.tidal.com/images/";
 
@@ -196,12 +197,80 @@ public class Item implements IMediaElement {
     }
 
     @Override
+    public String getParentId() {
+        return null;
+    }
+
+    @Override
+    public String getParentTitle() {
+        return null;
+    }
+
+    @Override
+    public int getParentType() {
+        return ItemType.ALBUM;
+    }
+
+    @Override
     public int getMediaType() {
         return MediaType.TIDAL;
     }
 
     public Integer getDuration() {
         return duration;
+    }
+
+    @Override
+    public String getItemAlbumId() {
+        return (getAlbum() != null)? String.valueOf(getAlbum().getId()) : null;
+    }
+
+    @Override
+    public String getItemAlbum() {
+        return (getAlbum() != null)? getAlbum().getTitle() : null;
+    }
+
+    @Override
+    public String getItemArtistId() {
+        return (getArtist() != null)? String.valueOf(getArtist().getId()) : null;
+    }
+
+    @Override
+    public String getItemArtist() {
+        return (getArtist() != null)? getArtist().getName() : null;
+    }
+
+    @Override
+    public long getDurationLong() {
+        return duration.longValue() * 1000;
+    }
+
+    public String getDuration() {
+        try {
+            Long time = duration.longValue();
+            long seconds = time / 1000;
+            long minutes = seconds / 60;
+            seconds = seconds % 60;
+
+            if (seconds < 10) {
+                return String.valueOf(minutes) + ":0" + String.valueOf(seconds);
+            } else {
+                return String.valueOf(minutes) + ":" + String.valueOf(seconds);
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return String.valueOf(0);
+        }
+    }
+
+    @Override
+    public long getDateAdded() {
+        return 0;
+    }
+
+    @Override
+    public String getItemUrl() {
+        return null;
     }
 
     public void setDuration(Integer duration) {
