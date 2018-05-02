@@ -77,7 +77,7 @@ public class TidalNewFragment extends Fragment {
 
     private void getNewPlaylists() {
         Call<TidalBaseResponse> call = getCallback()
-                .getNewPlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+                .getNewPlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "6");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
@@ -96,7 +96,7 @@ public class TidalNewFragment extends Fragment {
 
     private void getRecommPlaylists() {
         Call<TidalBaseResponse> call = getCallback()
-                .getRecommendedPlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+                .getRecommendedPlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "6");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
@@ -114,7 +114,7 @@ public class TidalNewFragment extends Fragment {
 
     private void getLocalPlaylists() {
         Call<TidalBaseResponse> call = getCallback()
-                .getLocalPlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+                .getLocalPlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "6");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
@@ -132,7 +132,7 @@ public class TidalNewFragment extends Fragment {
 
     private void getExclusivePlaylists() {
         Call<TidalBaseResponse> call = getCallback()
-                .getExclusivePlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+                .getExclusivePlaylists(TidalRequestController.AUTH_TOKEN, "US", "0", "6");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
@@ -150,7 +150,7 @@ public class TidalNewFragment extends Fragment {
 
     private void getNewAlbums() {
         Call<TidalBaseResponse> call = getCallback()
-                .getNewAlbums(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+                .getNewAlbums(TidalRequestController.AUTH_TOKEN, "US", "0", "6");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
@@ -168,7 +168,7 @@ public class TidalNewFragment extends Fragment {
 
     private void getRecommAlbums() {
         Call<TidalBaseResponse> call = getCallback()
-                .getRecommendedAlbums(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+                .getRecommendedAlbums(TidalRequestController.AUTH_TOKEN, "US", "0", "6");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
@@ -186,7 +186,7 @@ public class TidalNewFragment extends Fragment {
 
     private void getTop20Albums() {
         Call<TidalBaseResponse> call = getCallback()
-                .getTop20Albums(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+                .getTop20Albums(TidalRequestController.AUTH_TOKEN, "US", "0", "6");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
@@ -204,7 +204,7 @@ public class TidalNewFragment extends Fragment {
 
     private void getLocalAlbums() {
         Call<TidalBaseResponse> call = getCallback()
-                .getLocalAlbums(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+                .getLocalAlbums(TidalRequestController.AUTH_TOKEN, "US", "0", "6");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
@@ -222,7 +222,7 @@ public class TidalNewFragment extends Fragment {
 
     private void getNewTracks() {
         Call<TidalBaseResponse> call = getCallback()
-                .getNewTracks(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+                .getNewTracks(TidalRequestController.AUTH_TOKEN, "US", "0", "6");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
@@ -240,7 +240,7 @@ public class TidalNewFragment extends Fragment {
 
     private void getRecommTracks() {
         Call<TidalBaseResponse> call = getCallback()
-                .getRecommendedTracks(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+                .getRecommendedTracks(TidalRequestController.AUTH_TOKEN, "US", "0", "6");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
@@ -258,7 +258,7 @@ public class TidalNewFragment extends Fragment {
 
     private void getTop20Tracks() {
         Call<TidalBaseResponse> call = getCallback()
-                .getTop20Tracks(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+                .getTop20Tracks(TidalRequestController.AUTH_TOKEN, "US", "0", "6");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
@@ -279,7 +279,7 @@ public class TidalNewFragment extends Fragment {
 
     private void getLocalTracks() {
         Call<TidalBaseResponse> call = getCallback()
-                .getLocalTracks(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
+                .getLocalTracks(TidalRequestController.AUTH_TOKEN, "US", "0", "6");
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override
             public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
