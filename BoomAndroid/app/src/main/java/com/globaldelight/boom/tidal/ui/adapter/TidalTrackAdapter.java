@@ -5,12 +5,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.utils.Utils;
@@ -46,14 +49,41 @@ public class TidalTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         Item item = mItems.get(position);
         String imageUrl = item.getItemArtUrl();
         final int size = Utils.largeImageSize(mContext);
+
         Glide.with(mContext).load(imageUrl)
                 .placeholder(R.drawable.ic_default_art_grid)
                 .centerCrop()
                 .override(size, size)
-                .into(viewHolder.imgItemCover);
+                .into(viewHolder.imgTrackThumbnail);
 
-        viewHolder.txtItemTitle.setText(item.getTitle());
+        viewHolder.txtTitle.setText(item.getTitle());
+        viewHolder.txtSubTitle.setText(item.getDescription());
+        updatePlayingStation(viewHolder,item);
 
+    }
+
+    private void updatePlayingStation(ItemViewHolder holder, IMediaElement item) {
+        IMediaElement nowPlayingItem = App.playbackManager().queue().getPlayingItem();
+        holder.overlay.setVisibility(View.GONE);
+        holder.imgOverlayPlay.setVisibility(View.GONE);
+        holder.progressBar.setVisibility(View.GONE);
+        holder.txtTitle.setSelected(false);
+
+        if (null != nowPlayingItem) {
+            if (item.equalTo(nowPlayingItem)) {
+                holder.overlay.setVisibility(View.VISIBLE);
+                holder.imgOverlayPlay.setVisibility(View.VISIBLE);
+                holder.txtTitle.setSelected(true);
+                holder.progressBar.setVisibility(View.GONE);
+                holder.imgOverlayPlay.setImageResource(R.drawable.ic_player_play);
+                if (App.playbackManager().isTrackPlaying()) {
+                    holder.imgOverlayPlay.setImageResource(R.drawable.ic_player_pause);
+                    if (App.playbackManager().isTrackLoading()) {
+                        holder.progressBar.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -72,13 +102,27 @@ public class TidalTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView txtItemTitle;
-        private ImageView imgItemCover;
+        private TextView txtTitle;
+        private TextView txtSubTitle;
+        private View mainView;
+        private View overlay;
+        private ImageView imgTrackThumbnail;
+        private ImageView imgOverlayPlay;
+        private ImageView imgMenuTrack;
+        private ProgressBar progressBar;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            txtItemTitle = itemView.findViewById(R.id.txt_title_track);
-            imgItemCover = itemView.findViewById(R.id.img_thumb_tracks);
+
+            mainView = itemView;
+            imgTrackThumbnail = itemView.findViewById(R.id.song_item_img);
+            imgMenuTrack = itemView.findViewById(R.id.img_menu_track);
+            imgOverlayPlay = itemView.findViewById(R.id.song_item_img_overlay_play);
+            overlay = itemView.findViewById(R.id.song_item_img_overlay);
+            progressBar = itemView.findViewById(R.id.load_cloud);
+            txtTitle = itemView.findViewById(R.id.txt_title_track);
+            txtSubTitle = itemView.findViewById(R.id.txt_sub_title_track);
+
         }
     }
 }
