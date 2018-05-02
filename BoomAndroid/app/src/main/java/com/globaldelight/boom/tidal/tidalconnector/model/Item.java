@@ -216,8 +216,10 @@ public class Item implements IMediaItem {
         return MediaType.TIDAL;
     }
 
-    public Integer getDuration() {
-        return duration;
+
+    @Override
+    public String getItemDisplayName() {
+        return getTitle();
     }
 
     @Override
