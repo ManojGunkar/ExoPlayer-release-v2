@@ -233,5 +233,6 @@
     <string name="tidal_sign_up">Sign Up</string>
     <string name="hint_password">Password</string>
     <string name="hint_user">User Id</string>
+    <string name="view_all">View All</string>
 
 </resources>

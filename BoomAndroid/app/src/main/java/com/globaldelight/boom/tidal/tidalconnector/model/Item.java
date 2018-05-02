@@ -1,11 +1,8 @@
 package com.globaldelight.boom.tidal.tidalconnector.model;
 
-import android.provider.MediaStore;
-
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
-import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -134,6 +131,10 @@ public class Item implements IMediaElement {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     @Override
     public String getDescription() {
 
@@ -142,8 +143,9 @@ public class Item implements IMediaElement {
             default:
                 return "";
 
+            case ItemType.ALBUM:
             case ItemType.SONGS:
-                if ( getArtist() != null ) {
+                if (getArtist() != null) {
                     return getArtist().getName();
                 }
                 return "";
@@ -153,21 +155,21 @@ public class Item implements IMediaElement {
     @Override
     public String getItemArtUrl() {
         String imageId = getImage();
-        if ( imageId != null ) {
+        if (imageId != null) {
             return IMAGE_BASE_URL + imageId.replace("-", "/") + "/320x214.jpg";
         }
 
-        if ( getCover() != null ) {
+        if (getCover() != null) {
             imageId = getCover();
             return IMAGE_BASE_URL + imageId.replace("-", "/") + "/320x320.jpg";
         }
 
-        if (  getAlbum() != null && getAlbum().getCover() != null) {
+        if (getAlbum() != null && getAlbum().getCover() != null) {
             imageId = getAlbum().getCover();
             return IMAGE_BASE_URL + imageId.replace("-", "/") + "/320x320.jpg";
         }
 
-        return "" ;
+        return "";
     }
 
     @Override
@@ -177,7 +179,7 @@ public class Item implements IMediaElement {
 
     @Override
     public int getItemType() {
-        if ( getType() == null ) {
+        if (getType() == null) {
             return ItemType.SONGS;
         }
 
@@ -196,10 +198,6 @@ public class Item implements IMediaElement {
     @Override
     public int getMediaType() {
         return MediaType.TIDAL;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public Integer getDuration() {

@@ -50,6 +50,7 @@ public class TidalItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 .into(viewHolder.imgItemCover);
 
         viewHolder.txtItemTitle.setText(item.getTitle());
+        viewHolder.txtItemSubTitle.setText(item.getDescription());
 
     }
 
@@ -61,11 +62,13 @@ public class TidalItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     protected class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private TextView txtItemTitle;
+        private TextView txtItemSubTitle;
         private ImageView imgItemCover;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             txtItemTitle = itemView.findViewById(R.id.txt_tidal_title);
+            txtItemSubTitle = itemView.findViewById(R.id.txt_tidal_sub_title);
             imgItemCover = itemView.findViewById(R.id.img_tidal_cover);
         }
     }

@@ -3,15 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:selectableItemBackground"
+    android:layout_marginBottom="10dp"
     android:orientation="vertical"
-    android:padding="5dp">
+    >
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="2dp">
+        android:layout_height="wrap_content">
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/txt_title_album"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -20,17 +20,19 @@
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
             android:layout_toLeftOf="@+id/btn_more_album"
-            android:textColor="@color/colorAccent"
-            android:textSize="18sp" />
+            android:textColor="@color/white"
+            android:textSize="16dp" />
 
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_more_album"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="42dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:textSize="14dp"
             android:layout_centerVertical="true"
-            android:text="more"
+            android:text="@string/view_all"
             android:textColor="@color/colorAccent" />
 
     </RelativeLayout>
@@ -42,8 +44,4 @@
         android:layout_gravity="center_vertical"
         android:orientation="horizontal" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/library_separator" />
 </LinearLayout>
