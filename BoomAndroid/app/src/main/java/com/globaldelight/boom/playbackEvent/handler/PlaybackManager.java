@@ -443,20 +443,21 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                     mPlayer.setPath(dataSource);
                     mPlayer.setDataSourceId(mediaItemBase.getId());
 
+                    MediaMetadata.Builder builder = new MediaMetadata.Builder();
+                    builder.putString(MediaMetadata.METADATA_KEY_TITLE, mediaItemBase.getTitle());
+
                     if ( mediaItemBase instanceof  MediaItem ) {
                         MediaItem item = (MediaItem)mediaItemBase;
 
-                        MediaMetadata.Builder builder = new MediaMetadata.Builder();
-                        builder.putString(MediaMetadata.METADATA_KEY_TITLE, item.getTitle());
                         builder.putString(MediaMetadata.METADATA_KEY_ALBUM, item.getItemAlbum());
                         builder.putString(MediaMetadata.METADATA_KEY_ARTIST, item.getItemArtist());
                         Bitmap bitmap = getAlbumart(context,item.getItemAlbumId());
                         if ( bitmap != null ) {
                             builder.putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, bitmap);
                         }
-                        session.setMetadata(builder.build());
                     }
 
+                    session.setMetadata(builder.build());
                     setSessionState(PlaybackState.STATE_PLAYING);
                 }
             }
