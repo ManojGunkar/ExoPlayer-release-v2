@@ -87,8 +87,7 @@ public class TidalLoginFragment extends Fragment implements View.OnClickListener
                 if (response.isSuccessful()) {
                     if (mProgressDialog!=null)mProgressDialog.dismiss();
                     TidalLoginResponse loginResponse = response.body();
-                    UserCredentials.getCredentials(getActivity()).setSessionId(loginResponse.getSessionId());
-                    UserCredentials.getCredentials(getActivity()).setUserId(String.valueOf(loginResponse.getUserId()));
+                    UserCredentials.getCredentials(getActivity()).store(loginResponse);
                     Log.d(TAG, "SESSION ID =" + loginResponse.getSessionId());
                     Log.d(TAG, "USER ID =" + loginResponse.getUserId());
                     Log.d(TAG, "COUNTRY =" + loginResponse.getCountryCode());

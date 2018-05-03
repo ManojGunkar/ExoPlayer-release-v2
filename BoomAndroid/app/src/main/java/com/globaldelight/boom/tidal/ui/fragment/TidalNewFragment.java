@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,16 +22,13 @@ import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.ui.adapter.NestedItemAdapter;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
-import com.globaldelight.boom.tidal.utils.RequestChain;
+import com.globaldelight.boom.tidal.utils.TidalHelper;
+import com.globaldelight.boom.utils.RequestChain;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import retrofit2.Call;
-import retrofit2.Response;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
@@ -67,7 +62,7 @@ public class TidalNewFragment extends Fragment {
     };
 
     private List<NestedItemDescription> mItemList = new ArrayList<>();
-    class ResponseHandler implements RequestChain.Callback {
+    class ResponseHandler implements RequestChain.Callback<TidalBaseResponse> {
         private int resId;
         private int type;
 
@@ -109,15 +104,18 @@ public class TidalNewFragment extends Fragment {
 
         mRequestChain = new RequestChain(getContext());
         mProgressBar.setVisibility(View.VISIBLE);
-        mapResponse(getCallback()::getExclusivePlaylists, R.string.tidal_exclusive_playlists, GRID_VIEW);
-        mapResponse(getCallback()::getRecommendedTracks, R.string.tidal_recommended_tracks, LIST_VIEW);
-        mapResponse(getCallback()::getRecommendedAlbums, R.string.tidal_recommended_album, GRID_VIEW);
-        mapResponse(getCallback()::getNewTracks, R.string.tidal_new_tracks, LIST_VIEW);
-        mapResponse(getCallback()::getNewAlbums, R.string.tidal_new_albums, GRID_VIEW);
-        mapResponse(getCallback()::getNewPlaylists, R.string.tidal_new_playlist, GRID_VIEW);
-        mapResponse(getCallback()::getTop20Tracks, R.string.tidal_top20_tracks, LIST_VIEW);
-        mapResponse(getCallback()::getTop20Albums, R.string.tidal_top20_albums, GRID_VIEW);
-        mapResponse(getCallback()::getRecommendedPlaylists, R.string.tidal_recommended_playlists, GRID_VIEW);
+        mapResponse(TidalHelper.EXCLUSIVE_PLAYLISTS, R.string.tidal_exclusive_playlists, GRID_VIEW);
+        mapResponse(TidalHelper.RECOMMENDED_TRACKS, R.string.tidal_recommended_tracks, LIST_VIEW);
+        mapResponse(TidalHelper.RECOMMENDED_ALBUMS, R.string.tidal_recommended_album, GRID_VIEW);
+        mapResponse(TidalHelper.RECOMMENDED_PLAYLISTS, R.string.tidal_recommended_playlists, GRID_VIEW);
+        mapResponse(TidalHelper.NEW_TRACKS, R.string.tidal_new_tracks, LIST_VIEW);
+        mapResponse(TidalHelper.NEW_ALBUMS, R.string.tidal_new_albums, GRID_VIEW);
+        mapResponse(TidalHelper.NEW_PLAYLISTS, R.string.tidal_new_playlist, GRID_VIEW);
+        mapResponse(TidalHelper.TOP_TRACKS, R.string.tidal_top20_tracks, LIST_VIEW);
+        mapResponse(TidalHelper.TOP_ALBUMS, R.string.tidal_top20_albums, GRID_VIEW);
+        mapResponse(TidalHelper.LOCAL_TRACKS, R.string.tidal_local_tracks, LIST_VIEW);
+        mapResponse(TidalHelper.LOCAL_ALBUMS, R.string.tidal_local_albums, GRID_VIEW);
+        mapResponse(TidalHelper.LOCAL_PLAYLISTS, R.string.tidal_local_playlists, GRID_VIEW);
         mRequestChain.submit(null, (response)->{
             mAdapter = new NestedItemAdapter(getContext(), mItemList);
             mRecyclerView.setAdapter(mAdapter);
@@ -126,12 +124,9 @@ public class TidalNewFragment extends Fragment {
         });
     }
 
-    private void mapResponse(RequestChain.APICall api, int titleResId, int type) {
-        mRequestChain.submit(api, new ResponseHandler(titleResId, type));
-    }
-
-    private TidalRequestController.Callback getCallback() {
-        return TidalRequestController.getTidalClient();
+    private void mapResponse(String path, int titleResId, int type) {
+        Call<TidalBaseResponse> call = TidalHelper.getInstance(getContext()).getItemCollection(path, 0 , 6);
+        mRequestChain.submit(call, new ResponseHandler(titleResId, type));
     }
 
     @Override

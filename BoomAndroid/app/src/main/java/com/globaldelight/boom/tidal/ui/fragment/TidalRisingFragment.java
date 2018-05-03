@@ -22,10 +22,13 @@ import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.ui.adapter.NestedItemAdapter;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
-import com.globaldelight.boom.tidal.utils.RequestChain;
+import com.globaldelight.boom.tidal.utils.TidalHelper;
+import com.globaldelight.boom.utils.RequestChain;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
@@ -46,7 +49,7 @@ public class TidalRisingFragment extends Fragment {
     private NestedItemAdapter mAdapter;
 
     private List<NestedItemDescription> mItemList = new ArrayList<>();
-    class ResponseHandler implements RequestChain.Callback {
+    class ResponseHandler implements RequestChain.Callback<TidalBaseResponse> {
         private int resId;
         private int type;
 
@@ -102,8 +105,8 @@ public class TidalRisingFragment extends Fragment {
         }
         mRequestChain = new RequestChain(getContext());
         mProgressBar.setVisibility(View.VISIBLE);
-        mRequestChain.submit(getCallback()::getRisingAlbums, new ResponseHandler(R.string.tidal_rising_albums, GRID_VIEW));
-        mRequestChain.submit(getCallback()::getRisingTracks, new ResponseHandler(R.string.tidal_rising_tracks, LIST_VIEW));
+        mapResponse(TidalHelper.RISING_ALBUMS, R.string.tidal_rising_albums, GRID_VIEW);
+        mapResponse(TidalHelper.RISING_TRACKS, R.string.tidal_rising_tracks, LIST_VIEW);
         mRequestChain.submit(null, (resp) -> {
             mAdapter=new NestedItemAdapter(getActivity(), mItemList);
             mRecyclerView.setAdapter(mAdapter);
@@ -112,11 +115,10 @@ public class TidalRisingFragment extends Fragment {
         });
     }
 
-
-    private TidalRequestController.Callback getCallback() {
-        return TidalRequestController.getTidalClient();
+    private void mapResponse(String path, int titleResId, int type) {
+        Call<TidalBaseResponse> call = TidalHelper.getInstance(getContext()).getItemCollection(path, 0 , 10);
+        mRequestChain.submit(call, new ResponseHandler(titleResId, type));
     }
-
 
     @Override
     public void onStart() {

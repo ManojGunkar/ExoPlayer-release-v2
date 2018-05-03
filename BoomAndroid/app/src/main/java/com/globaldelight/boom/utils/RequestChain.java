@@ -1,4 +1,4 @@
-package com.globaldelight.boom.tidal.utils;
+package com.globaldelight.boom.utils;
 
 import android.content.Context;
 import android.os.Handler;
@@ -11,6 +11,7 @@ import com.globaldelight.boom.tidal.ui.fragment.TidalNewFragment;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.BiConsumer;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -19,16 +20,13 @@ import retrofit2.Response;
  * Created by adarsh on 03/05/18.
  * ©Global Delight Technologies Pvt. Ltd.
  */
+
+// Class for executing retrofit requests in sequentially
 public class RequestChain {
 
-    public interface APICall {
-        Call<TidalBaseResponse> operation(String token,String countryCode,String offSet,String limit);
+    public interface  Callback<T> {
+        void onResponse(T resp);
     }
-
-    public interface  Callback {
-        void onResponse(TidalBaseResponse tidalBaseResponse);
-    }
-
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -38,17 +36,13 @@ public class RequestChain {
         this.context = context;
     }
 
-    public void submit(APICall api, Callback callback) {
-        Call<TidalBaseResponse> call = api != null? api.operation(TidalRequestController.AUTH_TOKEN, "US", "0", "6") : null;
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                TidalBaseResponse body = null;
+    public <T> void submit(Call<T> call, Callback<T> callback) {
+        executor.execute(() -> {
+                T body = null;
                 try {
                     if ( call != null ) {
-                        Response<TidalBaseResponse> resp = call.execute();
+                        Response<T> resp = call.execute();
                         if ( resp.isSuccessful() ) {
-
                             body = resp.body();
                         }
                     }
@@ -56,19 +50,12 @@ public class RequestChain {
                 catch (IOException e) {
                 }
 
-                final TidalBaseResponse response = body;
-                mainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        callback.onResponse(response);
-                    }
-                });
-            }
+                final T response = body;
+                mainHandler.post(()->callback.onResponse(response));
         });
     }
 
     public void cancel() {
         executor.shutdownNow();
     }
-
 }

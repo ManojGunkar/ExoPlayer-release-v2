@@ -246,6 +246,8 @@
     <string name="tidal_exclusive_playlists">Exclusive Playlists</string>
     <string name="tidal_rising_albums">Rising Albums</string>
     <string name="tidal_rising_tracks">Rising Tracks</string>
-
+    <string name="tidal_local_tracks">Local Tracks</string>
+    <string name="tidal_local_albums">Local Albums</string>
+    <string name="tidal_local_playlists">Local Playlists</string>
 
 </resources>
