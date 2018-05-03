@@ -19,20 +19,18 @@ import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
-import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
-import com.globaldelight.boom.tidal.ui.adapter.TidalRisingAdapter;
-import com.globaldelight.boom.tidal.ui.adapter.TidalTrackAdapter;
+import com.globaldelight.boom.tidal.ui.adapter.NestedItemAdapter;
+import com.globaldelight.boom.tidal.utils.NestedItemDescription;
+import com.globaldelight.boom.tidal.utils.RequestChain;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
+import static com.globaldelight.boom.tidal.utils.NestedItemDescription.GRID_VIEW;
+import static com.globaldelight.boom.tidal.utils.NestedItemDescription.LIST_VIEW;
 
 /**
  * Created by Manoj Kumar on 28-04-2018.
@@ -43,9 +41,27 @@ public class TidalRisingFragment extends Fragment {
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
 
-    private TidalRisingAdapter mAdapter;
+    private boolean mHasResponse = false;
+    private RequestChain mRequestChain = null;
+    private NestedItemAdapter mAdapter;
 
-    private HashMap<String,List<Item>> mItemsMap = new HashMap<>();
+    private List<NestedItemDescription> mItemList = new ArrayList<>();
+    class ResponseHandler implements RequestChain.Callback {
+        private int resId;
+        private int type;
+
+        ResponseHandler(int resId, int type) {
+            this.resId = resId;
+            this.type = type;
+        }
+
+        @Override
+        public void onResponse(TidalBaseResponse tidalBaseResponse) {
+            if ( tidalBaseResponse != null ) {
+                mItemList.add(new NestedItemDescription(resId, type, tidalBaseResponse.getItems()));
+            }
+        }
+    }
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -66,8 +82,6 @@ public class TidalRisingFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tidal_new, null, false);
         initView(view);
-        getAlbums();
-        getTracks();
         return view;
     }
 
@@ -82,52 +96,27 @@ public class TidalRisingFragment extends Fragment {
 
     }
 
+    private void load() {
+        if ( mHasResponse ) {
+            return;
+        }
+        mRequestChain = new RequestChain(getContext());
+        mProgressBar.setVisibility(View.VISIBLE);
+        mRequestChain.submit(getCallback()::getRisingAlbums, new ResponseHandler(R.string.tidal_rising_albums, GRID_VIEW));
+        mRequestChain.submit(getCallback()::getRisingTracks, new ResponseHandler(R.string.tidal_rising_tracks, LIST_VIEW));
+        mRequestChain.submit(null, (resp) -> {
+            mAdapter=new NestedItemAdapter(getActivity(), mItemList);
+            mRecyclerView.setAdapter(mAdapter);
+            mProgressBar.setVisibility(View.GONE);
+            mHasResponse = true;
+        });
+    }
+
 
     private TidalRequestController.Callback getCallback() {
         return TidalRequestController.getTidalClient();
     }
 
-    private void getAlbums() {
-        Call<TidalBaseResponse> call = getCallback()
-                .getRisingAlbums(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
-        call.enqueue(new Callback<TidalBaseResponse>() {
-            @Override
-            public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
-                if (response.isSuccessful()) {
-                    mItemsMap.put("Albums",response.body().getItems());
-                    mAdapter=new TidalRisingAdapter(getActivity(), mItemsMap);
-                    mRecyclerView.setAdapter(mAdapter);
-                    mProgressBar.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
-
-            }
-        });
-    }
-
-    private void getTracks() {
-        Call<TidalBaseResponse> call = getCallback()
-                .getRisingTracks(TidalRequestController.AUTH_TOKEN, "US", "0", "20");
-        call.enqueue(new Callback<TidalBaseResponse>() {
-            @Override
-            public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
-                if (response.isSuccessful()) {
-                    mItemsMap.put("Tracks",response.body().getItems());
-                    mAdapter=new TidalRisingAdapter(getActivity(), mItemsMap);
-                    mRecyclerView.setAdapter(mAdapter);
-                    mProgressBar.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
-
-            }
-        });
-    }
 
     @Override
     public void onStart() {
@@ -135,12 +124,15 @@ public class TidalRisingFragment extends Fragment {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
+        load();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        mRequestChain.cancel();
+        mRequestChain = null;
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 

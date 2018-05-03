@@ -24,6 +24,7 @@ import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.ui.adapter.NestedItemAdapter;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
+import com.globaldelight.boom.tidal.utils.RequestChain;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,10 +51,8 @@ public class TidalNewFragment extends Fragment {
     private NestedItemAdapter mAdapter;
 
     private boolean mHasResponse = false;
-    private ExecutorService executor = null;
-    private Handler mainHandler = new Handler(Looper.getMainLooper());
+    private RequestChain mRequestChain = null;
 
-    private List<NestedItemDescription> mItemList = new ArrayList<>();
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -67,7 +66,8 @@ public class TidalNewFragment extends Fragment {
         }
     };
 
-    class ResponseHandler implements TidalNewFragment.Callback {
+    private List<NestedItemDescription> mItemList = new ArrayList<>();
+    class ResponseHandler implements RequestChain.Callback {
         private int resId;
         private int type;
 
@@ -82,10 +82,6 @@ public class TidalNewFragment extends Fragment {
                 mItemList.add(new NestedItemDescription(resId, type, tidalBaseResponse.getItems()));
             }
         }
-    }
-
-    interface APICall {
-        Call<TidalBaseResponse> operation(String token,String countryCode,String offSet,String limit);
     }
 
 
@@ -111,8 +107,9 @@ public class TidalNewFragment extends Fragment {
             return;
         }
 
-        executor = Executors.newSingleThreadExecutor();
+        mRequestChain = new RequestChain(getContext());
         mProgressBar.setVisibility(View.VISIBLE);
+        mapResponse(getCallback()::getExclusivePlaylists, R.string.tidal_exclusive_playlists, GRID_VIEW);
         mapResponse(getCallback()::getRecommendedTracks, R.string.tidal_recommended_tracks, LIST_VIEW);
         mapResponse(getCallback()::getRecommendedAlbums, R.string.tidal_recommended_album, GRID_VIEW);
         mapResponse(getCallback()::getNewTracks, R.string.tidal_new_tracks, LIST_VIEW);
@@ -121,8 +118,7 @@ public class TidalNewFragment extends Fragment {
         mapResponse(getCallback()::getTop20Tracks, R.string.tidal_top20_tracks, LIST_VIEW);
         mapResponse(getCallback()::getTop20Albums, R.string.tidal_top20_albums, GRID_VIEW);
         mapResponse(getCallback()::getRecommendedPlaylists, R.string.tidal_recommended_playlists, GRID_VIEW);
-        executeCall(getCallback()::getExclusivePlaylists, (response)->{
-            new ResponseHandler(R.string.tidal_exclusive_playlists, GRID_VIEW).onResponse(response);
+        mRequestChain.submit(null, (response)->{
             mAdapter = new NestedItemAdapter(getContext(), mItemList);
             mRecyclerView.setAdapter(mAdapter);
             mProgressBar.setVisibility(View.GONE);
@@ -130,47 +126,13 @@ public class TidalNewFragment extends Fragment {
         });
     }
 
-    private void mapResponse(APICall api, int titleResId, int type) {
-        executeCall(api, new ResponseHandler(titleResId, type));
+    private void mapResponse(RequestChain.APICall api, int titleResId, int type) {
+        mRequestChain.submit(api, new ResponseHandler(titleResId, type));
     }
 
     private TidalRequestController.Callback getCallback() {
         return TidalRequestController.getTidalClient();
     }
-
-
-    private interface  Callback {
-        void onResponse(TidalBaseResponse tidalBaseResponse);
-    }
-
-    private void executeCall(APICall api, Callback callback) {
-        Call<TidalBaseResponse> call = api.operation(TidalRequestController.AUTH_TOKEN, "US", "0", "6");
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                TidalBaseResponse body = null;
-                try {
-                    Response<TidalBaseResponse>  resp = call.execute();
-                    if ( resp.isSuccessful() ) {
-
-                        body = resp.body();
-                    }
-                }
-                catch (IOException e) {
-                }
-
-                final TidalBaseResponse response = body;
-                mainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        callback.onResponse(response);
-                    }
-                });
-            }
-        });
-   }
-
-
 
     @Override
     public void onStart() {
@@ -185,10 +147,8 @@ public class TidalNewFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if ( executor != null ) {
-            executor.shutdownNow();
-            executor = null;
-        }
+        mRequestChain.cancel();
+        mRequestChain = null;
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 }

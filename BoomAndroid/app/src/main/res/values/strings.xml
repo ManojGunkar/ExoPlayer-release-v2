@@ -244,6 +244,8 @@
     <string name="tidal_top20_albums">Top 20 Albums</string>
     <string name="tidal_recommended_playlists">Recommended Playlists</string>
     <string name="tidal_exclusive_playlists">Exclusive Playlists</string>
+    <string name="tidal_rising_albums">Rising Albums</string>
+    <string name="tidal_rising_tracks">Rising Tracks</string>
 
 
 </resources>
