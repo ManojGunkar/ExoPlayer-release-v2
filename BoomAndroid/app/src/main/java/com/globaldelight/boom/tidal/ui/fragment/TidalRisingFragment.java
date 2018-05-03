@@ -92,11 +92,9 @@ public class TidalRisingFragment extends Fragment {
         mProgressBar = view.findViewById(R.id.progress_tidal_new);
         mRecyclerView= view.findViewById(R.id.rv_tidal_new);
 
-
         LinearLayoutManager vertical = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(vertical);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
     }
 
     private void load() {
@@ -133,8 +131,11 @@ public class TidalRisingFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        mRequestChain.cancel();
-        mRequestChain = null;
+        if ( mRequestChain != null ) {
+            mRequestChain.cancel();
+            mRequestChain = null;
+        }
+
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 

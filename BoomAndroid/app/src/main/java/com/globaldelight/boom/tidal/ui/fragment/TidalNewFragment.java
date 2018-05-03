@@ -142,8 +142,10 @@ public class TidalNewFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        mRequestChain.cancel();
-        mRequestChain = null;
+        if ( mRequestChain != null ) {
+            mRequestChain.cancel();
+            mRequestChain = null;
+        }
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 }
