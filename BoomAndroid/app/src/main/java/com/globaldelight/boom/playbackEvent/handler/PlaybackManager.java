@@ -425,6 +425,13 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                     if ( resp.isSuccessful() ) {
                         return resp.body().getUrl();
                     }
+
+                    Call<TrackPlayResponse> call2 = TidalRequestController.getTidalClient().playTrack(sessionId, mediaItemBase.getId(), null);
+                    Response<TrackPlayResponse> resp2 = call2.execute();
+                    if ( resp2.isSuccessful() ) {
+                        return resp2.body().getUrl();
+                    }
+
                 }
                 catch (Exception e) {
                     e.printStackTrace();
