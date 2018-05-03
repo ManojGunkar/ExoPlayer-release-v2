@@ -11,25 +11,22 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.utils.NestedItemDescription;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by Manoj Kumar on 30-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class TidalNewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private HashMap<String, List<Item>> mMapItems;
-    private String[] mKeys;
+    private List<NestedItemDescription> mItems;
 
-    public TidalNewAdapter(Context context, HashMap<String, List<Item>> mapItems) {
+    public NestedItemAdapter(Context context, List<NestedItemDescription> mapItems) {
         this.mContext = context;
-        this.mMapItems = mapItems;
-        this.mKeys = mMapItems.keySet().toArray(new String[mMapItems.size()]);
+        this.mItems = mapItems;
     }
 
     @Override
@@ -41,18 +38,15 @@ public class TidalNewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         CustomViewHolder customViewHolder = (CustomViewHolder) holder;
-        String key = mKeys[position];
-        customViewHolder.txtTitleItem.setText(key);
-        TidalItemAdapter adapter = new TidalItemAdapter(mContext, mMapItems.get(key));
+        NestedItemDescription description = mItems.get(position);
+        customViewHolder.txtTitleItem.setText(description.titleResId);
+        TidalItemAdapter adapter = new TidalItemAdapter(mContext, description.itemList);
         LinearLayoutManager llm;
-        if (key.equalsIgnoreCase("New Tracks")
-                || key.equalsIgnoreCase("Recomm Tracks")
-                || key.equalsIgnoreCase("Top20 Tracks")
-                || key.equalsIgnoreCase("Local Tracks")) {
+        if (description.type == NestedItemDescription.LIST_VIEW) {
             llm = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
             customViewHolder.recyclerView.setLayoutManager(llm);
             customViewHolder.recyclerView.setItemAnimator(new DefaultItemAnimator());
-            customViewHolder.recyclerView.setAdapter(new TidalTrackAdapter(mContext,mMapItems.get(key)));
+            customViewHolder.recyclerView.setAdapter(new TidalTrackAdapter(mContext, description.itemList));
         } else {
             llm = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
             customViewHolder.recyclerView.setLayoutManager(llm);
@@ -64,7 +58,7 @@ public class TidalNewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
-        return mMapItems == null ? 0 : mMapItems.size();
+        return mItems == null ? 0 : mItems.size();
     }
 
     protected class CustomViewHolder extends RecyclerView.ViewHolder {
@@ -75,7 +69,6 @@ public class TidalNewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         public CustomViewHolder(View itemView) {
             super(itemView);
-
             txtTitleItem = itemView.findViewById(R.id.txt_title_album);
             btnMoreItem = itemView.findViewById(R.id.btn_more_album);
             recyclerView = itemView.findViewById(R.id.rv_tidal_album);

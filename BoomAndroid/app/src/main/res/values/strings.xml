@@ -235,4 +235,15 @@
     <string name="hint_user">User Id</string>
     <string name="view_all">View All</string>
 
+    <string name="tidal_recommended_tracks">Recommended Tracks</string>
+    <string name="tidal_recommended_album">Recommended Albums</string>
+    <string name="tidal_new_tracks">New Tracks</string>
+    <string name="tidal_new_albums">New Albums</string>
+    <string name="tidal_new_playlist">New Playlist</string>
+    <string name="tidal_top20_tracks">Top 20 Tracks</string>
+    <string name="tidal_top20_albums">Top 20 Albums</string>
+    <string name="tidal_recommended_playlists">Recommended Playlists</string>
+    <string name="tidal_exclusive_playlists">Exclusive Playlists</string>
+
+
 </resources>
