@@ -1,5 +1,9 @@
 package com.globaldelight.boom.tidal.tidalconnector.model;
 
+import android.content.res.Resources;
+
+import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
@@ -138,11 +142,16 @@ public class Item implements IMediaItem {
 
     @Override
     public String getDescription() {
-
-
         switch (getItemType()) {
             default:
-                return "";
+                int count = getNumberOfTracks() != null ? getNumberOfTracks() : 0;
+                Resources res = App.getApplication().getResources();
+                StringBuilder countStr = new StringBuilder();
+                countStr.append(count > 1 ? res.getString(R.string.songs) : res.getString(R.string.song));
+                countStr.append(" ");
+                countStr.append(count);
+
+                return countStr.toString();
 
             case ItemType.ALBUM:
             case ItemType.SONGS:
@@ -189,6 +198,7 @@ public class Item implements IMediaItem {
                 return ItemType.ALBUM;
             case "ARTIST":
                 return ItemType.ARTIST;
+            case "EDITORIAL":
             case "PLAYLIST":
                 return ItemType.PLAYLIST;
             default:
@@ -224,22 +234,22 @@ public class Item implements IMediaItem {
 
     @Override
     public String getItemAlbumId() {
-        return (getAlbum() != null)? String.valueOf(getAlbum().getId()) : null;
+        return (getAlbum() != null) ? String.valueOf(getAlbum().getId()) : null;
     }
 
     @Override
     public String getItemAlbum() {
-        return (getAlbum() != null)? getAlbum().getTitle() : null;
+        return (getAlbum() != null) ? getAlbum().getTitle() : null;
     }
 
     @Override
     public String getItemArtistId() {
-        return (getArtist() != null)? String.valueOf(getArtist().getId()) : null;
+        return (getArtist() != null) ? String.valueOf(getArtist().getId()) : null;
     }
 
     @Override
     public String getItemArtist() {
-        return (getArtist() != null)? getArtist().getName() : null;
+        return (getArtist() != null) ? getArtist().getName() : null;
     }
 
     @Override
