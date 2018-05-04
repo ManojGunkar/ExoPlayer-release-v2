@@ -4,6 +4,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.Curated;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalLoginResponse;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalSubscriptionInfo;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayResponse;
 
 import java.util.List;
@@ -104,5 +105,9 @@ public class TidalRequestController {
                 @Query("limit") String limit);
 
 
+        @GET("users/{userId}/subscription")
+        Call<TidalSubscriptionInfo> getUserSubscriptionInfo(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Path("userId") String userId);
     }
 }

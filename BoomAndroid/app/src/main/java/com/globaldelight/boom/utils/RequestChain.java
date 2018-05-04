@@ -37,7 +37,7 @@ public class RequestChain {
     }
 
     public <T> void submit(Call<T> call, Callback<T> callback) {
-        executor.execute(() -> {
+        executor.submit(() -> {
                 T body = null;
                 try {
                     if ( call != null ) {
