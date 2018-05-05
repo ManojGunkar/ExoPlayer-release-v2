@@ -104,8 +104,10 @@ public class TidalNewFragment extends Fragment {
             return;
         }
 
-        mRequestChain = new RequestChain(getContext());
         mProgressBar.setVisibility(View.VISIBLE);
+
+        mItemList.clear();
+        mRequestChain = new RequestChain(getContext());
         mapResponse(TidalHelper.EXCLUSIVE_PLAYLISTS, R.string.tidal_exclusive_playlists, GRID_VIEW);
         mapResponse(TidalHelper.RECOMMENDED_TRACKS, R.string.tidal_recommended_tracks, LIST_VIEW);
         mapResponse(TidalHelper.RECOMMENDED_ALBUMS, R.string.tidal_recommended_album, GRID_VIEW);
