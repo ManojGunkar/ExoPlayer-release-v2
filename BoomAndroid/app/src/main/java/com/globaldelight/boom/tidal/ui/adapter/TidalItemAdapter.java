@@ -1,6 +1,7 @@
 package com.globaldelight.boom.tidal.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +11,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.ui.GridDetailActivity;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.Collections;
@@ -51,6 +52,18 @@ public class TidalItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         viewHolder.txtItemTitle.setText(item.getTitle());
         viewHolder.txtItemSubTitle.setText(item.getDescription());
+
+        viewHolder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, GridDetailActivity.class);
+            intent.putExtra("imageurl", image);
+            intent.putExtra("title", item.getTitle());
+            if (item.getUuid() != null) {
+                intent.putExtra("id", item.getUuid());
+                intent.putExtra("isPlaylist", true);
+            } else
+                intent.putExtra("id", item.getId());
+            mContext.startActivity(intent);
+        });
 
     }
 
