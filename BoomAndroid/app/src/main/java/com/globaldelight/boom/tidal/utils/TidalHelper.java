@@ -3,6 +3,7 @@ package com.globaldelight.boom.tidal.utils;
 import android.content.Context;
 
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 
 import java.util.Locale;
@@ -30,6 +31,10 @@ public class TidalHelper {
     public static final String RISING_ALBUMS = "rising/new/albums";
     public static final String RISING_TRACKS = "rising/new/tracks";
 
+
+    public static final String PLAYLIST_TRACKS = "playlists/";
+
+
     private Context context;
     private TidalRequestController.Callback client;
 
@@ -53,4 +58,18 @@ public class TidalHelper {
                 String.valueOf(offset),
                 String.valueOf(limit));
     }
+
+    public Call<PlaylistResponse> getPlaylistTracks(String uuid, int offset, int limit){
+        String sessionId=UserCredentials.getCredentials(context).getSessionId();
+        String path=PLAYLIST_TRACKS+uuid+"/items";
+        return client.getPlayListTrack(path,
+                sessionId,
+                Locale.getDefault().getCountry(),
+                "INDEX",
+                "ASC",
+                String.valueOf(offset),
+                String.valueOf(limit));
+    }
+
+
 }

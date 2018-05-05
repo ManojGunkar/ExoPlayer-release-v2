@@ -4,7 +4,6 @@ import android.content.res.Resources;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
-import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
@@ -20,7 +19,9 @@ import java.util.List;
 public class Item implements IMediaItem {
 
     public final static String IMAGE_BASE_URL = "https://resources.tidal.com/images/";
-
+    @SerializedName("uuid")
+    @Expose
+    private String uuid;
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -99,6 +100,14 @@ public class Item implements IMediaItem {
     @SerializedName("image")
     @Expose
     private String image;
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     public String getImage() {
         return image;
@@ -275,6 +284,10 @@ public class Item implements IMediaItem {
         }
     }
 
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
     @Override
     public long getDateAdded() {
         return 0;
@@ -283,10 +296,6 @@ public class Item implements IMediaItem {
     @Override
     public String getItemUrl() {
         return null;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
     }
 
     public Boolean getStreamReady() {

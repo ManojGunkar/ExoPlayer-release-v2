@@ -1,5 +1,6 @@
 package com.globaldelight.boom.tidal.tidalconnector;
 
+import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalLoginResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayResponse;
@@ -85,6 +86,17 @@ public class TidalRequestController {
                 @Query("countryCode") String countryCode,
                 @Query("offset") String offSet,
                 @Query("limit") String limit);
+
+        @GET("{path}")
+        Call<PlaylistResponse> getPlayListTrack(
+                @Path(value = "path", encoded = true) String path,
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Query("countryCode") String countryCode,
+                @Query("order") String order,
+                @Query("orderDirection") String orderDirection,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
+
 
     }
 }
