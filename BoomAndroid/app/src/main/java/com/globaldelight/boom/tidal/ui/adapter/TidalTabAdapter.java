@@ -5,10 +5,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.globaldelight.boom.tidal.ui.fragment.TidalGenresFragment;
+import com.globaldelight.boom.tidal.ui.fragment.TidalCuratedFragment;
 import com.globaldelight.boom.tidal.ui.fragment.TidalMyMusicFragment;
 import com.globaldelight.boom.tidal.ui.fragment.TidalNewFragment;
-import com.globaldelight.boom.tidal.ui.fragment.TidalPlaylistFragment;
 import com.globaldelight.boom.tidal.ui.fragment.TidalRisingFragment;
 
 /**
@@ -17,7 +16,7 @@ import com.globaldelight.boom.tidal.ui.fragment.TidalRisingFragment;
  */
 public class TidalTabAdapter extends FragmentStatePagerAdapter {
 
-    private final String[] mTabs=new String[]{"NEW","TIDAL Rising","PLAYLISTS","GENRES","MY MUSIC"};
+    private final String[] mTabs = new String[]{"NEW", "TIDAL RISING", "CURATED", "MY MUSIC"};
 
     public TidalTabAdapter(FragmentManager fm) {
         super(fm);
@@ -25,17 +24,15 @@ public class TidalTabAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch (position){
+        switch (position) {
 
             case 0:
                 return new TidalNewFragment();
             case 1:
-                return  new TidalRisingFragment();
+                return new TidalRisingFragment();
             case 2:
-                return new TidalPlaylistFragment();
+                return new TidalCuratedFragment();
             case 3:
-                return new TidalGenresFragment();
-            case 4:
                 return new TidalMyMusicFragment();
 
         }
@@ -44,7 +41,7 @@ public class TidalTabAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return 4;
     }
 
     @Nullable

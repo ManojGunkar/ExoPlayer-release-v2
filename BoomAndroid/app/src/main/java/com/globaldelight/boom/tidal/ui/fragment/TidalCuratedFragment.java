@@ -13,10 +13,10 @@ import android.widget.ProgressBar;
 import com.globaldelight.boom.R;
 
 /**
- * Created by Manoj Kumar on 28-04-2018.
+ * Created by Manoj Kumar on 06-05-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class TidalGenresFragment extends Fragment {
+public class TidalCuratedFragment extends Fragment {
 
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
