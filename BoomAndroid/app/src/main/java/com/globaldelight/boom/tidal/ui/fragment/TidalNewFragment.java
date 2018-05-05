@@ -65,16 +65,18 @@ public class TidalNewFragment extends Fragment {
     class ResponseHandler implements RequestChain.Callback<TidalBaseResponse> {
         private int resId;
         private int type;
+        private String path;
 
-        ResponseHandler(int resId, int type) {
+        ResponseHandler(int resId, int type, String path) {
             this.resId = resId;
             this.type = type;
+            this.path = path;
         }
 
         @Override
         public void onResponse(TidalBaseResponse tidalBaseResponse) {
             if ( tidalBaseResponse != null ) {
-                mItemList.add(new NestedItemDescription(resId, type, tidalBaseResponse.getItems()));
+                mItemList.add(new NestedItemDescription(resId, type, tidalBaseResponse.getItems(), path));
             }
         }
     }
@@ -126,7 +128,7 @@ public class TidalNewFragment extends Fragment {
 
     private void mapResponse(String path, int titleResId, int type) {
         Call<TidalBaseResponse> call = TidalHelper.getInstance(getContext()).getItemCollection(path, 0 , 6);
-        mRequestChain.submit(call, new ResponseHandler(titleResId, type));
+        mRequestChain.submit(call, new ResponseHandler(titleResId, type,path));
     }
 
     @Override

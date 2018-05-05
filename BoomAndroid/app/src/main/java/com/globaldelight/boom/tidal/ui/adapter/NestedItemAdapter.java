@@ -1,6 +1,8 @@
 package com.globaldelight.boom.tidal.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.tidal.ui.MoreItemActivity;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
 
 import java.util.List;
@@ -35,6 +38,7 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return new CustomViewHolder(inflater.inflate(R.layout.item_album_tidal, parent, false));
     }
 
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         CustomViewHolder customViewHolder = (CustomViewHolder) holder;
@@ -53,6 +57,15 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             customViewHolder.recyclerView.setItemAnimator(new DefaultItemAnimator());
             customViewHolder.recyclerView.setAdapter(adapter);
         }
+
+        customViewHolder.btnMoreItem.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, MoreItemActivity.class);
+            intent.putExtra("title",mContext.getResources().getString(description.titleResId));
+            intent.putExtra("api",description.apiPath);
+            intent.putExtra("view_type",description.type);
+            mContext.startActivity(intent);
+        });
+
 
     }
 
@@ -74,4 +87,5 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             recyclerView = itemView.findViewById(R.id.rv_tidal_album);
         }
     }
+
 }

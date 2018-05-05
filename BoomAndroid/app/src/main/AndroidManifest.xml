@@ -199,6 +199,15 @@
                 android:value=".app.activities.MainActivity" />
         </activity>
 
+        <activity
+            android:name=".tidal.ui.MoreItemActivity"
+            android:parentActivityName=".app.activities.MainActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".app.activities.MainActivity" />
+        </activity>
+
         <receiver
             android:name=".app.analytics.GCMHelper"
             android:permission="com.google.android.c2dm.permission.SEND">

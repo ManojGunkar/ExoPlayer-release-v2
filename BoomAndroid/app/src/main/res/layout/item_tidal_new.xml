@@ -50,7 +50,7 @@
                     android:textSize="14dp" />
 
                 <ImageView
-                    android:id="@+id/card_grid_menu"
+                    android:id="@+id/img_menu_item"
                     style="@style/MediaController"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -30,7 +30,6 @@ public class TidalRequestController {
     public final static String AUTH_TOKEN = "xxb2MAG8HwjUFhTZ";
     private final static String BASE_URL = "https://api.tidal.com/v1/";
 
-
     /**
      * @implNote Please Suffix the size of image eg:- /80x80.jpg
      * https://resources.tidal.com/images/3e76aaa2/2dee/4f8f/bcd8/6b10a44a875a/220x146.jpg
@@ -44,13 +43,6 @@ public class TidalRequestController {
         if (client == null) {
             client = new OkHttpClient.Builder()
                     .addInterceptor(interceptor)
-                    /* .addInterceptor(chain -> {
-                         Request request = chain
-                                 .request()
-                                 .newBuilder()
-                                 .addHeader("X-Tidal-Token", AUTH_TOKEN).build();
-                         return chain.proceed(request);
-                     })*/
                     .connectTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
                     .build();
@@ -80,23 +72,11 @@ public class TidalRequestController {
                 @Field("password") String password,
                 @Field("clientUniqueKey") String clientUniqueKey);
 
-        // Play track http://api.tidal.com/v1/tracks/87002321/streamurl
-
         @GET("tracks/{track_id}/streamurl")
         Call<TrackPlayResponse> playTrack(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("track_id") String trackId,
                 @Query("soundQuality") String quality);
-
-        /*
-        Playlist
-            – New – GET https://api.tidal.com/v1/featured/new/playlists?US&limit=1&offset=1}
-            – Recommended – GET https://api.tidal.com/v1/featured/recommended/playlists?US&limit=1&offset=1
-            – Local (not applicable all regions)
-                – GET https://api.tidal.com/v1/featured/local/playlists?US&limit=1&offset=1
-            – Exclusive – GET https://api.tidal.com/v1/featured/exclusive/playlists?US&limit=1&offset=1
-        */
-
 
         @GET("{path}")
         Call<TidalBaseResponse> getItemCollection(

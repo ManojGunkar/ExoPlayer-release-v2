@@ -15,10 +15,12 @@ public class NestedItemDescription {
     public int titleResId;
     public int type;
     public List<Item> itemList;
+    public String apiPath;
 
-    public NestedItemDescription(int titleResId, int type, List<Item> items) {
+    public NestedItemDescription(int titleResId, int type, List<Item> items,String apiPath) {
         this.titleResId = titleResId;
         this.type = type;
+        this.apiPath=apiPath;
         this.itemList = items;
     }
 }
