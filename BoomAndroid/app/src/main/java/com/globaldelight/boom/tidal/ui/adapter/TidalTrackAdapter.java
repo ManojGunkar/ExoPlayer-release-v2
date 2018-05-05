@@ -30,9 +30,12 @@ public class TidalTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private Context mContext;
     private List<Item> mItems = Collections.emptyList();
 
-    public TidalTrackAdapter(Context context, List<Item> items) {
+    private boolean isAlbum=false;
+
+    public TidalTrackAdapter(Context context, List<Item> items,boolean isAlbum) {
         this.mContext = context;
         this.mItems = items;
+        this.isAlbum=isAlbum;
     }
 
     @Override
@@ -49,15 +52,27 @@ public class TidalTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         Item item = mItems.get(position);
         String imageUrl = item.getItemArtUrl();
         final int size = Utils.largeImageSize(mContext);
+        if (!isAlbum) {
+            Glide.with(mContext).load(imageUrl)
+                    .placeholder(R.drawable.ic_default_art_grid)
+                    .centerCrop()
+                    .override(size, size)
+                    .into(viewHolder.imgTrackThumbnail);
+            viewHolder.txtSubTitle.setText(item.getDescription());
+        }
+        else {
+            viewHolder.imgTrackThumbnail.setVisibility(View.GONE);
+            viewHolder.txtSongIndex.setText(String.valueOf(position+1));
+            viewHolder.txtSongIndex.setVisibility(View.VISIBLE);
+            Long time =item.getDurationLong();
+            long seconds = time / 1000;
+            long minutes = seconds / 60;
+            seconds = seconds % 60;
+            viewHolder.txtSubTitle.setText("Duration - "+String.valueOf(minutes)+":"+String.valueOf(seconds)+" min");
 
-        Glide.with(mContext).load(imageUrl)
-                .placeholder(R.drawable.ic_default_art_grid)
-                .centerCrop()
-                .override(size, size)
-                .into(viewHolder.imgTrackThumbnail);
-
+        }
         viewHolder.txtTitle.setText(item.getTitle());
-        viewHolder.txtSubTitle.setText(item.getDescription());
+
         updatePlayingStation(viewHolder,item);
 
     }
@@ -104,6 +119,7 @@ public class TidalTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         private TextView txtTitle;
         private TextView txtSubTitle;
+        private TextView txtSongIndex;
         private View mainView;
         private View overlay;
         private ImageView imgTrackThumbnail;
@@ -122,6 +138,7 @@ public class TidalTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             progressBar = itemView.findViewById(R.id.load_cloud);
             txtTitle = itemView.findViewById(R.id.txt_title_track);
             txtSubTitle = itemView.findViewById(R.id.txt_sub_title_track);
+            txtSongIndex = itemView.findViewById(R.id.txt_song_index);
 
         }
     }

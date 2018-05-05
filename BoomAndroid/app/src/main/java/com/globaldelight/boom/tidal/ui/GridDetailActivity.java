@@ -40,7 +40,7 @@ public class GridDetailActivity extends MasterActivity {
     private ProgressBar mProgressBar;
 
     private String id;
-    private boolean isPlaylist=false;
+    private boolean isPlaylist = false;
 
     private TidalTrackAdapter mAdapter;
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
@@ -80,18 +80,18 @@ public class GridDetailActivity extends MasterActivity {
     }
 
     private void init() {
-        setContentView(R.layout.activity_country_detail);
+        setContentView(R.layout.activity_grid_tidal);
         Bundle bundle = getIntent().getExtras();
         String title = bundle.getString("title");
         id = bundle.getString("id");
-        isPlaylist=bundle.getBoolean("isPlaylist");
+        isPlaylist = bundle.getBoolean("isPlaylist");
         String imageUrl = bundle.getString("imageurl");
 
-        Toolbar toolbar = findViewById(R.id.toolbar_country_detail);
+        Toolbar toolbar = findViewById(R.id.toolbar_grid_tidal);
         toolbar.setTitle(title);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ImageView imageView = findViewById(R.id.img_country_detail);
+        ImageView imageView = findViewById(R.id.img_grid_tidal);
         Glide.with(this)
                 .load(imageUrl)
                 .placeholder(R.drawable.radio_place_holder)
@@ -100,28 +100,28 @@ public class GridDetailActivity extends MasterActivity {
                 .into(imageView);
         imageView.setImageDrawable(getDrawable(R.drawable.ic_default_art_player_header));
 
-        mProgressBar = findViewById(R.id.progress_country_details);
-        mRecyclerView = findViewById(R.id.rv_country_details);
+        mProgressBar = findViewById(R.id.progress_grid_tidal);
+        mRecyclerView = findViewById(R.id.rv_grid_tidal);
 
     }
 
     private void loadApi() {
         RequestChain requestChain = new RequestChain(this);
-        if (isPlaylist){
-            Call<PlaylistResponse> call = TidalHelper.getInstance(this).getPlaylistTracks(id,0,10);
+        if (isPlaylist) {
+            Call<PlaylistResponse> call = TidalHelper.getInstance(this).getPlaylistTracks(id, 0, 10);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                mRecyclerView.setAdapter(new TidalPlaylistTrackAdapter(this,resp.getItems()));
+                mRecyclerView.setAdapter(new TidalPlaylistTrackAdapter(this, resp.getItems()));
             });
-            }else {
-            String path="albums/"+id+"/tracks";
+        } else {
+            String path = "albums/" + id + "/tracks";
             Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 200);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
-                mAdapter = new TidalTrackAdapter(this, resp.getItems());
+                mAdapter = new TidalTrackAdapter(this, resp.getItems(),true);
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());

@@ -50,7 +50,7 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             llm = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
             customViewHolder.recyclerView.setLayoutManager(llm);
             customViewHolder.recyclerView.setItemAnimator(new DefaultItemAnimator());
-            customViewHolder.recyclerView.setAdapter(new TidalTrackAdapter(mContext, description.itemList));
+            customViewHolder.recyclerView.setAdapter(new TidalTrackAdapter(mContext, description.itemList,false));
         } else {
             llm = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
             customViewHolder.recyclerView.setLayoutManager(llm);
