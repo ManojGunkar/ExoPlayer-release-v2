@@ -25,6 +25,9 @@ public class Item implements IMediaItem {
     @SerializedName("id")
     @Expose
     private Integer id;
+    @SerializedName("uuid")
+    @Expose
+    private String uuid;
     @SerializedName("title")
     @Expose
     private String title;
@@ -134,7 +137,7 @@ public class Item implements IMediaItem {
     }
 
     public String getId() {
-        return String.valueOf(id);
+        return (uuid != null)? uuid : String.valueOf(id);
     }
 
     public void setId(Integer id) {
