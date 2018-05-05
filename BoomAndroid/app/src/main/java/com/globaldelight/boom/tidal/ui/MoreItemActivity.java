@@ -70,7 +70,7 @@ public class MoreItemActivity extends MasterActivity {
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                mRecyclerView.setAdapter(new TidalTrackAdapter(this, resp.getItems(),false));
+                mRecyclerView.setAdapter(new TidalTrackAdapter(this, resp.getItems()));
             } else {
                 GridLayoutManager  glm= new GridLayoutManager(this,2);
                mRecyclerView.setLayoutManager(glm);

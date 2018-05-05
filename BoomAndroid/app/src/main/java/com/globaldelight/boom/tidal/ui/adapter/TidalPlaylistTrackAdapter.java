@@ -26,38 +26,58 @@ import java.util.List;
  */
 public class TidalPlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private final static int TYPE_HEADER = 0;
+    private final static int TYPE_ITEM = 1;
+
     private Context mContext;
     private List<PlaylistResponse.Items> mItems = Collections.emptyList();
+    private String mHeaderTitle;
 
-    public TidalPlaylistTrackAdapter(Context context, List<PlaylistResponse.Items> items) {
+    public TidalPlaylistTrackAdapter(Context context, List<PlaylistResponse.Items> items, String headerTitle) {
         this.mContext = context;
         this.mItems = items;
+        this.mHeaderTitle = headerTitle;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ItemViewHolder vh = new ItemViewHolder(inflater.inflate(R.layout.item_track, parent, false));
-        vh.itemView.setOnClickListener((v)->onClick(vh));
-        return vh;
+        if (viewType == TYPE_HEADER) {
+            View itemView = LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.card_header_recycler_view, parent, false);
+            HeaderViewHolder holder = new HeaderViewHolder(itemView);
+            return holder;
+        } else {
+            ItemViewHolder vh = new ItemViewHolder(inflater.inflate(R.layout.item_track, parent, false));
+            vh.itemView.setOnClickListener((v) -> onClick(vh));
+            return vh;
+        }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ItemViewHolder viewHolder = (ItemViewHolder) holder;
-        Item item = mItems.get(position).getItem();
-        String imageUrl = item.getItemArtUrl();
-        final int size = Utils.largeImageSize(mContext);
+        if (position < 1) {
+            HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
+            headerViewHolder.txtHeaderTitle.setText(mHeaderTitle);
+            headerViewHolder.txtHeaderDetail.setText("Song : " + mItems.size());
+        } else {
+            int pos = position - 1;
+            ItemViewHolder viewHolder = (ItemViewHolder) holder;
+            Item item = mItems.get(pos).getItem();
+            String imageUrl = item.getItemArtUrl();
+            final int size = Utils.largeImageSize(mContext);
 
-        Glide.with(mContext).load(imageUrl)
-                .placeholder(R.drawable.ic_default_art_grid)
-                .centerCrop()
-                .override(size, size)
-                .into(viewHolder.imgTrackThumbnail);
+            Glide.with(mContext).load(imageUrl)
+                    .placeholder(R.drawable.ic_default_art_grid)
+                    .centerCrop()
+                    .override(size, size)
+                    .into(viewHolder.imgTrackThumbnail);
 
-        viewHolder.txtTitle.setText(item.getTitle());
-        viewHolder.txtSubTitle.setText(item.getDescription());
-        updatePlayingStation(viewHolder,item);
+            viewHolder.txtTitle.setText(item.getTitle());
+            viewHolder.txtSubTitle.setText(item.getDescription());
+            updatePlayingStation(viewHolder, item);
+        }
+
 
     }
 
@@ -90,13 +110,22 @@ public class TidalPlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView
         return mItems.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (position < 1) {
+            return TYPE_HEADER;
+        } else {
+            return TYPE_ITEM;
+        }
+    }
+
     private void onClick(ItemViewHolder holder) {
-        final int position = holder.getAdapterPosition();
-        if ( position < 0 ) {
+        int position = holder.getAdapterPosition();
+        if (position <0) {
             return;
         }
 
-       // App.playbackManager().queue().addItemListToPlay(mItems, position, false);
+        // App.playbackManager().queue().addItemListToPlay(mItems, position, false);
     }
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -122,6 +151,20 @@ public class TidalPlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView
             txtTitle = itemView.findViewById(R.id.txt_title_track);
             txtSubTitle = itemView.findViewById(R.id.txt_sub_title_track);
 
+        }
+    }
+
+    protected class HeaderViewHolder extends RecyclerView.ViewHolder {
+        public TextView txtHeaderTitle;
+        private TextView txtHeaderDetail;
+        private ImageView imgMore;
+
+        public HeaderViewHolder(View itemView) {
+            super(itemView);
+
+            txtHeaderTitle = itemView.findViewById(R.id.header_sub_title);
+            txtHeaderDetail = itemView.findViewById(R.id.header_detail);
+            imgMore = itemView.findViewById(R.id.recycler_header_menu);
         }
     }
 }

@@ -61,6 +61,7 @@
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_grid_tidal"
         android:layout_width="wrap_content"
@@ -68,11 +69,12 @@
         android:layout_gravity="center_vertical|start"
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
-        app:rippleColor="@android:color/transparent"
         app:backgroundTint="@color/colorAccent"
-        app:srcCompat="@drawable/ic_floating_play_albums"
         app:layout_anchor="@+id/app_bar_grid_tidal"
-        app:layout_anchorGravity="bottom|right|end" />
+        app:layout_anchorGravity="bottom|right|end"
+        app:rippleColor="@android:color/transparent"
+        app:srcCompat="@drawable/ic_floating_play_albums" />
+
 
     <ProgressBar
         android:id="@+id/progress_grid_tidal"

@@ -9,56 +9,70 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
-import com.globaldelight.boom.utils.Utils;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by Manoj Kumar on 28-04-2018.
+ * Created by Manoj Kumar on 05-05-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class TidalTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private final static int TYPE_HEADER = 10000;
+    private final static int TYPE_ITEM = 20000;
     private Context mContext;
     private List<Item> mItems = Collections.emptyList();
+    private String mHeaderTitle;
 
-
-    public TidalTrackAdapter(Context context, List<Item> items) {
+    public TrackDetailAdapter(Context context, List<Item> items, String headerTitle) {
         this.mContext = context;
         this.mItems = items;
+        this.mHeaderTitle = headerTitle;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ItemViewHolder vh = new ItemViewHolder(inflater.inflate(R.layout.item_track, parent, false));
-        vh.itemView.setOnClickListener((v) -> onClick(vh));
-        return vh;
+
+        if (viewType == TYPE_ITEM) {
+            ItemViewHolder vh = new ItemViewHolder(inflater.inflate(R.layout.item_track, parent, false));
+            vh.itemView.setOnClickListener((v) -> onClick(vh));
+            return vh;
+        } else {
+            View itemView = LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.card_header_recycler_view, parent, false);
+            HeaderViewHolder holder = new HeaderViewHolder(itemView);
+            return holder;
+        }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ItemViewHolder viewHolder = (ItemViewHolder) holder;
         Item item = mItems.get(position);
-        String imageUrl = item.getItemArtUrl();
-        final int size = Utils.largeImageSize(mContext);
+        if (position <1) {
+            HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
+            headerViewHolder.txtHeaderTitle.setText(mHeaderTitle);
+            headerViewHolder.txtHeaderDetail.setText("Song : " + mItems.size());
+        } else if (position >=1) {
+            ItemViewHolder viewHolder = (ItemViewHolder) holder;
+            viewHolder.imgTrackThumbnail.setVisibility(View.GONE);
+            viewHolder.txtSongIndex.setText(String.valueOf(position));
+            viewHolder.txtSongIndex.setVisibility(View.VISIBLE);
+            Long time = item.getDurationLong();
+            long seconds = time / 1000;
+            long minutes = seconds / 60;
+            seconds = seconds % 60;
+            viewHolder.txtSubTitle.setText("Duration - " + String.valueOf(minutes) + ":" + String.valueOf(seconds) + " min");
 
-        Glide.with(mContext).load(imageUrl)
-                .placeholder(R.drawable.ic_default_art_grid)
-                .centerCrop()
-                .override(size, size)
-                .into(viewHolder.imgTrackThumbnail);
-        viewHolder.txtSubTitle.setText(item.getDescription());
-        viewHolder.txtTitle.setText(item.getTitle());
 
-        updatePlayingStation(viewHolder, item);
-
+            viewHolder.txtTitle.setText(item.getTitle());
+            updatePlayingStation(viewHolder, item);
+        }
     }
 
     private void updatePlayingStation(ItemViewHolder holder, IMediaElement item) {
@@ -90,6 +104,15 @@ public class TidalTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return mItems.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (position < 1) {
+            return TYPE_HEADER;
+        } else {
+            return TYPE_ITEM;
+        }
+    }
+
     private void onClick(ItemViewHolder holder) {
         final int position = holder.getAdapterPosition();
         if (position < 0) {
@@ -111,6 +134,7 @@ public class TidalTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private ImageView imgMenuTrack;
         private ProgressBar progressBar;
 
+
         public ItemViewHolder(View itemView) {
             super(itemView);
 
@@ -124,6 +148,20 @@ public class TidalTrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             txtSubTitle = itemView.findViewById(R.id.txt_sub_title_track);
             txtSongIndex = itemView.findViewById(R.id.txt_song_index);
 
+        }
+    }
+
+    protected class HeaderViewHolder extends RecyclerView.ViewHolder {
+        public TextView txtHeaderTitle;
+        private TextView txtHeaderDetail;
+        private ImageView imgMore;
+
+        public HeaderViewHolder(View itemView) {
+            super(itemView);
+
+            txtHeaderTitle = itemView.findViewById(R.id.header_sub_title);
+            txtHeaderDetail = itemView.findViewById(R.id.header_detail);
+            imgMore = itemView.findViewById(R.id.recycler_header_menu);
         }
     }
 }

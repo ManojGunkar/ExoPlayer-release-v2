@@ -22,6 +22,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistRespon
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.ui.adapter.TidalPlaylistTrackAdapter;
 import com.globaldelight.boom.tidal.ui.adapter.TidalTrackAdapter;
+import com.globaldelight.boom.tidal.ui.adapter.TrackDetailAdapter;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
 import com.globaldelight.boom.utils.RequestChain;
 
@@ -42,7 +43,7 @@ public class GridDetailActivity extends MasterActivity {
     private String id;
     private boolean isPlaylist = false;
 
-    private TidalTrackAdapter mAdapter;
+    private TrackDetailAdapter mAdapter;
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -56,6 +57,7 @@ public class GridDetailActivity extends MasterActivity {
             }
         }
     };
+    private String title;
 
     @Override
     public void onStart() {
@@ -82,7 +84,7 @@ public class GridDetailActivity extends MasterActivity {
     private void init() {
         setContentView(R.layout.activity_grid_tidal);
         Bundle bundle = getIntent().getExtras();
-        String title = bundle.getString("title");
+        title = bundle.getString("title");
         id = bundle.getString("id");
         isPlaylist = bundle.getBoolean("isPlaylist");
         String imageUrl = bundle.getString("imageurl");
@@ -114,14 +116,14 @@ public class GridDetailActivity extends MasterActivity {
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                mRecyclerView.setAdapter(new TidalPlaylistTrackAdapter(this, resp.getItems()));
+                mRecyclerView.setAdapter(new TidalPlaylistTrackAdapter(this, resp.getItems(),title));
             });
         } else {
             String path = "albums/" + id + "/tracks";
             Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 200);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
-                mAdapter = new TidalTrackAdapter(this, resp.getItems(),true);
+                mAdapter = new TrackDetailAdapter(this, resp.getItems(),title);
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
