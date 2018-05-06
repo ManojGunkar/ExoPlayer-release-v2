@@ -2,7 +2,6 @@ package com.globaldelight.boom.tidal.ui.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,13 +43,13 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         CustomViewHolder customViewHolder = (CustomViewHolder) holder;
         NestedItemDescription description = mItems.get(position);
         customViewHolder.txtTitleItem.setText(description.titleResId);
-        TidalItemAdapter adapter = new TidalItemAdapter(mContext, description.itemList);
+        ItemAdapter adapter = new ItemAdapter(mContext, description.itemList);
         LinearLayoutManager llm;
         if (description.type == NestedItemDescription.LIST_VIEW) {
             llm = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
             customViewHolder.recyclerView.setLayoutManager(llm);
             customViewHolder.recyclerView.setItemAnimator(new DefaultItemAnimator());
-            customViewHolder.recyclerView.setAdapter(new TidalTrackAdapter(mContext, description.itemList));
+            customViewHolder.recyclerView.setAdapter(new TrackAdapter(mContext, description.itemList));
         } else {
             llm = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
             customViewHolder.recyclerView.setLayoutManager(llm);

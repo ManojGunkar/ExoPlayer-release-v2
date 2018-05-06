@@ -20,8 +20,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.MasterActivity;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
-import com.globaldelight.boom.tidal.ui.adapter.TidalPlaylistTrackAdapter;
-import com.globaldelight.boom.tidal.ui.adapter.TidalTrackAdapter;
+import com.globaldelight.boom.tidal.ui.adapter.PlaylistTrackAdapter;
 import com.globaldelight.boom.tidal.ui.adapter.TrackDetailAdapter;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
 import com.globaldelight.boom.utils.RequestChain;
@@ -116,7 +115,7 @@ public class GridDetailActivity extends MasterActivity {
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                mRecyclerView.setAdapter(new TidalPlaylistTrackAdapter(this, resp.getItems(),title));
+                mRecyclerView.setAdapter(new PlaylistTrackAdapter(this, resp.getItems(),title));
             });
         } else {
             String path = "albums/" + id + "/tracks";

@@ -8,14 +8,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.MasterActivity;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
-import com.globaldelight.boom.tidal.ui.adapter.TidalGridAdapter;
-import com.globaldelight.boom.tidal.ui.adapter.TidalTrackAdapter;
+import com.globaldelight.boom.tidal.ui.adapter.GridAdapter;
+import com.globaldelight.boom.tidal.ui.adapter.TrackAdapter;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
 import com.globaldelight.boom.utils.RequestChain;
@@ -70,12 +69,12 @@ public class MoreItemActivity extends MasterActivity {
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                mRecyclerView.setAdapter(new TidalTrackAdapter(this, resp.getItems()));
+                mRecyclerView.setAdapter(new TrackAdapter(this, resp.getItems()));
             } else {
                 GridLayoutManager  glm= new GridLayoutManager(this,2);
                mRecyclerView.setLayoutManager(glm);
                mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-               mRecyclerView.setAdapter(new TidalGridAdapter(this,resp.getItems()));
+               mRecyclerView.setAdapter(new GridAdapter(this,resp.getItems()));
             }
 
         });

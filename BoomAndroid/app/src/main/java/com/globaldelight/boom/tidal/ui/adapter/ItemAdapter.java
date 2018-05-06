@@ -22,12 +22,12 @@ import java.util.List;
  * Created by Manoj Kumar on 28-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class TidalItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private List<Item> mItems = Collections.emptyList();
 
-    public TidalItemAdapter(Context context, List<Item> items) {
+    public ItemAdapter(Context context, List<Item> items) {
         this.mContext = context;
         this.mItems = items;
     }

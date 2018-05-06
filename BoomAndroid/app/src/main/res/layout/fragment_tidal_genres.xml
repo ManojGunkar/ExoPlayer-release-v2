@@ -5,15 +5,54 @@
     android:background="@color/app_background"
     android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_tidal_genres"
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scroll_search_all"
         android:layout_width="match_parent"
-        android:layout_centerInParent="true"
-        android:layout_height="match_parent" />
+        android:layout_alignParentTop="true"
+        android:layout_height="match_parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/txt_header_genres_curated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="@string/genres"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_tidal_genres"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:isScrollContainer="false"
+                android:nestedScrollingEnabled="false" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/txt_header_moods_curated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="@string/moods"
+                android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_tidal_moods"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:isScrollContainer="false"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 
     <ProgressBar
-        android:id="@+id/progress_tidal_genres"
+        android:id="@+id/progress_tidal_curated"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
