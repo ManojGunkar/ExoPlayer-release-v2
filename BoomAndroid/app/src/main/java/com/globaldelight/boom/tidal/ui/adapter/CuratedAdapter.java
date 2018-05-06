@@ -1,6 +1,8 @@
 package com.globaldelight.boom.tidal.ui.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,8 @@ import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Curated;
+import com.globaldelight.boom.tidal.ui.CuratedDetailActivity;
+import com.globaldelight.boom.tidal.ui.GridDetailActivity;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.Collections;
@@ -24,12 +28,13 @@ import java.util.List;
 public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private List<Curated> mGenres = Collections.emptyList();
+    private List<Curated> mCuratedList = Collections.emptyList();
     private boolean isMoods=false;
+    private String image;
 
     public CuratedAdapter(Context context, List<Curated> genres, boolean isMoods) {
         this.mContext = context;
-        this.mGenres = genres;
+        this.mCuratedList = genres;
         this.isMoods=isMoods;
     }
 
@@ -42,11 +47,9 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ItemViewHolder viewHolder = (ItemViewHolder) holder;
-        Curated genres = mGenres.get(position);
-
-        String image=genres.getImage();
-        image= TidalRequestController.IMAGE_BASE_URL+image.replace("-","/")+"/320x320.jpg";
-
+        Curated curated = mCuratedList.get(position);
+        image= curated.getImage();
+        image=TidalRequestController.IMAGE_BASE_URL+image.replace("-","/")+"/320x320.jpg";
         final int size = Utils.largeImageSize(mContext);
         Glide.with(mContext).load(image)
                 .placeholder(R.drawable.ic_default_art_grid)
@@ -54,32 +57,27 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 .override(size, size)
                 .into(viewHolder.imgGenresCover);
 
-        if (isMoods){
-            viewHolder.imgGenresCover.setMaxHeight(150);
-            viewHolder.imgGenresCover.setMaxHeight(110);
-        }
-
-        viewHolder.txtGenresTitle.setText(genres.getName());
+        viewHolder.txtGenresTitle.setText(curated.getName());
 
         viewHolder.itemView.setOnClickListener(v -> {
-
-           /* Intent intent = new Intent(mContext, GridDetailActivity.class);
-            intent.putExtra("imageurl", image);
-            intent.putExtra("title", item.getTitle());
-            if (item.getUuid() != null) {
-                intent.putExtra("id", item.getUuid());
-                intent.putExtra("isPlaylist", true);
-            } else
-                intent.putExtra("id", item.getId());
-
-            mContext.startActivity(intent);*/
+            Intent intent = new Intent(mContext, CuratedDetailActivity.class);
+            intent.putExtra("imageCurated", image);
+            intent.putExtra("title", curated.getName());
+            String path=null;
+            if (isMoods){
+                path="moods/"+curated.getPath()+"/playlists";
+            }else {
+                path="genres/"+curated.getPath()+"/playlists";
+            }
+            intent.putExtra("path",path);
+            mContext.startActivity(intent);
         });
 
     }
 
     @Override
     public int getItemCount() {
-        return mGenres.size();
+        return mCuratedList.size();
     }
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {
