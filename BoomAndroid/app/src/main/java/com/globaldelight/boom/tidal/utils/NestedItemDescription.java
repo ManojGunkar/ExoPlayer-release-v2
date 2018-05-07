@@ -8,16 +8,16 @@ import java.util.List;
  * Created by adarsh on 03/05/18.
  * ©Global Delight Technologies Pvt. Ltd.
  */
-public class NestedItemDescription {
+public class NestedItemDescription<T> {
     public static final int LIST_VIEW = 0;
     public static final int GRID_VIEW = 1;
 
     public int titleResId;
     public int type;
-    public List<Item> itemList;
+    public List<T> itemList;
     public String apiPath;
 
-    public NestedItemDescription(int titleResId, int type, List<Item> items,String apiPath) {
+    public NestedItemDescription(int titleResId, int type, List<T> items,String apiPath) {
         this.titleResId = titleResId;
         this.type = type;
         this.apiPath=apiPath;

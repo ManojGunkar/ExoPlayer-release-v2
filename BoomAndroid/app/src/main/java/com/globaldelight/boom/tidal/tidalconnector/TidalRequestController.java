@@ -6,6 +6,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseRespo
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalLoginResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalSubscriptionInfo;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayResponse;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -103,10 +104,21 @@ public class TidalRequestController {
                 @Query("offset") String offSet,
                 @Query("limit") String limit);
 
+        @GET("{path}")
+        Call<UserMusicResponse> getUserMusic(
+                @Path(value = "path", encoded = true) String path,
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Query("countryCode") String countryCode,
+                @Query("order") String order,
+                @Query("orderDirection") String orderDirection);
+
 
         @GET("users/{userId}/subscription")
         Call<TidalSubscriptionInfo> getUserSubscriptionInfo(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId);
+
+
+
     }
 }

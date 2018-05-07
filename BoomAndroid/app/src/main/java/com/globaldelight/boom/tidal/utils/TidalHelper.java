@@ -7,11 +7,9 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistRespon
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalSubscriptionInfo;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayResponse;
-import com.globaldelight.boom.utils.Result;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
 
 import java.util.Locale;
-import java.util.Observable;
-import java.util.concurrent.Callable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,27 +36,27 @@ public class TidalHelper {
     public static final String RISING_ALBUMS = "rising/new/albums";
     public static final String RISING_TRACKS = "rising/new/tracks";
 
-
+    public static final String USER = "users/";
+    public static final String USER_PLAYLISTS = "/favorites/playlists";
+    public static final String USER_TRACKS = "/favorites/tracks";
+    public static final String USER_ABLUMS = "/favorites/albums";
     public static final String PLAYLIST_TRACKS = "playlists/";
-
-
+    private static TidalHelper instance;
     private Context context;
     private TidalRequestController.Callback client;
     private TidalSubscriptionInfo subscriptionInfo;
-
-    private static TidalHelper instance;
-    public static TidalHelper getInstance(Context context) {
-        if ( instance == null ) {
-            instance = new TidalHelper(context.getApplicationContext());
-        }
-        return instance;
-    }
 
     private TidalHelper(Context context) {
         this.context = context;
         client = TidalRequestController.getTidalClient();
     }
 
+    public static TidalHelper getInstance(Context context) {
+        if (instance == null) {
+            instance = new TidalHelper(context.getApplicationContext());
+        }
+        return instance;
+    }
 
     public Call<TidalBaseResponse> getItemCollection(String path, int offset, int limit) {
         return client.getItemCollection(path,
@@ -68,9 +66,9 @@ public class TidalHelper {
                 String.valueOf(limit));
     }
 
-    public Call<PlaylistResponse> getPlaylistTracks(String uuid, int offset, int limit){
-        String sessionId=UserCredentials.getCredentials(context).getSessionId();
-        String path=PLAYLIST_TRACKS+uuid+"/items";
+    public Call<PlaylistResponse> getPlaylistTracks(String uuid, int offset, int limit) {
+        String sessionId = UserCredentials.getCredentials(context).getSessionId();
+        String path = PLAYLIST_TRACKS + uuid + "/items";
         return client.getPlayListTrack(path,
                 sessionId,
                 Locale.getDefault().getCountry(),
@@ -80,13 +78,23 @@ public class TidalHelper {
                 String.valueOf(limit));
     }
 
-
-
+    /**
+     * @param musicType @implNote Specify the music type eg:- Album, Track or Playlists.
+     */
+    public Call<UserMusicResponse> getUserMusic(String musicType) {
+        String sessionId = UserCredentials.getCredentials(context).getSessionId();
+        String path = USER + UserCredentials.getCredentials(context).getUserId() + musicType;
+        return client.getUserMusic(path,
+                sessionId,
+                Locale.getDefault().getCountry(),
+                "NAME",
+                "ASC");
+    }
 
     public Call<TrackPlayResponse> getStreamInfo(String trackId) {
         return client.playTrack(UserCredentials.getCredentials(context).getSessionId(),
-                                trackId,
-                                subscriptionInfo != null?subscriptionInfo.getHighestSoundQuality() : null);
+                trackId,
+                subscriptionInfo != null ? subscriptionInfo.getHighestSoundQuality() : null);
     }
 
     public void fetchSubscriptionInfo() {

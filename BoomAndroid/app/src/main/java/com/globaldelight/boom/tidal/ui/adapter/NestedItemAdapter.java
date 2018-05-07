@@ -12,9 +12,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
 import com.globaldelight.boom.tidal.ui.MoreItemActivity;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,10 +28,12 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private Context mContext;
     private List<NestedItemDescription> mItems;
+    private boolean isUserMode = false;
 
-    public NestedItemAdapter(Context context, List<NestedItemDescription> mapItems) {
+    public NestedItemAdapter(Context context, List<NestedItemDescription> mapItems, boolean isUserMode) {
         this.mContext = context;
         this.mItems = mapItems;
+        this.isUserMode = isUserMode;
     }
 
     @Override
@@ -37,7 +42,6 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return new CustomViewHolder(inflater.inflate(R.layout.item_album_tidal, parent, false));
     }
 
-
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         CustomViewHolder customViewHolder = (CustomViewHolder) holder;
@@ -45,6 +49,19 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         customViewHolder.txtTitleItem.setText(description.titleResId);
         ItemAdapter adapter = new ItemAdapter(mContext, description.itemList);
         LinearLayoutManager llm;
+
+        List<Item> playlists = new ArrayList();
+
+        if (isUserMode) {
+            for (int i = 0; i < description.itemList.size(); i++) {
+                UserMusicResponse.UserItem items = (UserMusicResponse.UserItem) description.itemList.get(i);
+                items.getItem();
+                playlists.add(items.getItem());
+            }
+            description.itemList.clear();
+            description.itemList.addAll(playlists);
+        }
+
         if (description.type == NestedItemDescription.LIST_VIEW) {
             llm = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
             customViewHolder.recyclerView.setLayoutManager(llm);
@@ -59,9 +76,9 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         customViewHolder.btnMoreItem.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, MoreItemActivity.class);
-            intent.putExtra("title",mContext.getResources().getString(description.titleResId));
-            intent.putExtra("api",description.apiPath);
-            intent.putExtra("view_type",description.type);
+            intent.putExtra("title", mContext.getResources().getString(description.titleResId));
+            intent.putExtra("api", description.apiPath);
+            intent.putExtra("view_type", description.type);
             mContext.startActivity(intent);
         });
 
