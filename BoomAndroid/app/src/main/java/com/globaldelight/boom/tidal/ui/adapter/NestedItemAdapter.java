@@ -16,6 +16,8 @@ import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
 import com.globaldelight.boom.tidal.ui.MoreItemActivity;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
+import com.globaldelight.boom.tidal.utils.TidalHelper;
+import com.globaldelight.boom.tidal.utils.UserCredentials;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,11 +79,16 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         customViewHolder.btnMoreItem.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, MoreItemActivity.class);
             intent.putExtra("title", mContext.getResources().getString(description.titleResId));
-            intent.putExtra("api", description.apiPath);
+            if (isUserMode){
+                String path= TidalHelper.USER+ UserCredentials.getCredentials(mContext).getUserId()+description.apiPath;
+                intent.putExtra("api", path);
+                intent.putExtra("isUserMode", isUserMode);
+            }else {
+                intent.putExtra("api", description.apiPath);
+            }
             intent.putExtra("view_type", description.type);
             mContext.startActivity(intent);
         });
-
 
     }
 

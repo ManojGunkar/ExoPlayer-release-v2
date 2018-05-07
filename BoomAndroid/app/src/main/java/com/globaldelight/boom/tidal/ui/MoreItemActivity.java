@@ -12,12 +12,20 @@ import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.MasterActivity;
+import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
+import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
 import com.globaldelight.boom.tidal.ui.adapter.GridAdapter;
 import com.globaldelight.boom.tidal.ui.adapter.TrackAdapter;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
+import com.globaldelight.boom.tidal.utils.UserCredentials;
 import com.globaldelight.boom.utils.RequestChain;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 
@@ -30,16 +38,15 @@ public class MoreItemActivity extends MasterActivity {
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
 
-    private RequestChain mRequestChain;
+    private RequestChain mRequestChain=null;
     private String api;
     private int viewType;
+    private boolean isUserMode=false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         initView();
-
     }
 
     private void initView(){
@@ -53,11 +60,14 @@ public class MoreItemActivity extends MasterActivity {
         Bundle bundle = getIntent().getExtras();
         String title = bundle.getString("title");
         viewType = bundle.getInt("view_type");
-
+        isUserMode=bundle.getBoolean("isUserMode");
         api = bundle.getString("api");
         setTitle(title);
-
-        loadApi();
+        if (isUserMode){
+            loadUserMusic();
+        }else {
+            loadApi();
+        }
     }
 
     private void loadApi(){
@@ -75,6 +85,35 @@ public class MoreItemActivity extends MasterActivity {
                mRecyclerView.setLayoutManager(glm);
                mRecyclerView.setItemAnimator(new DefaultItemAnimator());
                mRecyclerView.setAdapter(new GridAdapter(this,resp.getItems()));
+            }
+
+        });
+    }
+
+    private void loadUserMusic(){
+        mRequestChain=new RequestChain(this);
+        TidalRequestController.Callback callback=TidalRequestController.getTidalClient();
+        Call<UserMusicResponse> call=callback.getUserMusic(api,
+                UserCredentials.getCredentials(this).getSessionId(),
+                Locale.getDefault().getCountry(),
+                "NAME",
+                "ASC");
+        mRequestChain.submit(call,resp ->{
+            List<Item> itemList=new ArrayList<>();
+            for (int i=0;i<resp.getItems().size();i++){
+                itemList.add(resp.getItems().get(i).getItem());
+            }
+            mProgressBar.setVisibility(View.GONE);
+            if (viewType == NestedItemDescription.LIST_VIEW) {
+                LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+                mRecyclerView.setLayoutManager(llm);
+                mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                mRecyclerView.setAdapter(new TrackAdapter(this,itemList));
+            } else {
+                GridLayoutManager  glm= new GridLayoutManager(this,2);
+                mRecyclerView.setLayoutManager(glm);
+                mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                mRecyclerView.setAdapter(new GridAdapter(this,itemList));
             }
 
         });
