@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.utils.RequestChain;
 
 /**
  * Created by Manoj Kumar on 28-04-2018.
@@ -30,6 +31,11 @@ public class TidalSearchFragment extends Fragment {
     }
 
     public void getSearchQuery(String query){
+
+    }
+
+    private void loadQuery(String query){
+        RequestChain requestChain=new RequestChain(getContext());
 
     }
 

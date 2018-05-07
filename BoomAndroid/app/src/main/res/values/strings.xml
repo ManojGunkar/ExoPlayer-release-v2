@@ -250,5 +250,8 @@
     <string name="tidal_local_albums">Local Albums</string>
     <string name="tidal_local_playlists">Local Playlists</string>
     <string name="moods">Moods</string>
+    <string name="tidal_album">Albums</string>
+    <string name="tidal_tracks">Tracks</string>
+    <string name="tidal_playlist">Playlists</string>
 
 </resources>

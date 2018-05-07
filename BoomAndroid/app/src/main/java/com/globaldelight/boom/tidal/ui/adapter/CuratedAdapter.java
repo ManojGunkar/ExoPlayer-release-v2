@@ -63,13 +63,31 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             Intent intent = new Intent(mContext, CuratedDetailActivity.class);
             intent.putExtra("imageCurated", image);
             intent.putExtra("title", curated.getName());
-            String path=null;
-            if (isMoods){
-                path="moods/"+curated.getPath()+"/playlists";
-            }else {
-                path="genres/"+curated.getPath()+"/playlists";
+            if (curated.getHasAlbums()){
+                if (isMoods){
+                    String path="moods/"+curated.getPath()+"/albums";
+                    intent.putExtra("albumPath",path);
+                }else {
+                    String path="genres/"+curated.getPath()+"/albums";
+                    intent.putExtra("albumPath",path);
+                }
+            }  if (curated.getHasPlaylists()){
+                if (isMoods){
+                    String path="moods/"+curated.getPath()+"/playlists";
+                    intent.putExtra("playlistPath",path);
+                }else {
+                    String path="genres/"+curated.getPath()+"/playlists";
+                    intent.putExtra("playlistPath",path);
+                }
+            }  if (curated.getHasTracks()){
+                if (isMoods){
+                    String path="moods/"+curated.getPath()+"/tracks";
+                    intent.putExtra("trackPath",path);
+                }else {
+                    String path="genres/"+curated.getPath()+"/tracks";
+                    intent.putExtra("trackPath",path);
+                }
             }
-            intent.putExtra("path",path);
             mContext.startActivity(intent);
         });
 

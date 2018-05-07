@@ -62,7 +62,6 @@ public class TidalRequestController {
         return retrofit.create(Callback.class);
     }
 
-
     public interface Callback {
 
         @FormUrlEncoded
