@@ -25,9 +25,6 @@ public class Item implements IMediaItem {
     @SerializedName("id")
     @Expose
     private Integer id;
-    @SerializedName("uuid")
-    @Expose
-    private String uuid;
     @SerializedName("title")
     @Expose
     private String title;
