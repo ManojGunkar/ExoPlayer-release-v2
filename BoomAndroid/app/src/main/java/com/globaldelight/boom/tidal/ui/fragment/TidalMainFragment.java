@@ -20,6 +20,9 @@ import android.view.ViewGroup;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.tidal.ui.adapter.TidalTabAdapter;
+import com.globaldelight.boom.tidal.utils.TidalHelper;
+
+import retrofit2.http.Path;
 
 import static android.content.Context.SEARCH_SERVICE;
 
@@ -122,4 +125,9 @@ public class TidalMainFragment extends Fragment {
         return false;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        TidalHelper.getInstance(getContext()).fetchSubscriptionInfo();
+    }
 }

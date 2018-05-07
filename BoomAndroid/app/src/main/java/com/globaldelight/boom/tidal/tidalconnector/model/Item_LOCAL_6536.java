@@ -110,6 +110,11 @@ public class Item implements IMediaItem {
     @Expose
     private String picture;
 
+
+    public String getId() {
+        return String.valueOf(id);
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -163,11 +168,6 @@ public class Item implements IMediaItem {
     public void setAlbum(Album album) {
         this.album = album;
     }
-
-    public String getId() {
-        return (uuid != null)? uuid : String.valueOf(id);
-    }
-
 
 
     public String getTitle() {

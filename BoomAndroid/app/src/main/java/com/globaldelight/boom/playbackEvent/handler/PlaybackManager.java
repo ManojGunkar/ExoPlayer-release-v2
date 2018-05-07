@@ -25,6 +25,7 @@ import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
 import com.globaldelight.boom.radio.webconnector.model.RadioPlayResponse;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayResponse;
+import com.globaldelight.boom.tidal.utils.TidalHelper;
 import com.globaldelight.boom.tidal.utils.UserCredentials;
 import com.globaldelight.boom.utils.helpers.DropBoxAPI;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
@@ -419,19 +420,11 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
             }
             else if (mediaItemBase.getMediaType() == MediaType.TIDAL ) {
                 try {
-                    String sessionId = UserCredentials.getCredentials(context).getSessionId();
-                    Call<TrackPlayResponse> call = TidalRequestController.getTidalClient().playTrack(sessionId, mediaItemBase.getId(), "LOSSLESS");
+                    Call<TrackPlayResponse> call = TidalHelper.getInstance(context).getStreamInfo(mediaItemBase.getId());
                     Response<TrackPlayResponse> resp = call.execute();
                     if ( resp.isSuccessful() ) {
                         return resp.body().getUrl();
                     }
-
-                    Call<TrackPlayResponse> call2 = TidalRequestController.getTidalClient().playTrack(sessionId, mediaItemBase.getId(), null);
-                    Response<TrackPlayResponse> resp2 = call2.execute();
-                    if ( resp2.isSuccessful() ) {
-                        return resp2.body().getUrl();
-                    }
-
                 }
                 catch (Exception e) {
                     e.printStackTrace();

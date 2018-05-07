@@ -101,37 +101,6 @@ public class Item implements IMediaItem {
     @Expose
     private String image;
 
-
-    @SerializedName("name")
-    @Expose
-    private String name;
-
-    @SerializedName("picture")
-    @Expose
-    private String picture;
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
-    }
-
-
     public String getUuid() {
         return uuid;
     }
@@ -165,10 +134,12 @@ public class Item implements IMediaItem {
     }
 
     public String getId() {
-        return (uuid != null)? uuid : String.valueOf(id);
+        return String.valueOf(id);
     }
 
-
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
