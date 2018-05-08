@@ -12,14 +12,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.tidal.tidalconnector.model.Item;
-import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
 import com.globaldelight.boom.tidal.ui.MoreItemActivity;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
 import com.globaldelight.boom.tidal.utils.UserCredentials;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,17 +51,6 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         ItemAdapter adapter = new ItemAdapter(mContext, description.itemList);
         LinearLayoutManager llm;
 
-        List<Item> playlists = new ArrayList();
-
-        if (isUserMode) {
-            for (int i = 0; i < description.itemList.size(); i++) {
-                UserMusicResponse.UserItem items = (UserMusicResponse.UserItem) description.itemList.get(i);
-                items.getItem();
-                playlists.add(items.getItem());
-            }
-            description.itemList.clear();
-            description.itemList.addAll(playlists);
-        }
 
         if (description.type == NestedItemDescription.LIST_VIEW) {
             llm = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
@@ -85,10 +71,11 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 String path = TidalHelper.USER + UserCredentials.getCredentials(mContext).getUserId() + description.apiPath;
                 intent.putExtra("api", path);
                 intent.putExtra("isUserMode", isUserMode);
-            }if (isSearchMode){
-                intent.putExtra("isSearchMode", isSearchMode);
-                intent.putExtra("api", description.apiPath);
             } else {
+                intent.putExtra("api", description.apiPath);
+            }
+            if (isSearchMode) {
+                intent.putExtra("isSearchMode", isSearchMode);
                 intent.putExtra("api", description.apiPath);
             }
             intent.putExtra("view_type", description.type);

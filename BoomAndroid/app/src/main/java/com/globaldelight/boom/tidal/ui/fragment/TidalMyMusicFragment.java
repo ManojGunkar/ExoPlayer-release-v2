@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
+import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
 import com.globaldelight.boom.tidal.ui.adapter.NestedItemAdapter;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
@@ -74,9 +74,9 @@ public class TidalMyMusicFragment extends Fragment {
         return view;
     }
 
-    private void init(View view){
-        mProgressBar=view.findViewById(R.id.progress_tidal_my_music);
-        mRecyclerView=view.findViewById(R.id.rv_tidal_my_music);
+    private void init(View view) {
+        mProgressBar = view.findViewById(R.id.progress_tidal_my_music);
+        mRecyclerView = view.findViewById(R.id.rv_tidal_my_music);
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
@@ -91,12 +91,12 @@ public class TidalMyMusicFragment extends Fragment {
 
         mRequestChain = new RequestChain(getContext());
         mProgressBar.setVisibility(View.VISIBLE);
-            mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_playlist, GRID_VIEW);
-            mapResponse(TidalHelper.USER_TRACKS, R.string.tidal_tracks, LIST_VIEW);
-            mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_album, GRID_VIEW);
+        mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_playlist, GRID_VIEW);
+        mapResponse(TidalHelper.USER_TRACKS, R.string.tidal_tracks, LIST_VIEW);
+        mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_album, GRID_VIEW);
 
         mRequestChain.submit(null, (response) -> {
-            mAdapter = new NestedItemAdapter(getContext(), mItemList,true,false);
+            mAdapter = new NestedItemAdapter(getContext(), mItemList, true, false);
             mRecyclerView.setAdapter(mAdapter);
             mProgressBar.setVisibility(View.GONE);
             mHasResponse = true;
@@ -121,12 +121,13 @@ public class TidalMyMusicFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if ( mRequestChain != null ) {
+        if (mRequestChain != null) {
             mRequestChain.cancel();
             mRequestChain = null;
         }
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUpdateItemSongListReceiver);
     }
+
     class ResponseHandler implements RequestChain.Callback<UserMusicResponse> {
         private int resId;
         private int type;
@@ -141,8 +142,17 @@ public class TidalMyMusicFragment extends Fragment {
         @Override
         public void onResponse(UserMusicResponse response) {
             if (response != null) {
-                mItemList.add(new NestedItemDescription(resId, type, response.getItems(), path));
+
+                List<Item> playlists = new ArrayList();
+
+                for (int i = 0; i < response.getItems().size(); i++) {
+                    UserMusicResponse.UserItem items = response.getItems().get(i);
+                    items.getItem();
+                    playlists.add(items.getItem());
+                }
+                mItemList.add(new NestedItemDescription(resId, type, playlists, path));
             }
+
         }
     }
 
