@@ -96,7 +96,7 @@ public class TidalMyMusicFragment extends Fragment {
             mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_album, GRID_VIEW);
 
         mRequestChain.submit(null, (response) -> {
-            mAdapter = new NestedItemAdapter(getContext(), mItemList,true);
+            mAdapter = new NestedItemAdapter(getContext(), mItemList,true,false);
             mRecyclerView.setAdapter(mAdapter);
             mProgressBar.setVisibility(View.GONE);
             mHasResponse = true;

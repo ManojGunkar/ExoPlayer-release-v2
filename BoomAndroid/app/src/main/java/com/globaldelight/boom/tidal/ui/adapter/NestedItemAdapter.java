@@ -31,11 +31,13 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private Context mContext;
     private List<NestedItemDescription> mItems;
     private boolean isUserMode = false;
+    private boolean isSearchMode = false;
 
-    public NestedItemAdapter(Context context, List<NestedItemDescription> mapItems, boolean isUserMode) {
+    public NestedItemAdapter(Context context, List<NestedItemDescription> mapItems, boolean isUserMode, boolean isSearchMode) {
         this.mContext = context;
         this.mItems = mapItems;
         this.isUserMode = isUserMode;
+        this.isSearchMode = isSearchMode;
     }
 
     @Override
@@ -79,14 +81,19 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         customViewHolder.btnMoreItem.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, MoreItemActivity.class);
             intent.putExtra("title", mContext.getResources().getString(description.titleResId));
-            if (isUserMode){
-                String path= TidalHelper.USER+ UserCredentials.getCredentials(mContext).getUserId()+description.apiPath;
+            if (isUserMode) {
+                String path = TidalHelper.USER + UserCredentials.getCredentials(mContext).getUserId() + description.apiPath;
                 intent.putExtra("api", path);
                 intent.putExtra("isUserMode", isUserMode);
-            }else {
+            }if (isSearchMode){
+                intent.putExtra("isSearchMode", isSearchMode);
+                intent.putExtra("api", description.apiPath);
+            } else {
                 intent.putExtra("api", description.apiPath);
             }
             intent.putExtra("view_type", description.type);
+
+
             mContext.startActivity(intent);
         });
 

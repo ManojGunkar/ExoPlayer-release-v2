@@ -2,6 +2,7 @@ package com.globaldelight.boom.tidal.tidalconnector;
 
 import com.globaldelight.boom.tidal.tidalconnector.model.Curated;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.SearchResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalLoginResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalSubscriptionInfo;
@@ -111,6 +112,15 @@ public class TidalRequestController {
                 @Query("countryCode") String countryCode,
                 @Query("order") String order,
                 @Query("orderDirection") String orderDirection);
+
+
+        @GET("{path}")
+        Call<SearchResponse> getSearchResult(
+                @Path(value = "path", encoded = true) String path,
+                @Header("X-Tidal-Token") String token,
+                @Query("query") String query,
+                @Query("types") String type,
+                @Query("countryCode") String countryCode);
 
 
         @GET("users/{userId}/subscription")

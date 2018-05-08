@@ -108,7 +108,7 @@ public class TidalRisingFragment extends Fragment {
         mapResponse(TidalHelper.RISING_ALBUMS, R.string.tidal_rising_albums, GRID_VIEW);
         mapResponse(TidalHelper.RISING_TRACKS, R.string.tidal_rising_tracks, LIST_VIEW);
         mRequestChain.submit(null, (resp) -> {
-            mAdapter=new NestedItemAdapter(getActivity(), mItemList,false);
+            mAdapter=new NestedItemAdapter(getActivity(), mItemList,false,false);
             mRecyclerView.setAdapter(mAdapter);
             mProgressBar.setVisibility(View.GONE);
             mHasResponse = true;

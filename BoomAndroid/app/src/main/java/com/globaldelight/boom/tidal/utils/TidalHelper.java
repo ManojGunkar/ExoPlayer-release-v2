@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.SearchResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalSubscriptionInfo;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayResponse;
@@ -41,6 +42,12 @@ public class TidalHelper {
     public static final String USER_TRACKS = "/favorites/tracks";
     public static final String USER_ABLUMS = "/favorites/albums";
     public static final String PLAYLIST_TRACKS = "playlists/";
+
+    public final static String SEARCH="search/";
+    public final static String SEARCH_ALBUM_TYPE="ALBUMS";
+    public final static String SEARCH_TRACK_TYPE="TRACKS";
+    public final static String SEARCH_PLAYLIST_TYPE="PLAYLISTS";
+
     private static TidalHelper instance;
     private Context context;
     private TidalRequestController.Callback client;
@@ -95,6 +102,25 @@ public class TidalHelper {
         return client.playTrack(UserCredentials.getCredentials(context).getSessionId(),
                 trackId,
                 subscriptionInfo != null ? subscriptionInfo.getHighestSoundQuality() : null);
+    }
+
+    public Call<SearchResponse> searchMusic(String query,String musicType){
+        return client.getSearchResult(
+                SEARCH,
+                TidalRequestController.AUTH_TOKEN,
+                query,
+                Locale.getDefault().getCountry(),
+                musicType);
+    }
+
+    public Call<SearchResponse> searchMusic(String query){
+        String musicType=SEARCH_TRACK_TYPE+","+SEARCH_ALBUM_TYPE+","+SEARCH_PLAYLIST_TYPE;
+        return client.getSearchResult(
+                SEARCH,
+                TidalRequestController.AUTH_TOKEN,
+                query,
+                musicType,
+                Locale.getDefault().getCountry());
     }
 
     public void fetchSubscriptionInfo() {
