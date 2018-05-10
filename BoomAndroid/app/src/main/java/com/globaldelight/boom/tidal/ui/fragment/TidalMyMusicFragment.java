@@ -44,13 +44,11 @@ public class TidalMyMusicFragment extends Fragment {
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
 
-
     private boolean mHasResponse = false;
     private RequestChain mRequestChain = null;
     private NestedItemAdapter mAdapter;
 
     private List<NestedItemDescription> mItemList = new ArrayList<>();
-
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -91,7 +89,7 @@ public class TidalMyMusicFragment extends Fragment {
 
         mRequestChain = new RequestChain(getContext());
         mProgressBar.setVisibility(View.VISIBLE);
-        mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_playlist, GRID_VIEW);
+        mapResponse(TidalHelper.USER_PLAYLISTS, R.string.tidal_playlist, GRID_VIEW);
         mapResponse(TidalHelper.USER_TRACKS, R.string.tidal_tracks, LIST_VIEW);
         mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_album, GRID_VIEW);
 
@@ -104,7 +102,7 @@ public class TidalMyMusicFragment extends Fragment {
     }
 
     private void mapResponse(String path, int titleResId, int type) {
-        Call<UserMusicResponse> call = TidalHelper.getInstance(getContext()).getUserMusic(path);
+        Call<UserMusicResponse> call = TidalHelper.getInstance(getContext()).getUserMusic(path,0,10);
         mRequestChain.submit(call, new ResponseHandler(titleResId, type, path));
     }
 

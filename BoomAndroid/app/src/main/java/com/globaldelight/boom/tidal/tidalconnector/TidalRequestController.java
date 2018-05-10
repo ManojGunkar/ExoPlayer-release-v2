@@ -8,6 +8,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalLoginResp
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalSubscriptionInfo;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
+import com.google.gson.JsonElement;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -111,7 +112,9 @@ public class TidalRequestController {
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Query("countryCode") String countryCode,
                 @Query("order") String order,
-                @Query("orderDirection") String orderDirection);
+                @Query("orderDirection") String orderDirection,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
 
 
         @GET("{path}")
@@ -120,15 +123,38 @@ public class TidalRequestController {
                 @Header("X-Tidal-Token") String token,
                 @Query("query") String query,
                 @Query("types") String type,
-                @Query("countryCode") String countryCode);
-
+                @Query("countryCode") String countryCode ,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
 
         @GET("users/{userId}/subscription")
         Call<TidalSubscriptionInfo> getUserSubscriptionInfo(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId);
 
+        @FormUrlEncoded
+        @POST("users/{userId}/favorites/albums")
+        Call<JsonElement> addToAlbum(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Path("userId") String userId,
+                @Field("albumIds") String albumIds,
+                @Query("countryCode") String countryCode);
 
 
+        @FormUrlEncoded
+        @POST("users/{userId}/favorites/playlists")
+        Call<JsonElement> addToPlaylist(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Path("userId") String userId,
+                @Field("uuids") String uuid,
+                @Query("countryCode") String countryCode);
+
+        @FormUrlEncoded
+        @POST("users/{userId}/favorites/tracks")
+        Call<JsonElement> addToTrack(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Path("userId") String userId,
+                @Field("trackIds") String trackIds,
+                @Query("countryCode") String countryCode);
     }
 }

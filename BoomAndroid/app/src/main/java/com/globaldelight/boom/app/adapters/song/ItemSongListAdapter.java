@@ -216,7 +216,6 @@ public class ItemSongListAdapter extends RecyclerView.Adapter<ItemSongListAdapte
         holder.menu.setOnClickListener((view)->onItemMenuClicked(view, position));
     }
 
-
     private void onHeaderMenuClicked(View view) {
         if(collection.getItemType() == BOOM_PLAYLIST){
             OverFlowMenuUtils.showCollectionMenu(activity, view, R.menu.boomplaylist_header_menu, collection);

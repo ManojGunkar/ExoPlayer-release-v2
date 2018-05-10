@@ -88,7 +88,7 @@ public class MoreItemActivity extends MasterActivity {
         mRequestChain=new RequestChain(this);
         TidalRequestController.Callback callback=TidalRequestController.getTidalClient();
         Call<UserMusicResponse> call=callback.getUserMusic(api, UserCredentials.getCredentials(this).getSessionId(),
-                Locale.getDefault().getCountry(), "NAME", "ASC");
+                Locale.getDefault().getCountry(), "NAME", "ASC","0","100");
         mRequestChain.submit(call,resp ->{
             List<Item> itemList=new ArrayList<>();
             for (int i=0;i<resp.getItems().size();i++){
@@ -99,7 +99,7 @@ public class MoreItemActivity extends MasterActivity {
     }
 
     private void loadSearch(){
-        Call<SearchResponse> call= TidalHelper.getInstance(this).searchMusic("","");
+      //  Call<SearchResponse> call= TidalHelper.getInstance(this).searchMusic("","");
     }
 
     private void setDataInAdapter(List<Item> items){

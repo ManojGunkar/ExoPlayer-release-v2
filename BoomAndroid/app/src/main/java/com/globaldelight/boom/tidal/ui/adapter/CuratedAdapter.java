@@ -92,7 +92,7 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
 
     }
-
+    
     @Override
     public int getItemCount() {
         return mCuratedList.size();

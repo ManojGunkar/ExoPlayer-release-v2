@@ -253,5 +253,7 @@
     <string name="tidal_album">Albums</string>
     <string name="tidal_tracks">Tracks</string>
     <string name="tidal_playlist">Playlists</string>
+    <string name="tidal_menu_add_fav">Add to My Music</string>
+    <string name="tidal_menu_remove">Remove from My Music</string>
 
 </resources>

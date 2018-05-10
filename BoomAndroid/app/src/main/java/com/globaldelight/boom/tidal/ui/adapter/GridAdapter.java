@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.ui.GridDetailActivity;
+import com.globaldelight.boom.tidal.utils.TidalPopupMenu;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.Collections;
@@ -53,6 +54,10 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         viewHolder.txtItemTitle.setText(item.getTitle());
         viewHolder.txtItemSubTitle.setText(item.getDescription());
+
+        viewHolder.imgItemMenu.setOnClickListener(view->{
+            TidalPopupMenu.getInstance(mContext).showMenu(view,item.getUuid() != null?item.getUuid():item.getId());
+        });
 
         viewHolder.itemView.setOnClickListener(v -> {
 

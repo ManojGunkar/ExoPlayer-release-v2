@@ -9,6 +9,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseRespo
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalSubscriptionInfo;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
+import com.google.gson.JsonElement;
 
 import java.util.Locale;
 
@@ -88,14 +89,15 @@ public class TidalHelper {
     /**
      * @param musicType @implNote Specify the music type eg:- Album, Track or Playlists.
      */
-    public Call<UserMusicResponse> getUserMusic(String musicType) {
+    public Call<UserMusicResponse> getUserMusic(String musicType,int offset,int limit) {
         String sessionId = UserCredentials.getCredentials(context).getSessionId();
         String path = USER + UserCredentials.getCredentials(context).getUserId() + musicType;
         return client.getUserMusic(path,
                 sessionId,
                 Locale.getDefault().getCountry(),
                 "NAME",
-                "ASC");
+                "ASC",
+                String.valueOf(offset),String.valueOf(limit));
     }
 
     public Call<TrackPlayResponse> getStreamInfo(String trackId) {
@@ -104,13 +106,14 @@ public class TidalHelper {
                 subscriptionInfo != null ? subscriptionInfo.getHighestSoundQuality() : null);
     }
 
-    public Call<SearchResponse> searchMusic(String query,String musicType){
+    public Call<SearchResponse> searchMusic(String query,String musicType,int offset,int limit){
         return client.getSearchResult(
                 SEARCH,
                 TidalRequestController.AUTH_TOKEN,
                 query,
+                musicType,
                 Locale.getDefault().getCountry(),
-                musicType);
+                String.valueOf(offset),String.valueOf(limit));
     }
 
     public Call<SearchResponse> searchMusic(String query){
@@ -120,7 +123,18 @@ public class TidalHelper {
                 TidalRequestController.AUTH_TOKEN,
                 query,
                 musicType,
-                Locale.getDefault().getCountry());
+                Locale.getDefault().getCountry(),
+                String.valueOf(0),String.valueOf(10));
+    }
+
+    public Call<JsonElement> addToPlaylist(String uuid){
+        String sessionId = UserCredentials.getCredentials(context).getSessionId();
+        String userId = UserCredentials.getCredentials(context).getUserId();
+
+        return client.addToPlaylist(
+                sessionId,
+                userId,
+                uuid,Locale.getDefault().getCountry());
     }
 
     public void fetchSubscriptionInfo() {
