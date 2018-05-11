@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.fragments.TabBarFragment;
 import com.globaldelight.boom.tidal.ui.adapter.TidalTabAdapter;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
 
@@ -30,9 +31,8 @@ import static android.content.Context.SEARCH_SERVICE;
  * Created by Manoj Kumar on 28-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class TidalMainFragment extends Fragment {
+public class TidalMainFragment extends TabBarFragment {
 
-    private TabLayout mTabBar;
     private ViewPager mViewPager;
     private TidalTabAdapter mStateAdapter;
     private SearchView searchView;
