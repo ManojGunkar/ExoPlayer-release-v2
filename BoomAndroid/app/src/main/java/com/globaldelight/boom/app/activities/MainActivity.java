@@ -95,8 +95,12 @@ public class MainActivity extends MasterActivity
                         initSearchAndArt();
                         IMediaElement playingItem = PlaybackManager.getInstance(MainActivity.this).getPlayingItem();
                         if (playingItem != null && playingItem.getMediaType() == MediaType.RADIO) {
+                            onNavigateToRadio();
+                        }
+                        else if (playingItem != null && playingItem.getMediaType() == MediaType.TIDAL) {
                             onNavigateToTidal();
-                        } else {
+                        }
+                        else {
                             onNavigateToLibrary();
                         }
                     }
