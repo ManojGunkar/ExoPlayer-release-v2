@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 public class OverFlowMenuUtils {
 
-    private static boolean isPlayingRadio() {
+    private static boolean incompatiblePlayingItem() {
         IMediaElement playingItem = App.playbackManager().queue().getPlayingItem();
         return ( playingItem != null && playingItem.getMediaType() == MediaType.RADIO );
     }
@@ -53,7 +53,7 @@ public class OverFlowMenuUtils {
             }
         });
         pm.inflate(R.menu.recent_popup);
-        if ( isPlayingRadio() ) {
+        if ( incompatiblePlayingItem() ) {
             pm.getMenu().removeItem(R.id.collection_play_next_item);
             pm.getMenu().removeItem(R.id.collection_add_to_queue_item);
         }
@@ -90,7 +90,7 @@ public class OverFlowMenuUtils {
             }
         });
         pm.inflate(R.menu.playlist_boom_menu);
-        if ( isPlayingRadio() ) {
+        if ( incompatiblePlayingItem() ) {
             pm.getMenu().removeItem(R.id.popup_play_next);
             pm.getMenu().removeItem(R.id.popup_add_queue);
         }
@@ -131,7 +131,7 @@ public class OverFlowMenuUtils {
             }
         });
         pm.inflate(R.menu.recent_popup);
-        if ( isPlayingRadio() ) {
+        if ( incompatiblePlayingItem() ) {
             pm.getMenu().removeItem(R.id.collection_play_next_item);
             pm.getMenu().removeItem(R.id.collection_add_to_queue_item);
         }
@@ -157,7 +157,7 @@ public class OverFlowMenuUtils {
             }
         });
         pm.inflate(R.menu.recent_popup);
-        if ( isPlayingRadio() ) {
+        if ( incompatiblePlayingItem() ) {
             pm.getMenu().removeItem(R.id.collection_play_next_item);
             pm.getMenu().removeItem(R.id.collection_add_to_queue_item);
         }
@@ -243,7 +243,7 @@ public class OverFlowMenuUtils {
 
         pm.inflate(resId);
         updateFavoritesMenuItem(activity, itemBase, pm);
-        if ( isPlayingRadio() ) {
+        if ( incompatiblePlayingItem() ) {
             pm.getMenu().removeItem(R.id.song_play_next_item);
             pm.getMenu().removeItem(R.id.song_add_queue_item);
         }
@@ -263,7 +263,7 @@ public class OverFlowMenuUtils {
 
         pm.inflate(resId);
         updateFavoritesMenuItem(activity, itemBase, pm);
-        if ( isPlayingRadio() ) {
+        if ( incompatiblePlayingItem() ) {
             pm.getMenu().removeItem(R.id.song_play_next_item);
             pm.getMenu().removeItem(R.id.song_add_queue_item);
         }
@@ -309,7 +309,7 @@ public class OverFlowMenuUtils {
             }
         });
         pm.inflate(resId);
-        if ( isPlayingRadio() ) {
+        if ( incompatiblePlayingItem() ) {
             pm.getMenu().removeItem(R.id.collection_play_next_item);
             pm.getMenu().removeItem(R.id.collection_add_to_queue_item);
         }
