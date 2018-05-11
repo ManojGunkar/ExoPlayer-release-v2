@@ -47,13 +47,14 @@ public class MoreItemActivity extends MasterActivity {
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
 
-    private RequestChain mRequestChain=null;
+    private RequestChain mRequestChain = null;
     private String api;
     private int viewType;
-    private boolean isUserMode=false;
-    private boolean isSearchMode=false;
+    private boolean isUserMode = false;
+    private boolean isSearchMode = false;
     private String title;
-
+    private TrackAdapter mAdapter;
+    private GridAdapter mGridAdapter;
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -69,8 +70,6 @@ public class MoreItemActivity extends MasterActivity {
             }
         }
     };
-    private TrackAdapter mAdapter;
-    private GridAdapter mGridAdapter;
 
     @Override
     public void onStart() {
@@ -93,7 +92,7 @@ public class MoreItemActivity extends MasterActivity {
         initView();
     }
 
-    private void initView(){
+    private void initView() {
         setContentView(R.layout.activity_sub_category);
         Toolbar toolbar = findViewById(R.id.toolbar_sub_category);
         setSupportActionBar(toolbar);
@@ -104,61 +103,69 @@ public class MoreItemActivity extends MasterActivity {
         Bundle bundle = getIntent().getExtras();
         title = bundle.getString("title");
         viewType = bundle.getInt("view_type");
-        isUserMode=bundle.getBoolean("isUserMode");
-        isSearchMode=bundle.getBoolean("isSearchMode");
+        isUserMode = bundle.getBoolean("isUserMode");
+        isSearchMode = bundle.getBoolean("isSearchMode");
         api = bundle.getString("api");
         setTitle(title);
-        if (isUserMode){
+        if (isUserMode) {
             loadUserMusic();
-        }else if (isSearchMode){
-           // loadSearch();
-        }else {
+        } else if (isSearchMode) {
+            // loadSearch();
+        } else {
             loadApi();
         }
     }
 
-    private void loadApi(){
-        mRequestChain=new RequestChain(this);
-        Call<TidalBaseResponse> call=TidalHelper.getInstance(this).getItemCollection(api,0,200);
+    private void loadApi() {
+        mRequestChain = new RequestChain(this);
+        Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(api, 0, 200);
         mRequestChain.submit(call, resp -> {
-           setDataInAdapter(resp.getItems());
+            setDataInAdapter(resp.getItems());
         });
     }
 
-    private void loadUserMusic(){
-        mRequestChain=new RequestChain(this);
-        TidalRequestController.Callback callback=TidalRequestController.getTidalClient();
-        Call<UserMusicResponse> call=callback.getUserMusic(api, UserCredentials.getCredentials(this).getSessionId(),
-                Locale.getDefault().getCountry(), "NAME", "ASC","0","100");
-        mRequestChain.submit(call,resp ->{
-            List<Item> itemList=new ArrayList<>();
-            for (int i=0;i<resp.getItems().size();i++){
+    private void loadUserMusic() {
+        mRequestChain = new RequestChain(this);
+        TidalRequestController.Callback callback = TidalRequestController.getTidalClient();
+        Call<UserMusicResponse> call = callback.getUserMusic(api, UserCredentials.getCredentials(this).getSessionId(),
+                Locale.getDefault().getCountry(), "NAME", "ASC", "0", "100");
+        mRequestChain.submit(call, resp -> {
+            List<Item> itemList = new ArrayList<>();
+            for (int i = 0; i < resp.getItems().size(); i++) {
                 itemList.add(resp.getItems().get(i).getItem());
             }
             setDataInAdapter(itemList);
         });
     }
 
-    private void loadSearch(String query,String searchType){
-        mRequestChain=new RequestChain(this);
-        Call<SearchResponse> call= TidalHelper.getInstance(this).searchMusic(query,searchType,0,100);
-        mRequestChain.submit(call,resp -> {
+    private void loadSearch(String query, String searchType) {
+        String type = null;
+        if (searchType.equalsIgnoreCase(TidalHelper.SEARCH_ALBUM_TYPE)) {
+            type = searchType;
+        } else if (searchType.equalsIgnoreCase(TidalHelper.SEARCH_PLAYLIST_TYPE)) {
+            type = searchType;
+        } else if (searchType.equalsIgnoreCase(TidalHelper.SEARCH_TRACK_TYPE)) {
+            type = searchType;
+        }
+        mRequestChain = new RequestChain(this);
+        Call<SearchResponse> call = TidalHelper.getInstance(this).searchMusic(query, type, 0, 100);
+        mRequestChain.submit(call, resp -> {
 
         });
     }
 
-    private void setDataInAdapter(List<Item> items){
+    private void setDataInAdapter(List<Item> items) {
         mProgressBar.setVisibility(View.GONE);
         if (viewType == NestedItemDescription.LIST_VIEW) {
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             mRecyclerView.setLayoutManager(llm);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            mAdapter=new TrackAdapter(this,items);
+            mAdapter = new TrackAdapter(this, items);
             mRecyclerView.setAdapter(mAdapter);
         } else {
-            GridLayoutManager  glm= new GridLayoutManager(this,2);
+            GridLayoutManager glm = new GridLayoutManager(this, 2);
             mRecyclerView.setLayoutManager(glm);
-            mGridAdapter=new GridAdapter(this,items);
+            mGridAdapter = new GridAdapter(this, items);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
             mRecyclerView.setAdapter(mGridAdapter);
         }

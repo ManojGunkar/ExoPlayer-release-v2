@@ -22,6 +22,7 @@
                 android:layout_height="wrap_content"
                 android:padding="5dp"
                 android:text="@string/genres"
+                android:textSize="18dp"
                 android:visibility="gone" />
 
             <android.support.v7.widget.RecyclerView
@@ -37,6 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
+                android:textSize="18dp"
                 android:text="@string/moods"
                 android:visibility="gone" />
 
