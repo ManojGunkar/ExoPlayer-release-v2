@@ -53,12 +53,12 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Item item = mItems.get(position);
         if (position <1) {
             HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
             headerViewHolder.txtHeaderTitle.setText(mHeaderTitle);
             headerViewHolder.txtHeaderDetail.setText("Song : " + mItems.size());
         } else if (position >=1) {
+            Item item = mItems.get(position-1);
             ItemViewHolder viewHolder = (ItemViewHolder) holder;
             viewHolder.imgTrackThumbnail.setVisibility(View.GONE);
             viewHolder.txtSongIndex.setText(String.valueOf(position));
@@ -101,7 +101,7 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return mItems.size() + 1;
     }
 
     @Override
@@ -119,7 +119,7 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             return;
         }
 
-        App.playbackManager().queue().addItemListToPlay(mItems, position, false);
+        App.playbackManager().queue().addItemListToPlay(mItems, position - 1, false);
     }
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {
