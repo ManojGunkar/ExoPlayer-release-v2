@@ -17,6 +17,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
     private Context mContext;
     private List<PlaylistResponse.Items> mItems = Collections.emptyList();
     private String mHeaderTitle;
+    private ArrayList<Item> tracks;
 
     public PlaylistTrackAdapter(Context context, List<PlaylistResponse.Items> items, String headerTitle) {
         this.mContext = context;
@@ -60,10 +62,9 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
             HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
             headerViewHolder.txtHeaderTitle.setText(mHeaderTitle);
             headerViewHolder.txtHeaderDetail.setText("Song : " + mItems.size());
-        } else {
-            int pos = position - 1;
+        } else  if (position >=1){
             ItemViewHolder viewHolder = (ItemViewHolder) holder;
-            Item item = mItems.get(pos).getItem();
+            Item item = mItems.get(position).getItem();
             String imageUrl = item.getItemArtUrl();
             final int size = Utils.largeImageSize(mContext);
 
@@ -75,7 +76,14 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             viewHolder.txtTitle.setText(item.getTitle());
             viewHolder.txtSubTitle.setText(item.getDescription());
-            updatePlayingStation(viewHolder, item);
+
+            tracks = new ArrayList();
+
+            for (int i = 0; i < mItems.size(); i++) {
+                PlaylistResponse.Items items = mItems.get(i);
+                tracks.add(items.getItem());
+            }
+            updatePlayingStation(viewHolder, tracks.get(position));
         }
 
 
@@ -125,7 +133,7 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
             return;
         }
 
-        // App.playbackManager().queue().addItemListToPlay(mItems, position, false);
+         App.playbackManager().queue().addItemListToPlay(tracks, position, false);
     }
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {

@@ -93,12 +93,13 @@ public class TidalSearchFragment extends Fragment {
     public void getSearchQuery(String query){
         mRecyclerView.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
-        mRecyclerView.setAdapter(null);
+
         hideKeyboard();
         loadQuery(query);
     }
 
     private void loadQuery(String query){
+        mItems.clear();
         requestChain=new RequestChain(getContext());
         setResponseType(query,R.string.tidal_album,GRID_VIEW,TidalHelper.SEARCH,TidalHelper.SEARCH_ALBUM_TYPE);
         setResponseType(query,R.string.tidal_tracks,LIST_VIEW,TidalHelper.SEARCH,TidalHelper.SEARCH_TRACK_TYPE);

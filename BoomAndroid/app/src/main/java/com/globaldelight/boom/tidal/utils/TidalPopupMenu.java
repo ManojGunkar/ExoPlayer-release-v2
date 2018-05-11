@@ -58,8 +58,10 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener{
         RequestChain requestChain=new RequestChain(mContext);
         Call<JsonElement> call=TidalHelper.getInstance(mContext).addToPlaylist(uuid);
         requestChain.submit(call, resp -> {
-
+            if (resp==null)
             Toast.makeText(mContext,"Added Successfully",Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(mContext,"Something went wrong",Toast.LENGTH_SHORT).show();
         });
     }
 }

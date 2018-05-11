@@ -70,7 +70,7 @@ public class MoreItemActivity extends MasterActivity {
         if (isUserMode){
             loadUserMusic();
         }else if (isSearchMode){
-            loadSearch();
+           // loadSearch();
         }else {
             loadApi();
         }
@@ -98,8 +98,12 @@ public class MoreItemActivity extends MasterActivity {
         });
     }
 
-    private void loadSearch(){
-      //  Call<SearchResponse> call= TidalHelper.getInstance(this).searchMusic("","");
+    private void loadSearch(String query,String searchType){
+        mRequestChain=new RequestChain(this);
+        Call<SearchResponse> call= TidalHelper.getInstance(this).searchMusic(query,searchType,0,100);
+        mRequestChain.submit(call,resp -> {
+
+        });
     }
 
     private void setDataInAdapter(List<Item> items){

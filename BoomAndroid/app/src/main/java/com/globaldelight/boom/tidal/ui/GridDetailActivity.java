@@ -43,6 +43,8 @@ public class GridDetailActivity extends MasterActivity {
     private boolean isPlaylist = false;
 
     private TrackDetailAdapter mAdapter;
+    private String title;
+    private PlaylistTrackAdapter mPlaylistAdapter;
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -51,12 +53,13 @@ public class GridDetailActivity extends MasterActivity {
                 case ACTION_PLAYER_STATE_CHANGED:
                     if (null != mAdapter)
                         mAdapter.notifyDataSetChanged();
+                    if (mPlaylistAdapter != null)
+                        mPlaylistAdapter.notifyDataSetChanged();
                     break;
 
             }
         }
     };
-    private String title;
 
     @Override
     public void onStart() {
@@ -115,14 +118,15 @@ public class GridDetailActivity extends MasterActivity {
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                mRecyclerView.setAdapter(new PlaylistTrackAdapter(this, resp.getItems(),title));
+                mPlaylistAdapter = new PlaylistTrackAdapter(this, resp.getItems(), title);
+                mRecyclerView.setAdapter(mPlaylistAdapter);
             });
         } else {
             String path = "albums/" + id + "/tracks";
             Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 200);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
-                mAdapter = new TrackDetailAdapter(this, resp.getItems(),title);
+                mAdapter = new TrackDetailAdapter(this, resp.getItems(), title);
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());

@@ -222,7 +222,7 @@
     <string name="error_msg_unknown">An unexpected error occurred</string>
     <string name="search_hint_radio">Search Radio Station</string>
     <string name="tidal">Tidal</string>
-    <string name="tidal_login">Tidal Login</string>
+    <string name="tidal_login">TIDAL</string>
     <string name="user_id">User Id</string>
     <string name="enter_password">Enter Password</string>
     <string name="show_password">Show Password</string>
