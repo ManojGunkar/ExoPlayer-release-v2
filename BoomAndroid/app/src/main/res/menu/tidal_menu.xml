@@ -2,15 +2,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/tidal_menu_shuffle"
+        android:visible="false"
+        android:title="@string/tidal_menu_shuffle"/>
+
+    <item
+        android:id="@+id/tidal_menu_play_next"
+        android:title="@string/tidal_menu_play_next"/>
+
+    <item
+        android:id="@+id/tidal_menu_add_to_upnext"
+        android:title="@string/tidal_menu_add_upnext"/>
+
+
+    <item
         android:id="@+id/tidal_menu_add_to_fav"
         android:title="@string/tidal_menu_add_fav"/>
 
     <item
         android:id="@+id/tidal_menu_remove_fav"
+        android:visible="false"
         android:title="@string/tidal_menu_remove"/>
 
-    <item
-        android:id="@+id/playlist_delete_item"
-        android:visible="true"
-        android:title="@string/delete"/>
+
 </menu>

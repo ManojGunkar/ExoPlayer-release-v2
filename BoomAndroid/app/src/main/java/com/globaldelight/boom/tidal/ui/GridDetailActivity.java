@@ -63,7 +63,6 @@ public class GridDetailActivity extends MasterActivity {
         }
     };
 
-
     @Override
     public void onStart() {
         super.onStart();
