@@ -41,6 +41,8 @@ public class GridDetailActivity extends MasterActivity {
 
     private String id;
     private boolean isPlaylist = false;
+    private boolean isMoods = false;
+    private String moodsPath = null;
 
     private TrackDetailAdapter mAdapter;
     private String title;
@@ -61,6 +63,7 @@ public class GridDetailActivity extends MasterActivity {
         }
     };
 
+
     @Override
     public void onStart() {
         super.onStart();
@@ -74,7 +77,11 @@ public class GridDetailActivity extends MasterActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
-        loadApi();
+        if (isMoods) {
+            loadMoods(moodsPath);
+        } else {
+            loadApi();
+        }
     }
 
     @Override
@@ -89,7 +96,9 @@ public class GridDetailActivity extends MasterActivity {
         title = bundle.getString("title");
         id = bundle.getString("id");
         isPlaylist = bundle.getBoolean("isPlaylist");
+        isMoods = bundle.getBoolean("isMoods");
         String imageUrl = bundle.getString("imageurl");
+        moodsPath = bundle.getString("path");
 
         Toolbar toolbar = findViewById(R.id.toolbar_grid_tidal);
         toolbar.setTitle(title);
@@ -109,10 +118,23 @@ public class GridDetailActivity extends MasterActivity {
 
     }
 
+    private void loadMoods(String path) {
+        RequestChain requestChain = new RequestChain(this);
+        Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 100);
+        requestChain.submit(call, resp -> {
+            mProgressBar.setVisibility(View.GONE);
+            mAdapter = new TrackDetailAdapter(this, resp.getItems(), title);
+            LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            mRecyclerView.setLayoutManager(llm);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            mRecyclerView.setAdapter(mAdapter);
+        });
+    }
+
     private void loadApi() {
         RequestChain requestChain = new RequestChain(this);
         if (isPlaylist) {
-            Call<PlaylistResponse> call = TidalHelper.getInstance(this).getPlaylistTracks(id, 0, 10);
+            Call<PlaylistResponse> call = TidalHelper.getInstance(this).getPlaylistTracks(id, 0, 100);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
