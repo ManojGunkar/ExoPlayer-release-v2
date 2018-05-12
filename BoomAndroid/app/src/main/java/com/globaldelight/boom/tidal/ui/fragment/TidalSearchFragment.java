@@ -42,7 +42,6 @@ import static com.globaldelight.boom.tidal.utils.NestedItemDescription.LIST_VIEW
  */
 public class TidalSearchFragment extends Fragment {
 
-
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
 
@@ -108,6 +107,7 @@ public class TidalSearchFragment extends Fragment {
         requestChain.submit(null,resp -> {
 
             mAdapter = new NestedItemAdapter(getContext(), mItems,false,true);
+            mAdapter.setSearchQuery(query);
             mRecyclerView.setAdapter(mAdapter);
             mRecyclerView.setVisibility(View.VISIBLE);
             mProgressBar.setVisibility(View.GONE);

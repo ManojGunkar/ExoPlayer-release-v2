@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
@@ -29,12 +28,17 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private List<NestedItemDescription> mItems;
     private boolean isUserMode = false;
     private boolean isSearchMode = false;
+    private String searchQuery=null;
 
     public NestedItemAdapter(Context context, List<NestedItemDescription> mapItems, boolean isUserMode, boolean isSearchMode) {
         this.mContext = context;
         this.mItems = mapItems;
         this.isUserMode = isUserMode;
         this.isSearchMode = isSearchMode;
+    }
+
+    public void setSearchQuery(String searchQuery){
+        this.searchQuery=searchQuery;
     }
 
     @Override
@@ -64,7 +68,7 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             customViewHolder.recyclerView.setAdapter(adapter);
         }
 
-        customViewHolder.btnMoreItem.setOnClickListener(v -> {
+        customViewHolder.txtMoreItem.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, MoreItemActivity.class);
             intent.putExtra("title", mContext.getResources().getString(description.titleResId));
             if (isUserMode) {
@@ -77,6 +81,7 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (isSearchMode) {
                 intent.putExtra("isSearchMode", isSearchMode);
                 intent.putExtra("api", description.apiPath);
+                intent.putExtra("query", searchQuery);
             }
             intent.putExtra("view_type", description.type);
 
@@ -94,13 +99,13 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     protected class CustomViewHolder extends RecyclerView.ViewHolder {
 
         private TextView txtTitleItem;
-        private Button btnMoreItem;
+        private TextView txtMoreItem;
         private RecyclerView recyclerView;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
             txtTitleItem = itemView.findViewById(R.id.txt_title_album);
-            btnMoreItem = itemView.findViewById(R.id.btn_more_album);
+            txtMoreItem = itemView.findViewById(R.id.txt_more_album);
             recyclerView = itemView.findViewById(R.id.rv_tidal_album);
         }
     }

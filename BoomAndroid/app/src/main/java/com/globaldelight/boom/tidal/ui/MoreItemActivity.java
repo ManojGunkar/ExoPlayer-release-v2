@@ -37,6 +37,9 @@ import retrofit2.Call;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
+import static com.globaldelight.boom.tidal.utils.TidalHelper.SEARCH_ALBUM_TYPE;
+import static com.globaldelight.boom.tidal.utils.TidalHelper.SEARCH_PLAYLIST_TYPE;
+import static com.globaldelight.boom.tidal.utils.TidalHelper.SEARCH_TRACK_TYPE;
 
 /**
  * Created by Manoj Kumar on 04-05-2018.
@@ -70,6 +73,7 @@ public class MoreItemActivity extends MasterActivity {
             }
         }
     };
+    private String searchQuery;
 
     @Override
     public void onStart() {
@@ -102,6 +106,7 @@ public class MoreItemActivity extends MasterActivity {
         mProgressBar.setVisibility(View.VISIBLE);
         Bundle bundle = getIntent().getExtras();
         title = bundle.getString("title");
+        searchQuery = bundle.getString("query");
         viewType = bundle.getInt("view_type");
         isUserMode = bundle.getBoolean("isUserMode");
         isSearchMode = bundle.getBoolean("isSearchMode");
@@ -110,7 +115,7 @@ public class MoreItemActivity extends MasterActivity {
         if (isUserMode) {
             loadUserMusic();
         } else if (isSearchMode) {
-            // loadSearch();
+             loadSearch(searchQuery,title);
         } else {
             loadApi();
         }
@@ -140,17 +145,28 @@ public class MoreItemActivity extends MasterActivity {
 
     private void loadSearch(String query, String searchType) {
         String type = null;
-        if (searchType.equalsIgnoreCase(TidalHelper.SEARCH_ALBUM_TYPE)) {
-            type = searchType;
-        } else if (searchType.equalsIgnoreCase(TidalHelper.SEARCH_PLAYLIST_TYPE)) {
-            type = searchType;
-        } else if (searchType.equalsIgnoreCase(TidalHelper.SEARCH_TRACK_TYPE)) {
-            type = searchType;
+        if (searchType.equalsIgnoreCase(SEARCH_ALBUM_TYPE)) {
+            type = SEARCH_ALBUM_TYPE;
+        } else if (searchType.equalsIgnoreCase(SEARCH_PLAYLIST_TYPE)) {
+            type = SEARCH_PLAYLIST_TYPE;
+        } else if (searchType.equalsIgnoreCase(SEARCH_TRACK_TYPE)) {
+            type = SEARCH_TRACK_TYPE;
         }
         mRequestChain = new RequestChain(this);
         Call<SearchResponse> call = TidalHelper.getInstance(this).searchMusic(query, type, 0, 100);
+        String finalType = type;
         mRequestChain.submit(call, resp -> {
-
+            switch (finalType){
+                case SEARCH_ALBUM_TYPE:
+                    setDataInAdapter(resp.getAlbums().getItems());
+                    break;
+                case SEARCH_PLAYLIST_TYPE:
+                    setDataInAdapter(resp.getPlaylists().getItems());
+                    break;
+                case SEARCH_TRACK_TYPE:
+                    setDataInAdapter(resp.getTracks().getItems());
+                    break;
+            }
         });
     }
 
