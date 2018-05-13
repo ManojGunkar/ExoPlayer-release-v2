@@ -14,6 +14,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.utils.TidalPopupMenu;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.Collections;
@@ -27,11 +28,12 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private Context mContext;
     private List<Item> mItems = Collections.emptyList();
+    private boolean isUserMode = false;
 
-
-    public TrackAdapter(Context context, List<Item> items) {
+    public TrackAdapter(Context context, List<Item> items, boolean isUserMode) {
         this.mContext = context;
         this.mItems = items;
+        this.isUserMode = isUserMode;
     }
 
     @Override
@@ -56,6 +58,14 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 .into(viewHolder.imgTrackThumbnail);
         viewHolder.txtSubTitle.setText(item.getDescription());
         viewHolder.txtTitle.setText(item.getTitle());
+
+        viewHolder.imgMenuTrack.setOnClickListener(v -> {
+            if (isUserMode) {
+                TidalPopupMenu.getInstance(mContext).deleteTrack(v, item.getId());
+            } else {
+                TidalPopupMenu.getInstance(mContext).addToTrack(v, item.getId());
+            }
+        });
 
         updatePlayingStation(viewHolder, item);
 

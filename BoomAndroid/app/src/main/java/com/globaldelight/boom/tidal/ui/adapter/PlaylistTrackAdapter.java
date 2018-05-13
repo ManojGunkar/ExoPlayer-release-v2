@@ -15,6 +15,7 @@ import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
+import com.globaldelight.boom.tidal.utils.TidalPopupMenu;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.ArrayList;
@@ -76,6 +77,10 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             viewHolder.txtTitle.setText(item.getTitle());
             viewHolder.txtSubTitle.setText(item.getDescription());
+
+            viewHolder.imgMenuTrack.setOnClickListener(v -> {
+                    TidalPopupMenu.getInstance(mContext).addToTrack(v, item.getId());
+            });
 
             tracks = new ArrayList();
 

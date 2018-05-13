@@ -61,6 +61,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 if (item.getUuid()!=null)
                 TidalPopupMenu.getInstance(mContext).deletePlaylist(v,item.getUuid());
                 else TidalPopupMenu.getInstance(mContext).deleteAlbum(v,item.getId());
+            }else {
+                if (item.getUuid()!=null)
+                    TidalPopupMenu.getInstance(mContext).addToPlaylist(v,item.getUuid());
+                else TidalPopupMenu.getInstance(mContext).addToAlbum(v,item.getId());
             }
         });
 

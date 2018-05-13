@@ -176,7 +176,7 @@ public class MoreItemActivity extends MasterActivity {
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             mRecyclerView.setLayoutManager(llm);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            mAdapter = new TrackAdapter(this, items);
+            mAdapter = new TrackAdapter(this, items,false);
             mRecyclerView.setAdapter(mAdapter);
         } else {
             GridLayoutManager glm = new GridLayoutManager(this, 2);

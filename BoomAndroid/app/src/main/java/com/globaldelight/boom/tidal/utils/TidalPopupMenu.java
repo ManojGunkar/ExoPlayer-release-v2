@@ -77,6 +77,15 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
         popupMenu.setOnMenuItemClickListener(this::onMenuItemClick);
     }
 
+    public void deleteTrack(View view, String trackId) {
+        isTrackDel = true;
+        this.trackId = trackId;
+        PopupMenu popupMenu = getMenu(view);
+        popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(true);
+        popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(false);
+        popupMenu.setOnMenuItemClickListener(this::onMenuItemClick);
+    }
+
     public void deleteAlbum(View view, String albumId) {
         isAlbumDel = true;
         this.albumId = albumId;

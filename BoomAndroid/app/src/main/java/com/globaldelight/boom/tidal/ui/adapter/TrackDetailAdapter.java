@@ -13,6 +13,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.utils.TidalPopupMenu;
 
 import java.util.Collections;
 import java.util.List;
@@ -69,6 +70,10 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             seconds = seconds % 60;
             viewHolder.txtSubTitle.setText("Duration - " + String.valueOf(minutes) + ":" + String.valueOf(seconds) + " min");
 
+
+            viewHolder.imgMenuTrack.setOnClickListener(v -> {
+                TidalPopupMenu.getInstance(mContext).addToTrack(v, item.getId());
+            });
 
             viewHolder.txtTitle.setText(item.getTitle());
             updatePlayingStation(viewHolder, item);
