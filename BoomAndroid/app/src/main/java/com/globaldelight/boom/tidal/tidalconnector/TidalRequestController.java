@@ -166,25 +166,25 @@ public class TidalRequestController {
                 @Query("countryCode") String countryCode);
 
 
-        @DELETE("/users/{user_id}/favorites/playlists/{uuid}")
+        @DELETE("users/{userId}/favorites/playlists/{uuid}")
         Call<JsonElement> deletePlaylist(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,
                 @Path("uuid") String uuid);
 
-        @DELETE("/users/{user_id}/favorites/albums/{albumId}")
+        @DELETE("users/{userId}/favorites/albums/{albumId}")
         Call<JsonElement> deleteAlbum(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,
                 @Path("albumId") String albumId);
 
-        @DELETE("/users/{user_id}/favorites/tracks/{trackId}")
+        @DELETE("users/{userId}/favorites/tracks/{trackId}")
         Call<JsonElement> deleteTrack(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,
                 @Path("trackId") String trackId);
 
-        @DELETE("/users/{user_id}/favorites/tracks/{artists}")
+        @DELETE("users/{userId}/favorites/tracks/{artists}")
         Call<JsonElement> deleteArtist(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,

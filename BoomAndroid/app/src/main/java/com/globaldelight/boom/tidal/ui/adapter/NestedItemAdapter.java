@@ -52,7 +52,7 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         CustomViewHolder customViewHolder = (CustomViewHolder) holder;
         NestedItemDescription description = mItems.get(position);
         customViewHolder.txtTitleItem.setText(description.titleResId);
-        ItemAdapter adapter = new ItemAdapter(mContext, description.itemList);
+        ItemAdapter adapter = new ItemAdapter(mContext, description.itemList,isUserMode);
         LinearLayoutManager llm;
 
 
