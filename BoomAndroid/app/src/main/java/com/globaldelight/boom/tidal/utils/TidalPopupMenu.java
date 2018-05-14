@@ -1,14 +1,26 @@
 package com.globaldelight.boom.tidal.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.ui.adapter.PlaylistDialogAdapter;
 import com.globaldelight.boom.utils.RequestChain;
+import com.globaldelight.boom.utils.Utils;
 import com.google.gson.JsonElement;
+
+import java.util.Collections;
+import java.util.List;
 
 import retrofit2.Call;
 
@@ -34,6 +46,9 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
     private boolean isAlbumDel = false;
     private boolean isArtistDel = false;
     private boolean isTrackDel = false;
+    private PlaylistDialogAdapter adapter;
+
+    private List<Item> mItems= Collections.emptyList();
 
     private TidalPopupMenu(Context context) {
         this.mContext = context;
@@ -44,31 +59,35 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
         return instance;
     }
 
-    public void setSuffleMenu(View view){
+    public void setSuffleMenu(View view) {
 
     }
 
+    public void setPlaylist(List<Item> items){
+        this.mItems=items;
+    }
+
     public void addToPlaylist(View view, String uuid) {
-        this.isPlaylistAdd=true;
+        this.isPlaylistAdd = true;
         this.uuid = uuid;
         getMenu(view).setOnMenuItemClickListener(this::onMenuItemClick);
     }
 
     public void addToTrack(View view, String trackId) {
-        this.isTrackAdd=true;
+        this.isTrackAdd = true;
         this.trackId = trackId;
         getMenu(view).setOnMenuItemClickListener(this::onMenuItemClick);
     }
 
     public void addToAlbum(View view, String albumId) {
-        this.isAlbumAdd=true;
+        this.isAlbumAdd = true;
         this.albumId = albumId;
         getMenu(view).setOnMenuItemClickListener(this::onMenuItemClick);
     }
 
     public void addToArtist(View view, String artist) {
-        this.isArtistAdd=true;
-        this.artist =artist;
+        this.isArtistAdd = true;
+        this.artist = artist;
         getMenu(view).setOnMenuItemClickListener(this::onMenuItemClick);
     }
 
@@ -132,7 +151,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
                 break;
 
             case R.id.tidal_menu_add_to_playlist:
-
+                showPlaylistDialog();
                 break;
 
             case R.id.tidal_menu_add_to_upnext:
@@ -168,5 +187,40 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
         });
     }
 
+    private void showPlaylistDialog() {
+        RecyclerView rv = (RecyclerView) ((Activity) mContext).getLayoutInflater()
+                .inflate(R.layout.addtoplaylist, null);
+        adapter = new PlaylistDialogAdapter(mContext,mItems );
+        rv.setLayoutManager(new LinearLayoutManager(mContext));
+        rv.setAdapter(adapter);
+        MaterialDialog dialog = Utils.createDialogBuilder(mContext)
+                .title(R.string.menu_add_boom_playlist)
+                .customView(rv, false)
+                .positiveText(R.string.new_playlist)
+                .negativeText(R.string.dialog_txt_cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        showNewDialog();
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                        materialDialog.dismiss();
+                    }
+                }).show();
+    }
 
+    private void showNewDialog() {
+        Utils.createDialogBuilder(mContext).title(R.string.new_playlist)
+                .input(mContext.getResources().getString(R.string.new_playlist), null, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        if (!input.toString().matches("")) {
+
+                        }
+                    }
+                }).show();
+    }
 }

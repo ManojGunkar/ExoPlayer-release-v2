@@ -24,6 +24,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicRespo
 import com.globaldelight.boom.tidal.ui.adapter.NestedItemAdapter;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
+import com.globaldelight.boom.tidal.utils.TidalPopupMenu;
 import com.globaldelight.boom.utils.RequestChain;
 
 import java.util.ArrayList;
@@ -94,6 +95,7 @@ public class TidalMyMusicFragment extends Fragment {
         mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_album, GRID_VIEW);
         Call<TidalBaseResponse> call = TidalHelper.getInstance(getContext()).getUserPlayLists(0,10);
         mRequestChain.submit(call, resp->{
+            TidalPopupMenu.getInstance(getContext()).setPlaylist(resp.getItems());
             mItemList.add(new NestedItemDescription(R.string.user_playlist, GRID_VIEW, resp.getItems(), "/playlists"));
         });
         mRequestChain.submit(null, (response) -> {

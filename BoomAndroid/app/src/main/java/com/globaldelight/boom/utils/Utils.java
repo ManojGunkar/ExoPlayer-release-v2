@@ -189,7 +189,7 @@ public class Utils {
                 })
                 .show();
     }
-
+// 1800 3000 9009
     public static boolean isPhone(Activity activity){
         DisplayMetrics metrics = new DisplayMetrics();
         if(null != activity) {
