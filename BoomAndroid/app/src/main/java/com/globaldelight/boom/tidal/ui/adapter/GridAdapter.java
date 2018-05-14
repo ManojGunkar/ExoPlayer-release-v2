@@ -28,9 +28,12 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
     private List<Item> mItems = Collections.emptyList();
 
-    public GridAdapter(Context context, List<Item> items) {
+    private boolean isUserMode=false;
+
+    public GridAdapter(Context context, List<Item> items,boolean isUserMode) {
         this.mContext = context;
         this.mItems = items;
+        this.isUserMode=isUserMode;
     }
 
     @Override
@@ -56,7 +59,19 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         viewHolder.txtItemSubTitle.setText(item.getDescription());
 
         viewHolder.imgItemMenu.setOnClickListener(view->{
-            TidalPopupMenu.getInstance(mContext).addToPlaylist(view,item.getUuid() != null?item.getUuid():item.getId());
+            if (isUserMode){
+                if (item.getUuid()!=null){
+                    TidalPopupMenu.getInstance(mContext).deletePlaylist(view,item.getUuid());
+                }else {
+                    TidalPopupMenu.getInstance(mContext).deleteAlbum(view,item.getId());
+                }
+            }else {
+                if (item.getUuid()!=null){
+                    TidalPopupMenu.getInstance(mContext).addToPlaylist(view,item.getUuid());
+                }else {
+                    TidalPopupMenu.getInstance(mContext).addToAlbum(view,item.getId());
+                }
+            }
         });
 
         viewHolder.itemView.setOnClickListener(v -> {
@@ -64,6 +79,7 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Intent intent = new Intent(mContext, GridDetailActivity.class);
             intent.putExtra("imageurl", image);
             intent.putExtra("title", item.getTitle());
+            intent.putExtra("isUserMode", isUserMode);
             if (item.getUuid() != null){
                 intent.putExtra("id", item.getUuid());
                 intent.putExtra("isPlaylist",true);

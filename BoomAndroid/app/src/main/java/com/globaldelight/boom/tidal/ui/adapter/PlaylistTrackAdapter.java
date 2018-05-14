@@ -35,11 +35,13 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
     private List<PlaylistResponse.Items> mItems = Collections.emptyList();
     private String mHeaderTitle;
     private ArrayList<Item> tracks;
+    private boolean isUserMode=false;
 
-    public PlaylistTrackAdapter(Context context, List<PlaylistResponse.Items> items, String headerTitle) {
+    public PlaylistTrackAdapter(Context context, List<PlaylistResponse.Items> items, String headerTitle,boolean isUserMode) {
         this.mContext = context;
         this.mItems = items;
         this.mHeaderTitle = headerTitle;
+        this.isUserMode=isUserMode;
     }
 
     @Override
@@ -63,6 +65,9 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
             HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
             headerViewHolder.txtHeaderTitle.setText(mHeaderTitle);
             headerViewHolder.txtHeaderDetail.setText("Song : " + mItems.size());
+            headerViewHolder.imgMore.setOnClickListener(view->{
+
+            });
         } else  if (position >=1){
             ItemViewHolder viewHolder = (ItemViewHolder) holder;
             Item item = mItems.get(position).getItem();
@@ -79,8 +84,11 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
             viewHolder.txtSubTitle.setText(item.getDescription());
 
             viewHolder.imgMenuTrack.setOnClickListener(v -> {
+                if (isUserMode){
+                    TidalPopupMenu.getInstance(mContext).deleteTrack(v, item.getId());
+                }else {
                     TidalPopupMenu.getInstance(mContext).addToTrack(v, item.getId());
-            });
+                }            });
 
             tracks = new ArrayList();
 

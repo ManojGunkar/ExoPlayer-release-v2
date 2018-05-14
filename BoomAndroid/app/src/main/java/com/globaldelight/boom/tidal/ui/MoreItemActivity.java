@@ -55,6 +55,7 @@ public class MoreItemActivity extends MasterActivity {
     private int viewType;
     private boolean isUserMode = false;
     private boolean isSearchMode = false;
+    private boolean isUserPlaylist = false;
     private String title;
     private TrackAdapter mAdapter;
     private GridAdapter mGridAdapter;
@@ -110,12 +111,16 @@ public class MoreItemActivity extends MasterActivity {
         viewType = bundle.getInt("view_type");
         isUserMode = bundle.getBoolean("isUserMode");
         isSearchMode = bundle.getBoolean("isSearchMode");
+        isUserPlaylist = bundle.getBoolean("isUserPlaylist");
         api = bundle.getString("api");
         setTitle(title);
         if (isUserMode) {
-            loadUserMusic();
+            if (isUserPlaylist)
+                loadUserPlaylists();
+            else
+                loadUserMusic();
         } else if (isSearchMode) {
-             loadSearch(searchQuery,title);
+            loadSearch(searchQuery, title);
         } else {
             loadApi();
         }
@@ -128,6 +133,15 @@ public class MoreItemActivity extends MasterActivity {
             setDataInAdapter(resp.getItems());
         });
     }
+
+    private void loadUserPlaylists() {
+        mRequestChain = new RequestChain(this);
+        Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getUserPlayLists(0, 200);
+        mRequestChain.submit(call, resp -> {
+            setDataInAdapter(resp.getItems());
+        });
+    }
+
 
     private void loadUserMusic() {
         mRequestChain = new RequestChain(this);
@@ -156,7 +170,7 @@ public class MoreItemActivity extends MasterActivity {
         Call<SearchResponse> call = TidalHelper.getInstance(this).searchMusic(query, type, 0, 100);
         String finalType = type;
         mRequestChain.submit(call, resp -> {
-            switch (finalType){
+            switch (finalType) {
                 case SEARCH_ALBUM_TYPE:
                     setDataInAdapter(resp.getAlbums().getItems());
                     break;
@@ -176,12 +190,12 @@ public class MoreItemActivity extends MasterActivity {
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             mRecyclerView.setLayoutManager(llm);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            mAdapter = new TrackAdapter(this, items,false);
+            mAdapter = new TrackAdapter(this, items, isUserMode);
             mRecyclerView.setAdapter(mAdapter);
         } else {
             GridLayoutManager glm = new GridLayoutManager(this, 2);
             mRecyclerView.setLayoutManager(glm);
-            mGridAdapter = new GridAdapter(this, items);
+            mGridAdapter = new GridAdapter(this, items, isUserMode);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
             mRecyclerView.setAdapter(mGridAdapter);
         }

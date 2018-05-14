@@ -70,6 +70,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         viewHolder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, GridDetailActivity.class);
+            intent.putExtra("isUserMode", isUserMode);
             intent.putExtra("imageurl", image);
             intent.putExtra("title", item.getTitle());
             if (item.getUuid() != null) {

@@ -20,6 +20,10 @@
         android:title="@string/tidal_menu_add_fav"/>
 
     <item
+        android:id="@+id/tidal_menu_add_to_playlist"
+        android:title="@string/tidal_menu_add_playlist"/>
+
+    <item
         android:id="@+id/tidal_menu_remove_fav"
         android:visible="false"
         android:title="@string/tidal_menu_remove"/>

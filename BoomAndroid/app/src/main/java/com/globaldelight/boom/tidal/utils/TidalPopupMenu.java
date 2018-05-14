@@ -44,6 +44,10 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
         return instance;
     }
 
+    public void setSuffleMenu(View view){
+
+    }
+
     public void addToPlaylist(View view, String uuid) {
         this.isPlaylistAdd=true;
         this.uuid = uuid;
@@ -125,6 +129,10 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
                     removeFromMyMusic(TidalHelper.getInstance(mContext).removeTrack(trackId));
                 if (isArtistDel)
                     removeFromMyMusic(TidalHelper.getInstance(mContext).removeArtist(artist));
+                break;
+
+            case R.id.tidal_menu_add_to_playlist:
+
                 break;
 
             case R.id.tidal_menu_add_to_upnext:

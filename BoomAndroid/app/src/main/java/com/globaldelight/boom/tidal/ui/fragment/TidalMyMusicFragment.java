@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
 import com.globaldelight.boom.tidal.ui.adapter.NestedItemAdapter;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
@@ -81,7 +82,6 @@ public class TidalMyMusicFragment extends Fragment {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
-
     private void loadAll() {
         if (mHasResponse) {
             return;
@@ -92,7 +92,10 @@ public class TidalMyMusicFragment extends Fragment {
         mapResponse(TidalHelper.USER_PLAYLISTS, R.string.tidal_playlist, GRID_VIEW);
         mapResponse(TidalHelper.USER_TRACKS, R.string.tidal_tracks, LIST_VIEW);
         mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_album, GRID_VIEW);
-
+        Call<TidalBaseResponse> call = TidalHelper.getInstance(getContext()).getUserPlayLists(0,10);
+        mRequestChain.submit(call, resp->{
+            mItemList.add(new NestedItemDescription(R.string.user_playlist, GRID_VIEW, resp.getItems(), "/playlists"));
+        });
         mRequestChain.submit(null, (response) -> {
             mAdapter = new NestedItemAdapter(getContext(), mItemList, true, false);
             mRecyclerView.setAdapter(mAdapter);

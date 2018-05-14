@@ -43,6 +43,7 @@ public class GridDetailActivity extends MasterActivity {
     private boolean isPlaylist = false;
     private boolean isMoods = false;
     private String moodsPath = null;
+    private boolean isUserMode = false;
 
     private TrackDetailAdapter mAdapter;
     private String title;
@@ -96,6 +97,7 @@ public class GridDetailActivity extends MasterActivity {
         id = bundle.getString("id");
         isPlaylist = bundle.getBoolean("isPlaylist");
         isMoods = bundle.getBoolean("isMoods");
+        isUserMode = bundle.getBoolean("isUserMode");
         String imageUrl = bundle.getString("imageurl");
         moodsPath = bundle.getString("path");
 
@@ -122,7 +124,7 @@ public class GridDetailActivity extends MasterActivity {
         Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 100);
         requestChain.submit(call, resp -> {
             mProgressBar.setVisibility(View.GONE);
-            mAdapter = new TrackDetailAdapter(this, resp.getItems(), title);
+            mAdapter = new TrackDetailAdapter(this, resp.getItems(), title,isUserMode);
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             mRecyclerView.setLayoutManager(llm);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -139,7 +141,7 @@ public class GridDetailActivity extends MasterActivity {
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                mPlaylistAdapter = new PlaylistTrackAdapter(this, resp.getItems(), title);
+                mPlaylistAdapter = new PlaylistTrackAdapter(this, resp.getItems(), title,isUserMode);
                 mRecyclerView.setAdapter(mPlaylistAdapter);
             });
         } else {
@@ -147,7 +149,7 @@ public class GridDetailActivity extends MasterActivity {
             Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 200);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
-                mAdapter = new TrackDetailAdapter(this, resp.getItems(), title);
+                mAdapter = new TrackDetailAdapter(this, resp.getItems(), title,isUserMode);
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());

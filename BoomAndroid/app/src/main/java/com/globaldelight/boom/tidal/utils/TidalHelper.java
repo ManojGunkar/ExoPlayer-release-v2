@@ -102,6 +102,12 @@ public class TidalHelper {
                 String.valueOf(offset), String.valueOf(limit));
     }
 
+    public Call<TidalBaseResponse> getUserPlayLists(int offset, int limit ){
+        String path="users/"+userId+"/playlists";
+        return client.getUserPlaylist(path,sessionId,
+                Locale.getDefault().getCountry(), String.valueOf(offset), String.valueOf(limit));
+    }
+
     public Call<TrackPlayResponse> getStreamInfo(String trackId) {
         return client.playTrack(sessionId,
                 trackId,

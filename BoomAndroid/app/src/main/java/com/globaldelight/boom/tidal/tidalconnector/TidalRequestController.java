@@ -91,6 +91,15 @@ public class TidalRequestController {
                 @Query("offset") String offSet,
                 @Query("limit") String limit);
 
+
+        @GET("{path}")
+        Call<TidalBaseResponse> getUserPlaylist(
+                @Path(value = "path", encoded = true) String path,
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Query("countryCode") String countryCode,
+                @Query("offset") String offSet,
+                @Query("limit") String limit);
+
         @GET("{path}")
         Call<List<Curated>> getCurated(
                 @Path(value = "path", encoded = true) String path,
@@ -116,6 +125,7 @@ public class TidalRequestController {
                 @Query("orderDirection") String orderDirection,
                 @Query("offset") String offSet,
                 @Query("limit") String limit);
+
 
 
         @GET("{path}")

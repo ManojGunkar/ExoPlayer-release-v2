@@ -254,9 +254,11 @@
     <string name="tidal_tracks">Tracks</string>
     <string name="tidal_playlist">Playlists</string>
     <string name="tidal_menu_add_fav">Add to my music</string>
-    <string name="tidal_menu_remove">Remove from my music</string>
+    <string name="tidal_menu_remove">Remove</string>
     <string name="tidal_menu_play_next">Play next</string>
     <string name="tidal_menu_add_upnext">Add to up next</string>
     <string name="tidal_menu_shuffle">Shuffle</string>
+    <string name="user_playlist">My Playlists</string>
+    <string name="tidal_menu_add_playlist">Add to my playlists</string>
 
 </resources>

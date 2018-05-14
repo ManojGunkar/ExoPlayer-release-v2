@@ -75,6 +75,7 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 String path = TidalHelper.USER + UserCredentials.getCredentials(mContext).getUserId() + description.apiPath;
                 intent.putExtra("api", path);
                 intent.putExtra("isUserMode", isUserMode);
+                intent.putExtra("isUserPlaylist", true);
             } else {
                 intent.putExtra("api", description.apiPath);
             }
