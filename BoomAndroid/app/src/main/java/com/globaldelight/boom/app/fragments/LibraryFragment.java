@@ -66,11 +66,10 @@ import static com.globaldelight.boom.app.sharedPreferences.Preferences.TOOLTIP_U
  * Created by Rahul Agarwal on 27-02-17.
  */
 
-public class LibraryFragment extends Fragment {
+public class LibraryFragment extends TabBarFragment {
     private Activity mActivity;
     private View rootView;
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    private TabLayout mTabBar;
     private ViewPager mViewPager;
     private CoachMarkerWindow coachMarkUseHeadPhone, coachMarkChooseHeadPhone;
 
