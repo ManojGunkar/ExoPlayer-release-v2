@@ -1,7 +1,6 @@
 package com.globaldelight.boom.tidal.utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +12,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.ui.adapter.PlaylistDialogAdapter;
 import com.globaldelight.boom.utils.RequestChain;
@@ -22,7 +22,11 @@ import com.google.gson.JsonElement;
 import java.util.Collections;
 import java.util.List;
 
+import okhttp3.Headers;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.http.Header;
 
 /**
  * Created by Manoj Kumar on 09-05-2018.
@@ -31,7 +35,7 @@ import retrofit2.Call;
 public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
 
     private static TidalPopupMenu instance;
-    private Context mContext;
+    private Activity mActivity;
     private String uuid = null;
     private String trackId = null;
     private String albumId = null;
@@ -48,14 +52,14 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
     private boolean isTrackDel = false;
     private PlaylistDialogAdapter adapter;
 
-    private List<Item> mItems= Collections.emptyList();
+    private List<Item> mItems = Collections.emptyList();
 
-    private TidalPopupMenu(Context context) {
-        this.mContext = context;
+    private TidalPopupMenu(Activity activity) {
+        this.mActivity = activity;
     }
 
-    public static TidalPopupMenu getInstance(Context context) {
-        if (instance == null) instance = new TidalPopupMenu(context);
+    public static TidalPopupMenu getInstance(Activity activity) {
+        if (instance == null) instance = new TidalPopupMenu(activity);
         return instance;
     }
 
@@ -63,8 +67,8 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
 
     }
 
-    public void setPlaylist(List<Item> items){
-        this.mItems=items;
+    public void setPlaylist(List<Item> items) {
+        this.mItems = items;
     }
 
     public void addToPlaylist(View view, String uuid) {
@@ -119,7 +123,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
     }
 
     private PopupMenu getMenu(View view) {
-        PopupMenu popupMenu = new PopupMenu(mContext, view);
+        PopupMenu popupMenu = new PopupMenu(mActivity, view);
         popupMenu.inflate(R.menu.tidal_menu);
         popupMenu.show();
         return popupMenu;
@@ -130,24 +134,24 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
         switch (item.getItemId()) {
             case R.id.tidal_menu_add_to_fav:
                 if (isPlaylistAdd)
-                    addToMyMusic(TidalHelper.getInstance(mContext).addToPlaylist(uuid));
+                    addToMyMusic(TidalHelper.getInstance(mActivity).addToPlaylist(uuid));
                 if (isAlbumAdd)
-                    addToMyMusic(TidalHelper.getInstance(mContext).addToAlbum(albumId));
+                    addToMyMusic(TidalHelper.getInstance(mActivity).addToAlbum(albumId));
                 if (isArtistAdd)
-                    addToMyMusic(TidalHelper.getInstance(mContext).addToArtist(artist));
+                    addToMyMusic(TidalHelper.getInstance(mActivity).addToArtist(artist));
                 if (isTrackAdd)
-                    addToMyMusic(TidalHelper.getInstance(mContext).addToTrack(trackId));
+                    addToMyMusic(TidalHelper.getInstance(mActivity).addToTrack(trackId));
                 break;
 
             case R.id.tidal_menu_remove_fav:
                 if (isPlaylistDel)
-                    removeFromMyMusic(TidalHelper.getInstance(mContext).removePlaylist(uuid));
+                    removeFromMyMusic(TidalHelper.getInstance(mActivity).removePlaylist(uuid));
                 if (isAlbumDel)
-                    removeFromMyMusic(TidalHelper.getInstance(mContext).removeAlbum(albumId));
+                    removeFromMyMusic(TidalHelper.getInstance(mActivity).removeAlbum(albumId));
                 if (isTrackDel)
-                    removeFromMyMusic(TidalHelper.getInstance(mContext).removeTrack(trackId));
+                    removeFromMyMusic(TidalHelper.getInstance(mActivity).removeTrack(trackId));
                 if (isArtistDel)
-                    removeFromMyMusic(TidalHelper.getInstance(mContext).removeArtist(artist));
+                    removeFromMyMusic(TidalHelper.getInstance(mActivity).removeArtist(artist));
                 break;
 
             case R.id.tidal_menu_add_to_playlist:
@@ -170,30 +174,30 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
     }
 
     private void addToMyMusic(Call<JsonElement> call) {
-        RequestChain requestChain = new RequestChain(mContext);
+        RequestChain requestChain = new RequestChain(mActivity);
         requestChain.submit(call, resp -> {
             if (resp == null)
-                Toast.makeText(mContext, "Added Successfully", Toast.LENGTH_SHORT).show();
-            else Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, "Added Successfully", Toast.LENGTH_SHORT).show();
+            else Toast.makeText(mActivity, "Something went wrong", Toast.LENGTH_SHORT).show();
         });
     }
 
     private void removeFromMyMusic(Call<JsonElement> call) {
-        RequestChain requestChain = new RequestChain(mContext);
+        RequestChain requestChain = new RequestChain(mActivity);
         requestChain.submit(call, resp -> {
             if (resp == null)
-                Toast.makeText(mContext, "Remove Successfully", Toast.LENGTH_SHORT).show();
-            else Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, "Remove Successfully", Toast.LENGTH_SHORT).show();
+            else Toast.makeText(mActivity, "Something went wrong", Toast.LENGTH_SHORT).show();
         });
     }
 
     private void showPlaylistDialog() {
-        RecyclerView rv = (RecyclerView) ((Activity) mContext).getLayoutInflater()
+        RecyclerView rv = (RecyclerView) mActivity.getLayoutInflater()
                 .inflate(R.layout.addtoplaylist, null);
-        adapter = new PlaylistDialogAdapter(mContext,mItems );
-        rv.setLayoutManager(new LinearLayoutManager(mContext));
+        adapter = new PlaylistDialogAdapter(mActivity, mItems);
+        rv.setLayoutManager(new LinearLayoutManager(mActivity));
         rv.setAdapter(adapter);
-        MaterialDialog dialog = Utils.createDialogBuilder(mContext)
+        MaterialDialog dialog = Utils.createDialogBuilder(mActivity)
                 .title(R.string.menu_add_boom_playlist)
                 .customView(rv, false)
                 .positiveText(R.string.new_playlist)
@@ -213,12 +217,30 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
     }
 
     private void showNewDialog() {
-        Utils.createDialogBuilder(mContext).title(R.string.new_playlist)
-                .input(mContext.getResources().getString(R.string.new_playlist), null, new MaterialDialog.InputCallback() {
+        Utils.createDialogBuilder(mActivity).title(R.string.new_playlist)
+                .input(mActivity.getResources().getString(R.string.new_playlist), null, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
                         if (!input.toString().matches("")) {
+                            TidalRequestController.Callback callback=TidalRequestController.getTidalClient();
+                            Call<Item> call=callback.createPlaylist(
+                                    UserCredentials.getCredentials(mActivity).getSessionId(),
+                                    UserCredentials.getCredentials(mActivity).getUserId(),
+                                    input.toString(),"My Playlist");
+                           call.enqueue(new Callback<Item>() {
+                               @Override
+                               public void onResponse(Call<Item> call, Response<Item> response) {
+                                   if (response.isSuccessful()) {
+                                       String etag = response.headers().get("etag");
+                                       UserCredentials.getCredentials(mActivity).setETag(etag);
+                                   }
+                               }
 
+                               @Override
+                               public void onFailure(Call<Item> call, Throwable t) {
+
+                               }
+                           });
                         }
                     }
                 }).show();

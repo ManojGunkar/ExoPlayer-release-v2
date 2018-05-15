@@ -38,6 +38,7 @@ public class TidalMainFragment extends TabBarFragment {
     private SearchView searchView;
     private TidalSearchFragment tidalSearch;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

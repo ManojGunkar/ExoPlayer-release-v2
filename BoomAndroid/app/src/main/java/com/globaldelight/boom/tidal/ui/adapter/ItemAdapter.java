@@ -1,5 +1,6 @@
 package com.globaldelight.boom.tidal.ui.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -59,12 +60,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         viewHolder.imgItemMenu.setOnClickListener(v->{
             if (isUserMode){
                 if (item.getUuid()!=null)
-                TidalPopupMenu.getInstance(mContext).deletePlaylist(v,item.getUuid());
-                else TidalPopupMenu.getInstance(mContext).deleteAlbum(v,item.getId());
+                TidalPopupMenu.getInstance((Activity) mContext).deletePlaylist(v,item.getUuid());
+                else TidalPopupMenu.getInstance((Activity) mContext).deleteAlbum(v,item.getId());
             }else {
                 if (item.getUuid()!=null)
-                    TidalPopupMenu.getInstance(mContext).addToPlaylist(v,item.getUuid());
-                else TidalPopupMenu.getInstance(mContext).addToAlbum(v,item.getId());
+                    TidalPopupMenu.getInstance((Activity) mContext).addToPlaylist(v,item.getUuid());
+                else TidalPopupMenu.getInstance((Activity) mContext).addToAlbum(v,item.getId());
             }
         });
 

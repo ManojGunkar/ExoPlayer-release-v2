@@ -1,5 +1,6 @@
 package com.globaldelight.boom.tidal.ui.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -75,9 +76,9 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             viewHolder.imgMenuTrack.setOnClickListener(v -> {
                 if (isUserMode){
-                    TidalPopupMenu.getInstance(mContext).deleteTrack(v, item.getId());
+                    TidalPopupMenu.getInstance((Activity) mContext).deleteTrack(v, item.getId());
                 }else {
-                    TidalPopupMenu.getInstance(mContext).addToTrack(v, item.getId());
+                    TidalPopupMenu.getInstance((Activity) mContext).addToTrack(v, item.getId());
                 }
             });
 

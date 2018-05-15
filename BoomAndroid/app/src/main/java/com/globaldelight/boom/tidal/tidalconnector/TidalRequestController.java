@@ -1,6 +1,7 @@
 package com.globaldelight.boom.tidal.tidalconnector;
 
 import com.globaldelight.boom.tidal.tidalconnector.model.Curated;
+import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.SearchResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
@@ -100,6 +101,16 @@ public class TidalRequestController {
                 @Query("offset") String offSet,
                 @Query("limit") String limit);
 
+        //https://api.tidal.com/v1/users/{{userId}}/playlists
+
+        @FormUrlEncoded
+        @POST("users/{userId}/playlists")
+        Call<Item> createPlaylist(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Path("userId") String userId,
+                @Field("title") String playlistTitle,
+                @Field("description") String playlistDesc);
+
         @GET("{path}")
         Call<List<Curated>> getCurated(
                 @Path(value = "path", encoded = true) String path,
@@ -125,8 +136,6 @@ public class TidalRequestController {
                 @Query("orderDirection") String orderDirection,
                 @Query("offset") String offSet,
                 @Query("limit") String limit);
-
-
 
         @GET("{path}")
         Call<SearchResponse> getSearchResult(
@@ -157,6 +166,18 @@ public class TidalRequestController {
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,
                 @Field("uuids") String uuid,
+                @Query("countryCode") String countryCode);
+
+        //https://api.tidal.com/v1/playlists/c989958b-c60a-4bdc-b58f-25236c6c1e8a/items
+
+        @FormUrlEncoded
+        @POST("playlists/{playlistId}")
+        Call<JsonElement> addToUserPlaylist(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Header("If-None-Match") String eTag,
+                @Path("playlistId") String playlistId,
+                @Field("itemIds") String itemIds,
+                @Field("toIndex") String toIndex,
                 @Query("countryCode") String countryCode);
 
         @FormUrlEncoded

@@ -95,7 +95,7 @@ public class TidalMyMusicFragment extends Fragment {
         mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_album, GRID_VIEW);
         Call<TidalBaseResponse> call = TidalHelper.getInstance(getContext()).getUserPlayLists(0,10);
         mRequestChain.submit(call, resp->{
-            TidalPopupMenu.getInstance(getContext()).setPlaylist(resp.getItems());
+            TidalPopupMenu.getInstance(getActivity()).setPlaylist(resp.getItems());
             mItemList.add(new NestedItemDescription(R.string.user_playlist, GRID_VIEW, resp.getItems(), "/playlists"));
         });
         mRequestChain.submit(null, (response) -> {
@@ -119,6 +119,7 @@ public class TidalMyMusicFragment extends Fragment {
         intentFilter.addAction(ACTION_SONG_CHANGED);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
         loadAll();
+
     }
 
     @Override

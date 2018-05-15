@@ -3,6 +3,7 @@ package com.globaldelight.boom.tidal.utils;
 import android.content.Context;
 
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
+import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.SearchResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;

@@ -1,5 +1,6 @@
 package com.globaldelight.boom.tidal.ui.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -61,15 +62,15 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         viewHolder.imgItemMenu.setOnClickListener(view->{
             if (isUserMode){
                 if (item.getUuid()!=null){
-                    TidalPopupMenu.getInstance(mContext).deletePlaylist(view,item.getUuid());
+                    TidalPopupMenu.getInstance((Activity)mContext).deletePlaylist(view,item.getUuid());
                 }else {
-                    TidalPopupMenu.getInstance(mContext).deleteAlbum(view,item.getId());
+                    TidalPopupMenu.getInstance((Activity)mContext).deleteAlbum(view,item.getId());
                 }
             }else {
                 if (item.getUuid()!=null){
-                    TidalPopupMenu.getInstance(mContext).addToPlaylist(view,item.getUuid());
+                    TidalPopupMenu.getInstance((Activity)mContext).addToPlaylist(view,item.getUuid());
                 }else {
-                    TidalPopupMenu.getInstance(mContext).addToAlbum(view,item.getId());
+                    TidalPopupMenu.getInstance((Activity)mContext).addToAlbum(view,item.getId());
                 }
             }
         });
