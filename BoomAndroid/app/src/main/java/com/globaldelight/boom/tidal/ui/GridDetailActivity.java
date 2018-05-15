@@ -108,7 +108,7 @@ public class GridDetailActivity extends MasterActivity {
         ImageView imageView = findViewById(R.id.img_grid_tidal);
         Glide.with(this)
                 .load(imageUrl)
-                .placeholder(R.drawable.radio_place_holder)
+                .placeholder(R.drawable.ic_default_art_player_header)
                 .centerCrop()
                 .skipMemoryCache(true)
                 .into(imageView);
