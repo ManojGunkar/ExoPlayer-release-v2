@@ -18,6 +18,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -140,7 +141,6 @@ public class TidalRequestController {
                 @Field("albumIds") String albumIds,
                 @Query("countryCode") String countryCode);
 
-
         @FormUrlEncoded
         @POST("users/{userId}/favorites/playlists")
         Call<JsonElement> addToPlaylist(
@@ -156,5 +156,39 @@ public class TidalRequestController {
                 @Path("userId") String userId,
                 @Field("trackIds") String trackIds,
                 @Query("countryCode") String countryCode);
+
+        @FormUrlEncoded
+        @POST("users/{userId}/favorites/artists")
+        Call<JsonElement> addToArtists(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Path("userId") String userId,
+                @Field("artists") String artists,
+                @Query("countryCode") String countryCode);
+
+
+        @DELETE("users/{userId}/favorites/playlists/{uuid}")
+        Call<JsonElement> deletePlaylist(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Path("userId") String userId,
+                @Path("uuid") String uuid);
+
+        @DELETE("users/{userId}/favorites/albums/{albumId}")
+        Call<JsonElement> deleteAlbum(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Path("userId") String userId,
+                @Path("albumId") String albumId);
+
+        @DELETE("users/{userId}/favorites/tracks/{trackId}")
+        Call<JsonElement> deleteTrack(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Path("userId") String userId,
+                @Path("trackId") String trackId);
+
+        @DELETE("users/{userId}/favorites/tracks/{artists}")
+        Call<JsonElement> deleteArtist(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Path("userId") String userId,
+                @Path("artists") String artists);
+
     }
 }

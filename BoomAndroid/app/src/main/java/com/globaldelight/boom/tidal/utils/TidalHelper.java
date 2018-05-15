@@ -44,12 +44,13 @@ public class TidalHelper {
     public static final String USER_ABLUMS = "/favorites/albums";
     public static final String PLAYLIST_TRACKS = "playlists/";
 
-    public final static String SEARCH="search/";
-    public final static String SEARCH_ALBUM_TYPE="ALBUMS";
-    public final static String SEARCH_TRACK_TYPE="TRACKS";
-    public final static String SEARCH_PLAYLIST_TYPE="PLAYLISTS";
-
+    public final static String SEARCH = "search/";
+    public final static String SEARCH_ALBUM_TYPE = "ALBUMS";
+    public final static String SEARCH_TRACK_TYPE = "TRACKS";
+    public final static String SEARCH_PLAYLIST_TYPE = "PLAYLISTS";
     private static TidalHelper instance;
+    private String sessionId;
+    private String userId;
     private Context context;
     private TidalRequestController.Callback client;
     private TidalSubscriptionInfo subscriptionInfo;
@@ -57,6 +58,8 @@ public class TidalHelper {
     private TidalHelper(Context context) {
         this.context = context;
         client = TidalRequestController.getTidalClient();
+        this.sessionId = UserCredentials.getCredentials(context).getSessionId();
+        this.userId = UserCredentials.getCredentials(context).getUserId();
     }
 
     public static TidalHelper getInstance(Context context) {
@@ -75,7 +78,6 @@ public class TidalHelper {
     }
 
     public Call<PlaylistResponse> getPlaylistTracks(String uuid, int offset, int limit) {
-        String sessionId = UserCredentials.getCredentials(context).getSessionId();
         String path = PLAYLIST_TRACKS + uuid + "/items";
         return client.getPlayListTrack(path,
                 sessionId,
@@ -89,57 +91,78 @@ public class TidalHelper {
     /**
      * @param musicType @implNote Specify the music type eg:- Album, Track or Playlists.
      */
-    public Call<UserMusicResponse> getUserMusic(String musicType,int offset,int limit) {
-        String sessionId = UserCredentials.getCredentials(context).getSessionId();
-        String path = USER + UserCredentials.getCredentials(context).getUserId() + musicType;
+    public Call<UserMusicResponse> getUserMusic(String musicType, int offset, int limit) {
+
+        String path = USER + userId + musicType;
         return client.getUserMusic(path,
                 sessionId,
                 Locale.getDefault().getCountry(),
                 "NAME",
                 "ASC",
-                String.valueOf(offset),String.valueOf(limit));
+                String.valueOf(offset), String.valueOf(limit));
     }
 
     public Call<TrackPlayResponse> getStreamInfo(String trackId) {
-        return client.playTrack(UserCredentials.getCredentials(context).getSessionId(),
+        return client.playTrack(sessionId,
                 trackId,
                 subscriptionInfo != null ? subscriptionInfo.getHighestSoundQuality() : null);
     }
 
-    public Call<SearchResponse> searchMusic(String query,String musicType,int offset,int limit){
+    public Call<SearchResponse> searchMusic(String query, String musicType, int offset, int limit) {
         return client.getSearchResult(
                 SEARCH,
                 TidalRequestController.AUTH_TOKEN,
                 query,
                 musicType,
                 Locale.getDefault().getCountry(),
-                String.valueOf(offset),String.valueOf(limit));
+                String.valueOf(offset), String.valueOf(limit));
     }
 
-    public Call<SearchResponse> searchMusic(String query){
-        String musicType=SEARCH_TRACK_TYPE+","+SEARCH_ALBUM_TYPE+","+SEARCH_PLAYLIST_TYPE;
+    public Call<SearchResponse> searchMusic(String query) {
+        String musicType = SEARCH_TRACK_TYPE + "," + SEARCH_ALBUM_TYPE + "," + SEARCH_PLAYLIST_TYPE;
         return client.getSearchResult(
                 SEARCH,
                 TidalRequestController.AUTH_TOKEN,
                 query,
                 musicType,
                 Locale.getDefault().getCountry(),
-                String.valueOf(0),String.valueOf(10));
+                String.valueOf(0), String.valueOf(10));
     }
 
-    public Call<JsonElement> addToPlaylist(String uuid){
-        String sessionId = UserCredentials.getCredentials(context).getSessionId();
-        String userId = UserCredentials.getCredentials(context).getUserId();
+    public Call<JsonElement> addToPlaylist(String uuid) {
+        return client.addToPlaylist(sessionId, userId, uuid, Locale.getDefault().getCountry());
+    }
 
-        return client.addToPlaylist(
-                sessionId,
-                userId,
-                uuid,Locale.getDefault().getCountry());
+    public Call<JsonElement> addToTrack(String trackId) {
+        return client.addToTrack(sessionId, userId, trackId, Locale.getDefault().getCountry());
+    }
+
+    public Call<JsonElement> addToAlbum(String albumId) {
+        return client.addToAlbum(sessionId, userId, albumId, Locale.getDefault().getCountry());
+    }
+
+    public Call<JsonElement> addToArtist(String artist) {
+        return client.addToArtists(sessionId, userId, artist, Locale.getDefault().getCountry());
+    }
+
+    public Call<JsonElement> removeAlbum(String albumId) {
+        return client.deleteAlbum(sessionId, userId, albumId);
+    }
+
+    public Call<JsonElement> removePlaylist(String uuid) {
+        return client.deletePlaylist(sessionId, userId, uuid);
+    }
+
+    public Call<JsonElement> removeTrack(String trackId) {
+        return client.deleteTrack(sessionId, userId, trackId);
+    }
+
+    public Call<JsonElement> removeArtist(String artist) {
+        return client.deleteArtist(sessionId, userId, artist);
     }
 
     public void fetchSubscriptionInfo() {
-        Call<TidalSubscriptionInfo> call = client.getUserSubscriptionInfo(UserCredentials.getCredentials(context).getSessionId(),
-                UserCredentials.getCredentials(context).getUserId());
+        Call<TidalSubscriptionInfo> call = client.getUserSubscriptionInfo(sessionId, userId);
         call.enqueue(new Callback<TidalSubscriptionInfo>() {
             @Override
             public void onResponse(Call<TidalSubscriptionInfo> call, Response<TidalSubscriptionInfo> response) {

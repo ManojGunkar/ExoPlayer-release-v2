@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.ui.GridDetailActivity;
+import com.globaldelight.boom.tidal.utils.TidalPopupMenu;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.Collections;
@@ -26,10 +27,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private List<Item> mItems = Collections.emptyList();
+    private boolean isUserMode = false;
 
-    public ItemAdapter(Context context, List<Item> items) {
+    public ItemAdapter(Context context, List<Item> items,boolean isUserMode) {
         this.mContext = context;
         this.mItems = items;
+        this.isUserMode = isUserMode;
     }
 
     @Override
@@ -52,6 +55,18 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         viewHolder.txtItemTitle.setText(item.getTitle());
         viewHolder.txtItemSubTitle.setText(item.getDescription());
+
+        viewHolder.imgItemMenu.setOnClickListener(v->{
+            if (isUserMode){
+                if (item.getUuid()!=null)
+                TidalPopupMenu.getInstance(mContext).deletePlaylist(v,item.getUuid());
+                else TidalPopupMenu.getInstance(mContext).deleteAlbum(v,item.getId());
+            }else {
+                if (item.getUuid()!=null)
+                    TidalPopupMenu.getInstance(mContext).addToPlaylist(v,item.getUuid());
+                else TidalPopupMenu.getInstance(mContext).addToAlbum(v,item.getId());
+            }
+        });
 
         viewHolder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, GridDetailActivity.class);

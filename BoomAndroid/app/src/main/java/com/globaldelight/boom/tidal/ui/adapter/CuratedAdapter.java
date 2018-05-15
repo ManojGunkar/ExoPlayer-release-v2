@@ -1,6 +1,5 @@
 package com.globaldelight.boom.tidal.ui.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -29,13 +28,13 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private Context mContext;
     private List<Curated> mCuratedList = Collections.emptyList();
-    private boolean isMoods=false;
+    private boolean isMoods = false;
     private String image;
 
     public CuratedAdapter(Context context, List<Curated> genres, boolean isMoods) {
         this.mContext = context;
         this.mCuratedList = genres;
-        this.isMoods=isMoods;
+        this.isMoods = isMoods;
     }
 
     @Override
@@ -48,8 +47,8 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ItemViewHolder viewHolder = (ItemViewHolder) holder;
         Curated curated = mCuratedList.get(position);
-        image= curated.getImage();
-        image=TidalRequestController.IMAGE_BASE_URL+image.replace("-","/")+"/320x320.jpg";
+        image = curated.getImage();
+        image = TidalRequestController.IMAGE_BASE_URL + image.replace("-", "/") + "/320x320.jpg";
         final int size = Utils.largeImageSize(mContext);
         Glide.with(mContext).load(image)
                 .placeholder(R.drawable.ic_default_art_grid)
@@ -60,39 +59,39 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         viewHolder.txtGenresTitle.setText(curated.getName());
 
         viewHolder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(mContext, CuratedDetailActivity.class);
-            intent.putExtra("imageCurated", image);
-            intent.putExtra("title", curated.getName());
-            if (curated.getHasAlbums()){
-                if (isMoods){
-                    String path="moods/"+curated.getPath()+"/albums";
-                    intent.putExtra("albumPath",path);
-                }else {
-                    String path="genres/"+curated.getPath()+"/albums";
-                    intent.putExtra("albumPath",path);
+
+            if (isMoods) {
+                Intent intent = new Intent(mContext, GridDetailActivity.class);
+
+                String path = "moods/" + curated.getPath() + "/playlists";
+                intent.putExtra("path", path);
+                intent.putExtra("isMoods",true);
+                intent.putExtra("imageurl", image);
+                intent.putExtra("title", curated.getName());
+
+                mContext.startActivity(intent);
+            } else {
+                Intent intent = new Intent(mContext, CuratedDetailActivity.class);
+                intent.putExtra("imageCurated", image);
+                intent.putExtra("title", curated.getName());
+                if (curated.getHasAlbums()) {
+                    String path = "genres/" + curated.getPath() + "/albums";
+                    intent.putExtra("albumPath", path);
                 }
-            }  if (curated.getHasPlaylists()){
-                if (isMoods){
-                    String path="moods/"+curated.getPath()+"/playlists";
-                    intent.putExtra("playlistPath",path);
-                }else {
-                    String path="genres/"+curated.getPath()+"/playlists";
-                    intent.putExtra("playlistPath",path);
+                if (curated.getHasPlaylists()) {
+                    String path = "genres/" + curated.getPath() + "/playlists";
+                    intent.putExtra("playlistPath", path);
                 }
-            }  if (curated.getHasTracks()){
-                if (isMoods){
-                    String path="moods/"+curated.getPath()+"/tracks";
-                    intent.putExtra("trackPath",path);
-                }else {
-                    String path="genres/"+curated.getPath()+"/tracks";
-                    intent.putExtra("trackPath",path);
+                if (curated.getHasTracks()) {
+                    String path = "genres/" + curated.getPath() + "/tracks";
+                    intent.putExtra("trackPath", path);
                 }
+                mContext.startActivity(intent);
             }
-            mContext.startActivity(intent);
         });
 
     }
-    
+
     @Override
     public int getItemCount() {
         return mCuratedList.size();
