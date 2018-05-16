@@ -1,6 +1,7 @@
 package com.globaldelight.boom.tidal.ui.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -92,6 +94,7 @@ public class TidalLoginFragment extends Fragment implements View.OnClickListener
                     Log.d(TAG, "USER ID =" + loginResponse.getUserId());
                     Log.d(TAG, "COUNTRY =" + loginResponse.getCountryCode());
                     Toast.makeText(getActivity(), "Login success", Toast.LENGTH_SHORT).show();
+                    hideKeyboard();
                     jumpToTidal();
                 } else {
                     Log.d(TAG, "FAILED lOGIN");
@@ -106,6 +109,14 @@ public class TidalLoginFragment extends Fragment implements View.OnClickListener
 
             }
         });
+    }
+
+    private void hideKeyboard(){
+        View hideKey = getActivity().getCurrentFocus();
+        if (hideKey != null) {
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(hideKey.getWindowToken(), 0);
+        }
     }
 
     private void jumpToTidal(){

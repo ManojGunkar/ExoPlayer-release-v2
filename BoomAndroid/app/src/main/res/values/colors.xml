@@ -131,6 +131,7 @@
     <color name="promo_code_line">#999999</color>
     <color name="promo_code_hint">#666666</color>
     <color name="promo_code_error">#ffc600</color>
+    <color name="login_color">#252526</color>
 
     <array name="radio_tag_colors">
         <item>#D0021B</item>

@@ -17,7 +17,7 @@ import com.globaldelight.boom.tidal.ui.fragment.TidalRisingFragment;
  */
 public class TidalTabAdapter extends FragmentStatePagerAdapter {
 
-    private final String[] mTabs = new String[]{"WHANEW", "TIDAL RISING", "CURATED", "MY MUSIC"};
+    private final String[] mTabs = new String[]{"NEW", "TIDAL RISING", "CURATED", "MY MUSIC"};
 
     public TidalTabAdapter(FragmentManager fm) {
         super(fm);
