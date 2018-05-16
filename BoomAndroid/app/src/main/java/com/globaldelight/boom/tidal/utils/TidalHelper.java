@@ -1,6 +1,8 @@
 package com.globaldelight.boom.tidal.utils;
 
 import android.content.Context;
+import android.os.Looper;
+import android.widget.Toast;
 
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
@@ -12,7 +14,10 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayRespo
 import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
 import com.google.gson.JsonElement;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.logging.Handler;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,6 +60,7 @@ public class TidalHelper {
     private Context context;
     private TidalRequestController.Callback client;
     private TidalSubscriptionInfo subscriptionInfo;
+    private List<Item> mMyPlaylists = new ArrayList<>();
 
     private TidalHelper(Context context) {
         this.context = context;
@@ -183,5 +189,65 @@ public class TidalHelper {
         });
     }
 
+
+    public void setMyPlaylists(List<Item> playlists) {
+        mMyPlaylists.clear();
+        mMyPlaylists.addAll(playlists);
+    }
+
+    public List<Item> getMyPlaylists() {
+        return mMyPlaylists;
+    }
+
+    public void addItemToPlaylist(List<String> itemIds, String playlistId) {
+        Call<PlaylistResponse> call = getPlaylistTracks(playlistId,0, 1);
+        call.enqueue(new Callback<PlaylistResponse>() {
+            @Override
+            public void onResponse(Call<PlaylistResponse> call, Response<PlaylistResponse> response) {
+                if (response.isSuccessful()) {
+                    String etag = response.headers().get("etag");
+                    new android.os.Handler(Looper.getMainLooper()).post(()->{
+                        updatePlaylist(itemIds, playlistId, etag);
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PlaylistResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void updatePlaylist(List<String> itemIds, String playlistId, String etag) {
+
+        StringBuilder builder = new StringBuilder();
+        for ( String itemId: itemIds) {
+            builder.append(itemId);
+        }
+
+        TidalRequestController.Callback client = TidalRequestController.getTidalClient();
+        Call<String> call = client.addToUserPlaylist(sessionId, etag, playlistId, builder.toString(), "0", getCountry());
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(context, "Added to playlist", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Toast.makeText(context, "Failed to add playlist", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(context, "Failed to add playlist", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private String getCountry() {
+        return Locale.getDefault().getCountry();
+    }
 
 }

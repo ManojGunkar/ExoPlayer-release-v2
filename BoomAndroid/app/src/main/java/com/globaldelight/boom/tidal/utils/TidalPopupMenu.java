@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.adapters.song.PlayListAdapter;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.ui.adapter.PlaylistDialogAdapter;
@@ -19,6 +20,7 @@ import com.globaldelight.boom.utils.RequestChain;
 import com.globaldelight.boom.utils.Utils;
 import com.google.gson.JsonElement;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,9 +34,8 @@ import retrofit2.http.Header;
  * Created by Manoj Kumar on 09-05-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
+public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, PlaylistDialogAdapter.Callback {
 
-    private static TidalPopupMenu instance;
     private Activity mActivity;
     private String uuid = null;
     private String trackId = null;
@@ -52,23 +53,12 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
     private boolean isTrackDel = false;
     private PlaylistDialogAdapter adapter;
 
-    private List<Item> mItems = Collections.emptyList();
-
     private TidalPopupMenu(Activity activity) {
         this.mActivity = activity;
     }
 
-    public static TidalPopupMenu getInstance(Activity activity) {
-        if (instance == null) instance = new TidalPopupMenu(activity);
-        return instance;
-    }
-
-    public void setSuffleMenu(View view) {
-
-    }
-
-    public void setPlaylist(List<Item> items) {
-        this.mItems = items;
+    public static TidalPopupMenu newInstance(Activity activity) {
+        return new TidalPopupMenu(activity);
     }
 
     public void addToPlaylist(View view, String uuid) {
@@ -194,7 +184,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
     private void showPlaylistDialog() {
         RecyclerView rv = (RecyclerView) mActivity.getLayoutInflater()
                 .inflate(R.layout.addtoplaylist, null);
-        adapter = new PlaylistDialogAdapter(mActivity, mItems);
+        adapter = new PlaylistDialogAdapter(mActivity, TidalHelper.getInstance(mActivity).getMyPlaylists(), this);
         rv.setLayoutManager(new LinearLayoutManager(mActivity));
         rv.setAdapter(adapter);
         MaterialDialog dialog = Utils.createDialogBuilder(mActivity)
@@ -244,5 +234,16 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener {
                         }
                     }
                 }).show();
+    }
+
+    @Override
+    public void onItemSelected(Item item) {
+
+        ArrayList<String> ids = new ArrayList<>();
+        if (isTrackAdd) {
+            ids.add(trackId);
+        }
+
+        TidalHelper.getInstance(mActivity).addItemToPlaylist(ids,item.getId());
     }
 }

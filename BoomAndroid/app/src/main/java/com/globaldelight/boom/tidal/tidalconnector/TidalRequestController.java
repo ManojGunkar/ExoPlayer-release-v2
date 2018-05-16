@@ -171,8 +171,8 @@ public class TidalRequestController {
         //https://api.tidal.com/v1/playlists/c989958b-c60a-4bdc-b58f-25236c6c1e8a/items
 
         @FormUrlEncoded
-        @POST("playlists/{playlistId}")
-        Call<JsonElement> addToUserPlaylist(
+        @POST("playlists/{playlistId}/items")
+        Call<String> addToUserPlaylist(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Header("If-None-Match") String eTag,
                 @Path("playlistId") String playlistId,
