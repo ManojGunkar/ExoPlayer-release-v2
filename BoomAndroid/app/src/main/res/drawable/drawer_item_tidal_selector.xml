@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<bitmap android:src="@drawable/tidal_ic"
+<bitmap android:src="@drawable/tidal_d"
     android:tint="@color/navigation_item"
     xmlns:android="http://schemas.android.com/apk/res/android" />

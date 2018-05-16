@@ -54,6 +54,7 @@ public class TidalLoginFragment extends Fragment implements View.OnClickListener
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tidal_login, null, false);
         setHasOptionsMenu(true);
+
         init(view);
         return view;
     }

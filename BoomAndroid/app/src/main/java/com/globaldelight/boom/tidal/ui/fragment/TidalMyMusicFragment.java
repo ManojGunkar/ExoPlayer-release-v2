@@ -118,7 +118,7 @@ public class TidalMyMusicFragment extends Fragment {
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
-        loadAll();
+
 
     }
 
