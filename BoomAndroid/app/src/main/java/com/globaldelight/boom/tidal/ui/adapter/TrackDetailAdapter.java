@@ -76,9 +76,9 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             viewHolder.imgMenuTrack.setOnClickListener(v -> {
                 if (isUserMode){
-                    TidalPopupMenu.getInstance((Activity) mContext).deleteTrack(v, item.getId());
+                    TidalPopupMenu.newInstance((Activity) mContext).deleteTrack(v, item.getId());
                 }else {
-                    TidalPopupMenu.getInstance((Activity) mContext).addToTrack(v, item.getId());
+                    TidalPopupMenu.newInstance((Activity) mContext).addToTrack(v, item.getId());
                 }
             });
 

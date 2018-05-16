@@ -95,7 +95,7 @@ public class TidalMyMusicFragment extends Fragment {
         mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_album, GRID_VIEW);
         Call<TidalBaseResponse> call = TidalHelper.getInstance(getContext()).getUserPlayLists(0,10);
         mRequestChain.submit(call, resp->{
-            TidalPopupMenu.getInstance(getActivity()).setPlaylist(resp.getItems());
+            TidalHelper.getInstance(getContext()).setMyPlaylists(resp.getItems());
             mItemList.add(new NestedItemDescription(R.string.user_playlist, GRID_VIEW, resp.getItems(), "/playlists"));
         });
         mRequestChain.submit(null, (response) -> {

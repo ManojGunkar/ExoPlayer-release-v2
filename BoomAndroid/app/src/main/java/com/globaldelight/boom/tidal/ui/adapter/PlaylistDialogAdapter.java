@@ -19,11 +19,17 @@ import java.util.List;
  */
 public class PlaylistDialogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context mContext;
-    private List<Item> mItems= Collections.emptyList();
+    public interface Callback {
+        void onItemSelected(Item item);
+    }
 
-    public PlaylistDialogAdapter(Context context, List<Item> items) {
+    private Context mContext;
+    private Callback mCallback;
+    private List<Item> mItems;
+
+    public PlaylistDialogAdapter(Context context, List<Item> items, Callback callback) {
         this.mContext = context;
+        mCallback = callback;
         this.mItems = items;
     }
 
@@ -31,8 +37,8 @@ public class PlaylistDialogAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         ItemViewHolder vh = new ItemViewHolder(inflater.inflate(R.layout.card_grid_item, parent, false));
+        vh.itemView.setOnClickListener((v)->onClick(vh));
         return vh;
-
     }
 
     @Override
@@ -48,6 +54,15 @@ public class PlaylistDialogAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return mItems.size();
     }
 
+    private void onClick(ItemViewHolder holder) {
+        int position = holder.getAdapterPosition();
+        if ( position < 0 ) {
+            return;
+        }
+
+        mCallback.onItemSelected(mItems.get(position));
+    }
+
     protected class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private TextView txtTitle;
@@ -58,7 +73,6 @@ public class PlaylistDialogAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             txtTitle = itemView.findViewById(R.id.card_grid_title);
             txtSubTitle = itemView.findViewById(R.id.card_grid_sub_title);
             itemView.findViewById(R.id.card_grid_menu).setVisibility(View.GONE);
-
         }
     }
 }
