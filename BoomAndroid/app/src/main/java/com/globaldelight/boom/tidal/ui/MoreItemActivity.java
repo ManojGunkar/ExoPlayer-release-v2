@@ -38,6 +38,7 @@ import retrofit2.Call;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
 import static com.globaldelight.boom.tidal.utils.TidalHelper.SEARCH_ALBUM_TYPE;
+import static com.globaldelight.boom.tidal.utils.TidalHelper.SEARCH_ARTISTS_TYPE;
 import static com.globaldelight.boom.tidal.utils.TidalHelper.SEARCH_PLAYLIST_TYPE;
 import static com.globaldelight.boom.tidal.utils.TidalHelper.SEARCH_TRACK_TYPE;
 
@@ -165,6 +166,8 @@ public class MoreItemActivity extends MasterActivity {
             type = SEARCH_PLAYLIST_TYPE;
         } else if (searchType.equalsIgnoreCase(SEARCH_TRACK_TYPE)) {
             type = SEARCH_TRACK_TYPE;
+        } else if (searchType.equalsIgnoreCase(SEARCH_ARTISTS_TYPE)) {
+            type = SEARCH_ARTISTS_TYPE;
         }
         mRequestChain = new RequestChain(this);
         Call<SearchResponse> call = TidalHelper.getInstance(this).searchMusic(query, type, 0, 100);
@@ -178,6 +181,9 @@ public class MoreItemActivity extends MasterActivity {
                     setDataInAdapter(resp.getPlaylists().getItems());
                     break;
                 case SEARCH_TRACK_TYPE:
+                    setDataInAdapter(resp.getTracks().getItems());
+                    break;
+                case SEARCH_ARTISTS_TYPE:
                     setDataInAdapter(resp.getTracks().getItems());
                     break;
             }

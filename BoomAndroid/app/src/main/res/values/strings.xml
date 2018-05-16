@@ -260,5 +260,6 @@
     <string name="tidal_menu_shuffle">Shuffle</string>
     <string name="user_playlist">My Playlists</string>
     <string name="tidal_menu_add_playlist">Add to my playlists</string>
+    <string name="tidal_artist">Artists</string>
 
 </resources>

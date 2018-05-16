@@ -48,12 +48,14 @@ public class TidalHelper {
     public static final String USER_PLAYLISTS = "/favorites/playlists";
     public static final String USER_TRACKS = "/favorites/tracks";
     public static final String USER_ABLUMS = "/favorites/albums";
+    public static final String USER_ARTISTS = "/favorites/artists";
     public static final String PLAYLIST_TRACKS = "playlists/";
 
     public final static String SEARCH = "search/";
     public final static String SEARCH_ALBUM_TYPE = "ALBUMS";
     public final static String SEARCH_TRACK_TYPE = "TRACKS";
     public final static String SEARCH_PLAYLIST_TYPE = "PLAYLISTS";
+    public final static String SEARCH_ARTISTS_TYPE = "ARTISTS";
     private static TidalHelper instance;
     private String sessionId;
     private String userId;
@@ -132,7 +134,7 @@ public class TidalHelper {
     }
 
     public Call<SearchResponse> searchMusic(String query) {
-        String musicType = SEARCH_TRACK_TYPE + "," + SEARCH_ALBUM_TYPE + "," + SEARCH_PLAYLIST_TYPE;
+        String musicType = SEARCH_TRACK_TYPE + "," + SEARCH_ALBUM_TYPE + "," + SEARCH_PLAYLIST_TYPE+","+SEARCH_ARTISTS_TYPE;
         return client.getSearchResult(
                 SEARCH,
                 TidalRequestController.AUTH_TOKEN,

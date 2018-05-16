@@ -103,6 +103,7 @@ public class TidalSearchFragment extends Fragment {
         setResponseType(query,R.string.tidal_album,GRID_VIEW,TidalHelper.SEARCH,TidalHelper.SEARCH_ALBUM_TYPE);
         setResponseType(query,R.string.tidal_tracks,LIST_VIEW,TidalHelper.SEARCH,TidalHelper.SEARCH_TRACK_TYPE);
         setResponseType(query,R.string.tidal_playlist,GRID_VIEW,TidalHelper.SEARCH,TidalHelper.SEARCH_PLAYLIST_TYPE);
+        setResponseType(query,R.string.tidal_artist,GRID_VIEW,TidalHelper.SEARCH,TidalHelper.SEARCH_ARTISTS_TYPE);
 
         requestChain.submit(null,resp -> {
 
@@ -145,6 +146,9 @@ public class TidalSearchFragment extends Fragment {
                         mItems.add(new NestedItemDescription(resId,type,resp.getTracks().getItems(),path));
                         break;
                     case TidalHelper.SEARCH_PLAYLIST_TYPE:
+                        mItems.add(new NestedItemDescription(resId,type,resp.getPlaylists().getItems(),path));
+                        break;
+                    case TidalHelper.SEARCH_ARTISTS_TYPE:
                         mItems.add(new NestedItemDescription(resId,type,resp.getPlaylists().getItems(),path));
                         break;
                 }
