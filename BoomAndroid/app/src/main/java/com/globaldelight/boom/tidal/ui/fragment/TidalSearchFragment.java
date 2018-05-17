@@ -149,7 +149,7 @@ public class TidalSearchFragment extends Fragment {
                         mItems.add(new NestedItemDescription(resId,type,resp.getPlaylists().getItems(),path));
                         break;
                     case TidalHelper.SEARCH_ARTISTS_TYPE:
-                        mItems.add(new NestedItemDescription(resId,type,resp.getPlaylists().getItems(),path));
+                        mItems.add(new NestedItemDescription(resId,type,resp.getArtists().getItems(),path));
                         break;
                 }
         }

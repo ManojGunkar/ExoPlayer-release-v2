@@ -229,10 +229,10 @@ public class TidalHelper {
         }
 
         TidalRequestController.Callback client = TidalRequestController.getTidalClient();
-        Call<String> call = client.addToUserPlaylist(sessionId, etag, playlistId, builder.toString(), "0", getCountry());
-        call.enqueue(new Callback<String>() {
+        Call<Void> call = client.addToUserPlaylist(sessionId, etag, playlistId, builder.toString(), "0", getCountry());
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(context, "Added to playlist", Toast.LENGTH_LONG).show();
                 }
@@ -242,7 +242,7 @@ public class TidalHelper {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 Toast.makeText(context, "Failed to add playlist", Toast.LENGTH_LONG).show();
             }
         });

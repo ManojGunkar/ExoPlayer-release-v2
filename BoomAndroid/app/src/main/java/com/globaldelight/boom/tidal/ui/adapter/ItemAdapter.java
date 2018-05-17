@@ -20,6 +20,8 @@ import com.globaldelight.boom.utils.Utils;
 import java.util.Collections;
 import java.util.List;
 
+import static com.globaldelight.boom.tidal.tidalconnector.model.Item.IMAGE_BASE_URL;
+
 /**
  * Created by Manoj Kumar on 28-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
@@ -29,6 +31,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
     private List<Item> mItems = Collections.emptyList();
     private boolean isUserMode = false;
+    private String image=null;
 
     public ItemAdapter(Context context, List<Item> items,boolean isUserMode) {
         this.mContext = context;
@@ -46,7 +49,14 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ItemViewHolder viewHolder = (ItemViewHolder) holder;
         Item item = mItems.get(position);
-        String image = item.getItemArtUrl();
+
+        if (item.getPicture()!=null){
+            image = item.getPicture();
+            image=IMAGE_BASE_URL + image.replace("-", "/") + "/320x214.jpg";
+        }else {
+             image = item.getItemArtUrl();
+        }
+
         final int size = Utils.largeImageSize(mContext);
         Glide.with(mContext).load(image)
                 .placeholder(R.drawable.ic_default_art_grid)
@@ -54,7 +64,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 .override(size, size)
                 .into(viewHolder.imgItemCover);
 
-        viewHolder.txtItemTitle.setText(item.getTitle());
+        viewHolder.txtItemTitle.setText(item.getTitle()==null?item.getName():item.getTitle());
         viewHolder.txtItemSubTitle.setText(item.getDescription());
 
         viewHolder.imgItemMenu.setOnClickListener(v->{

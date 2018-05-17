@@ -172,7 +172,7 @@ public class TidalRequestController {
 
         @FormUrlEncoded
         @POST("playlists/{playlistId}/items")
-        Call<String> addToUserPlaylist(
+        Call<Void> addToUserPlaylist(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Header("If-None-Match") String eTag,
                 @Path("playlistId") String playlistId,

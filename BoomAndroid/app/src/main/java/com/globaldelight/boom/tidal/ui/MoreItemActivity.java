@@ -116,7 +116,8 @@ public class MoreItemActivity extends MasterActivity {
         api = bundle.getString("api");
         setTitle(title);
         if (isUserMode) {
-            if (isUserPlaylist)
+            boolean isArtists=api.contains("artists");
+            if (!isArtists&&isUserPlaylist)
                 loadUserPlaylists();
             else
                 loadUserMusic();
@@ -184,7 +185,7 @@ public class MoreItemActivity extends MasterActivity {
                     setDataInAdapter(resp.getTracks().getItems());
                     break;
                 case SEARCH_ARTISTS_TYPE:
-                    setDataInAdapter(resp.getTracks().getItems());
+                    setDataInAdapter(resp.getArtists().getItems());
                     break;
             }
         });
