@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Looper;
 import android.widget.Toast;
 
+import com.globaldelight.boom.R;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
@@ -15,9 +17,9 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicRespo
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Handler;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -201,7 +203,7 @@ public class TidalHelper {
         return mMyPlaylists;
     }
 
-    public void addItemToPlaylist(List<String> itemIds, String playlistId) {
+    public void addItemToPlaylist(Item item, String playlistId) {
         Call<PlaylistResponse> call = getPlaylistTracks(playlistId,0, 1);
         call.enqueue(new Callback<PlaylistResponse>() {
             @Override
@@ -209,7 +211,7 @@ public class TidalHelper {
                 if (response.isSuccessful()) {
                     String etag = response.headers().get("etag");
                     new android.os.Handler(Looper.getMainLooper()).post(()->{
-                        updatePlaylist(itemIds, playlistId, etag);
+                        updatePlaylist(item, playlistId, etag);
                     });
                 }
             }
@@ -221,20 +223,101 @@ public class TidalHelper {
         });
     }
 
-    private void updatePlaylist(List<String> itemIds, String playlistId, String etag) {
 
+    private void updatePlaylist(Item item, String playlistId, String etag) {
+        if ( item.getItemType() == ItemType.SONGS ) {
+            addItemIdsToPlaylist(Collections.singletonList(item.getId()), playlistId, etag);
+        }
+        else if ( item.getItemType() == ItemType.PLAYLIST ) {
+            addPlaylistToPlaylist(item, playlistId, etag);
+        }
+        else {
+            addCollectionToPlaylist(item, playlistId, etag);
+        }
+    }
+
+
+    private void addPlaylistToPlaylist(Item item, String playlistId, String etag) {
+        int limit = item.getNumberOfTracks() != null? item.getNumberOfTracks().intValue() : 10;
+        Call<PlaylistResponse> call = getPlaylistTracks(item.getUuid(),0, limit );
+        call.enqueue(new Callback<PlaylistResponse>() {
+            @Override
+            public void onResponse(Call<PlaylistResponse> call, Response<PlaylistResponse> response) {
+                if (response.isSuccessful()) {
+                    ArrayList<String> itemIds = new ArrayList<>();
+                    List<PlaylistResponse.Items> tracks = response.body().getItems();
+                    for ( PlaylistResponse.Items aTrack: tracks ) {
+                        itemIds.add(aTrack.getItem().getId());
+                    }
+
+                    new android.os.Handler(Looper.getMainLooper()).post(()->{
+                        addItemIdsToPlaylist(itemIds, playlistId, etag);
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PlaylistResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void addCollectionToPlaylist(Item item, String playlistId, String etag) {
+        String path = item.getItemType() == ItemType.ALBUM ?
+                "albums/"+ item.getId() + "/tracks" :
+                "artists/" + item.getId() +  "/toptracks" ;
+
+        Call<TidalBaseResponse> call = getItemCollection(path,0, item.getNumberOfTracks().intValue());
+        call.enqueue(new Callback<TidalBaseResponse>() {
+            @Override
+            public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
+                if (response.isSuccessful()) {
+                    ArrayList<String> itemIds = new ArrayList<>();
+                    List<Item> tracks = response.body().getItems();
+                    for ( Item aTrack: tracks ) {
+                        itemIds.add(aTrack.getId());
+                    }
+
+                    new android.os.Handler(Looper.getMainLooper()).post(()->{
+                        addItemIdsToPlaylist(itemIds, playlistId, etag);
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+
+
+    // returns a comma seperated String
+    private static String listToCSS(List<String> itemIds) {
         StringBuilder builder = new StringBuilder();
-        for ( String itemId: itemIds) {
-            builder.append(itemId);
+        boolean initial = true;
+        for ( String anId: itemIds ) {
+            if ( !initial ) {
+                builder.append(",");
+            }
+            builder.append(anId);
+            initial = false;
         }
 
+        return builder.toString();
+    }
+
+
+    private void addItemIdsToPlaylist(List<String> itemIds, String playlistId, String etag) {
         TidalRequestController.Callback client = TidalRequestController.getTidalClient();
-        Call<String> call = client.addToUserPlaylist(sessionId, etag, playlistId, builder.toString(), "0", getCountry());
-        call.enqueue(new Callback<String>() {
+        Call<Void> call = client.addToUserPlaylist(sessionId, etag, playlistId, listToCSS(itemIds), String.valueOf(0), getCountry());
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(context, "Added to playlist", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, R.string.added_to_playlist, Toast.LENGTH_LONG).show();
                 }
                 else {
                     Toast.makeText(context, "Failed to add playlist", Toast.LENGTH_LONG).show();
@@ -242,10 +325,11 @@ public class TidalHelper {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 Toast.makeText(context, "Failed to add playlist", Toast.LENGTH_LONG).show();
             }
         });
+
     }
 
     private String getCountry() {

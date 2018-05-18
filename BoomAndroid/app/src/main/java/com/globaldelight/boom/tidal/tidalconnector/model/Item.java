@@ -231,6 +231,10 @@ public class Item implements IMediaItem {
             return ItemType.SONGS;
         }
 
+        if ( uuid != null ) {
+            return ItemType.PLAYLIST;
+        }
+
         switch (getType()) {
             case "ALBUM":
                 return ItemType.ALBUM;
@@ -240,6 +244,7 @@ public class Item implements IMediaItem {
             case "PLAYLIST":
                 return ItemType.PLAYLIST;
             default:
+
                 return ItemType.SONGS;
         }
     }

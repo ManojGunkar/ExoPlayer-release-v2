@@ -12,7 +12,10 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.adapters.song.PlayListAdapter;
+import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.ui.adapter.PlaylistDialogAdapter;
@@ -37,20 +40,9 @@ import retrofit2.http.Header;
 public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, PlaylistDialogAdapter.Callback {
 
     private Activity mActivity;
-    private String uuid = null;
-    private String trackId = null;
-    private String albumId = null;
-    private String artist = null;
+    private Item mItem;
+    private boolean mIsFavourite;
 
-    private boolean isPlaylistAdd = false;
-    private boolean isAlbumAdd = false;
-    private boolean isArtistAdd = false;
-    private boolean isTrackAdd = false;
-
-    private boolean isPlaylistDel = false;
-    private boolean isAlbumDel = false;
-    private boolean isArtistDel = false;
-    private boolean isTrackDel = false;
     private PlaylistDialogAdapter adapter;
 
     private TidalPopupMenu(Activity activity) {
@@ -61,60 +53,17 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
         return new TidalPopupMenu(activity);
     }
 
-    public void addToPlaylist(View view, String uuid) {
-        this.isPlaylistAdd = true;
-        this.uuid = uuid;
+    public void showPopup(View view, Item item, boolean isFavourite) {
+        mItem = item;
+        mIsFavourite = isFavourite;
         getMenu(view).setOnMenuItemClickListener(this::onMenuItemClick);
-    }
-
-    public void addToTrack(View view, String trackId) {
-        this.isTrackAdd = true;
-        this.trackId = trackId;
-        getMenu(view).setOnMenuItemClickListener(this::onMenuItemClick);
-    }
-
-    public void addToAlbum(View view, String albumId) {
-        this.isAlbumAdd = true;
-        this.albumId = albumId;
-        getMenu(view).setOnMenuItemClickListener(this::onMenuItemClick);
-    }
-
-    public void addToArtist(View view, String artist) {
-        this.isArtistAdd = true;
-        this.artist = artist;
-        getMenu(view).setOnMenuItemClickListener(this::onMenuItemClick);
-    }
-
-    public void deletePlaylist(View view, String uuid) {
-        isPlaylistDel = true;
-        this.uuid = uuid;
-        PopupMenu popupMenu = getMenu(view);
-        popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(true);
-        popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(false);
-        popupMenu.setOnMenuItemClickListener(this::onMenuItemClick);
-    }
-
-    public void deleteTrack(View view, String trackId) {
-        isTrackDel = true;
-        this.trackId = trackId;
-        PopupMenu popupMenu = getMenu(view);
-        popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(true);
-        popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(false);
-        popupMenu.setOnMenuItemClickListener(this::onMenuItemClick);
-    }
-
-    public void deleteAlbum(View view, String albumId) {
-        isAlbumDel = true;
-        this.albumId = albumId;
-        PopupMenu popupMenu = getMenu(view);
-        popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(true);
-        popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(false);
-        popupMenu.setOnMenuItemClickListener(this::onMenuItemClick);
     }
 
     private PopupMenu getMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(mActivity, view);
         popupMenu.inflate(R.menu.tidal_menu);
+        popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(!mIsFavourite);
+        popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(mIsFavourite);
         popupMenu.show();
         return popupMenu;
     }
@@ -123,25 +72,11 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.tidal_menu_add_to_fav:
-                if (isPlaylistAdd)
-                    addToMyMusic(TidalHelper.getInstance(mActivity).addToPlaylist(uuid));
-                if (isAlbumAdd)
-                    addToMyMusic(TidalHelper.getInstance(mActivity).addToAlbum(albumId));
-                if (isArtistAdd)
-                    addToMyMusic(TidalHelper.getInstance(mActivity).addToArtist(artist));
-                if (isTrackAdd)
-                    addToMyMusic(TidalHelper.getInstance(mActivity).addToTrack(trackId));
+                addToFavourites();
                 break;
 
             case R.id.tidal_menu_remove_fav:
-                if (isPlaylistDel)
-                    removeFromMyMusic(TidalHelper.getInstance(mActivity).removePlaylist(uuid));
-                if (isAlbumDel)
-                    removeFromMyMusic(TidalHelper.getInstance(mActivity).removeAlbum(albumId));
-                if (isTrackDel)
-                    removeFromMyMusic(TidalHelper.getInstance(mActivity).removeTrack(trackId));
-                if (isArtistDel)
-                    removeFromMyMusic(TidalHelper.getInstance(mActivity).removeArtist(artist));
+                removeFromFavourites();
                 break;
 
             case R.id.tidal_menu_add_to_playlist:
@@ -149,15 +84,14 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
                 break;
 
             case R.id.tidal_menu_add_to_upnext:
-
+                addToQueue();
                 break;
 
             case R.id.tidal_menu_play_next:
-
+                playNext();
                 break;
 
             case R.id.tidal_menu_shuffle:
-
                 break;
         }
         return false;
@@ -179,6 +113,65 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
                 Toast.makeText(mActivity, "Remove Successfully", Toast.LENGTH_SHORT).show();
             else Toast.makeText(mActivity, "Something went wrong", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private void addToQueue() {
+        if ( mItem.getItemType() == ItemType.SONGS ) {
+            App.playbackManager().queue().addItemAsUpNext(mItem);
+        }
+        else {
+
+        }
+    }
+
+    private void playNext() {
+        if ( mItem.getItemType() == ItemType.SONGS ) {
+            App.playbackManager().queue().addItemAsPlayNext(mItem);
+        }
+        else {
+
+        }
+    }
+
+
+    private void addToFavourites() {
+        switch (mItem.getItemType()) {
+            case ItemType.SONGS:
+                addToMyMusic(TidalHelper.getInstance(mActivity).addToTrack(mItem.getId()));
+                break;
+
+            case ItemType.ALBUM:
+                addToMyMusic(TidalHelper.getInstance(mActivity).addToAlbum(mItem.getId()));
+                break;
+
+            case ItemType.ARTIST:
+                addToMyMusic(TidalHelper.getInstance(mActivity).addToArtist(mItem.getId()));
+                break;
+
+            case ItemType.PLAYLIST:
+                addToMyMusic(TidalHelper.getInstance(mActivity).addToPlaylist(mItem.getId()));
+                break;
+        }
+    }
+
+    private void removeFromFavourites() {
+        switch (mItem.getItemType()) {
+            case ItemType.SONGS:
+                removeFromMyMusic(TidalHelper.getInstance(mActivity).removeTrack(mItem.getId()));
+                break;
+
+            case ItemType.ALBUM:
+                removeFromMyMusic(TidalHelper.getInstance(mActivity).removeAlbum(mItem.getId()));
+                break;
+
+            case ItemType.ARTIST:
+                removeFromMyMusic(TidalHelper.getInstance(mActivity).removeArtist(mItem.getId()));
+                break;
+
+            case ItemType.PLAYLIST:
+                removeFromMyMusic(TidalHelper.getInstance(mActivity).removePlaylist(mItem.getId()));
+                break;
+        }
     }
 
     private void showPlaylistDialog() {
@@ -238,12 +231,6 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
 
     @Override
     public void onItemSelected(Item item) {
-
-        ArrayList<String> ids = new ArrayList<>();
-        if (isTrackAdd) {
-            ids.add(trackId);
-        }
-
-        TidalHelper.getInstance(mActivity).addItemToPlaylist(ids,item.getId());
+        TidalHelper.getInstance(mActivity).addItemToPlaylist(mItem,item.getId());
     }
 }
