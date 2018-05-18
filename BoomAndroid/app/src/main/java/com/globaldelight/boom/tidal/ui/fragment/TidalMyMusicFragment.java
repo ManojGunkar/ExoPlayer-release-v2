@@ -33,6 +33,7 @@ import java.util.List;
 import retrofit2.Call;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_REFRESH_LIST;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
 import static com.globaldelight.boom.tidal.utils.NestedItemDescription.GRID_VIEW;
 import static com.globaldelight.boom.tidal.utils.NestedItemDescription.LIST_VIEW;
@@ -60,6 +61,12 @@ public class TidalMyMusicFragment extends Fragment {
                 case ACTION_SONG_CHANGED:
                     if (null != mAdapter)
                         mAdapter.notifyDataSetChanged();
+                    break;
+
+                case ACTION_REFRESH_LIST:
+                    mItemList.clear();
+                    mItemList.addAll(TidalPopupMenu.newInstance(getActivity()).getNestedItems());
+                    mAdapter.notifyDataSetChanged();
                     break;
             }
         }
@@ -101,6 +108,7 @@ public class TidalMyMusicFragment extends Fragment {
         });
         mRequestChain.submit(null, (response) -> {
             mAdapter = new NestedItemAdapter(getContext(), mItemList, true, false);
+            TidalPopupMenu.newInstance(getActivity()).saveNestedItems(mItemList);
             mRecyclerView.setAdapter(mAdapter);
             mProgressBar.setVisibility(View.GONE);
             mHasResponse = true;
@@ -118,6 +126,7 @@ public class TidalMyMusicFragment extends Fragment {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
+        intentFilter.addAction(ACTION_REFRESH_LIST);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
         loadAll();
 

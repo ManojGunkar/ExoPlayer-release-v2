@@ -1,7 +1,9 @@
 package com.globaldelight.boom.tidal.utils;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -13,25 +15,23 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
-import com.globaldelight.boom.app.adapters.song.PlayListAdapter;
-import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.ui.adapter.PlaylistDialogAdapter;
+import com.globaldelight.boom.utils.Log;
 import com.globaldelight.boom.utils.RequestChain;
 import com.globaldelight.boom.utils.Utils;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import okhttp3.Headers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.Header;
+
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_REFRESH_LIST;
 
 /**
  * Created by Manoj Kumar on 09-05-2018.
@@ -39,10 +39,10 @@ import retrofit2.http.Header;
  */
 public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, PlaylistDialogAdapter.Callback {
 
+    private static List<NestedItemDescription> mItemList = new ArrayList<>();
     private Activity mActivity;
     private Item mItem;
     private boolean mIsFavourite;
-
     private PlaylistDialogAdapter adapter;
 
     private TidalPopupMenu(Activity activity) {
@@ -97,6 +97,35 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
         return false;
     }
 
+    public void saveNestedItems(List<NestedItemDescription> itemList) {
+        mItemList = itemList;
+        Log.d("Tidal", "Nested Item Size=" + mItemList.size());
+    }
+
+    public List<NestedItemDescription> getNestedItems() {
+        return mItemList;
+    }
+
+    public void refreshList() {
+        NestedItemDescription itemDescription;
+        List<NestedItemDescription> list = new ArrayList<>();
+        for (int i = 0; i < mItemList.size(); i++) {
+
+            List<Item> items = mItemList.get(i).itemList;
+            int titleResId = mItemList.get(i).titleResId;
+            String path = mItemList.get(i).apiPath;
+            int type = mItemList.get(i).type;
+            if (items.contains(mItem)) {
+                items.remove(mItem);
+            }
+            itemDescription = new NestedItemDescription(titleResId, type, items, path);
+            list.add(itemDescription);
+
+        }
+        saveNestedItems(list);
+        LocalBroadcastManager.getInstance(mActivity).sendBroadcast(new Intent(ACTION_REFRESH_LIST));
+    }
+
     private void addToMyMusic(Call<JsonElement> call) {
         RequestChain requestChain = new RequestChain(mActivity);
         requestChain.submit(call, resp -> {
@@ -109,26 +138,25 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
     private void removeFromMyMusic(Call<JsonElement> call) {
         RequestChain requestChain = new RequestChain(mActivity);
         requestChain.submit(call, resp -> {
-            if (resp == null)
+            if (resp == null) {
                 Toast.makeText(mActivity, "Remove Successfully", Toast.LENGTH_SHORT).show();
-            else Toast.makeText(mActivity, "Something went wrong", Toast.LENGTH_SHORT).show();
+                refreshList();
+            } else Toast.makeText(mActivity, "Something went wrong", Toast.LENGTH_SHORT).show();
         });
     }
 
     private void addToQueue() {
-        if ( mItem.getItemType() == ItemType.SONGS ) {
+        if (mItem.getItemType() == ItemType.SONGS) {
             App.playbackManager().queue().addItemAsUpNext(mItem);
-        }
-        else {
+        } else {
 
         }
     }
 
     private void playNext() {
-        if ( mItem.getItemType() == ItemType.SONGS ) {
+        if (mItem.getItemType() == ItemType.SONGS) {
             App.playbackManager().queue().addItemAsPlayNext(mItem);
-        }
-        else {
+        } else {
 
         }
     }
@@ -205,25 +233,25 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
                         if (!input.toString().matches("")) {
-                            TidalRequestController.Callback callback=TidalRequestController.getTidalClient();
-                            Call<Item> call=callback.createPlaylist(
+                            TidalRequestController.Callback callback = TidalRequestController.getTidalClient();
+                            Call<Item> call = callback.createPlaylist(
                                     UserCredentials.getCredentials(mActivity).getSessionId(),
                                     UserCredentials.getCredentials(mActivity).getUserId(),
-                                    input.toString(),"My Playlist");
-                           call.enqueue(new Callback<Item>() {
-                               @Override
-                               public void onResponse(Call<Item> call, Response<Item> response) {
-                                   if (response.isSuccessful()) {
-                                       String etag = response.headers().get("etag");
-                                       UserCredentials.getCredentials(mActivity).setETag(etag);
-                                   }
-                               }
+                                    input.toString(), "My Playlist");
+                            call.enqueue(new Callback<Item>() {
+                                @Override
+                                public void onResponse(Call<Item> call, Response<Item> response) {
+                                    if (response.isSuccessful()) {
+                                        String etag = response.headers().get("etag");
+                                        UserCredentials.getCredentials(mActivity).setETag(etag);
+                                    }
+                                }
 
-                               @Override
-                               public void onFailure(Call<Item> call, Throwable t) {
+                                @Override
+                                public void onFailure(Call<Item> call, Throwable t) {
 
-                               }
-                           });
+                                }
+                            });
                         }
                     }
                 }).show();
@@ -231,6 +259,6 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
 
     @Override
     public void onItemSelected(Item item) {
-        TidalHelper.getInstance(mActivity).addItemToPlaylist(mItem,item.getId());
+        TidalHelper.getInstance(mActivity).addItemToPlaylist(mItem, item.getId());
     }
 }
