@@ -31,12 +31,14 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
     private List<Item> mItems = Collections.emptyList();
     private boolean isUserMode = false;
+    private boolean isArtists = false;
     private String image=null;
 
-    public ItemAdapter(Context context, List<Item> items,boolean isUserMode) {
+    public ItemAdapter(Context context, List<Item> items,boolean isUserMode,boolean isArtists) {
         this.mContext = context;
         this.mItems = items;
         this.isUserMode = isUserMode;
+        this.isArtists=isArtists;
     }
 
     @Override
@@ -89,6 +91,9 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 intent.putExtra("isPlaylist", true);
             } else
                 intent.putExtra("id", item.getId());
+            if (isArtists){
+                intent.putExtra("isArtists", true);
+            }
             mContext.startActivity(intent);
         });
 

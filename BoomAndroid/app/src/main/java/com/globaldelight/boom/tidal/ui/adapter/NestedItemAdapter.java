@@ -29,6 +29,7 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private boolean isUserMode = false;
     private boolean isSearchMode = false;
     private String searchQuery=null;
+    private boolean isArtists=false;
 
     public NestedItemAdapter(Context context, List<NestedItemDescription> mapItems, boolean isUserMode, boolean isSearchMode) {
         this.mContext = context;
@@ -52,7 +53,10 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         CustomViewHolder customViewHolder = (CustomViewHolder) holder;
         NestedItemDescription description = mItems.get(position);
         customViewHolder.txtTitleItem.setText(description.titleResId);
-        ItemAdapter adapter = new ItemAdapter(mContext, description.itemList,isUserMode);
+        if (description.apiPath.contains("artists")){
+            isArtists=true;
+        }
+        ItemAdapter adapter = new ItemAdapter(mContext, description.itemList,isUserMode,isArtists);
         LinearLayoutManager llm;
 
 

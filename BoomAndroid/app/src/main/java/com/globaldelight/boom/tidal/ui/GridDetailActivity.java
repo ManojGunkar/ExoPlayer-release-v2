@@ -41,6 +41,7 @@ public class GridDetailActivity extends MasterActivity {
 
     private String id;
     private boolean isPlaylist = false;
+    private boolean isArtists = false;
     private boolean isMoods = false;
     private String moodsPath = null;
     private boolean isUserMode = false;
@@ -96,6 +97,7 @@ public class GridDetailActivity extends MasterActivity {
         title = bundle.getString("title");
         id = bundle.getString("id");
         isPlaylist = bundle.getBoolean("isPlaylist");
+        isArtists = bundle.getBoolean("isArtists");
         isMoods = bundle.getBoolean("isMoods");
         isUserMode = bundle.getBoolean("isUserMode");
         String imageUrl = bundle.getString("imageurl");
@@ -144,7 +146,18 @@ public class GridDetailActivity extends MasterActivity {
                 mPlaylistAdapter = new PlaylistTrackAdapter(this, resp.getItems(), title,isUserMode);
                 mRecyclerView.setAdapter(mPlaylistAdapter);
             });
-        } else {
+        }else if (isArtists){
+            String path = "artists/" + id + "/tracks";
+            Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 200);
+            requestChain.submit(call, resp -> {
+                mProgressBar.setVisibility(View.GONE);
+                mAdapter = new TrackDetailAdapter(this, resp.getItems(), title,isUserMode);
+                LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+                mRecyclerView.setLayoutManager(llm);
+                mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                mRecyclerView.setAdapter(mAdapter);
+            });
+        }else {
             String path = "albums/" + id + "/tracks";
             Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 200);
             requestChain.submit(call, resp -> {
