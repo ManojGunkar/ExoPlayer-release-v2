@@ -20,8 +20,6 @@ import com.globaldelight.boom.utils.Utils;
 import java.util.Collections;
 import java.util.List;
 
-import static com.globaldelight.boom.tidal.tidalconnector.model.Item.IMAGE_BASE_URL;
-
 /**
  * Created by Manoj Kumar on 28-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
@@ -32,14 +30,11 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Item> mItems = Collections.emptyList();
 
     private boolean isUserMode=false;
-    private boolean isArtists=false;
-    private String image=null;
 
-    public GridAdapter(Context context, List<Item> items,boolean isUserMode,boolean isArtists) {
+    public GridAdapter(Context context, List<Item> items,boolean isUserMode) {
         this.mContext = context;
         this.mItems = items;
         this.isUserMode=isUserMode;
-        this.isArtists=isArtists;
     }
 
     @Override
@@ -52,41 +47,20 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ItemViewHolder viewHolder = (ItemViewHolder) holder;
         Item item = mItems.get(position);
-
+        String image = item.getItemArtUrl();
         viewHolder.imgItemCover.setVisibility(View.VISIBLE);
         final int size = Utils.largeImageSize(mContext);
-
-        if (item.getPicture()!=null){
-            image = item.getPicture();
-            image=IMAGE_BASE_URL + image.replace("-", "/") + "/320x214.jpg";
-        }else {
-            image = item.getItemArtUrl();
-        }
-
         Glide.with(mContext).load(image)
                 .placeholder(R.drawable.ic_default_art_grid)
                 .centerCrop()
                 .override(size, size)
                 .into(viewHolder.imgItemCover);
 
-        viewHolder.txtItemTitle.setText(item.getTitle()==null?item.getName():item.getTitle());
+        viewHolder.txtItemTitle.setText(item.getTitle());
         viewHolder.txtItemSubTitle.setText(item.getDescription());
 
         viewHolder.imgItemMenu.setOnClickListener(view->{
-            if (isUserMode){
-                if (item.getUuid()!=null){
-                    TidalPopupMenu.newInstance((Activity)mContext).deletePlaylist(view,item.getUuid());
-                }else {
-                    TidalPopupMenu.newInstance((Activity)mContext).deleteAlbum(view,item.getId());
-                }
-
-            }else {
-                if (item.getUuid()!=null){
-                    TidalPopupMenu.newInstance((Activity)mContext).addToPlaylist(view,item.getUuid());
-                }else {
-                    TidalPopupMenu.newInstance((Activity)mContext).addToAlbum(view,item.getId());
-                }
-            }
+            TidalPopupMenu.newInstance((Activity)mContext).showPopup(view,item, isUserMode);
         });
 
         viewHolder.itemView.setOnClickListener(v -> {
@@ -101,8 +75,6 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
             else
                 intent.putExtra("id", item.getId());
-            if (isArtists)
-                intent.putExtra("isArtists",true);
 
             mContext.startActivity(intent);
         });

@@ -28,7 +28,7 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private final static int TYPE_HEADER = 10000;
     private final static int TYPE_ITEM = 20000;
     private Context mContext;
-    private List<Item> mItems = Collections.emptyList();
+    private List<Item> mItems = null;
     private String mHeaderTitle;
     private boolean isUserMode=false;
 
@@ -75,11 +75,7 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
             viewHolder.imgMenuTrack.setOnClickListener(v -> {
-                if (isUserMode){
-                    TidalPopupMenu.newInstance((Activity) mContext).deleteTrack(v, item.getId());
-                }else {
-                    TidalPopupMenu.newInstance((Activity) mContext).addToTrack(v, item.getId());
-                }
+                TidalPopupMenu.newInstance((Activity) mContext).showPopup(v, item, isUserMode);
             });
 
             viewHolder.txtTitle.setText(item.getTitle());

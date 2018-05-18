@@ -54,6 +54,7 @@ import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.controller.PlayerUIController;
+import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.player.AudioEffect;
@@ -643,9 +644,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
     private void updatePlayerUI(boolean mediaChanged) {
 //        if(MasterActivity.isPlayerExpended()){
-        updateLargePlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
+        updateLargePlayerUI(mPlayingMediaItem, App.playbackManager().isTrackPlaying(), mIsLastPlayed);
 //        }else {
-        updateMiniPlayerUI(mPlayingMediaItem, mIsPlaying, mIsLastPlayed);
+        updateMiniPlayerUI(mPlayingMediaItem, App.playbackManager().isTrackPlaying(), mIsLastPlayed);
 //        }
         if (null != mPlayingMediaItem && mediaChanged)
             updateAlbumArt(mPlayingMediaItem);

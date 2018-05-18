@@ -70,15 +70,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         viewHolder.txtItemSubTitle.setText(item.getDescription());
 
         viewHolder.imgItemMenu.setOnClickListener(v->{
-            if (isUserMode){
-                if (item.getUuid()!=null)
-                TidalPopupMenu.newInstance((Activity) mContext).deletePlaylist(v,item.getUuid());
-                else TidalPopupMenu.newInstance((Activity) mContext).deleteAlbum(v,item.getId());
-            }else {
-                if (item.getUuid()!=null)
-                    TidalPopupMenu.newInstance((Activity) mContext).addToPlaylist(v,item.getUuid());
-                else TidalPopupMenu.newInstance((Activity) mContext).addToAlbum(v,item.getId());
-            }
+            TidalPopupMenu.newInstance((Activity) mContext).showPopup(v,item, isUserMode);
         });
 
         viewHolder.itemView.setOnClickListener(v -> {
