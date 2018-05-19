@@ -217,6 +217,11 @@ public class Item implements IMediaItem {
             return IMAGE_BASE_URL + imageId.replace("-", "/") + "/320x320.jpg";
         }
 
+        if (getPicture() != null) {
+            imageId = getPicture();
+            return IMAGE_BASE_URL + imageId.replace("-", "/") + "/320x214.jpg";
+        }
+
         return "";
     }
 

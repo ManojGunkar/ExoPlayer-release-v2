@@ -20,8 +20,6 @@ import com.globaldelight.boom.utils.Utils;
 import java.util.Collections;
 import java.util.List;
 
-import static com.globaldelight.boom.tidal.tidalconnector.model.Item.IMAGE_BASE_URL;
-
 /**
  * Created by Manoj Kumar on 28-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
@@ -31,15 +29,14 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
     private List<Item> mItems = Collections.emptyList();
 
-    private boolean isUserMode=false;
-    private boolean isArtists=false;
-    private String image=null;
+    private boolean isUserMode = false;
+    private boolean isArtists = false;
 
-    public GridAdapter(Context context, List<Item> items,boolean isUserMode,boolean isArtists) {
+    public GridAdapter(Context context, List<Item> items, boolean isUserMode, boolean isArtists) {
         this.mContext = context;
         this.mItems = items;
-        this.isUserMode=isUserMode;
-        this.isArtists=isArtists;
+        this.isUserMode = isUserMode;
+        this.isArtists = isArtists;
     }
 
     @Override
@@ -53,12 +50,7 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ItemViewHolder viewHolder = (ItemViewHolder) holder;
         Item item = mItems.get(position);
 
-        if (item.getPicture()!=null){
-            image = item.getPicture();
-            image=IMAGE_BASE_URL + image.replace("-", "/") + "/320x214.jpg";
-        }else {
-            image = item.getItemArtUrl();
-        }
+        String image = item.getItemArtUrl();
 
         final int size = Utils.largeImageSize(mContext);
         Glide.with(mContext).load(image)
@@ -67,12 +59,12 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 .override(size, size)
                 .into(viewHolder.imgItemCover);
 
-        viewHolder.txtItemTitle.setText(item.getTitle()==null?item.getName():item.getTitle());
+        viewHolder.txtItemTitle.setText(item.getTitle() == null ? item.getName() : item.getTitle());
         viewHolder.txtItemSubTitle.setText(item.getDescription());
 
 
-        viewHolder.imgItemMenu.setOnClickListener(view->{
-            TidalPopupMenu.newInstance((Activity)mContext).showPopup(view,item, isUserMode);
+        viewHolder.imgItemMenu.setOnClickListener(view -> {
+            TidalPopupMenu.newInstance((Activity) mContext).showPopup(view, item, isUserMode);
         });
 
         viewHolder.itemView.setOnClickListener(v -> {
@@ -81,14 +73,13 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             intent.putExtra("imageurl", image);
             intent.putExtra("title", item.getTitle());
             intent.putExtra("isUserMode", isUserMode);
-            if (item.getUuid() != null){
+            if (item.getUuid() != null) {
                 intent.putExtra("id", item.getUuid());
-                intent.putExtra("isPlaylist",true);
-            }
-            else
+                intent.putExtra("isPlaylist", true);
+            } else
                 intent.putExtra("id", item.getId());
             if (isArtists)
-                intent.putExtra("isArtists",true);
+                intent.putExtra("isArtists", true);
 
             mContext.startActivity(intent);
         });

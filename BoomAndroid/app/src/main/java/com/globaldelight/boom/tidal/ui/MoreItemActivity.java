@@ -119,7 +119,6 @@ public class MoreItemActivity extends MasterActivity {
 
         setTitle(title);
         if (isUserMode) {
-            isArtists = api.contains("artists");
             if (!isArtists && isUserPlaylist)
                 loadUserPlaylists();
             else
