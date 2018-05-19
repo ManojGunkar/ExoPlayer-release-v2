@@ -59,10 +59,10 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 .override(size, size)
                 .into(viewHolder.imgItemCover);
 
+        viewHolder.imgItemCover.setVisibility(View.VISIBLE);
         viewHolder.txtItemTitle.setText(item.getTitle() == null ? item.getName() : item.getTitle());
         viewHolder.txtItemSubTitle.setText(item.getDescription());
-
-
+        
         viewHolder.imgItemMenu.setOnClickListener(view -> {
             TidalPopupMenu.newInstance((Activity) mContext).showPopup(view, item, isUserMode);
         });
