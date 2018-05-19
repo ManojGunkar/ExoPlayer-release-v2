@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Curated;
+import com.globaldelight.boom.tidal.ui.ContentLoadable;
 import com.globaldelight.boom.tidal.ui.adapter.CuratedAdapter;
 import com.globaldelight.boom.utils.RequestChain;
 
@@ -28,13 +29,14 @@ import retrofit2.Call;
  * Created by Manoj Kumar on 06-05-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class TidalCuratedFragment extends Fragment {
+public class TidalCuratedFragment extends Fragment implements ContentLoadable {
 
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerGenres;
     private RecyclerView mRecyclerMoods;
     private TextView mTxtGenres;
     private TextView mTxtMoods;
+    private boolean mHasData = false;
 
     @Nullable
     @Override
@@ -50,9 +52,20 @@ public class TidalCuratedFragment extends Fragment {
         mRecyclerGenres=view.findViewById(R.id.rv_tidal_genres);
         mTxtGenres=view.findViewById(R.id.txt_header_genres_curated);
         mTxtMoods=view.findViewById(R.id.txt_header_moods_curated);
+    }
+
+    public void onLoadContent() {
+        if ( mHasData ) {
+            return;
+        }
         load("genres",false);
         load("moods",true);
     }
+
+    @Override
+    public void onStopLoading() {
+    }
+
 
     private void load(String path,boolean isMoods){
         RequestChain requestChain=new RequestChain(getContext());
@@ -78,6 +91,7 @@ public class TidalCuratedFragment extends Fragment {
                 mTxtGenres.setVisibility(View.VISIBLE);
                 mRecyclerGenres.setAdapter(new CuratedAdapter(getContext(),resp,false));
             }
+            mHasData = true;
         });
     }
 

@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
+import com.globaldelight.boom.tidal.ui.ContentLoadable;
 import com.globaldelight.boom.tidal.ui.adapter.NestedItemAdapter;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
@@ -39,7 +40,7 @@ import static com.globaldelight.boom.tidal.utils.NestedItemDescription.LIST_VIEW
  * Created by Manoj Kumar on 28-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class TidalRisingFragment extends Fragment {
+public class TidalRisingFragment extends Fragment implements ContentLoadable {
 
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
@@ -99,7 +100,9 @@ public class TidalRisingFragment extends Fragment {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
-    private void load() {
+
+    @Override
+    public void onLoadContent() {
         if ( mHasResponse ) {
             return;
         }
@@ -115,6 +118,15 @@ public class TidalRisingFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onStopLoading() {
+        if ( mRequestChain != null ) {
+            mRequestChain.cancel();
+            mRequestChain = null;
+        }
+    }
+
+
     private void mapResponse(String path, int titleResId, int type) {
         Call<TidalBaseResponse> call = TidalHelper.getInstance(getContext()).getItemCollection(path, 0 , 10);
         mRequestChain.submit(call, new ResponseHandler(titleResId, type,path));
@@ -126,18 +138,12 @@ public class TidalRisingFragment extends Fragment {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
-        load();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if ( mRequestChain != null ) {
-            mRequestChain.cancel();
-            mRequestChain = null;
-        }
-
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 

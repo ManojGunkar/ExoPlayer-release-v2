@@ -2,10 +2,9 @@ package com.globaldelight.boom.tidal.ui.fragment;
 
 import android.app.SearchManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -20,10 +19,9 @@ import android.view.ViewGroup;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.fragments.TabBarFragment;
+import com.globaldelight.boom.tidal.ui.ContentLoadable;
 import com.globaldelight.boom.tidal.ui.adapter.TidalTabAdapter;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
-
-import retrofit2.http.Path;
 
 import static android.content.Context.SEARCH_SERVICE;
 
@@ -51,15 +49,30 @@ public class TidalMainFragment extends TabBarFragment {
     private void initComp(View view) {
         mTabBar = view.findViewById(R.id.tab_radio);
         mViewPager = view.findViewById(R.id.viewpager_radio);
-        setViewPager(mViewPager);
+        setViewPager();
     }
 
-    private void setViewPager(ViewPager viewPager) {
+    private void setViewPager() {
         mStateAdapter = new TidalTabAdapter(getActivity().getSupportFragmentManager());
-        viewPager.setAdapter(mStateAdapter);
-        viewPager.setOffscreenPageLimit(3);
+        mViewPager.setAdapter(mStateAdapter);
+        mViewPager.setOffscreenPageLimit(3);
         mTabBar.setupWithViewPager(mViewPager);
-        viewPager.setCurrentItem(0);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                ((ContentLoadable)mStateAdapter.getItem(position)).onLoadContent();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
 
@@ -127,8 +140,17 @@ public class TidalMainFragment extends TabBarFragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
+
+        // Post is necessary. Otherwise the method is called before the fragment is ready.
+        new Handler().post(()-> ((ContentLoadable)mStateAdapter.getItem(mViewPager.getCurrentItem())).onLoadContent());
         TidalHelper.getInstance(getContext()).fetchSubscriptionInfo();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ((ContentLoadable)mStateAdapter.getItem(mViewPager.getCurrentItem())).onStopLoading();
     }
 }
