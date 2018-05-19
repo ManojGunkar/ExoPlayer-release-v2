@@ -115,7 +115,7 @@ public class CuratedDetailActivity extends MasterActivity {
         if (albumPath!=null)
         mapResponse(albumPath, R.string.tidal_album, GRID_VIEW);
 
-        mRequestChain.submit(null, (response) -> {
+        mRequestChain.submit(response -> {
             mAdapter = new NestedItemAdapter(this, mItemList,false,false);
             mRecyclerView.setAdapter(mAdapter);
             mProgressBar.setVisibility(View.GONE);

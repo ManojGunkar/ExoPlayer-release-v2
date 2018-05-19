@@ -105,7 +105,7 @@ public class TidalSearchFragment extends Fragment {
         setResponseType(query,R.string.tidal_playlist,GRID_VIEW,TidalHelper.SEARCH,TidalHelper.SEARCH_PLAYLIST_TYPE);
         setResponseType(query,R.string.tidal_artist,GRID_VIEW,TidalHelper.SEARCH,TidalHelper.SEARCH_ARTISTS_TYPE);
 
-        requestChain.submit(null,resp -> {
+        requestChain.submit(resp -> {
 
             mAdapter = new NestedItemAdapter(getContext(), mItems,false,true);
             mAdapter.setSearchQuery(query);
