@@ -115,7 +115,7 @@ public class MoreItemActivity extends MasterActivity {
         isSearchMode = bundle.getBoolean("isSearchMode");
         isUserPlaylist = bundle.getBoolean("isUserPlaylist");
         api = bundle.getString("api");
-        isArtists = title.contains("artists");
+        isArtists = title.equalsIgnoreCase("artists");
 
         setTitle(title);
         if (isUserMode) {
