@@ -53,21 +53,15 @@ public class RequestChain {
             }
 
             if ( callback != null ) {
-                callback.onResponse(result);
+                final Result<T> res = result;
+                mainHandler.post(()->callback.onResponse(res));
             }
         });
     }
 
     // Just submit a callback - will be executed after all previous operations are done
     public <T> void submit(Callback<Result<T>> callback) {
-        executor.submit(()->{
-            try {
-                callback.onResponse(Result.success(null));
-            }
-            catch (Exception e) {
-                callback.onResponse(Result.error(-1, e.getMessage()));
-            }
-        });
+        executor.submit(()->mainHandler.post(()->callback.onResponse(Result.success(null))));
     }
 
     public void cancel() {
