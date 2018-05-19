@@ -53,7 +53,8 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         CustomViewHolder customViewHolder = (CustomViewHolder) holder;
         NestedItemDescription description = mItems.get(position);
         customViewHolder.txtTitleItem.setText(description.titleResId);
-        if (description.apiPath.contains("artists")){
+        String check=mContext.getResources().getString(description.titleResId);
+        if (check.equalsIgnoreCase("artists")){
             isArtists=true;
         }
         ItemAdapter adapter = new ItemAdapter(mContext, description.itemList,isUserMode,isArtists);

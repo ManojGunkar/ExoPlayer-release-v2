@@ -147,8 +147,8 @@ public class GridDetailActivity extends MasterActivity {
                 mRecyclerView.setAdapter(mPlaylistAdapter);
             });
         }else if (isArtists){
-            String path = "artists/" + id + "/tracks";
-            Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 200);
+            String path = "artists/" + id + "/toptracks";
+            Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 999);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
                 mAdapter = new TrackDetailAdapter(this, resp.getItems(), title,isUserMode);

@@ -76,7 +76,7 @@ public class MoreItemActivity extends MasterActivity {
         }
     };
     private String searchQuery;
-    private boolean isArtists=false;
+    private boolean isArtists = false;
 
     @Override
     public void onStart() {
@@ -115,11 +115,12 @@ public class MoreItemActivity extends MasterActivity {
         isSearchMode = bundle.getBoolean("isSearchMode");
         isUserPlaylist = bundle.getBoolean("isUserPlaylist");
         api = bundle.getString("api");
+        isArtists = title.contains("artists");
 
         setTitle(title);
         if (isUserMode) {
-            isArtists=api.contains("artists");
-            if (!isArtists&&isUserPlaylist)
+            isArtists = api.contains("artists");
+            if (!isArtists && isUserPlaylist)
                 loadUserPlaylists();
             else
                 loadUserMusic();
@@ -204,7 +205,7 @@ public class MoreItemActivity extends MasterActivity {
         } else {
             GridLayoutManager glm = new GridLayoutManager(this, 2);
             mRecyclerView.setLayoutManager(glm);
-            mGridAdapter = new GridAdapter(this, items, isUserMode,isArtists);
+            mGridAdapter = new GridAdapter(this, items, isUserMode, isArtists);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
             mRecyclerView.setAdapter(mGridAdapter);
         }
