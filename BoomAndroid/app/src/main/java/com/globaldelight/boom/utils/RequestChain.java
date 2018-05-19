@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,20 +28,45 @@ public class RequestChain {
     }
 
     public <T> void submit(Call<T> call, Callback<T> callback) {
-        executor.submit(() -> {
-            T body = null;
-            try {
-                if (call != null) {
-                    Response<T> resp = call.execute();
-                    if (resp.isSuccessful()) {
-                        body = resp.body();
+        submit(() -> {
+                    Response<T> response = call.execute();
+                    if (response.isSuccessful()) {
+                        return Result.success(response.body());
                     }
-                }
-            } catch (IOException e) {
+                    return Result.error(response.code(), response.message());
+                },
+                (result) -> {
+                    if (result.isSuccess()) {
+                        callback.onResponse(result.get());
+                    }
+                });
+    }
+
+    public <T> void submit(Callable<Result<T>> call, Callback<Result<T>> callback) {
+        executor.submit(()->{
+            Result<T> result;
+            try {
+                result = call.call();
+            }
+            catch (Exception e) {
+                result = Result.error(-1, e.getMessage());
             }
 
-            final T response = body;
-            mainHandler.post(() -> callback.onResponse(response));
+            if ( callback != null ) {
+                callback.onResponse(result);
+            }
+        });
+    }
+
+    // Just submit a callback - will be executed after all previous operations are done
+    public <T> void submit(Callback<Result<T>> callback) {
+        executor.submit(()->{
+            try {
+                callback.onResponse(Result.success(null));
+            }
+            catch (Exception e) {
+                callback.onResponse(Result.error(-1, e.getMessage()));
+            }
         });
     }
 

@@ -30,6 +30,7 @@ import com.globaldelight.boom.utils.RequestChain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import retrofit2.Call;
 
@@ -108,7 +109,7 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
             TidalHelper.getInstance(getContext()).setMyPlaylists(resp.getItems());
             mItemList.add(new NestedItemDescription(R.string.user_playlist, GRID_VIEW, resp.getItems(), "/playlists"));
         });
-        mRequestChain.submit(null, (response) -> {
+        mRequestChain.submit((response) -> {
             mAdapter = new NestedItemAdapter(getContext(), mItemList, true, false);
             TidalPopupMenu.newInstance(getActivity()).saveNestedItems(mItemList);
             mRecyclerView.setAdapter(mAdapter);
@@ -177,3 +178,4 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
     }
 
 }
+
