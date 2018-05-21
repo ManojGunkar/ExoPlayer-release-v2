@@ -32,7 +32,6 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Item> mItems = Collections.emptyList();
     private boolean isUserMode = false;
     private boolean isArtists = false;
-    private String image=null;
 
     public ItemAdapter(Context context, List<Item> items,boolean isUserMode,boolean isArtists) {
         this.mContext = context;
@@ -52,15 +51,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         ItemViewHolder viewHolder = (ItemViewHolder) holder;
         Item item = mItems.get(position);
 
-        if (item.getPicture()!=null){
-            image = item.getPicture();
-            image=IMAGE_BASE_URL + image.replace("-", "/") + "/320x214.jpg";
-        }else {
-             image = item.getItemArtUrl();
-        }
-
         final int size = Utils.largeImageSize(mContext);
-        Glide.with(mContext).load(image)
+        Glide.with(mContext).load(item.getItemArtUrl())
                 .placeholder(R.drawable.ic_default_art_grid)
                 .centerCrop()
                 .override(size, size)
@@ -76,7 +68,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         viewHolder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, GridDetailActivity.class);
             intent.putExtra("isUserMode", isUserMode);
-            intent.putExtra("imageurl", image);
+            intent.putExtra("imageurl", item.getItemArtUrl());
             intent.putExtra("title", item.getTitle());
             if (item.getUuid() != null) {
                 intent.putExtra("id", item.getUuid());

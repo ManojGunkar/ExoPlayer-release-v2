@@ -114,7 +114,6 @@ public class GridDetailActivity extends MasterActivity {
                 .centerCrop()
                 .skipMemoryCache(true)
                 .into(imageView);
-        imageView.setImageDrawable(getDrawable(R.drawable.ic_default_art_player_header));
 
         mProgressBar = findViewById(R.id.progress_grid_tidal);
         mRecyclerView = findViewById(R.id.rv_grid_tidal);
