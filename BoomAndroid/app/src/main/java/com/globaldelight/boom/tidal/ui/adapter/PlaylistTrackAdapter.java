@@ -54,7 +54,7 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
             HeaderViewHolder holder = new HeaderViewHolder(itemView);
             return holder;
         } else {
-            ItemViewHolder vh = new ItemViewHolder(inflater.inflate(R.layout.item_track, parent, false));
+            ItemViewHolder vh = new ItemViewHolder(inflater.inflate(R.layout.item_edit_track, parent, false));
             vh.itemView.setOnClickListener((v) -> onClick(vh));
             return vh;
         }
@@ -87,6 +87,12 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
             viewHolder.imgMenuTrack.setOnClickListener(v -> {
                 TidalPopupMenu.newInstance((Activity) mContext).showPopup(v, item, isUserMode);
             });
+
+            if (isUserMode){
+                viewHolder.imgReArragneTrack.setVisibility(View.VISIBLE);
+            }else {
+                viewHolder.imgReArragneTrack.setVisibility(View.GONE);
+            }
 
             tracks = new ArrayList();
 
@@ -156,6 +162,7 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
         private ImageView imgTrackThumbnail;
         private ImageView imgOverlayPlay;
         private ImageView imgMenuTrack;
+        private ImageView imgReArragneTrack;
         private ProgressBar progressBar;
 
         public ItemViewHolder(View itemView) {
@@ -163,6 +170,7 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             mainView = itemView;
             imgTrackThumbnail = itemView.findViewById(R.id.song_item_img);
+            imgReArragneTrack = itemView.findViewById(R.id.img_rearrange_track);
             imgMenuTrack = itemView.findViewById(R.id.img_menu_track);
             imgOverlayPlay = itemView.findViewById(R.id.song_item_img_overlay_play);
             overlay = itemView.findViewById(R.id.song_item_img_overlay);
