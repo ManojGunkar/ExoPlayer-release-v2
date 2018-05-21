@@ -212,6 +212,7 @@
     <string name="facebook_app_id" translatable="false">218364201905576</string>
 
     <!-- to be localized -->
+    <string name="song_count">Songs: %1$d</string>
     <string name="radio">Radio</string>
     <string name="local_radio">Local</string>
     <string name="favourite_radio">Favourite</string>
@@ -234,6 +235,10 @@
     <string name="hint_password">Password</string>
     <string name="hint_user">User Id</string>
     <string name="view_all">View All</string>
+    <string name="tidal_new_tab">NEW</string>
+    <string name="tidal_rising_tab">TIDAL RISING</string>
+    <string name="tidal_curated_tab">CURATED</string>
+    <string name="tidal_mymusic_tab">MY MUSIC</string>
 
     <string name="tidal_recommended_tracks">Recommended Tracks</string>
     <string name="tidal_recommended_album">Recommended Albums</string>
