@@ -53,7 +53,7 @@ public class TidalMainFragment extends TabBarFragment {
     }
 
     private void setViewPager() {
-        mStateAdapter = new TidalTabAdapter(getActivity().getSupportFragmentManager());
+        mStateAdapter = new TidalTabAdapter(getContext(), getActivity().getSupportFragmentManager());
         mViewPager.setAdapter(mStateAdapter);
         mViewPager.setOffscreenPageLimit(3);
         mTabBar.setupWithViewPager(mViewPager);

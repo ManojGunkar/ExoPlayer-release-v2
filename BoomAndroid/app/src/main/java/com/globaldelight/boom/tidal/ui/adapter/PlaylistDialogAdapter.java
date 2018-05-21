@@ -36,7 +36,7 @@ public class PlaylistDialogAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ItemViewHolder vh = new ItemViewHolder(inflater.inflate(R.layout.card_grid_item, parent, false));
+        ItemViewHolder vh = new ItemViewHolder(inflater.inflate(R.layout.card_playlist_dialog, parent, false));
         vh.itemView.setOnClickListener((v)->onClick(vh));
         return vh;
     }
@@ -46,7 +46,7 @@ public class PlaylistDialogAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         Item item = mItems.get(position);
         ItemViewHolder viewHolder = (ItemViewHolder) holder;
         viewHolder.txtTitle.setText(item.getTitle());
-        viewHolder.txtSubTitle.setText("Song "+item.getNumberOfTracks());
+        viewHolder.txtSubTitle.setText(mContext.getResources().getString(R.string.song_count, item.getNumberOfTracks()));
     }
 
     @Override
@@ -70,9 +70,8 @@ public class PlaylistDialogAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            txtTitle = itemView.findViewById(R.id.card_grid_title);
-            txtSubTitle = itemView.findViewById(R.id.card_grid_sub_title);
-            itemView.findViewById(R.id.card_grid_menu).setVisibility(View.GONE);
+            txtTitle = itemView.findViewById(R.id.playlist_dialog_name);
+            txtSubTitle = itemView.findViewById(R.id.playlist_dialog_song_count);
         }
     }
 }

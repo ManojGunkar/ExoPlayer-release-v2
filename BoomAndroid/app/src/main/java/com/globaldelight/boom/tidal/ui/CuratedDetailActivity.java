@@ -85,11 +85,10 @@ public class CuratedDetailActivity extends MasterActivity {
         ImageView imageView = findViewById(R.id.img_curated_detail);
         Glide.with(this)
                 .load(url)
-                .placeholder(R.drawable.radio_place_holder)
+                .placeholder(R.drawable.ic_default_art_player_header)
                 .centerCrop()
                 .skipMemoryCache(true)
                 .into(imageView);
-        imageView.setImageDrawable(getDrawable(R.drawable.ic_default_art_player_header));
 
 
         mProgressBar = findViewById(R.id.progress_curated_details);

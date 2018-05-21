@@ -45,8 +45,7 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
     @Override
     public void onBindViewHolder(final SimpleItemViewHolder holder, final int position) {
         holder.name.setText(playList.get(position).getTitle());
-        holder.count.setText(context.getResources().getString(R.string.songs)
-                + " " + ((MediaItemCollection) playList.get(position)).getItemCount());
+        holder.count.setText(context.getResources().getString(R.string.song_count,((MediaItemCollection) playList.get(position)).getItemCount()));
         holder.mainView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
