@@ -8,6 +8,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.tidalconnector.model.ItemWrapper;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.SearchResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
@@ -195,15 +196,52 @@ public class TidalHelper {
         });
     }
 
+    public void loadUserPlaylist() {
+        Call<TidalBaseResponse> call = TidalHelper.getInstance(context).getUserPlayLists(0,1);
+        call.enqueue(new Callback<TidalBaseResponse>() {
+            @Override
+            public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
+                if (response.isSuccessful()) {
+                    loadFullUserPlaylists(response.body().getTotalNumberOfItems());
+                }
+            }
 
-    public void setMyPlaylists(List<Item> playlists) {
-        mMyPlaylists.clear();
-        mMyPlaylists.addAll(playlists);
+            @Override
+            public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
+
+            }
+        });
     }
 
-    public List<Item> getMyPlaylists() {
+
+    private void loadFullUserPlaylists(int itemCount) {
+        Call<TidalBaseResponse> call = TidalHelper.getInstance(context).getUserPlayLists(0,itemCount);
+        call.enqueue(new Callback<TidalBaseResponse>() {
+            @Override
+            public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
+                if (response.isSuccessful()) {
+                    mMyPlaylists.clear();
+                    mMyPlaylists.addAll(response.body().getItems());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+    public List<Item> getUserPlaylists() {
         return mMyPlaylists;
     }
+
+
+    public void addToUserPlaylist(Item item) {
+        mMyPlaylists.add(item);
+    }
+
 
     public void addItemToPlaylist(Item item, String playlistId) {
         Call<PlaylistResponse> call = getPlaylistTracks(playlistId,0, 1);
