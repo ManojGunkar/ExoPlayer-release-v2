@@ -41,8 +41,8 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_R
 public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, PlaylistDialogAdapter.Callback {
     private Activity mActivity;
     private Item mItem;
-    private boolean mIsFavourite;
     private PlaylistDialogAdapter adapter;
+    private boolean isUserPlaylistTrack=false;
 
     private TidalPopupMenu(Activity activity) {
         this.mActivity = activity;
@@ -52,17 +52,21 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
         return new TidalPopupMenu(activity);
     }
 
-    public void showPopup(View view, Item item, boolean isFavourite) {
+    public void showPopup(View view, Item item, boolean isFavourite,boolean isUserPlaylistTrack) {
         mItem = item;
-        mIsFavourite = isFavourite;
-        getMenu(view).setOnMenuItemClickListener(this::onMenuItemClick);
+        this.isUserPlaylistTrack=isUserPlaylistTrack;
+        getMenu(view,isFavourite,isUserPlaylistTrack).setOnMenuItemClickListener(this::onMenuItemClick);
     }
 
-    private PopupMenu getMenu(View view) {
+    private PopupMenu getMenu(View view,boolean isFavourite,boolean isUserPlaylistTrack) {
         PopupMenu popupMenu = new PopupMenu(mActivity, view);
         popupMenu.inflate(R.menu.tidal_menu);
-        popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(!mIsFavourite);
-        popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(mIsFavourite);
+        if ((isFavourite&&isUserPlaylistTrack)||(isFavourite&&!isUserPlaylistTrack))
+            popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(true);
+        else
+            popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(false);
+        popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(!isFavourite);
+
         popupMenu.show();
         return popupMenu;
     }

@@ -62,7 +62,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         viewHolder.txtItemSubTitle.setText(item.getDescription());
 
         viewHolder.imgItemMenu.setOnClickListener(v->{
-            TidalPopupMenu.newInstance((Activity) mContext).showPopup(v,item, isUserMode);
+            TidalPopupMenu.newInstance((Activity) mContext).showPopup(v,item, isUserMode,false);
         });
 
         viewHolder.itemView.setOnClickListener(v -> {
@@ -78,6 +78,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (isArtists){
                 intent.putExtra("isArtists", true);
             }
+            if (item.getType()!=null&&item.getType().equals("USER"))
+                intent.putExtra("isUserPlaylist", true);
             mContext.startActivity(intent);
         });
 
