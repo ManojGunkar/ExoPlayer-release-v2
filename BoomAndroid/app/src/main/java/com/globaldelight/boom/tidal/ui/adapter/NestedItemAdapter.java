@@ -76,25 +76,17 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         customViewHolder.txtMoreItem.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, MoreItemActivity.class);
             intent.putExtra("title", mContext.getResources().getString(description.titleResId));
+            intent.putExtra("api", description.apiPath);
             if (isUserMode) {
-                String path = TidalHelper.USER + UserCredentials.getCredentials(mContext).getUserId() + description.apiPath;
-                intent.putExtra("api", path);
                 intent.putExtra("isUserMode", isUserMode);
-                intent.putExtra("isUserPlaylist", true);
-            } else {
-                intent.putExtra("api", description.apiPath);
             }
             if (isSearchMode) {
                 intent.putExtra("isSearchMode", isSearchMode);
-                intent.putExtra("api", description.apiPath);
                 intent.putExtra("query", searchQuery);
             }
             intent.putExtra("view_type", description.type);
-
-
             mContext.startActivity(intent);
         });
-
     }
 
     @Override
@@ -115,5 +107,4 @@ public class NestedItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             recyclerView = itemView.findViewById(R.id.rv_tidal_album);
         }
     }
-
 }

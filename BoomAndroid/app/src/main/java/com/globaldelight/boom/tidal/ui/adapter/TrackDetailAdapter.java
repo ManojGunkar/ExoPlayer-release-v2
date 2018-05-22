@@ -130,6 +130,10 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         App.playbackManager().queue().addItemListToPlay(mItems, position - 1, false);
     }
 
+    public List<Item> getItems() {
+        return mItems;
+    }
+
     protected class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private TextView txtTitle;

@@ -154,7 +154,7 @@ public class TidalRequestController {
 
         @FormUrlEncoded
         @POST("users/{userId}/favorites/albums")
-        Call<JsonElement> addToAlbum(
+        Call<Void> addAlbum(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,
                 @Field("albumIds") String albumIds,
@@ -162,7 +162,7 @@ public class TidalRequestController {
 
         @FormUrlEncoded
         @POST("users/{userId}/favorites/playlists")
-        Call<JsonElement> addToPlaylist(
+        Call<Void> addPlaylist(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,
                 @Field("uuids") String uuid,
@@ -182,7 +182,7 @@ public class TidalRequestController {
 
         @FormUrlEncoded
         @POST("users/{userId}/favorites/tracks")
-        Call<JsonElement> addToTrack(
+        Call<Void> addTrack(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,
                 @Field("trackIds") String trackIds,
@@ -190,7 +190,7 @@ public class TidalRequestController {
 
         @FormUrlEncoded
         @POST("users/{userId}/favorites/artists")
-        Call<JsonElement> addToArtists(
+        Call<Void> addArtist(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,
                 @Field("artists") String artists,
@@ -198,25 +198,25 @@ public class TidalRequestController {
 
 
         @DELETE("users/{userId}/favorites/playlists/{uuid}")
-        Call<JsonElement> deletePlaylist(
+        Call<Void> deletePlaylist(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,
                 @Path("uuid") String uuid);
 
         @DELETE("users/{userId}/favorites/albums/{albumId}")
-        Call<JsonElement> deleteAlbum(
+        Call<Void> deleteAlbum(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,
                 @Path("albumId") String albumId);
 
         @DELETE("users/{userId}/favorites/tracks/{trackId}")
-        Call<JsonElement> deleteTrack(
+        Call<Void> deleteTrack(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,
                 @Path("trackId") String trackId);
 
         @DELETE("users/{userId}/favorites/tracks/{artists}")
-        Call<JsonElement> deleteArtist(
+        Call<Void> deleteArtist(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,
                 @Path("artists") String artists);

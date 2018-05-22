@@ -113,13 +113,12 @@ public class MoreItemActivity extends MasterActivity {
         viewType = bundle.getInt("view_type");
         isUserMode = bundle.getBoolean("isUserMode");
         isSearchMode = bundle.getBoolean("isSearchMode");
-        isUserPlaylist = bundle.getBoolean("isUserPlaylist");
         api = bundle.getString("api");
         isArtists = title.equalsIgnoreCase("artists");
 
         setTitle(title);
         if (isUserMode) {
-            if (!isArtists && isUserPlaylist)
+            if ( api.equals(TidalHelper.getInstance(this).getUserPath("/playlists")))
                 loadUserPlaylists();
             else
                 loadUserMusic();

@@ -15,6 +15,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseRespo
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalSubscriptionInfo;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
+import com.globaldelight.boom.utils.Result;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
@@ -31,6 +32,10 @@ import retrofit2.Response;
  * ©Global Delight Technologies Pvt. Ltd.
  */
 public class TidalHelper {
+
+    public interface CompletionHandler <T> {
+         void onComplete(Result<T> result);
+    }
 
     public static final String NEW_PLAYLISTS = "featured/new/playlists";
     public static final String RECOMMENDED_PLAYLISTS = "/featured/recommended/playlists";
@@ -149,37 +154,40 @@ public class TidalHelper {
                 String.valueOf(0), String.valueOf(10));
     }
 
-    public Call<JsonElement> addToPlaylist(String uuid) {
-        return client.addToPlaylist(sessionId, userId, uuid, Locale.getDefault().getCountry());
+    public Call<Void> addToFavorites(Item item) {
+        switch (item.getItemType()) {
+            default:
+            case ItemType.SONGS:
+                return client.addTrack(sessionId, userId, item.getId(), Locale.getDefault().getCountry());
+
+            case ItemType.ALBUM:
+                return client.addAlbum(sessionId, userId, item.getId(), Locale.getDefault().getCountry());
+
+            case ItemType.ARTIST:
+                return client.addArtist(sessionId, userId, item.getId(), Locale.getDefault().getCountry());
+
+            case ItemType.PLAYLIST:
+                return client.addPlaylist(sessionId, userId, item.getId(), Locale.getDefault().getCountry());
+        }
     }
 
-    public Call<JsonElement> addToTrack(String trackId) {
-        return client.addToTrack(sessionId, userId, trackId, Locale.getDefault().getCountry());
+    public Call<Void> removeFromFavorites(Item item) {
+        switch (item.getItemType()) {
+            default:
+            case ItemType.SONGS:
+                return client.deleteTrack(sessionId, userId, item.getId());
+
+            case ItemType.ALBUM:
+                return client.deleteAlbum(sessionId, userId, item.getId());
+
+            case ItemType.ARTIST:
+                return client.deleteArtist(sessionId, userId, item.getId());
+
+            case ItemType.PLAYLIST:
+                return client.deletePlaylist(sessionId, userId, item.getId());
+        }
     }
 
-    public Call<JsonElement> addToAlbum(String albumId) {
-        return client.addToAlbum(sessionId, userId, albumId, Locale.getDefault().getCountry());
-    }
-
-    public Call<JsonElement> addToArtist(String artist) {
-        return client.addToArtists(sessionId, userId, artist, Locale.getDefault().getCountry());
-    }
-
-    public Call<JsonElement> removeAlbum(String albumId) {
-        return client.deleteAlbum(sessionId, userId, albumId);
-    }
-
-    public Call<JsonElement> removePlaylist(String uuid) {
-        return client.deletePlaylist(sessionId, userId, uuid);
-    }
-
-    public Call<JsonElement> removeTrack(String trackId) {
-        return client.deleteTrack(sessionId, userId, trackId);
-    }
-
-    public Call<JsonElement> removeArtist(String artist) {
-        return client.deleteArtist(sessionId, userId, artist);
-    }
 
     public void fetchSubscriptionInfo() {
         Call<TidalSubscriptionInfo> call = client.getUserSubscriptionInfo(sessionId, userId);
@@ -243,7 +251,7 @@ public class TidalHelper {
     }
 
 
-    public void addItemToPlaylist(Item item, String playlistId) {
+    public void addItemToPlaylist(Item item, String playlistId, final CompletionHandler completion) {
         Call<PlaylistResponse> call = getPlaylistTracks(playlistId,0, 1);
         call.enqueue(new Callback<PlaylistResponse>() {
             @Override
@@ -251,7 +259,7 @@ public class TidalHelper {
                 if (response.isSuccessful()) {
                     String etag = response.headers().get("etag");
                     new android.os.Handler(Looper.getMainLooper()).post(()->{
-                        updatePlaylist(item, playlistId, etag);
+                        updatePlaylist(item, playlistId, etag, completion);
                     });
                 }
             }
@@ -264,20 +272,20 @@ public class TidalHelper {
     }
 
 
-    private void updatePlaylist(Item item, String playlistId, String etag) {
+    private void updatePlaylist(Item item, String playlistId, String etag, CompletionHandler completion) {
         if ( item.getItemType() == ItemType.SONGS ) {
-            addItemIdsToPlaylist(Collections.singletonList(item.getId()), playlistId, etag);
+            addItemIdsToPlaylist(Collections.singletonList(item.getId()), playlistId, etag, completion);
         }
         else if ( item.getItemType() == ItemType.PLAYLIST ) {
-            addPlaylistToPlaylist(item, playlistId, etag);
+            addPlaylistToPlaylist(item, playlistId, etag, completion);
         }
         else {
-            addCollectionToPlaylist(item, playlistId, etag);
+            addCollectionToPlaylist(item, playlistId, etag, completion);
         }
     }
 
 
-    private void addPlaylistToPlaylist(Item item, String playlistId, String etag) {
+    private void addPlaylistToPlaylist(Item item, String playlistId, String etag, CompletionHandler completion) {
         int limit = item.getNumberOfTracks() != null? item.getNumberOfTracks().intValue() : 10;
         Call<PlaylistResponse> call = getPlaylistTracks(item.getUuid(),0, limit );
         call.enqueue(new Callback<PlaylistResponse>() {
@@ -291,7 +299,7 @@ public class TidalHelper {
                     }
 
                     new android.os.Handler(Looper.getMainLooper()).post(()->{
-                        addItemIdsToPlaylist(itemIds, playlistId, etag);
+                        addItemIdsToPlaylist(itemIds, playlistId, etag, completion);
                     });
                 }
             }
@@ -303,7 +311,7 @@ public class TidalHelper {
         });
     }
 
-    private void addCollectionToPlaylist(Item item, String playlistId, String etag) {
+    private void addCollectionToPlaylist(Item item, String playlistId, String etag, CompletionHandler completion) {
         String path = item.getItemType() == ItemType.ALBUM ?
                 "albums/"+ item.getId() + "/tracks" :
                 "artists/" + item.getId() +  "/toptracks" ;
@@ -320,7 +328,7 @@ public class TidalHelper {
                     }
 
                     new android.os.Handler(Looper.getMainLooper()).post(()->{
-                        addItemIdsToPlaylist(itemIds, playlistId, etag);
+                        addItemIdsToPlaylist(itemIds, playlistId, etag, completion);
                     });
                 }
             }
@@ -350,23 +358,23 @@ public class TidalHelper {
     }
 
 
-    private void addItemIdsToPlaylist(List<String> itemIds, String playlistId, String etag) {
+    private void addItemIdsToPlaylist(List<String> itemIds, String playlistId, String etag, CompletionHandler completion) {
         TidalRequestController.Callback client = TidalRequestController.getTidalClient();
         Call<Void> call = client.addToUserPlaylist(sessionId, etag, playlistId, listToCSS(itemIds), String.valueOf(0), getCountry());
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(context, R.string.added_to_playlist, Toast.LENGTH_LONG).show();
+                    completion.onComplete(Result.success((Void)null));
                 }
                 else {
-                    Toast.makeText(context, "Failed to add playlist", Toast.LENGTH_LONG).show();
+                    completion.onComplete(Result.error(-1, "failed"));
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(context, "Failed to add playlist", Toast.LENGTH_LONG).show();
+                completion.onComplete(Result.error(-1, "failed"));
             }
         });
 

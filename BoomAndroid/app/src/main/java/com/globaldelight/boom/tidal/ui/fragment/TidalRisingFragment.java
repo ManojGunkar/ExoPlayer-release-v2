@@ -106,6 +106,8 @@ public class TidalRisingFragment extends Fragment implements ContentLoadable {
         if ( mHasResponse ) {
             return;
         }
+
+        mItemList.clear();
         mRequestChain = new RequestChain(getContext());
         mProgressBar.setVisibility(View.VISIBLE);
         mapResponse(TidalHelper.RISING_ALBUMS, R.string.tidal_rising_albums, GRID_VIEW);
