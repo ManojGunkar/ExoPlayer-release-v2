@@ -37,12 +37,14 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
     private String mHeaderTitle;
     private ArrayList<Item> tracks;
     private boolean isUserMode=false;
+    private boolean isUserPlaylist=false;
 
-    public PlaylistTrackAdapter(Context context, List<PlaylistResponse.Items> items, String headerTitle,boolean isUserMode) {
+    public PlaylistTrackAdapter(Context context, List<PlaylistResponse.Items> items, String headerTitle,boolean isUserMode,boolean isUserPlaylist) {
         this.mContext = context;
         this.mItems = items;
         this.mHeaderTitle = headerTitle;
         this.isUserMode=isUserMode;
+        this.isUserPlaylist=isUserPlaylist;
     }
 
     @Override
@@ -84,15 +86,16 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
             viewHolder.txtTitle.setText(item.getTitle());
             viewHolder.txtSubTitle.setText(item.getDescription());
 
-            viewHolder.imgMenuTrack.setOnClickListener(v -> {
-                TidalPopupMenu.newInstance((Activity) mContext).showPopup(v, item, isUserMode);
-            });
 
-            if (isUserMode){
+            if (isUserPlaylist){
                 viewHolder.imgReArragneTrack.setVisibility(View.VISIBLE);
             }else {
                 viewHolder.imgReArragneTrack.setVisibility(View.GONE);
             }
+
+            viewHolder.imgMenuTrack.setOnClickListener(v -> {
+                TidalPopupMenu.newInstance((Activity) mContext).showPopup(v, item, isUserMode,isUserPlaylist);
+            });
 
             tracks = new ArrayList();
 

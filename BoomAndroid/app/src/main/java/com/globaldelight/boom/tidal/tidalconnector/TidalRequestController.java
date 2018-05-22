@@ -215,7 +215,7 @@ public class TidalRequestController {
                 @Path("userId") String userId,
                 @Path("trackId") String trackId);
 
-        @DELETE("users/{userId}/favorites/tracks/{artists}")
+        @DELETE("users/{userId}/favorites/artists/{artists}")
         Call<JsonElement> deleteArtist(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Path("userId") String userId,

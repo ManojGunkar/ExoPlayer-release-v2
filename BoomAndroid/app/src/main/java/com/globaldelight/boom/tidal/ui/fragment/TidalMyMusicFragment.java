@@ -168,7 +168,9 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
 
                 for (int i = 0; i < response.getItems().size(); i++) {
                     UserMusicResponse.UserItem items = response.getItems().get(i);
-                    items.getItem();
+                    if ( resId == R.string.tidal_artist ) {
+                        items.getItem().setType("ARTIST");
+                    }
                     playlists.add(items.getItem());
                 }
                 mItemList.add(new NestedItemDescription(resId, type, playlists, path));

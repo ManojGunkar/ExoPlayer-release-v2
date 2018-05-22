@@ -45,6 +45,7 @@ public class GridDetailActivity extends MasterActivity {
     private boolean isMoods = false;
     private String moodsPath = null;
     private boolean isUserMode = false;
+    private boolean isUserPlaylist=false;
 
     private TrackDetailAdapter mAdapter;
     private String title;
@@ -64,6 +65,7 @@ public class GridDetailActivity extends MasterActivity {
             }
         }
     };
+
 
     @Override
     public void onStart() {
@@ -100,6 +102,7 @@ public class GridDetailActivity extends MasterActivity {
         isArtists = bundle.getBoolean("isArtists");
         isMoods = bundle.getBoolean("isMoods");
         isUserMode = bundle.getBoolean("isUserMode");
+        isUserPlaylist = bundle.getBoolean("isUserPlaylist");
         String imageUrl = bundle.getString("imageurl");
         moodsPath = bundle.getString("path");
 
@@ -142,7 +145,7 @@ public class GridDetailActivity extends MasterActivity {
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                mPlaylistAdapter = new PlaylistTrackAdapter(this, resp.getItems(), title,isUserMode);
+                mPlaylistAdapter = new PlaylistTrackAdapter(this, resp.getItems(), title,isUserMode,isUserPlaylist);
                 mRecyclerView.setAdapter(mPlaylistAdapter);
             });
         }else if (isArtists){
