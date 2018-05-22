@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.MasterActivity;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
@@ -38,6 +40,7 @@ public class GridDetailActivity extends MasterActivity {
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
+    private FloatingActionButton mPlayButton;
 
     private String id;
     private boolean isPlaylist = false;
@@ -115,9 +118,12 @@ public class GridDetailActivity extends MasterActivity {
                 .skipMemoryCache(true)
                 .into(imageView);
 
+        mPlayButton = findViewById(R.id.fab_grid_tidal);
+        mPlayButton.setOnClickListener(this::onPlayClicked);
+        mPlayButton.setVisibility(View.GONE);
+
         mProgressBar = findViewById(R.id.progress_grid_tidal);
         mRecyclerView = findViewById(R.id.rv_grid_tidal);
-
     }
 
     private void loadMoods(String path) {
@@ -130,6 +136,7 @@ public class GridDetailActivity extends MasterActivity {
             mRecyclerView.setLayoutManager(llm);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
             mRecyclerView.setAdapter(mAdapter);
+            mPlayButton.setVisibility(View.VISIBLE);
         });
     }
 
@@ -144,6 +151,8 @@ public class GridDetailActivity extends MasterActivity {
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 mPlaylistAdapter = new PlaylistTrackAdapter(this, resp.getItems(), title,isUserMode);
                 mRecyclerView.setAdapter(mPlaylistAdapter);
+                mPlayButton.setVisibility(View.VISIBLE);
+
             });
         }else if (isArtists){
             String path = "artists/" + id + "/toptracks";
@@ -155,6 +164,8 @@ public class GridDetailActivity extends MasterActivity {
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 mRecyclerView.setAdapter(mAdapter);
+                mPlayButton.setVisibility(View.VISIBLE);
+
             });
         }else {
             String path = "albums/" + id + "/tracks";
@@ -166,7 +177,18 @@ public class GridDetailActivity extends MasterActivity {
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 mRecyclerView.setAdapter(mAdapter);
+                mPlayButton.setVisibility(View.VISIBLE);
             });
+        }
+    }
+
+    private void onPlayClicked(View view) {
+        App.playbackManager().stop();
+        if (isPlaylist) {
+            App.playbackManager().queue().addItemListToPlay(mPlaylistAdapter.getItems(), 0, false);
+        }
+        else {
+            App.playbackManager().queue().addItemListToPlay(mAdapter.getItems(), 0, false);
         }
     }
 }
