@@ -171,7 +171,7 @@ public class Item implements IMediaItem {
 
 
     public String getTitle() {
-        return title;
+        return title != null? title : name;
     }
 
     public void setTitle(String title) {
@@ -233,12 +233,19 @@ public class Item implements IMediaItem {
     @Override
     public int getItemType() {
         if (getType() == null) {
-            return ItemType.SONGS;
+            if ( title == null && name != null ) {
+                return ItemType.ARTIST;
+            }
+            else {
+                return ItemType.SONGS;
+            }
         }
 
         if ( uuid != null ) {
             return ItemType.PLAYLIST;
         }
+
+
 
         switch (getType()) {
             case "ALBUM":

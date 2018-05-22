@@ -19,6 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.SearchResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.ui.adapter.NestedItemAdapter;
@@ -149,7 +150,11 @@ public class TidalSearchFragment extends Fragment {
                         mItems.add(new NestedItemDescription(resId,type,resp.getPlaylists().getItems(),path));
                         break;
                     case TidalHelper.SEARCH_ARTISTS_TYPE:
-                        mItems.add(new NestedItemDescription(resId,type,resp.getArtists().getItems(),path));
+                        List<Item> items = resp.getArtists().getItems();
+                        for ( Item anItem: items) {
+                            anItem.setType("ARTIST");
+                        }
+                        mItems.add(new NestedItemDescription(resId,type,items,path));
                         break;
                 }
         }
