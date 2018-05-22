@@ -76,9 +76,10 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
             headerViewHolder.imgMore.setOnClickListener(view->{
 
             });
-        } else  if (position >=1){
+        }
+        else {
             ItemViewHolder viewHolder = (ItemViewHolder) holder;
-            Item item = mItems.get(position).getItem();
+            Item item = mItems.get(position-1).getItem();
             String imageUrl = item.getItemArtUrl();
             final int size = Utils.largeImageSize(mContext);
 
@@ -95,13 +96,7 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
                 TidalPopupMenu.newInstance((Activity) mContext).showPopup(v, item, isUserMode);
             });
 
-            tracks = new ArrayList();
-
-            for (int i = 0; i < mItems.size(); i++) {
-                PlaylistResponse.Items items = mItems.get(i);
-                tracks.add(items.getItem());
-            }
-            updatePlayingStation(viewHolder, tracks.get(position));
+            updatePlayingStation(viewHolder, tracks.get(position-1));
         }
 
 
@@ -133,7 +128,7 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return mItems.size() + 1;
     }
 
     @Override
@@ -146,12 +141,16 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     private void onClick(ItemViewHolder holder) {
-        int position = holder.getAdapterPosition();
+        int position = holder.getAdapterPosition() - 1;
         if (position <0) {
             return;
         }
 
          App.playbackManager().queue().addItemListToPlay(tracks, position, false);
+    }
+
+    public List<Item> getItems() {
+        return tracks;
     }
 
     protected class ItemViewHolder extends RecyclerView.ViewHolder {
