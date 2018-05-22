@@ -245,8 +245,8 @@ public class TidalHelper {
             public void onResponse(Call<PlaylistResponse> call, Response<PlaylistResponse> response) {
                 if (response.isSuccessful()) {
                     ArrayList<String> itemIds = new ArrayList<>();
-                    List<PlaylistResponse.Items> tracks = response.body().getItems();
-                    for ( PlaylistResponse.Items aTrack: tracks ) {
+                    List<ItemWrapper> tracks = response.body().getItems();
+                    for ( ItemWrapper aTrack: tracks ) {
                         itemIds.add(aTrack.getItem().getId());
                     }
 

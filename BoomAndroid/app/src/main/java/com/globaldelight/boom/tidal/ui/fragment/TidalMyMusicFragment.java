@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.tidalconnector.model.ItemWrapper;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
 import com.globaldelight.boom.tidal.ui.ContentLoadable;
@@ -167,11 +168,14 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
                 List<Item> playlists = new ArrayList();
 
                 for (int i = 0; i < response.getItems().size(); i++) {
-                    UserMusicResponse.UserItem items = response.getItems().get(i);
+                    ItemWrapper items = response.getItems().get(i);
                     items.getItem();
                     playlists.add(items.getItem());
                 }
-                mItemList.add(new NestedItemDescription(resId, type, playlists, path));
+
+                if (playlists.size() > 0 ) {
+                    mItemList.add(new NestedItemDescription(resId, type, playlists, path));
+                }
             }
 
         }

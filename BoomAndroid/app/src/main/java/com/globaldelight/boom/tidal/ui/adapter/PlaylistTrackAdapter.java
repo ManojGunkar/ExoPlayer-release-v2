@@ -14,7 +14,9 @@ import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.tidalconnector.model.ItemWrapper;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.utils.TidalPopupMenu;
 import com.globaldelight.boom.utils.Utils;
@@ -33,16 +35,21 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
     private final static int TYPE_ITEM = 1;
 
     private Context mContext;
-    private List<PlaylistResponse.Items> mItems = Collections.emptyList();
+    private List<ItemWrapper> mItems = Collections.emptyList();
     private String mHeaderTitle;
     private ArrayList<Item> tracks;
     private boolean isUserMode=false;
 
-    public PlaylistTrackAdapter(Context context, List<PlaylistResponse.Items> items, String headerTitle,boolean isUserMode) {
+    public PlaylistTrackAdapter(Context context, List<ItemWrapper> items, String headerTitle,boolean isUserMode) {
         this.mContext = context;
         this.mItems = items;
         this.mHeaderTitle = headerTitle;
         this.isUserMode=isUserMode;
+        tracks = new ArrayList();
+        for (int i = 0; i < mItems.size(); i++) {
+            ItemWrapper item = mItems.get(i);
+            tracks.add(item.getItem());
+        }
     }
 
     @Override

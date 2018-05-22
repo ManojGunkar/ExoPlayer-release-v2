@@ -1,6 +1,7 @@
 package com.globaldelight.boom.tidal.tidalconnector.model.response;
 
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.tidalconnector.model.ItemCollection;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -14,50 +15,50 @@ public class SearchResponse {
 
     @SerializedName("artists")
     @Expose
-    private Artists artists;
+    private ItemCollection<Item> artists;
     @SerializedName("albums")
     @Expose
-    private Albums albums;
+    private ItemCollection<Item> albums;
     @SerializedName("playlists")
     @Expose
-    private Playlists playlists;
+    private ItemCollection<Item> playlists;
     @SerializedName("tracks")
     @Expose
-    private Tracks tracks;
+    private ItemCollection<Item> tracks;
     @SerializedName("videos")
     @Expose
 
     private TopHit topHit;
 
-    public Artists getArtists() {
+    public ItemCollection<Item> getArtists() {
         return artists;
     }
 
-    public void setArtists(Artists artists) {
+    public void setArtists(ItemCollection<Item> artists) {
         this.artists = artists;
     }
 
-    public Albums getAlbums() {
+    public ItemCollection<Item> getAlbums() {
         return albums;
     }
 
-    public void setAlbums(Albums albums) {
+    public void setAlbums(ItemCollection<Item> albums) {
         this.albums = albums;
     }
 
-    public Playlists getPlaylists() {
+    public ItemCollection<Item> getPlaylists() {
         return playlists;
     }
 
-    public void setPlaylists(Playlists playlists) {
+    public void setPlaylists(ItemCollection<Item> playlists) {
         this.playlists = playlists;
     }
 
-    public Tracks getTracks() {
+    public ItemCollection<Item> getTracks() {
         return tracks;
     }
 
-    public void setTracks(Tracks tracks) {
+    public void setTracks(ItemCollection<Item> tracks) {
         this.tracks = tracks;
     }
 
@@ -67,153 +68,6 @@ public class SearchResponse {
 
     public void setTopHit(TopHit topHit) {
         this.topHit = topHit;
-    }
-
-    public class Albums {
-
-        @SerializedName("limit")
-        @Expose
-        private Integer limit;
-        @SerializedName("offset")
-        @Expose
-        private Integer offset;
-        @SerializedName("totalNumberOfItems")
-        @Expose
-        private Integer totalNumberOfItems;
-        @SerializedName("items")
-        @Expose
-        private List<Item> items = null;
-
-        public Integer getLimit() {
-            return limit;
-        }
-
-        public void setLimit(Integer limit) {
-            this.limit = limit;
-        }
-
-        public Integer getOffset() {
-            return offset;
-        }
-
-        public void setOffset(Integer offset) {
-            this.offset = offset;
-        }
-
-        public Integer getTotalNumberOfItems() {
-            return totalNumberOfItems;
-        }
-
-        public void setTotalNumberOfItems(Integer totalNumberOfItems) {
-            this.totalNumberOfItems = totalNumberOfItems;
-        }
-
-        public List<Item> getItems() {
-            return items;
-        }
-
-        public void setItems(List<Item> items) {
-            this.items = items;
-        }
-
-    }
-
-    public class Artists {
-
-        @SerializedName("limit")
-        @Expose
-        private Integer limit;
-        @SerializedName("offset")
-        @Expose
-        private Integer offset;
-        @SerializedName("totalNumberOfItems")
-        @Expose
-        private Integer totalNumberOfItems;
-        @SerializedName("items")
-        @Expose
-        private List<Item> items = null;
-
-        public Integer getLimit() {
-            return limit;
-        }
-
-        public void setLimit(Integer limit) {
-            this.limit = limit;
-        }
-
-        public Integer getOffset() {
-            return offset;
-        }
-
-        public void setOffset(Integer offset) {
-            this.offset = offset;
-        }
-
-        public Integer getTotalNumberOfItems() {
-            return totalNumberOfItems;
-        }
-
-        public void setTotalNumberOfItems(Integer totalNumberOfItems) {
-            this.totalNumberOfItems = totalNumberOfItems;
-        }
-
-        public List<Item> getItems() {
-            return items;
-        }
-
-        public void setItems(List<Item> items) {
-            this.items = items;
-        }
-
-    }
-
-    public class Playlists {
-
-        @SerializedName("limit")
-        @Expose
-        private Integer limit;
-        @SerializedName("offset")
-        @Expose
-        private Integer offset;
-        @SerializedName("totalNumberOfItems")
-        @Expose
-        private Integer totalNumberOfItems;
-        @SerializedName("items")
-        @Expose
-        private List<Item> items = null;
-
-        public Integer getLimit() {
-            return limit;
-        }
-
-        public void setLimit(Integer limit) {
-            this.limit = limit;
-        }
-
-        public Integer getOffset() {
-            return offset;
-        }
-
-        public void setOffset(Integer offset) {
-            this.offset = offset;
-        }
-
-        public Integer getTotalNumberOfItems() {
-            return totalNumberOfItems;
-        }
-
-        public void setTotalNumberOfItems(Integer totalNumberOfItems) {
-            this.totalNumberOfItems = totalNumberOfItems;
-        }
-
-        public List<Item> getItems() {
-            return items;
-        }
-
-        public void setItems(List<Item> items) {
-            this.items = items;
-        }
-
     }
 
     public class TopHit {
@@ -239,55 +93,6 @@ public class SearchResponse {
 
         public void setType(String type) {
             this.type = type;
-        }
-
-    }
-
-    public class Tracks {
-
-        @SerializedName("limit")
-        @Expose
-        private Integer limit;
-        @SerializedName("offset")
-        @Expose
-        private Integer offset;
-        @SerializedName("totalNumberOfItems")
-        @Expose
-        private Integer totalNumberOfItems;
-        @SerializedName("items")
-        @Expose
-        private List<Item> items = null;
-
-        public Integer getLimit() {
-            return limit;
-        }
-
-        public void setLimit(Integer limit) {
-            this.limit = limit;
-        }
-
-        public Integer getOffset() {
-            return offset;
-        }
-
-        public void setOffset(Integer offset) {
-            this.offset = offset;
-        }
-
-        public Integer getTotalNumberOfItems() {
-            return totalNumberOfItems;
-        }
-
-        public void setTotalNumberOfItems(Integer totalNumberOfItems) {
-            this.totalNumberOfItems = totalNumberOfItems;
-        }
-
-        public List<Item> getItems() {
-            return items;
-        }
-
-        public void setItems(List<Item> items) {
-            this.items = items;
         }
 
     }

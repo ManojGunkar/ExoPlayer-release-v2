@@ -20,7 +20,6 @@ public class UserCredentials {
     private final static String KEY_SESSION_ID="KEY_SESSION_ID";
     private final static String KEY_USER_ID="KEY_USER_ID";
     private final static String KEY_COUNTRY_CODE="KEY_COUNTRY_CODE";
-    private final static String KEY_E_TAG="KEY_E_TAG";
 
     public static final int MODE = Context.MODE_PRIVATE;
     private SharedPreferences mSharedPreferences;
@@ -46,23 +45,13 @@ public class UserCredentials {
         editor.putString(KEY_SESSION_ID, response.getSessionId());
         editor.putString(KEY_COUNTRY_CODE, response.getCountryCode());
         editor.apply();
-
     }
 
     public boolean isUserLogged(){
        return mSharedPreferences.contains(KEY_SESSION_ID)&&mSharedPreferences.contains(KEY_USER_ID)?true:false;
     }
 
-    public void setETag(String etag){
-        SharedPreferences.Editor editor=getEditor();
-        editor.putString(KEY_E_TAG, etag);
-        editor.apply();
-    }
 
-
-    public String getETag(){
-        return mSharedPreferences.getString(KEY_E_TAG,null);
-    }
     public String getSessionId(){
        return mSharedPreferences.getString(KEY_SESSION_ID,null);
     }
