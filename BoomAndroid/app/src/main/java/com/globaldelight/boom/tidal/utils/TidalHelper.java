@@ -80,6 +80,10 @@ public class TidalHelper {
         return instance;
     }
 
+    public String getUserPath(String path) {
+        return USER + userId + path;
+    }
+
     public Call<TidalBaseResponse> getItemCollection(String path, int offset, int limit) {
         return client.getItemCollection(path,
                 TidalRequestController.AUTH_TOKEN,
@@ -104,8 +108,7 @@ public class TidalHelper {
      */
     public Call<UserMusicResponse> getUserMusic(String musicType, int offset, int limit) {
 
-        String path = USER + userId + musicType;
-        return client.getUserMusic(path,
+        return client.getUserMusic(getUserPath(musicType),
                 sessionId,
                 Locale.getDefault().getCountry(),
                 "NAME",
@@ -114,8 +117,7 @@ public class TidalHelper {
     }
 
     public Call<TidalBaseResponse> getUserPlayLists(int offset, int limit ){
-        String path="users/"+userId+"/playlists";
-        return client.getUserPlaylist(path,sessionId,
+        return client.getUserPlaylist(getUserPath("/playlists"),sessionId,
                 Locale.getDefault().getCountry(), String.valueOf(offset), String.valueOf(limit));
     }
 
