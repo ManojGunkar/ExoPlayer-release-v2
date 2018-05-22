@@ -56,7 +56,6 @@ public class MoreItemActivity extends MasterActivity {
     private int viewType;
     private boolean isUserMode = false;
     private boolean isSearchMode = false;
-    private boolean isUserPlaylist = false;
     private String title;
     private TrackAdapter mAdapter;
     private GridAdapter mGridAdapter;
@@ -198,12 +197,12 @@ public class MoreItemActivity extends MasterActivity {
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             mRecyclerView.setLayoutManager(llm);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            mAdapter = new TrackAdapter(this, items, isUserMode);
+            mAdapter = new TrackAdapter(this, items);
             mRecyclerView.setAdapter(mAdapter);
         } else {
             GridLayoutManager glm = new GridLayoutManager(this, 2);
             mRecyclerView.setLayoutManager(glm);
-            mGridAdapter = new GridAdapter(this, items, isUserMode, isArtists);
+            mGridAdapter = new GridAdapter(this, items);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
             mRecyclerView.setAdapter(mGridAdapter);
         }

@@ -16,6 +16,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.ui.GridDetailActivity;
 import com.globaldelight.boom.tidal.utils.TidalPopupMenu;
 import com.globaldelight.boom.utils.Utils;
+import com.google.gson.Gson;
 
 import java.util.Collections;
 import java.util.List;
@@ -62,24 +63,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         viewHolder.txtItemSubTitle.setText(item.getDescription());
 
         viewHolder.imgItemMenu.setOnClickListener(v->{
-            TidalPopupMenu.newInstance((Activity) mContext).showPopup(v,item, isUserMode,false);
+            TidalPopupMenu.newInstance((Activity) mContext).showPopup(v,item);
         });
 
         viewHolder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, GridDetailActivity.class);
-            intent.putExtra("isUserMode", isUserMode);
-            intent.putExtra("imageurl", item.getItemArtUrl());
-            intent.putExtra("title", item.getTitle());
-            if (item.getUuid() != null) {
-                intent.putExtra("id", item.getUuid());
-                intent.putExtra("isPlaylist", true);
-            } else
-                intent.putExtra("id", item.getId());
-            if (isArtists){
-                intent.putExtra("isArtists", true);
-            }
-            if (item.getType()!=null&&item.getType().equals("USER"))
-                intent.putExtra("isUserPlaylist", true);
+            intent.putExtra(GridDetailActivity.ITEM_KEY, new Gson().toJson(item));
             mContext.startActivity(intent);
         });
 

@@ -30,13 +30,11 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private Context mContext;
     private List<Item> mItems = null;
     private String mHeaderTitle;
-    private boolean isUserMode=false;
 
-    public TrackDetailAdapter(Context context, List<Item> items, String headerTitle,boolean isUserMode) {
+    public TrackDetailAdapter(Context context, List<Item> items, String headerTitle) {
         this.mContext = context;
         this.mItems = items;
         this.mHeaderTitle = headerTitle;
-        this.isUserMode=isUserMode;
     }
 
     @Override
@@ -75,7 +73,7 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
             viewHolder.imgMenuTrack.setOnClickListener(v -> {
-                TidalPopupMenu.newInstance((Activity) mContext).showPopup(v, item, isUserMode,false);
+                TidalPopupMenu.newInstance((Activity) mContext).showPopup(v, item);
             });
 
             viewHolder.txtTitle.setText(item.getTitle());

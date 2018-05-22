@@ -71,12 +71,15 @@ public class TidalHelper {
     private TidalRequestController.Callback client;
     private TidalSubscriptionInfo subscriptionInfo;
     private List<Item> mMyPlaylists = new ArrayList<>();
+    private FavoritesManager mFavoriteManager;
 
     private TidalHelper(Context context) {
         this.context = context;
         client = TidalRequestController.getTidalClient();
         this.sessionId = UserCredentials.getCredentials(context).getSessionId();
         this.userId = UserCredentials.getCredentials(context).getUserId();
+
+        mFavoriteManager = new FavoritesManager(context, client);
     }
 
     public static TidalHelper getInstance(Context context) {
@@ -84,6 +87,15 @@ public class TidalHelper {
             instance = new TidalHelper(context.getApplicationContext());
         }
         return instance;
+    }
+
+    public FavoritesManager getFavoriteManager() {
+        return mFavoriteManager;
+    }
+
+    public void loadUserMusic() {
+        loadUserPlaylist();
+        mFavoriteManager.load();
     }
 
     public String getUserPath(String path) {

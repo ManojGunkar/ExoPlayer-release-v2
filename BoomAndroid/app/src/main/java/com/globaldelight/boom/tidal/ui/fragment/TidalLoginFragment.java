@@ -48,7 +48,6 @@ public class TidalLoginFragment extends Fragment implements View.OnClickListener
     private Button mBtnLogin;
     private ProgressDialog mProgressDialog;
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -43,33 +43,41 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
     private Item mItem;
     private PlaylistDialogAdapter adapter;
     private boolean isUserPlaylistTrack=false;
+    private TidalHelper mHelper;
 
     private TidalPopupMenu(Activity activity) {
         this.mActivity = activity;
+        mHelper = TidalHelper.getInstance(mActivity);
+
     }
 
     public static TidalPopupMenu newInstance(Activity activity) {
         return new TidalPopupMenu(activity);
     }
 
-    public void showPopup(View view, Item item, boolean isFavourite,boolean isUserPlaylistTrack) {
+    public void showPopup(View view, Item item) {
         mItem = item;
-        this.isUserPlaylistTrack=isUserPlaylistTrack;
-        getMenu(view,isFavourite,isUserPlaylistTrack).setOnMenuItemClickListener(this::onMenuItemClick);
+        getMenu(view).setOnMenuItemClickListener(this::onMenuItemClick);
     }
 
-    private PopupMenu getMenu(View view,boolean isFavourite,boolean isUserPlaylistTrack) {
-        PopupMenu popupMenu = new PopupMenu(mActivity, view);
-        popupMenu.inflate(R.menu.tidal_menu);
-        if ((isFavourite&&isUserPlaylistTrack)||(isFavourite&&!isUserPlaylistTrack))
-            popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(true);
-        else
-            popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(false);
-        popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(!isFavourite);
 
+
+    private PopupMenu getMenu(View view) {
+        PopupMenu popupMenu = new PopupMenu(mActivity, view);
+        if ( mItem.getItemType() == ItemType.PLAYLIST && mItem.getType().equals("USER") ) {
+            popupMenu.inflate(R.menu.playlist_boom_menu);
+        }
+        else {
+            popupMenu.inflate(R.menu.tidal_menu);
+            boolean isFavourite =  mHelper.getFavoriteManager().isFavorite(mItem);
+            popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(isFavourite);
+            popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(!isFavourite);
+        }
         popupMenu.show();
+
         return popupMenu;
     }
+
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
@@ -131,6 +139,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Toast.makeText(mActivity, "Added Successfully", Toast.LENGTH_SHORT).show();
+                mHelper.getFavoriteManager().addToFavorites(mItem);
                 refreshList();
             }
 
@@ -147,6 +156,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 refreshList();
+                mHelper.getFavoriteManager().removeFromFavorites(mItem);
                 Toast.makeText(mActivity, "Removed Successfully", Toast.LENGTH_SHORT).show();
             }
 

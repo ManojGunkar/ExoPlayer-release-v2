@@ -16,6 +16,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.Curated;
 import com.globaldelight.boom.tidal.ui.CuratedDetailActivity;
 import com.globaldelight.boom.tidal.ui.GridDetailActivity;
 import com.globaldelight.boom.utils.Utils;
+import com.google.gson.Gson;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,10 +47,8 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ItemViewHolder viewHolder = (ItemViewHolder) holder;
         Curated curated = mCuratedList.get(position);
-        String image = curated.getImage();
-        final String imageUrl = TidalRequestController.IMAGE_BASE_URL + image.replace("-", "/") + "/320x320.jpg";
         final int size = Utils.largeImageSize(mContext);
-        Glide.with(mContext).load(imageUrl)
+        Glide.with(mContext).load(curated.getImageUrl())
                 .placeholder(R.drawable.ic_default_art_grid)
                 .centerCrop()
                 .override(size, size)
@@ -61,17 +60,11 @@ public class CuratedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             if (isMoods) {
                 Intent intent = new Intent(mContext, GridDetailActivity.class);
-
-                String path = "moods/" + curated.getPath() + "/playlists";
-                intent.putExtra("path", path);
-                intent.putExtra("isMoods",true);
-                intent.putExtra("imageurl", imageUrl);
-                intent.putExtra("title", curated.getName());
-
+                intent.putExtra(GridDetailActivity.CURATED_KEY, new Gson().toJson(curated));
                 mContext.startActivity(intent);
             } else {
                 Intent intent = new Intent(mContext, CuratedDetailActivity.class);
-                intent.putExtra("imageCurated", imageUrl);
+                intent.putExtra("imageCurated", curated.getImageUrl());
                 intent.putExtra("title", curated.getName());
                 if (curated.getHasAlbums()) {
                     String path = "genres/" + curated.getPath() + "/albums";

@@ -2,6 +2,7 @@ package com.globaldelight.boom.tidal.tidalconnector;
 
 import com.globaldelight.boom.tidal.tidalconnector.model.Curated;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.FavoritesResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.SearchResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
@@ -221,5 +222,9 @@ public class TidalRequestController {
                 @Path("userId") String userId,
                 @Path("artists") String artists);
 
+        @GET("users/{userId}/favorites/ids")
+        Call<FavoritesResponse> getFavorites(
+                @Header("X-Tidal-SessionId") String token,
+                @Path("userId") String userId);
     }
 }

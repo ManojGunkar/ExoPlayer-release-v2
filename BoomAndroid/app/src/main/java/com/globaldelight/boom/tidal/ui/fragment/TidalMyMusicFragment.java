@@ -198,6 +198,12 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
     }
 
     private void refreshList(Item item) {
+
+        if (!mHasResponse) {
+            return;
+        }
+
+
         if ( mRequestChain == null ) {
             mRequestChain = new RequestChain(getContext());
         }

@@ -146,7 +146,7 @@ public class TidalMainFragment extends TabBarFragment {
         // Post is necessary. Otherwise the method is called before the fragment is ready.
         new Handler().post(()-> ((ContentLoadable)mStateAdapter.getItem(mViewPager.getCurrentItem())).onLoadContent());
         TidalHelper.getInstance(getContext()).fetchSubscriptionInfo();
-        TidalHelper.getInstance(getContext()).loadUserPlaylist();
+        TidalHelper.getInstance(getContext()).loadUserMusic();
     }
 
     @Override

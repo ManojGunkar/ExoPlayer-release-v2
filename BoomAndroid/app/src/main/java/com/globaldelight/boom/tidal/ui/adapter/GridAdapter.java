@@ -16,6 +16,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.ui.GridDetailActivity;
 import com.globaldelight.boom.tidal.utils.TidalPopupMenu;
 import com.globaldelight.boom.utils.Utils;
+import com.google.gson.Gson;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,14 +30,9 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
     private List<Item> mItems = Collections.emptyList();
 
-    private boolean isUserMode = false;
-    private boolean isArtists = false;
-
-    public GridAdapter(Context context, List<Item> items, boolean isUserMode, boolean isArtists) {
+    public GridAdapter(Context context, List<Item> items) {
         this.mContext = context;
         this.mItems = items;
-        this.isUserMode = isUserMode;
-        this.isArtists = isArtists;
     }
 
     @Override
@@ -64,26 +60,12 @@ public class GridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         viewHolder.txtItemSubTitle.setText(item.getDescription());
         
         viewHolder.imgItemMenu.setOnClickListener(view -> {
-            TidalPopupMenu.newInstance((Activity) mContext).showPopup(view, item, isUserMode,false);
+            TidalPopupMenu.newInstance((Activity) mContext).showPopup(view, item);
         });
 
         viewHolder.itemView.setOnClickListener(v -> {
-
             Intent intent = new Intent(mContext, GridDetailActivity.class);
-            intent.putExtra("imageurl", image);
-            intent.putExtra("title", item.getTitle());
-            intent.putExtra("isUserMode", isUserMode);
-            if (item.getUuid() != null) {
-                intent.putExtra("id", item.getUuid());
-                intent.putExtra("isPlaylist", true);
-            } else
-                intent.putExtra("id", item.getId());
-            if (isArtists)
-                intent.putExtra("isArtists", true);
-
-            if (item.getType()!=null&&item.getType().equals("USER"))
-                intent.putExtra("isUserPlaylist", true);
-
+            intent.putExtra(GridDetailActivity.ITEM_KEY, new Gson().toJson(item));
             mContext.startActivity(intent);
         });
 

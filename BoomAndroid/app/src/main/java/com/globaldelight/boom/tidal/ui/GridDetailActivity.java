@@ -20,12 +20,16 @@ import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.MasterActivity;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
+import com.globaldelight.boom.tidal.tidalconnector.model.Curated;
+import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.ui.adapter.PlaylistTrackAdapter;
 import com.globaldelight.boom.tidal.ui.adapter.TrackDetailAdapter;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
 import com.globaldelight.boom.utils.RequestChain;
+import com.google.gson.Gson;
 
 import retrofit2.Call;
 
@@ -38,20 +42,17 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_S
  */
 public class GridDetailActivity extends MasterActivity {
 
+    public static final String ITEM_KEY="item";
+    public static final String CURATED_KEY="curated";
+
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
     private FloatingActionButton mPlayButton;
 
-    private String id;
-    private boolean isPlaylist = false;
-    private boolean isArtists = false;
-    private boolean isMoods = false;
-    private String moodsPath = null;
-    private boolean isUserMode = false;
-    private boolean isUserPlaylist=false;
+    private Item mParent = null;
+    private Curated mCurated = null;
 
     private TrackDetailAdapter mAdapter;
-    private String title;
     private PlaylistTrackAdapter mPlaylistAdapter;
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -83,7 +84,8 @@ public class GridDetailActivity extends MasterActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
-        if (isMoods) {
+        if (mCurated != null) {
+            String moodsPath = "moods/" + mCurated.getPath() + "/playlists";
             loadMoods(moodsPath);
         } else {
             loadApi();
@@ -99,23 +101,23 @@ public class GridDetailActivity extends MasterActivity {
     private void init() {
         setContentView(R.layout.activity_grid_tidal);
         Bundle bundle = getIntent().getExtras();
-        title = bundle.getString("title");
-        id = bundle.getString("id");
-        isPlaylist = bundle.getBoolean("isPlaylist");
-        isArtists = bundle.getBoolean("isArtists");
-        isMoods = bundle.getBoolean("isMoods");
-        isUserMode = bundle.getBoolean("isUserMode");
-        isUserPlaylist = bundle.getBoolean("isUserPlaylist");
-        String imageUrl = bundle.getString("imageurl");
-        moodsPath = bundle.getString("path");
+        String json = bundle.getString(ITEM_KEY);
+        if ( json != null ) {
+            mParent = new Gson().fromJson(json, Item.class);
+        }
+
+        String curatedJson = bundle.getString(CURATED_KEY);
+        if ( curatedJson != null ) {
+            mCurated = new Gson().fromJson(curatedJson, Curated.class);
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar_grid_tidal);
-        toolbar.setTitle(title);
+        toolbar.setTitle((mCurated != null)? mCurated.getName() : mParent.getTitle());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ImageView imageView = findViewById(R.id.img_grid_tidal);
         Glide.with(this)
-                .load(imageUrl)
+                .load((mCurated != null)? mCurated.getImageUrl() : mParent.getItemArtUrl())
                 .placeholder(R.drawable.ic_default_art_player_header)
                 .centerCrop()
                 .skipMemoryCache(true)
@@ -134,7 +136,7 @@ public class GridDetailActivity extends MasterActivity {
         Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 100);
         requestChain.submit(call, resp -> {
             mProgressBar.setVisibility(View.GONE);
-            mAdapter = new TrackDetailAdapter(this, resp.getItems(), title,isUserMode);
+            mAdapter = new TrackDetailAdapter(this, resp.getItems(), mCurated.getName());
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             mRecyclerView.setLayoutManager(llm);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -144,25 +146,27 @@ public class GridDetailActivity extends MasterActivity {
     }
 
     private void loadApi() {
+        String title = mParent.getTitle();
         RequestChain requestChain = new RequestChain(this);
-        if (isPlaylist) {
-            Call<PlaylistResponse> call = TidalHelper.getInstance(this).getPlaylistTracks(id, 0, 100);
+        if (mParent.getItemType() == ItemType.PLAYLIST) {
+            boolean isUserCreated = mParent.getType().equals("USER");
+            Call<PlaylistResponse> call = TidalHelper.getInstance(this).getPlaylistTracks(mParent.getId(), 0, 100);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                mPlaylistAdapter = new PlaylistTrackAdapter(this, resp.getItems(), title,isUserMode,isUserPlaylist);
+                mPlaylistAdapter = new PlaylistTrackAdapter(this, resp.getItems(), title,isUserCreated);
                 mRecyclerView.setAdapter(mPlaylistAdapter);
                 mPlayButton.setVisibility(View.VISIBLE);
 
             });
-        }else if (isArtists){
-            String path = "artists/" + id + "/toptracks";
+        }else if (mParent.getItemType() == ItemType.ARTIST){
+            String path = "artists/" + mParent.getId() + "/toptracks";
             Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 999);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
-                mAdapter = new TrackDetailAdapter(this, resp.getItems(), title,isUserMode);
+                mAdapter = new TrackDetailAdapter(this, resp.getItems(), title);
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -171,11 +175,11 @@ public class GridDetailActivity extends MasterActivity {
 
             });
         }else {
-            String path = "albums/" + id + "/tracks";
+            String path = "albums/" + mParent.getId() + "/tracks";
             Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 200);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
-                mAdapter = new TrackDetailAdapter(this, resp.getItems(), title,isUserMode);
+                mAdapter = new TrackDetailAdapter(this, resp.getItems(), title);
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -187,7 +191,7 @@ public class GridDetailActivity extends MasterActivity {
 
     private void onPlayClicked(View view) {
         App.playbackManager().stop();
-        if (isPlaylist) {
+        if (mParent != null && mParent.getItemType() == ItemType.PLAYLIST) {
             App.playbackManager().queue().addItemListToPlay(mPlaylistAdapter.getItems(), 0, false);
         }
         else {

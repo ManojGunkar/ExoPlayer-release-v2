@@ -38,14 +38,12 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
     private List<ItemWrapper> mItems = Collections.emptyList();
     private String mHeaderTitle;
     private ArrayList<Item> tracks;
-    private boolean isUserMode=false;
     private boolean isUserPlaylist=false;
 
-    public PlaylistTrackAdapter(Context context, List<ItemWrapper> items, String headerTitle,boolean isUserMode, boolean isUserPlaylist) {
+    public PlaylistTrackAdapter(Context context, List<ItemWrapper> items, String headerTitle, boolean isUserPlaylist) {
         this.mContext = context;
         this.mItems = items;
         this.mHeaderTitle = headerTitle;
-        this.isUserMode=isUserMode;
         tracks = new ArrayList();
         for (int i = 0; i < mItems.size(); i++) {
             ItemWrapper item = mItems.get(i);
@@ -102,7 +100,7 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
 
             viewHolder.imgMenuTrack.setOnClickListener(v -> {
-                TidalPopupMenu.newInstance((Activity) mContext).showPopup(v, item, isUserMode,isUserPlaylist);
+                TidalPopupMenu.newInstance((Activity) mContext).showPopup(v, item);
             });
 
             updatePlayingStation(viewHolder, tracks.get(position-1));

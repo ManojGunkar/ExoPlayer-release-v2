@@ -29,12 +29,10 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private Context mContext;
     private List<Item> mItems = Collections.emptyList();
-    private boolean isUserMode = false;
 
-    public TrackAdapter(Context context, List<Item> items, boolean isUserMode) {
+    public TrackAdapter(Context context, List<Item> items) {
         this.mContext = context;
         this.mItems = items;
-        this.isUserMode = isUserMode;
     }
 
     @Override
@@ -61,7 +59,7 @@ public class TrackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         viewHolder.txtTitle.setText(item.getTitle());
 
         viewHolder.imgMenuTrack.setOnClickListener(v -> {
-            TidalPopupMenu.newInstance((Activity) mContext).showPopup(v, item, isUserMode,false);
+            TidalPopupMenu.newInstance((Activity) mContext).showPopup(v, item);
         });
 
         updatePlayingStation(viewHolder, item);

@@ -1,5 +1,6 @@
 package com.globaldelight.boom.tidal.tidalconnector.model;
 
+import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -92,6 +93,10 @@ public class Curated {
 
     public String getImage() {
         return image;
+    }
+
+    public String getImageUrl() {
+        return TidalRequestController.IMAGE_BASE_URL + image.replace("-", "/") + "/320x320.jpg";
     }
 
     public void setImage(String image) {
