@@ -18,7 +18,10 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.MainActivity;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.ui.adapter.PlaylistDialogAdapter;
@@ -54,60 +57,55 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
         return new TidalPopupMenu(activity);
     }
 
-    public void showPopup(View view, Item item) {
-        mItem = item;
-        getMenu(view).setOnMenuItemClickListener(this::onMenuItemClick);
-    }
-
     public void showPopup(View view, int menuResId, Item item) {
         mItem = item;
         PopupMenu popupMenu = new PopupMenu(mActivity, view);
         popupMenu.inflate(menuResId);
         popupMenu.setOnMenuItemClickListener(this::onMenuItemClick);
+        filterItems(popupMenu);
+        popupMenu.show();
+    }
+
+    public void showPopup(View view, Item item) {
+        if ( item.getItemType() == ItemType.PLAYLIST && item.getType().equals("USER") ) {
+            showPopup(view, R.menu.playlist_boom_menu, item);
+        }
+        else {
+            showPopup(view, R.menu.tidal_item_menu, item);
+        }
+    }
+
+    public void showHeaderPopup(View view, Item item, List<Item> items) {
+        mItemList = items;
+        if ( item.getItemType() == ItemType.PLAYLIST && item.getType().equals("USER") ) {
+            showPopup(view, R.menu.tidal_playlist_header_menu, item);
+        }
+        else {
+            showPopup(view, R.menu.tidal_collection_header_menu, item);
+        }
+    }
+
+
+    private void filterItems(PopupMenu popupMenu) {
         boolean isFavourite =  mHelper.getFavoriteManager().isFavorite(mItem);
         MenuItem removeFavItem = popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav);
         if ( removeFavItem != null ) {
             removeFavItem.setVisible(isFavourite);
         }
-        MenuItem addFavItem = popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(!isFavourite);
+        MenuItem addFavItem = popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav);
         if ( addFavItem != null ) {
             addFavItem.setVisible(!isFavourite);
         }
-        popupMenu.show();
-    }
 
-    public void showHeaderPopup(View view, Item item, List<Item> items) {
-        mItem = item;
-        mItemList = items;
-        PopupMenu popupMenu = new PopupMenu(mActivity, view);
-        if ( mItem.getItemType() == ItemType.PLAYLIST && mItem.getType().equals("USER") ) {
-            popupMenu.inflate(R.menu.tidal_playlist_header_menu);
+        IMediaElement currentPlayingItem = PlaybackManager.getInstance(mActivity).queue().getPlayingItem();
+        if ( currentPlayingItem.getMediaType() != MediaType.TIDAL ) {
+            popupMenu.getMenu().removeItem(R.id.song_add_queue_item);
+            popupMenu.getMenu().removeItem(R.id.tidal_menu_add_to_upnext);
+            popupMenu.getMenu().removeItem(R.id.song_play_next_item);
+            popupMenu.getMenu().removeItem(R.id.tidal_menu_play_next);
+            popupMenu.getMenu().removeItem(R.id.popup_play_next);
+            popupMenu.getMenu().removeItem(R.id.popup_add_queue);
         }
-        else {
-            popupMenu.inflate(R.menu.tidal_collection_header_menu);
-            boolean isFavourite =  mHelper.getFavoriteManager().isFavorite(mItem);
-            popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(isFavourite);
-            popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(!isFavourite);
-        }
-        popupMenu.setOnMenuItemClickListener(this::onMenuItemClick);
-        popupMenu.show();
-    }
-
-
-    private PopupMenu getMenu(View view) {
-        PopupMenu popupMenu = new PopupMenu(mActivity, view);
-        if ( mItem.getItemType() == ItemType.PLAYLIST && mItem.getType().equals("USER") ) {
-            popupMenu.inflate(R.menu.playlist_boom_menu);
-        }
-        else {
-            popupMenu.inflate(R.menu.tidal_item_menu);
-            boolean isFavourite =  mHelper.getFavoriteManager().isFavorite(mItem);
-            popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(isFavourite);
-            popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(!isFavourite);
-        }
-        popupMenu.show();
-
-        return popupMenu;
     }
 
 
@@ -128,10 +126,14 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
                 showPlaylistDialog();
                 break;
 
+            case R.id.popup_add_queue:
+            case R.id.song_add_queue_item:
             case R.id.tidal_menu_add_to_upnext:
                 addToQueue();
                 break;
 
+            case R.id.popup_play_next:
+            case R.id.song_play_next_item:
             case R.id.tidal_menu_play_next:
                 playNext();
                 break;

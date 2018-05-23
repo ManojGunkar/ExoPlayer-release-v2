@@ -30,7 +30,7 @@ public class OverFlowMenuUtils {
 
     private static boolean incompatiblePlayingItem() {
         IMediaElement playingItem = App.playbackManager().queue().getPlayingItem();
-        return ( playingItem != null && playingItem.getMediaType() == MediaType.RADIO );
+        return ( playingItem != null && (playingItem.getMediaType() == MediaType.RADIO || playingItem.getMediaType() == MediaType.TIDAL) );
     }
 
 
