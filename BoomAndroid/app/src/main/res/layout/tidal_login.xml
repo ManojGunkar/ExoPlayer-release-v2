@@ -2,107 +2,123 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/black_overlay"
+    android:orientation="vertical"
     android:padding="20dp">
 
-    <LinearLayout
-        android:id="@+id/ll_login_tidal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/tidal_ic" />
-
-        <android.support.v7.widget.AppCompatTextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="@string/tidal_login"
-            android:textColor="@color/white"
-            android:textSize="30dp"
-            android:textStyle="bold" />
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_user_id"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColorHint="@color/white">
-
-            <EditText
-                android:id="@+id/et_user_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_user"
-                android:singleLine="true"
-                android:textColor="@color/white" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_password"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColorHint="@color/white">
-
-            <EditText
-                android:id="@+id/et_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_password"
-                android:inputType="textPassword"
-                android:textColor="@color/white" />
-        </android.support.design.widget.TextInputLayout>
-
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="5dp"
-            android:paddingTop="8dp">
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/txt_forgot_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:padding="5dp"
-                android:text="@string/forgot_password"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/btn_login_tidal"
-            android:layout_width="300dp"
-            android:layout_gravity="center"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:padding="3dp"
-            android:text="@string/login"
-            android:textColor="@color/login_color"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/txt_create_account_tidal"
+    <ImageView
+        android:id="@+id/img_tidal_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ll_login_tidal"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="50dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
+        android:src="@drawable/tidal_ic" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/img_tidal_logo"
         android:gravity="center"
-        android:padding="5dp"
-        android:text="@string/newUser"
+        android:padding="10dp"
+        android:text="@string/tidal_login"
         android:textColor="@color/white"
-        android:textSize="15sp" />
+        android:textSize="30dp"
+        android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
+
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_user_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center"
+                android:textColorHint="@color/white">
+
+                <EditText
+                    android:id="@+id/et_user_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_user"
+                    android:singleLine="true"
+                    android:textSize="14dp"
+                    android:backgroundTint="@color/white"
+                    android:textColor="@color/white" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center"
+                android:textColorHint="@color/white">
+
+                <EditText
+                    android:id="@+id/et_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_password"
+                    android:textSize="14dp"
+                    android:backgroundTint="@color/white"
+                    android:inputType="textPassword"
+                    android:textColor="@color/white" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                >
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/txt_forgot_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:padding="5dp"
+                    android:text="@string/forgot_password"
+                    android:textColor="@color/white"
+                    android:textSize="14dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_login_tidal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/login_btn"
+                android:padding="3dp"
+                android:text="@string/login"
+                android:textAllCaps="false"
+                android:textSize="14dp" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/txt_create_account_tidal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/newUser"
+                android:textColor="@color/white"
+                android:textSize="14dp" />
+
+        </LinearLayout>
 
 </RelativeLayout>

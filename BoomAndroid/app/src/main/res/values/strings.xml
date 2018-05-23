@@ -228,8 +228,8 @@
     <string name="enter_password">Enter Password</string>
     <string name="show_password">Show Password</string>
     <string name="forgot_password">Forgot Password</string>
-    <string name="login">Login</string>
-    <string name="newUser">New User</string>
+    <string name="login">Log in</string>
+    <string name="newUser">Sign Up</string>
     <string name="search_hint_tidal">Tidal Search</string>
     <string name="tidal_sign_up">Sign Up</string>
     <string name="hint_password">Password</string>
