@@ -232,5 +232,19 @@ public class TidalRequestController {
         Call<FavoritesResponse> getFavorites(
                 @Header("X-Tidal-SessionId") String token,
                 @Path("userId") String userId);
+
+        @FormUrlEncoded
+        @POST("playlists/{playlistId}")
+        Call<Void> renamePlaylist(
+                @Header("X-Tidal-SessionId") String token,
+                @Path("playlistId") String playlistId,
+                @Field("title") String title,
+                @Field("description") String description);
+
+        @DELETE("playlists/{playlistId}")
+        Call<Void> deletePlaylist(
+                @Header("X-Tidal-SessionId") String token,
+                @Path("playlistId") String playlistId);
+
     }
 }

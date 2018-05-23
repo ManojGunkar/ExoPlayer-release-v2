@@ -268,5 +268,8 @@
     <string name="tidal_artist">Artists</string>
     <string name="failed_to_add_to_playlist">Failed to add to playlist</string>
     <string name="tidal_logout">Logout</string>
+    <string name="tidal_failed_delete">Failed to delete</string>
+    <string name="tidal_renamed">Renamed playlist</string>
+    <string name="tidal_failed_rename">Failed to rename</string>
 
 </resources>

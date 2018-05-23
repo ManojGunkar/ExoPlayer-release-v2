@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/collection_shuffle_item"
+        android:title="@string/menu_shuffle"/>
+
+    <item
+        android:id="@+id/tidal_menu_play_next"
+        android:title="@string/tidal_menu_play_next"/>
+
+    <item
+        android:id="@+id/tidal_menu_add_to_upnext"
+        android:title="@string/tidal_menu_add_upnext"/>
+
+    <item
+        android:id="@+id/popup_playlist_rename"
+        android:title="@string/rename"/>
+
+</menu>

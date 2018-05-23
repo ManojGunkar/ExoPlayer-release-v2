@@ -53,7 +53,7 @@
                     android:id="@+id/recycler_header_menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingRight="@dimen/card_header_recycler_title_margine_right"
+                    android:padding="@dimen/card_header_recycler_title_margine_right"
                     android:src="@drawable/ic_player_more_button"/>
         </LinearLayout>
 

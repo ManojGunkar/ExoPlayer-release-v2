@@ -28,12 +28,14 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private final static int TYPE_HEADER = 10000;
     private final static int TYPE_ITEM = 20000;
     private Context mContext;
+    private Item mParent = null;
     private List<Item> mItems = null;
     private String mHeaderTitle;
 
-    public TrackDetailAdapter(Context context, List<Item> items, String headerTitle) {
+    public TrackDetailAdapter(Context context, Item parent, List<Item> items, String headerTitle) {
         this.mContext = context;
         this.mItems = items;
+        this.mParent = parent;
         this.mHeaderTitle = headerTitle;
     }
 
@@ -49,6 +51,7 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             View itemView = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.card_header_recycler_view, parent, false);
             HeaderViewHolder holder = new HeaderViewHolder(itemView);
+            holder.imgMore.setOnClickListener((v)->onHeaderMenuClicked(holder));
             return holder;
         }
     }
@@ -126,6 +129,10 @@ public class TrackDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
         App.playbackManager().queue().addItemListToPlay(mItems, position - 1, false);
+    }
+
+    private void onHeaderMenuClicked(HeaderViewHolder holder) {
+        TidalPopupMenu.newInstance((Activity)mContext).showHeaderPopup(holder.imgMore, mParent, mItems);
     }
 
     public List<Item> getItems() {
