@@ -78,7 +78,7 @@ public class TidalRequestController {
                 @Field("username") String userId,
                 @Field("password") String password,
                 @Field("clientUniqueKey") String clientUniqueKey);
-        
+
         @FormUrlEncoded
         @POST("logout")
         Call<Void> userLogout(

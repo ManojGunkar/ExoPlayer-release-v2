@@ -41,9 +41,15 @@ public class UserCredentials {
 
     public void store(TidalLoginResponse response) {
         SharedPreferences.Editor editor=getEditor();
-        editor.putString(KEY_USER_ID, response.getUserId().toString());
-        editor.putString(KEY_SESSION_ID, response.getSessionId());
-        editor.putString(KEY_COUNTRY_CODE, response.getCountryCode());
+        if (response!=null){
+            editor.putString(KEY_USER_ID, response.getUserId().toString());
+            editor.putString(KEY_SESSION_ID, response.getSessionId());
+            editor.putString(KEY_COUNTRY_CODE, response.getCountryCode());
+        }else {
+            editor.putString(KEY_USER_ID, null);
+            editor.putString(KEY_SESSION_ID, null);
+            editor.putString(KEY_COUNTRY_CODE, null);
+        }
         editor.apply();
     }
 

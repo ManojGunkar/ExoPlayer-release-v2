@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.fragments.TabBarFragment;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalLoginResponse;
 import com.globaldelight.boom.tidal.ui.ContentLoadable;
 import com.globaldelight.boom.tidal.ui.adapter.TidalTabAdapter;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
@@ -92,6 +93,8 @@ public class TidalMainFragment extends TabBarFragment {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()){
                     Log.d("Okhttp","Logout done");
+
+                    UserCredentials.getCredentials(getContext()).store(null);
                     backToLogin();
                 }else {
                     Log.d("Okhttp","mislead in logout");
