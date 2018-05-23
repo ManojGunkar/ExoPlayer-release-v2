@@ -2,6 +2,8 @@ package com.globaldelight.boom.tidal.utils;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Looper;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +17,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
+import com.globaldelight.boom.app.activities.MainActivity;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
@@ -40,6 +43,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
     private List<Item> mItemList;
     private PlaylistDialogAdapter adapter;
     private TidalHelper mHelper;
+    private MaterialDialog mDialog = null;
 
     private TidalPopupMenu(Activity activity) {
         this.mActivity = activity;
@@ -53,6 +57,23 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
     public void showPopup(View view, Item item) {
         mItem = item;
         getMenu(view).setOnMenuItemClickListener(this::onMenuItemClick);
+    }
+
+    public void showPopup(View view, int menuResId, Item item) {
+        mItem = item;
+        PopupMenu popupMenu = new PopupMenu(mActivity, view);
+        popupMenu.inflate(menuResId);
+        popupMenu.setOnMenuItemClickListener(this::onMenuItemClick);
+        boolean isFavourite =  mHelper.getFavoriteManager().isFavorite(mItem);
+        MenuItem removeFavItem = popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav);
+        if ( removeFavItem != null ) {
+            removeFavItem.setVisible(isFavourite);
+        }
+        MenuItem addFavItem = popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(!isFavourite);
+        if ( addFavItem != null ) {
+            addFavItem.setVisible(!isFavourite);
+        }
+        popupMenu.show();
     }
 
     public void showHeaderPopup(View view, Item item, List<Item> items) {
@@ -93,6 +114,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
+
             case R.id.tidal_menu_add_to_fav:
                 addToFavourites();
                 break;
@@ -101,6 +123,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
                 removeFromFavourites();
                 break;
 
+            case R.id.song_add_playlist_item:
             case R.id.tidal_menu_add_to_playlist:
                 showPlaylistDialog();
                 break;
@@ -144,8 +167,12 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
 
 
     public void refreshList(String action) {
+        refreshList(action, mItem);
+    }
+
+    public void refreshList(String action, Item item) {
         Intent intent = new Intent(ACTION_REFRESH_LIST);
-        intent.putExtra("item", new Gson().toJson(mItem));
+        intent.putExtra("item", new Gson().toJson(item));
         intent.putExtra("action", action);
         LocalBroadcastManager.getInstance(mActivity).sendBroadcast(intent);
     }
@@ -255,7 +282,6 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
                         mHelper.deletePlaylist(mItem, (result)-> {
                             if ( result.isSuccess() ) {
                                 refreshList("remove");
@@ -277,7 +303,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
         adapter = new PlaylistDialogAdapter(mActivity, TidalHelper.getInstance(mActivity).getUserPlaylists(), this);
         rv.setLayoutManager(new LinearLayoutManager(mActivity));
         rv.setAdapter(adapter);
-        MaterialDialog dialog = Utils.createDialogBuilder(mActivity)
+        mDialog = Utils.createDialogBuilder(mActivity)
                 .title(R.string.menu_add_boom_playlist)
                 .customView(rv, false)
                 .positiveText(R.string.new_playlist)
@@ -302,22 +328,10 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
                         if (!input.toString().matches("")) {
-                            TidalRequestController.Callback callback = TidalRequestController.getTidalClient();
-                            Call<Item> call = callback.createPlaylist(
-                                    UserCredentials.getCredentials(mActivity).getSessionId(),
-                                    UserCredentials.getCredentials(mActivity).getUserId(),
-                                    input.toString(), "My Playlist");
-                            call.enqueue(new Callback<Item>() {
-                                @Override
-                                public void onResponse(Call<Item> call, Response<Item> response) {
-                                    if (response.isSuccessful()) {
-                                        TidalHelper.getInstance(mActivity).addToUserPlaylist(response.body());
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<Item> call, Throwable t) {
-
+                            mHelper.createPlaylist(input.toString(), "My Playlist", (result)->{
+                                if ( result.isSuccess() ) {
+                                    onItemSelected(result.get());
+                                    refreshList("add", result.get());
                                 }
                             });
                         }
@@ -327,10 +341,16 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
 
     @Override
     public void onItemSelected(Item item) {
+        if ( mDialog != null ) {
+            mDialog.dismiss();
+            mDialog = null;
+        }
+
         TidalHelper.getInstance(mActivity).addItemToPlaylist(mItem, item.getId(), (result)->{
             if ( result.isSuccess() ) {
                 item.setNumberOfTracks(item.getNumberOfTracks() + 1);
                 Toast.makeText(mActivity, R.string.added_to_playlist, Toast.LENGTH_LONG).show();
+                refreshList("refresh", item);
             }
             else {
                 Toast.makeText(mActivity, R.string.failed_to_add_to_playlist, Toast.LENGTH_LONG).show();

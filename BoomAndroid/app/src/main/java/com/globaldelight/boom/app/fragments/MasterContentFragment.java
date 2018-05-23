@@ -60,6 +60,8 @@ import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.player.AudioEffect;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
+import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.utils.TidalPopupMenu;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.PlayerUtils;
 import com.globaldelight.boom.view.CoachMarkerWindow;
@@ -997,7 +999,12 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
 
     private void overFlowMenu(Context context, View view) {
-        OverFlowMenuUtils.showMediaItemMenu(mActivity, view, R.menu.player_popup, App.playbackManager().getPlayingItem());
+        if ( mPlayingMediaItem.getMediaType() == MediaType.TIDAL ) {
+            TidalPopupMenu.newInstance(mActivity).showPopup(view, R.menu.tidal_player_popup, (Item)mPlayingMediaItem);
+        }
+        else {
+            OverFlowMenuUtils.showMediaItemMenu(mActivity, view, R.menu.player_popup, App.playbackManager().getPlayingItem());
+        }
     }
 
     @Override

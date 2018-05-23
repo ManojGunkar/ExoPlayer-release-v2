@@ -80,6 +80,36 @@ public class TidalHelper {
     private FavoritesManager mFavoriteManager;
     private Handler mMainHandler = new Handler(Looper.getMainLooper());
 
+    private class ResponseAdapter<T> implements Callback<T> {
+
+        private CompletionHandler<T> completionHandler;
+
+        public ResponseAdapter(CompletionHandler<T> completion) {
+            completionHandler = completion;
+        }
+
+        @Override
+        public void onResponse(Call<T> call, Response<T> response) {
+            if ( response.isSuccessful() ) {
+                T body = response.body();
+                onProcess(body);
+                mMainHandler.post(()->completionHandler.onComplete(Result.success(body)));
+            }
+            else {
+                mMainHandler.post(()->completionHandler.onComplete(Result.error(response.code(), response.message())));
+            }
+        }
+
+        @Override
+        public void onFailure(Call<T> call, Throwable t) {
+            mMainHandler.post(()->completionHandler.onComplete(Result.error(-1, "Failed")));
+        }
+
+        public void onProcess(T body) {
+
+        }
+    }
+
     private TidalHelper(Context context) {
         this.context = context;
         client = TidalRequestController.getTidalClient();
@@ -303,6 +333,17 @@ public class TidalHelper {
             @Override
             public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
 
+            }
+        });
+    }
+
+    public void createPlaylist(String name, String description, CompletionHandler<Item> completion) {
+        Call<Item> call = client.createPlaylist(sessionId, userId, name, description);
+        call.enqueue(new ResponseAdapter<Item>(completion) {
+            @Override
+            public void onProcess(Item body) {
+                super.onProcess(body);
+                addToUserPlaylist(body);
             }
         });
     }
