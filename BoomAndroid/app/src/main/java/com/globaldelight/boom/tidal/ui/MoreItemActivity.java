@@ -130,7 +130,7 @@ public class MoreItemActivity extends MasterActivity {
 
     private void loadApi() {
         mRequestChain = new RequestChain(this);
-        Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(api, 0, 200);
+        Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(api, 0, 999);
         mRequestChain.submit(call, resp -> {
             setDataInAdapter(resp.getItems());
         });
@@ -138,7 +138,7 @@ public class MoreItemActivity extends MasterActivity {
 
     private void loadUserPlaylists() {
         mRequestChain = new RequestChain(this);
-        Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getUserPlayLists(0, 200);
+        Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getUserPlayLists(0, 999);
         mRequestChain.submit(call, resp -> {
             setDataInAdapter(resp.getItems());
         });
@@ -149,7 +149,7 @@ public class MoreItemActivity extends MasterActivity {
         mRequestChain = new RequestChain(this);
         TidalRequestController.Callback callback = TidalRequestController.getTidalClient();
         Call<UserMusicResponse> call = callback.getUserMusic(api, UserCredentials.getCredentials(this).getSessionId(),
-                Locale.getDefault().getCountry(), "NAME", "ASC", "0", "100");
+                Locale.getDefault().getCountry(), "NAME", "ASC", "0", "999");
         mRequestChain.submit(call, resp -> {
             List<Item> itemList = new ArrayList<>();
             for (int i = 0; i < resp.getItems().size(); i++) {
@@ -171,7 +171,7 @@ public class MoreItemActivity extends MasterActivity {
             type = SEARCH_ARTISTS_TYPE;
         }
         mRequestChain = new RequestChain(this);
-        Call<SearchResponse> call = TidalHelper.getInstance(this).searchMusic(query, type, 0, 100);
+        Call<SearchResponse> call = TidalHelper.getInstance(this).searchMusic(query, type, 0, 999);
         String finalType = type;
         mRequestChain.submit(call, resp -> {
             switch (finalType) {

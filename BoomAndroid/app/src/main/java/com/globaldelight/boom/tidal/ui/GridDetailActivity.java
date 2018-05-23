@@ -146,11 +146,16 @@ public class GridDetailActivity extends MasterActivity {
     }
 
     private void loadApi() {
+        int limit = 999;
+        Integer maxItems = mParent.getNumberOfTracks();
+        if ( maxItems != null ) {
+            limit = maxItems.intValue();
+        }
         String title = mParent.getTitle();
         RequestChain requestChain = new RequestChain(this);
         if (mParent.getItemType() == ItemType.PLAYLIST) {
             boolean isUserCreated = mParent.getType().equals("USER");
-            Call<PlaylistResponse> call = TidalHelper.getInstance(this).getPlaylistTracks(mParent.getId(), 0, 100);
+            Call<PlaylistResponse> call = TidalHelper.getInstance(this).getPlaylistTracks(mParent.getId(), 0, limit);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -163,7 +168,7 @@ public class GridDetailActivity extends MasterActivity {
             });
         }else if (mParent.getItemType() == ItemType.ARTIST){
             String path = "artists/" + mParent.getId() + "/toptracks";
-            Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 999);
+            Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, limit);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
                 mAdapter = new TrackDetailAdapter(this, resp.getItems(), title);
@@ -176,7 +181,7 @@ public class GridDetailActivity extends MasterActivity {
             });
         }else {
             String path = "albums/" + mParent.getId() + "/tracks";
-            Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 200);
+            Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, limit);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
                 mAdapter = new TrackDetailAdapter(this, resp.getItems(), title);
