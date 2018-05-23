@@ -7,4 +7,10 @@
         android:icon="@drawable/ic_search"
         android:title="@string/search_hint"
         app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/action_logout"
+        android:title="@string/tidal_logout"
+        android:icon="@drawable/ic_over_ear_active"
+        />
 </menu>

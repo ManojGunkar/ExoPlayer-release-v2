@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -19,9 +20,16 @@ import android.view.ViewGroup;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.fragments.TabBarFragment;
+import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.ui.ContentLoadable;
 import com.globaldelight.boom.tidal.ui.adapter.TidalTabAdapter;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
+import com.globaldelight.boom.tidal.utils.UserCredentials;
+import com.globaldelight.boom.utils.Log;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.content.Context.SEARCH_SERVICE;
 
@@ -75,6 +83,33 @@ public class TidalMainFragment extends TabBarFragment {
         });
     }
 
+    private void userLogout(){
+        TidalRequestController.Callback client=TidalRequestController.getTidalClient();
+        String sessionid=UserCredentials.getCredentials(getContext()).getSessionId();
+        Call<Void> call=client.userLogout(sessionid,sessionid);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()){
+                    Log.d("Okhttp","Logout done");
+                    backToLogin();
+                }else {
+                    Log.d("Okhttp","mislead in logout");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("Okhttp","error in logout "+t.getMessage());
+            }
+        });
+    }
+
+    private void backToLogin(){
+        Fragment fragment=new TidalLoginFragment();
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -135,6 +170,9 @@ public class TidalMainFragment extends TabBarFragment {
         int id = item.getItemId();
         if (id == R.id.action_search) {
             return true;
+        }
+        if (id==R.id.action_logout){
+            userLogout();
         }
         return false;
     }

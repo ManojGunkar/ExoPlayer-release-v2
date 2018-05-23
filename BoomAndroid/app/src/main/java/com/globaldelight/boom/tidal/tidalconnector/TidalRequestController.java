@@ -78,6 +78,12 @@ public class TidalRequestController {
                 @Field("username") String userId,
                 @Field("password") String password,
                 @Field("clientUniqueKey") String clientUniqueKey);
+        
+        @FormUrlEncoded
+        @POST("logout")
+        Call<Void> userLogout(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Field("sessionId") String sessionid);
 
         @GET("tracks/{track_id}/streamurl")
         Call<TrackPlayResponse> playTrack(
