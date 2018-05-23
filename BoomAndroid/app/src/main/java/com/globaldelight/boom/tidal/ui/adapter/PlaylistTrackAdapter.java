@@ -40,14 +40,16 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
     private Context mContext;
     private List<ItemWrapper> mItems = Collections.emptyList();
     private String mHeaderTitle;
+    private Item mParent;
     private ArrayList<Item> tracks;
     private boolean isUserPlaylist=false;
 
     private OnStartDragListener mOnStartDragListener;
 
-    public PlaylistTrackAdapter(Context context, List<ItemWrapper> items, String headerTitle, boolean isUserPlaylist) {
+    public PlaylistTrackAdapter(Context context, Item parent, List<ItemWrapper> items, String headerTitle, boolean isUserPlaylist) {
         this.mContext = context;
         this.mItems = items;
+        this.mParent = parent;
         this.mHeaderTitle = headerTitle;
         tracks = new ArrayList();
         for (int i = 0; i < mItems.size(); i++) {
@@ -64,6 +66,7 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
             View itemView = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.card_header_recycler_view, parent, false);
             HeaderViewHolder holder = new HeaderViewHolder(itemView);
+            holder.imgMore.setOnClickListener((v)->onHeaderMenuClicked(holder));
             return holder;
         } else {
             ItemViewHolder vh = new ItemViewHolder(inflater.inflate(R.layout.item_edit_track, parent, false));
@@ -76,11 +79,8 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (position < 1) {
             HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
-            headerViewHolder.txtHeaderTitle.setText(mHeaderTitle);
+            headerViewHolder.txtHeaderTitle.setText(mParent.getTitle());
             headerViewHolder.txtHeaderDetail.setText("Song : " + mItems.size());
-            headerViewHolder.imgMore.setOnClickListener(view->{
-
-            });
         }
         else {
             ItemViewHolder viewHolder = (ItemViewHolder) holder;
@@ -172,6 +172,11 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
 
          App.playbackManager().queue().addItemListToPlay(tracks, position, false);
     }
+
+    private void onHeaderMenuClicked(HeaderViewHolder holder) {
+        TidalPopupMenu.newInstance((Activity)mContext).showHeaderPopup(holder.imgMore, mParent, tracks);
+    }
+
 
     public List<Item> getItems() {
         return tracks;

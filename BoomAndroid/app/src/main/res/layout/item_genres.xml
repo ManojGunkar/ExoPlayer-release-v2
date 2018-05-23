@@ -9,7 +9,7 @@
         android:layout_width="150dp"
         android:layout_height="100dp"
         android:layout_centerInParent="true"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         android:src="@drawable/ic_default_art_grid"/>
 
     <android.support.v7.widget.AppCompatTextView

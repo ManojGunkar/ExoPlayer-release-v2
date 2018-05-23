@@ -288,8 +288,8 @@ public class UpNextPlayingQueue {
         }
     }
 
-    private void updateUnshuffledList(int position, ArrayList<? extends IMediaElement> itemList) {
-        ArrayList<IMediaElement> tempList = null;
+    private void updateUnshuffledList(int position, List<? extends IMediaElement> itemList) {
+        List<IMediaElement> tempList = null;
         try {
             tempList = fetchSavedItems(UNSHUFFLE);
         } catch (JsonSyntaxException e) {
@@ -349,7 +349,7 @@ public class UpNextPlayingQueue {
         mUpNextList.add(item);
     }
 
-    public void addItemAsUpNext(ArrayList<? extends IMediaElement> itemList) {
+    public void addItemAsUpNext(List<? extends IMediaElement> itemList) {
         if (mShuffle == SHUFFLE_ON) {
             updateUnshuffledList(mUpNextList.size() - 1, itemList);
         }
@@ -367,7 +367,7 @@ public class UpNextPlayingQueue {
         mUpNextList.add(getPlayNextPosition(), item);
     }
 
-    public void addItemAsPlayNext(ArrayList<? extends IMediaElement> itemList) {
+    public void addItemAsPlayNext(List<? extends IMediaElement> itemList) {
         if (mShuffle == SHUFFLE_ON) {
             updateUnshuffledList(getPlayNextPosition(), itemList);
         }

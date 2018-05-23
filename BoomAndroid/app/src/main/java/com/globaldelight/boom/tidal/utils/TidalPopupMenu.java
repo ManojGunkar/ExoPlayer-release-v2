@@ -19,12 +19,8 @@ import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.ui.adapter.PlaylistDialogAdapter;
-import com.globaldelight.boom.utils.Log;
-import com.globaldelight.boom.utils.RequestChain;
-import com.globaldelight.boom.utils.Result;
 import com.globaldelight.boom.utils.Utils;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 
 import java.util.List;
 
@@ -41,14 +37,13 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_R
 public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, PlaylistDialogAdapter.Callback {
     private Activity mActivity;
     private Item mItem;
+    private List<Item> mItemList;
     private PlaylistDialogAdapter adapter;
-    private boolean isUserPlaylistTrack=false;
     private TidalHelper mHelper;
 
     private TidalPopupMenu(Activity activity) {
         this.mActivity = activity;
         mHelper = TidalHelper.getInstance(mActivity);
-
     }
 
     public static TidalPopupMenu newInstance(Activity activity) {
@@ -60,6 +55,22 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
         getMenu(view).setOnMenuItemClickListener(this::onMenuItemClick);
     }
 
+    public void showHeaderPopup(View view, Item item, List<Item> items) {
+        mItem = item;
+        mItemList = items;
+        PopupMenu popupMenu = new PopupMenu(mActivity, view);
+        if ( mItem.getItemType() == ItemType.PLAYLIST && mItem.getType().equals("USER") ) {
+            popupMenu.inflate(R.menu.tidal_playlist_header_menu);
+        }
+        else {
+            popupMenu.inflate(R.menu.tidal_collection_header_menu);
+            boolean isFavourite =  mHelper.getFavoriteManager().isFavorite(mItem);
+            popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(isFavourite);
+            popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(!isFavourite);
+        }
+        popupMenu.setOnMenuItemClickListener(this::onMenuItemClick);
+        popupMenu.show();
+    }
 
 
     private PopupMenu getMenu(View view) {
@@ -68,7 +79,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
             popupMenu.inflate(R.menu.playlist_boom_menu);
         }
         else {
-            popupMenu.inflate(R.menu.tidal_menu);
+            popupMenu.inflate(R.menu.tidal_item_menu);
             boolean isFavourite =  mHelper.getFavoriteManager().isFavorite(mItem);
             popupMenu.getMenu().findItem(R.id.tidal_menu_remove_fav).setVisible(isFavourite);
             popupMenu.getMenu().findItem(R.id.tidal_menu_add_to_fav).setVisible(!isFavourite);
@@ -102,10 +113,33 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
                 playNext();
                 break;
 
-            case R.id.tidal_menu_shuffle:
+            case R.id.collection_shuffle_item:
+                shuffle();
+                break;
+
+            case R.id.popup_playlist_rename:
+            case R.id.playlist_rename_item:
+                renamePlaylist();
+                break;
+
+            case R.id.popup_playlist_delete:
+                deletePlaylist();
                 break;
         }
         return false;
+    }
+
+    public void shuffle() {
+        if (mItemList != null ){
+            App.playbackManager().queue().addItemListToPlay(mItemList, 0, true);
+        }
+        else {
+            mHelper.getTracks(mItem, result -> {
+                if (result.isSuccess()) {
+                    App.playbackManager().queue().addItemListToPlay(result.get(), 0, true);
+                }
+            });
+        }
     }
 
 
@@ -119,16 +153,32 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
     private void addToQueue() {
         if (mItem.getItemType() == ItemType.SONGS) {
             App.playbackManager().queue().addItemAsUpNext(mItem);
-        } else {
-
+        }
+        else if (mItemList != null ){
+            App.playbackManager().queue().addItemAsUpNext(mItemList);
+        }
+        else {
+            mHelper.getTracks(mItem, result -> {
+                if (result.isSuccess()) {
+                    App.playbackManager().queue().addItemAsUpNext(result.get());
+                }
+            });
         }
     }
 
     private void playNext() {
         if (mItem.getItemType() == ItemType.SONGS) {
             App.playbackManager().queue().addItemAsPlayNext(mItem);
-        } else {
-
+        }
+        else if ( mItemList != null ) {
+            App.playbackManager().queue().addItemAsPlayNext(mItemList);
+        }
+        else {
+            mHelper.getTracks(mItem, result -> {
+                if (result.isSuccess()) {
+                    App.playbackManager().queue().addItemAsPlayNext(result.get());
+                }
+            });
         }
     }
 
@@ -165,6 +215,59 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
                 Toast.makeText(mActivity, "Something went wrong", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void renamePlaylist() {
+        Utils.createDialogBuilder(mActivity)
+                .title(R.string.rename)
+                .cancelable(true)
+                .positiveText(mActivity.getResources().getString(R.string.done))
+                .negativeText(mActivity.getResources().getString(R.string.dialog_txt_cancel))
+                .input(null, mItem.getTitle(), new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        if (input.toString().matches("")) {
+                            renamePlaylist();
+                        } else {
+                            final String newName = input.toString();
+                            mHelper.renamePlaylist(mItem, newName, (result)->{
+                                if ( result.isSuccess() ) {
+                                    mItem.setTitle(newName);
+                                    Toast.makeText(mActivity, R.string.tidal_renamed, Toast.LENGTH_SHORT).show();
+                                    refreshList();
+                                }
+                                else {
+                                    Toast.makeText(mActivity, R.string.tidal_failed_rename, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                }).show();
+    }
+
+    private void deletePlaylist() {
+        String content = mActivity.getResources().getString(R.string.delete_dialog_txt, mItem.getTitle());
+        Utils.createDialogBuilder(mActivity).title(R.string.delete_dialog_title)
+                .content(content)
+                .positiveText(mActivity.getResources().getString(R.string.ok))
+                .negativeText(mActivity.getResources().getString(R.string.dialog_txt_cancel))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                        mHelper.deletePlaylist(mItem, (result)-> {
+                            if ( result.isSuccess() ) {
+                                refreshList();
+                                Toast.makeText(mActivity, R.string.playlist_deleted, Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                Toast.makeText(mActivity, R.string.tidal_failed_delete, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }
+                }).show();
+
     }
 
     private void showPlaylistDialog() {

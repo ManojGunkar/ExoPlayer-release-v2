@@ -108,10 +108,7 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
         mapResponse(TidalHelper.USER_TRACKS, R.string.tidal_tracks, LIST_VIEW);
         mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_album, GRID_VIEW);
         mapResponse(TidalHelper.USER_ARTISTS, R.string.tidal_artist, GRID_VIEW);
-        Call<TidalBaseResponse> call = TidalHelper.getInstance(getContext()).getUserPlayLists(0,10);
-        mRequestChain.submit(call, resp->{
-            mItemList.add(new NestedItemDescription(R.string.user_playlist, GRID_VIEW, resp.getItems(), TidalHelper.getInstance(getContext()).getUserPath("/playlists")));
-        });
+        updateUserPlaylist();
         mRequestChain.submit((response) -> {
             mAdapter = new NestedItemAdapter(getContext(), mItemList, true, false);
             mRecyclerView.setAdapter(mAdapter);
@@ -135,19 +132,18 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
         intentFilter.addAction(ACTION_REFRESH_LIST);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
-
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroy() {
+        super.onDestroy();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 
@@ -176,21 +172,19 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
                     playlists.add(items.getItem());
                 }
 
-                if (playlists.size() > 0 ) {
-                    NestedItemDescription theDesc = null;
-                    for (NestedItemDescription desc: mItemList) {
-                        if ( desc.titleResId == resId ) {
-                            theDesc = desc;
-                        }
+                NestedItemDescription theDesc = null;
+                for (NestedItemDescription desc: mItemList) {
+                    if ( desc.titleResId == resId ) {
+                        theDesc = desc;
                     }
+                }
 
-                    if ( theDesc != null ) {
-                        theDesc.itemList = playlists;
-                        mAdapter.notifyDataSetChanged();
-                    }
-                    else {
-                        mItemList.add(new NestedItemDescription(resId, type, playlists, path));
-                    }
+                if ( theDesc != null ) {
+                    theDesc.itemList = playlists;
+                    mAdapter.notifyDataSetChanged();
+                }
+                else {
+                    mItemList.add(new NestedItemDescription(resId, type, playlists, path));
                 }
             }
 
@@ -198,11 +192,9 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
     }
 
     private void refreshList(Item item) {
-
         if (!mHasResponse) {
             return;
         }
-
 
         if ( mRequestChain == null ) {
             mRequestChain = new RequestChain(getContext());
@@ -210,7 +202,13 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
 
         switch (item.getItemType()) {
             case ItemType.PLAYLIST:
-                mapResponse(TidalHelper.USER_PLAYLISTS, R.string.tidal_playlist, GRID_VIEW);
+                if ( item.getType().equals("USER") ) {
+                    updateUserPlaylist();
+                }
+                else {
+                    mapResponse(TidalHelper.USER_PLAYLISTS, R.string.tidal_playlist, GRID_VIEW);
+                }
+
                 break;
 
             case ItemType.ALBUM:
@@ -225,6 +223,25 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
                 mapResponse(TidalHelper.USER_TRACKS, R.string.tidal_tracks, LIST_VIEW);
                 break;
         }
+    }
+
+    private void updateUserPlaylist() {
+        Call<TidalBaseResponse> call = TidalHelper.getInstance(getContext()).getUserPlayLists(0,10);
+        mRequestChain.submit(call, resp->{
+            NestedItemDescription theDesc = null;
+            for (NestedItemDescription desc: mItemList) {
+                if ( desc.titleResId == R.string.user_playlist ) {
+                    theDesc = desc;
+                }
+            }
+            if ( theDesc != null ) {
+                theDesc.itemList = resp.getItems();
+                mAdapter.notifyDataSetChanged();
+            }
+            else {
+                mItemList.add(new NestedItemDescription(R.string.user_playlist, GRID_VIEW, resp.getItems(), TidalHelper.getInstance(getContext()).getUserPath("/playlists")));
+            }
+        });
     }
 
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -37,6 +38,7 @@ import java.util.Collections;
 import retrofit2.Call;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_REFRESH_LIST;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
 
 /**
@@ -51,6 +53,7 @@ public class GridDetailActivity extends MasterActivity {
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
     private FloatingActionButton mPlayButton;
+    private Toolbar mToolbar;
 
     private Item mParent = null;
     private Curated mCurated = null;
@@ -69,6 +72,14 @@ public class GridDetailActivity extends MasterActivity {
                         mPlaylistAdapter.notifyDataSetChanged();
                     break;
 
+                case ACTION_REFRESH_LIST:
+                    String json = intent.getStringExtra("item");
+                    if ( json != null ) {
+                        Item item = new Gson().fromJson(json, Item.class);
+                        refresh(item);
+                    }
+                    break;
+
             }
         }
     };
@@ -80,6 +91,7 @@ public class GridDetailActivity extends MasterActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
+        intentFilter.addAction(ACTION_REFRESH_LIST);
         LocalBroadcastManager.getInstance(this).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 
@@ -114,9 +126,10 @@ public class GridDetailActivity extends MasterActivity {
             mCurated = new Gson().fromJson(curatedJson, Curated.class);
         }
 
-        Toolbar toolbar = findViewById(R.id.toolbar_grid_tidal);
-        toolbar.setTitle((mCurated != null) ? mCurated.getName() : mParent.getTitle());
-        setSupportActionBar(toolbar);
+        mToolbar = findViewById(R.id.toolbar_grid_tidal);
+        mToolbar.setTitle((mCurated != null)? mCurated.getName() : mParent.getTitle());
+
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ImageView imageView = findViewById(R.id.img_grid_tidal);
         Glide.with(this)
@@ -139,7 +152,7 @@ public class GridDetailActivity extends MasterActivity {
         Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 100);
         requestChain.submit(call, resp -> {
             mProgressBar.setVisibility(View.GONE);
-            mAdapter = new TrackDetailAdapter(this, resp.getItems(), mCurated.getName());
+            mAdapter = new TrackDetailAdapter(this, mParent, resp.getItems(), mCurated.getName());
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             mRecyclerView.setLayoutManager(llm);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -164,7 +177,7 @@ public class GridDetailActivity extends MasterActivity {
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                mPlaylistAdapter = new PlaylistTrackAdapter(this, resp.getItems(), title, isUserCreated);
+                mPlaylistAdapter = new PlaylistTrackAdapter(this, mParent, resp.getItems(), title,isUserCreated);
                 mRecyclerView.setAdapter(mPlaylistAdapter);
                 mPlayButton.setVisibility(View.VISIBLE);
 
@@ -202,7 +215,7 @@ public class GridDetailActivity extends MasterActivity {
             Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, limit);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
-                mAdapter = new TrackDetailAdapter(this, resp.getItems(), title);
+                mAdapter = new TrackDetailAdapter(this, mParent, resp.getItems(), title);
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -215,7 +228,7 @@ public class GridDetailActivity extends MasterActivity {
             Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, limit);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
-                mAdapter = new TrackDetailAdapter(this, resp.getItems(), title);
+                mAdapter = new TrackDetailAdapter(this, mParent, resp.getItems(), title);
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -231,6 +244,15 @@ public class GridDetailActivity extends MasterActivity {
             App.playbackManager().queue().addItemListToPlay(mPlaylistAdapter.getItems(), 0, false);
         } else {
             App.playbackManager().queue().addItemListToPlay(mAdapter.getItems(), 0, false);
+        }
+    }
+
+    private void refresh(Item item) {
+        if ( mParent.equalTo(item) ) {
+            mParent.setTitle(item.getTitle());
+            CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout_grid_tidal);
+            collapsingToolbarLayout.setTitle(mParent.getTitle());
+            mPlaylistAdapter.notifyDataSetChanged();
         }
     }
 }

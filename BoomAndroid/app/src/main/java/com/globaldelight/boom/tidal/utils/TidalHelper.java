@@ -1,7 +1,11 @@
 package com.globaldelight.boom.tidal.utils;
 
 import android.content.Context;
+import android.os.Handler;
 import android.os.Looper;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.view.View;
 import android.widget.Toast;
 
 import com.globaldelight.boom.R;
@@ -15,6 +19,8 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseRespo
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalSubscriptionInfo;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
+import com.globaldelight.boom.tidal.ui.adapter.PlaylistTrackAdapter;
+import com.globaldelight.boom.tidal.ui.adapter.TrackDetailAdapter;
 import com.globaldelight.boom.utils.Result;
 import com.google.gson.JsonElement;
 
@@ -72,6 +78,7 @@ public class TidalHelper {
     private TidalSubscriptionInfo subscriptionInfo;
     private List<Item> mMyPlaylists = new ArrayList<>();
     private FavoritesManager mFavoriteManager;
+    private Handler mMainHandler = new Handler(Looper.getMainLooper());
 
     private TidalHelper(Context context) {
         this.context = context;
@@ -102,6 +109,8 @@ public class TidalHelper {
         return USER + userId + path;
     }
 
+
+
     public Call<TidalBaseResponse> getItemCollection(String path, int offset, int limit) {
         return client.getItemCollection(path,
                 TidalRequestController.AUTH_TOKEN,
@@ -109,6 +118,71 @@ public class TidalHelper {
                 String.valueOf(offset),
                 String.valueOf(limit));
     }
+
+
+    public void getTracks(Item parent, CompletionHandler<List<Item>> completionHandler) {
+        Integer trackCount = parent.getNumberOfTracks();
+        if ( trackCount == null ) {
+            trackCount = new Integer(999);
+        }
+
+        if (parent.getItemType() == ItemType.PLAYLIST) {
+            Call<PlaylistResponse> call = getPlaylistTracks(parent.getId(), 0, trackCount);
+            call.enqueue(new Callback<PlaylistResponse>() {
+                @Override
+                public void onResponse(Call<PlaylistResponse> call, Response<PlaylistResponse> response) {
+                    if (response.isSuccessful()) {
+                        List<ItemWrapper> wrappedItems = response.body().getItems();
+                        ArrayList<Item> items = new ArrayList<>();
+                        for (ItemWrapper wrapped : wrappedItems) {
+                            items.add(wrapped.getItem());
+                        }
+                        mMainHandler.post(() -> completionHandler.onComplete(Result.success(items)));
+                    } else {
+                        mMainHandler.post(() -> completionHandler.onComplete(Result.error(response.code(), response.message())));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<PlaylistResponse> call, Throwable t) {
+                    mMainHandler.post(()->completionHandler.onComplete(Result.error(-1, null)));
+                }
+            });
+
+        }
+        else {
+            String path;
+            switch (parent.getItemType()) {
+                case ItemType.ARTIST:
+                    path = "artists/" + parent.getId() + "/toptracks";
+                    break;
+
+                default:
+                case ItemType.ALBUM:
+                    path = "albums/" + parent.getId() + "/tracks";
+                    break;
+            }
+            Call<TidalBaseResponse> call = getItemCollection(path, 0, trackCount);
+            call.enqueue(new Callback<TidalBaseResponse>() {
+                @Override
+                public void onResponse(Call<TidalBaseResponse> call, Response<TidalBaseResponse> response) {
+                    if (response.isSuccessful()) {
+                        mMainHandler.post(() -> completionHandler.onComplete(Result.success(response.body().getItems())));
+                    } else {
+                        mMainHandler.post(() -> completionHandler.onComplete(Result.error(response.code(), response.message())));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
+                    mMainHandler.post(()->completionHandler.onComplete(Result.error(-1, null)));
+                }
+            });
+        }
+    }
+
+
+
 
     public Call<PlaylistResponse> getPlaylistTracks(String uuid, int offset, int limit) {
         String path = PLAYLIST_TRACKS + uuid + "/items";
@@ -231,6 +305,76 @@ public class TidalHelper {
 
             }
         });
+    }
+
+    public void renamePlaylist(Item playlist, String newName, CompletionHandler<Void> completion) {
+        Call<Void> call = client.renamePlaylist(sessionId, playlist.getId(), newName, "my playlist");
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if ( response.isSuccessful() ) {
+                    mMainHandler.post(()->{
+                        for ( Item aPlaylist: mMyPlaylists ) {
+                            if ( aPlaylist.equalTo(playlist) ) {
+                                aPlaylist.setTitle(newName);
+                                break;
+                            }
+                        }
+                        mMainHandler.post(()->completion.onComplete(Result.success(null)));
+                    });
+                }
+                else {
+                    mMainHandler.post(()->{
+                        completion.onComplete(Result.error(response.code(), response.message()));
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                mMainHandler.post(()->{
+                    completion.onComplete(Result.error(-1, "Failed"));
+                });
+            }
+        });
+    }
+
+    public void deletePlaylist(Item playlist, CompletionHandler<Void> completion) {
+        Call<Void> call = client.deletePlaylist(sessionId, playlist.getId());
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if ( response.isSuccessful() ) {
+                    mMainHandler.post(()->{
+                        int count = mMyPlaylists.size();
+                        int index = -1;
+                        for ( int i = 0; i < count; i++ ) {
+                            if ( mMyPlaylists.get(i).equalTo(playlist) ) {
+                                index = i;
+                                break;
+                            }
+                        }
+                        if ( index != -1 ) {
+                            mMyPlaylists.remove(index);
+                        }
+                        mMainHandler.post(()->completion.onComplete(Result.success(null)));
+                    });
+                }
+                else {
+                    mMainHandler.post(()->{
+                        completion.onComplete(Result.error(response.code(), response.message()));
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                mMainHandler.post(()->{
+                    completion.onComplete(Result.error(-1, "Failed"));
+                });
+            }
+        });
+
     }
 
 
