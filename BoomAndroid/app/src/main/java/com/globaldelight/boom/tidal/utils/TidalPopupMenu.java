@@ -143,9 +143,10 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
     }
 
 
-    public void refreshList() {
+    public void refreshList(String action) {
         Intent intent = new Intent(ACTION_REFRESH_LIST);
         intent.putExtra("item", new Gson().toJson(mItem));
+        intent.putExtra("action", action);
         LocalBroadcastManager.getInstance(mActivity).sendBroadcast(intent);
     }
 
@@ -190,7 +191,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Toast.makeText(mActivity, "Added Successfully", Toast.LENGTH_SHORT).show();
                 mHelper.getFavoriteManager().addToFavorites(mItem);
-                refreshList();
+                refreshList("add");
             }
 
             @Override
@@ -205,7 +206,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                refreshList();
+                refreshList("remove");
                 mHelper.getFavoriteManager().removeFromFavorites(mItem);
                 Toast.makeText(mActivity, "Removed Successfully", Toast.LENGTH_SHORT).show();
             }
@@ -234,7 +235,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
                                 if ( result.isSuccess() ) {
                                     mItem.setTitle(newName);
                                     Toast.makeText(mActivity, R.string.tidal_renamed, Toast.LENGTH_SHORT).show();
-                                    refreshList();
+                                    refreshList("refresh");
                                 }
                                 else {
                                     Toast.makeText(mActivity, R.string.tidal_failed_rename, Toast.LENGTH_SHORT).show();
@@ -257,7 +258,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
 
                         mHelper.deletePlaylist(mItem, (result)-> {
                             if ( result.isSuccess() ) {
-                                refreshList();
+                                refreshList("remove");
                                 Toast.makeText(mActivity, R.string.playlist_deleted, Toast.LENGTH_SHORT).show();
                             }
                             else {

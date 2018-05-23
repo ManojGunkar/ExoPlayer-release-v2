@@ -28,6 +28,7 @@ import com.globaldelight.boom.tidal.utils.NestedItemDescription;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
 import com.globaldelight.boom.tidal.utils.UserCredentials;
 import com.globaldelight.boom.utils.RequestChain;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ import java.util.Locale;
 import retrofit2.Call;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
+import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_REFRESH_LIST;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
 import static com.globaldelight.boom.tidal.utils.TidalHelper.SEARCH_ALBUM_TYPE;
 import static com.globaldelight.boom.tidal.utils.TidalHelper.SEARCH_ARTISTS_TYPE;
@@ -71,11 +73,20 @@ public class MoreItemActivity extends MasterActivity {
                         mGridAdapter.notifyDataSetChanged();
                     break;
 
+                case ACTION_REFRESH_LIST:
+                    if ( isUserMode && mItems != null ) {
+                        String json = intent.getStringExtra("item");
+                        Item theItem = new Gson().fromJson(json, Item.class);
+                        refresh(intent.getStringExtra("action"), theItem);
+                    }
+                    break;
+
             }
         }
     };
     private String searchQuery;
     private boolean isArtists = false;
+    private List<Item> mItems;
 
     @Override
     public void onStart() {
@@ -83,6 +94,7 @@ public class MoreItemActivity extends MasterActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
+        intentFilter.addAction(ACTION_REFRESH_LIST);
         LocalBroadcastManager.getInstance(this).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 
@@ -192,6 +204,7 @@ public class MoreItemActivity extends MasterActivity {
     }
 
     private void setDataInAdapter(List<Item> items) {
+        mItems = items;
         mProgressBar.setVisibility(View.GONE);
         if (viewType == NestedItemDescription.LIST_VIEW) {
             LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -206,6 +219,47 @@ public class MoreItemActivity extends MasterActivity {
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
             mRecyclerView.setAdapter(mGridAdapter);
         }
+    }
+
+    private void refresh(String action, Item item) {
+        if ( action.equals("add") ) {
+            mItems.add(0, item);
+        }
+        else if ( action.equals("remove") ) {
+            int index = -1;
+            for ( int i = 0; i < mItems.size(); i++ ) {
+                if (mItems.get(i).equalTo(item)) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1) {
+                mItems.remove(index);
+            }
+        }
+        else {
+            int index = -1;
+            for ( int i = 0; i < mItems.size(); i++ ) {
+                if (mItems.get(i).equalTo(item)) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1) {
+                mItems.remove(index);
+                mItems.add(index, item);
+            }
+
+        }
+
+        if ( mGridAdapter != null ) {
+            mGridAdapter.notifyDataSetChanged();
+        }
+
+        if ( mAdapter != null ) {
+            mAdapter.notifyDataSetChanged();
+        }
+
     }
 
 }
