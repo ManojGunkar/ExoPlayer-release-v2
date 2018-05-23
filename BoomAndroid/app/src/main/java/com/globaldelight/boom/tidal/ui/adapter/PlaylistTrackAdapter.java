@@ -2,8 +2,10 @@ package com.globaldelight.boom.tidal.ui.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -19,6 +21,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.ItemWrapper;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.utils.TidalPopupMenu;
+import com.globaldelight.boom.utils.OnStartDragListener;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.ArrayList;
@@ -39,6 +42,8 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
     private String mHeaderTitle;
     private ArrayList<Item> tracks;
     private boolean isUserPlaylist=false;
+
+    private OnStartDragListener mOnStartDragListener;
 
     public PlaylistTrackAdapter(Context context, List<ItemWrapper> items, String headerTitle, boolean isUserPlaylist) {
         this.mContext = context;
@@ -103,10 +108,22 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<RecyclerView.View
                 TidalPopupMenu.newInstance((Activity) mContext).showPopup(v, item);
             });
 
+            viewHolder.imgReArragneTrack.setOnTouchListener((v, event) -> {
+                if (MotionEventCompat.getActionMasked(event) ==
+                        MotionEvent.ACTION_DOWN || MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                    mOnStartDragListener.onStartDrag(viewHolder);
+                }
+                return false;
+            });
+
             updatePlayingStation(viewHolder, tracks.get(position-1));
         }
 
 
+    }
+
+    public void setDragListerner(OnStartDragListener onStartDragListener){
+        this.mOnStartDragListener=onStartDragListener;
     }
 
     private void updatePlayingStation(ItemViewHolder holder, IMediaElement item) {
