@@ -188,6 +188,15 @@ public class TidalRequestController {
                 @Query("countryCode") String countryCode);
 
         @FormUrlEncoded
+        @POST("playlists/{uuid}/items/{fromIndex}")
+        Call<Void> moveItem(
+                @Header("X-Tidal-SessionId") String sessionId,
+                @Header("If-None-Match") String eTag,
+                @Field("toIndex") String toIndex,
+                @Path("uuid") String uuid,
+                @Path("fromIndex") String fromIndex);
+
+        @FormUrlEncoded
         @POST("users/{userId}/favorites/tracks")
         Call<Void> addTrack(
                 @Header("X-Tidal-SessionId") String sessionId,

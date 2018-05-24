@@ -23,6 +23,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.MasterActivity;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
+import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Curated;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
@@ -30,16 +31,25 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseRespo
 import com.globaldelight.boom.tidal.ui.adapter.PlaylistTrackAdapter;
 import com.globaldelight.boom.tidal.ui.adapter.TrackDetailAdapter;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
+import com.globaldelight.boom.tidal.utils.UserCredentials;
+import com.globaldelight.boom.utils.Log;
 import com.globaldelight.boom.utils.RequestChain;
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.Collections;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_REFRESH_LIST;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
+import static com.globaldelight.boom.tidal.utils.TidalHelper.PLAYLIST_TRACKS;
 
 /**
  * Created by Manoj Kumar on 05-05-2018.
@@ -74,7 +84,7 @@ public class GridDetailActivity extends MasterActivity {
 
                 case ACTION_REFRESH_LIST:
                     String json = intent.getStringExtra("item");
-                    if ( json != null ) {
+                    if (json != null) {
                         Item item = new Gson().fromJson(json, Item.class);
                         refresh(item);
                     }
@@ -83,6 +93,7 @@ public class GridDetailActivity extends MasterActivity {
             }
         }
     };
+    private String etag = null;
 
 
     @Override
@@ -127,7 +138,7 @@ public class GridDetailActivity extends MasterActivity {
         }
 
         mToolbar = findViewById(R.id.toolbar_grid_tidal);
-        mToolbar.setTitle((mCurated != null)? mCurated.getName() : mParent.getTitle());
+        mToolbar.setTitle((mCurated != null) ? mCurated.getName() : mParent.getTitle());
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -177,7 +188,7 @@ public class GridDetailActivity extends MasterActivity {
                 LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                 mRecyclerView.setLayoutManager(llm);
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                mPlaylistAdapter = new PlaylistTrackAdapter(this, mParent, resp.getItems(), title,isUserCreated);
+                mPlaylistAdapter = new PlaylistTrackAdapter(this, mParent, resp.getItems(), title, isUserCreated);
                 mRecyclerView.setAdapter(mPlaylistAdapter);
                 mPlayButton.setVisibility(View.VISIBLE);
 
@@ -187,22 +198,32 @@ public class GridDetailActivity extends MasterActivity {
                                     .SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
                                 @Override
                                 public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                                    Collections.swap(resp.getItems(), viewHolder.getAdapterPosition() - 1, target.getAdapterPosition() - 1);
-                                    mPlaylistAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                                    mPlaylistAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                                    mPlaylistAdapter.notifyItemChanged(target.getAdapterPosition());
+                                    if (resp.getItems().size() > 0 && target.getAdapterPosition() > 0) {
+                                        Collections.swap(resp.getItems(), viewHolder.getAdapterPosition() - 1, target.getAdapterPosition() - 1);
+                                        mPlaylistAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                                        mPlaylistAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                                        mPlaylistAdapter.notifyItemChanged(target.getAdapterPosition());
+                                        return true;
+                                    }
                                     return true;
                                 }
 
                                 @Override
                                 public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
                                     super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
+                                    movedItem(String.valueOf(fromPos), String.valueOf(toPos));
                                 }
 
                                 @Override
                                 public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
                                 }
+
+                                @Override
+                                public boolean isLongPressDragEnabled() {
+                                    return false;
+                                }
+
                             });
                     itemTouchHelper.attachToRecyclerView(mRecyclerView);
                     itemTouchHelper.startDrag(viewHolder);
@@ -248,11 +269,59 @@ public class GridDetailActivity extends MasterActivity {
     }
 
     private void refresh(Item item) {
-        if ( mParent.equalTo(item) ) {
+        if (mParent.equalTo(item)) {
             mParent.setTitle(item.getTitle());
             CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout_grid_tidal);
             collapsingToolbarLayout.setTitle(mParent.getTitle());
             mPlaylistAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void movedItem(String fromIndex, String toIndex) {
+        TidalRequestController.Callback client = TidalRequestController.getTidalClient();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            String path = PLAYLIST_TRACKS + mParent.getId() + "/items";
+            Call<PlaylistResponse> call = client.getPlayListTrack(path,
+                    UserCredentials.getCredentials(GridDetailActivity.this).getSessionId(),
+                    Locale.getDefault().getCountry(),
+                    "INDEX",
+                    "ASC",
+                    String.valueOf(0),
+                    String.valueOf(1));
+            try {
+                Response<PlaylistResponse> response = call.execute();
+                if (response.isSuccessful()) {
+                    etag = response.headers().get("etag");
+                    movedItem(etag, fromIndex, toIndex);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+
+    }
+
+    private void movedItem(String etag, String fromIndex, String toIndex) {
+        TidalRequestController.Callback client = TidalRequestController.getTidalClient();
+        String sessionId = UserCredentials.getCredentials(this).getSessionId();
+        Call<Void> call = client.moveItem(sessionId, etag, fromIndex, mParent.getId(), toIndex);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.d("okhttp", "moved.");
+                } else {
+                    Log.d("okhttp", "not moved.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("okhttp", "error in moving.");
+
+            }
+        });
     }
 }
