@@ -26,6 +26,7 @@ import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
 import com.globaldelight.boom.tidal.tidalconnector.model.Curated;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
+import com.globaldelight.boom.tidal.tidalconnector.model.ItemWrapper;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.ui.adapter.PlaylistTrackAdapter;
@@ -38,6 +39,7 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -193,43 +195,10 @@ public class GridDetailActivity extends MasterActivity {
                 mPlayButton.setVisibility(View.VISIBLE);
 
                 mPlaylistAdapter.setDragListerner(viewHolder -> {
-                    ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
-                            new ItemTouchHelper
-                                    .SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
-                                @Override
-                                public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                                    if (resp.getItems().size() > 0 && target.getAdapterPosition() > 0) {
-                                        Collections.swap(resp.getItems(), viewHolder.getAdapterPosition() - 1, target.getAdapterPosition() - 1);
-                                        mPlaylistAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                                        mPlaylistAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                                        mPlaylistAdapter.notifyItemChanged(target.getAdapterPosition());
-                                        return true;
-                                    }
-                                    return true;
-                                }
-
-                                @Override
-                                public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
-                                    super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
-                                    movedItem(String.valueOf(fromPos), String.valueOf(toPos));
-                                }
-
-                                @Override
-                                public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-                                }
-
-                                @Override
-                                public boolean isLongPressDragEnabled() {
-                                    return false;
-                                }
-
-                            });
+                    ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new DragHelper(resp.getItems()));
                     itemTouchHelper.attachToRecyclerView(mRecyclerView);
                     itemTouchHelper.startDrag(viewHolder);
-
                 });
-
             });
         } else if (mParent.getItemType() == ItemType.ARTIST) {
             String path = "artists/" + mParent.getId() + "/toptracks";
@@ -277,51 +246,86 @@ public class GridDetailActivity extends MasterActivity {
         }
     }
 
-    private void movedItem(String fromIndex, String toIndex) {
-        TidalRequestController.Callback client = TidalRequestController.getTidalClient();
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            String path = PLAYLIST_TRACKS + mParent.getId() + "/items";
-            Call<PlaylistResponse> call = client.getPlayListTrack(path,
-                    UserCredentials.getCredentials(GridDetailActivity.this).getSessionId(),
-                    Locale.getDefault().getCountry(),
-                    "INDEX",
-                    "ASC",
-                    String.valueOf(0),
-                    String.valueOf(1));
-            try {
-                Response<PlaylistResponse> response = call.execute();
-                if (response.isSuccessful()) {
-                    etag = response.headers().get("etag");
-                    movedItem(etag, fromIndex, toIndex);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+    private void movedItem(int from, int to) {
+        TidalHelper.getInstance(this).playlistMoveItem(mParent, from, to, (result)-> {
+            if ( result.isSuccess() ) {
+                Log.d("GridDetailActivity", "Move successful");
             }
-        });
-
-
-    }
-
-    private void movedItem(String etag, String fromIndex, String toIndex) {
-        TidalRequestController.Callback client = TidalRequestController.getTidalClient();
-        String sessionId = UserCredentials.getCredentials(this).getSessionId();
-        Call<Void> call = client.moveItem(sessionId, etag, fromIndex, mParent.getId(), toIndex);
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Log.d("okhttp", "moved.");
-                } else {
-                    Log.d("okhttp", "not moved.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.d("okhttp", "error in moving.");
-
+            else {
+                Log.d("GridDetailActivity", "Move failed");
             }
         });
     }
+
+    class DragHelper extends ItemTouchHelper.SimpleCallback {
+        int dragFrom = -1;
+        int dragTo = -1;
+        List<ItemWrapper> mItems;
+
+        public DragHelper(List<ItemWrapper> items) {
+            super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0);
+            mItems = items;
+        }
+
+
+        @Override
+        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
+                    0);
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            if (mItems.size() > 0 && target.getAdapterPosition() > 0) {
+
+                int fromPosition = viewHolder.getAdapterPosition() - 1;
+                int toPosition = target.getAdapterPosition() - 1;
+
+
+                if(dragFrom == -1) {
+                    dragFrom =  fromPosition;
+                }
+                dragTo = toPosition;
+
+                Collections.swap(mItems, viewHolder.getAdapterPosition() - 1, target.getAdapterPosition() - 1);
+                mPlaylistAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                mPlaylistAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                mPlaylistAdapter.notifyItemChanged(target.getAdapterPosition());
+                return true;
+            }
+            return true;
+        }
+
+        @Override
+        public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
+            super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+        }
+
+        @Override
+        public boolean isLongPressDragEnabled() {
+            return false;
+        }
+
+        @Override
+        public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            super.clearView(recyclerView, viewHolder);
+
+            if(dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
+                finishedMoving(dragFrom, dragTo);
+            }
+
+            dragFrom = dragTo = -1;
+        }
+
+        private void finishedMoving(int from, int to) {
+            movedItem(from, to);
+        }
+    }
+
 }
+

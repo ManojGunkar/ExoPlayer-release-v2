@@ -19,15 +19,20 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseRespo
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalSubscriptionInfo;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
+import com.globaldelight.boom.tidal.ui.GridDetailActivity;
 import com.globaldelight.boom.tidal.ui.adapter.PlaylistTrackAdapter;
 import com.globaldelight.boom.tidal.ui.adapter.TrackDetailAdapter;
+import com.globaldelight.boom.utils.Log;
 import com.globaldelight.boom.utils.Result;
 import com.google.gson.JsonElement;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -419,6 +424,40 @@ public class TidalHelper {
     public void addToUserPlaylist(Item item) {
         mMyPlaylists.add(item);
     }
+
+
+    public void playlistMoveItem(Item playlist, int fromIndex, int toIndex, CompletionHandler<Void> completion) {
+        TidalRequestController.Callback client = TidalRequestController.getTidalClient();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            String path = PLAYLIST_TRACKS + playlist.getId() + "/items";
+            Call<PlaylistResponse> call = client.getPlayListTrack(path,
+                    sessionId,
+                    getCountry(),
+                    "INDEX",
+                    "ASC",
+                    String.valueOf(0),
+                    String.valueOf(1));
+            try {
+                Response<PlaylistResponse> response = call.execute();
+                if (response.isSuccessful()) {
+                    String etag = response.headers().get("etag");
+                    mMainHandler.post(()->movedItem(playlist.getId(), etag, fromIndex, toIndex, completion));
+                }
+            } catch (IOException e) {
+                mMainHandler.post(()->completion.onComplete(Result.error(-1, "")));
+            }
+        });
+
+
+    }
+
+    private void movedItem(String uuid, String etag, int fromIndex, int toIndex, CompletionHandler<Void> completion) {
+        TidalRequestController.Callback client = TidalRequestController.getTidalClient();
+        Call<Void> call = client.moveItem(sessionId, etag, uuid, String.valueOf(fromIndex), String.valueOf(toIndex));
+        call.enqueue(new ResponseAdapter<>(completion));
+    }
+
 
 
     public void addItemToPlaylist(Item item, String playlistId, final CompletionHandler completion) {

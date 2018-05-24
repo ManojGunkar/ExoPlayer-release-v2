@@ -192,9 +192,9 @@ public class TidalRequestController {
         Call<Void> moveItem(
                 @Header("X-Tidal-SessionId") String sessionId,
                 @Header("If-None-Match") String eTag,
-                @Field("toIndex") String toIndex,
                 @Path("uuid") String uuid,
-                @Path("fromIndex") String fromIndex);
+                @Path("fromIndex") String fromIndex,
+                @Field("toIndex") String toIndex);
 
         @FormUrlEncoded
         @POST("users/{userId}/favorites/tracks")
