@@ -68,20 +68,20 @@ public class B2BApi {
             Response response = getClient().newCall(request).execute();
             if ( response.isSuccessful() ) {
                 Receipt receipt = Receipt.fromJSON(response.body().string());
-                return new Result<Receipt>(receipt);
+                return Result.success(receipt);
             }
             else {
-                return new Result<Receipt>(parseError(response));
+                return Result.error(parseError(response), "Failed");
             }
         }
         catch (JSONException e) {
             e.printStackTrace();
-            return new Result<Receipt>(ErrorCode.FAILED);
+            return Result.error(ErrorCode.FAILED, "Failed");
 
         }
         catch (IOException e) {
             e.printStackTrace();
-            return new Result<Receipt>(ErrorCode.NETWORK_ERROR);
+            return Result.error(ErrorCode.NETWORK_ERROR, "Network Error");
         }
     }
 
@@ -99,16 +99,16 @@ public class B2BApi {
                 return new Result<String>(version);
             }
 
-            return new Result<String>(ErrorCode.FAILED);
+            return Result.error(ErrorCode.FAILED, "Failed");
         }
         catch (JSONException e) {
             e.printStackTrace();
-            return new Result<String>(ErrorCode.FAILED);
+            return Result.error(ErrorCode.FAILED, "Failed");
 
         }
         catch (IOException e) {
             e.printStackTrace();
-            return new Result<String>(ErrorCode.NETWORK_ERROR);
+            return Result.error(ErrorCode.NETWORK_ERROR, "Network Error");
         }
     }
 

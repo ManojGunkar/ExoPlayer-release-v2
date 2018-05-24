@@ -110,6 +110,8 @@ public class TidalHelper {
         }
     }
 
+
+
     private TidalHelper(Context context) {
         this.context = context;
         client = TidalRequestController.getTidalClient();
@@ -463,7 +465,7 @@ public class TidalHelper {
 
             @Override
             public void onFailure(Call<PlaylistResponse> call, Throwable t) {
-
+                mMainHandler.post(()->completion.onComplete(Result.error(-1, "")));
             }
         });
     }
@@ -503,7 +505,7 @@ public class TidalHelper {
 
             @Override
             public void onFailure(Call<PlaylistResponse> call, Throwable t) {
-
+                mMainHandler.post(()->completion.onComplete(Result.error(-1, "")));
             }
         });
     }
@@ -532,7 +534,7 @@ public class TidalHelper {
 
             @Override
             public void onFailure(Call<TidalBaseResponse> call, Throwable t) {
-
+                mMainHandler.post(()->completion.onComplete(Result.error(-1, "")));
             }
         });
     }
@@ -562,7 +564,7 @@ public class TidalHelper {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    completion.onComplete(Result.success((Void)null));
+                    completion.onComplete(Result.success(null));
                 }
                 else {
                     completion.onComplete(Result.error(-1, "failed"));
