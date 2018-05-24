@@ -138,6 +138,13 @@ public class TidalNewFragment extends Fragment implements ContentLoadable {
         }
     }
 
+    @Override
+    public void resetContent() {
+        mHasResponse = false;
+        mItemList.clear();
+    }
+
+
     private void mapResponse(String path, int titleResId, int type) {
         Call<TidalBaseResponse> call = TidalHelper.getInstance(getContext()).getItemCollection(path, 0 , 6);
         mRequestChain.submit(call, new ResponseHandler(titleResId, type,path));

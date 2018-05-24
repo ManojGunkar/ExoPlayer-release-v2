@@ -125,6 +125,12 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
     }
 
 
+    @Override
+    public void resetContent() {
+        mHasResponse = false;
+        mItemList.clear();
+    }
+
     private void mapResponse(String path, int titleResId, int type) {
         Call<UserMusicResponse> call = TidalHelper.getInstance(getContext()).getUserMusic(path, 0, 10);
         mRequestChain.submit(call, new ResponseHandler(titleResId, type, TidalHelper.getInstance(getContext()).getUserPath(path)));

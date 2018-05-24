@@ -19,14 +19,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.fragments.TabBarFragment;
+import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.playbackEvent.handler.UpNextPlayingQueue;
+import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
+import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalLoginResponse;
 import com.globaldelight.boom.tidal.ui.ContentLoadable;
 import com.globaldelight.boom.tidal.ui.adapter.TidalTabAdapter;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
 import com.globaldelight.boom.tidal.utils.UserCredentials;
 import com.globaldelight.boom.utils.Log;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,6 +51,7 @@ public class TidalMainFragment extends TabBarFragment {
     private TidalTabAdapter mStateAdapter;
     private SearchView searchView;
     private TidalSearchFragment tidalSearch;
+    private boolean mUserDataLoaded = false;
 
 
     @Nullable
@@ -85,6 +93,25 @@ public class TidalMainFragment extends TabBarFragment {
     }
 
     private void userLogout(){
+        mUserDataLoaded = false;
+        int fragmentCount = mStateAdapter.getCount();
+        for ( int i = 0; i < fragmentCount; i++ ) {
+            ((ContentLoadable)mStateAdapter.getItem(i)).resetContent();
+        }
+
+        final UpNextPlayingQueue theQueue = App.playbackManager().queue();
+        IMediaElement playing = theQueue.getPlayingItem();
+        if ( playing != null && playing.getMediaType() == MediaType.TIDAL ) {
+            if ( App.playbackManager().isTrackPlaying() ) {
+                App.playbackManager().stop();
+            }
+
+            theQueue.setPlayingItemIndex(-1);
+            theQueue.PlayingItemChanged();
+            theQueue.clearUpNext();
+            theQueue.QueueUpdated();
+        }
+
         TidalRequestController.Callback client=TidalRequestController.getTidalClient();
         String sessionid=UserCredentials.getCredentials(getContext()).getSessionId();
         Call<Void> call=client.userLogout(sessionid,sessionid);
@@ -116,7 +143,7 @@ public class TidalMainFragment extends TabBarFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.library_menu, menu);
+        inflater.inflate(R.menu.tidal_menu, menu);
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
 
         searchView = (SearchView)searchMenuItem.getActionView();
@@ -183,11 +210,12 @@ public class TidalMainFragment extends TabBarFragment {
     @Override
     public void onResume() {
         super.onResume();
-
         // Post is necessary. Otherwise the method is called before the fragment is ready.
         new Handler().post(()-> ((ContentLoadable)mStateAdapter.getItem(mViewPager.getCurrentItem())).onLoadContent());
-        TidalHelper.getInstance(getContext()).fetchSubscriptionInfo();
-        TidalHelper.getInstance(getContext()).loadUserMusic();
+        if ( !mUserDataLoaded ) {
+            TidalHelper.getInstance(getContext()).loadUserData();
+            mUserDataLoaded = true;
+        }
     }
 
     @Override

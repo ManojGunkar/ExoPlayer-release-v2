@@ -66,6 +66,12 @@ public class TidalCuratedFragment extends Fragment implements ContentLoadable {
     public void onStopLoading() {
     }
 
+    @Override
+    public void resetContent() {
+        mHasData = false;
+    }
+
+
 
     private void load(String path,boolean isMoods){
         RequestChain requestChain=new RequestChain(getContext());

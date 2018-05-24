@@ -5,6 +5,7 @@ package com.globaldelight.boom.tidal.ui;
  * ©Global Delight Technologies Pvt. Ltd.
  */
 public interface ContentLoadable {
+    void resetContent();
     void onLoadContent();
     void onStopLoading();
 }
