@@ -19,6 +19,9 @@ import android.widget.ProgressBar;
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.MasterActivity;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.webconnector.RadioRequestController;
@@ -59,6 +62,9 @@ public class SubCategoryDetailedActivity extends MasterActivity implements Radio
     private boolean isLastPage = false;
     private boolean isTagDisable=false;
 
+    private InlineAds mAdController;
+
+
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -77,6 +83,9 @@ public class SubCategoryDetailedActivity extends MasterActivity implements Radio
     @Override
     public void onStart() {
         super.onStart();
+        if ( mAdController != null ) {
+            mAdController.register();
+        }
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
@@ -92,6 +101,9 @@ public class SubCategoryDetailedActivity extends MasterActivity implements Radio
     @Override
     public void onStop() {
         super.onStop();
+        if ( mAdController != null ) {
+            mAdController.unregister();
+        }
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 
@@ -123,7 +135,15 @@ public class SubCategoryDetailedActivity extends MasterActivity implements Radio
         mRecyclerView.setLayoutManager(llm);
         mAdapter = new RadioListAdapter(this, this::retryPageLoad, mContents);
 
-        mRecyclerView.setAdapter(mAdapter);
+        Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+        if ( factory != null ) {
+            mAdController = factory.createInlineAds(this, mRecyclerView, mAdapter);
+            mRecyclerView.setAdapter(mAdController.getAdapter());
+        }
+        else {
+            mRecyclerView.setAdapter(mAdapter);
+        }
+        
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addOnScrollListener(new OnPaginationListener(llm) {
             @Override

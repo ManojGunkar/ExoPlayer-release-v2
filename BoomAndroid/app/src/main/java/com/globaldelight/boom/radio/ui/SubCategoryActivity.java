@@ -12,6 +12,9 @@ import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.MasterActivity;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.ExploreTagAdapter;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.ui.adapter.SubCategoryAdapter;
@@ -48,6 +51,7 @@ public class SubCategoryActivity extends MasterActivity {
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
+    private InlineAds mAdController;
 
     private SubCategoryAdapter mAdapter;
     private List<CategoryResponse.Content> contentList=new ArrayList<>();
@@ -75,7 +79,14 @@ public class SubCategoryActivity extends MasterActivity {
             isTagEnabled(isTagEnable);
         else {
             mAdapter = new SubCategoryAdapter(SubCategoryActivity.this, contentList);
-            mRecyclerView.setAdapter(mAdapter);
+            Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+            if ( factory != null ) {
+                mAdController = factory.createInlineAds(this, mRecyclerView, mAdapter);
+                mRecyclerView.setAdapter(mAdController.getAdapter());
+            }
+            else {
+                mRecyclerView.setAdapter(mAdapter);
+            }
             mRecyclerView.addOnScrollListener(new OnPaginationListener(llm) {
                 @Override
                 protected void loadMoreContent() {
@@ -189,7 +200,14 @@ public class SubCategoryActivity extends MasterActivity {
         mProgressBar.setVisibility(View.GONE);
         List<ExploreTag.Tags> tags = getTags().getTags();
         ExploreTagAdapter mAdapter = new ExploreTagAdapter(this, tags);
-        mRecyclerView.setAdapter(mAdapter);
+        Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+        if ( factory != null ) {
+            mAdController = factory.createInlineAds(this, mRecyclerView, mAdapter);
+            mRecyclerView.setAdapter(mAdController.getAdapter());
+        }
+        else {
+            mRecyclerView.setAdapter(mAdapter);
+        }
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
@@ -214,6 +232,22 @@ public class SubCategoryActivity extends MasterActivity {
         tagStream.read(buffer);
         tagStream.close();
         return new String(buffer, "UTF-8");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if ( mAdController != null ) {
+            mAdController.register();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if ( mAdController != null ) {
+            mAdController.unregister();
+        }
     }
 
 }

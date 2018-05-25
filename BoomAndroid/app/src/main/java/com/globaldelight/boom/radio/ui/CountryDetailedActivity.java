@@ -19,6 +19,9 @@ import android.widget.ProgressBar;
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.MasterActivity;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.ui.fragments.CountryFragment;
@@ -58,6 +61,8 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
     private boolean isLoading = false;
     private boolean isLastPage = false;
 
+    private InlineAds mAdController;
+
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -75,6 +80,9 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
     @Override
     public void onStart() {
         super.onStart();
+        if (mAdController != null) {
+            mAdController.register();
+        }
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
@@ -90,6 +98,9 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
     @Override
     public void onStop() {
         super.onStop();
+        if (mAdController != null) {
+            mAdController.unregister();
+        }
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 
@@ -119,7 +130,15 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
         mRecyclerView.setLayoutManager(llm);
         mAdapter = new RadioListAdapter(this, this::retryPageLoad, mContents);
 
-        mRecyclerView.setAdapter(mAdapter);
+        Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+        if ( factory != null ) {
+            mAdController = factory.createInlineAds(this, mRecyclerView, mAdapter);
+            mRecyclerView.setAdapter(mAdController.getAdapter());
+        }
+        else {
+            mRecyclerView.setAdapter(mAdapter);
+        }
+
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addOnScrollListener(new OnPaginationListener(llm) {
             @Override
