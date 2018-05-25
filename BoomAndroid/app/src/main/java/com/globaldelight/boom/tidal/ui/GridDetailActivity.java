@@ -31,6 +31,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistRespon
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
 import com.globaldelight.boom.tidal.ui.adapter.PlaylistTrackAdapter;
 import com.globaldelight.boom.tidal.ui.adapter.TrackDetailAdapter;
+import com.globaldelight.boom.tidal.utils.ItemUtils;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
 import com.globaldelight.boom.tidal.utils.UserCredentials;
 import com.globaldelight.boom.utils.Log;
@@ -175,15 +176,11 @@ public class GridDetailActivity extends MasterActivity {
     }
 
     private void loadApi() {
-        int limit = 999;
-        Integer maxItems = mParent.getNumberOfTracks();
-        if (maxItems != null) {
-            limit = maxItems.intValue();
-        }
+        int limit = ItemUtils.getTrackCount(mParent);
         String title = mParent.getTitle();
         RequestChain requestChain = new RequestChain(this);
         if (mParent.getItemType() == ItemType.PLAYLIST) {
-            boolean isUserCreated = mParent.getType().equals("USER");
+            boolean isUserCreated = ItemUtils.isUserPlaylist(mParent);
             Call<PlaylistResponse> call = TidalHelper.getInstance(this).getPlaylistTracks(mParent.getId(), 0, limit);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);
@@ -200,21 +197,8 @@ public class GridDetailActivity extends MasterActivity {
                     itemTouchHelper.startDrag(viewHolder);
                 });
             });
-        } else if (mParent.getItemType() == ItemType.ARTIST) {
-            String path = "artists/" + mParent.getId() + "/toptracks";
-            Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, limit);
-            requestChain.submit(call, resp -> {
-                mProgressBar.setVisibility(View.GONE);
-                mAdapter = new TrackDetailAdapter(this, mParent, resp.getItems(), title);
-                LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-                mRecyclerView.setLayoutManager(llm);
-                mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                mRecyclerView.setAdapter(mAdapter);
-                mPlayButton.setVisibility(View.VISIBLE);
-
-            });
         } else {
-            String path = "albums/" + mParent.getId() + "/tracks";
+            String path = ItemUtils.pathForTracks(mParent);
             Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, limit);
             requestChain.submit(call, resp -> {
                 mProgressBar.setVisibility(View.GONE);

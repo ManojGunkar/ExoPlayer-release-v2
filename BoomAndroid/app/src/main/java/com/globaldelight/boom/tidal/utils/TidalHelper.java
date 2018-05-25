@@ -129,10 +129,7 @@ public class TidalHelper {
 
 
     public void getTracks(Item parent, CompletionHandler<List<Item>> completionHandler) {
-        Integer trackCount = parent.getNumberOfTracks();
-        if ( trackCount == null ) {
-            trackCount = new Integer(999);
-        }
+        int trackCount = ItemUtils.getTrackCount(parent);
 
         if (parent.getItemType() == ItemType.PLAYLIST) {
             Call<PlaylistResponse> call = getPlaylistTracks(parent.getId(), 0, trackCount);
@@ -159,17 +156,7 @@ public class TidalHelper {
 
         }
         else {
-            String path;
-            switch (parent.getItemType()) {
-                case ItemType.ARTIST:
-                    path = "artists/" + parent.getId() + "/toptracks";
-                    break;
-
-                default:
-                case ItemType.ALBUM:
-                    path = "albums/" + parent.getId() + "/tracks";
-                    break;
-            }
+            String path = ItemUtils.pathForTracks(parent);
             Call<TidalBaseResponse> call = getItemCollection(path, 0, trackCount);
             call.enqueue(new Callback<TidalBaseResponse>() {
                 @Override
@@ -495,7 +482,7 @@ public class TidalHelper {
 
 
     private void addPlaylistToPlaylist(Item item, String playlistId, String etag, CompletionHandler completion) {
-        int limit = item.getNumberOfTracks() != null? item.getNumberOfTracks().intValue() : 10;
+        int limit = ItemUtils.getTrackCount(item);
         Call<PlaylistResponse> call = getPlaylistTracks(item.getUuid(),0, limit );
         call.enqueue(new Callback<PlaylistResponse>() {
             @Override
@@ -521,10 +508,7 @@ public class TidalHelper {
     }
 
     private void addCollectionToPlaylist(Item item, String playlistId, String etag, CompletionHandler completion) {
-        String path = item.getItemType() == ItemType.ALBUM ?
-                "albums/"+ item.getId() + "/tracks" :
-                "artists/" + item.getId() +  "/toptracks" ;
-
+        String path = ItemUtils.pathForTracks(item);
         Call<TidalBaseResponse> call = getItemCollection(path,0, item.getNumberOfTracks().intValue());
         call.enqueue(new Callback<TidalBaseResponse>() {
             @Override

@@ -25,6 +25,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseRespo
 import com.globaldelight.boom.tidal.tidalconnector.model.response.UserMusicResponse;
 import com.globaldelight.boom.tidal.ui.ContentLoadable;
 import com.globaldelight.boom.tidal.ui.adapter.NestedItemAdapter;
+import com.globaldelight.boom.tidal.utils.ItemUtils;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
 import com.globaldelight.boom.utils.RequestChain;
@@ -163,7 +164,7 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
 
         switch (item.getItemType()) {
             case ItemType.PLAYLIST:
-                if (item.getType().equals("USER")) {
+                if (ItemUtils.isUserPlaylist(item)) {
                     updateUserPlaylist();
                 } else {
                     mapResponse(TidalHelper.USER_PLAYLISTS, R.string.tidal_playlist, GRID_VIEW);

@@ -41,6 +41,8 @@ android {
 
         resValue 'string', 'version', "v"+versionName
 
+        resConfigs "en"
+
         buildConfigField "boolean",'ENABLE_LOG',                'true'
         buildConfigField("String",  EXPIRY_DATE,                STRING(getExpiryDate()) )
         buildConfigField "String", 'MIXPANEL_SENDER_ID',        STRING("862807752058")

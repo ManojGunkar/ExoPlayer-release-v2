@@ -67,7 +67,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
     }
 
     public void showPopup(View view, Item item) {
-        if ( item.getItemType() == ItemType.PLAYLIST && item.getType().equals("USER") ) {
+        if ( ItemUtils.isUserPlaylist(item) ) {
             showPopup(view, R.menu.playlist_boom_menu, item);
         }
         else {
