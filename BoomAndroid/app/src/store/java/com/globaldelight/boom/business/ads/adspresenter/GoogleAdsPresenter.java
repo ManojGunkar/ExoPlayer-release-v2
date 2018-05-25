@@ -25,7 +25,7 @@ public class GoogleAdsPresenter implements AdsPresenter {
     private Callback callback;
 
     private int[] mPositions = new int[0];
-    private final int AD_INTERVAL = 50;
+    private final int AD_INTERVAL = 10;
     private final int AD_POSITION = (int)(Math.random() * 4);
 
     @Override
