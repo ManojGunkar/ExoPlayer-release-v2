@@ -222,7 +222,7 @@ public class GridDetailActivity extends MasterActivity {
     }
 
     private void refresh(Item item) {
-        if (mParent.equalTo(item)) {
+        if ( ItemUtils.isUserPlaylist(mParent) && mParent.equalTo(item) ) {
             mParent.setTitle(item.getTitle());
             CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout_grid_tidal);
             collapsingToolbarLayout.setTitle(mParent.getTitle());
