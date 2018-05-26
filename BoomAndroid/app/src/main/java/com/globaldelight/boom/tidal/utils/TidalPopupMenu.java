@@ -98,7 +98,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
         }
 
         IMediaElement currentPlayingItem = PlaybackManager.getInstance(mActivity).queue().getPlayingItem();
-        if ( currentPlayingItem.getMediaType() != MediaType.TIDAL ) {
+        if ( currentPlayingItem != null && currentPlayingItem.getMediaType() != MediaType.TIDAL ) {
             popupMenu.getMenu().removeItem(R.id.song_add_queue_item);
             popupMenu.getMenu().removeItem(R.id.tidal_menu_add_to_upnext);
             popupMenu.getMenu().removeItem(R.id.song_play_next_item);
