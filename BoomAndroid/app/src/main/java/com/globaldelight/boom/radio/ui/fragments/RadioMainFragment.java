@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.fragments.TabBarFragment;
 import com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter;
 
 import static android.content.Context.SEARCH_SERVICE;
@@ -30,10 +31,9 @@ import static android.content.Context.SEARCH_SERVICE;
  * Created by Manoj Kumar on 09-04-2018.
  * ©Global Delight Technologies Pvt. Ltd.
  */
-public class RadioMainFragment extends Fragment {
+public class RadioMainFragment extends TabBarFragment {
 
     private RadioFragmentStateAdapter mStateAdapter;
-    private TabLayout mTabBar;
     private ViewPager mViewPager;
     private Activity mActivity;
     private float mToolbarElevation;
@@ -161,16 +161,5 @@ public class RadioMainFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        mToolbarElevation = toolbar.getElevation();
-        mTabBar.setElevation(mToolbarElevation);
-        toolbar.setElevation(0);
-    }
-
-    @Override
-    public void onStop() {
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        toolbar.setElevation(mToolbarElevation);
-        super.onStop();
     }
 }

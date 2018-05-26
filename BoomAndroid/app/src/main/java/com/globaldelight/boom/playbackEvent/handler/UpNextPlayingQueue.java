@@ -13,8 +13,10 @@ import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.collection.base.IMediaItemCollection;
 import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
+import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
+import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -33,7 +35,7 @@ import static com.globaldelight.boom.app.sharedPreferences.Preferences.PLAYING_I
  */
 
 public class UpNextPlayingQueue {
-
+    
     @IntDef({REPEAT_ONE, REPEAT_ALL, REPEAT_NONE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface RepeatMode {
@@ -48,6 +50,9 @@ public class UpNextPlayingQueue {
     @Retention(RetentionPolicy.SOURCE)
     public @interface ShuffleMode {
     }
+
+
+    private static final String QUEUE_TYPE_KEY = "queue_type";
 
     public static final int SHUFFLE_OFF = 0;
     public static final int SHUFFLE_ON = 1;
@@ -229,7 +234,7 @@ public class UpNextPlayingQueue {
 
     private void insertUpNextList(String shuffleType) {
         Preferences.writeString(context, shuffleType, new Gson().toJson(mUpNextList));
-        Preferences.writeBoolean(context, "isRadioQueue", getPlayingItem().getMediaType() == MediaType.RADIO);
+        Preferences.writeInteger(context, QUEUE_TYPE_KEY, getPlayingItem().getMediaType());
 
     }
 
@@ -283,8 +288,8 @@ public class UpNextPlayingQueue {
         }
     }
 
-    private void updateUnshuffledList(int position, ArrayList<? extends IMediaElement> itemList) {
-        ArrayList<IMediaElement> tempList = null;
+    private void updateUnshuffledList(int position, List<? extends IMediaElement> itemList) {
+        List<IMediaElement> tempList = null;
         try {
             tempList = fetchSavedItems(UNSHUFFLE);
         } catch (JsonSyntaxException e) {
@@ -299,13 +304,6 @@ public class UpNextPlayingQueue {
         }
     }
 
-    private Class getQueueClass() {
-        Class cls = MediaItem[].class;
-        if ( Preferences.readBoolean(context, "isRadioQueue", false) ) {
-            cls = RadioStationResponse.Content[].class;
-        }
-        return cls;
-    }
 
     private void clearUpNextSavedList() {
         Preferences.writeString(context, SHUFFLED, null);
@@ -351,7 +349,7 @@ public class UpNextPlayingQueue {
         mUpNextList.add(item);
     }
 
-    public void addItemAsUpNext(ArrayList<? extends IMediaElement> itemList) {
+    public void addItemAsUpNext(List<? extends IMediaElement> itemList) {
         if (mShuffle == SHUFFLE_ON) {
             updateUnshuffledList(mUpNextList.size() - 1, itemList);
         }
@@ -369,7 +367,7 @@ public class UpNextPlayingQueue {
         mUpNextList.add(getPlayNextPosition(), item);
     }
 
-    public void addItemAsPlayNext(ArrayList<? extends IMediaElement> itemList) {
+    public void addItemAsPlayNext(List<? extends IMediaElement> itemList) {
         if (mShuffle == SHUFFLE_ON) {
             updateUnshuffledList(getPlayNextPosition(), itemList);
         }
@@ -557,12 +555,21 @@ public class UpNextPlayingQueue {
     private ArrayList<IMediaElement> fetchSavedItems(String shuffleType) {
         try {
             List list = null;
-            if ( Preferences.readBoolean(context, "isRadioQueue", false) ) {
-                list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, shuffleType, null), RadioStationResponse.Content[].class));
+            int queueType = Preferences.readInteger(context, QUEUE_TYPE_KEY, MediaType.DEVICE_MEDIA_LIB);
+            switch (queueType) {
+                case MediaType.RADIO:
+                    list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, shuffleType, null), RadioStationResponse.Content[].class));
+                    break;
+
+                case MediaType.TIDAL:
+                    list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, shuffleType, null), Item[].class));
+                    break;
+
+                default:
+                    list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, shuffleType, null), MediaItem[].class));
+                    break;
             }
-            else {
-                list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, shuffleType, null), MediaItem[].class));
-            }
+
             return new ArrayList<>(list);
         }
         catch (Exception e) {

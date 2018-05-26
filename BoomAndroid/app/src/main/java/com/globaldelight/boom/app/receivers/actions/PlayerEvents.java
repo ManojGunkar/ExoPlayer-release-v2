@@ -33,4 +33,6 @@ public interface PlayerEvents {
 
     String ACTION_SHARE_SUCCESS = "com.globaldelight.boom.SHARE_SUCCESS";
     String ACTION_SHARE_FAILED = "com.globaldelight.boom.SHARE_FAILED";
+
+    String ACTION_REFRESH_LIST="ACTION_REFRESH_LIST";
 }

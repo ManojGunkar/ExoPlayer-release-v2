@@ -81,7 +81,7 @@ public class LicenseManager {
             protected Result<Receipt> doInBackground(Void... voids) {
                 Result<Receipt> result = B2BApi.getInstance(mContext).verify(promoCode);
                 if ( result.isSuccess() ) {
-                    Receipt receipt = result.getObject();
+                    Receipt receipt = result.get();
                     SecureStorage store = new SecureStorage(RECEIPT_NAME, mContext);
                     store.store(receipt.toJSON().getBytes());
                 }
@@ -92,11 +92,11 @@ public class LicenseManager {
             protected void onPostExecute(Result<Receipt> result) {
                 super.onPostExecute(result);
                 if ( result.isSuccess() ) {
-                    mReceipt = result.getObject();
+                    mReceipt = result.get();
                     verifyReceipt(callback);
                 }
                 else {
-                    callback.onError(result.getStatus());
+                    callback.onError(result.getError().getCode());
                 }
             }
         }.execute();

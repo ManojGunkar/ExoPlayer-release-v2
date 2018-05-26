@@ -26,6 +26,14 @@
             android:checked="false"
             android:checkable="true"
             android:title="@string/radio" />
+
+        <item
+            android:id="@+id/tidal"
+            android:icon="@drawable/drawer_item_tidal_selector"
+            android:checked="false"
+            android:checkable="true"
+            android:title="@string/tidal" />
+
     </group>
     <group>
         <item

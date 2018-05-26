@@ -128,10 +128,10 @@ public class B2BModel implements BusinessModel {
             @Override
             protected void onPostExecute(Result<String> result) {
                 super.onPostExecute(result);
-                if ( result.isSuccess() && isNewerVersion(result.getObject()) ) {
+                if ( result.isSuccess() && isNewerVersion(result.get()) ) {
                     showUpdateDialog();
                     prefs.edit().putLong(LAST_CHECK_KEY, System.currentTimeMillis()).apply();
-                    prefs.edit().putString(AVAILABLE_VERSION, result.getObject()).apply();
+                    prefs.edit().putString(AVAILABLE_VERSION, result.get()).apply();
                 }
 
                 updateDrawer();

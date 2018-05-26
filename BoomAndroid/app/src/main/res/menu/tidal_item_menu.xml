@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/tidal_menu_play_next"
+        android:title="@string/tidal_menu_play_next"/>
+
+    <item
+        android:id="@+id/tidal_menu_add_to_upnext"
+        android:title="@string/tidal_menu_add_upnext"/>
+
+    <item
+        android:id="@+id/tidal_menu_add_to_fav"
+        android:title="@string/tidal_menu_add_fav"/>
+
+    <item
+        android:id="@+id/tidal_menu_remove_fav"
+        android:visible="false"
+        android:title="@string/tidal_menu_remove_fav"/>
+
+    <item
+        android:id="@+id/tidal_menu_add_to_playlist"
+        android:title="@string/tidal_menu_add_playlist"/>
+
+    <item
+        android:id="@+id/song_delete_item"
+        android:visible="false"
+        android:title="@string/menu_remove_boom_item" />
+
+</menu>

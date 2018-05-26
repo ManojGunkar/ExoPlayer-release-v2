@@ -16,7 +16,8 @@ import java.util.Map;
         MediaType.DROP_BOX,
         MediaType.GOOGLE_DRIVE,
         MediaType.SEARCH,
-        MediaType.RADIO
+        MediaType.RADIO,
+        MediaType.TIDAL
 })
 
 @Retention(RetentionPolicy.SOURCE)
@@ -25,5 +26,6 @@ public @interface MediaType {
             DROP_BOX = 1,
             GOOGLE_DRIVE = 2,
             SEARCH = 4,
-            RADIO = 5;
+            RADIO = 5,
+            TIDAL = 6;
 }

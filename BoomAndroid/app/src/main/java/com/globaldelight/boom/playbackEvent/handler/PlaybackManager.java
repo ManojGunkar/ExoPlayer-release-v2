@@ -23,6 +23,10 @@ import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEve
 import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
 import com.globaldelight.boom.radio.webconnector.model.RadioPlayResponse;
+import com.globaldelight.boom.tidal.tidalconnector.TidalRequestController;
+import com.globaldelight.boom.tidal.tidalconnector.model.response.TrackPlayResponse;
+import com.globaldelight.boom.tidal.utils.TidalHelper;
+import com.globaldelight.boom.tidal.utils.UserCredentials;
 import com.globaldelight.boom.utils.helpers.DropBoxAPI;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
 import com.globaldelight.boom.player.AudioEffect;
@@ -413,8 +417,21 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 }
 
                 return null;
-
             }
+            else if (mediaItemBase.getMediaType() == MediaType.TIDAL ) {
+                try {
+                    Call<TrackPlayResponse> call = TidalHelper.getInstance(context).getStreamInfo(mediaItemBase.getId());
+                    Response<TrackPlayResponse> resp = call.execute();
+                    if ( resp.isSuccessful() ) {
+                        return resp.body().getUrl();
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
             return dataSource;
         }
 
@@ -426,20 +443,21 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                     mPlayer.setPath(dataSource);
                     mPlayer.setDataSourceId(mediaItemBase.getId());
 
+                    MediaMetadata.Builder builder = new MediaMetadata.Builder();
+                    builder.putString(MediaMetadata.METADATA_KEY_TITLE, mediaItemBase.getTitle());
+
                     if ( mediaItemBase instanceof  MediaItem ) {
                         MediaItem item = (MediaItem)mediaItemBase;
 
-                        MediaMetadata.Builder builder = new MediaMetadata.Builder();
-                        builder.putString(MediaMetadata.METADATA_KEY_TITLE, item.getTitle());
                         builder.putString(MediaMetadata.METADATA_KEY_ALBUM, item.getItemAlbum());
                         builder.putString(MediaMetadata.METADATA_KEY_ARTIST, item.getItemArtist());
                         Bitmap bitmap = getAlbumart(context,item.getItemAlbumId());
                         if ( bitmap != null ) {
                             builder.putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, bitmap);
                         }
-                        session.setMetadata(builder.build());
                     }
 
+                    session.setMetadata(builder.build());
                     setSessionState(PlaybackState.STATE_PLAYING);
                 }
             }

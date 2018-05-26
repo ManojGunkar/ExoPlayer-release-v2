@@ -212,6 +212,7 @@
     <string name="facebook_app_id" translatable="false">218364201905576</string>
 
     <!-- to be localized -->
+    <string name="song_count">Songs: %1$d</string>
     <string name="radio">Radio</string>
     <string name="local_radio">Local</string>
     <string name="favourite_radio">Favourite</string>
@@ -221,5 +222,54 @@
     <string name="error_msg_timeout">The server took too long to respond</string>
     <string name="error_msg_unknown">An unexpected error occurred</string>
     <string name="search_hint_radio">Search Radio Station</string>
+    <string name="tidal">Tidal</string>
+    <string name="tidal_login">TIDAL</string>
+    <string name="user_id">User Id</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="show_password">Show Password</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="login">Log in</string>
+    <string name="newUser">Sign Up</string>
+    <string name="search_hint_tidal">Tidal Search</string>
+    <string name="tidal_sign_up">Sign Up</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_user">User Id</string>
+    <string name="view_all">View All</string>
+    <string name="tidal_new_tab">NEW</string>
+    <string name="tidal_rising_tab">TIDAL RISING</string>
+    <string name="tidal_curated_tab">CURATED</string>
+    <string name="tidal_mymusic_tab">MY MUSIC</string>
+
+    <string name="tidal_recommended_tracks">Recommended Tracks</string>
+    <string name="tidal_recommended_album">Recommended Albums</string>
+    <string name="tidal_new_tracks">New Tracks</string>
+    <string name="tidal_new_albums">New Albums</string>
+    <string name="tidal_new_playlist">New Playlist</string>
+    <string name="tidal_top20_tracks">Top 20 Tracks</string>
+    <string name="tidal_top20_albums">Top 20 Albums</string>
+    <string name="tidal_recommended_playlists">Recommended Playlists</string>
+    <string name="tidal_exclusive_playlists">Exclusive Playlists</string>
+    <string name="tidal_rising_albums">Rising Albums</string>
+    <string name="tidal_rising_tracks">Rising Tracks</string>
+    <string name="tidal_local_tracks">Local Tracks</string>
+    <string name="tidal_local_albums">Local Albums</string>
+    <string name="tidal_local_playlists">Local Playlists</string>
+    <string name="moods">Moods</string>
+    <string name="tidal_album">Albums</string>
+    <string name="tidal_tracks">Tracks</string>
+    <string name="tidal_playlist">Playlists</string>
+    <string name="tidal_menu_add_fav">Add to favorites</string>
+    <string name="tidal_menu_remove_fav">Remove from favorites</string>
+    <string name="tidal_menu_play_next">Play next</string>
+    <string name="tidal_menu_add_upnext">Add to up next</string>
+    <string name="tidal_menu_shuffle">Shuffle</string>
+    <string name="user_playlist">My Playlists</string>
+    <string name="tidal_menu_add_playlist">Add to my playlists</string>
+    <string name="tidal_artist">Artists</string>
+    <string name="failed_to_add_to_playlist">Failed to add to playlist</string>
+    <string name="tidal_logout">Logout</string>
+    <string name="tidal_failed_delete">Failed to delete</string>
+    <string name="tidal_renamed">Renamed playlist</string>
+    <string name="tidal_failed_rename">Failed to rename</string>
 
 </resources>
