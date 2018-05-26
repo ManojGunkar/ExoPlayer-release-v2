@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -40,9 +40,9 @@ import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_P
 
 public abstract class CloudFragment extends Fragment {
 
-    protected SongListAdapter adapter;
+    protected SongListAdapter mAdapter;
     protected View mRootView;
-    protected RecyclerView mListView;
+    protected RecyclerView mRecyclerView;
     protected Activity mActivity;
     private ImageView emptyPlaceholderIcon;
     private TextView emptyPlaceholderTitle;
@@ -57,8 +57,8 @@ public abstract class CloudFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
                 case ACTION_PLAYER_STATE_CHANGED:
-                    if(null != adapter)
-                        adapter.notifyDataSetChanged();
+                    if(null != mAdapter)
+                        mAdapter.notifyDataSetChanged();
                     break;
                 case ACTION_ON_NETWORK_CONNECTED:
                     loadSongList();
@@ -71,29 +71,28 @@ public abstract class CloudFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_cloud, container, false);
-        mListView = mRootView.findViewById(R.id.cloud_list);
+        mRecyclerView = mRootView.findViewById(R.id.cloud_list);
         emptyPlaceholderIcon = mRootView.findViewById(R.id.list_empty_placeholder_icon);
         emptyPlaceholderTitle = mRootView.findViewById(R.id.list_empty_placeholder_txt);
         emptyPlaceHolder = mRootView.findViewById(R.id.list_empty_placeholder);
         mProgressView = mRootView.findViewById(R.id.progress_view);
 
-        final GridLayoutManager gridLayoutManager =
-                new GridLayoutManager(mActivity, 1);
-        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        gridLayoutManager.scrollToPosition(0);
-        mListView.setLayoutManager(gridLayoutManager);
-        adapter = new SongListAdapter(mActivity, this, new ArrayList<>(), ItemType.SONGS);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(llm);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setLayoutManager(llm);
+        mAdapter = new SongListAdapter(mActivity, this, new ArrayList<>(), ItemType.SONGS);
 
         Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
         if ( factory != null ) {
-            mAdController = factory.createInlineAds(mActivity, mListView, adapter);
-            mListView.setAdapter(mAdController.getAdapter());
+            mAdController = factory.createInlineAds(mActivity, mRecyclerView, mAdapter);
+            mRecyclerView.setAdapter(mAdController.getAdapter());
         }
         else {
-            mListView.setAdapter(adapter);
+            mRecyclerView.setAdapter(mAdapter);
         }
 
-        mListView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(true);
         setHasOptionsMenu(true);
         if(null == mActivity)
             mActivity = getActivity();
@@ -159,7 +158,7 @@ public abstract class CloudFragment extends Fragment {
 
     public void showEmptyList(boolean enable, boolean isAccountConfigured) {
         if (enable) {
-            mListView.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.GONE);
             emptyPlaceHolder.setVisibility(View.VISIBLE);
             int imgResourceId = R.drawable.ic_no_music_placeholder;
             int placeHolderTxtId = R.string.no_music_placeholder_txt;
@@ -170,7 +169,7 @@ public abstract class CloudFragment extends Fragment {
             emptyPlaceholderIcon.setImageResource(imgResourceId);
             emptyPlaceholderTitle.setText(placeHolderTxtId);
         } else {
-            mListView.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.VISIBLE);
             emptyPlaceHolder.setVisibility(View.GONE);
         }
     }

@@ -7,17 +7,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.widget.Toast;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.cloud.GoogleDriveMediaList;
-import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
-import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
 import com.globaldelight.boom.utils.helpers.GoogleDriveHandler;
@@ -79,8 +75,8 @@ public class GoogleDriveListFragment extends CloudFragment  implements GoogleDri
         }
 
 
-        if(null != adapter)
-            adapter.notifyDataSetChanged();
+        if(null != mAdapter)
+            mAdapter.notifyDataSetChanged();
 
     }
 
@@ -109,7 +105,7 @@ public class GoogleDriveListFragment extends CloudFragment  implements GoogleDri
     }
 
     public void checkPermissions() {
-        permissionChecker = new PermissionChecker(mActivity, mListView, PermissionChecker.ACCOUNTS_PERMISSION);
+        permissionChecker = new PermissionChecker(mActivity, mRecyclerView, PermissionChecker.ACCOUNTS_PERMISSION);
         permissionChecker.check(Manifest.permission.GET_ACCOUNTS, getResources().getString(R.string.account_permission), this);
     }
 
@@ -139,7 +135,7 @@ public class GoogleDriveListFragment extends CloudFragment  implements GoogleDri
 
     private void updateSongList() {
         if(null != googleDriveMediaList) {
-            adapter.updateMediaList(googleDriveMediaList.getGoogleDriveMediaList());
+            mAdapter.updateMediaList(googleDriveMediaList.getGoogleDriveMediaList());
             if (googleDriveMediaList.getGoogleDriveMediaList().size() <= 0) {
                 showEmptyList(true, isGoogleAccountConfigured);
             } else {
@@ -194,7 +190,7 @@ public class GoogleDriveListFragment extends CloudFragment  implements GoogleDri
     }
 
     private void setForAnimation() {
-        mListView.scrollTo(0, 100);
+        mRecyclerView.scrollTo(0, 100);
     }
 
     @Override

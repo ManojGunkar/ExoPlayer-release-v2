@@ -3,14 +3,10 @@ package com.globaldelight.boom.app.fragments;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 
-import com.globaldelight.boom.app.adapters.song.SongListAdapter;
 import com.globaldelight.boom.app.analytics.flurry.FlurryAnalytics;
 import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.collection.cloud.DropboxMediaList;
-import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.loaders.LoadDropBoxList;
 import com.globaldelight.boom.utils.helpers.DropBoxAPI;
@@ -101,20 +97,20 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
     }
 
     private void setForAnimation() {
-        mListView.scrollTo(0, 100);
+        mRecyclerView.scrollTo(0, 100);
     }
 
     private void updateSongList() {
         boolean isEmpty = dropboxMediaList.getDropboxMediaList().size() <= 0;
 
-        if(!isEmpty && null != adapter){
+        if(!isEmpty && null != mAdapter){
             notifyAdapter();
         }
     }
 
     private void notifyAdapter() {
-        if(null != adapter) {
-            adapter.updateMediaList(dropboxMediaList.getDropboxMediaList());
+        if(null != mAdapter) {
+            mAdapter.updateMediaList(dropboxMediaList.getDropboxMediaList());
         }
     }
 
