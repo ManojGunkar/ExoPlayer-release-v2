@@ -24,6 +24,9 @@ import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.adapters.song.SongListAdapter;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 
 import java.util.ArrayList;
@@ -46,6 +49,8 @@ public abstract class CloudFragment extends Fragment {
     private LinearLayout emptyPlaceHolder;
     private View mProgressView;
     private boolean mIsLoading = false;
+    private InlineAds mAdController;
+
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -78,9 +83,17 @@ public abstract class CloudFragment extends Fragment {
         gridLayoutManager.scrollToPosition(0);
         mListView.setLayoutManager(gridLayoutManager);
         adapter = new SongListAdapter(mActivity, this, new ArrayList<>(), ItemType.SONGS);
-        mListView.setAdapter(adapter);
-        mListView.setHasFixedSize(true);
 
+        Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+        if ( factory != null ) {
+            mAdController = factory.createInlineAds(mActivity, mListView, adapter);
+            mListView.setAdapter(mAdController.getAdapter());
+        }
+        else {
+            mListView.setAdapter(adapter);
+        }
+
+        mListView.setHasFixedSize(true);
         setHasOptionsMenu(true);
         if(null == mActivity)
             mActivity = getActivity();
@@ -172,8 +185,22 @@ public abstract class CloudFragment extends Fragment {
         mIsLoading = false;
     }
 
-
     abstract void onSync();
-
     abstract void loadSongList();
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if ( mAdController != null ) {
+            mAdController.register();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if ( mAdController != null ) {
+            mAdController.unregister();
+        }
+    }
 }

@@ -143,7 +143,7 @@ public class SubCategoryDetailedActivity extends MasterActivity implements Radio
         else {
             mRecyclerView.setAdapter(mAdapter);
         }
-        
+
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addOnScrollListener(new OnPaginationListener(llm) {
             @Override

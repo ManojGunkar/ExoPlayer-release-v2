@@ -37,15 +37,12 @@ public class DropBoxListFragment extends CloudFragment  implements DropboxMediaL
         dropboxMediaList.setDropboxUpdater(null);
     }
 
-
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         prefs = mActivity.getSharedPreferences(
                 ACCOUNT_PREFS_NAME, 0);
     }
-
 
     @Override
     public void onStart() {
