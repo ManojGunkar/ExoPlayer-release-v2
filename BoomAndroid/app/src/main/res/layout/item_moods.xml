@@ -11,19 +11,10 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_default_art_grid"/>
 
-    <!--<ImageView
-        android:id="@+id/img_moods_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:scaleType="centerCrop"
-        android:layout_gravity="center"
-        android:src="@drawable/fav_selected" />-->
 
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/img_moods_logo"
         android:layout_centerInParent="true"
         android:text="sdvhsdj" />
 
