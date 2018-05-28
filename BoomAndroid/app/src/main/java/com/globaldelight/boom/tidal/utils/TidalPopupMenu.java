@@ -1,6 +1,7 @@
 package com.globaldelight.boom.tidal.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -335,6 +337,7 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
                                     onItemSelected(result.get());
                                     refreshList("add", result.get());
                                 }
+                                hideKeyboard();
                             });
                         }
                     }
@@ -358,5 +361,13 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
                 Toast.makeText(mActivity, R.string.failed_to_add_to_playlist, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void hideKeyboard(){
+        View hideKey = mActivity.getCurrentFocus();
+        if (hideKey != null) {
+            InputMethodManager imm = (InputMethodManager)mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(hideKey.getWindowToken(), 0);
+        }
     }
 }
