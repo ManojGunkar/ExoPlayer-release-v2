@@ -27,14 +27,25 @@ public class RequestChain {
         this.context = context;
     }
 
+    public static class CallAdapter<T> implements Callable<Result<T>> {
+
+        private Call<T> mCall;
+        public CallAdapter(Call<T> call) {
+            mCall = call;
+        }
+
+        @Override
+        public Result<T> call() throws Exception {
+            Response<T> response = mCall.execute();
+            if (response.isSuccessful()) {
+                return Result.success(response.body());
+            }
+            return Result.error(response.code(), response.message());
+        }
+    }
+
     public <T> void submit(Call<T> call, Callback<T> callback) {
-        submit(() -> {
-                    Response<T> response = call.execute();
-                    if (response.isSuccessful()) {
-                        return Result.success(response.body());
-                    }
-                    return Result.error(response.code(), response.message());
-                },
+        submit( new CallAdapter<>(call),
                 (result) -> {
                     if (result.isSuccess()) {
                         callback.onResponse(result.get());

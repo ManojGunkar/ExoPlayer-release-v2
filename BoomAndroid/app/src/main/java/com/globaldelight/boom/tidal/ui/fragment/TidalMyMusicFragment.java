@@ -30,12 +30,14 @@ import com.globaldelight.boom.tidal.ui.adapter.NestedItemAdapter;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
 import com.globaldelight.boom.utils.RequestChain;
+import com.globaldelight.boom.utils.Result;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Response;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_REFRESH_LIST;
@@ -58,6 +60,7 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
     private boolean mHasResponse = false;
     private RequestChain mRequestChain = null;
     private NestedItemAdapter mAdapter;
+    private Result.Error mLastError;
 
     private List<NestedItemDescription> mItemList = new ArrayList<>();
 
@@ -147,8 +150,10 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
     }
 
     private void mapResponse(String path, int titleResId, int type) {
-        Call<UserMusicResponse> call = TidalHelper.getInstance(getContext()).getUserMusic(path, 0, 10);
-        mRequestChain.submit(call, new ResponseHandler(titleResId, type, TidalHelper.getInstance(getContext()).getUserPath(path)));
+        if ( mLastError != null ) {
+            Call<UserMusicResponse> call = TidalHelper.getInstance(getContext()).getUserMusic(path, 0, 10);
+            mRequestChain.submit(new RequestChain.CallAdapter<>(call), new ResponseHandler(titleResId, type, TidalHelper.getInstance(getContext()).getUserPath(path)));
+        }
     }
 
     @Override
@@ -218,7 +223,7 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
         });
     }
 
-    class ResponseHandler implements RequestChain.Callback<UserMusicResponse> {
+    class ResponseHandler implements RequestChain.Callback<Result<UserMusicResponse>> {
         private int resId;
         private int type;
         private String path;
@@ -230,9 +235,9 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
         }
 
         @Override
-        public void onResponse(UserMusicResponse response) {
-            if (response != null) {
-
+        public void onResponse(Result<UserMusicResponse> result) {
+            if (result.isSuccess()) {
+                UserMusicResponse response = result.get();
                 List<Item> playlists = new ArrayList();
 
                 for (int i = 0; i < response.getItems().size(); i++) {
@@ -257,7 +262,9 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
                     mItemList.add(new NestedItemDescription(resId, type, playlists, path));
                 }
             }
+            else {
 
+            }
         }
     }
 
