@@ -64,7 +64,7 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
 
 
     @IntDef({PRICE_FULL, PRICE_DISCOUNT, PRICE_DISCOUNT_2})
-    public @interface Price{};
+    public @interface Price{}
     public static final int PRICE_FULL = 0;
     public static final int PRICE_DISCOUNT = 1;
     public static final int PRICE_DISCOUNT_2 = 2;
@@ -176,8 +176,8 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
 
     @Override
     public void addItemsToDrawer(Menu menu, int groupId) {
-        menu.add(groupId, R.id.nav_store, Menu.NONE, R.string.store_title).setIcon(R.drawable.ic_store);
-        menu.add(groupId, R.id.nav_share, Menu.NONE, R.string.title_share).setIcon(R.drawable.ic_share);
+        menu.add(1,R.id.nav_store, Menu.NONE, R.string.store_title).setIcon(R.drawable.ic_store);
+        menu.add(1,R.id.nav_share, Menu.NONE, R.string.title_share).setIcon(R.drawable.ic_share);
     }
 
     @Override
