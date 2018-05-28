@@ -110,13 +110,12 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
             return;
         }
 
-        mItemList.clear();
         mRequestChain = new RequestChain(getContext());
         if (mProgressBar != null)
             mProgressBar.setVisibility(View.VISIBLE);
         mLastError = null;
+        mItemList.clear();
         mapResponse(TidalHelper.USER_PLAYLISTS, R.string.tidal_playlist, GRID_VIEW);
-        mapResponse(TidalHelper.USER_TRACKS, R.string.tidal_tracks, LIST_VIEW);
         mapResponse(TidalHelper.USER_TRACKS, R.string.tidal_tracks, LIST_VIEW);
         mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_album, GRID_VIEW);
         mapResponse(TidalHelper.USER_ARTISTS, R.string.tidal_artist, GRID_VIEW);
@@ -266,7 +265,7 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
                     }
                 }
 
-                if (theDesc != null) {
+                if (theDesc != null && mAdapter != null) {
                     theDesc.itemList = playlists;
                     mAdapter.notifyDataSetChanged();
                 } else {
