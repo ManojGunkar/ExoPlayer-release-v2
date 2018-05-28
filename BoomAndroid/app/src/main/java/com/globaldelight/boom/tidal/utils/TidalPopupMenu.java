@@ -265,11 +265,13 @@ public class TidalPopupMenu implements PopupMenu.OnMenuItemClickListener, Playli
                             mHelper.renamePlaylist(mItem, newName, (result)->{
                                 if ( result.isSuccess() ) {
                                     mItem.setTitle(newName);
+                                    hideKeyboard();
                                     Toast.makeText(mActivity, R.string.tidal_renamed, Toast.LENGTH_SHORT).show();
                                     refreshList("refresh");
                                 }
                                 else {
                                     Toast.makeText(mActivity, R.string.tidal_failed_rename, Toast.LENGTH_SHORT).show();
+                                    hideKeyboard();
                                 }
                             });
                         }

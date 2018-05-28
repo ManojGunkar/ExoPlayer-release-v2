@@ -15,7 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
@@ -49,6 +51,9 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
 
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
+    private View mErrorView;
+    private TextView mTxtError;
+    private Button mBtnRetry;
 
     private boolean mHasResponse = false;
     private RequestChain mRequestChain = null;
@@ -87,6 +92,9 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
     private void init(View view) {
         mProgressBar = view.findViewById(R.id.progress_tidal_my_music);
         mRecyclerView = view.findViewById(R.id.rv_tidal_my_music);
+        mErrorView=view.findViewById(R.id.layout_error);
+        mTxtError=view.findViewById(R.id.txt_cause);
+        mBtnRetry=view.findViewById(R.id.btn_retry);
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
@@ -103,16 +111,23 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
         mRequestChain = new RequestChain(getContext());
         if (mProgressBar != null)
             mProgressBar.setVisibility(View.VISIBLE);
-        mapResponse(TidalHelper.USER_PLAYLISTS, R.string.tidal_playlist, GRID_VIEW);
+    //    mapResponse(TidalHelper.USER_PLAYLISTS, R.string.tidal_playlist, GRID_VIEW);
         mapResponse(TidalHelper.USER_TRACKS, R.string.tidal_tracks, LIST_VIEW);
         mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_album, GRID_VIEW);
         mapResponse(TidalHelper.USER_ARTISTS, R.string.tidal_artist, GRID_VIEW);
         updateUserPlaylist();
         mRequestChain.submit((response) -> {
-            mAdapter = new NestedItemAdapter(getContext(), mItemList, true, false);
-            mRecyclerView.setAdapter(mAdapter);
-            mProgressBar.setVisibility(View.GONE);
-            mHasResponse = true;
+            if (response.isSuccess()){
+                mAdapter = new NestedItemAdapter(getContext(), mItemList, true, false);
+                mRecyclerView.setAdapter(mAdapter);
+                mProgressBar.setVisibility(View.GONE);
+                mHasResponse = true;
+            }else{
+                mErrorView.setVisibility(View.VISIBLE);
+                mTxtError.setText(response.getError().getReason());
+                mBtnRetry.setOnClickListener(view->onLoadContent());
+            }
+
         });
     }
 

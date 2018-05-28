@@ -19,5 +19,9 @@
         android:layout_centerInParent="true"
         android:visibility="visible" />
 
+    <include layout="@layout/tidal_error_layout"
+        android:id="@+id/layout_error"
+        android:visibility="gone"/>
+
 
 </RelativeLayout>

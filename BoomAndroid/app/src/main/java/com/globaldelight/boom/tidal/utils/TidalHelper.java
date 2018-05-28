@@ -64,10 +64,10 @@ public class TidalHelper {
     public static final String RISING_TRACKS = "rising/new/tracks";
 
     public static final String USER = "users/";
-    public static final String USER_PLAYLISTS = "/favorites/playlists";
-    public static final String USER_TRACKS = "/favorites/tracks";
-    public static final String USER_ABLUMS = "/favorites/albums";
-    public static final String USER_ARTISTS = "/favorites/artists";
+    public static final String USER_PLAYLISTS = "/favor";
+    public static final String USER_TRACKS = "/favor";
+    public static final String USER_ABLUMS = "/favo";
+    public static final String USER_ARTISTS = "/favori";
     public static final String PLAYLIST_TRACKS = "playlists/";
 
     public final static String SEARCH = "search/";

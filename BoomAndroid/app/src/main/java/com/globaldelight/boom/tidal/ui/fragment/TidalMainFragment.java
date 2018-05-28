@@ -207,6 +207,8 @@ public class TidalMainFragment extends TabBarFragment {
         return false;
     }
 
+
+
     @Override
     public void onResume() {
         super.onResume();
