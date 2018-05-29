@@ -23,6 +23,7 @@ public class RequestChain {
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private Context context;
+    private volatile boolean isCancelled = false;
     public RequestChain(Context context) {
         this.context = context;
     }
@@ -65,17 +66,26 @@ public class RequestChain {
 
             if ( callback != null ) {
                 final Result<T> res = result;
-                mainHandler.post(()->callback.onResponse(res));
+                mainHandler.post(()-> {
+                    if (!isCancelled) {
+                        callback.onResponse(res);
+                    }
+                });
             }
         });
     }
 
     // Just submit a callback - will be executed after all previous operations are done
     public <T> void submit(Callback<Result<T>> callback) {
-        executor.submit(()->mainHandler.post(()->callback.onResponse(Result.success(null))));
+        executor.submit(()->mainHandler.post(()-> {
+            if (!isCancelled) {
+                callback.onResponse(Result.success(null));
+            }
+        }));
     }
 
     public void cancel() {
+        isCancelled = true;
         executor.shutdownNow();
     }
 

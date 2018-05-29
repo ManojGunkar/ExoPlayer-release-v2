@@ -93,15 +93,15 @@ public class TidalRisingFragment extends Fragment implements ContentLoadable {
 
     @Override
     public void onLoadContent() {
-        if (mHasResponse) {
+        if (mHasResponse || mRequestChain != null) {
             return;
         }
         mLastError = null;
         mItemList.clear();
         mRequestChain = new RequestChain(getContext());
         mProgressBar.setVisibility(View.VISIBLE);
-        mapResponse(TidalHelper.RISING_ALBUMS, R.string.tidal_rising_albums, GRID_VIEW);
-        mapResponse(TidalHelper.RISING_TRACKS, R.string.tidal_rising_tracks, LIST_VIEW);
+        mapResponse(TidalHelper.RISING_ALBUMS, R.string.tidal_album, GRID_VIEW);
+        mapResponse(TidalHelper.RISING_TRACKS, R.string.tidal_tracks, LIST_VIEW);
         mRequestChain.submit(resp -> {
             mProgressBar.setVisibility(View.VISIBLE);
             if (mLastError == null) {

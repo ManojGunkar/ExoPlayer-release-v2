@@ -117,7 +117,7 @@ public class TidalNewFragment extends Fragment implements ContentLoadable {
 
     @Override
      public void onLoadContent() {
-        if ( mHasResponse ) {
+        if ( mHasResponse || mRequestChain != null) {
             return;
         }
 

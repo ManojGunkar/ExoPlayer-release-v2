@@ -107,14 +107,15 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
 
     @Override
     public void onLoadContent() {
-        if (mHasResponse) {
+        // Already has data or fetching data
+        if (mHasResponse|| mRequestChain != null ) {
             return;
         }
 
-        mRequestChain = new RequestChain(getContext());
-        if (mProgressBar != null)
-            mProgressBar.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
+
         mLastError = null;
+        mRequestChain = new RequestChain(getContext());
         mItemList.clear();
         mapResponse(TidalHelper.USER_PLAYLISTS, R.string.tidal_playlist, GRID_VIEW);
         mapResponse(TidalHelper.USER_TRACKS, R.string.tidal_tracks, LIST_VIEW);
@@ -132,7 +133,6 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
                 mTxtError.setText(mLastError.getReason());
                 mBtnRetry.setOnClickListener(view->onLoadContent());
             }
-
         });
     }
 
