@@ -97,6 +97,9 @@ public class TidalLoginFragment extends Fragment implements View.OnClickListener
                     hideKeyboard();
                     jumpToTidal();
                 } else {
+                    if (response.code()==401){
+                        Toast.makeText(getActivity(), "Username or password is wrong", Toast.LENGTH_SHORT).show();
+                    }
                     Log.d(TAG, "FAILED lOGIN");
                     if (mProgressDialog!=null)mProgressDialog.dismiss();
                 }
