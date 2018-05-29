@@ -271,5 +271,8 @@
     <string name="tidal_failed_delete">Failed to delete</string>
     <string name="tidal_renamed">Renamed playlist</string>
     <string name="tidal_failed_rename">Failed to rename</string>
+    <string name="retry">Retry</string>
+    <string name="server_take">The server took too long to respond.</string>
+    <string name="radio_find_error">Sorry Couldn\'t find any Radio station.</string>
 
 </resources>
