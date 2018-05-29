@@ -15,7 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
@@ -24,6 +26,7 @@ import com.globaldelight.boom.tidal.ui.adapter.NestedItemAdapter;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
 import com.globaldelight.boom.utils.RequestChain;
+import com.globaldelight.boom.utils.Result;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +47,10 @@ public class TidalNewFragment extends Fragment implements ContentLoadable {
 
     private RecyclerView mRecyclerView;
     private NestedItemAdapter mAdapter;
+    private View mErrorView;
+    private TextView mTxtError;
+    private Button mBtnRetry;
+    private Result.Error mLastError = null;
 
     private boolean mHasResponse = false;
     private RequestChain mRequestChain = null;
@@ -62,7 +69,7 @@ public class TidalNewFragment extends Fragment implements ContentLoadable {
     };
 
     private List<NestedItemDescription> mItemList = new ArrayList<>();
-    class ResponseHandler implements RequestChain.Callback<TidalBaseResponse> {
+    class ResponseHandler implements RequestChain.Callback<Result<TidalBaseResponse>> {
         private int resId;
         private int type;
         private String path;
@@ -74,10 +81,16 @@ public class TidalNewFragment extends Fragment implements ContentLoadable {
         }
 
         @Override
-        public void onResponse(TidalBaseResponse tidalBaseResponse) {
-            if ( tidalBaseResponse != null ) {
-                mItemList.add(new NestedItemDescription(resId, type, tidalBaseResponse.getItems(), path));
+        public void onResponse(Result<TidalBaseResponse> result) {
+            if (result.isSuccess()||result.getError().getCode()>0){
+                TidalBaseResponse baseResponse=result.get();
+                if (baseResponse!=null)
+                mItemList.add(new NestedItemDescription(resId, type, baseResponse.getItems(), path));
+
+            }else {
+                mLastError=result.getError();
             }
+
         }
     }
 
@@ -93,6 +106,9 @@ public class TidalNewFragment extends Fragment implements ContentLoadable {
     private void initView(View view) {
         mProgressBar = view.findViewById(R.id.progress_tidal_new);
         mRecyclerView = view.findViewById(R.id.rv_tidal_new);
+        mErrorView=view.findViewById(R.id.layout_error);
+        mTxtError=view.findViewById(R.id.txt_cause);
+        mBtnRetry=view.findViewById(R.id.btn_retry);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -106,7 +122,7 @@ public class TidalNewFragment extends Fragment implements ContentLoadable {
         }
 
         mProgressBar.setVisibility(View.VISIBLE);
-
+        mLastError=null;
         mItemList.clear();
         mRequestChain = new RequestChain(getContext());
         mapResponse(TidalHelper.EXCLUSIVE_PLAYLISTS, R.string.tidal_exclusive_playlists, GRID_VIEW);
@@ -122,10 +138,18 @@ public class TidalNewFragment extends Fragment implements ContentLoadable {
         mapResponse(TidalHelper.LOCAL_ALBUMS, R.string.tidal_local_albums, GRID_VIEW);
         mapResponse(TidalHelper.LOCAL_PLAYLISTS, R.string.tidal_local_playlists, GRID_VIEW);
         mRequestChain.submit(response->{
-            mAdapter = new NestedItemAdapter(getContext(), mItemList,false,false);
-            mRecyclerView.setAdapter(mAdapter);
-            mProgressBar.setVisibility(View.GONE);
-            mHasResponse = true;
+            mProgressBar.setVisibility(View.VISIBLE);
+            if (mLastError==null){
+                mAdapter = new NestedItemAdapter(getContext(), mItemList,false,false);
+                mRecyclerView.setAdapter(mAdapter);
+                mProgressBar.setVisibility(View.GONE);
+                mHasResponse = true;
+            }else {
+                mErrorView.setVisibility(View.VISIBLE);
+                mTxtError.setText(mLastError.getReason());
+                mBtnRetry.setOnClickListener(view->onLoadContent());
+            }
+
         });
     }
 
@@ -147,7 +171,7 @@ public class TidalNewFragment extends Fragment implements ContentLoadable {
 
     private void mapResponse(String path, int titleResId, int type) {
         Call<TidalBaseResponse> call = TidalHelper.getInstance(getContext()).getItemCollection(path, 0 , 6);
-        mRequestChain.submit(call, new ResponseHandler(titleResId, type,path));
+        mRequestChain.submit(new RequestChain.CallAdapter<>(call), new ResponseHandler(titleResId, type,path));
     }
 
     @Override

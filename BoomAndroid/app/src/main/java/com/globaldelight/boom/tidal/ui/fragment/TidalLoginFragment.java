@@ -53,7 +53,6 @@ public class TidalLoginFragment extends Fragment implements View.OnClickListener
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tidal_login, null, false);
         setHasOptionsMenu(true);
-
         init(view);
         return view;
     }
@@ -93,12 +92,12 @@ public class TidalLoginFragment extends Fragment implements View.OnClickListener
                     Log.d(TAG, "SESSION ID =" + loginResponse.getSessionId());
                     Log.d(TAG, "USER ID =" + loginResponse.getUserId());
                     Log.d(TAG, "COUNTRY =" + loginResponse.getCountryCode());
-                    Toast.makeText(getActivity(), "Login success", Toast.LENGTH_SHORT).show();
                     hideKeyboard();
                     jumpToTidal();
                 } else {
                     if (response.code()==401){
-                        Toast.makeText(getActivity(), "Username or password is wrong", Toast.LENGTH_SHORT).show();
+                        mInputUserId.setError("Username or password is wrong");
+                        mInputPassword.setError("Username or password is wrong");
                     }
                     Log.d(TAG, "FAILED lOGIN");
                     if (mProgressDialog!=null)mProgressDialog.dismiss();
@@ -162,7 +161,7 @@ public class TidalLoginFragment extends Fragment implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_login_tidal:
-                if (validateUserId()||validatePassword())
+                if (validateUserId()&&validatePassword())
                 userLogin(mEtUserId.getText().toString(), mEtPassword.getText().toString());
                 break;
         }
