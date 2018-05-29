@@ -60,6 +60,7 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
         public InlineAds createInlineAds(Activity activity, RecyclerView recyclerView, RecyclerView.Adapter baseAdapter) {
             return new AdsController(activity, recyclerView, baseAdapter);
         }
+
     }
 
 
