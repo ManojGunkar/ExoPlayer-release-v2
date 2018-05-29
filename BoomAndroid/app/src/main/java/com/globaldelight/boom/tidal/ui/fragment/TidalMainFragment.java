@@ -143,8 +143,7 @@ public class TidalMainFragment extends TabBarFragment {
         Fragment fragment=new TidalLoginFragment();
         FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        while(fragmentManager.getBackStackEntryCount() > 0) { fragmentManager.popBackStackImmediate(); }
-        transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
+        transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
     }
 
     @Override
