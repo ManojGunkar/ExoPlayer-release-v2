@@ -1,11 +1,13 @@
 package com.globaldelight.boom.tidal.ui.fragment;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -17,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
@@ -60,6 +63,7 @@ public class TidalMainFragment extends TabBarFragment {
         View view = inflater.inflate(R.layout.fragment_radio, null, false);
         setHasOptionsMenu(true);
         initComp(view);
+        hideKeyboard();
         return view;
     }
 
@@ -137,8 +141,10 @@ public class TidalMainFragment extends TabBarFragment {
 
     private void backToLogin(){
         Fragment fragment=new TidalLoginFragment();
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+        FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        while(fragmentManager.getBackStackEntryCount() > 0) { fragmentManager.popBackStackImmediate(); }
+        transaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
     }
 
     @Override
@@ -207,7 +213,13 @@ public class TidalMainFragment extends TabBarFragment {
         return false;
     }
 
-
+    private void hideKeyboard(){
+        View hideKey = getActivity().getCurrentFocus();
+        if (hideKey != null) {
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(hideKey.getWindowToken(), 0);
+        }
+    }
 
     @Override
     public void onResume() {
