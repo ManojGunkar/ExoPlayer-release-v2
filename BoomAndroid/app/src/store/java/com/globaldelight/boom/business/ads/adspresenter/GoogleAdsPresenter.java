@@ -2,6 +2,7 @@ package com.globaldelight.boom.business.ads.adspresenter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,10 +125,16 @@ public class GoogleAdsPresenter implements AdsPresenter, InterstitialAdsPresente
 
     @Override
     public void onComplete() {
-        MobileAds.initialize(mContext, "ca-app-pub-3940256099942544~3347511713");
+        MobileAds.initialize(mContext, BuildConfig.GOOGLE_ADMOB_APP_ID);
 
         mInterstitialAd = new InterstitialAd(mContext);
         mInterstitialAd.setAdUnitId(BuildConfig.GOOGLE_INTERSTITIAL_AD_ID);
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+            Log.d("AdmobAds", "The interstitial wasn't loaded yet.");
+        }
     }
 }
