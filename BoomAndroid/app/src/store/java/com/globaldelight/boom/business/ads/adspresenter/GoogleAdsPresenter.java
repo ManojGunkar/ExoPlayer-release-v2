@@ -6,17 +6,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.business.ads.builder.AdsBuilder;
 import com.globaldelight.boom.business.ads.viewholder.GoogleAdViewHolder;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.NativeContentAd;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by Manoj Kumar on 6/13/2017.
@@ -131,10 +135,23 @@ public class GoogleAdsPresenter implements AdsPresenter, InterstitialAdsPresente
         mInterstitialAd.setAdUnitId(BuildConfig.GOOGLE_INTERSTITIAL_AD_ID);
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
-        if (mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
-        } else {
-            Log.d("AdmobAds", "The interstitial wasn't loaded yet.");
-        }
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("EE9822DD68C1D97586D6526D4C316699").build();
+        mInterstitialAd.loadAd(adRequest);
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                Toast.makeText(getApplicationContext(),"Failed", Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onAdLoaded() {
+                Toast.makeText(getApplicationContext(),"Loaded", Toast.LENGTH_SHORT).show();
+                mInterstitialAd.show();
+            }
+            @Override
+            public void onAdClosed(){
+                Toast.makeText(getApplicationContext(),"Thanks", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
