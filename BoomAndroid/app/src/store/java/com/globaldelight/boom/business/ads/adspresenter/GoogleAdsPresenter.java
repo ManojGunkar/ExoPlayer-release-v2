@@ -44,8 +44,11 @@ public class GoogleAdsPresenter implements AdsPresenter, InterstitialAdsPresente
         }
     }
 
+    public GoogleAdsPresenter(Context context){
+        this.mContext=context;
+    }
+
     public GoogleAdsPresenter(AdsBuilder.AdsParam param) {
-        this.mContext=param.context;
         this.param = param;
         adLoader = new AdLoader.Builder(param.context, BuildConfig.GOOGLE_NATIVE_AD_ID)
                 .forContentAd(contentAd -> {
@@ -121,7 +124,7 @@ public class GoogleAdsPresenter implements AdsPresenter, InterstitialAdsPresente
 
     @Override
     public void onComplete() {
-      //  MobileAds.initialize(mContext, "ca-app-pub-3940256099942544~3347511713");
+        MobileAds.initialize(mContext, "ca-app-pub-3940256099942544~3347511713");
 
         mInterstitialAd = new InterstitialAd(mContext);
         mInterstitialAd.setAdUnitId(BuildConfig.GOOGLE_INTERSTITIAL_AD_ID);

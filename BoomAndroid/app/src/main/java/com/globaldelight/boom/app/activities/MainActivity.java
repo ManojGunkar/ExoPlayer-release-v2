@@ -25,6 +25,8 @@ import com.globaldelight.boom.app.fragments.DropBoxListFragment;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.adspresenter.InterstitialAdsPresenter;
+import com.globaldelight.boom.business.ads.builder.AdsBuilder;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
@@ -279,6 +281,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void onNavigateToRadio() {
+        AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
         navigationView.getMenu().findItem(R.id.radio).setChecked(true);
         setTitle(R.string.radio);
         Fragment fragment = new RadioMainFragment();
