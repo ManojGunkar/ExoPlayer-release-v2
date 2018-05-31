@@ -42,7 +42,7 @@
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sorry Couldn't find any Radio station."
+            android:text="@string/radio_find_error"
             android:textColor="@color/white"
             android:textSize="18sp" />
 
@@ -64,10 +64,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="24dp"
-            android:text="Retry"
+            android:text="@string/retry"
             android:textColor="@color/colorAccent" />
 
     </LinearLayout>
-
 
 </RelativeLayout>

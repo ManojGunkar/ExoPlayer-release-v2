@@ -15,7 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
@@ -29,12 +31,14 @@ import com.globaldelight.boom.tidal.utils.ItemUtils;
 import com.globaldelight.boom.tidal.utils.NestedItemDescription;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
 import com.globaldelight.boom.utils.RequestChain;
+import com.globaldelight.boom.utils.Result;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Response;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_REFRESH_LIST;
@@ -50,10 +54,14 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
 
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
+    private View mErrorView;
+    private TextView mTxtError;
+    private Button mBtnRetry;
 
     private boolean mHasResponse = false;
     private RequestChain mRequestChain = null;
     private NestedItemAdapter mAdapter;
+    private Result.Error mLastError = null;
 
     private List<NestedItemDescription> mItemList = new ArrayList<>();
 
@@ -88,6 +96,9 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
     private void init(View view) {
         mProgressBar = view.findViewById(R.id.progress_tidal_my_music);
         mRecyclerView = view.findViewById(R.id.rv_tidal_my_music);
+        mErrorView=view.findViewById(R.id.layout_error);
+        mTxtError=view.findViewById(R.id.txt_cause);
+        mBtnRetry=view.findViewById(R.id.btn_retry);
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
@@ -96,24 +107,32 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
 
     @Override
     public void onLoadContent() {
-        if (mHasResponse) {
+        // Already has data or fetching data
+        if (mHasResponse|| mRequestChain != null ) {
             return;
         }
 
-        mItemList.clear();
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        mLastError = null;
         mRequestChain = new RequestChain(getContext());
-        if (mProgressBar != null)
-            mProgressBar.setVisibility(View.VISIBLE);
+        mItemList.clear();
         mapResponse(TidalHelper.USER_PLAYLISTS, R.string.tidal_playlist, GRID_VIEW);
         mapResponse(TidalHelper.USER_TRACKS, R.string.tidal_tracks, LIST_VIEW);
         mapResponse(TidalHelper.USER_ABLUMS, R.string.tidal_album, GRID_VIEW);
         mapResponse(TidalHelper.USER_ARTISTS, R.string.tidal_artist, GRID_VIEW);
         updateUserPlaylist();
-        mRequestChain.submit((response) -> {
-            mAdapter = new NestedItemAdapter(getContext(), mItemList, true, false);
-            mRecyclerView.setAdapter(mAdapter);
+        mRequestChain.submit((result) -> {
             mProgressBar.setVisibility(View.GONE);
-            mHasResponse = true;
+            if ( mLastError == null ){
+                mAdapter = new NestedItemAdapter(getContext(), mItemList, true, false);
+                mRecyclerView.setAdapter(mAdapter);
+                mHasResponse = true;
+            }else{
+                mErrorView.setVisibility(View.VISIBLE);
+                mTxtError.setText(mLastError.getReason());
+                mBtnRetry.setOnClickListener(view->onLoadContent());
+            }
         });
     }
 
@@ -133,8 +152,10 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
     }
 
     private void mapResponse(String path, int titleResId, int type) {
-        Call<UserMusicResponse> call = TidalHelper.getInstance(getContext()).getUserMusic(path, 0, 10);
-        mRequestChain.submit(call, new ResponseHandler(titleResId, type, TidalHelper.getInstance(getContext()).getUserPath(path)));
+        if ( mLastError == null ) {
+            Call<UserMusicResponse> call = TidalHelper.getInstance(getContext()).getUserMusic(path, 0, 10);
+            mRequestChain.submit(new RequestChain.CallAdapter<>(call), new ResponseHandler(titleResId, type, TidalHelper.getInstance(getContext()).getUserPath(path)));
+        }
     }
 
     @Override
@@ -188,23 +209,29 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
 
     private void updateUserPlaylist() {
         Call<TidalBaseResponse> call = TidalHelper.getInstance(getContext()).getUserPlayLists(0, 10);
-        mRequestChain.submit(call, resp -> {
-            NestedItemDescription theDesc = null;
-            for (NestedItemDescription desc : mItemList) {
-                if (desc.titleResId == R.string.user_playlist) {
-                    theDesc = desc;
+        mRequestChain.submit(new RequestChain.CallAdapter<>(call), result -> {
+            if ( result.isSuccess() || result.getError().getCode() > 0) {
+                TidalBaseResponse resp = result.get();
+                NestedItemDescription theDesc = null;
+                for (NestedItemDescription desc : mItemList) {
+                    if (desc.titleResId == R.string.user_playlist) {
+                        theDesc = desc;
+                    }
+                }
+                if (theDesc != null) {
+                    theDesc.itemList = resp.getItems();
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    mItemList.add(new NestedItemDescription(R.string.user_playlist, GRID_VIEW, resp.getItems(), TidalHelper.getInstance(getContext()).getUserPath("/playlists")));
                 }
             }
-            if (theDesc != null) {
-                theDesc.itemList = resp.getItems();
-                mAdapter.notifyDataSetChanged();
-            } else {
-                mItemList.add(new NestedItemDescription(R.string.user_playlist, GRID_VIEW, resp.getItems(), TidalHelper.getInstance(getContext()).getUserPath("/playlists")));
+            else {
+                mLastError = result.getError();
             }
         });
     }
 
-    class ResponseHandler implements RequestChain.Callback<UserMusicResponse> {
+    class ResponseHandler implements RequestChain.Callback<Result<UserMusicResponse>> {
         private int resId;
         private int type;
         private String path;
@@ -216,17 +243,20 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
         }
 
         @Override
-        public void onResponse(UserMusicResponse response) {
-            if (response != null) {
-
+        public void onResponse(Result<UserMusicResponse> result) {
+            // For now only treat non HTTP errors as errors
+            if (result.isSuccess() || result.getError().getCode() > 0) {
+                UserMusicResponse response = result.get();
                 List<Item> playlists = new ArrayList();
 
-                for (int i = 0; i < response.getItems().size(); i++) {
-                    ItemWrapper items = response.getItems().get(i);
-                    if (resId == R.string.tidal_artist) {
-                        items.getItem().setType("ARTIST");
+                if ( response != null ) {
+                    for (int i = 0; i < response.getItems().size(); i++) {
+                        ItemWrapper items = response.getItems().get(i);
+                        if (resId == R.string.tidal_artist) {
+                            items.getItem().setType("ARTIST");
+                        }
+                        playlists.add(items.getItem());
                     }
-                    playlists.add(items.getItem());
                 }
 
                 NestedItemDescription theDesc = null;
@@ -236,14 +266,16 @@ public class TidalMyMusicFragment extends Fragment implements ContentLoadable {
                     }
                 }
 
-                if (theDesc != null) {
+                if (theDesc != null && mAdapter != null) {
                     theDesc.itemList = playlists;
                     mAdapter.notifyDataSetChanged();
                 } else {
                     mItemList.add(new NestedItemDescription(resId, type, playlists, path));
                 }
             }
-
+            else {
+                mLastError = result.getError();
+            }
         }
     }
 

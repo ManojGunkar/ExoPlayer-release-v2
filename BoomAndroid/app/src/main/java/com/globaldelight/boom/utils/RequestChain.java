@@ -23,18 +23,30 @@ public class RequestChain {
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private Context context;
+    private volatile boolean isCancelled = false;
     public RequestChain(Context context) {
         this.context = context;
     }
 
+    public static class CallAdapter<T> implements Callable<Result<T>> {
+
+        private Call<T> mCall;
+        public CallAdapter(Call<T> call) {
+            mCall = call;
+        }
+
+        @Override
+        public Result<T> call() throws Exception {
+            Response<T> response = mCall.execute();
+            if (response.isSuccessful()) {
+                return Result.success(response.body());
+            }
+            return Result.error(response.code(), response.message());
+        }
+    }
+
     public <T> void submit(Call<T> call, Callback<T> callback) {
-        submit(() -> {
-                    Response<T> response = call.execute();
-                    if (response.isSuccessful()) {
-                        return Result.success(response.body());
-                    }
-                    return Result.error(response.code(), response.message());
-                },
+        submit( new CallAdapter<>(call),
                 (result) -> {
                     if (result.isSuccess()) {
                         callback.onResponse(result.get());
@@ -54,17 +66,26 @@ public class RequestChain {
 
             if ( callback != null ) {
                 final Result<T> res = result;
-                mainHandler.post(()->callback.onResponse(res));
+                mainHandler.post(()-> {
+                    if (!isCancelled) {
+                        callback.onResponse(res);
+                    }
+                });
             }
         });
     }
 
     // Just submit a callback - will be executed after all previous operations are done
     public <T> void submit(Callback<Result<T>> callback) {
-        executor.submit(()->mainHandler.post(()->callback.onResponse(Result.success(null))));
+        executor.submit(()->mainHandler.post(()-> {
+            if (!isCancelled) {
+                callback.onResponse(Result.success(null));
+            }
+        }));
     }
 
     public void cancel() {
+        isCancelled = true;
         executor.shutdownNow();
     }
 

@@ -75,7 +75,7 @@ public class FavoritesManager {
     }
 
     public void removeFromFavorites(Item item) {
-        setForItem(item).remove(item);
+        setForItem(item).remove(item.getId());
     }
 
 
