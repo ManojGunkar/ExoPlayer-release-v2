@@ -267,5 +267,6 @@
     <string name="tidal_menu_add_playlist">Add to my playlists</string>
     <string name="tidal_artist">Artists</string>
     <string name="failed_to_add_to_playlist">Failed to add to playlist</string>
+    <string name="podcast">Podcast</string>
 
 </resources>

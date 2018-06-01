@@ -64,8 +64,6 @@ public class SubCategoryDetailedActivity extends MasterActivity implements Radio
 
     private InlineAds mAdController;
 
-
-
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

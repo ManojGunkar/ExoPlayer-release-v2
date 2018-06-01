@@ -28,6 +28,13 @@
             android:title="@string/radio" />
 
         <item
+            android:id="@+id/podcast"
+            android:checkable="true"
+            android:checked="false"
+            android:icon="@drawable/drawer_radio_selector"
+            android:title="@string/podcast" />
+
+        <item
             android:id="@+id/tidal"
             android:checkable="true"
             android:checked="false"
