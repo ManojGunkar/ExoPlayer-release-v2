@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -25,6 +26,7 @@ import com.globaldelight.boom.tidal.tidalconnector.model.Curated;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.PlaylistResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.response.TidalBaseResponse;
+import com.globaldelight.boom.tidal.ui.adapter.GridAdapter;
 import com.globaldelight.boom.tidal.ui.adapter.PlaylistTrackAdapter;
 import com.globaldelight.boom.tidal.ui.adapter.TrackDetailAdapter;
 import com.globaldelight.boom.tidal.utils.TidalHelper;
@@ -136,12 +138,12 @@ public class GridDetailActivity extends MasterActivity {
         Call<TidalBaseResponse> call = TidalHelper.getInstance(this).getItemCollection(path, 0, 100);
         requestChain.submit(call, resp -> {
             mProgressBar.setVisibility(View.GONE);
-            mAdapter = new TrackDetailAdapter(this, resp.getItems(), mCurated.getName());
-            LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-            mRecyclerView.setLayoutManager(llm);
+            mPlayButton.hide();
+            GridAdapter gridAdapter=new GridAdapter(this,resp.getItems());
+            GridLayoutManager glm = new GridLayoutManager(this, 2);
+            mRecyclerView.setLayoutManager(glm);
             mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            mRecyclerView.setAdapter(mAdapter);
-            mPlayButton.setVisibility(View.VISIBLE);
+            mRecyclerView.setAdapter(gridAdapter);
         });
     }
 
