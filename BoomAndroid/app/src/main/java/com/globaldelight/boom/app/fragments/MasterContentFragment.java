@@ -105,8 +105,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private static IMediaElement mPlayingMediaItem;
     private static boolean mIsPlaying, mIsLastPlayed;
 
-
-    private IMediaElement mCurrentItem = null;
     private boolean isUser = false;
 
     private Activity mActivity;
@@ -308,11 +306,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 false);
 
         updatePlayerSeekAndTime();
-        try {
-            updatePlayerUI();
-        } catch (Exception e) {
-
-        }
+        updatePlayerUI();
     }
 
     private void updatePlayerSeekAndTime() {
@@ -450,11 +444,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
 
     class BlurBitmapTarget extends  BaseTarget<Bitmap> {
-        private IMediaElement item;
-
-        BlurBitmapTarget(IMediaElement item) {
-            this.item = item;
-        }
 
         @Override
         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -473,7 +462,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                         try {
                             final Bitmap bitmap = resource.copy(ARGB_8888, false);
                             Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(context, bitmap, ScreenWidth / 10, ScreenHeight / 10);
-                            resource.recycle();
                             result = blurredBitmap;
                         } catch (Exception e) {
                         }
@@ -506,7 +494,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                     .placeholder(R.drawable.ic_default_art_grid)
                     .centerCrop()
                     .skipMemoryCache(true)
-                    .into(new BlurBitmapTarget(item));
+                    .into(new BlurBitmapTarget());
         }
         else {
             new BlurTask(item).execute();

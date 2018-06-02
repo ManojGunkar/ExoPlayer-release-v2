@@ -77,7 +77,6 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
         public void onStateChange(@AudioPlayer.State int state) {
             switch (state) {
                 case AudioPlayer.LOADING:
-                    notifyMediaChanged();
                     if(null != getPlayingItem() && getPlayingItem().getMediaType() != MediaType.DEVICE_MEDIA_LIB){
                         notifyPlayerStateChanged();
                     }
