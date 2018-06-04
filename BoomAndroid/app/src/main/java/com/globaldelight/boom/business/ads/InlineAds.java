@@ -7,9 +7,8 @@ import android.support.v7.widget.RecyclerView;
  */
 
 public interface InlineAds {
+
     RecyclerView.Adapter getAdapter();
-
     void register();
-
     void unregister();
 }

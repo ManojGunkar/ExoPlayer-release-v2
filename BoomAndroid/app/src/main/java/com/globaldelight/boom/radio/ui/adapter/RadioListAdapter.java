@@ -215,12 +215,15 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         isLoadingAdded = false;
 
         int position = mContents.size() - 1;
-        RadioStationResponse.Content result = getItem(position);
+        if (position>=0){
+            RadioStationResponse.Content result = getItem(position);
 
-        if (result != null) {
-            mContents.remove(position);
-            notifyItemRemoved(position);
+            if (result != null) {
+                mContents.remove(position);
+                notifyItemRemoved(position);
+            }
         }
+
     }
 
     public void showRetry(boolean show, @Nullable String errorMsg) {

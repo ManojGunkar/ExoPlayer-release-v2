@@ -25,6 +25,8 @@ import com.globaldelight.boom.app.fragments.DropBoxListFragment;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.adspresenter.InterstitialAdsPresenter;
+import com.globaldelight.boom.business.ads.builder.AdsBuilder;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
@@ -264,6 +266,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void onNavigateToLibrary() {
+        AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (currentFragment instanceof LibraryFragment) {
             return;
@@ -279,6 +282,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void onNavigateToRadio() {
+        AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
         navigationView.getMenu().findItem(R.id.radio).setChecked(true);
         setTitle(R.string.radio);
         Fragment fragment = new RadioMainFragment();
@@ -287,6 +291,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void onNavigateToTidal() {
+        AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
         navigationView.getMenu().findItem(R.id.tidal).setChecked(true);
         setTitle(R.string.tidal);
         Fragment fragment=null;
@@ -300,6 +305,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void onNavigateToDropbox() {
+        AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (currentFragment instanceof DropBoxListFragment) {
             return;
@@ -313,6 +319,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void onNavigateToGoogleDrive() {
+        AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (currentFragment instanceof GoogleDriveListFragment) {
             return;

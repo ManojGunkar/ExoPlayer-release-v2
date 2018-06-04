@@ -17,6 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
@@ -35,6 +38,7 @@ public class FavouriteFragment extends Fragment {
     private RecyclerView recyclerView;
     private RadioListAdapter mAdapter;
     private List<RadioStationResponse.Content> mContents;
+    private InlineAds mAdController;
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -55,7 +59,6 @@ public class FavouriteFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
-
         return recyclerView;
     }
 
@@ -64,9 +67,17 @@ public class FavouriteFragment extends Fragment {
         super.onResume();
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
-        mContents= FavouriteRadioManager.getInstance(getContext()).getRadioStations();
-        mAdapter = new RadioListAdapter(getActivity(),null,mContents);
-        recyclerView.setAdapter(mAdapter);
+        mContents = FavouriteRadioManager.getInstance(getContext()).getRadioStations();
+        mAdapter = new RadioListAdapter(getActivity(), null, mContents);
+
+        Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+        if ( factory != null ) {
+            mAdController = factory.createInlineAds(getActivity(), recyclerView, mAdapter);
+            recyclerView.setAdapter(mAdController.getAdapter());
+        }
+        else {
+            recyclerView.setAdapter(mAdapter);
+        }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
     }
@@ -74,6 +85,9 @@ public class FavouriteFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        if ( mAdController != null ) {
+            mAdController.register();
+        }
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
@@ -84,6 +98,9 @@ public class FavouriteFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        if ( mAdController != null ) {
+            mAdController.unregister();
+        }
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 }

@@ -9,10 +9,10 @@
         android:id="@+id/ad_loading_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -33,11 +33,11 @@
     <LinearLayout
         android:id="@+id/ad_error_view"
         android:layout_width="match_parent"
-        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <android.support.v7.widget.AppCompatTextView
             android:layout_width="wrap_content"
@@ -62,7 +62,7 @@
             android:layout_width="@dimen/track_list_album_art_size"
             android:layout_height="@dimen/track_list_album_art_size"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
+            android:layout_margin="5dp"
             android:scaleType="centerCrop" />
 
         <LinearLayout
@@ -75,9 +75,9 @@
                 android:id="@+id/tvHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:maxLines="1"
                 android:padding="2dp"
-                android:layout_marginLeft="5dp"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 
@@ -85,21 +85,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:layout_marginLeft="1dp"
                 android:orientation="horizontal">
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/tvDescription"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.65"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="2dp"
+                    android:layout_weight="0.65"
                     android:ellipsize="end"
                     android:maxLines="2"
                     android:padding="2dp"
                     android:text="Description"
                     android:textColor="@color/track_sub_title"
                     android:textSize="14sp" />
+
                 <Button
                     android:id="@+id/btnAction"
                     android:layout_width="0dp"
@@ -107,9 +109,9 @@
                     android:layout_gravity="center"
                     android:layout_weight="0.35"
                     android:text="@string/install_google"
-                    android:textStyle="bold"
                     android:textColor="#586267"
-                    android:textSize="8sp" />
+                    android:textSize="8sp"
+                    android:textStyle="bold" />
 
 
             </LinearLayout>

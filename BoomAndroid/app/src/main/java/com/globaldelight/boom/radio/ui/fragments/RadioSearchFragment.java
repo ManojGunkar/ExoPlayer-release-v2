@@ -17,6 +17,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
@@ -48,6 +51,8 @@ public class RadioSearchFragment extends Fragment {
     private RadioListAdapter mAdapter;
     private List<RadioStationResponse.Content> mContents;
 
+    private InlineAds mAdController;
+
     private BroadcastReceiver mUpdatePlayingItem = new BroadcastReceiver() {
         @Override
         public void onReceive(Context mActivity, Intent intent) {
@@ -64,6 +69,9 @@ public class RadioSearchFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        if (mAdController != null) {
+            mAdController.register();
+        }
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
@@ -120,7 +128,16 @@ public class RadioSearchFragment extends Fragment {
                     mProgressBar.setVisibility(View.GONE);
                     mContents = response.body().getBody().getContent();
                     mAdapter = new RadioListAdapter(getActivity(),null, mContents);
-                    mRecyclerView.setAdapter(mAdapter);
+
+                    Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+                    if ( factory != null ) {
+                        mAdController = factory.createInlineAds(getActivity(), mRecyclerView, mAdapter);
+                        mRecyclerView.setAdapter(mAdController.getAdapter());
+                    }
+                    else {
+                        mRecyclerView.setAdapter(mAdapter);
+                    }
+
                     mRecyclerView.setVisibility(View.VISIBLE);
 
                 } else {
@@ -143,7 +160,13 @@ public class RadioSearchFragment extends Fragment {
         }
     }
 
-
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAdController != null) {
+            mAdController.unregister();
+        }
+    }
 
 
 }

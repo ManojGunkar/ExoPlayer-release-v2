@@ -15,6 +15,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.CountryListAdapter;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.webconnector.RadioRequestController;
@@ -52,6 +55,7 @@ public class CountryFragment extends Fragment {
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
+    private InlineAds mAdController;
 
     @Nullable
     @Override
@@ -63,7 +67,17 @@ public class CountryFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         countryListAdapter = new CountryListAdapter(getActivity(), mContents);
-        recyclerView.setAdapter(countryListAdapter);
+
+
+        Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+        if ( factory != null ) {
+            mAdController = factory.createInlineAds(getActivity(), recyclerView, countryListAdapter);
+            recyclerView.setAdapter(mAdController.getAdapter());
+        }
+        else {
+            recyclerView.setAdapter(countryListAdapter);
+        }
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(new OnPaginationListener(llm) {
             @Override
@@ -172,5 +186,20 @@ public class CountryFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if ( mAdController != null ) {
+            mAdController.register();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if ( mAdController != null ) {
+            mAdController.unregister();
+        }
+    }
 
 }

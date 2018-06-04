@@ -13,6 +13,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.ExploreCategoryAdapter;
 import com.globaldelight.boom.radio.webconnector.model.ExploreCategory;
 import com.globaldelight.boom.radio.webconnector.model.ExploreTag;
@@ -30,6 +33,7 @@ public class ExploreFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private ProgressBar mProgressBar;
+    private InlineAds mAdController;
 
     @Nullable
     @Override
@@ -42,7 +46,15 @@ public class ExploreFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         ExploreCategoryAdapter mAdapter = new ExploreCategoryAdapter(getActivity(), contents);
-        recyclerView.setAdapter(mAdapter);
+
+        Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+        if ( factory != null ) {
+            mAdController = factory.createInlineAds(getActivity(), recyclerView, mAdapter);
+            recyclerView.setAdapter(mAdController.getAdapter());
+        }
+        else {
+            recyclerView.setAdapter(mAdapter);
+        }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         return view;
     }
@@ -68,5 +80,22 @@ public class ExploreFragment extends Fragment {
         tagStream.read(buffer);
         tagStream.close();
         return new String(buffer, "UTF-8");
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if ( mAdController != null ) {
+            mAdController.register();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if ( mAdController != null ) {
+            mAdController.unregister();
+        }
     }
 }

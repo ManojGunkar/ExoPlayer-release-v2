@@ -19,6 +19,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.webconnector.RadioRequestController;
@@ -56,6 +59,7 @@ public class PopularFragment extends Fragment {
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
+    private InlineAds mAdController;
 
     private BroadcastReceiver mUpdatePlayingItem = new BroadcastReceiver() {
         @Override
@@ -73,6 +77,9 @@ public class PopularFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        if (mAdController != null) {
+            mAdController.register();
+        }
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
@@ -88,7 +95,15 @@ public class PopularFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
         mAdapter = new RadioListAdapter(getActivity(),null, mContents);
-        recyclerView.setAdapter(mAdapter);
+
+        Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+        if ( factory != null ) {
+            mAdController = factory.createInlineAds(getActivity(), recyclerView, mAdapter);
+            recyclerView.setAdapter(mAdController.getAdapter());
+        }
+        else {
+            recyclerView.setAdapter(mAdapter);
+        }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(new OnPaginationListener(llm) {
             @Override
@@ -210,6 +225,9 @@ public class PopularFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        if (mAdController != null) {
+            mAdController.unregister();
+        }
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdatePlayingItem);
     }
 }

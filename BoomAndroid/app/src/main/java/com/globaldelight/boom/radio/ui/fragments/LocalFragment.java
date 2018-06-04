@@ -23,11 +23,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
-import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
+import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 
 import java.io.IOException;
@@ -68,6 +71,8 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     private boolean isLastPage = false;
     private String countryCode = Locale.getDefault().getCountry().toUpperCase();
 
+    private InlineAds mAdController;
+
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -97,7 +102,13 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         recyclerView.setLayoutManager(llm);
         radioListAdapter = new RadioListAdapter(getActivity(), this, contentList);
 
-        recyclerView.setAdapter(radioListAdapter);
+        Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+        if (factory != null) {
+            mAdController = factory.createInlineAds(getActivity(), recyclerView, radioListAdapter);
+            recyclerView.setAdapter(mAdController.getAdapter());
+        } else {
+            recyclerView.setAdapter(radioListAdapter);
+        }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(new OnPaginationListener(llm) {
             @Override
@@ -155,7 +166,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         requestForContent().enqueue(new Callback<RadioStationResponse>() {
             @Override
             public void onResponse(Call<RadioStationResponse> call, Response<RadioStationResponse> response) {
-                if (response.code()==404){
+                if (response.code() == 404) {
                     showErrorView(1);
                     return;
                 }
@@ -176,8 +187,8 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
                     else isLastPage = true;
                 } else {
                     progressBar.setVisibility(View.GONE);
-                    if (response.code()==504)
-                    showErrorView(3);
+                    if (response.code() == 504)
+                        showErrorView(3);
                 }
             }
 
@@ -262,6 +273,9 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     @Override
     public void onStart() {
         super.onStart();
+        if (mAdController != null) {
+            mAdController.register();
+        }
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
@@ -272,6 +286,9 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     @Override
     public void onStop() {
         super.onStop();
+        if (mAdController != null) {
+            mAdController.unregister();
+        }
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 }
