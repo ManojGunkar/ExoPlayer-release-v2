@@ -14,13 +14,6 @@ import java.util.Date;
  */
 
 public class BusinessData {
-    public static final int STATE_UNDEFINED = -1;
-    public static final int STATE_TRIAL = 0;
-    public static final int STATE_SHARED = 1;
-    public static final int STATE_LOCKED = 2;
-    public static final int STATE_VIDOE_REWARD = 3;
-    public static final int STATE_PURCHASED = 4;
-
     private static final String APP_STATE_KEY = "BusinessData.state";
     private static final String SHARED_DATE_KEY = "BusinessData.shared_date";
     private static final String REWARD_DATE_KEY = "BusinessData.reward_date";

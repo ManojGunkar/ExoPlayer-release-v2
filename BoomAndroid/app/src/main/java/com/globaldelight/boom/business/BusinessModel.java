@@ -32,4 +32,8 @@ public interface BusinessModel {
 
     }
 
+    default UIHandler getUIHandler() {
+        return null;
+    }
+
 }

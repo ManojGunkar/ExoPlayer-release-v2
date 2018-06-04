@@ -18,6 +18,10 @@ public class BusinessConfig {
         return (int)(ms/MS_PER_HOUR);
     }
 
+    public long adsFreeTrialPeriod() {
+        return 24 * MS_PER_HOUR;
+    }
+
 
     public long trialPeriod() {
         return 1 * MS_PER_DAY;

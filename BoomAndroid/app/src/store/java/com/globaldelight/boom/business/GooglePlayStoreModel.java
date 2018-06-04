@@ -54,6 +54,14 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
 
     private static final String TAG = "Business Model";
 
+
+    private static final int STATE_UNDEFINED = -1;
+    private static final int STATE_TRIAL = 1;
+    private static final int STATE_LOCKED = 2;
+    private static final int STATE_EXTENDED_TRIAL = 3;
+    private static final int STATE_PURCHASED = 4;
+
+
     static class AdvertiserImpl implements Advertiser {
 
         @Override
@@ -105,20 +113,6 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
         }
     };
 
-    private BroadcastReceiver mShareStatusReciever = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case ACTION_SHARE_SUCCESS:
-                    onShareSuccess();
-                    break;
-                case ACTION_SHARE_FAILED:
-                    onShareFailed();
-                    break;
-            }
-        }
-    };
-
 
     private BroadcastReceiver mIAPReceiver = new BroadcastReceiver() {
         @Override
@@ -149,11 +143,6 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
         AudioEffect.getInstance(mContext).addObserver(this);
         App.playbackManager().registerListener(this);
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_SHARE_SUCCESS);
-        filter.addAction(ACTION_SHARE_FAILED);
-        LocalBroadcastManager.getInstance(mContext).registerReceiver(mShareStatusReciever, filter);
-
         IntentFilter iapFilter = new IntentFilter();
         iapFilter.addAction(InAppPurchase.ACTION_IAP_RESTORED);
         iapFilter.addAction(InAppPurchase.ACTION_IAP_SUCCESS);
@@ -165,7 +154,8 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
 
     @Override
     public boolean isAdsEnabled() {
-        return data.getState() != BusinessData.STATE_TRIAL && data.getState() != BusinessData.STATE_PURCHASED;
+        int state = data.getState();
+        return state != STATE_PURCHASED && (state == STATE_LOCKED && isTimeExpired(data.installDate(), config.adsFreeTrialPeriod()));
     }
 
 
@@ -220,135 +210,122 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
 
 
     private void update() {
-
-        if ( mCurrentActivity != null && mVideoAd == null && data.getState() == BusinessData.STATE_LOCKED ) {
+        if ( mCurrentActivity != null && mVideoAd == null && data.getState() == STATE_LOCKED ) {
             mVideoAd = new VideoAd(mCurrentActivity, this);
             mVideoAd.prepare();
         }
 
         switch ( data.getState() ) {
-            case BusinessData.STATE_PURCHASED:
+            default:
+            case STATE_LOCKED:
                 break;
 
-            case BusinessData.STATE_LOCKED:
-                if ( shouldRemindSharing() ) {
-                    showShareDialog();
-                }
-                else if ( shouldRemindPurchase() ) {
-                    showPurchaseDialog(false);
-                }
+            case STATE_PURCHASED:
+                checkSubscription();
                 break;
 
-            case BusinessData.STATE_SHARED:
-                if ( isShareExpired() && isExtendedShareExpired() ) {
-                    lockEffects();
-                    showPurchaseDialog(false);
-                    FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_SHARE_EXPIRE);
-                    FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_5_DAYS_TRIAL_EXPIRE);
-                }
+            case STATE_EXTENDED_TRIAL:
+                checkExtendedTrial();
                 break;
 
 
-            case BusinessData.STATE_VIDOE_REWARD:
-                if ( isVideoRewardExpired() ) {
-                    lockEffects();
-                    FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_REWARADED_EXPIRE);
-                }
-                break;
-
-            case BusinessData.STATE_TRIAL:
-                if ( isTrialExpired() ) {
-                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
-                    lockEffects();
-                    FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_TRIAL_EXPIRE);
-                    if ( shouldRemindSharing() ) {
-                        showShareDialog();
-                    }
-                    else if ( shouldRemindPurchase() ) {
-                        showPurchaseDialog(false);
-                    }
-                }
-                break;
-
-            // App is just installed or user cleared the data
-            case BusinessData.STATE_UNDEFINED:
-                if ( !isTrialExpired() ) {
-                    data.setState(BusinessData.STATE_TRIAL);
-                }
+            case STATE_TRIAL:
+                checkTrial();
                 break;
         }
     }
+
+
+    private void setState(int newState) {
+        int oldState = data.getState();
+        data.setState(newState);
+    }
+
+
+    private void checkTrial() {
+        if ( isTimeExpired(data.installDate(),config.trialPeriod()) ) {
+            showPopup("Trial Expired!",
+                    "Sign-up to continue",
+                    "Sign up",
+                    "Continue with Ads",
+                    new PopupResponse() {
+                        @Override
+                        public void onPrimaryAction() {
+                            setState(STATE_EXTENDED_TRIAL);
+                        }
+
+                        @Override
+                        public void onSecondaryAction() {
+                            setState(STATE_LOCKED);
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            setState(STATE_LOCKED);
+                        }
+                    }
+            );
+        }
+    }
+
+
+    private void checkExtendedTrial() {
+        checkAds();
+        if ( isTimeExpired(data.installDate(),config.trialPeriod()) ) {
+            showPopup("Trial Expired!",
+                    "Subscribe to continue",
+                    "Subscribe",
+                    "Continue with Ads",
+                    new PopupResponse() {
+                        @Override
+                        public void onPrimaryAction() {
+                            setState(STATE_PURCHASED);
+                        }
+
+                        @Override
+                        public void onSecondaryAction() {
+                            setState(STATE_LOCKED);
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            setState(STATE_LOCKED);
+                        }
+                    }
+            );
+        }
+    }
+
+
+    private void checkAds() {
+        if ( isTimeExpired(data.installDate(),config.adsFreeTrialPeriod()) ) {
+            // enable ads
+            showPopup("Ad free usage expired!",
+                    "Ads will start",
+                    "OK",
+                    null,
+                    new DefaultResponse() {
+                        @Override
+                        public void onPrimaryAction() {
+
+                        }
+                    });
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
+        }
+    }
+
+    private void checkSubscription() {
+
+    }
+
+
 
     private static boolean isTimeExpired(Date startDate, long period) {
         return (startDate == null) || ( System.currentTimeMillis() > startDate.getTime() + period );
     }
 
-    private boolean isTrialExpired() {
-        return isTimeExpired(data.installDate(), config.trialPeriod());
-    }
 
-    private boolean isShareExpired() {
-        return isTimeExpired(data.getSharedDate(), config.sharePeriod());
-    }
 
-    private boolean isExtendedShareExpired() {
-        return isTimeExpired(data.getSharedDate(), config.sharePeriod() + config.extendedSharePeriod());
-    }
-
-    private boolean isVideoRewardExpired() {
-        return isTimeExpired(data.getVideoRewardDate(), config.videoRewardPeriod());
-    }
-
-    private boolean rewardUserForSharing() {
-        return ( data.getState() != BusinessData.STATE_PURCHASED && data.getState() != BusinessData.STATE_SHARED && data.getSharedDate() == null );
-    }
-
-    private boolean shouldRemindPurchase() {
-        return isTimeExpired(data.getLastPurchaseReminder(), config.purchaseReminderInterval());
-    }
-
-    private void showInitialPopup() {
-        String price = getPurchasePrice();
-        showPopup(
-                mContext.getString(R.string.first_notification_title),
-                mContext.getString(R.string.first_notification_message, price ),
-                mContext.getString(R.string.buy_button_title),
-                mContext.getString(R.string.remind_button_title),
-                buyResponse);
-    }
-
-    private void showPurchaseDialog(boolean sharingAllowed) {
-        String price = getPurchasePrice();
-
-        data.setLastPurchaseReminder(new Date());
-
-        if ( getPurchaseLevel() == PRICE_FULL ) {
-            if ( sharingAllowed ) {
-                showPopup(
-                        mContext.getString(R.string.second_notification_title),
-                        mContext.getString(R.string.second_notification_message, price, BusinessConfig.toDays(config.sharePeriod()) ),
-                        mContext.getString(R.string.buy_button_title),
-                        mContext.getString(R.string.share_button_title),
-                        shareResponse);
-            }
-            else {
-                showPopup(
-                        mContext.getString(R.string.second_notification_title),
-                        mContext.getString(R.string.second_notification_message_no_share, price),
-                        mContext.getString(R.string.buy_button_title),
-                        mContext.getString(R.string.remind_button_title),
-                        buyResponse);
-            }
-        }
-        else {
-            showPopup(
-                    mContext.getString(R.string.third_notification_title),
-                    mContext.getString(R.string.third_notification_message, price),
-                    mContext.getString(R.string.buy_button_title),
-                    mContext.getString(R.string.remind_button_title),
-                    buyResponse);
-        }
-    };
 
     public @Price int getPurchaseLevel() {
         if ( !isTimeExpired(data.installDate(), config.fullPricePeriod() ) ) {
@@ -378,62 +355,19 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
     }
 
     public boolean isPurchased() {
-        return data.getState() == BusinessData.STATE_PURCHASED;
+        return data.getState() == STATE_PURCHASED;
     }
 
     public void onPurchaseSuccess() {
-        data.setState(BusinessData.STATE_PURCHASED);
+        setState(STATE_PURCHASED);
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
         AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
     }
 
     public void onPurchaseFailed() {
         // Probably an attempt to hack the app.
-        if ( data.getState() == BusinessData.STATE_PURCHASED ) {
-            data.setState(BusinessData.STATE_LOCKED);
-        }
-    }
-
-
-    private boolean shouldRemindSharing() {
-        Date sharedDate = data.getSharedDate();
-        if (  isSharingAllowed() && sharedDate == null && isTimeExpired(data.getLastShareReminder(), config.shareReminderInterval()) ) {
-            return true;
-        }
-        return false;
-    }
-
-    private void showShareDialog() {
-        data.setLastShareReminder(new Date());
-        showPurchaseDialog(true);
-    }
-
-    private boolean isSharingAllowed() {
-        return data.getSharedDate() == null && !isTimeExpired(data.installDate(), config.sharePeriod()*2 + config.extendedSharePeriod());
-    }
-
-
-    private void onShare() {
-        if ( mCurrentActivity != null ) {
-            new ShareDialog(mCurrentActivity).show();
-        }
-    }
-
-    private void onShareSuccess() {
-        if ( rewardUserForSharing() ) {
-            data.setSharedDate(new Date());
-            data.setState(BusinessData.STATE_SHARED);
-            AudioEffect.getInstance(mContext).setEnableAudioEffect(true);
-            showPopup(mContext.getString(R.string.share_success_title),
-                    mContext.getString(R.string.share_success_message, BusinessConfig.toDays(config.sharePeriod())),
-                    mContext.getString(R.string.ok),
-                    null, null);
-        }
-    }
-
-    private void onShareFailed() {
-        if ( rewardUserForSharing() ) {
-            FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_SHARE_FAILED);
+        if ( data.getState() == STATE_PURCHASED ) {
+            data.setState(STATE_LOCKED);
         }
     }
 
@@ -451,7 +385,7 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
     public void onVideoAdCompleted() {
         FlurryAnalytics.getInstance(mContext).setEvent(FlurryEvents.EVENT_WATCHED_VIDEO);
 
-        data.setState(BusinessData.STATE_VIDOE_REWARD);
+    //    data.setState(BusinessData.STATE_VIDOE_REWARD);
         data.setVideoRewardDate(new Date());
         showPopup(mContext.getString(R.string.share_success_title),
                 mContext.getString(R.string.video_ad_success_message, BusinessConfig.toHours(config.videoRewardPeriod())),
@@ -492,46 +426,6 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
 
 
     private void onEffectsON() {
-
-        switch (data.getState()) {
-            case BusinessData.STATE_LOCKED: {
-                AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
-                showPopup(null,
-                        mContext.getString(R.string.video_ad_message, BusinessConfig.toHours(config.videoRewardPeriod())),
-                        mContext.getString(R.string.watch_button_title),
-                        mContext.getString(R.string.dialog_txt_cancel),
-                        videoResponse);
-                break;
-            }
-
-            case BusinessData.STATE_TRIAL: {
-                if ( data.getStartDate() == null ) {
-                    data.setStartDate(new Date());
-                    showPopup(
-                            mContext.getString(R.string.first_effect_on_title),
-                            mContext.getString(R.string.first_effect_on_message, BusinessConfig.toHours(config.trialPeriod())),
-                            mContext.getString(R.string.ok),
-                            null,
-                            null);
-                }
-                break;
-            }
-
-            case BusinessData.STATE_UNDEFINED: {
-                if ( data.getStartDate() == null ) {
-                    data.setStartDate(new Date());
-                    showPopup(
-                            mContext.getString(R.string.afterTrial_effect_on_title),
-                            mContext.getString(R.string.afterTrial_effect_on_message, config.freeSongsLimit()),
-                            mContext.getString(R.string.ok),
-                            null,
-                            null);
-                }
-                break;
-            }
-
-        }
-
     }
 
 
@@ -548,25 +442,12 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
 
     private void lockEffects() {
         mWasEffectsOnWhenLocked = AudioEffect.getInstance(mContext).isAudioEffectOn();
-        data.setState(BusinessData.STATE_LOCKED);
+        data.setState(STATE_LOCKED);
         AudioEffect.getInstance(mContext).setEnableAudioEffect(false);
     }
 
     @Override
     public void onMediaChanged() {
-        if ( data.getState() == BusinessData.STATE_UNDEFINED && data.getStartDate() != null ) {
-            if ( mSongsPlayed > config.freeSongsLimit() ) {
-                LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(ACTION_ADS_STATUS_CHANGED));
-                lockEffects();
-                if ( isSharingAllowed() ) {
-                    showShareDialog();
-                }
-                else {
-                    showPurchaseDialog(false);
-                }
-            }
-            mSongsPlayed++;
-        }
         postUpdate();
     }
 
@@ -587,22 +468,6 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
 
     @Override
     public void onUpdatePlayerPosition() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if ( data.getState() == BusinessData.STATE_TRIAL ) {
-                    if ( !data.isInitialPopupShown() && data.getStartDate() != null && isTimeExpired(data.getStartDate(), config.initialPopupDelay())) {
-                        data.setInitialPopupShown();
-                        data.setLastPopupDate(new Date());
-                        showInitialPopup();
-                    }
-                    else if ( data.isInitialPopupShown() && isTimeExpired(data.getLastPopupDate(), config.reminderInterval()) ) {
-                        data.setLastPopupDate(new Date());
-                        showPurchaseDialog(true);
-                    }
-                }
-            }
-        });
     }
 
     @Override
@@ -703,19 +568,6 @@ public class GooglePlayStoreModel implements BusinessModel, Observer, PlaybackMa
         }
     }
 
-
-    private PopupResponse shareResponse = new DefaultResponse() {
-        @Override
-        public void onPrimaryAction() {
-            onPurchase();
-
-        }
-
-        @Override
-        public void onSecondaryAction() {
-            onShare();
-        }
-    };
 
     private PopupResponse buyResponse = new DefaultResponse() {
         @Override
