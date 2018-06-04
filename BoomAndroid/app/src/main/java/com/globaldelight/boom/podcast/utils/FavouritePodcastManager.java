@@ -1,4 +1,4 @@
-package com.globaldelight.boom.radio.utils;
+package com.globaldelight.boom.podcast.utils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,16 +17,16 @@ import java.util.List;
  * Created by Manoj Kumar on 12-04-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class FavouriteRadioManager {
+public class FavouritePodcastManager {
 
-    public static final String FAVOURITES_RADIO_CHANGED = "con.globaldelight.FAVOURITES_RADIO_CHANGED";
+    public static final String FAVOURITES_PODCAST_CHANGED = "con.globaldelight.FAVOURITES_PODCAST_CHANGED";
 
-    private final static String FAV_SHARED_PREF="FAV_SHARED_PREF";
-    private final static String KEY_FAV_RADIO="KEY_FAV_RADIO";
+    private final static String FAV_PODCAST_SHARED_PREF="FAV_PODCAST_SHARED_PREF";
+    private final static String KEY_FAV_PODCAST="KEY_FAV_PODCAST";
 
     public static final int MODE = Context.MODE_PRIVATE;
 
-    private static FavouriteRadioManager instance;
+    private static FavouritePodcastManager instance;
 
     private SharedPreferences mSharedPreferences;
 
@@ -35,44 +35,44 @@ public class FavouriteRadioManager {
     private ArrayList<RadioStationResponse.Content> mContents=new ArrayList<>();
     private HashSet<String> mFavIds=new HashSet<>();
 
-    public boolean containsRadioStation(RadioStationResponse.Content content){
+    public boolean containPodcast(RadioStationResponse.Content content){
         return mFavIds.contains(content.getId());
     }
 
-    public void addRadioStation(RadioStationResponse.Content content){
+    public void addPodcast(RadioStationResponse.Content content){
 
-       if (containsRadioStation(content)){
+       if (containPodcast(content)){
           return;
        }
         mContents.add(content);
         mFavIds.add(content.getId());
-        saveRadioStation(mContents);
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(FAVOURITES_RADIO_CHANGED));
+        savePodcast(mContents);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(FAVOURITES_PODCAST_CHANGED));
 
     }
 
-    public void removeRadioStation(RadioStationResponse.Content content){
-        if (containsRadioStation(content)){
+    public void removePodcast(RadioStationResponse.Content content){
+        if (containPodcast(content)){
             mContents.remove(content);
             mFavIds.remove(content.getId());
-            saveRadioStation(mContents);
-            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(FAVOURITES_RADIO_CHANGED));
+            savePodcast(mContents);
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(FAVOURITES_PODCAST_CHANGED));
         }
     }
 
-    public List<RadioStationResponse.Content> getRadioStations(){
+    public List<RadioStationResponse.Content> getpodcast(){
         return mContents;
     }
 
-    private FavouriteRadioManager(Context context){
+    private FavouritePodcastManager(Context context){
         this.mContext=context;
-        mSharedPreferences=context.getSharedPreferences(FAV_SHARED_PREF,MODE);
+        mSharedPreferences=context.getSharedPreferences(FAV_PODCAST_SHARED_PREF,MODE);
     }
 
-    public static FavouriteRadioManager getInstance(Context context){
+    public static FavouritePodcastManager getInstance(Context context){
         if (instance==null){
-            instance=new FavouriteRadioManager(context.getApplicationContext());
-            instance.getFavRadioStation();
+            instance=new FavouritePodcastManager(context.getApplicationContext());
+            instance.getFavPodcast();
         }
         return instance;
     }
@@ -82,18 +82,18 @@ public class FavouriteRadioManager {
 
     }
 
-    private void saveRadioStation(List<RadioStationResponse.Content> favRadioStations){
+    private void savePodcast(List<RadioStationResponse.Content> favRadioStations){
         Gson gson = new Gson();
         String jsonFav = gson.toJson(favRadioStations);
         SharedPreferences.Editor editor=getEditor();
-        editor.putString(KEY_FAV_RADIO, jsonFav);
+        editor.putString(KEY_FAV_PODCAST, jsonFav);
         editor.apply();
     }
 
-    private void getFavRadioStation() {
+    private void getFavPodcast() {
 
-        if (mSharedPreferences.contains(KEY_FAV_RADIO)) {
-            String jsonFavorites = mSharedPreferences.getString(KEY_FAV_RADIO, null);
+        if (mSharedPreferences.contains(KEY_FAV_PODCAST)) {
+            String jsonFavorites = mSharedPreferences.getString(KEY_FAV_PODCAST, null);
             Gson gson = new Gson();
             RadioStationResponse.Content[] favoriteItems = gson.fromJson(jsonFavorites,
                     RadioStationResponse.Content[].class);

@@ -103,7 +103,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     if (isChecked){
                         FavouriteRadioManager.getInstance(mContext).addRadioStation(content);
                     }else {
-                        FavouriteRadioManager.getInstance(mContext).removeRadioSation(content);
+                        FavouriteRadioManager.getInstance(mContext).removeRadioStation(content);
                     }
                 });
 

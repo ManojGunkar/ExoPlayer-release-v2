@@ -16,8 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
-import com.globaldelight.boom.app.App;
-import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
+import com.globaldelight.boom.podcast.utils.FavouritePodcastManager;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.globaldelight.boom.utils.Utils;
 
@@ -78,8 +77,7 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (position < 0) {
             return;
         }
-
-        App.playbackManager().queue().addItemListToPlay(mContents, position, false);
+        // perform click operation.
     }
 
     @Override
@@ -100,13 +98,13 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                 viewHolder.checkFavRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     if (isChecked) {
-                        FavouriteRadioManager.getInstance(mContext).addRadioStation(content);
+                        FavouritePodcastManager.getInstance(mContext).addPodcast(content);
                     } else {
-                        FavouriteRadioManager.getInstance(mContext).removeRadioSation(content);
+                        FavouritePodcastManager.getInstance(mContext).removePodcast(content);
                     }
                 });
 
-                if (FavouriteRadioManager.getInstance(mContext).containsRadioStation(content)) {
+                if (FavouritePodcastManager.getInstance(mContext).containPodcast(content)) {
                     viewHolder.checkFavRadio.setChecked(true);
                 } else {
                     viewHolder.checkFavRadio.setChecked(false);

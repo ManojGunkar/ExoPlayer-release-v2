@@ -50,11 +50,9 @@ import com.globaldelight.boom.app.dialogs.EqualizerDialog;
 import com.globaldelight.boom.app.dialogs.SpeakerDialog;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
-import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.controller.PlayerUIController;
-import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.player.AudioEffect;
@@ -990,7 +988,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
             FavouriteRadioManager.getInstance(getContext()).addRadioStation((RadioStationResponse.Content)mPlayingMediaItem);
         }
         else {
-            FavouriteRadioManager.getInstance(getContext()).removeRadioSation((RadioStationResponse.Content)mPlayingMediaItem);
+            FavouriteRadioManager.getInstance(getContext()).removeRadioStation((RadioStationResponse.Content)mPlayingMediaItem);
         }
     }
 
