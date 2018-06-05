@@ -44,6 +44,7 @@ import retrofit2.Response;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
+import static com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter.KEY_TYPE;
 
 /**
  * Created by Manoj Kumar on 18-04-2018.
@@ -61,6 +62,7 @@ public class SubCategoryDetailedActivity extends MasterActivity implements Radio
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private boolean isTagDisable=false;
+    private boolean isPodcast=false;
 
     private InlineAds mAdController;
 
@@ -112,6 +114,7 @@ public class SubCategoryDetailedActivity extends MasterActivity implements Radio
         String permalink = bundle.getString("permalink");
         String url = bundle.getString("url");
         isTagDisable=bundle.getBoolean("isTagDisable");
+        isPodcast=bundle.getBoolean(KEY_TYPE);
 
         Toolbar toolbar = findViewById(R.id.toolbar_country_detail);
         toolbar.setTitle(title);
@@ -131,7 +134,7 @@ public class SubCategoryDetailedActivity extends MasterActivity implements Radio
         mRecyclerView = findViewById(R.id.rv_country_details);
         LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
-        mAdapter = new RadioListAdapter(this, this::retryPageLoad, mContents);
+        mAdapter = new RadioListAdapter(this, this::retryPageLoad, mContents,isPodcast);
 
         Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
         if ( factory != null ) {

@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.radio.podcast.FavouritePodcastManager;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.globaldelight.boom.utils.Utils;
@@ -43,11 +44,14 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private Callback mCallback;
     private boolean isPaginationEnabled = true;
 
+    private boolean isPodcastType = false;
 
-    public RadioListAdapter(Context context, Callback callback, List<RadioStationResponse.Content> contentList) {
+
+    public RadioListAdapter(Context context, Callback callback, List<RadioStationResponse.Content> contentList, boolean isPodcast) {
         this.mContext = context;
         this.mContents = contentList;
         this.mCallback = callback;
+        this.isPodcastType = isPodcast;
     }
 
 
@@ -79,8 +83,8 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (position < 0) {
             return;
         }
-
-        App.playbackManager().queue().addItemListToPlay(mContents, position, false);
+        if (!isPodcastType)
+            App.playbackManager().queue().addItemListToPlay(mContents, position, false);
     }
 
     @Override
@@ -100,21 +104,27 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         .into(viewHolder.imgStationThumbnail);
 
                 viewHolder.checkFavRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if (isChecked){
-                        FavouriteRadioManager.getInstance(mContext).addRadioStation(content);
-                    }else {
+                    if (isChecked) {
+                        if (!isPodcastType) {
+                            FavouriteRadioManager.getInstance(mContext).addRadioStation(content);
+                        } else {
+                            FavouritePodcastManager.getInstance(mContext).addPodcast(content);
+                        }
+                    } else if (!isPodcastType) {
                         FavouriteRadioManager.getInstance(mContext).removeRadioStation(content);
+                    } else {
+                        FavouritePodcastManager.getInstance(mContext).removePodcast(content);
                     }
                 });
 
-                if (FavouriteRadioManager.getInstance(mContext).containsRadioStation(content)) {
+                if (FavouriteRadioManager.getInstance(mContext).containsRadioStation(content)
+                        || FavouritePodcastManager.getInstance(mContext).containPodcast(content)) {
                     viewHolder.checkFavRadio.setChecked(true);
                 } else {
                     viewHolder.checkFavRadio.setChecked(false);
                 }
-
-
-                updatePlayingStation(viewHolder, mContents.get(position));
+                if (!isPodcastType)
+                    updatePlayingStation(viewHolder, mContents.get(position));
                 break;
 
             case LOADING:
@@ -215,7 +225,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         isLoadingAdded = false;
 
         int position = mContents.size() - 1;
-        if (position>=0){
+        if (position >= 0) {
             RadioStationResponse.Content result = getItem(position);
 
             if (result != null) {

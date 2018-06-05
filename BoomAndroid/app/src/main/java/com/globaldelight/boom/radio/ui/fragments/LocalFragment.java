@@ -102,7 +102,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         txtError = view.findViewById(R.id.error_txt_cause);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
-        radioListAdapter = new RadioListAdapter(getActivity(), this, contentList);
+        radioListAdapter = new RadioListAdapter(getActivity(), this, contentList,type.equalsIgnoreCase("podcast")?true:false);
 
         Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
         if (factory != null) {

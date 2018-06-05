@@ -44,6 +44,7 @@ import retrofit2.Response;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
+import static com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter.KEY_TYPE;
 
 /**
  * Created by Manoj Kumar on 18-04-2018.
@@ -76,6 +77,7 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
             }
         }
     };
+    private String type;
 
     @Override
     public void onStart() {
@@ -110,6 +112,7 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
         String country = bundle.getString(CountryFragment.KEY_COUNTRY_NAME);
         String code = bundle.getString(CountryFragment.KEY_COUNTRY_CODE);
         String url = bundle.getString(CountryFragment.KEY_COUNTRY_URL);
+        type = bundle.getString(KEY_TYPE);
 
         Toolbar toolbar = findViewById(R.id.toolbar_country_detail);
         toolbar.setTitle(country);
@@ -128,7 +131,7 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
         mRecyclerView = findViewById(R.id.rv_country_details);
         LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(llm);
-        mAdapter = new RadioListAdapter(this, this::retryPageLoad, mContents);
+        mAdapter = new RadioListAdapter(this, this::retryPageLoad, mContents,type.equalsIgnoreCase("podcast")?true:false);
 
         Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
         if ( factory != null ) {
@@ -187,7 +190,7 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
-        return requestCallback.getLocalRadio(countryCode, "radio", "popularity", String.valueOf(currentPage), "25");
+        return requestCallback.getLocalRadio(countryCode, type, "popularity", String.valueOf(currentPage), "25");
     }
 
     private void getContent(String countryCode) {

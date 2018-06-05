@@ -20,6 +20,8 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.business.ads.Advertiser;
 import com.globaldelight.boom.business.ads.InlineAds;
+import com.globaldelight.boom.radio.podcast.FavouritePodcastManager;
+import com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
@@ -39,16 +41,18 @@ public class FavouriteFragment extends Fragment {
     private RadioListAdapter mAdapter;
     private List<RadioStationResponse.Content> mContents;
     private InlineAds mAdController;
+    private String type;
+    private boolean isPodcastType = false;
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
+            switch (intent.getAction()) {
                 case FavouriteRadioManager.FAVOURITES_RADIO_CHANGED:
                 case ACTION_PLAYER_STATE_CHANGED:
                 case ACTION_SONG_CHANGED:
 
-                    if(null != mAdapter)
+                    if (null != mAdapter)
                         mAdapter.notifyDataSetChanged();
                     break;
             }
@@ -59,6 +63,8 @@ public class FavouriteFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         recyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view_layout, container, false);
+        type = getArguments().getString(RadioFragmentStateAdapter.KEY_TYPE);
+        isPodcastType = type.equalsIgnoreCase("podcast") ? true : false;
         return recyclerView;
     }
 
@@ -67,15 +73,17 @@ public class FavouriteFragment extends Fragment {
         super.onResume();
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
-        mContents = FavouriteRadioManager.getInstance(getContext()).getRadioStations();
-        mAdapter = new RadioListAdapter(getActivity(), null, mContents);
+        if (!isPodcastType)
+            mContents = FavouriteRadioManager.getInstance(getContext()).getRadioStations();
+        else
+            mContents = FavouritePodcastManager.getInstance(getContext()).getpodcast();
+        mAdapter = new RadioListAdapter(getActivity(), null, mContents, isPodcastType);
 
         Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
-        if ( factory != null ) {
+        if (factory != null) {
             mAdController = factory.createInlineAds(getActivity(), recyclerView, mAdapter);
             recyclerView.setAdapter(mAdController.getAdapter());
-        }
-        else {
+        } else {
             recyclerView.setAdapter(mAdapter);
         }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -85,7 +93,7 @@ public class FavouriteFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if ( mAdController != null ) {
+        if (mAdController != null) {
             mAdController.register();
         }
         IntentFilter intentFilter = new IntentFilter();
@@ -98,7 +106,7 @@ public class FavouriteFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if ( mAdController != null ) {
+        if (mAdController != null) {
             mAdController.unregister();
         }
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdateItemSongListReceiver);

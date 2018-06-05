@@ -23,6 +23,7 @@ import com.globaldelight.boom.app.fragments.TabBarFragment;
 import com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter;
 
 import static android.content.Context.SEARCH_SERVICE;
+import static com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter.KEY_TYPE;
 
 /**
  * Created by Manoj Kumar on 09-04-2018.
@@ -51,7 +52,7 @@ public class RadioMainFragment extends TabBarFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_radio, null, false);
-        type = getArguments().getString(RadioFragmentStateAdapter.KEY_TYPE);
+        type = getArguments().getString(KEY_TYPE);
         setHasOptionsMenu(true);
         initComp(view);
         return view;
@@ -119,6 +120,9 @@ public class RadioMainFragment extends TabBarFragment {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 radioSearchFragment = new RadioSearchFragment();
+                Bundle bundle=new Bundle();
+                bundle.putString(KEY_TYPE,type);
+                radioSearchFragment.setArguments(bundle);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .add(R.id.fragment_container, radioSearchFragment)
