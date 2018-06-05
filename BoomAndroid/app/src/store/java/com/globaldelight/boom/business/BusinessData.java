@@ -47,7 +47,7 @@ public class BusinessData {
     }
 
     public int getState() {
-        return mPrefs.getInt(APP_STATE_KEY, STATE_UNDEFINED);
+        return mPrefs.getInt(APP_STATE_KEY, -1);
     }
 
     public void enableAds(boolean enable) {
