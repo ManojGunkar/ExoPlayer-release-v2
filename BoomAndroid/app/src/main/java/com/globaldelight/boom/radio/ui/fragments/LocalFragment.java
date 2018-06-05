@@ -50,6 +50,7 @@ import retrofit2.Response;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
+import static com.globaldelight.boom.radio.podcast.FavouritePodcastManager.FAVOURITES_PODCAST_CHANGED;
 
 /**
  * Created by Manoj Kumar on 09-04-2018.
@@ -82,6 +83,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
                 case ACTION_PLAYER_STATE_CHANGED:
                 case ACTION_SONG_CHANGED:
                 case FavouriteRadioManager.FAVOURITES_RADIO_CHANGED:
+                case FAVOURITES_PODCAST_CHANGED:
 
                     if (null != radioListAdapter)
                         radioListAdapter.notifyDataSetChanged();
@@ -281,6 +283,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
+        intentFilter.addAction(FAVOURITES_PODCAST_CHANGED);
         intentFilter.addAction(FavouriteRadioManager.FAVOURITES_RADIO_CHANGED);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }

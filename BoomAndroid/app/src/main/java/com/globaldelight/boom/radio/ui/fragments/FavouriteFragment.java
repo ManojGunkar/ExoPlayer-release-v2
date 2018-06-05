@@ -30,6 +30,7 @@ import java.util.List;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
+import static com.globaldelight.boom.radio.podcast.FavouritePodcastManager.FAVOURITES_PODCAST_CHANGED;
 
 /**
  * Created by Manoj Kumar on 09-04-2018.
@@ -51,7 +52,7 @@ public class FavouriteFragment extends Fragment {
                 case FavouriteRadioManager.FAVOURITES_RADIO_CHANGED:
                 case ACTION_PLAYER_STATE_CHANGED:
                 case ACTION_SONG_CHANGED:
-
+                case FAVOURITES_PODCAST_CHANGED:
                     if (null != mAdapter)
                         mAdapter.notifyDataSetChanged();
                     break;
@@ -100,6 +101,7 @@ public class FavouriteFragment extends Fragment {
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
         intentFilter.addAction(FavouriteRadioManager.FAVOURITES_RADIO_CHANGED);
+        intentFilter.addAction(FAVOURITES_PODCAST_CHANGED);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 
