@@ -29,7 +29,6 @@ import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
-import com.globaldelight.boom.podcast.ui.fragments.PodcastMainFragment;
 import com.globaldelight.boom.radio.ui.fragments.RadioMainFragment;
 import com.globaldelight.boom.tidal.ui.fragment.TidalLoginFragment;
 import com.globaldelight.boom.tidal.ui.fragment.TidalMainFragment;
@@ -38,6 +37,7 @@ import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 
 import static com.globaldelight.boom.app.fragments.MasterContentFragment.isUpdateUpnextDB;
+import static com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter.KEY_TYPE;
 
 /**
  * Created by adarsh on 09/03/18.
@@ -292,6 +292,9 @@ public class MainActivity extends MasterActivity
         navigationView.getMenu().findItem(R.id.radio).setChecked(true);
         setTitle(R.string.radio);
         Fragment fragment = new RadioMainFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_TYPE, "radio");
+        fragment.setArguments(bundle);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
     }
@@ -300,7 +303,10 @@ public class MainActivity extends MasterActivity
         // AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
         navigationView.getMenu().findItem(R.id.podcast).setChecked(true);
         setTitle(R.string.podcast);
-        Fragment fragment = new PodcastMainFragment();
+        Fragment fragment = new RadioMainFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_TYPE, "podcast");
+        fragment.setArguments(bundle);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
     }

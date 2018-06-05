@@ -27,6 +27,7 @@ import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.business.ads.Advertiser;
 import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
+import com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
@@ -65,6 +66,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     private RadioListAdapter radioListAdapter;
     private List<RadioStationResponse.Content> contentList = new ArrayList<>();
 
+    private String type;
     private int totalPage = 0;
     private int currentPage = 1;
     private boolean isLoading = false;
@@ -72,7 +74,6 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     private String countryCode = Locale.getDefault().getCountry().toUpperCase();
 
     private InlineAds mAdController;
-
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -93,6 +94,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.radio_layout, container, false);
+        type = getArguments().getString(RadioFragmentStateAdapter.KEY_TYPE);
         recyclerView = view.findViewById(R.id.rv_local_radio);
         progressBar = view.findViewById(R.id.progress_local);
         errorLayout = view.findViewById(R.id.error_layout);
@@ -158,7 +160,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
-        return requestCallback.getLocalRadio(countryCode, "radio", "popularity", String.valueOf(currentPage), "25");
+        return requestCallback.getLocalRadio(countryCode, type, "popularity", String.valueOf(currentPage), "25");
     }
 
     private void getContent() {

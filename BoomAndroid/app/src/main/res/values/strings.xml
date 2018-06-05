@@ -268,5 +268,6 @@
     <string name="tidal_artist">Artists</string>
     <string name="failed_to_add_to_playlist">Failed to add to playlist</string>
     <string name="podcast">Podcast</string>
+    <string name="search_hint_podcast">Search podcast</string>
 
 </resources>
