@@ -1,4 +1,4 @@
-package com.globaldelight.boom.podcast.utils;
+package com.globaldelight.boom.radio.podcast;
 
 import android.content.Context;
 import android.content.Intent;
