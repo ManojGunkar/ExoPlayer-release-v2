@@ -69,6 +69,8 @@ public class RadioMainFragment extends TabBarFragment {
         viewPager.setAdapter(mStateAdapter);
         viewPager.setOffscreenPageLimit(4);
         mTabBar.setupWithViewPager(mViewPager);
+        if (type.equalsIgnoreCase("podcast"))
+        mTabBar.removeTabAt(4);
         viewPager.setCurrentItem(0);
     }
 
