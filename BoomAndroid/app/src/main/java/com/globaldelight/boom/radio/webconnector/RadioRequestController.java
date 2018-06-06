@@ -140,8 +140,16 @@ public class RadioRequestController {
                 @Query("pageSize") String pageSize);
 
         @GET("/Pillow/{category}")
-        Call<RadioStationResponse> getRadioSation(
+        Call<RadioStationResponse> getRadioStation(
                 @Path(value = "category",encoded = true) String category,
+                @Query("page") String page,
+                @Query("pageSize") String pageSize);
+
+        // Pillow/podcasts/historical_india_podcast/chapters?page=1&pageSize=10
+
+        @GET("Pillow/podcasts/{podcast}/chapters")
+        Call<RadioStationResponse> getPodcastChapter(
+                @Path(value = "podcast",encoded = true) String podcast,
                 @Query("page") String page,
                 @Query("pageSize") String pageSize);
 

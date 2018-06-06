@@ -78,7 +78,6 @@ public class RadioMainFragment extends TabBarFragment {
     public void onPause() {
         super.onPause();
         mActivity = null;
-
     }
 
     @Override

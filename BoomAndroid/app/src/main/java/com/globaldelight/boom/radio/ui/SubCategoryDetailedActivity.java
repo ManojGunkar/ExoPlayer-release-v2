@@ -194,7 +194,7 @@ public class SubCategoryDetailedActivity extends MasterActivity implements Radio
             e.printStackTrace();
         }
         if (isTagDisable){
-            return requestCallback.getRadioSation(permalink, String.valueOf(currentPage), "25");
+            return requestCallback.getRadioStation(permalink, String.valueOf(currentPage), "25");
         }else {
             return requestCallback.getTagsRadioStation(permalink, Locale.getDefault().getCountry().toUpperCase(),"radio","popularity", String.valueOf(currentPage), "25");
         }
