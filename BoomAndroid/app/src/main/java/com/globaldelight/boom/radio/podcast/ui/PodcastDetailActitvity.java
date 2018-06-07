@@ -111,7 +111,6 @@ public class PodcastDetailActitvity extends MasterActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-
     }
 
     private void initView() {

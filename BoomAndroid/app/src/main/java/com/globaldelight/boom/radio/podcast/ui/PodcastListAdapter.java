@@ -22,6 +22,7 @@ import com.globaldelight.boom.radio.podcast.FavouritePodcastManager;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
 import com.globaldelight.boom.radio.webconnector.model.Chapter;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
+import com.globaldelight.boom.tidal.ui.adapter.TrackDetailAdapter;
 import com.globaldelight.boom.utils.Utils;
 
 import java.util.List;
@@ -34,6 +35,9 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private final static int DISPLAYING = 0;
     private final static int LOADING = 1;
+
+    private final static int TYPE_HEADER = 10000;
+    private final static int TYPE_ITEM = 20000;
 
     private boolean isLoadingAdded = false;
     private boolean retryPageLoad = false;
@@ -60,20 +64,21 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         switch (viewType) {
             case DISPLAYING:
-                viewHolder = getViewHolder(parent, inflater);
-                break;
+                if (viewType == TYPE_ITEM) {
+                    LocalViewHolder vh = new LocalViewHolder(inflater.inflate(R.layout.item_list_podcast, parent, false));
+                    vh.itemView.setOnClickListener((v) -> onClick(vh));
+                    return vh;
+                } else {
+                    View itemView = LayoutInflater.from(parent.getContext()).
+                            inflate(R.layout.card_header_recycler_view, parent, false);
+                    HeaderViewHolder holder = new HeaderViewHolder(itemView);
+                    return holder;
+                }
             case LOADING:
                 viewHolder = new LoadingViewHolder(inflater.inflate(R.layout.item_progress, parent, false));
                 break;
         }
         return viewHolder;
-    }
-
-    @NonNull
-    private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
-        LocalViewHolder vh = new LocalViewHolder(inflater.inflate(R.layout.item_list_podcast, parent, false));
-        vh.itemView.setOnClickListener(v -> onClick(vh));
-        return vh;
     }
 
     private void onClick(LocalViewHolder vh) {
@@ -88,20 +93,33 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
             case DISPLAYING:
-                Chapter content = mContents.get(position);
-                LocalViewHolder viewHolder = (LocalViewHolder) holder;
-                viewHolder.mainView.setElevation(0);
-                viewHolder.txtTitle.setText(content.getName());
-                viewHolder.txtSubTitle.setText(content.getDescription());
+                if (position <1) {
+                    HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
+                    headerViewHolder.txtHeaderTitle.setText("Chapters");
+                    headerViewHolder.txtHeaderDetail.setText("Episode : " + mContents.size());
+                } else if (position >=1) {
+                    RadioStationResponse.Content content = mContents.get(position);
+                    LocalViewHolder viewHolder = (LocalViewHolder) holder;
+                    viewHolder.mainView.setElevation(0);
+                    viewHolder.txtTitle.setText(content.getName());
 
-                final int size = Utils.largeImageSize(mContext);
-                Glide.with(mContext).load(content.getLogo())
-                        .placeholder(R.drawable.ic_default_art_grid)
-                        .centerCrop()
-                        .override(size, size)
-                        .into(viewHolder.imgStationThumbnail);
+                    long time = content.getDuration();
+                    long seconds = time / 1000;
+                    long minutes = seconds / 60;
+                    seconds = seconds % 60;
+
+                    viewHolder.txtSubTitle.setText("Published : "+content.getPublished()+"Duration - " + String.valueOf(minutes) + ":" + String.valueOf(seconds) + " min");
+
+                    final int size = Utils.largeImageSize(mContext);
+                    Glide.with(mContext).load(content.getLogo())
+                            .placeholder(R.drawable.ic_default_art_grid)
+                            .centerCrop()
+                            .override(size, size)
+                            .into(viewHolder.imgStationThumbnail);
 
                     updatePlayingStation(viewHolder, mContents.get(position));
+                }
+
                 break;
 
             case LOADING:
@@ -159,7 +177,13 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             return (position == mContents.size() - 1 && isLoadingAdded) ? LOADING : DISPLAYING;
         }
 
-        return DISPLAYING;
+        if (position < 1) {
+            return TYPE_HEADER;
+        } else {
+            return TYPE_ITEM;
+        }
+
+
     }
 
     public void add(Chapter content) {
@@ -287,6 +311,20 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         }
 
+    }
+
+    protected class HeaderViewHolder extends RecyclerView.ViewHolder {
+        public TextView txtHeaderTitle;
+        private TextView txtHeaderDetail;
+        private ImageView imgMore;
+
+        public HeaderViewHolder(View itemView) {
+            super(itemView);
+
+            txtHeaderTitle = itemView.findViewById(R.id.header_sub_title);
+            txtHeaderDetail = itemView.findViewById(R.id.header_detail);
+            imgMore = itemView.findViewById(R.id.recycler_header_menu);
+        }
     }
 
 }
