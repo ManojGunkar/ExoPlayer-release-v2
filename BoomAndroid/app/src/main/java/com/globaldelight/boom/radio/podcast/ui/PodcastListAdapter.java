@@ -64,16 +64,16 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         switch (viewType) {
             case DISPLAYING:
-                if (viewType == TYPE_ITEM) {
-                    LocalViewHolder vh = new LocalViewHolder(inflater.inflate(R.layout.item_list_podcast, parent, false));
-                    vh.itemView.setOnClickListener((v) -> onClick(vh));
-                    return vh;
-                } else {
-                    View itemView = LayoutInflater.from(parent.getContext()).
-                            inflate(R.layout.card_header_recycler_view, parent, false);
-                    HeaderViewHolder holder = new HeaderViewHolder(itemView);
-                    return holder;
-                }
+                LocalViewHolder vh = new LocalViewHolder(inflater.inflate(R.layout.item_list_podcast, parent, false));
+                vh.itemView.setOnClickListener((v) -> onClick(vh));
+                return vh;
+
+            case TYPE_HEADER:
+                View itemView = LayoutInflater.from(parent.getContext()).
+                        inflate(R.layout.card_header_recycler_view, parent, false);
+                HeaderViewHolder holder = new HeaderViewHolder(itemView);
+                return holder;
+
             case LOADING:
                 viewHolder = new LoadingViewHolder(inflater.inflate(R.layout.item_progress, parent, false));
                 break;
@@ -82,7 +82,7 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private void onClick(LocalViewHolder vh) {
-        int position = vh.getAdapterPosition();
+        int position = vh.getAdapterPosition() - 1;
         if (position < 0) {
             return;
         }
@@ -92,33 +92,33 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
+            case TYPE_HEADER:
+                HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
+                headerViewHolder.txtHeaderTitle.setText("Chapters");
+                headerViewHolder.txtHeaderDetail.setText("Episode : " + mContents.size());
+                break;
+
             case DISPLAYING:
-                if (position <1) {
-                    HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
-                    headerViewHolder.txtHeaderTitle.setText("Chapters");
-                    headerViewHolder.txtHeaderDetail.setText("Episode : " + mContents.size());
-                } else if (position >=1) {
-                    Chapter content = mContents.get(position);
-                    LocalViewHolder viewHolder = (LocalViewHolder) holder;
-                    viewHolder.mainView.setElevation(0);
-                    viewHolder.txtTitle.setText(content.getName());
+                Chapter content = mContents.get(position-1);
+                LocalViewHolder viewHolder = (LocalViewHolder) holder;
+                viewHolder.mainView.setElevation(0);
+                viewHolder.txtTitle.setText(content.getName());
 
-                    long time = content.getDuration();
-                    long seconds = time / 1000;
-                    long minutes = seconds / 60;
-                    seconds = seconds % 60;
+                long time = content.getDuration();
+                long seconds = time / 1000;
+                long minutes = seconds / 60;
+                seconds = seconds % 60;
 
-                    viewHolder.txtSubTitle.setText(content.getDescription());
+                viewHolder.txtSubTitle.setText(content.getDescription());
 
-                    final int size = Utils.largeImageSize(mContext);
-                    Glide.with(mContext).load(content.getLogo())
-                            .placeholder(R.drawable.ic_default_art_grid)
-                            .centerCrop()
-                            .override(size, size)
-                            .into(viewHolder.imgStationThumbnail);
+                final int size = Utils.largeImageSize(mContext);
+                Glide.with(mContext).load(content.getLogo())
+                        .placeholder(R.drawable.ic_default_art_grid)
+                        .centerCrop()
+                        .override(size, size)
+                        .into(viewHolder.imgStationThumbnail);
 
-                    updatePlayingStation(viewHolder, mContents.get(position));
-                }
+                updatePlayingStation(viewHolder, content);
 
                 break;
 
@@ -168,18 +168,17 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        return mContents == null ? 0 : mContents.size();
+        return mContents == null ? 0 : mContents.size() + 1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (isPaginationEnabled) {
-            return (position == mContents.size() - 1 && isLoadingAdded) ? LOADING : DISPLAYING;
-        }
-
         if (position < 1) {
             return TYPE_HEADER;
         } else {
+            if (isPaginationEnabled) {
+                return (position == mContents.size() && isLoadingAdded) ? LOADING : DISPLAYING;
+            }
             return TYPE_ITEM;
         }
 
