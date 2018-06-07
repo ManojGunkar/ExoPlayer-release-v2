@@ -15,6 +15,7 @@ import com.globaldelight.boom.playbackEvent.controller.MediaController;
 import com.globaldelight.boom.playbackEvent.controller.callbacks.IUpNextMediaEvent;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
+import com.globaldelight.boom.radio.webconnector.model.Chapter;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.google.gson.Gson;
@@ -559,6 +560,10 @@ public class UpNextPlayingQueue {
             switch (queueType) {
                 case MediaType.RADIO:
                     list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, shuffleType, null), RadioStationResponse.Content[].class));
+                    break;
+
+                case MediaType.PODCAST:
+                    list = Arrays.asList(new Gson().fromJson(Preferences.readString(context, shuffleType, null), Chapter[].class));
                     break;
 
                 case MediaType.TIDAL:

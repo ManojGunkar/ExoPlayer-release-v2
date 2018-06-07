@@ -24,7 +24,10 @@ import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
 import com.globaldelight.boom.radio.webconnector.RadioRequestController;
+import com.globaldelight.boom.radio.webconnector.model.BaseResponse;
+import com.globaldelight.boom.radio.webconnector.model.Chapter;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -50,16 +53,16 @@ public class PodcastDetailActitvity extends MasterActivity {
 
     public final static String KEY_TITLE = "KEY_TITLE";
     public final static String KEY_IMG_URL = "KEY_IMG_URL";
-    public final static String KEY_PODCAST_LINK = "KEY_PODCAST_LINK";
+    public final static String KEY_PODCAST= "KEY_PODCAST";
 
     private int totalPage = 0;
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
 
-    private List<RadioStationResponse.Content> mContents = new ArrayList<>();
+    private List<Chapter> mContents = new ArrayList<>();
 
-    private String mPodcastLink;
+    private RadioStationResponse.Content mPodcast;
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
@@ -115,7 +118,10 @@ public class PodcastDetailActitvity extends MasterActivity {
         Bundle bundle = getIntent().getExtras();
         String title = bundle.getString(KEY_TITLE);
         String imageUrl = bundle.getString(KEY_IMG_URL);
-        mPodcastLink = bundle.getString(KEY_PODCAST_LINK);
+        String json = bundle.getString(KEY_PODCAST);
+        if (json != null) {
+            mPodcast = new Gson().fromJson(json, RadioStationResponse.Content.class);
+        }
         setContentView(R.layout.activity_grid_tidal);
         Toolbar toolbar = findViewById(R.id.toolbar_grid_tidal);
         toolbar.setTitle(title);
@@ -168,7 +174,7 @@ public class PodcastDetailActitvity extends MasterActivity {
 
     }
 
-    private Call<RadioStationResponse> requestForContent() {
+    private Call<BaseResponse<Chapter>> getChapters() {
         RadioRequestController.RequestCallback requestCallback = null;
         try {
             requestCallback = RadioRequestController
@@ -186,18 +192,20 @@ public class PodcastDetailActitvity extends MasterActivity {
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
-        return requestCallback.getPodcastChapter(mPodcastLink, String.valueOf(currentPage), "25");
+        return requestCallback.getPodcastChapters(mPodcast.getId(), String.valueOf(currentPage), "25");
     }
 
     private void getContent() {
-
-        requestForContent().enqueue(new Callback<RadioStationResponse>() {
+        getChapters().enqueue(new Callback<BaseResponse<Chapter>>() {
             @Override
-            public void onResponse(Call<RadioStationResponse> call, Response<RadioStationResponse> response) {
+            public void onResponse(Call<BaseResponse<Chapter>> call, Response<BaseResponse<Chapter>> response) {
                 if (response.isSuccessful()) {
                     mProgressBar.setVisibility(View.GONE);
-                    RadioStationResponse radioResponse = response.body();
+                    BaseResponse<Chapter> radioResponse = response.body();
                     mContents = radioResponse.getBody().getContent();
+                    for (Chapter aChapter : mContents) {
+                        aChapter.setPodcast(mPodcast);
+                    }
                     totalPage = radioResponse.getBody().getTotalPages();
                     currentPage = radioResponse.getBody().getPage();
                     mAdapter.addAll(mContents);
@@ -209,7 +217,7 @@ public class PodcastDetailActitvity extends MasterActivity {
             }
 
             @Override
-            public void onFailure(Call<RadioStationResponse> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<Chapter>> call, Throwable t) {
                 t.printStackTrace();
                 mProgressBar.setVisibility(View.GONE);
             }
@@ -217,15 +225,18 @@ public class PodcastDetailActitvity extends MasterActivity {
     }
 
     private void getNextPageContent() {
-        requestForContent().enqueue(new Callback<RadioStationResponse>() {
+        getChapters().enqueue(new Callback<BaseResponse<Chapter>>() {
             @Override
-            public void onResponse(Call<RadioStationResponse> call, Response<RadioStationResponse> response) {
+            public void onResponse(Call<BaseResponse<Chapter>> call, Response<BaseResponse<Chapter>> response) {
                 if (response.isSuccessful()) {
                     mAdapter.removeLoadingFooter();
                     isLoading = false;
-                    RadioStationResponse radioResponse = response.body();
-                    mContents = radioResponse.getBody().getContent();
-                    totalPage = radioResponse.getBody().getTotalPages();
+                    BaseResponse<Chapter> content = response.body();
+                    mContents = content.getBody().getContent();
+                    for (Chapter aChapter : mContents) {
+                        aChapter.setPodcast(mPodcast);
+                    }
+                    totalPage = content.getBody().getTotalPages();
                     mAdapter.addAll(mContents);
                     mAdapter.notifyDataSetChanged();
 
@@ -235,7 +246,7 @@ public class PodcastDetailActitvity extends MasterActivity {
             }
 
             @Override
-            public void onFailure(Call<RadioStationResponse> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<Chapter>> call, Throwable t) {
             }
         });
     }

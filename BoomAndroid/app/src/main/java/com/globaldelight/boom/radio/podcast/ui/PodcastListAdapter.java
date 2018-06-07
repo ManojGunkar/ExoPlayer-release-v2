@@ -20,6 +20,7 @@ import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.radio.podcast.FavouritePodcastManager;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
+import com.globaldelight.boom.radio.webconnector.model.Chapter;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.globaldelight.boom.utils.Utils;
 
@@ -40,12 +41,12 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private String errorMsg;
 
     private Context mContext;
-    private List<RadioStationResponse.Content> mContents;
+    private List<Chapter> mContents;
     private Callback mCallback;
     private boolean isPaginationEnabled = true;
 
 
-    public PodcastListAdapter(Context context, Callback callback, List<RadioStationResponse.Content> contentList) {
+    public PodcastListAdapter(Context context, Callback callback, List<Chapter> contentList) {
         this.mContext = context;
         this.mContents = contentList;
         this.mCallback = callback;
@@ -87,7 +88,7 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
             case DISPLAYING:
-                RadioStationResponse.Content content = mContents.get(position);
+                Chapter content = mContents.get(position);
                 LocalViewHolder viewHolder = (LocalViewHolder) holder;
                 viewHolder.mainView.setElevation(0);
                 viewHolder.txtTitle.setText(content.getName());
@@ -161,18 +162,18 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return DISPLAYING;
     }
 
-    public void add(RadioStationResponse.Content content) {
+    public void add(Chapter content) {
         mContents.add(content);
         notifyItemInserted(mContents.size() - 1);
     }
 
-    public void addAll(List<RadioStationResponse.Content> moveResults) {
-        for (RadioStationResponse.Content result : moveResults) {
+    public void addAll(List<Chapter> moveResults) {
+        for (Chapter result : moveResults) {
             add(result);
         }
     }
 
-    public void remove(RadioStationResponse.Content content) {
+    public void remove(Chapter content) {
         int position = mContents.indexOf(content);
         if (position > -1) {
             mContents.remove(position);
@@ -194,7 +195,7 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void addLoadingFooter() {
         isLoadingAdded = true;
-        add(new RadioStationResponse().new Content());
+        add(new Chapter());
     }
 
     public void removeLoadingFooter() {
@@ -202,7 +203,7 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         int position = mContents.size() - 1;
         if (position >= 0) {
-            RadioStationResponse.Content result = getItem(position);
+            Chapter result = getItem(position);
 
             if (result != null) {
                 mContents.remove(position);
@@ -219,7 +220,7 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (errorMsg != null) this.errorMsg = errorMsg;
     }
 
-    public RadioStationResponse.Content getItem(int position) {
+    public Chapter getItem(int position) {
         return mContents.get(position);
     }
 

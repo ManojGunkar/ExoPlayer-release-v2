@@ -97,9 +97,14 @@ public class MainActivity extends MasterActivity
                         IMediaElement playingItem = PlaybackManager.getInstance(MainActivity.this).getPlayingItem();
                         if (playingItem != null && playingItem.getMediaType() == MediaType.RADIO) {
                             onNavigateToRadio();
-                        } else if (playingItem != null && playingItem.getMediaType() == MediaType.TIDAL) {
+                        }
+                        else if (playingItem != null && playingItem.getMediaType() == MediaType.TIDAL) {
                             onNavigateToTidal();
-                        } else {
+                        }
+                        else if (playingItem != null && playingItem.getMediaType() == MediaType.PODCAST) {
+                            onNavigateToPodcast();
+                        }
+                        else {
                             onNavigateToLibrary();
                         }
                     }

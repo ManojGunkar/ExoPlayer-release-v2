@@ -24,11 +24,12 @@ import com.globaldelight.boom.radio.podcast.ui.PodcastDetailActitvity;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.globaldelight.boom.utils.Utils;
+import com.google.gson.Gson;
 
 import java.util.List;
 
 import static com.globaldelight.boom.radio.podcast.ui.PodcastDetailActitvity.KEY_IMG_URL;
-import static com.globaldelight.boom.radio.podcast.ui.PodcastDetailActitvity.KEY_PODCAST_LINK;
+import static com.globaldelight.boom.radio.podcast.ui.PodcastDetailActitvity.KEY_PODCAST;
 import static com.globaldelight.boom.radio.podcast.ui.PodcastDetailActitvity.KEY_TITLE;
 
 /**
@@ -98,7 +99,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             Intent intent=new Intent(mContext, PodcastDetailActitvity.class);
             intent.putExtra(KEY_TITLE,mContents.get(position).getName());
             intent.putExtra(KEY_IMG_URL,mContents.get(position).getItemArtUrl());
-            intent.putExtra(KEY_PODCAST_LINK,mContents.get(position).getPermalink());
+            intent.putExtra(KEY_PODCAST, new Gson().toJson(mContents.get(position)));
             mContext.startActivity(intent);
         }else {
             App.playbackManager().queue().addItemListToPlay(mContents, position, false);

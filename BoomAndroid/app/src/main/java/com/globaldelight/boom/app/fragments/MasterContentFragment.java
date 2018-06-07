@@ -56,7 +56,9 @@ import com.globaldelight.boom.playbackEvent.controller.PlayerUIController;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.player.AudioEffect;
+import com.globaldelight.boom.radio.podcast.FavouritePodcastManager;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
+import com.globaldelight.boom.radio.webconnector.model.Chapter;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.globaldelight.boom.utils.OverFlowMenuUtils;
 import com.globaldelight.boom.utils.PlayerUtils;
@@ -330,11 +332,18 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     /* Large Player UI and Functionality*/
     private void updateActionBarButtons() {
 
-        if ( mPlayingMediaItem != null && mPlayingMediaItem.getMediaType() == MediaType.RADIO ) {
+        if ( mPlayingMediaItem != null && (mPlayingMediaItem.getMediaType() == MediaType.RADIO || mPlayingMediaItem.getMediaType() == MediaType.PODCAST )) {
             mUpNextBtnPanel.setVisibility(View.GONE);
             mPlayerOverFlowMenuPanel.setVisibility(View.GONE);
             mFavouritesCheckbox.setVisibility(View.VISIBLE);
-            mFavouritesCheckbox.setChecked(FavouriteRadioManager.getInstance(getContext()).containsRadioStation((RadioStationResponse.Content)mPlayingMediaItem));
+            boolean isFavorite = false;
+            if ( mPlayingMediaItem.getMediaType() == MediaType.RADIO ) {
+                isFavorite = FavouriteRadioManager.getInstance(getContext()).containsRadioStation((RadioStationResponse.Content)mPlayingMediaItem);
+            }
+            else {
+                isFavorite =  FavouritePodcastManager.getInstance(getContext()).containPodcast(((Chapter)mPlayingMediaItem).getPodcast());
+            }
+            mFavouritesCheckbox.setChecked(isFavorite);
             return;
         }
 
@@ -353,7 +362,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void updateShuffle() {
-        if ( mPlayingMediaItem != null && mPlayingMediaItem.getMediaType() == MediaType.RADIO ) {
+        if ( mPlayingMediaItem != null && (mPlayingMediaItem.getMediaType() == MediaType.RADIO || mPlayingMediaItem.getMediaType() == MediaType.PODCAST)) {
             mShuffle.setEnabled(false);
             mShuffle.setVisibility(View.INVISIBLE);
         }
@@ -372,7 +381,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void updateRepeat() {
-        if ( mPlayingMediaItem != null && mPlayingMediaItem.getMediaType() == MediaType.RADIO ) {
+        if ( mPlayingMediaItem != null && (mPlayingMediaItem.getMediaType() == MediaType.RADIO || mPlayingMediaItem.getMediaType() == MediaType.PODCAST)) {
             mRepeat.setEnabled(false);
             mRepeat.setVisibility(View.INVISIBLE);
             return;
@@ -496,7 +505,8 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
 
     private void UpdateBackground(final IMediaElement item) {
-        if ( item.getMediaType() == MediaType.RADIO || item.getMediaType() == MediaType.TIDAL) {
+        int mediaType = item.getMediaType();
+        if ( mediaType == MediaType.RADIO || mediaType == MediaType.TIDAL || mediaType == MediaType.PODCAST) {
             Glide.with(getContext())
                     .load(item.getItemArtUrl()).asBitmap()
                     .placeholder(R.drawable.ic_default_art_grid)
@@ -984,11 +994,23 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void onFavouritesChanged(CompoundButton button, boolean isChecked) {
-        if ( isChecked ) {
-            FavouriteRadioManager.getInstance(getContext()).addRadioStation((RadioStationResponse.Content)mPlayingMediaItem);
+        if ( mPlayingMediaItem == null) return;
+
+        if ( mPlayingMediaItem.getMediaType() == MediaType.RADIO) {
+            if ( isChecked ) {
+                FavouriteRadioManager.getInstance(getContext()).addRadioStation((RadioStationResponse.Content)mPlayingMediaItem);
+            }
+            else {
+                FavouriteRadioManager.getInstance(getContext()).removeRadioStation((RadioStationResponse.Content)mPlayingMediaItem);
+            }
         }
         else {
-            FavouriteRadioManager.getInstance(getContext()).removeRadioStation((RadioStationResponse.Content)mPlayingMediaItem);
+            if ( isChecked ) {
+                FavouritePodcastManager.getInstance(getContext()).addPodcast(((Chapter)mPlayingMediaItem).getPodcast());
+            }
+            else {
+                FavouritePodcastManager.getInstance(getContext()).removePodcast(((Chapter)mPlayingMediaItem).getPodcast());
+            }
         }
     }
 

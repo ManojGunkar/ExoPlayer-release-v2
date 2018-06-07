@@ -400,7 +400,7 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
                 }
                 return null;
             }
-            else if(mediaItemBase.getMediaType() == MediaType.RADIO) {
+            else if(mediaItemBase.getMediaType() == MediaType.RADIO || mediaItemBase.getMediaType() == MediaType.PODCAST ) {
                 RadioRequestController.RequestCallback requestCallback = null;
                 try {
                     requestCallback = RadioRequestController.getClient(context, RadioApiUtils.BASE_URL);
