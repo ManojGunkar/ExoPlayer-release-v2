@@ -44,6 +44,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="7dp"
+                    android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:gravity="center_vertical"
@@ -61,7 +62,6 @@
                     android:button="@drawable/fav_selector"
                     android:paddingBottom="8dp"
                     android:paddingLeft="@dimen/card_grid_bottom_padding"
-                    android:paddingRight="@dimen/card_grid_bottom_padding"
                     android:paddingTop="5dp" />
 
             </LinearLayout>

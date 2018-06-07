@@ -1,4 +1,4 @@
-package com.globaldelight.boom.radio.ui;
+package com.globaldelight.boom.radio.podcast.ui;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,9 +7,9 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,14 +20,10 @@ import android.widget.ProgressBar;
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.activities.MasterActivity;
-import com.globaldelight.boom.business.BusinessModelFactory;
-import com.globaldelight.boom.business.ads.Advertiser;
 import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
-import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
-import com.globaldelight.boom.radio.ui.fragments.CountryFragment;
-import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
+import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 
 import java.io.IOException;
@@ -45,28 +41,33 @@ import retrofit2.Response;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
-import static com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter.KEY_TYPE;
 
 /**
- * Created by Manoj Kumar on 18-04-2018.
+ * Created by Manoj Kumar on 07-06-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class CountryDetailedActivity extends MasterActivity implements RadioListAdapter.Callback {
+public class PodcastDetailActitvity extends MasterActivity {
 
-    private RecyclerView mRecyclerView;
-    private RadioListAdapter mAdapter;
-    private ProgressBar mProgressBar;
-    private List<RadioStationResponse.Content> mContents = new ArrayList<>();
+    public final static String KEY_TITLE = "KEY_TITLE";
+    public final static String KEY_IMG_URL = "KEY_IMG_URL";
+    public final static String KEY_PODCAST_LINK = "KEY_PODCAST_LINK";
 
     private int totalPage = 0;
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
 
-    private LinearLayoutManager llm;
-    private GridLayoutManager glm;
+    private List<RadioStationResponse.Content> mContents = new ArrayList<>();
+
+    private String mPodcastLink;
+
+    private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
+    private FloatingActionButton mPlayButton;
+    private PodcastListAdapter mAdapter;
 
     private InlineAds mAdController;
+
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -81,7 +82,6 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
             }
         }
     };
-    private String type;
 
     @Override
     public void onStart() {
@@ -96,12 +96,6 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        init();
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
         if (mAdController != null) {
@@ -110,59 +104,48 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mUpdateItemSongListReceiver);
     }
 
-    private void init() {
-        setContentView(R.layout.activity_country_detail);
-        Bundle bundle = getIntent().getExtras();
-        String country = bundle.getString(CountryFragment.KEY_COUNTRY_NAME);
-        String code = bundle.getString(CountryFragment.KEY_COUNTRY_CODE);
-        String url = bundle.getString(CountryFragment.KEY_COUNTRY_URL);
-        type = bundle.getString(KEY_TYPE);
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initView();
 
-        Toolbar toolbar = findViewById(R.id.toolbar_country_detail);
-        toolbar.setTitle(country);
+    }
+
+    private void initView() {
+        Bundle bundle = getIntent().getExtras();
+        String title = bundle.getString(KEY_TITLE);
+        String imageUrl = bundle.getString(KEY_IMG_URL);
+        mPodcastLink = bundle.getString(KEY_PODCAST_LINK);
+        setContentView(R.layout.activity_grid_tidal);
+        Toolbar toolbar = findViewById(R.id.toolbar_grid_tidal);
+        toolbar.setTitle(title);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ImageView imageView = findViewById(R.id.img_country_detail);
+        ImageView imageView = findViewById(R.id.img_grid_tidal);
         Glide.with(this)
-                .load(url)
-                .placeholder(R.drawable.radio_place_holder)
+                .load(imageUrl)
+                .placeholder(R.drawable.ic_default_art_player_header)
                 .centerCrop()
                 .skipMemoryCache(true)
                 .into(imageView);
+        mPlayButton = findViewById(R.id.fab_grid_tidal);
+        mProgressBar = findViewById(R.id.progress_grid_tidal);
+        mRecyclerView = findViewById(R.id.rv_grid_tidal);
 
-        mProgressBar = findViewById(R.id.progress_country_details);
+        LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(llm);
 
-        mRecyclerView = findViewById(R.id.rv_country_details);
-
-
-        if (type.equalsIgnoreCase("podcast")){
-            glm = new GridLayoutManager(this, 2);
-            mRecyclerView.setLayoutManager(glm);
-        }else {
-            llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-            mRecyclerView.setLayoutManager(llm);
-        }
-
-
-        mAdapter = new RadioListAdapter(this, this::retryPageLoad, mContents,type.equalsIgnoreCase("podcast")?true:false);
-
-        Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
-        if ( factory != null ) {
-            mAdController = factory.createInlineAds(this, mRecyclerView, mAdapter);
-            mRecyclerView.setAdapter(mAdController.getAdapter());
-        }
-        else {
-            mRecyclerView.setAdapter(mAdapter);
-        }
+        mAdapter = new PodcastListAdapter(this, null, mContents);
+        mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addOnScrollListener(new OnPaginationListener(llm!=null?llm:glm) {
+        mRecyclerView.addOnScrollListener(new OnPaginationListener(llm) {
             @Override
             protected void loadMoreContent() {
                 isLoading = true;
                 currentPage = currentPage + 1;
 
-                new Handler().postDelayed(() -> getNextPageContent(code), 1000);
+                new Handler().postDelayed(() -> getNextPageContent(), 1000);
             }
 
             @Override
@@ -181,11 +164,11 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
             }
         });
 
-        getContent(code);
+        getContent();
 
     }
 
-    private Call<RadioStationResponse> requestForContent(String countryCode) {
+    private Call<RadioStationResponse> requestForContent() {
         RadioRequestController.RequestCallback requestCallback = null;
         try {
             requestCallback = RadioRequestController
@@ -203,12 +186,12 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
-        return requestCallback.getLocalRadio(countryCode, type, "popularity", String.valueOf(currentPage), "25");
+        return requestCallback.getPodcastChapter(mPodcastLink, String.valueOf(currentPage), "25");
     }
 
-    private void getContent(String countryCode) {
+    private void getContent() {
 
-        requestForContent(countryCode).enqueue(new Callback<RadioStationResponse>() {
+        requestForContent().enqueue(new Callback<RadioStationResponse>() {
             @Override
             public void onResponse(Call<RadioStationResponse> call, Response<RadioStationResponse> response) {
                 if (response.isSuccessful()) {
@@ -233,8 +216,8 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
         });
     }
 
-    private void getNextPageContent(String countryCode) {
-        requestForContent(countryCode).enqueue(new Callback<RadioStationResponse>() {
+    private void getNextPageContent() {
+        requestForContent().enqueue(new Callback<RadioStationResponse>() {
             @Override
             public void onResponse(Call<RadioStationResponse> call, Response<RadioStationResponse> response) {
                 if (response.isSuccessful()) {
@@ -255,10 +238,5 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
             public void onFailure(Call<RadioStationResponse> call, Throwable t) {
             }
         });
-    }
-
-    @Override
-    public void retryPageLoad() {
-
     }
 }
