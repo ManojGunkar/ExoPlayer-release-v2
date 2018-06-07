@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -72,14 +73,18 @@ public class FavouriteFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(llm);
-        if (!isPodcastType)
-            mContents = FavouriteRadioManager.getInstance(getContext()).getRadioStations();
-        else
-            mContents = FavouritePodcastManager.getInstance(getContext()).getpodcast();
-        mAdapter = new RadioListAdapter(getActivity(), null, mContents, isPodcastType);
 
+        if (!isPodcastType){
+            LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            recyclerView.setLayoutManager(llm);
+            mContents = FavouriteRadioManager.getInstance(getContext()).getRadioStations();
+        }
+        else{
+            GridLayoutManager glm = new GridLayoutManager(getContext(), 2);
+            recyclerView.setLayoutManager(glm);
+            mContents = FavouritePodcastManager.getInstance(getContext()).getpodcast();
+        }
+        mAdapter = new RadioListAdapter(getActivity(), null, mContents, isPodcastType);
         Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
         if (factory != null) {
             mAdController = factory.createInlineAds(getActivity(), recyclerView, mAdapter);

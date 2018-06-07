@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -91,9 +92,15 @@ public class RadioSearchFragment extends Fragment {
     private void init(View view) {
         mProgressBar = view.findViewById(R.id.progress_radio_search);
         mRecyclerView = view.findViewById(R.id.rv_search_radio);
-        LinearLayoutManager llm = new LinearLayoutManager(
-                getActivity(), LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(llm);
+
+        if (type.equalsIgnoreCase("podcast")){
+            GridLayoutManager glm = new GridLayoutManager(getActivity(), 2);
+            mRecyclerView.setLayoutManager(glm);
+        }else {
+            LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            mRecyclerView.setLayoutManager(llm);
+        }
+
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 

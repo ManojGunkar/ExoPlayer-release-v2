@@ -73,7 +73,12 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @NonNull
     private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
-        LocalViewHolder vh = new LocalViewHolder(inflater.inflate(R.layout.item_local_radio, parent, false));
+        LocalViewHolder vh;
+        if (isPodcastType){
+             vh = new LocalViewHolder(inflater.inflate(R.layout.item_podcast, parent, false));
+        }else {
+             vh = new LocalViewHolder(inflater.inflate(R.layout.item_local_radio, parent, false));
+        }
         vh.itemView.setOnClickListener(v -> onClick(vh));
         return vh;
     }

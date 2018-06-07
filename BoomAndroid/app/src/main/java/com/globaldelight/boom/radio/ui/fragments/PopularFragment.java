@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -62,6 +63,9 @@ public class PopularFragment extends Fragment {
     private boolean isLastPage = false;
     private InlineAds mAdController;
 
+    private LinearLayoutManager llm;
+    private GridLayoutManager glm;
+
     private BroadcastReceiver mUpdatePlayingItem = new BroadcastReceiver() {
         @Override
         public void onReceive(Context mActivity, Intent intent) {
@@ -95,8 +99,15 @@ public class PopularFragment extends Fragment {
         type = getArguments().getString(RadioFragmentStateAdapter.KEY_TYPE);
         recyclerView = view.findViewById(R.id.rv_local_radio);
         progressBar = view.findViewById(R.id.progress_local);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(llm);
+
+        if (type.equalsIgnoreCase("podcast")){
+            glm = new GridLayoutManager(getContext(), 2);
+            recyclerView.setLayoutManager(glm);
+        }else {
+            llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            recyclerView.setLayoutManager(llm);
+        }
+
         mAdapter = new RadioListAdapter(getActivity(),null, mContents,type.equalsIgnoreCase("podcast")?true:false);
 
         Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
@@ -108,7 +119,7 @@ public class PopularFragment extends Fragment {
             recyclerView.setAdapter(mAdapter);
         }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addOnScrollListener(new OnPaginationListener(llm) {
+        recyclerView.addOnScrollListener(new OnPaginationListener(llm!=null?llm:glm) {
             @Override
             protected void loadMoreContent() {
                 isLoading = true;

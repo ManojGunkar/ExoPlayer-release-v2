@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -74,6 +75,9 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     private boolean isLastPage = false;
     private String countryCode = Locale.getDefault().getCountry().toUpperCase();
 
+    private LinearLayoutManager llm;
+    private GridLayoutManager glm;
+
     private InlineAds mAdController;
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
@@ -92,6 +96,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         }
     };
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -102,8 +107,16 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         errorLayout = view.findViewById(R.id.error_layout);
         btnRetry = view.findViewById(R.id.error_btn_retry);
         txtError = view.findViewById(R.id.error_txt_cause);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(llm);
+
+
+        if (type.equalsIgnoreCase("podcast")){
+            glm = new GridLayoutManager(getContext(), 2);
+            recyclerView.setLayoutManager(glm);
+        }else {
+            llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            recyclerView.setLayoutManager(llm);
+        }
+
         radioListAdapter = new RadioListAdapter(getActivity(), this, contentList,type.equalsIgnoreCase("podcast")?true:false);
 
         Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
@@ -114,7 +127,8 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
             recyclerView.setAdapter(radioListAdapter);
         }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addOnScrollListener(new OnPaginationListener(llm) {
+
+        recyclerView.addOnScrollListener(new OnPaginationListener(llm!=null?llm:glm) {
             @Override
             protected void loadMoreContent() {
                 isLoading = true;

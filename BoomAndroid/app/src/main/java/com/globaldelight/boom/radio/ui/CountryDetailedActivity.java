@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -61,6 +62,10 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
+
+    private LinearLayoutManager llm;
+    private GridLayoutManager glm;
+
 
     private InlineAds mAdController;
 
@@ -129,8 +134,17 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
         mProgressBar = findViewById(R.id.progress_country_details);
 
         mRecyclerView = findViewById(R.id.rv_country_details);
-        LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(llm);
+
+
+        if (type.equalsIgnoreCase("podcast")){
+            glm = new GridLayoutManager(this, 2);
+            mRecyclerView.setLayoutManager(glm);
+        }else {
+            llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            mRecyclerView.setLayoutManager(llm);
+        }
+
+
         mAdapter = new RadioListAdapter(this, this::retryPageLoad, mContents,type.equalsIgnoreCase("podcast")?true:false);
 
         Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
@@ -143,7 +157,7 @@ public class CountryDetailedActivity extends MasterActivity implements RadioList
         }
 
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addOnScrollListener(new OnPaginationListener(llm) {
+        mRecyclerView.addOnScrollListener(new OnPaginationListener(llm!=null?llm:glm) {
             @Override
             protected void loadMoreContent() {
                 isLoading = true;
