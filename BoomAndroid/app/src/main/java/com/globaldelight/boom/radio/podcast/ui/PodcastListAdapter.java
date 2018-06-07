@@ -98,7 +98,7 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     headerViewHolder.txtHeaderTitle.setText("Chapters");
                     headerViewHolder.txtHeaderDetail.setText("Episode : " + mContents.size());
                 } else if (position >=1) {
-                    RadioStationResponse.Content content = mContents.get(position);
+                    Chapter content = mContents.get(position);
                     LocalViewHolder viewHolder = (LocalViewHolder) holder;
                     viewHolder.mainView.setElevation(0);
                     viewHolder.txtTitle.setText(content.getName());
@@ -108,7 +108,7 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     long minutes = seconds / 60;
                     seconds = seconds % 60;
 
-                    viewHolder.txtSubTitle.setText("Published : "+content.getPublished()+"Duration - " + String.valueOf(minutes) + ":" + String.valueOf(seconds) + " min");
+                    viewHolder.txtSubTitle.setText(content.getDescription());
 
                     final int size = Utils.largeImageSize(mContext);
                     Glide.with(mContext).load(content.getLogo())
