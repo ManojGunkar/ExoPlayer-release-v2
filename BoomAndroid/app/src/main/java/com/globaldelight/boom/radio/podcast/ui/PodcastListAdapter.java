@@ -94,8 +94,9 @@ public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         switch (getItemViewType(position)) {
             case TYPE_HEADER:
                 HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
-                headerViewHolder.txtHeaderTitle.setText("Chapters");
-                headerViewHolder.txtHeaderDetail.setText("Episode : " + mContents.size());
+                headerViewHolder.txtHeaderTitle.setText(mContext.getResources().getString(R.string.chapters, mContents.size()));
+                headerViewHolder.txtHeaderDetail.setVisibility(View.GONE);
+                headerViewHolder.imgMore.setVisibility(View.GONE);
                 break;
 
             case DISPLAYING:

@@ -56,7 +56,7 @@ public class PodcastDetailActitvity extends MasterActivity {
     public final static String KEY_PODCAST= "KEY_PODCAST";
 
     private int totalPage = 0;
-    private int currentPage = 1;
+    private int currentPage = 0;
     private boolean isLoading = false;
     private boolean isLastPage = false;
 
@@ -168,9 +168,6 @@ public class PodcastDetailActitvity extends MasterActivity {
                 return isLoading;
             }
         });
-
-        getContent();
-
     }
 
     private Call<BaseResponse<Chapter>> getChapters() {
@@ -227,6 +224,7 @@ public class PodcastDetailActitvity extends MasterActivity {
         getChapters().enqueue(new Callback<BaseResponse<Chapter>>() {
             @Override
             public void onResponse(Call<BaseResponse<Chapter>> call, Response<BaseResponse<Chapter>> response) {
+                mProgressBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     mAdapter.removeLoadingFooter();
                     isLoading = false;
