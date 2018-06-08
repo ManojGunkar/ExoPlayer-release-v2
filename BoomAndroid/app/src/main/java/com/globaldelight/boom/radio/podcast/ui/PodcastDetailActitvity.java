@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
@@ -19,6 +20,7 @@ import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.app.activities.MasterActivity;
 import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
@@ -134,6 +136,9 @@ public class PodcastDetailActitvity extends MasterActivity {
                 .skipMemoryCache(true)
                 .into(imageView);
         mPlayButton = findViewById(R.id.fab_grid_tidal);
+        mPlayButton.setVisibility(View.INVISIBLE);
+        mPlayButton.setOnClickListener(this::onPlay);
+
         mProgressBar = findViewById(R.id.progress_grid_tidal);
         mRecyclerView = findViewById(R.id.rv_grid_tidal);
 
@@ -168,6 +173,14 @@ public class PodcastDetailActitvity extends MasterActivity {
                 return isLoading;
             }
         });
+    }
+
+    private void onPlay(View view) {
+        App.playbackManager().stop();
+
+        if ( mContents != null && mContents.size() > 0 ) {
+            App.playbackManager().queue().addItemListToPlay(mContents, 0,  false);
+        }
     }
 
     private Call<BaseResponse<Chapter>> getChapters() {
@@ -224,22 +237,25 @@ public class PodcastDetailActitvity extends MasterActivity {
         getChapters().enqueue(new Callback<BaseResponse<Chapter>>() {
             @Override
             public void onResponse(Call<BaseResponse<Chapter>> call, Response<BaseResponse<Chapter>> response) {
-                mProgressBar.setVisibility(View.GONE);
-                if (response.isSuccessful()) {
-                    mAdapter.removeLoadingFooter();
-                    isLoading = false;
-                    BaseResponse<Chapter> content = response.body();
-                    mContents = content.getBody().getContent();
-                    for (Chapter aChapter : mContents) {
-                        aChapter.setPodcast(mPodcast);
-                    }
-                    totalPage = content.getBody().getTotalPages();
-                    mAdapter.addAll(mContents);
-                    mAdapter.notifyDataSetChanged();
+                new Handler(Looper.getMainLooper()).post(()->{
+                    mProgressBar.setVisibility(View.GONE);
+                    if (response.isSuccessful()) {
+                        mAdapter.removeLoadingFooter();
+                        isLoading = false;
+                        BaseResponse<Chapter> content = response.body();
+                        mContents = content.getBody().getContent();
+                        for (Chapter aChapter : mContents) {
+                            aChapter.setPodcast(mPodcast);
+                        }
+                        totalPage = content.getBody().getTotalPages();
+                        mAdapter.addAll(mContents);
+                        mAdapter.notifyDataSetChanged();
+                        mPlayButton.setVisibility(View.VISIBLE);
 
-                    if (currentPage <= totalPage) mAdapter.addLoadingFooter();
-                    else isLastPage = true;
-                }
+                        if (currentPage <= totalPage) mAdapter.addLoadingFooter();
+                        else isLastPage = true;
+                    }
+                });
             }
 
             @Override
