@@ -31,7 +31,7 @@
             android:id="@+id/podcast"
             android:checkable="true"
             android:checked="false"
-            android:icon="@drawable/drawer_radio_selector"
+            android:icon="@drawable/drawer_podcast_selector"
             android:title="@string/podcast" />
 
         <item

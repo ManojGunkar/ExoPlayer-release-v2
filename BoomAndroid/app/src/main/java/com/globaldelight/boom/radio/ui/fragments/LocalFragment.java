@@ -176,7 +176,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
-        return requestCallback.getLocalRadio(countryCode, type, "popularity", String.valueOf(currentPage), "25");
+        return requestCallback.getLocalRadio(countryCode, type, "popularity", String.valueOf(currentPage), type.equalsIgnoreCase("podcast")?"11":"25");
     }
 
     private void getContent() {

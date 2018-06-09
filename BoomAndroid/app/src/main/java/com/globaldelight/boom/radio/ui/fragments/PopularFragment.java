@@ -165,7 +165,7 @@ public class PopularFragment extends Fragment {
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
-        return requestCallback.getPopularStation(type,"popularity",String.valueOf(currentPage), "25");
+        return requestCallback.getPopularStation(type,"popularity",String.valueOf(currentPage), type.equalsIgnoreCase("podcast")?"11":"25");
     }
 
     private void getContent() {
