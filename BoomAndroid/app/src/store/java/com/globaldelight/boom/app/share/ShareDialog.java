@@ -91,8 +91,6 @@ public class ShareDialog implements SharePagerAdapter.OnItemClickListener {
         }
     }
 
-
-
     private Activity mActivity;
     private Dialog mDialog = null;
     private ViewPager viewpager;

@@ -1,31 +1,42 @@
 package com.globaldelight.boom.business.ads.adspresenter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.globaldelight.boom.BuildConfig;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.business.ads.builder.AdsBuilder;
 import com.globaldelight.boom.business.ads.viewholder.GoogleAdViewHolder;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.NativeContentAd;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by Manoj Kumar on 6/13/2017.
  */
 
-public class GoogleAdsPresenter implements AdsPresenter {
+public class GoogleAdsPresenter implements AdsPresenter, InterstitialAdsPresenter {
+    private Context mContext;
+    private InterstitialAd mInterstitialAd;
+
     private AdsBuilder.AdsParam param;
     private AdLoader adLoader;
     private NativeContentAd mAd = null;
     private Callback callback;
 
     private int[] mPositions = new int[0];
-    private final int AD_INTERVAL = 50;
+    private final int AD_INTERVAL = 10;
     private final int AD_POSITION = (int)(Math.random() * 4);
 
     @Override
@@ -38,35 +49,20 @@ public class GoogleAdsPresenter implements AdsPresenter {
         }
     }
 
+    public GoogleAdsPresenter(Context context){
+        this.mContext=context;
+    }
 
     public GoogleAdsPresenter(AdsBuilder.AdsParam param) {
         this.param = param;
-        //Change google ad id to release build
         adLoader = new AdLoader.Builder(param.context, BuildConfig.GOOGLE_NATIVE_AD_ID)
-                .forContentAd(new NativeContentAd.OnContentAdLoadedListener() {
-                    @Override
-                    public void onContentAdLoaded(NativeContentAd contentAd) {
-                        mAd = contentAd;
-                        if ( callback != null ) {
-                            callback.onAdsLoaded();
-                        }
+                .forContentAd(contentAd -> {
+                    mAd = contentAd;
+                    if ( callback != null ) {
+                        callback.onAdsLoaded();
                     }
                 })
-//                .withAdListener(new AdListener() {
-//                    @Override
-//                    public void onAdFailedToLoad(int errorCode) {
-//                    }
-//
-//                    @Override
-//                    public void onAdLoaded() {
-//                        callback.onAdsLoaded();
-//                    }
-//                })
-                .withNativeAdOptions(new NativeAdOptions.Builder()
-                        .build())
-                .build();
-
-
+                .withNativeAdOptions(new NativeAdOptions.Builder().build()).build();
         adLoader.loadAd(new AdRequest.Builder().build());
     }
 
@@ -111,22 +107,11 @@ public class GoogleAdsPresenter implements AdsPresenter {
         viewHolder.progressView.setVisibility(View.GONE);
         viewHolder.errorView.setVisibility(View.GONE);
         viewHolder.adContentView.setVisibility(View.VISIBLE);
-
-
-       /* if ( ad.getLogo() != null ) {
-            viewHolder.logoView.setImageDrawable(ad.getLogo().getDrawable());
-            viewHolder.logoView.setVisibility(View.VISIBLE);
-        }
-        else {
-            viewHolder.logoView.setVisibility(View.GONE);
-        }*/
-
         viewHolder.headerView.setText(ad.getHeadline());
         viewHolder.descriptionView.setText(ad.getBody());
         if ( viewHolder.imageView != null && ad.getImages().size() > 0 ) {
             viewHolder.imageView.setImageDrawable(ad.getImages().get(0).getDrawable());
         }
-      //  viewHolder.advertiserView.setText(ad.getAdvertiser());
         viewHolder.adActionBtn.setText(ad.getCallToAction());
         viewHolder.adView.setNativeAd(ad);
     }
@@ -140,5 +125,33 @@ public class GoogleAdsPresenter implements AdsPresenter {
     @Override
     public void setCallback(Callback callback) {
         this.callback = callback;
+    }
+
+    @Override
+    public void onComplete() {
+        MobileAds.initialize(mContext, BuildConfig.GOOGLE_ADMOB_APP_ID);
+
+        mInterstitialAd = new InterstitialAd(mContext);
+        mInterstitialAd.setAdUnitId(BuildConfig.GOOGLE_INTERSTITIAL_AD_ID);
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("EE9822DD68C1D97586D6526D4C316699").build();
+        mInterstitialAd.loadAd(adRequest);
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                Toast.makeText(getApplicationContext(),"Failed", Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onAdLoaded() {
+                Toast.makeText(getApplicationContext(),"Loaded", Toast.LENGTH_SHORT).show();
+                mInterstitialAd.show();
+            }
+            @Override
+            public void onAdClosed(){
+                Toast.makeText(getApplicationContext(),"Thanks", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

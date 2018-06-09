@@ -17,7 +17,8 @@ import java.util.Map;
         MediaType.GOOGLE_DRIVE,
         MediaType.SEARCH,
         MediaType.RADIO,
-        MediaType.TIDAL
+        MediaType.TIDAL,
+        MediaType.PODCAST
 })
 
 @Retention(RetentionPolicy.SOURCE)
@@ -27,5 +28,7 @@ public @interface MediaType {
             GOOGLE_DRIVE = 2,
             SEARCH = 4,
             RADIO = 5,
-            TIDAL = 6;
+            TIDAL = 6,
+            PODCAST = 7;
+
 }

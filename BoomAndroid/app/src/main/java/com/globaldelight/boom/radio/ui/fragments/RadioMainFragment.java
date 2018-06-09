@@ -6,14 +6,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +23,7 @@ import com.globaldelight.boom.app.fragments.TabBarFragment;
 import com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter;
 
 import static android.content.Context.SEARCH_SERVICE;
+import static com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter.KEY_TYPE;
 
 /**
  * Created by Manoj Kumar on 09-04-2018.
@@ -40,6 +38,7 @@ public class RadioMainFragment extends TabBarFragment {
     private SearchView searchView;
 
     private RadioSearchFragment radioSearchFragment;
+    private String type;
 
     @Override
     public void onAttach(Context context) {
@@ -53,6 +52,7 @@ public class RadioMainFragment extends TabBarFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_radio, null, false);
+        type = getArguments().getString(KEY_TYPE);
         setHasOptionsMenu(true);
         initComp(view);
         return view;
@@ -65,10 +65,12 @@ public class RadioMainFragment extends TabBarFragment {
     }
 
     private void setViewPager(ViewPager viewPager) {
-        mStateAdapter = new RadioFragmentStateAdapter(getActivity().getSupportFragmentManager());
+        mStateAdapter = new RadioFragmentStateAdapter(getActivity().getSupportFragmentManager(), type);
         viewPager.setAdapter(mStateAdapter);
         viewPager.setOffscreenPageLimit(4);
         mTabBar.setupWithViewPager(mViewPager);
+        if (type.equalsIgnoreCase("podcast"))
+        mTabBar.removeTabAt(4);
         viewPager.setCurrentItem(0);
     }
 
@@ -76,7 +78,6 @@ public class RadioMainFragment extends TabBarFragment {
     public void onPause() {
         super.onPause();
         mActivity = null;
-
     }
 
     @Override
@@ -100,8 +101,12 @@ public class RadioMainFragment extends TabBarFragment {
         inflater.inflate(R.menu.library_menu, menu);
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
 
-        searchView = (SearchView)searchMenuItem.getActionView();
-        searchView.setQueryHint(getResources().getString(R.string.search_hint_radio));
+        searchView = (SearchView) searchMenuItem.getActionView();
+        if (type.equalsIgnoreCase("radio"))
+            searchView.setQueryHint(getResources().getString(R.string.search_hint_radio));
+        else
+            searchView.setQueryHint(getResources().getString(R.string.search_hint_podcast));
+
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(SEARCH_SERVICE);
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
@@ -115,7 +120,10 @@ public class RadioMainFragment extends TabBarFragment {
         searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                 radioSearchFragment=new RadioSearchFragment();
+                radioSearchFragment = new RadioSearchFragment();
+                Bundle bundle=new Bundle();
+                bundle.putString(KEY_TYPE,type);
+                radioSearchFragment.setArguments(bundle);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .add(R.id.fragment_container, radioSearchFragment)
@@ -129,7 +137,7 @@ public class RadioMainFragment extends TabBarFragment {
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .remove(radioSearchFragment)
                         .commitAllowingStateLoss();
-                radioSearchFragment=null;
+                radioSearchFragment = null;
                 return true;
             }
         });

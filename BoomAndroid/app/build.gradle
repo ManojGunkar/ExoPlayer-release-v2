@@ -39,17 +39,15 @@ android {
         versionName "1.0.0"
         multiDexEnabled true
 
-        resValue 'string', 'version', "v"+versionName
+        resValue 'string', 'version', "v" + versionName
 
-        resConfigs "en"
-
-        buildConfigField "boolean",'ENABLE_LOG',                'true'
-        buildConfigField("String",  EXPIRY_DATE,                STRING(getExpiryDate()) )
-        buildConfigField "String", 'MIXPANEL_SENDER_ID',        STRING("862807752058")
-        buildConfigField "String", 'FLURRY_API_KEY',            STRING("MGGVKKG7JYXGC3N89B4V")
-        buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN',    STRING("598c4011c2d961ef3b7f248459fa30c7")
-        buildConfigField "String", 'AUDIO_CONFIG_URL',          STRING("http://devboom2.globaldelight.net/audioconfig.php")
-        buildConfigField "String", 'FEEDBACK_URL',              STRING("http://devboom2.globaldelight.net/feedback.php?os=android")
+        buildConfigField "boolean", 'ENABLE_LOG', 'true'
+        buildConfigField("String", EXPIRY_DATE, STRING(getExpiryDate()))
+        buildConfigField "String", 'MIXPANEL_SENDER_ID', STRING("862807752058")
+        buildConfigField "String", 'FLURRY_API_KEY', STRING("MGGVKKG7JYXGC3N89B4V")
+        buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN', STRING("598c4011c2d961ef3b7f248459fa30c7")
+        buildConfigField "String", 'AUDIO_CONFIG_URL', STRING("http://devboom2.globaldelight.net/audioconfig.php")
+        buildConfigField "String", 'FEEDBACK_URL', STRING("http://devboom2.globaldelight.net/feedback.php?os=android")
 
         ndk {
             abiFilters = ['armeabi-v7a']
@@ -59,8 +57,8 @@ android {
     buildTypes {
 
         debug {
-            buildConfigField "String",  'FLURRY_API_KEY',            STRING("")
-            buildConfigField "boolean", 'ENABLE_LOG',                'true'
+            buildConfigField "String", 'FLURRY_API_KEY', STRING("")
+            buildConfigField "boolean", 'ENABLE_LOG', 'true'
         }
 
         release {
@@ -72,39 +70,45 @@ android {
     productFlavors {
 
         demo {
-            buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    "null"
+            buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN', "null"
         }
 
         store {
-            buildConfigField "String", 'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-3940256099942544/5224354917")
-            buildConfigField "String", 'GOOGLE_NATIVE_AD_ID',       STRING("ca-app-pub-3940256099942544/2247696110")
+            buildConfigField "String", 'GOOGLE_VIDEO_AD_ID', STRING("ca-app-pub-3940256099942544/5224354917")
+            buildConfigField "String", 'GOOGLE_NATIVE_AD_ID', STRING("ca-app-pub-3940256099942544/2247696110")
+            buildConfigField "String", 'GOOGLE_INTERSTITIAL_AD_ID', STRING("ca-app-pub-3940256099942544/1033173712")
+            buildConfigField "String", 'GOOGLE_ADMOB_APP_ID', STRING("ca-app-pub-2462021843550393~9475787864")
+
         }
 
         production {
-            buildConfigField "boolean",'ENABLE_LOG',                'false'
-            buildConfigField "String",  EXPIRY_DATE,                 "null"
-            buildConfigField "String",  'FLURRY_API_KEY',            STRING("XRPWTN4PDGJJQX6NNJPN")
-            buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    STRING("79a795acec1fbcc3d9d28f792c51fc24")
-            buildConfigField "String",  'GOOGLE_VIDEO_AD_ID',        STRING("ca-app-pub-2462021843550393/4811995067")
-            buildConfigField "String",  'GOOGLE_NATIVE_AD_ID',       STRING("ca-app-pub-2462021843550393/9799761460")
+            buildConfigField "boolean", 'ENABLE_LOG', 'false'
+            buildConfigField "String", EXPIRY_DATE, "null"
+            buildConfigField "String", 'FLURRY_API_KEY', STRING("XRPWTN4PDGJJQX6NNJPN")
+            buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN', STRING("79a795acec1fbcc3d9d28f792c51fc24")
+            buildConfigField "String", 'GOOGLE_VIDEO_AD_ID', STRING("ca-app-pub-2462021843550393/4811995067")
+            buildConfigField "String", 'GOOGLE_NATIVE_AD_ID', STRING("ca-app-pub-2462021843550393/9799761460")
+            buildConfigField "String", 'GOOGLE_INTERSTITIAL_AD_ID', STRING("ca-app-pub-2462021843550393/9125547464")
+            buildConfigField "String", 'GOOGLE_ADMOB_APP_ID', STRING("ca-app-pub-2462021843550393~9475787864")
+
         }
 
         b2b {
             applicationIdSuffix ".b2b"
 
-            buildConfigField "boolean", 'ENABLE_LOG',                'true'
-            buildConfigField "String",   EXPIRY_DATE,                 "null"
-            buildConfigField "String",  'FLURRY_API_KEY',            STRING("G6P5DBXKYF5C3NH4S752")
-            buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    "null"
-            buildConfigField "String",  'FEEDBACK_URL',               STRING("https://boom3dapp.com/feedback/android/deviceid/%s/language/%s/")
+            buildConfigField "boolean", 'ENABLE_LOG', 'true'
+            buildConfigField "String", EXPIRY_DATE, "null"
+            buildConfigField "String", 'FLURRY_API_KEY', STRING("G6P5DBXKYF5C3NH4S752")
+            buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN', "null"
+            buildConfigField "String", 'FEEDBACK_URL', STRING("https://boom3dapp.com/feedback/android/deviceid/%s/language/%s/")
         }
 
         whitelabel {
             resConfigs "en"
 
-            buildConfigField "String",  'FLURRY_API_KEY',            "null"
-            buildConfigField "String",  'MIXPANEL_PROJECT_TOKEN',    "null"
-            buildConfigField "String",  'FEEDBACK_URL',               STRING("https://boom3dapp.com/feedback/android/deviceid/%s/language/%s/")
+            buildConfigField "String", 'FLURRY_API_KEY', "null"
+            buildConfigField "String", 'MIXPANEL_PROJECT_TOKEN', "null"
+            buildConfigField "String", 'FEEDBACK_URL', STRING("https://boom3dapp.com/feedback/android/deviceid/%s/language/%s/")
         }
     }
 
@@ -179,7 +183,7 @@ dependencies {
 
     // Dependencies for store
     storeImplementation 'com.google.android.gms:play-services-ads:11.4.2'
-    storeImplementation('com.facebook.android:audience-network-sdk:4.+' ) {
+    storeImplementation('com.facebook.android:audience-network-sdk:4.+') {
         exclude group: 'com.google.android.exoplayer'
     }
     storeImplementation('com.facebook.android:facebook-android-sdk:4.5.0') {
@@ -188,7 +192,7 @@ dependencies {
 
     // Dependencies for production
     productionImplementation 'com.google.android.gms:play-services-ads:11.4.2'
-    productionImplementation('com.facebook.android:audience-network-sdk:4.+' ) {
+    productionImplementation('com.facebook.android:audience-network-sdk:4.+') {
         exclude group: 'com.google.android.exoplayer'
     }
     productionImplementation('com.facebook.android:facebook-android-sdk:4.5.0') {
@@ -196,5 +200,4 @@ dependencies {
     }
 }
 
-// ADD THIS AT THE BOTTOM
 apply plugin: 'com.google.gms.google-services'

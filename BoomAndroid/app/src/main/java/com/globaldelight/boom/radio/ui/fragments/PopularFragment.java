@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,7 +20,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
+import com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
@@ -56,6 +61,10 @@ public class PopularFragment extends Fragment {
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
+    private InlineAds mAdController;
+
+    private LinearLayoutManager llm;
+    private GridLayoutManager glm;
 
     private BroadcastReceiver mUpdatePlayingItem = new BroadcastReceiver() {
         @Override
@@ -69,10 +78,14 @@ public class PopularFragment extends Fragment {
             }
         }
     };
+    private String type;
 
     @Override
     public void onStart() {
         super.onStart();
+        if (mAdController != null) {
+            mAdController.register();
+        }
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
@@ -83,14 +96,30 @@ public class PopularFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.radio_layout, container, false);
+        type = getArguments().getString(RadioFragmentStateAdapter.KEY_TYPE);
         recyclerView = view.findViewById(R.id.rv_local_radio);
         progressBar = view.findViewById(R.id.progress_local);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(llm);
-        mAdapter = new RadioListAdapter(getActivity(),null, mContents);
-        recyclerView.setAdapter(mAdapter);
+
+        if (type.equalsIgnoreCase("podcast")){
+            glm = new GridLayoutManager(getContext(), 2);
+            recyclerView.setLayoutManager(glm);
+        }else {
+            llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            recyclerView.setLayoutManager(llm);
+        }
+
+        mAdapter = new RadioListAdapter(getActivity(),null, mContents,type.equalsIgnoreCase("podcast")?true:false);
+
+        Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+        if ( factory != null ) {
+            mAdController = factory.createInlineAds(getActivity(), recyclerView, mAdapter);
+            recyclerView.setAdapter(mAdController.getAdapter());
+        }
+        else {
+            recyclerView.setAdapter(mAdapter);
+        }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addOnScrollListener(new OnPaginationListener(llm) {
+        recyclerView.addOnScrollListener(new OnPaginationListener(llm!=null?llm:glm) {
             @Override
             protected void loadMoreContent() {
                 isLoading = true;
@@ -136,7 +165,7 @@ public class PopularFragment extends Fragment {
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
-        return requestCallback.getPopularStation("radio","popularity",String.valueOf(currentPage), "25");
+        return requestCallback.getPopularStation(type,"popularity",String.valueOf(currentPage), type.equalsIgnoreCase("podcast")?"11":"25");
     }
 
     private void getContent() {
@@ -210,6 +239,9 @@ public class PopularFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        if (mAdController != null) {
+            mAdController.unregister();
+        }
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mUpdatePlayingItem);
     }
 }

@@ -1,5 +1,6 @@
 package com.globaldelight.boom.radio.ui.adapter;
 
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,25 +19,41 @@ import com.globaldelight.boom.radio.ui.fragments.PopularFragment;
 public class RadioFragmentStateAdapter extends FragmentStatePagerAdapter {
 
     private String mTabTitle[] = new String[]{"Local", "Favourite", "Country","Popular","Explore"};
+    private String mType;
+    public static final String KEY_TYPE="KEY_TYPE";
 
-
-    public RadioFragmentStateAdapter(FragmentManager fm) {
+    public RadioFragmentStateAdapter(FragmentManager fm,String type) {
         super(fm);
+        this.mType=type;
     }
 
     @Override
     public Fragment getItem(int position) {
+        Fragment fragment=null;
+        Bundle bundle=new Bundle();
+        bundle.putString(KEY_TYPE,mType);
+
         switch (position){
             case 0:
-                return new LocalFragment();
+                fragment= new LocalFragment();
+                fragment.setArguments(bundle);
+                return fragment;
             case 1:
-                return new FavouriteFragment();
-                case 2:
-                return new CountryFragment();
+                fragment= new FavouriteFragment();
+                fragment.setArguments(bundle);
+                return fragment;
+            case 2:
+                fragment= new CountryFragment();
+                fragment.setArguments(bundle);
+                return fragment;
             case 3:
-                return new PopularFragment();
+                fragment= new PopularFragment();
+                fragment.setArguments(bundle);
+                return fragment;
             case 4:
-                return new ExploreFragment();
+                fragment= new ExploreFragment();
+                fragment.setArguments(bundle);
+                return fragment;
 
         }
         return null;

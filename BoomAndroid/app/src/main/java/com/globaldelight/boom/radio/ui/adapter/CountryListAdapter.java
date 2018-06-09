@@ -18,6 +18,7 @@ import com.globaldelight.boom.utils.Utils;
 
 import java.util.List;
 
+import static com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter.KEY_TYPE;
 import static com.globaldelight.boom.radio.ui.fragments.CountryFragment.KEY_COUNTRY_CODE;
 import static com.globaldelight.boom.radio.ui.fragments.CountryFragment.KEY_COUNTRY_NAME;
 import static com.globaldelight.boom.radio.ui.fragments.CountryFragment.KEY_COUNTRY_URL;
@@ -38,9 +39,13 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private Context mContext;
     private List<CategoryResponse.Content> mContents;
 
-    public CountryListAdapter(Context context, List<CategoryResponse.Content> contentList) {
+    private boolean isPodcast=false;
+
+    public CountryListAdapter(Context context, List<CategoryResponse.Content> contentList,boolean isPodcast) {
         this.mContext = context;
         this.mContents = contentList;
+        this.isPodcast=isPodcast;
+
     }
 
     @Override
@@ -84,6 +89,7 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     code=code.substring(code.length()-2,code.length()).toUpperCase();
                     String url=mContents.get(position).getLogo();
                     Intent intent=new Intent(mContext, CountryDetailedActivity.class);
+                    intent.putExtra(KEY_TYPE,isPodcast==true?"podcast":"radio");
                     intent.putExtra(KEY_COUNTRY_NAME,country);
                     intent.putExtra(KEY_COUNTRY_URL,url);
                     intent.putExtra(KEY_COUNTRY_CODE,code);
@@ -148,11 +154,12 @@ public class CountryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         isLoadingAdded = false;
 
         int position = mContents.size() - 1;
-        CategoryResponse.Content result = getItem(position);
-
-        if (result != null) {
-            mContents.remove(position);
-            notifyItemRemoved(position);
+        if ( position >= 0 ) {
+            CategoryResponse.Content result = getItem(position);
+            if (result != null) {
+                mContents.remove(position);
+                notifyItemRemoved(position);
+            }
         }
     }
 
