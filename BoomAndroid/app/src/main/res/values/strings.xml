@@ -270,5 +270,6 @@
     <string name="podcast">Podcast</string>
     <string name="search_hint_podcast">Search podcast</string>
     <string name="chapters">Chapters: %d</string>
+    <string name="boom_login">Boom Login</string>
 
 </resources>
