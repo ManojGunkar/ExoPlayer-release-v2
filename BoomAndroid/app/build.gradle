@@ -40,6 +40,7 @@ android {
         multiDexEnabled true
 
         resValue 'string', 'version', "v" + versionName
+        resConfigs "en"
 
         buildConfigField "boolean", 'ENABLE_LOG', 'true'
         buildConfigField("String", EXPIRY_DATE, STRING(getExpiryDate()))
