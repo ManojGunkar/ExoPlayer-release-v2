@@ -20,6 +20,8 @@ import com.globaldelight.boom.utils.Utils;
 
 import java.util.List;
 
+import static com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter.KEY_TYPE;
+
 /**
  * Created by Manoj Kumar on 20-04-2018.
  * ©Global Delight Technologies Pvt. Ltd.
@@ -29,9 +31,12 @@ public class ExploreCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private Context mContext;
     private List<ExploreCategory.Content> mContents;
 
-    public ExploreCategoryAdapter(Context context, List<ExploreCategory.Content> contentList) {
+    private boolean isPodcast=false;
+
+    public ExploreCategoryAdapter(Context context, List<ExploreCategory.Content> contentList,boolean isPodcast) {
         this.mContext = context;
         this.mContents = contentList;
+        this.isPodcast=isPodcast;
     }
 
     @Override
@@ -87,12 +92,14 @@ public class ExploreCategoryAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
             intent.putExtra("title",content.getName());
             intent.putExtra("permalink",content.getPermalink());
+            intent.putExtra(KEY_TYPE,isPodcast);
             mContext.startActivity(intent);
         }
         else {
             Intent intent=new Intent(mContext, SubCategoryDetailedActivity.class);
             intent.putExtra("title",content.getName());
             intent.putExtra("permalink",content.getPermalink());
+            intent.putExtra(KEY_TYPE,isPodcast);
             mContext.startActivity(intent);
 
         }

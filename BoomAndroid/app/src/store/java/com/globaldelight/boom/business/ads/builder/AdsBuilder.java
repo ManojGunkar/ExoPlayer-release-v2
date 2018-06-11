@@ -11,6 +11,7 @@ import com.globaldelight.boom.app.analytics.flurry.FlurryEvents;
 import com.globaldelight.boom.business.ads.adspresenter.AdsPresenter;
 import com.globaldelight.boom.business.ads.adspresenter.FacebookAdsPresenter;
 import com.globaldelight.boom.business.ads.adspresenter.GoogleAdsPresenter;
+import com.globaldelight.boom.business.ads.adspresenter.InterstitialAdsPresenter;
 
 /**
  * Created by Manoj Kumar on 6/2/2017.
@@ -72,6 +73,10 @@ public class AdsBuilder {
     public AdsPresenter buildGoogleAds(){
         FlurryAnalytics.getInstance(param.context).setEvent(FlurryEvents.EVENT_GOOGLE_ADS);
         return new GoogleAdsPresenter(param);
+    }
+
+    public static InterstitialAdsPresenter buildInterstitialGoogleAds(Context context){
+        return new GoogleAdsPresenter(context);
     }
 
     public static class AdsParam {

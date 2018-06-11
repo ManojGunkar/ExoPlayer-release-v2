@@ -37,6 +37,8 @@ public class TidalCuratedFragment extends Fragment implements ContentLoadable {
     private TextView mTxtGenres;
     private TextView mTxtMoods;
     private boolean mHasData = false;
+    private RequestChain mRequestChain = null;
+
 
     @Nullable
     @Override
@@ -55,15 +57,20 @@ public class TidalCuratedFragment extends Fragment implements ContentLoadable {
     }
 
     public void onLoadContent() {
-        if ( mHasData ) {
+        if ( mHasData && mRequestChain != null ) {
             return;
         }
+        mRequestChain = new RequestChain(getContext());
         load("genres",false);
         load("moods",true);
     }
 
     @Override
     public void onStopLoading() {
+        if ( mRequestChain != null ) {
+            mRequestChain.cancel();
+            mRequestChain = null;
+        }
     }
 
     @Override
@@ -74,14 +81,13 @@ public class TidalCuratedFragment extends Fragment implements ContentLoadable {
 
 
     private void load(String path,boolean isMoods){
-        RequestChain requestChain=new RequestChain(getContext());
         TidalRequestController.Callback callback=TidalRequestController.getTidalClient();
 
         Call<List<Curated>> call=callback.getCurated(path,
                 TidalRequestController.AUTH_TOKEN,
                 Locale.getDefault().getCountry());
 
-        requestChain.submit(call,resp->{
+        mRequestChain.submit(call,resp->{
             mProgressBar.setVisibility(View.GONE);
             GridLayoutManager glm= new GridLayoutManager(getContext(), 2, GridLayoutManager.HORIZONTAL, false);
 

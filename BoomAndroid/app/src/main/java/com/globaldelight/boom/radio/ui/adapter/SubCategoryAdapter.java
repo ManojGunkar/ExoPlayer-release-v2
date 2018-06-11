@@ -179,12 +179,15 @@ public class SubCategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         isLoadingAdded = false;
 
         int position = mContents.size() - 1;
-        CategoryResponse.Content result = getItem(position);
+        if (position>=0){
+            CategoryResponse.Content result = getItem(position);
 
-        if (result != null) {
-            mContents.remove(position);
-            notifyItemRemoved(position);
+            if (result != null) {
+                mContents.remove(position);
+                notifyItemRemoved(position);
+            }
         }
+
     }
 
     public CategoryResponse.Content getItem(int position) {

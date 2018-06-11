@@ -1,7 +1,6 @@
-package com.globaldelight.boom.radio.ui.adapter;
+package com.globaldelight.boom.radio.podcast.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -20,26 +19,25 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.app.App;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.radio.podcast.FavouritePodcastManager;
-import com.globaldelight.boom.radio.podcast.ui.PodcastDetailActitvity;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
+import com.globaldelight.boom.radio.webconnector.model.Chapter;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
+import com.globaldelight.boom.tidal.ui.adapter.TrackDetailAdapter;
 import com.globaldelight.boom.utils.Utils;
-import com.google.gson.Gson;
 
 import java.util.List;
 
-import static com.globaldelight.boom.radio.podcast.ui.PodcastDetailActitvity.KEY_IMG_URL;
-import static com.globaldelight.boom.radio.podcast.ui.PodcastDetailActitvity.KEY_PODCAST;
-import static com.globaldelight.boom.radio.podcast.ui.PodcastDetailActitvity.KEY_TITLE;
-
 /**
- * Created by Manoj Kumar on 09-04-2018.
+ * Created by Manoj Kumar on 07-06-2018.
  * ©Global Delight Technologies Pvt. Ltd.
  */
-public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class PodcastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final static int DISPLAYING = 0;
     private final static int LOADING = 1;
+
+    private final static int TYPE_HEADER = 10000;
+    private final static int TYPE_ITEM = 20000;
 
     private boolean isLoadingAdded = false;
     private boolean retryPageLoad = false;
@@ -47,18 +45,15 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private String errorMsg;
 
     private Context mContext;
-    private List<RadioStationResponse.Content> mContents;
+    private List<Chapter> mContents;
     private Callback mCallback;
     private boolean isPaginationEnabled = true;
 
-    private boolean isPodcastType = false;
 
-
-    public RadioListAdapter(Context context, Callback callback, List<RadioStationResponse.Content> contentList, boolean isPodcast) {
+    public PodcastListAdapter(Context context, Callback callback, List<Chapter> contentList) {
         this.mContext = context;
         this.mContents = contentList;
         this.mCallback = callback;
-        this.isPodcastType = isPodcast;
     }
 
 
@@ -69,8 +64,16 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         switch (viewType) {
             case DISPLAYING:
-                viewHolder = getViewHolder(parent, inflater);
-                break;
+                LocalViewHolder vh = new LocalViewHolder(inflater.inflate(R.layout.item_list_podcast, parent, false));
+                vh.itemView.setOnClickListener((v) -> onClick(vh));
+                return vh;
+
+            case TYPE_HEADER:
+                View itemView = LayoutInflater.from(parent.getContext()).
+                        inflate(R.layout.card_header_recycler_view, parent, false);
+                HeaderViewHolder holder = new HeaderViewHolder(itemView);
+                return holder;
+
             case LOADING:
                 viewHolder = new LoadingViewHolder(inflater.inflate(R.layout.item_progress, parent, false));
                 break;
@@ -78,43 +81,37 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return viewHolder;
     }
 
-    @NonNull
-    private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
-        LocalViewHolder vh;
-        if (isPodcastType){
-             vh = new LocalViewHolder(inflater.inflate(R.layout.item_podcast, parent, false));
-        }else {
-             vh = new LocalViewHolder(inflater.inflate(R.layout.item_local_radio, parent, false));
-        }
-        vh.itemView.setOnClickListener(v -> onClick(vh));
-        return vh;
-    }
-
     private void onClick(LocalViewHolder vh) {
-        int position = vh.getAdapterPosition();
+        int position = vh.getAdapterPosition() - 1;
         if (position < 0) {
             return;
         }
-        if (isPodcastType){
-            Intent intent=new Intent(mContext, PodcastDetailActitvity.class);
-            intent.putExtra(KEY_TITLE,mContents.get(position).getName());
-            intent.putExtra(KEY_IMG_URL,mContents.get(position).getItemArtUrl());
-            intent.putExtra(KEY_PODCAST, new Gson().toJson(mContents.get(position)));
-            mContext.startActivity(intent);
-        }else {
-            App.playbackManager().queue().addItemListToPlay(mContents, position, false);
-        }
+        App.playbackManager().queue().addItemListToPlay(mContents, position, false);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
+            case TYPE_HEADER:
+                HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
+                headerViewHolder.txtHeaderTitle.setText(mContext.getResources().getString(R.string.chapters, mContents.size()));
+                headerViewHolder.txtHeaderDetail.setVisibility(View.GONE);
+                headerViewHolder.imgMore.setVisibility(View.GONE);
+                break;
+
             case DISPLAYING:
-                RadioStationResponse.Content content = mContents.get(position);
+                Chapter content = mContents.get(position-1);
                 LocalViewHolder viewHolder = (LocalViewHolder) holder;
                 viewHolder.mainView.setElevation(0);
                 viewHolder.txtTitle.setText(content.getName());
+
+                long time = content.getDuration();
+                long seconds = time / 1000;
+                long minutes = seconds / 60;
+                seconds = seconds % 60;
+
                 viewHolder.txtSubTitle.setText(content.getDescription());
+
                 final int size = Utils.largeImageSize(mContext);
                 Glide.with(mContext).load(content.getLogo())
                         .placeholder(R.drawable.ic_default_art_grid)
@@ -122,28 +119,8 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         .override(size, size)
                         .into(viewHolder.imgStationThumbnail);
 
-                viewHolder.checkFavRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if (isChecked) {
-                        if (!isPodcastType) {
-                            FavouriteRadioManager.getInstance(mContext).addRadioStation(content);
-                        } else {
-                            FavouritePodcastManager.getInstance(mContext).addPodcast(content);
-                        }
-                    } else if (!isPodcastType) {
-                        FavouriteRadioManager.getInstance(mContext).removeRadioStation(content);
-                    } else {
-                        FavouritePodcastManager.getInstance(mContext).removePodcast(content);
-                    }
-                });
+                updatePlayingStation(viewHolder, content);
 
-                if (FavouriteRadioManager.getInstance(mContext).containsRadioStation(content)
-                        || FavouritePodcastManager.getInstance(mContext).containPodcast(content)) {
-                    viewHolder.checkFavRadio.setChecked(true);
-                } else {
-                    viewHolder.checkFavRadio.setChecked(false);
-                }
-                if (!isPodcastType)
-                    updatePlayingStation(viewHolder, mContents.get(position));
                 break;
 
             case LOADING:
@@ -192,30 +169,35 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemCount() {
-        return mContents == null ? 0 : mContents.size();
+        return mContents == null ? 0 : mContents.size() + 1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (isPaginationEnabled) {
-            return (position == mContents.size() - 1 && isLoadingAdded) ? LOADING : DISPLAYING;
+        if (position < 1) {
+            return TYPE_HEADER;
+        } else {
+            if (isPaginationEnabled) {
+                return (position == mContents.size() && isLoadingAdded) ? LOADING : DISPLAYING;
+            }
+            return TYPE_ITEM;
         }
 
-        return DISPLAYING;
+
     }
 
-    public void add(RadioStationResponse.Content content) {
+    public void add(Chapter content) {
         mContents.add(content);
         notifyItemInserted(mContents.size() - 1);
     }
 
-    public void addAll(List<RadioStationResponse.Content> moveResults) {
-        for (RadioStationResponse.Content result : moveResults) {
+    public void addAll(List<Chapter> moveResults) {
+        for (Chapter result : moveResults) {
             add(result);
         }
     }
 
-    public void remove(RadioStationResponse.Content content) {
+    public void remove(Chapter content) {
         int position = mContents.indexOf(content);
         if (position > -1) {
             mContents.remove(position);
@@ -237,7 +219,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void addLoadingFooter() {
         isLoadingAdded = true;
-        add(new RadioStationResponse().new Content());
+        add(new Chapter());
     }
 
     public void removeLoadingFooter() {
@@ -245,7 +227,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         int position = mContents.size() - 1;
         if (position >= 0) {
-            RadioStationResponse.Content result = getItem(position);
+            Chapter result = getItem(position);
 
             if (result != null) {
                 mContents.remove(position);
@@ -262,7 +244,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (errorMsg != null) this.errorMsg = errorMsg;
     }
 
-    public RadioStationResponse.Content getItem(int position) {
+    public Chapter getItem(int position) {
         return mContents.get(position);
     }
 
@@ -274,11 +256,11 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         private TextView txtTitle;
         private TextView txtSubTitle;
+        private TextView txtSongIndex;
         private View mainView;
         private View overlay;
         private ImageView imgStationThumbnail;
         private ImageView imgOverlayPlay;
-        private CheckBox checkFavRadio;
         private ProgressBar progressBar;
 
         public LocalViewHolder(View itemView) {
@@ -286,12 +268,13 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             mainView = itemView;
             imgStationThumbnail = itemView.findViewById(R.id.song_item_img);
-            checkFavRadio = itemView.findViewById(R.id.check_fav_station);
             imgOverlayPlay = itemView.findViewById(R.id.song_item_img_overlay_play);
             overlay = itemView.findViewById(R.id.song_item_img_overlay);
             progressBar = itemView.findViewById(R.id.load_cloud);
             txtTitle = itemView.findViewById(R.id.txt_title_station);
             txtSubTitle = itemView.findViewById(R.id.txt_sub_title_station);
+            txtSongIndex = itemView.findViewById(R.id.txt_song_index);
+
 
         }
 
@@ -328,6 +311,20 @@ public class RadioListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         }
 
+    }
+
+    protected class HeaderViewHolder extends RecyclerView.ViewHolder {
+        public TextView txtHeaderTitle;
+        private TextView txtHeaderDetail;
+        private ImageView imgMore;
+
+        public HeaderViewHolder(View itemView) {
+            super(itemView);
+
+            txtHeaderTitle = itemView.findViewById(R.id.header_sub_title);
+            txtHeaderDetail = itemView.findViewById(R.id.header_detail);
+            imgMore = itemView.findViewById(R.id.recycler_header_menu);
+        }
     }
 
 }

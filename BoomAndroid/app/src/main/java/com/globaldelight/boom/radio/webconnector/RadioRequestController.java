@@ -5,7 +5,9 @@ import android.content.Context;
 
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.radio.webconnector.model.AccessTokenModel;
+import com.globaldelight.boom.radio.webconnector.model.BaseResponse;
 import com.globaldelight.boom.radio.webconnector.model.CategoryResponse;
+import com.globaldelight.boom.radio.webconnector.model.Chapter;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.globaldelight.boom.radio.webconnector.model.RadioPlayResponse;
 
@@ -140,8 +142,16 @@ public class RadioRequestController {
                 @Query("pageSize") String pageSize);
 
         @GET("/Pillow/{category}")
-        Call<RadioStationResponse> getRadioSation(
+        Call<RadioStationResponse> getRadioStation(
                 @Path(value = "category",encoded = true) String category,
+                @Query("page") String page,
+                @Query("pageSize") String pageSize);
+
+        // Pillow/podcasts/historical_india_podcast/chapters?page=1&pageSize=10
+
+        @GET("Pillow/{podcast}/chapters")
+        Call<BaseResponse<Chapter>> getPodcastChapters(
+                @Path(value = "podcast",encoded = true) String podcast,
                 @Query("page") String page,
                 @Query("pageSize") String pageSize);
 
@@ -172,9 +182,9 @@ public class RadioRequestController {
                 @Query("page") String page,
                 @Query("pageSize") String pageSize);
 
-        @GET("/Pillow/{radio_name}/play")
+        @GET("/Pillow/{permalink}/play")
         Call<RadioPlayResponse> getRadioPlayService(
-                @Path("radio_name") String radioName);
+                @Path(encoded = true, value = "permalink") String id);
 
     }
 

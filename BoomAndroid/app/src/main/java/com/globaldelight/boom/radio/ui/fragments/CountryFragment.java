@@ -15,8 +15,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.globaldelight.boom.R;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.ads.Advertiser;
+import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.CountryListAdapter;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
+import com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter;
 import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
 import com.globaldelight.boom.radio.webconnector.model.CategoryResponse;
@@ -48,22 +52,36 @@ public class CountryFragment extends Fragment {
     private CountryListAdapter countryListAdapter;
     private ProgressBar progressBar;
     private List<CategoryResponse.Content> mContents = new ArrayList<>();
+
+    private String type;
     private int totalPage = 0;
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
+    private InlineAds mAdController;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.radio_layout, container, false);
+        type = getArguments().getString(RadioFragmentStateAdapter.KEY_TYPE);
         recyclerView = view.findViewById(R.id.rv_local_radio);
         txtResCode = view.findViewById(R.id.txt_log);
         progressBar = view.findViewById(R.id.progress_local);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
-        countryListAdapter = new CountryListAdapter(getActivity(), mContents);
-        recyclerView.setAdapter(countryListAdapter);
+        countryListAdapter = new CountryListAdapter(getActivity(), mContents,type.equalsIgnoreCase("podcast")?true:false);
+
+
+        Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
+        if ( factory != null ) {
+            mAdController = factory.createInlineAds(getActivity(), recyclerView, countryListAdapter);
+            recyclerView.setAdapter(mAdController.getAdapter());
+        }
+        else {
+            recyclerView.setAdapter(countryListAdapter);
+        }
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addOnScrollListener(new OnPaginationListener(llm) {
             @Override
@@ -172,5 +190,20 @@ public class CountryFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if ( mAdController != null ) {
+            mAdController.register();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if ( mAdController != null ) {
+            mAdController.unregister();
+        }
+    }
 
 }

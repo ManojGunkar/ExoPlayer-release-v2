@@ -5,73 +5,23 @@
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/card_grid_margin"
     app:cardBackgroundColor="@color/library_album_footer"
-    app:cardElevation="4dp"
-    app:cardCornerRadius="3dp">
+    app:cardCornerRadius="3dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:background="@color/library_album_footer"
+        android:gravity="center"
         android:orientation="vertical">
 
-        <FrameLayout
-            android:id="@+id/card_grid_img_panel"
+        <ImageView
+            android:id="@+id/song_item_img"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/card_grid_default_img"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="centerCrop"
-                android:visibility="gone" />
-
-            <TableLayout
-                android:id="@+id/card_grid_art_table"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/card_grid_art_img1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:scaleType="centerCrop" />
-
-                    <ImageView
-                        android:id="@+id/card_grid_art_img2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:scaleType="centerCrop" />
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/card_grid_art_img3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:scaleType="centerCrop" />
-
-                    <ImageView
-                        android:id="@+id/card_grid_art_img4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:scaleType="centerCrop" />
-
-                </TableRow>
-
-            </TableLayout>
-
-        </FrameLayout>
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_default_art_grid"
+            android:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/card_grid_bottom"
@@ -90,10 +40,11 @@
                 android:orientation="horizontal">
 
                 <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/card_grid_title"
+                    android:id="@+id/txt_title_station"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="7dp"
+                    android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:gravity="center_vertical"
@@ -102,23 +53,21 @@
                     android:textColor="@color/track_title"
                     android:textSize="@dimen/card_grid_item_title" />
 
-                <ImageView
-                    android:id="@+id/card_grid_menu"
-                    style="@style/MediaController"
+                <CheckBox
+                    android:id="@+id/check_fav_station"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:layout_marginBottom="2dp"
+                    android:button="@drawable/fav_selector"
                     android:paddingBottom="8dp"
                     android:paddingLeft="@dimen/card_grid_bottom_padding"
-                    android:paddingRight="@dimen/card_grid_bottom_padding"
-                    android:paddingTop="5dp"
-                    android:src="@drawable/ic_more_button_playlists" />
+                    android:paddingTop="5dp" />
 
             </LinearLayout>
 
             <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/card_grid_sub_title"
+                android:id="@+id/txt_sub_title_station"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/card_grid_bottom_padding"
