@@ -17,6 +17,7 @@ import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.business.ads.Advertiser;
 import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.ExploreCategoryAdapter;
+import com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter;
 import com.globaldelight.boom.radio.webconnector.model.ExploreCategory;
 import com.globaldelight.boom.radio.webconnector.model.ExploreTag;
 import com.google.gson.Gson;
@@ -34,18 +35,20 @@ public class ExploreFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProgressBar mProgressBar;
     private InlineAds mAdController;
+    private String type;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.radio_layout, container, false);
+        type = getArguments().getString(RadioFragmentStateAdapter.KEY_TYPE);
         mProgressBar = view.findViewById(R.id.progress_local);
         mProgressBar.setVisibility(View.GONE);
         recyclerView = view.findViewById(R.id.rv_local_radio);
         List<ExploreCategory.Content> contents = getCategories().getBody().getContent();
         LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
-        ExploreCategoryAdapter mAdapter = new ExploreCategoryAdapter(getActivity(), contents);
+        ExploreCategoryAdapter mAdapter = new ExploreCategoryAdapter(getActivity(), contents,type.equalsIgnoreCase("podcast")?true:false);
 
         Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
         if ( factory != null ) {

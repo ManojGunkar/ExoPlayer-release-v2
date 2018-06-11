@@ -111,6 +111,12 @@ public class RadioStationResponse {
 
     public class Content implements IMediaElement {
 
+        @SerializedName("published")
+        @Expose
+        private String published;
+        @SerializedName("duration")
+        @Expose
+        private Integer duration;
         @SerializedName("type")
         @Expose
         private String type;
@@ -156,6 +162,22 @@ public class RadioStationResponse {
         @SerializedName("monitoring")
         @Expose
         private Monitoring monitoring;
+
+        public String getPublished() {
+            return published;
+        }
+
+        public void setPublished(String published) {
+            this.published = published;
+        }
+
+        public Integer getDuration() {
+            return duration;
+        }
+
+        public void setDuration(Integer duration) {
+            this.duration = duration;
+        }
 
         public String getType() {
             return type;
@@ -203,6 +225,10 @@ public class RadioStationResponse {
             return description;
         }
 
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
         @Override
         public String getItemArtUrl() {
             return logo;
@@ -221,10 +247,6 @@ public class RadioStationResponse {
         @Override
         public int getMediaType() {
             return MediaType.RADIO;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
         }
 
         public String getLogo() {
@@ -309,8 +331,8 @@ public class RadioStationResponse {
 
         @Override
         public boolean equals(Object another) {
-            if ( another instanceof  Content ) {
-                return equalTo((Content)another);
+            if (another instanceof Content) {
+                return equalTo((Content) another);
             }
 
             return false;

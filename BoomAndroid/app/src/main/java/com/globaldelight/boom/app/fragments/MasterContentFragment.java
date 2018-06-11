@@ -50,15 +50,15 @@ import com.globaldelight.boom.app.dialogs.EqualizerDialog;
 import com.globaldelight.boom.app.dialogs.SpeakerDialog;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
-import com.globaldelight.boom.collection.local.MediaItem;
 import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.controller.PlayerUIController;
-import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.ItemType;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
 import com.globaldelight.boom.player.AudioEffect;
+import com.globaldelight.boom.radio.podcast.FavouritePodcastManager;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
+import com.globaldelight.boom.radio.webconnector.model.Chapter;
 import com.globaldelight.boom.radio.webconnector.model.RadioStationResponse;
 import com.globaldelight.boom.tidal.tidalconnector.model.Item;
 import com.globaldelight.boom.tidal.utils.TidalPopupMenu;
@@ -105,8 +105,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private static IMediaElement mPlayingMediaItem;
     private static boolean mIsPlaying, mIsLastPlayed;
 
-
-    private IMediaElement mCurrentItem = null;
     private boolean isUser = false;
 
     private Activity mActivity;
@@ -308,11 +306,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                 false);
 
         updatePlayerSeekAndTime();
-        try {
-            updatePlayerUI();
-        } catch (Exception e) {
-
-        }
+        updatePlayerUI();
     }
 
     private void updatePlayerSeekAndTime() {
@@ -334,11 +328,18 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     /* Large Player UI and Functionality*/
     private void updateActionBarButtons() {
 
-        if ( mPlayingMediaItem != null && mPlayingMediaItem.getMediaType() == MediaType.RADIO ) {
+        if ( mPlayingMediaItem != null && (mPlayingMediaItem.getMediaType() == MediaType.RADIO || mPlayingMediaItem.getMediaType() == MediaType.PODCAST )) {
             mUpNextBtnPanel.setVisibility(View.GONE);
             mPlayerOverFlowMenuPanel.setVisibility(View.GONE);
             mFavouritesCheckbox.setVisibility(View.VISIBLE);
-            mFavouritesCheckbox.setChecked(FavouriteRadioManager.getInstance(getContext()).containsRadioStation((RadioStationResponse.Content)mPlayingMediaItem));
+            boolean isFavorite = false;
+            if ( mPlayingMediaItem.getMediaType() == MediaType.RADIO ) {
+                isFavorite = FavouriteRadioManager.getInstance(getContext()).containsRadioStation((RadioStationResponse.Content)mPlayingMediaItem);
+            }
+            else {
+                isFavorite =  FavouritePodcastManager.getInstance(getContext()).containPodcast(((Chapter)mPlayingMediaItem).getPodcast());
+            }
+            mFavouritesCheckbox.setChecked(isFavorite);
             return;
         }
 
@@ -357,7 +358,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void updateShuffle() {
-        if ( mPlayingMediaItem != null && mPlayingMediaItem.getMediaType() == MediaType.RADIO ) {
+        if ( mPlayingMediaItem != null && (mPlayingMediaItem.getMediaType() == MediaType.RADIO || mPlayingMediaItem.getMediaType() == MediaType.PODCAST)) {
             mShuffle.setEnabled(false);
             mShuffle.setVisibility(View.INVISIBLE);
         }
@@ -376,7 +377,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void updateRepeat() {
-        if ( mPlayingMediaItem != null && mPlayingMediaItem.getMediaType() == MediaType.RADIO ) {
+        if ( mPlayingMediaItem != null && (mPlayingMediaItem.getMediaType() == MediaType.RADIO || mPlayingMediaItem.getMediaType() == MediaType.PODCAST)) {
             mRepeat.setEnabled(false);
             mRepeat.setVisibility(View.INVISIBLE);
             return;
@@ -450,11 +451,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
 
     class BlurBitmapTarget extends  BaseTarget<Bitmap> {
-        private IMediaElement item;
-
-        BlurBitmapTarget(IMediaElement item) {
-            this.item = item;
-        }
 
         @Override
         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -473,7 +469,6 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
                         try {
                             final Bitmap bitmap = resource.copy(ARGB_8888, false);
                             Bitmap blurredBitmap = PlayerUtils.createBackgoundBitmap(context, bitmap, ScreenWidth / 10, ScreenHeight / 10);
-                            resource.recycle();
                             result = blurredBitmap;
                         } catch (Exception e) {
                         }
@@ -500,13 +495,14 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
 
 
     private void UpdateBackground(final IMediaElement item) {
-        if ( item.getMediaType() == MediaType.RADIO || item.getMediaType() == MediaType.TIDAL) {
+        int mediaType = item.getMediaType();
+        if ( mediaType == MediaType.RADIO || mediaType == MediaType.TIDAL || mediaType == MediaType.PODCAST) {
             Glide.with(getContext())
                     .load(item.getItemArtUrl()).asBitmap()
                     .placeholder(R.drawable.ic_default_art_grid)
                     .centerCrop()
                     .skipMemoryCache(true)
-                    .into(new BlurBitmapTarget(item));
+                    .into(new BlurBitmapTarget());
         }
         else {
             new BlurTask(item).execute();
@@ -988,11 +984,23 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     }
 
     private void onFavouritesChanged(CompoundButton button, boolean isChecked) {
-        if ( isChecked ) {
-            FavouriteRadioManager.getInstance(getContext()).addRadioStation((RadioStationResponse.Content)mPlayingMediaItem);
+        if ( mPlayingMediaItem == null) return;
+
+        if ( mPlayingMediaItem.getMediaType() == MediaType.RADIO) {
+            if ( isChecked ) {
+                FavouriteRadioManager.getInstance(getContext()).addRadioStation((RadioStationResponse.Content)mPlayingMediaItem);
+            }
+            else {
+                FavouriteRadioManager.getInstance(getContext()).removeRadioStation((RadioStationResponse.Content)mPlayingMediaItem);
+            }
         }
         else {
-            FavouriteRadioManager.getInstance(getContext()).removeRadioSation((RadioStationResponse.Content)mPlayingMediaItem);
+            if ( isChecked ) {
+                FavouritePodcastManager.getInstance(getContext()).addPodcast(((Chapter)mPlayingMediaItem).getPodcast());
+            }
+            else {
+                FavouritePodcastManager.getInstance(getContext()).removePodcast(((Chapter)mPlayingMediaItem).getPodcast());
+            }
         }
     }
 

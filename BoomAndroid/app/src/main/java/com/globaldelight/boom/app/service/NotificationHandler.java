@@ -38,6 +38,7 @@ public class NotificationHandler  {
     private Context context;
     private Service service;
     private NotificationManager notificationManager;
+    private IMediaElement currentItem = null;
 
     public NotificationHandler(Service service) {
         this.context = service;
@@ -61,6 +62,11 @@ public class NotificationHandler  {
 
 
     public void update(IMediaElement item, boolean playing, boolean isLastPlayed) {
+        boolean mediaChanged = false;
+        if ( !item.equalTo(currentItem) ) {
+            currentItem = item;
+            mediaChanged = true;
+        }
 
         if(item == null && !isLastPlayed){
             removeNotification();
@@ -124,12 +130,13 @@ public class NotificationHandler  {
                     .setImageViewResource(R.id.noti_play_button, R.drawable.ic_play_notification);
         }
 
-        notificationCompat.bigContentView.setImageViewResource(R.id.noti_album_art, R.drawable.ic_default_art_grid);
-        notificationCompat.contentView.setImageViewResource(R.id.noti_album_art, R.drawable.ic_default_art_grid);
+        if ( mediaChanged ) {
+            notificationCompat.bigContentView.setImageViewResource(R.id.noti_album_art, R.drawable.ic_default_art_grid);
+            notificationCompat.contentView.setImageViewResource(R.id.noti_album_art, R.drawable.ic_default_art_grid);
+        }
 
         Glide.with(context)
                 .load(item.getItemArtUrl()).asBitmap()
-                .placeholder(R.drawable.ic_default_art_grid)
                 .skipMemoryCache(true)
                 .into(new BaseTarget<Bitmap>() {
                     @Override
@@ -146,6 +153,7 @@ public class NotificationHandler  {
                 });
 
 
+
         if ( playing ) {
             service.startForeground(NOTIFICATION_ID, notificationCompat);
         }
@@ -156,5 +164,6 @@ public class NotificationHandler  {
 
     public void removeNotification(){
         notificationManager.cancel(NOTIFICATION_ID);
+        currentItem = null;
     }
  }

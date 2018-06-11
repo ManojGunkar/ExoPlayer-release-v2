@@ -274,5 +274,8 @@
     <string name="retry">Retry</string>
     <string name="server_take">The server took too long to respond.</string>
     <string name="radio_find_error">Sorry Couldn\'t find any Radio station.</string>
+    <string name="podcast">Podcast</string>
+    <string name="search_hint_podcast">Search podcast</string>
+    <string name="chapters">Chapters: %d</string>
 
 </resources>

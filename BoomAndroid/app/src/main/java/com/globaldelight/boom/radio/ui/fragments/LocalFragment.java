@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.business.ads.Advertiser;
 import com.globaldelight.boom.business.ads.InlineAds;
 import com.globaldelight.boom.radio.ui.adapter.OnPaginationListener;
+import com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.utils.FavouriteRadioManager;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
@@ -49,6 +51,7 @@ import retrofit2.Response;
 
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_PLAYER_STATE_CHANGED;
 import static com.globaldelight.boom.app.receivers.actions.PlayerEvents.ACTION_SONG_CHANGED;
+import static com.globaldelight.boom.radio.podcast.FavouritePodcastManager.FAVOURITES_PODCAST_CHANGED;
 
 /**
  * Created by Manoj Kumar on 09-04-2018.
@@ -65,14 +68,17 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
     private RadioListAdapter radioListAdapter;
     private List<RadioStationResponse.Content> contentList = new ArrayList<>();
 
+    private String type;
     private int totalPage = 0;
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private String countryCode = Locale.getDefault().getCountry().toUpperCase();
 
-    private InlineAds mAdController;
+    private LinearLayoutManager llm;
+    private GridLayoutManager glm;
 
+    private InlineAds mAdController;
 
     private BroadcastReceiver mUpdateItemSongListReceiver = new BroadcastReceiver() {
         @Override
@@ -80,7 +86,8 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
             switch (intent.getAction()) {
                 case ACTION_PLAYER_STATE_CHANGED:
                 case ACTION_SONG_CHANGED:
-                case FavouriteRadioManager.FAVOURITES_CHANGED:
+                case FavouriteRadioManager.FAVOURITES_RADIO_CHANGED:
+                case FAVOURITES_PODCAST_CHANGED:
 
                     if (null != radioListAdapter)
                         radioListAdapter.notifyDataSetChanged();
@@ -89,18 +96,28 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         }
     };
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.radio_layout, container, false);
+        type = getArguments().getString(RadioFragmentStateAdapter.KEY_TYPE);
         recyclerView = view.findViewById(R.id.rv_local_radio);
         progressBar = view.findViewById(R.id.progress_local);
         errorLayout = view.findViewById(R.id.error_layout);
         btnRetry = view.findViewById(R.id.error_btn_retry);
         txtError = view.findViewById(R.id.error_txt_cause);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(llm);
-        radioListAdapter = new RadioListAdapter(getActivity(), this, contentList);
+
+
+        if (type.equalsIgnoreCase("podcast")){
+            glm = new GridLayoutManager(getContext(), 2);
+            recyclerView.setLayoutManager(glm);
+        }else {
+            llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            recyclerView.setLayoutManager(llm);
+        }
+
+        radioListAdapter = new RadioListAdapter(getActivity(), this, contentList,type.equalsIgnoreCase("podcast")?true:false);
 
         Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
         if (factory != null) {
@@ -110,7 +127,8 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
             recyclerView.setAdapter(radioListAdapter);
         }
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addOnScrollListener(new OnPaginationListener(llm) {
+
+        recyclerView.addOnScrollListener(new OnPaginationListener(llm!=null?llm:glm) {
             @Override
             protected void loadMoreContent() {
                 isLoading = true;
@@ -158,7 +176,7 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
-        return requestCallback.getLocalRadio(countryCode, "radio", "popularity", String.valueOf(currentPage), "25");
+        return requestCallback.getLocalRadio(countryCode, type, "popularity", String.valueOf(currentPage), type.equalsIgnoreCase("podcast")?"11":"25");
     }
 
     private void getContent() {
@@ -279,7 +297,8 @@ public class LocalFragment extends Fragment implements RadioListAdapter.Callback
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PLAYER_STATE_CHANGED);
         intentFilter.addAction(ACTION_SONG_CHANGED);
-        intentFilter.addAction(FavouriteRadioManager.FAVOURITES_CHANGED);
+        intentFilter.addAction(FAVOURITES_PODCAST_CHANGED);
+        intentFilter.addAction(FavouriteRadioManager.FAVOURITES_RADIO_CHANGED);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mUpdateItemSongListReceiver, intentFilter);
     }
 

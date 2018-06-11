@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import com.globaldelight.boom.R;
 import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.business.ads.Advertiser;
 import com.globaldelight.boom.business.ads.InlineAds;
+import com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter;
 import com.globaldelight.boom.radio.ui.adapter.RadioListAdapter;
 import com.globaldelight.boom.radio.webconnector.RadioRequestController;
 import com.globaldelight.boom.radio.webconnector.RadioApiUtils;
@@ -52,6 +54,7 @@ public class RadioSearchFragment extends Fragment {
     private List<RadioStationResponse.Content> mContents;
 
     private InlineAds mAdController;
+    private String type;
 
     private BroadcastReceiver mUpdatePlayingItem = new BroadcastReceiver() {
         @Override
@@ -80,6 +83,7 @@ public class RadioSearchFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        type = getArguments().getString(RadioFragmentStateAdapter.KEY_TYPE);
         View view = inflater.inflate(R.layout.fragment_radio_search, container, false);
         init(view);
         return view;
@@ -88,9 +92,15 @@ public class RadioSearchFragment extends Fragment {
     private void init(View view) {
         mProgressBar = view.findViewById(R.id.progress_radio_search);
         mRecyclerView = view.findViewById(R.id.rv_search_radio);
-        LinearLayoutManager llm = new LinearLayoutManager(
-                getActivity(), LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(llm);
+
+        if (type.equalsIgnoreCase("podcast")){
+            GridLayoutManager glm = new GridLayoutManager(getActivity(), 2);
+            mRecyclerView.setLayoutManager(glm);
+        }else {
+            LinearLayoutManager llm = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            mRecyclerView.setLayoutManager(llm);
+        }
+
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
@@ -120,14 +130,14 @@ public class RadioSearchFragment extends Fragment {
         RadioRequestController.RequestCallback requestCallback = RadioRequestController
                 .getClient(getActivity(), RadioApiUtils.BASE_URL);
         Call<RadioStationResponse> call = requestCallback
-                .getSearchResult("radio", query, "popularity", "1", "100");
+                .getSearchResult(type, query, "popularity", "1", "100");
         call.enqueue(new Callback<RadioStationResponse>() {
             @Override
             public void onResponse(Call<RadioStationResponse> call, Response<RadioStationResponse> response) {
                 if (response.isSuccessful()) {
                     mProgressBar.setVisibility(View.GONE);
                     mContents = response.body().getBody().getContent();
-                    mAdapter = new RadioListAdapter(getActivity(),null, mContents);
+                    mAdapter = new RadioListAdapter(getActivity(),null, mContents,type.equalsIgnoreCase("podcast")?true:false);
 
                     Advertiser factory = BusinessModelFactory.getCurrentModel().getAdFactory();
                     if ( factory != null ) {

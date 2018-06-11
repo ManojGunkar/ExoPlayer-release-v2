@@ -25,8 +25,6 @@ import com.globaldelight.boom.app.fragments.DropBoxListFragment;
 import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.business.BusinessModelFactory;
-import com.globaldelight.boom.business.ads.adspresenter.InterstitialAdsPresenter;
-import com.globaldelight.boom.business.ads.builder.AdsBuilder;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
@@ -39,6 +37,7 @@ import com.globaldelight.boom.utils.PermissionChecker;
 import com.globaldelight.boom.utils.Utils;
 
 import static com.globaldelight.boom.app.fragments.MasterContentFragment.isUpdateUpnextDB;
+import static com.globaldelight.boom.radio.ui.adapter.RadioFragmentStateAdapter.KEY_TYPE;
 
 /**
  * Created by adarsh on 09/03/18.
@@ -101,6 +100,9 @@ public class MainActivity extends MasterActivity
                         }
                         else if (playingItem != null && playingItem.getMediaType() == MediaType.TIDAL) {
                             onNavigateToTidal();
+                        }
+                        else if (playingItem != null && playingItem.getMediaType() == MediaType.PODCAST) {
+                            onNavigateToPodcast();
                         }
                         else {
                             onNavigateToLibrary();
@@ -240,6 +242,15 @@ public class MainActivity extends MasterActivity
                 }
                 break;
 
+            case R.id.podcast:
+                if (Utils.isOnline(this)) {
+                    runnable = this::onNavigateToPodcast;
+                } else {
+                    Utils.networkAlert(this);
+                    return false;
+                }
+                break;
+
             case R.id.tidal:
                 runnable = this::onNavigateToTidal;
                 break;
@@ -266,7 +277,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void onNavigateToLibrary() {
-        AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
+        //   AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (currentFragment instanceof LibraryFragment) {
             return;
@@ -282,30 +293,45 @@ public class MainActivity extends MasterActivity
     }
 
     private void onNavigateToRadio() {
-        AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
+        //  AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
         navigationView.getMenu().findItem(R.id.radio).setChecked(true);
         setTitle(R.string.radio);
         Fragment fragment = new RadioMainFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_TYPE, "radio");
+        fragment.setArguments(bundle);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
+    }
+
+    private void onNavigateToPodcast() {
+        // AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
+        navigationView.getMenu().findItem(R.id.podcast).setChecked(true);
+        setTitle(R.string.podcast);
+        Fragment fragment = new RadioMainFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_TYPE, "podcast");
+        fragment.setArguments(bundle);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
     }
 
     private void onNavigateToTidal() {
-        AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
+        //   AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
         navigationView.getMenu().findItem(R.id.tidal).setChecked(true);
         setTitle(R.string.tidal);
-        Fragment fragment=null;
-        if (UserCredentials.getCredentials(this).isUserLogged()){
-             fragment = new TidalMainFragment();
-        }else {
-            fragment=new TidalLoginFragment();
+        Fragment fragment = null;
+        if (UserCredentials.getCredentials(this).isUserLogged()) {
+            fragment = new TidalMainFragment();
+        } else {
+            fragment = new TidalLoginFragment();
         }
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
     }
 
     private void onNavigateToDropbox() {
-        AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
+        //  AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (currentFragment instanceof DropBoxListFragment) {
             return;
@@ -319,7 +345,7 @@ public class MainActivity extends MasterActivity
     }
 
     private void onNavigateToGoogleDrive() {
-        AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
+        //  AdsBuilder.buildInterstitialGoogleAds(this).onComplete();
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if (currentFragment instanceof GoogleDriveListFragment) {
             return;
