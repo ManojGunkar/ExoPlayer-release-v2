@@ -157,6 +157,10 @@ public class BoomLoginActivity extends AppCompatActivity {
                 (json_object, response) -> {
                     Log.d("okhttp", "userProfile" + json_object.toString());
                 });
+        Bundle permission_param = new Bundle();
+        permission_param.putString("fields", "id,name,email,picture.width(120).height(120)");
+        data_request.setParameters(permission_param);
+        data_request.executeAsync();
     }
 
     @Override
