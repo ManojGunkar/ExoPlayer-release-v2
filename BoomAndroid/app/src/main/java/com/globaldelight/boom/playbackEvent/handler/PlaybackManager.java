@@ -644,20 +644,32 @@ public class PlaybackManager implements IUpNextMediaEvent, AudioManager.OnAudioF
 
     public interface Listener {
         // when the song changes
-        void onMediaChanged();
+        default void onMediaChanged() {
+
+        }
 
         // when all items in the queue are played
-        void onPlaybackCompleted();
+        default void onPlaybackCompleted() {
+
+        }
 
         // when player state changes
-        void onPlayerStateChanged();
+        default void onPlayerStateChanged() {
+
+        }
 
         // when there is an error in playing the song
-        void onPlayerError();
+        default void onPlayerError() {
+
+        }
 
         // when song is being played
-        void onUpdatePlayerPosition();
+        default void onUpdatePlayerPosition() {
 
-        void onQueueUpdated();
+        }
+
+        default void onQueueUpdated() {
+
+        }
     }
 }

@@ -24,7 +24,7 @@ public class BusinessConfig {
 
 
     public long trialPeriod() {
-        return 1 * MS_PER_DAY;
+        return 2 * MS_PER_MIN;
     };
 
     public long sharePeriod() {

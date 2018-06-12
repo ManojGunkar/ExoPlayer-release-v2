@@ -32,8 +32,7 @@ public interface BusinessModel {
 
     }
 
-    default UIHandler getUIHandler() {
+    default EffectsScreenPolicy createEffectsScreenPolicy() {
         return null;
     }
-
 }

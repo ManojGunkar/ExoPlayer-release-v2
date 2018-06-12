@@ -1,9 +1,7 @@
 package com.globaldelight.boom.business;
 
-import android.content.Context;
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.ViewGroup;
 
 /**
@@ -12,21 +10,23 @@ import android.view.ViewGroup;
 
 public class DefaultModel implements BusinessModel {
 
-    class DefaultUIHandler implements UIHandler {
+    class DefaultEffectsScreenPolicy implements EffectsScreenPolicy {
 
         @Override
-        public void handleEffectsScreen(ViewGroup root) {
+        public void init(Activity activity, ViewGroup root) {
+
         }
 
         @Override
-        public RecyclerView.Adapter handleEqualizerPresets(RecyclerView.Adapter adapter) {
-            return adapter;
+        public void finish() {
+
         }
+
     }
 
-    private DefaultUIHandler mUIHandler = new DefaultUIHandler();
+    private EffectsScreenPolicy mEffectsPolicy = new DefaultEffectsScreenPolicy();
 
-    public UIHandler getUIHandler() {
-        return mUIHandler;
+    public EffectsScreenPolicy createEffectsScreenPolicy() {
+        return mEffectsPolicy;
     }
 }

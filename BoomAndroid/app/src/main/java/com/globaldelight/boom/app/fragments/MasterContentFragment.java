@@ -50,6 +50,8 @@ import com.globaldelight.boom.app.dialogs.EqualizerDialog;
 import com.globaldelight.boom.app.dialogs.SpeakerDialog;
 import com.globaldelight.boom.app.receivers.ConnectivityReceiver;
 import com.globaldelight.boom.app.sharedPreferences.Preferences;
+import com.globaldelight.boom.business.BusinessModelFactory;
+import com.globaldelight.boom.business.EffectsScreenPolicy;
 import com.globaldelight.boom.collection.base.IMediaItem;
 import com.globaldelight.boom.collection.base.IMediaElement;
 import com.globaldelight.boom.playbackEvent.controller.PlayerUIController;
@@ -111,6 +113,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     private ProgressBar mLoadingProgress;
     private AudioEffect audioEffects;
     private boolean mHideUpNext = false;
+
+    private EffectsScreenPolicy mEffectsPolicy;
+
 
 
     /************************************************************************************/
@@ -238,6 +243,7 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
     @Override
     public void onDetach() {
         super.onDetach();
+        mEffectsPolicy.finish();
         mActivity = null;
     }
 
@@ -1084,6 +1090,9 @@ public class MasterContentFragment extends Fragment implements View.OnClickListe
         switchAudioEffect();
 
         updateAudioEffectUI();
+
+        mEffectsPolicy = BusinessModelFactory.getCurrentModel().createEffectsScreenPolicy();
+        mEffectsPolicy.init(getActivity(), (ViewGroup)mRootView);
     }
 
     private void switchAudioEffect() {
