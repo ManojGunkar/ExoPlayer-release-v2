@@ -26,6 +26,7 @@ import com.globaldelight.boom.app.fragments.GoogleDriveListFragment;
 import com.globaldelight.boom.app.fragments.LibraryFragment;
 import com.globaldelight.boom.business.BusinessModelFactory;
 import com.globaldelight.boom.collection.base.IMediaElement;
+import com.globaldelight.boom.login.BoomLoginActivity;
 import com.globaldelight.boom.playbackEvent.handler.PlaybackManager;
 import com.globaldelight.boom.playbackEvent.utils.DeviceMediaLibrary;
 import com.globaldelight.boom.playbackEvent.utils.MediaType;
@@ -203,6 +204,11 @@ public class MainActivity extends MasterActivity
         Runnable runnable;
         runnable = null;
         switch (item.getItemId()) {
+
+            case R.id.boom_login:
+                runnable=this::boomLogin;
+                break;
+
             case R.id.music_library:
                 runnable = this::onNavigateToLibrary;
                 FlurryAnalytics.getInstance(this).setEvent(FlurryEvents.Music_library_Opened_From_Drawer);
@@ -268,6 +274,10 @@ public class MainActivity extends MasterActivity
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void boomLogin() {
+      startActivity(new Intent(this,BoomLoginActivity.class));
     }
 
     private void startCompoundActivities(int activityName) {

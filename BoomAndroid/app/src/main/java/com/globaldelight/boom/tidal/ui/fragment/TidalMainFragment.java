@@ -56,7 +56,6 @@ public class TidalMainFragment extends TabBarFragment {
     private TidalSearchFragment tidalSearch;
     private boolean mUserDataLoaded = false;
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
