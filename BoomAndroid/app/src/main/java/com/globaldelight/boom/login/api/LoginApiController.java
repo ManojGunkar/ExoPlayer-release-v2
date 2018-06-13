@@ -1,5 +1,6 @@
 package com.globaldelight.boom.login.api;
 
+import com.globaldelight.boom.login.api.request.SocialRequestBody;
 import com.google.gson.JsonElement;
 
 import java.util.concurrent.TimeUnit;
@@ -10,9 +11,6 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 /**
@@ -21,12 +19,13 @@ import retrofit2.http.POST;
  */
 public class LoginApiController {
 
-    public static final String APP_AUTH_BASE_URL="http://devuser.globaldelight.net/";
+    public static final String APP_AUTH_BASE_URL = "http://devuser.globaldelight.net/";
     public static final String BASE_URL = "https://login.globaldelight.net/";
     public static final String REGISTER_ENDPOINT = "register/";
-    public static final String AUTH_URL="appauthentication/";
+    public static final String AUTH_URL = "appauthentication/";
+    public static final String SOCIAL_LOGIN_URL = "sociallogin/";
 
-    public static final String SECRET_KEY="4301aad4464554d3245ba5fd6fc1bf9fa6c47b4fb5292e13da6ed7c1ac5ef6fd";
+    public static final String SECRET_KEY = "4301aad4464554d3245ba5fd6fc1bf9fa6c47b4fb5292e13da6ed7c1ac5ef6fd";
 
     private static OkHttpClient client;
     private static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -61,6 +60,10 @@ public class LoginApiController {
         @POST(AUTH_URL)
         Call<JsonElement> getToken(
                 @Body RequestBody requestBody);
+
+        @POST(SOCIAL_LOGIN_URL)
+        Call<JsonElement> sendSocialInfo(@Body SocialRequestBody requestBody);
+
     }
 
 }

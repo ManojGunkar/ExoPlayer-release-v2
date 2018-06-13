@@ -24,14 +24,17 @@ import com.facebook.login.LoginResult;
 import com.globaldelight.boom.R;
 import com.globaldelight.boom.login.api.LoginApiController;
 import com.globaldelight.boom.login.api.RequestBody;
+import com.globaldelight.boom.login.api.request.SocialRequestBody;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -45,7 +48,7 @@ import retrofit2.Response;
  * Created by Manoj Kumar on 09-06-2018.
  * Copyright (C) 2018. Global Delight Technologies Pvt. Ltd. All rights reserved.
  */
-public class BoomLoginActivity extends AppCompatActivity {
+public class BoomLoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
 
 
     private static final int FACEBOOK_RES_CODE = 01;
@@ -179,19 +182,18 @@ public class BoomLoginActivity extends AppCompatActivity {
     private void loginWithGp() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+              //  .requestIdToken("862807752058-d5g81f41tptroo7p1ovihbvgg2cklq3j.apps.googleusercontent.com")
+                .requestScopes(new Scope(Scopes.PLUS_LOGIN))
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, connectionResult -> {
-                    Log.d(TAG, "GPlus- Connection failed");
-                })
+                .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, GOOGLE_RES_CODE);    }
-
-
+        startActivityForResult(signInIntent, GOOGLE_RES_CODE);
+    }
 
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
@@ -204,8 +206,12 @@ public class BoomLoginActivity extends AppCompatActivity {
             String personPhotoUrl = acct.getPhotoUrl().toString();
             String email = acct.getEmail();
 
+            SocialRequestBody body=new SocialRequestBody();
+          //  body.set
+
             Log.e(TAG, "Name: " + personName + ", email: " + email
                     + ", Image: " + personPhotoUrl);
+
         }
     }
 
@@ -216,7 +222,9 @@ public class BoomLoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GOOGLE_RES_CODE) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            String token=result.getSignInAccount().getIdToken();
             handleSignInResult(result);
+            Log.d(TAG,"code:"+result.getStatus().getStatusCode());
         }
     }
 
@@ -227,4 +235,31 @@ public class BoomLoginActivity extends AppCompatActivity {
         mGoogleApiClient.disconnect();
     }
 
+
+    private void sendSocialInfo(SocialRequestBody requestBody){
+        LoginApiController.Callback callback=LoginApiController.getClient(LoginApiController.APP_AUTH_BASE_URL);
+        Call<JsonElement> call=callback.sendSocialInfo(requestBody);
+        call.enqueue(new Callback<JsonElement>() {
+            @Override
+            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
+                if (response.isSuccessful()){
+                    Log.d(TAG,"Send successfully");
+
+                }else {
+                    Log.d(TAG,"error code"+response.code());
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonElement> call, Throwable t) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
 }
